@@ -4,5 +4,5 @@
 <!ENTITY Domains.Panel.szTitle "Domaines">
 <!ENTITY Logging.Panel.szTitle "Journaux">
 <!ENTITY Proxy.Panel.szTitle "Proxy">
-<!ENTITY Defaults.Button.Label "Par d&#233faut">
-<!ENTITY Defaults.Button.Tip "Restaurer les param&#269;tres par d&#233faut.">
+<!ENTITY Defaults.Button.Label "Par défaut">
+<!ENTITY Defaults.Button.Tip "Restaurer les paramètres par défaut.">
