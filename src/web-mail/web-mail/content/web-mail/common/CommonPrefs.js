@@ -80,3 +80,19 @@ WebMailCommonPrefAccess.prototype.Set = function(Type, Key, Value)
         return false;
     }
 }
+
+
+
+WebMailCommonPrefAccess.prototype.DeleteBranch = function(Key)
+{
+    try
+    {
+        this.m_PrefService.deleteBranch( Key);
+        return true;
+    }
+    catch(e)
+    {
+        alert(e.message);
+        return false;
+    }
+}
