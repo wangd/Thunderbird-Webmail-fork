@@ -63,7 +63,7 @@ nsPOPConnectionManager.prototype.Start = function()
             if (!this.bGarbage)
             {//start garbage collection
                 this.GarbageTimer.initWithCallback(this, 
-                                                   1000, 
+                                                   10000,  //10 seconds 
                                                    Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
                 this.bGarbage = true;
             }
