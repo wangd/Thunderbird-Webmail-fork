@@ -30,9 +30,10 @@ function LoadWebmailDomains()
         
         var aszDomains = {value : null};
         var iCount = {value : null }; 
-        if (DomainManager.getAllDomains(iCount, aszDomains))
+        if (DomainManager.getAllDomainsForProtocol("pop", iCount, aszDomains))
         {
             parent.gWebmailLog.Write("Webmail: Webmail-Prefs-Domains.js : LoadWebmailDomains "
+                                            + "pop"
                                             + iCount.value +"\n"
                                             + aszDomains.value);
         }
