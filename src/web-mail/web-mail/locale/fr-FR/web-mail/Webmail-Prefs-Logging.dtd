@@ -1,13 +1,13 @@
-<!ENTITY Logging.Label "Journaux">
-<!ENTITY GeneralLogging.Label "Activer l'enregistrement de fichiers journaux">
+<!ENTITY Logging.Label "Archivage">
+<!ENTITY GeneralLogging.Label "Activer l'archivage">
 <!ENTITY GeneralLogging.AccessKey "A">
-<!ENTITY JavaScriptConsole.Label "Utiliser la console JavaScript">
+<!ENTITY JavaScriptConsole.Label "Utiliser la console Javascript">
 <!ENTITY JavaScriptConsole1.AccessKey "J">
-<!ENTITY LogFile.Label "Utiliser un fichier journal">
-<!ENTITY LogFile1.AccessKey "l">
-<!ENTITY Location.Label "Emplacement">
-<!ENTITY Location1.AccessKey "m">
-<!ENTITY Note.Label "Ces fichiers journaux vont contenir les noms d'utilisateurs et les mots de passe.">
-<!ENTITY Restart.Label "Un redémarrage de Thunderbird est nécessaire pour que les changements effectués soient pris en considération.">
+<!ENTITY LogFile.Label "Utiliser le fichier d'archive">
+<!ENTITY LogFile1.AccessKey "U">
+<!ENTITY Location.Label "Chemin">
+<!ENTITY Location1.AccessKey "C">
+<!ENTITY Note.Label "Ces archives contiendront des noms d'utilisateurs et des mots de passe.">
+<!ENTITY Restart.Label "Un redémarrage de Thunderbird est nécessaire pour que les changements prennent effet.">
 
 
