@@ -13,8 +13,8 @@ xmlns:chrome="http://www.mozilla.org/rdf/chrome#">
 		chrome:authorURL=""
 		chrome:name="hotmail"
 		chrome:extension="true"
-		chrome:description="Hotmail component for Web-Mail extension">
-        <!--chrome:settingsURL = "">-->
+		chrome:description="Hotmail component for Web-Mail extension"
+        chrome:settingsURL = "chrome://hotmail/content/Hotmail-Prefs.xul">
 	</RDF:Description>
 
 

@@ -13,7 +13,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 		<em:homepageURL>http://webmail.mozdev.org</em:homepageURL>
 		<em:iconURL>chrome://hotmail/skin/Hotmail-SmallIcon.png</em:iconURL>
 		<em:aboutURL>chrome://hotmail/content/Hotmail-About.xul</em:aboutURL>
-		<!--<em:optionsURL>chrome://hotmail/content/Hotmail-Prefs.xul</em:optionsURL>-->
+		<em:optionsURL>chrome://hotmail/content/Hotmail-Prefs.xul</em:optionsURL>
 		<em:updateURL>http://webmail.mozdev.org/hotmailUpdate.rdf</em:updateURL>
 		
 		<em:file>
