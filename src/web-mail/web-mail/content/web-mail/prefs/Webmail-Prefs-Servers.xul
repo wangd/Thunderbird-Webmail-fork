@@ -17,7 +17,8 @@
     <script type="application/x-javascript" src="chrome://web-mail/content/common/CommonPrefs.js"/>  
     <script type="application/x-javascript">
         <![CDATA[
-            var _elementIDs = ["txtPopPort"];
+            var _elementIDs = ["txtPopPort",
+                               "chkAccountWizard"];
         ]]>
     </script>
     
@@ -55,36 +56,37 @@
             <spacer flex="1"/>  
         </hbox>
         
-        <spacer flex="3"/>
+        <spacer flex="2"/> 
+        
         
         <!--ports-->
-        <hbox align="center">
-            <label class = "text"
-                   value="&Ports.Label;" 
-                   accesskey= "&Ports.AccessKey;" 
-                   control="txtPopPort"/>
-                    
-            <textbox id="txtPopPort" 
-                     size = "4" 
-                     maxlength = "4" 
-                     preftype="int"
-                     prefstring="webmail.server.port.pop"
-                     class= "text"/>
+        <vbox class = "port">  
+            <hbox align="center">
+                <label class = "textPort"
+                       value="&Ports.Label;" 
+                       accesskey= "&Ports.AccessKey;" 
+                       control="txtPopPort"/>
+                        
+                <textbox id="txtPopPort" 
+                         size = "4" 
+                         maxlength = "4" 
+                         preftype="int"
+                         prefstring="webmail.server.port.pop"
+                         class= "text"/>
+                
+                 <label class = "textPort"
+                        value= "&Default.Label;"
+                        control="txtPopPort"/>
+                        
+                <spacer flex="1"/>
+            </hbox>
             
-             <label class = "text"
-                    value= "&Default.Label;"
-                    control="txtPopPort"/>
-                    
             <spacer flex="1"/>
-        </hbox>
-        
-        <spacer flex="1"/>
-        
-        <!-- information -->   
-        <vbox class = "information">  
+            
+            <!-- information -->   
+       
             <hbox>
-                <image src = "chrome://web-mail/skin/Message.png" /> 
-                <description style="margin-left: 10px"> 
+                <description style="margin-left: 25px"> 
                     &Note.Label;
                 </description> 
             </hbox>
@@ -93,7 +95,30 @@
        
         <spacer flex="2"/>
         
-        <!-- information -->   
+        <!--account wizard-->
+        <vbox class = "accountwizard">
+            <checkbox label="&AccountWizard.Label;" 
+                      accesskey="&AccountWizard.AccessKey;"
+                      id="chkAccountWizard"
+                      preftype="bool" 
+                      prefstring="webmail.UseAccountWizard"
+                      onclick=""/>
+                      
+            <spacer flex="1"/>
+            
+            <!-- application folder information -->   
+       
+            <hbox >
+                <description style="margin-left: 25px"> 
+                    &AccountWizardWarning.Label;
+                </description> 
+            </hbox>
+        </vbox>
+        
+        
+        <spacer flex="2"/>
+        
+        <!-- restart information -->   
         <vbox class = "information">   
             <hbox>
                 <image src = "chrome://web-mail/skin/Message.png" /> 

@@ -43,6 +43,26 @@
 }
 
 
+.port
+{
+    margin-bottom: 5px;  
+    margin-top: 10px;
+    border: 1px solid black;
+    font-size: small;
+    padding: 5px; 
+}
+
+
+.accountwizard
+{
+    margin-bottom: 5px;  
+    margin-top: 5px;
+    border: 1px solid black;
+    font-size: small;
+    padding: 5px; 
+}
+
+
 .information
 {
     margin-top: 15px;
