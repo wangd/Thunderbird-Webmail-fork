@@ -7,13 +7,15 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
 		<em:id>{a6a33690-2c6a-11d9-9669-0800200c9a66}</em:id>
 		<em:name>Hotmail</em:name>
-		<em:version>0.3.5</em:version>
+		<em:version>0.3.6</em:version>
 		<em:description>Hotmail component for Web-Mail extension</em:description>
 		<em:creator>ComodoDragon</em:creator>
-		<em:homepageURL>http://todo.com</em:homepageURL>
+		<em:homepageURL>http://webmail.mozdev.org</em:homepageURL>
 		<em:iconURL>chrome://hotmail/skin/Hotmail-SmallIcon.png</em:iconURL>
 		<em:aboutURL>chrome://hotmail/content/Hotmail-About.xul</em:aboutURL>
 		<!--<em:optionsURL>chrome://hotmail/content/Hotmail-Prefs.xul</em:optionsURL>-->
+		<em:updateURL>http://webmail.mozdev.org/hotmailUpdate.rdf</em:updateURL>
+		
 		<em:file>
 			<Description about="urn:mozilla:extension:file:hotmail.jar">
                 <em:skin>skin/classic/hotmail/</em:skin>
@@ -27,7 +29,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 			<Description>
 				<!-- Mozilla Thunderbird -->
 				<em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
-				<em:minVersion>0.7</em:minVersion>
+				<em:minVersion>1.0</em:minVersion>
 				<em:maxVersion>1.0</em:maxVersion>
 			</Description>
 		</em:targetApplication>
