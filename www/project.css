@@ -1,1 +1,11 @@
-@import url("http://www.mozdev.org/project.css");
+/*@import url("http://www.mozdev.org/project.css");*/
+
+#mozdev-date
+{
+    background-color: rgb(255,255,255);
+}
+
+.mozdev-fries
+{
+    
+}
