@@ -1,6 +1,6 @@
 <!ENTITY WebmailAbout.Title "Informazioni su Webmail">
 <!ENTITY WebmailAbout.ExtName "Web Mail">
-<!ENTITY WebmailAbout.ExtVersion "versione 0.2.8a">
+<!ENTITY WebmailAbout.ExtVersion "versione 0.2.8">
 <!ENTITY WebmailAbout.ExtDescription "Permette di consultare i propri account di posta 'solo web' tramite Thunderbird.">
 <!ENTITY WebmailAbout.ExtCreaterTitle "Creato da:">
 <!ENTITY WebmailAbout.ExtCreator "ComodoDragon">
@@ -8,5 +8,3 @@
 <!ENTITY WebmailAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY WebmailAbout.ExtButton "Chiudi">
 <!ENTITY WebmailAbout.ExtContributorTitle "Collaboratori:">
-<!ENTITY WebmailAbout.ExtContributorNames "MatrixIsAllOver by eXtenZilla (it-IT)">
-
