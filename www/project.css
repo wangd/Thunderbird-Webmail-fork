@@ -12,8 +12,8 @@
 
 #WebMailContent 
 {
-	margin-left: 20pt;
-	margin-right: 20pt;
+	margin-left: 30pt;
+	margin-right: 30pt;
 	font-size: 12pt;
 	text-align: justify;
 	line-height: 17pt;
@@ -95,6 +95,18 @@
 	color: rgb(102, 0, 204) ! important;
 }
 
+#setuplist ol
+{
+    margin-right: 5pt;
+	margin-left: 5pt;
+}
+
+#setuplist ol li
+{
+    margin-top: 5pt;
+}
+
+
 #extensiontable 
 {
 	margin-left: auto;
@@ -105,26 +117,3 @@
 {
 	padding: 10px;
 }
-
-.table 
-{
-    margin-left: 90px;
-	margin-right: 90px;
-	display: table;
-}
-
-.row 
-{
-	display: table-row;
-}
-
-.cell 
-{
-	display: table-cell;
-	line-height: 17pt;
-	font-weight: normal;
-	font-family: Times New Roman, Times, serif;
-	font-size: 1em;
-	padding-top: 20pt;
-}
-
