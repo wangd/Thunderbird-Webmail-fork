@@ -1,0 +1,57 @@
+#HotmailAboutDialog
+{
+    padding: 0px 0px 0px 0px;
+    background-color: #FFFFFF;
+    color: #000000;
+}
+
+
+#HotmailName
+{
+    font-size: x-large;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 9px;
+}
+
+#HotmailVersion
+{
+    color: #909090;
+    margin-bottom: 3px;
+}
+
+#HotmailDescription
+{
+  color: #404040;
+}
+
+
+#HotmailCreatorLabel
+{
+    border-top: 2px solid #C0C0C0;
+    padding: 5px 0px 3px 0px;
+    margin-top: 3px;
+    font-weight: bold;
+}
+
+#HotmailContributorLabel
+{
+    padding: 5px 0px 3px 0px;
+    margin-top: 3px;
+    font-weight: bold;
+}
+
+.HotmailCreatorText
+{
+    margin-left: 45px;
+    margin-top: 3px;
+}
+
+#HotmailHomePage
+{
+    text-align: right;
+    color: #0000FF;
+    text-decoration: underline !important;
+    cursor: pointer;
+    margin-top: 30px;
+}

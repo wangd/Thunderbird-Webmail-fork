@@ -1,0 +1,36 @@
+<?xml version="1.0"?> 
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?> 
+<?xml-stylesheet href="chrome://hotmail/content/Hotmail-About.css" type="text/css"?> 
+
+<!DOCTYPE dialog SYSTEM "chrome://hotmail/locale/Hotmail-About.dtd">
+
+<window class="dialog"
+        title= "&HotmailAbout.Title;"
+        orient="vertical"
+        autostretch="always"
+        onload="sizeToContent()"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        id = "HotmailAboutDialog">
+        
+    <groupbox align="center" orient="horizontal">
+        <vbox>
+            <text value="&HotmailAbout.ExtName;" id = "HotmailName"/>
+            <text value="&HotmailAbout.ExtVersion;" id = "HotmailVersion"/>
+            <text value="&HotmailAbout.ExtDescription;" id = "HotmailDescription"/>
+            <text value="&HotmailAbout.ExtCreaterTitle;" id = "HotmailCreatorLabel"/>
+            <text value="&HotmailAbout.ExtCreator;" class = "HotmailCreatorText"/>
+            <text value="&HotmailAbout.ExtContributorTitle;" id = "HotmailContributorLabel"/>
+            <text value="&HotmailAbout.ExtContributorNames;" class = "HotmailCreatorText"/>
+            <text value="&HotmailAbout.ExtHome;" 
+                  id = "HotmailHomePage"
+                  onclick="window.opener.openURL('&HotmailAbout.ExtHomeURL;');"/>
+        </vbox>
+        <spacer flex="1"/>
+        <image src="chrome://hotmail/skin/Hotmail-VeryLargeIcon.png"/>
+    </groupbox>
+
+    <hbox>
+        <spacer flex="1"/>
+        <button label="&HotmailAbout.ExtButton;" oncommand="window.close();"/>
+    </hbox>
+</window>

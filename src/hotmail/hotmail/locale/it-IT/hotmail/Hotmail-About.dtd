@@ -1,0 +1,12 @@
+<!ENTITY HotmailAbout.Title "Informazioni su Hotmail">
+<!ENTITY HotmailAbout.ExtName "Hotmail">
+<!ENTITY HotmailAbout.ExtVersion "versione 0.3.5">
+<!ENTITY HotmailAbout.ExtDescription "Componente per l'estensione Web-Mail.">
+<!ENTITY HotmailAbout.ExtCreaterTitle "Creato da:">
+<!ENTITY HotmailAbout.ExtCreator "ComodoDragon">
+<!ENTITY HotmailAbout.ExtHome "Sito web">
+<!ENTITY HotmailAbout.ExtHomeURL "http://www.eskvale.plus.com/">
+<!ENTITY HotmailAbout.ExtButton "Chiudi">
+<!ENTITY HotmailAbout.ExtContributorTitle "Collaboratori:">
+<!ENTITY HotmailAbout.ExtContributorNames "MatrixIsAllOver by eXtenZilla (it-IT)">
+
