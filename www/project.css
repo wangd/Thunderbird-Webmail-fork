@@ -22,7 +22,12 @@
 
 #WebMailIndex
 {
+    margin-left: 20pt;
     margin-right: 140pt;
+	font-size: 12pt;
+	text-align: justify;
+	line-height: 17pt;
+	font-family: Times New Roman, Times, serif ! important;
 }
   
   
@@ -103,15 +108,15 @@
 
 .table 
 {
-    width: 675px;
-	max-width: 675px;
+    /*width: 700px;*/
+	/*max-width:700px;*/
 	display: table;
 }
 
 .row 
 {
-    width: 675px;
-	max-width: 675px;
+   /* width: 700px;*/
+/*	max-width: 700px;*/
 	display: table-row;
 }
 
