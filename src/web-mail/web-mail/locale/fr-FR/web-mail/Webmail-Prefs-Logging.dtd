@@ -8,6 +8,6 @@
 <!ENTITY Location.Label "Emplacement">
 <!ENTITY Location1.AccessKey "m">
 <!ENTITY Note.Label "Ces fichiers journaux vont contenir les noms d'utilisateurs et les mots de passe.">
-<!ENTITY Restart.Label "Un redémarrage de Thunderbird est nécessaire pour que les changements effectués soient pris en considération.">
+<!ENTITY Restart.Label "Un red&#233;marrage de Thunderbird est n&#233;cessaire pour que les changements effectu&#233;s soient pris en consid&#233;ration.">
 
 

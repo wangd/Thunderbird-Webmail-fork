@@ -2,7 +2,8 @@
 <!ENTITY Ports.Label "Ports">
 <!ENTITY Ports.AccessKey "P">
 <!ENTITY ServerStatus.Label "Etat du serveur">
-<!ENTITY Default.Label "par défaut 110">
-<!ENTITY Note.Label "Les ports en dessous de 1024 risquent d'être bloqués par le système d'exploitation">
-<!ENTITY Restart.Label "Un redémarrage de Thunderbird est nécessaire pour que les changements effectués soient pris en considération.">
+<!ENTITY Default.Label "par d&#233;faut 110">
+<!ENTITY Note.Label "Les ports en dessous de 1024 risquent d'&#234;tre bloqu&#233;s par le syst&#233;me d'exploitation">
+<!ENTITY Restart.Label "Un red&#233;marrage de Thunderbird est n&#233;cessaire pour que les changements effectu&#233;s soient pris en consid&#233;ration.">
+
 
