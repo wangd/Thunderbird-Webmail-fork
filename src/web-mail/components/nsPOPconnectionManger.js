@@ -69,6 +69,7 @@ nsPOPConnectionManager.prototype.Start = function()
             }
             
             //get pref settings
+            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
             var oPref = new Object();
             oPref.Value = null;
             if (! WebMailPrefAccess.Get("int", "webmail.server.port.pop", oPref)) 
@@ -78,6 +79,7 @@ nsPOPConnectionManager.prototype.Start = function()
             }
             this.m_POPLog.Write("nsPOPConnectionManager.js - Start - POP port value "+ oPref.Value);
             this.iPopPort = oPref.Value;
+            delete WebMailPrefAccess
             
             //create listener
             //connect only to this machine, 10 Queue

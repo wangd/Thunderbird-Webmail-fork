@@ -50,13 +50,15 @@ function SetFields( aDataObject )
         {   //general file not set get from prefs
             var oPref = new Object();
             oPref.Value = null;
+            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
             if (WebMailPrefAccess.Get("nsILocalFile","webmail.logging.comms.FileLocation",oPref))
             {
                 parent.gFileGeneralLogging = Components.classes["@mozilla.org/file/local;1"].
 	                                    createInstance(Components.interfaces.nsILocalFile);
                 parent.gFileGeneralLogging.initWithFile(oPref.Value);
                 document.getElementById("txtLoggingFile").value = parent.gFileGeneralLogging.path;
-            }  
+            } 
+            delete WebMailPrefAccess;
         }
                 
         parent.gWebmailLog.Write("Webmail: Webmail-Prefs-Logging.js : SetFields - END");
@@ -110,12 +112,14 @@ function onOK()
         //set file locations
         if (parent.gFileGeneralLogging)
         {
+            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
             var bResult = WebMailPrefAccess.Set("nsILocalFile",
                                          "webmail.logging.comms.FileLocation",
                                          parent.gFileGeneralLogging);
        
          
-            if (!bResult) throw "WebMailPrefAccess.Set general.FileLocation failed";
+            if (!bResult) throw new Error("WebMailPrefAccess.Set general.FileLocation failed");
+            delete WebMailPrefAccess;
         }
         parent.gWebmailLog.Write("Webmail: Webmail-Prefs-Logging.js : onOK - END");
     }
