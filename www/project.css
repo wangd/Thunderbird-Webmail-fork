@@ -95,13 +95,13 @@
 	color: rgb(102, 0, 204) ! important;
 }
 
-#setuplist ol
+.setuplist ol
 {
     margin-right: 100px;
 	margin-left: 50px;
 }
 
-#setuplist ol li
+.setuplist ol li
 {
     margin-top: 50px;
 }
