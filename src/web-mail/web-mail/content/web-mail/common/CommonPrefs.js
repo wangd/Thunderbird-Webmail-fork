@@ -1,4 +1,4 @@
-var WebMailCommonPrefAccess = function () 
+function WebMailCommonPrefAccess() 
 {
     this.m_PrefService =  Components.classes["@mozilla.org/preferences-service;1"].
                                               getService(Components.interfaces.nsIPrefBranch);
@@ -80,5 +80,3 @@ WebMailCommonPrefAccess.prototype.Set = function(Type, Key, Value)
         return false;
     }
 }
-
-const WebMailPrefAccess = new WebMailCommonPrefAccess();
