@@ -1,0 +1,143 @@
+<!-- MAIN CONTENT -->
+    <div id="header">Setup</div>
+    <div id="WebMailContent">
+        <p style="margin-bottom: 0cm;">
+            I&rsquo;ll assume you have installed the Web-Mail extension 
+            and at least one of the domain handlers (hotmail.xpi, yahoo.xpi), 
+            if you haven't please do so. 
+        </p>
+        <div class="table">
+            <div class="row">
+                <div class="cell">
+                    <img style="width: 300px; height: 257px;"  
+                         alt="Web-mail Server Pref" 
+                         src="http://webmail.mozdev.org/ScreenShots/SmallWebMailServers.png" 
+                         align="left">
+                </div><!-- cell end-->
+                <div class="cell">
+                    <ol style="list-style-type: upper-roman;">
+                        <li>
+                            <p style="margin-bottom: 0cm;">
+                                The first step is to check the Web-Mail
+                                extension is running. Go to the Web-Mail options panel,&nbsp;
+                                on the first page the Server Status should be green. If the Web-Mail
+                                extension fails to start&nbsp; this could be due to the operating
+                                system blocking the default port (110), try setting the port
+                                higher than 1024 and restart Thunderbird. 
+                            </p>
+                        </li>
+                    </ol>
+                </div><!-- cell end-->
+            </div><!-- row end-->
+            <div class="row">
+                <div class="cell">
+                    <ol start="2" style="list-style-type: upper-roman;">
+                        <li>
+                            <p style="margin-bottom: 0cm;">
+                                Check you have installed the necessary domain 
+                                handlers. Go to Web-Mail options panel, on the second
+                                page is a list supported domains. 
+                            </p>
+                        </li>
+                    </ol>
+                </div><!-- cell end-->
+                <div style="text-align: right;" class="cell">
+                    <img  style="width: 300px; height: 257px;" 
+                          alt="Small Domains Pref"  
+                          src="http://webmail.mozdev.org/ScreenShots/SmallWebMailDomains.png" 
+                          align="right">       
+                </div><!-- cell end-->
+            </div><!-- row end-->
+        </div><!-- end table-->
+        
+        <BR>
+        <p>You are now ready too set-up a Hotmail or Yahoo account in 
+           Thunderbird. In the following example I'll be using a 
+           fictitious Hotmail account (BillGates@hotmail.com).
+        </p>
+        <BR>
+        <ol start="3" style="list-style-type: upper-roman;">
+            <li>
+                <p style="margin-bottom: 0cm;">From the main window menu bar select File-&gt;New-&gt;Account..</p>
+            </li>
+            <li>
+                <p style="margin-bottom: 0cm;">In the Account wizard select &ldquo;Email Account&rdquo;</p>
+            </li>
+        </ol>
+       
+        <div class="table">    
+            <div class="row">
+                <div class="cell">
+                    <img  style="border: 1px solid ; width: 300px; height: 188px;" 
+                          alt="id"  
+                          src="http://webmail.mozdev.org/ScreenShots/AccountWizardID.png" 
+                          align="left">
+                </div> <!-- end cell-->
+                <div class="cell">
+                    <ol start="5" style="list-style-type: upper-roman;">
+                        <li>
+                            <p style="margin-bottom: 0cm;">
+                                On the Identity page set your name and email address.
+                            </p>
+                            <div>Ex</div>
+                            <div style="margin-left: 10px; text-align: left;">
+                                Your Name : Bill Gates<BR>
+                                Email Address : BillGates@hotmail.com 
+                            </div>
+                        </li>
+                    </ol>
+                </div><!-- cell end-->
+            </div><!-- row end-->
+            <div class="row">
+                <div class="cell">
+                    <ol start="6" style="list-style-type: upper-roman;">
+                        <li>
+                            <p>For the server information use the following settings</p>
+                            <p style="margin-left: 10px; text-align: left;">
+                               Server Type : POP <BR>
+                               Incoming Server : localhost
+                            </p>
+                        </li>
+                    </ol>
+                </div><!-- cell end -->
+                <div class="cell">
+                    <img  style="border: 1px solid ; width: 300px; height: 136px;" 
+                          alt="server"  
+                          src="http://webmail.mozdev.org/ScreenShots/AccountWizardServerInfo.png" 
+                          align="right">
+                </div><!-- cell end-->
+            </div><!-- row end-->
+            <div class="row">
+                <div class="cell">
+                    <img  style="border: 1px solid ; width: 300px; height: 153px;" 
+                          alt="user"  
+                          src="http://webmail.mozdev.org/ScreenShots/AccountWizardUsername.png" 
+                          align="left"> 
+                </div><!-- cell end-->
+                <div class="cell">
+                    <ol start="7" style="list-style-type: upper-roman;">
+                        <li>
+                            <p>The user name must include the domain</p>
+                            <div>Ex</div>
+                            <div style="margin-left: 10px; text-align: left;">
+                               Incoming UserName : BillGates@Hotmail.com<BR>
+                               Outgoing UserName : BillGates@Hotmail.com
+                            </div>
+                        </li>
+                    </ol>
+                </div><!--- cell end -->
+            </div><!-- row end-->
+        </div><!-- table end-->
+        <BR>
+        <ol start="8" style="list-style-type: upper-roman;">
+            <li>Follow the new account wizard to the end</li>
+            <li>
+                <p>If you changed the port number in stage 1 you must change the port 
+                number for this account in the Account Settings dialog box.</p>
+                <div>Ex</div>
+                <div style="margin-left: 50px; text-align: left;">
+                    Tools->Account Settings->Bill Gates->Server Settings
+                </div>
+            </li>
+        </ol>      
+    </div>
