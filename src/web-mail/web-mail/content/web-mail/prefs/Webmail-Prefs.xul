@@ -12,7 +12,7 @@
         style="width: 46em; height: 37em"
         onload="InitWebmailPrefs();"
         onunload="WebMailPrefsClose();"
-        ondialogaccept="g_bServersDirty = true; return hPrefWindow.onOK(event);"
+        ondialogaccept="return hPrefWindow.onOK(event);"
         ondialogcancel="return hPrefWindow.onCancel(event);">
      
     <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>  

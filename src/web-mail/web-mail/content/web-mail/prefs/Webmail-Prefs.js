@@ -2,7 +2,6 @@
 var gWebmailLog = null;
 var hPrefWindow = null;
 var gWebmailPOP = null;
-var gWebmailSMTP = null;
 var gWebMailUpdateTimer = null;
 var gFileGeneralLogging = null;
 
@@ -86,7 +85,7 @@ function switchPage(aEvent)
         if (hPrefWindow) 
             hPrefWindow.switchPage(newURL, newTag);    
         else
-            throw "hPrefWindow = NULL" ;   
+            throw new Error("hPrefWindow = NULL") ;   
             
         gWebmailLog.Write("Webmail: prefs-Webmail.js : switchPage - END");
     }

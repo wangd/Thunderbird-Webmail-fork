@@ -9,7 +9,6 @@
 <page xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
       onload="parent.initPanel('chrome://web-mail/content/prefs/Webmail-Prefs-Servers.xul');"
       headertitle="&MailServers.Label;"
-      onclose="alert('here');"
       class ="background">
     
     <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
