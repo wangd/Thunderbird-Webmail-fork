@@ -83,7 +83,7 @@ nsDomainManager.prototype =
           
            
             //get contentId
-            var contentIDResource = this.m_rdfService.GetResource("http://www.xulplanet.com/rdf/webmail/contentID");    
+            var contentIDResource = this.m_rdfService.GetResource("http://www.xulplanet.com/rdf/webmail/"+szProtocol);    
             var contentID = this.m_DataSource.GetTarget(DomainResource, contentIDResource, true);
             if (contentID instanceof Components.interfaces.nsIRDFLiteral)
             {
@@ -132,7 +132,7 @@ nsDomainManager.prototype =
         
             var protocolResource = this.getProtocolResource(szProtocol);
             var iIndex = rdfContainerUtils.indexOf(this.m_DataSource,protocolResource,DomainResource);             
-            this.m_DomainLog.Write("nsDomainManager.js - removeDomain - pop " + iIndex);
+            this.m_DomainLog.Write("nsDomainManager.js - removeDomain - "+szProtocol + " " + iIndex);
                        
                        
             //remove from list    
@@ -153,7 +153,7 @@ nsDomainManager.prototype =
             
             //delete contentId
             var szContentID;
-            var contentIDResource = this.m_rdfService.GetResource("http://www.xulplanet.com/rdf/webmail/contentID");    
+            var contentIDResource = this.m_rdfService.GetResource("http://www.xulplanet.com/rdf/webmail/"+szProtocol);    
             var contentID = this.m_DataSource.GetTarget(DomainResource, contentIDResource, true);
             if (contentID instanceof Components.interfaces.nsIRDFLiteral)
                 this.m_DataSource.Unassert(DomainResource, contentIDResource, contentID);
@@ -199,13 +199,13 @@ nsDomainManager.prototype =
             }    
             
             //clear old entrys for the address
-            this.removeDomain(szAddress, szProtocol);
+            this.removeDomainForProtocol(szAddress, szProtocol);
             
             //creat new entry
             var DomainResource = this.m_rdfService.GetResource("urn:"+szAddress.toLowerCase()); 
            
             // contentId
-            var contentIDResource = this.m_rdfService.GetResource("http://www.xulplanet.com/rdf/webmail/contentID");    
+            var contentIDResource = this.m_rdfService.GetResource("http://www.xulplanet.com/rdf/webmail/"+szProtocol);    
             this.m_DataSource.Assert(DomainResource, 
                                      contentIDResource, 
                                      this.m_rdfService.GetLiteral(szContentID), 
