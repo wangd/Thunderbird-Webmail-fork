@@ -267,7 +267,9 @@ nsYahoo.prototype =
             
             //if this fails we've gone somewhere new
             mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - status :" +httpChannel.responseStatus );
-            if (httpChannel.responseStatus != 200 && httpChannel.responseStatus != 302) 
+            if (httpChannel.responseStatus != 200 
+                        && httpChannel.responseStatus != 302
+                                    && httpChannel.responseStatus != 301) 
                 throw new Error("return status " + httpChannel.responseStatus);
             
             var szURL = httpChannel.URI.host;
@@ -293,7 +295,7 @@ nsYahoo.prototype =
 
 
             //bounce handler
-            if ( httpChannel.responseStatus == 302)
+            if ( httpChannel.responseStatus == 302 || httpChannel.responseStatus == 301)
             {
                 try
                 {
