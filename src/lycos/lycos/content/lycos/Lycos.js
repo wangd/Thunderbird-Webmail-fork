@@ -80,9 +80,10 @@ var LycosDiagnosticTest =
             var bResult1= DomainManager.getDomainForProtocol("lycos.it", "pop",szContentID);
             var bResult2= DomainManager.getDomainForProtocol("lycos.at", "pop",szContentID);
             var bResult3= DomainManager.getDomainForProtocol("lycos.de", "pop",szContentID);
+            var bResult4= DomainManager.getDomainForProtocol("lycos.es", "pop",szContentID);
             var bPass = false;
             
-            if (bResult && bResult1 && bResult2 && bResult3 )
+            if (bResult && bResult1 && bResult2 && bResult3 && bResult4 )
             {
                 g_LycosDebugLog.Write("Lycos.js :TimerCallback - getDomain - OK");
                 
@@ -97,6 +98,7 @@ var LycosDiagnosticTest =
                     DomainManager.newDomainForProtocol("lycos.it", "pop" ,cszLycosContentID);
                     DomainManager.newDomainForProtocol("lycos.at", "pop",cszLycosContentID);
                     DomainManager.newDomainForProtocol("lycos.de", "pop",cszLycosContentID);
+                     DomainManager.newDomainForProtocol("lycos.es", "pop",cszLycosContentID);
                 }  
             }
             else
@@ -106,6 +108,7 @@ var LycosDiagnosticTest =
                 if (!bResult1) DomainManager.newDomainForProtocol("lycos.it", "pop" ,cszLycosContentID);
                 if (!bResult2) DomainManager.newDomainForProtocol("lycos.at", "pop",cszLycosContentID);
                 if (!bResult3) DomainManager.newDomainForProtocol("lycos.de", "pop",cszLycosContentID);
+                if (!bResult4) DomainManager.newDomainForProtocol("lycos.es", "pop",cszLycosContentID);
             }       
 
             g_LycosDebugLog.Write("Lycos.js : TimerCallback - END");
