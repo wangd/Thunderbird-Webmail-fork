@@ -7,7 +7,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
 		<em:id>{a6a33690-2c6a-11d9-9669-0800200c9a66}</em:id>
 		<em:name>Hotmail</em:name>
-		<em:version>0.3.6</em:version>
+		<em:version>0.4.0</em:version>
 		<em:description>Hotmail component for Web-Mail extension</em:description>
 		<em:creator>ComodoDragon</em:creator>
 		<em:homepageURL>http://webmail.mozdev.org</em:homepageURL>
@@ -21,7 +21,8 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
                 <em:skin>skin/classic/hotmail/</em:skin>
                 <em:locale>locale/en-US/hotmail/</em:locale>
                 <em:locale>locale/it-IT/hotmail/</em:locale>
-                <em:locale>locale/fr-FR/hotmail/</em:locale>
+                <em:locale>locale/es-ES/hotmail/</em:locale>
+               <!-- <em:locale>locale/fr-FR/hotmail/</em:locale>-->
                 <em:package>content/hotmail/</em:package>
             </Description>
 		</em:file>
@@ -39,8 +40,8 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
             <Description>
                 <!-- requires web-mail extension-->
                 <em:id>{3c8e8390-2cf6-11d9-9669-0800200c9a66}</em:id>
-                <em:minVersion>0.2.5/em:minVersion>
-                <em:maxVersion>0.3.0</em:maxVersion>
+                <em:minVersion>0.3.2/em:minVersion>
+                <em:maxVersion>0.4.0</em:maxVersion>
             </Description>
         </em:requires>
 	</Description>

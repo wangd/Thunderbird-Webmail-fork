@@ -371,7 +371,7 @@ nsLycos.prototype =
             try
             {
                 var szCookies =  httpChannel.getResponseHeader("Set-Cookie");
-                mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - received cookies \n" + szCookies);  
+                mainObject.m_LycosLog.Write("nsLycos.js - mailBoxOnloadHandler - received cookies \n" + szCookies);  
                 mainObject.m_oCookies.addCookie( aszTempDomain[0], szCookies); 
             }
             catch(e)
@@ -437,7 +437,7 @@ nsLycos.prototype =
                             //size 
                             var iSize = aszResponses[i].match(LycosSize)[1]
                             mainObject.m_iTotalSize += iSize;
-                            mainObject.m_aiMsgSize.push(aszResponses[i].match(LycosSize)[1]);
+                            mainObject.m_aiMsgSize.push(iSize);
                         }
                     }
                     
@@ -479,7 +479,7 @@ nsLycos.prototype =
                             //size 
                             var iSize = aszResponses[i].match(LycosSize)[1]
                             mainObject.m_iTotalSize += iSize;
-                            mainObject.m_aiMsgSize.push(aszResponses[i].match(LycosSize)[1]);
+                            mainObject.m_aiMsgSize.push(iSize);
                         }
                     }
                     

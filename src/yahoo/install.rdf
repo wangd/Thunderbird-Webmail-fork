@@ -7,7 +7,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
 		<em:id>{d7103710-6112-11d9-9669-0800200c9a66}</em:id>
 		<em:name>Yahoo</em:name>
-		<em:version>0.2.10</em:version>
+		<em:version>0.2.11</em:version>
 		<em:description>Yahoo component for Web-Mail extension</em:description>
 		<em:creator>ComodoDragon</em:creator>
 		<em:homepageURL>http://webmail.mozdev.org</em:homepageURL>
@@ -21,6 +21,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
                 <em:locale>locale/en-US/yahoo/</em:locale>
                 <em:locale>locale/it-IT/yahoo/</em:locale>
                 <em:locale>locale/fr-FR/yahoo/</em:locale>
+                <em:locale>locale/es-ES/yahoo/</em:locale>
                 <em:package>content/yahoo/</em:package>
             </Description>
 		</em:file>

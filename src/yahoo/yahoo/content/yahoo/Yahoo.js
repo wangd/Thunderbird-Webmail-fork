@@ -76,12 +76,14 @@ var YahooDiagnosticTest =
                       
             //get domain handler contentid for pop protocol
             var bResult = DomainManager.getDomain("yahoo.com", szContentID);
+            var bResult1 = DomainManager.getDomain("yahoo.es",szContentID);
             var bResult2 = DomainManager.getDomain("yahoo.co.uk", szContentID);
             var bResult3 = DomainManager.getDomain("yahoo.it",szContentID);
+           
             
             var bPass = false;
             
-            if (bResult && bResult2 && bResult3)
+            if (bResult && bResult1 && bResult2 && bResult3)
             {
                 g_YahooDebugLog.Write("Yahoo.js :YahooStartUp - getDomains ");
                 
@@ -95,12 +97,14 @@ var YahooDiagnosticTest =
                     DomainManager.newDomain("yahoo.com", cszYahooContentID);
                     DomainManager.newDomain("yahoo.co.uk", cszYahooContentID);
                     DomainManager.newDomain("yahoo.it", cszYahooContentID);  
+                    DomainManager.newDomain("yahoo.es", cszYahooContentID);  
                 }  
             }
             else
             {
                 g_YahooDebugLog.Write("Yahoo.js :YahooStartUp - setting Domains");
                 if (!bResult) DomainManager.newDomain("yahoo.com", cszYahooContentID);
+                if (!bResult1)DomainManager.newDomain("yahoo.es", cszYahooContentID);  
                 if (!bResult2)DomainManager.newDomain("yahoo.co.uk", cszYahooContentID);
                 if (!bResult3)DomainManager.newDomain("yahoo.it", cszYahooContentID);  
             }
