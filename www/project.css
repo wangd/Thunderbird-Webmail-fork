@@ -6,11 +6,50 @@
 	font-family: Times New Roman, Times, serif;
 	font-style: italic;
 	font-weight: normal;
-	line-height: 8pt;
-	font-size: 19pt;
+	font-size: 5em;
 }
 
 #mozdev-date
 {
     background-color: rgb(255,255,255) !important;
 }
+
+#navbar 
+{
+	font-family: Times New Roman, Times, serif ! important;
+	font-size: 15pt ! important;
+	color: rgb(0, 0, 1) ! important;
+	background-repeat: no-repeat;
+	height: 115px;
+	background-position: center top;
+	background-image: url(header.png);
+}
+
+#navbar ul 
+{
+	float: right;
+	position: relative;
+	display: inline;
+	padding-top: 55px;
+}
+
+#navbar ul li 
+{
+	margin-right: 5pt;
+	margin-left: 5pt;
+	font-style: italic;
+	font-weight: lighter;
+	display: inline ! important;
+}
+
+#navbar ul li a 
+{
+	text-decoration: none ! important;
+	color: rgb(0, 0, 1) ! important;
+}
+
+#navbar ul li a:hover 
+{
+	color: rgb(102, 0, 204) ! important;
+}
+
