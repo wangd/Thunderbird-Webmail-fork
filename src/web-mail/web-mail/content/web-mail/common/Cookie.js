@@ -49,8 +49,11 @@ Cookie.prototype =
             for (var j = 0 ; j<iMax ; j++)
             {
                 var szTemp = aCookie[j];
-                this.m_Log.Write("cookie.js - setCookieValue - value " + szTemp);
-                this.cookieValue(szTemp);
+                if (szTemp.length>0)
+                {
+                    this.m_Log.Write("cookie.js - setCookieValue - value " + szTemp);
+                    this.cookieValue(szTemp);
+                }
             }
             
             this.m_Log.Write("cookie.js - setCookieValue - END");
@@ -81,8 +84,11 @@ Cookie.prototype =
             for (var k = 0 ; k<iMax ; k++)
             {
                 var szTemp = aCookie[k];
-                this.m_Log.Write("cookie.js - newCookie - value " + szTemp);
-                this.cookieValue(szTemp);
+                if (szTemp.length>0)
+                {
+                    this.m_Log.Write("cookie.js - newCookie - value " + szTemp);
+                    this.cookieValue(szTemp);
+                }
             }
             
             this.m_Log.Write("cookie.js - newCookie - END");
