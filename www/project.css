@@ -12,9 +12,9 @@
 
 #WebMailContent 
 {
-	margin-left: 10pt;
-	margin-right: 10pt;
-	font-size: 15pt;
+	margin-left: 15pt;
+	margin-right: 25pt;
+	font-size: 12pt;
 	text-align: justify;
 	line-height: 17pt;
 	font-family: Times New Roman, Times, serif ! important;
@@ -83,5 +83,30 @@
 #navbar ul li a:hover 
 {
 	color: rgb(102, 0, 204) ! important;
+}
+
+
+.table 
+{
+    width: 675px;
+	max-width: 675px;
+	display: table;
+}
+
+.row 
+{
+    width: 675px;
+	max-width: 675px;
+	display: table-row;
+}
+
+.cell 
+{
+	display: table-cell;
+	line-height: 17pt;
+	font-weight: normal;
+	font-family: Times New Roman, Times, serif;
+	font-size: 1em;
+	padding-right: 5pt;
 }
 
