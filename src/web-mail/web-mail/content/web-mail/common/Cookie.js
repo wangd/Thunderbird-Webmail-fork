@@ -71,13 +71,7 @@ Cookie.prototype =
         try
         {
             this.m_Log.Write("cookie.js - newCookie - START");
-            
-            //remove real cookies
-            var cookMan = Components.classes["@mozilla.org/cookieService;1"]
-                            .getService(Components.interfaces.nsICookieManager);
-            cookMan.remove(szDomain, null, null, true);
-           
-           
+
             this.m_szDomain = szDomain;
             
             var aCookie = szValues.replace(/\n/g,";").split(";");
