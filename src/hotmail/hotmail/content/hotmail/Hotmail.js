@@ -76,11 +76,11 @@ var HotmailDiagnosticTest =
             var szContentID = new Object;
                       
             //get domain handler contentid for pop protocol
-            var bResult = DomainManager.getDomain("hotmail.com", szContentID);
-            var bResult1 = DomainManager.getDomain("hotmail.co.uk", szContentID);
-            var bResult2 = DomainManager.getDomain("msn.co.uk", szContentID);
-            var bResult3 = DomainManager.getDomain("msn.com", szContentID);
-            var bResult4 = DomainManager.getDomain("hotmail.it", szContentID);
+            var bResult = DomainManager.getDomainForProtocol("hotmail.com", "pop" , szContentID);
+            var bResult1 = DomainManager.getDomainForProtocol("hotmail.co.uk","pop" , szContentID);
+            var bResult2 = DomainManager.getDomainForProtocol("msn.co.uk", "pop" ,szContentID);
+            var bResult3 = DomainManager.getDomainForProtocol("msn.com", "pop" ,szContentID);
+            var bResult4 = DomainManager.getDomainForProtocol("hotmail.it","pop" , szContentID);
             var bPass = false;
             
             if (bResult && bResult1 && bResult2 && bResult3 && bResult4)
@@ -94,21 +94,21 @@ var HotmailDiagnosticTest =
                 if (!bPass)
                 {
                     g_HotmailDebugLog.Write("Hotmail.js :HotmailStartUp - IDs failed - resetting");
-                    DomainManager.newDomain("hotmail.com", cszHotmailContentID);
-                    DomainManager.newDomain("hotmail.co.uk", cszHotmailContentID);
-                    DomainManager.newDomain("msn.co.uk", cszHotmailContentID);
-                    DomainManager.newDomain("msn.com", cszHotmailContentID);
-                    DomainManager.newDomain("hotmail.it", cszHotmailContentID);
+                    DomainManager.newDomainForProtocol("hotmail.com", "pop" ,cszHotmailContentID);
+                    DomainManager.newDomainForProtocol("hotmail.co.uk","pop" , cszHotmailContentID);
+                    DomainManager.newDomainForProtocol("msn.co.uk", "pop" ,cszHotmailContentID);
+                    DomainManager.newDomainForProtocol("msn.com", "pop" ,cszHotmailContentID);
+                    DomainManager.newDomainForProtocol("hotmail.it", "pop" ,cszHotmailContentID);
                 }  
             }
             else
             {
                 g_HotmailDebugLog.Write("Hotmail.js :HotmailStartUp - setting domains");
-                if (!bResult) DomainManager.newDomain("hotmail.com", cszHotmailContentID);
-                if (!bResult1)DomainManager.newDomain("hotmail.co.uk", cszHotmailContentID);
-                if (!bResult2)DomainManager.newDomain("msn.co.uk", cszHotmailContentID);
-                if (!bResult3)DomainManager.newDomain("msn.com", cszHotmailContentID);
-                if (!bResult4)DomainManager.newDomain("hotmail.it", cszHotmailContentID);
+                if (!bResult) DomainManager.newDomainForProtocol("hotmail.com", "pop" ,cszHotmailContentID);
+                if (!bResult1)DomainManager.newDomainForProtocol("hotmail.co.uk","pop" , cszHotmailContentID);
+                if (!bResult2)DomainManager.newDomainForProtocol("msn.co.uk", "pop" ,cszHotmailContentID);
+                if (!bResult3)DomainManager.newDomainForProtocol("msn.com", "pop" ,cszHotmailContentID);
+                if (!bResult4)DomainManager.newDomainForProtocol("hotmail.it", "pop" ,cszHotmailContentID);
             }       
 
             g_HotmailDebugLog.Write("Hotmail: Hotmail.js : TimerCallback - END");
