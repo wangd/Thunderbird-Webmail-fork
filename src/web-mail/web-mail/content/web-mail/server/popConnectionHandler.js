@@ -101,8 +101,17 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                         
                     this.iLoginReTryCount --;
                     
-                    if (!this.m_DomainHandler.logIn(aCommand[1]))
-                        throw new Error("login failed");
+                    try
+                    {//new method
+                        this.m_DomainHandler.passWord = aCommand[1];
+                        if (!this.m_DomainHandler.logIn())
+                            throw new Error("login failed");  
+                    }
+                    catch(err)
+                    {//old method
+                        if (!this.m_DomainHandler.logIn(aCommand[1]))
+                            throw new Error("login failed");
+                    }
                         
                     this.m_POPLog.Write("POPconnectionHandler - onDataWritable - pass END");
                 }
