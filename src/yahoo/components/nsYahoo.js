@@ -629,11 +629,10 @@ nsYahoo.prototype =
                         var szSize = szMsgSize.match(/<td.*?>(.*?)<\/td/)[1];
                         var iSize = parseInt(szSize);
                         if (szSize.indexOf('k')!= -1) iSize*=1000;
-                        var iOctalSize = iSize.toString(8);
-                        mainObject.m_YahooLog.Write("nsYahoo.js - mailBoxOnloadHandler - msg size :" + i + " " +iOctalSize);
-                        mainObject.m_iTotalSize += iOctalSize;
+                        mainObject.m_YahooLog.Write("nsYahoo.js - mailBoxOnloadHandler - msg size :" + i + " " +iSize);
+                        mainObject.m_iTotalSize += iSize;
                         mainObject.m_aszMsgIDStore.push(szMsgID);
-                        mainObject.m_aiMsgSize.push(iOctalSize);    
+                        mainObject.m_aiMsgSize.push(iSize);    
                     }
                 }
                 
