@@ -12,8 +12,18 @@
 
 #WebMailContent 
 {
-	margin-left: 15pt;
-	margin-right: 140pt;
+	margin-left: 20pt;
+	margin-right: 20pt;
+	font-size: 12pt;
+	text-align: justify;
+	line-height: 17pt;
+	font-family: Times New Roman, Times, serif ! important;
+}
+
+#WebMailIndex
+{
+    margin-left: 20pt;
+    margin-right: 140pt;
 	font-size: 12pt;
 	text-align: justify;
 	line-height: 17pt;
