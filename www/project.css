@@ -115,7 +115,6 @@
 
 .row 
 {
-    margin-top: 20px;
 	display: table-row;
 }
 
@@ -127,5 +126,6 @@
 	font-family: Times New Roman, Times, serif;
 	font-size: 1em;
 	padding-right: 5pt;
+	padding-top: 20pt;
 }
 
