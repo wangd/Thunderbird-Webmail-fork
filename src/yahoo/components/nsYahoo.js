@@ -16,7 +16,7 @@ const patternYahooMSGIdTable = /<table id="datatable".*?>[\S\d\s\r\n]*?<\/table>
 const patternYahooMsgRow = /<tr.*?>[\S\d\s\r\n]*?<\/tr>/gm;
 const patternYahooMsgID = /<a href="(.*?MsgId.*?)">/;
 const patternYahooMsgSize = /<td.*?>.*?<\/td>/gm;
-const patternYahooNextPage = /<a href="(.*?)">Next<\/a>/m;
+const patternYahooNextPage = /<a href=".*?next=1.*?">/m;
 const PatternYahooID =/MsgId=(.*?)&/;
 const PatternYahooDeleteForm = /<form name=messageList.*?>[\S\d\s\r\n]*?<\/form>/;
 const PatternYahooDeleteURL = /action="(.*?)"/;
@@ -649,7 +649,11 @@ nsYahoo.prototype =
                 mainObject.m_YahooLog.Write("nsYahoo.js - mailBoxOnloadHandler - msg next page :" +aszNextPage);
                 if (aszNextPage)
                 { 
-                    var szMailboxURI = mainObject.m_szLocationURI + aszNextPage[1]; 
+                    var szNewPage = aszNextPage[0].split("|");
+                    mainObject.m_YahooLog.Write("nsYahoo.js - mailBoxOnloadHandler - msg next page :" +szNewPage + " " + szNewPage.length);
+        
+                    var szMailboxURI = mainObject.m_szLocationURI + szNewPage[szNewPage.length-1].match(/<a href="(.*?)">/)[1];
+                   
                     mainObject.m_YahooLog.Write("nsYahoo.js - getNumMessages - mail box url " + szMailboxURI); 
                     
                     var ios=Components.classes["@mozilla.org/network/io-service;1"].
@@ -895,9 +899,9 @@ nsYahoo.prototype =
                 
                 case 1: //body
                     var szMsg =  mainObject.m_szHeader;
-                    szMsg += szResponse;//.toString(8)
+                    szMsg += szResponse;
                                                                                                                          
-                    var szPOPResponse = "+OK " + szMsg.length + "\r\n";
+                    var szPOPResponse = "+OK " + szMsg.length.toString(8) + "\r\n";
                     szMsg = szMsg.replace(/^\./mg,"..");    //bit padding                       
                     szPOPResponse += szMsg +"\r\n\r\n";
                     szPOPResponse += "\r\n.\r\n";  //msg end
