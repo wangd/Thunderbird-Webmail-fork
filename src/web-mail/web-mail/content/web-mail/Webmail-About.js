@@ -1,4 +1,4 @@
-function AddNamesListItems()
+function AddNamesWebmailListItems()
 {
     var strbundle = document.getElementById("stringsWebmailAbout");
     var szContributors = strbundle.getString("ExtContributorNames");

@@ -8,7 +8,7 @@
         title= "&HotmailAbout.Title;"
         orient="vertical"
         autostretch="always"
-        onload="AddNamesListItems();sizeToContent()"
+        onload="AddNamesHotmailListItems();sizeToContent()"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         id = "HotmailAboutDialog">
      

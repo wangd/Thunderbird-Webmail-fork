@@ -1,4 +1,4 @@
-function AddNamesListItems()
+function AddNamesHotmailListItems()
 {
     var strbundle = document.getElementById("stringsHotmailAbout");
     var szContributors = strbundle.getString("ExtContributorNames");

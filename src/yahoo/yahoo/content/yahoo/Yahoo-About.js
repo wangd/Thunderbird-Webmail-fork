@@ -1,4 +1,4 @@
-function AddNamesListItems()
+function AddNamesYahooListItems()
 {
     var strbundle = document.getElementById("stringsYahooAbout");
     var szContributors = strbundle.getString("ExtContributorNames");
