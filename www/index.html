@@ -51,15 +51,32 @@
 <!-- ***************** INFO/NEWS *************** -->
 
 <!-- MAIN CONTENT -->
-<p>The <strong>webmail</strong> project content goes here.</p>
-
-<p>
-    <strong>Note:</strong> 
-    If you want to add an area for user feedback to any of your pages, take a look at the 
-    <a href="notes.html">notes.html</a>
-    template.
-</p>
-
+    <h1>About</h1>
+    <div id="content">
+        <p>The  Web-Mail extension creates a platform which other extensions 
+        use to integrate web based email accounts into Mozilla Thunderbird.  POP is the 
+        only protocol supported, this means Thunderbird can only download emails.  
+        To send emails use your ISP’s SMTP server,  Thunderbird will set the “Return-Path” 
+        and “From” email headers using the web account email address,  too the recipient the 
+        email will appear to have come from the web base account.</p>
+        <p></p>
+        <p>Currently only Hotmail and Yahoo accounts are supported. </p>
+        <p></p>
+        <table id="DomainTable" >
+            <tr>
+              <th>Extension</th>
+              <th>Domains Supported</th>
+            </tr>
+            <tr>
+              <td>Hotmail-0-2-5</td>
+              <td>hotmail.com<br>hotmail.co.uk<br>hotmail.it<br>msn.com</td>
+            </tr>
+            <tr>
+              <td>Yahoo-0-2-6</td>
+              <td>yahoo.com<br>yahoo.co.uk<br>yahoo.it</td>
+            </tr>
+        </table>
+    </div>
 
 
 

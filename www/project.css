@@ -1,18 +1,49 @@
 @import url("http://www.mozdev.org/project.css");
 
-
-#project-name
+#header
 {
 	font-family: Times New Roman, Times, serif;
 	font-style: italic;
 	font-weight: normal;
-	font-size: 37pt;
+	line-height: 8pt;
+	font-size: 19pt;
 }
 
-#counter 
+#content 
 {
-    clear: right;
+	margin-left: 15pt;
+	font-weight: inherit;
+	font-size: 1em;
+	text-align: justify;
+	line-height: 17pt;
+	font-family: Times New Roman, Times, serif ! important;
 }
+  
+  
+#domaintable 
+{
+    border-spacing:0px;
+    border-style: solid;
+    border-width: 1px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#domaintable th 
+{
+	border-style: solid;
+	border-width: 1px;
+	padding: 10px;
+	text-align: center;
+	background-color: rgb(204, 204, 255);
+}
+
+#domaintable td 
+{
+	border-style: solid; 
+	border-width: 1px;
+	padding: 10px;
+}    
 
 #mozdev-date
 {
