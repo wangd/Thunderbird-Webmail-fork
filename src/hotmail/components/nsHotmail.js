@@ -34,10 +34,10 @@ const patternHotmailPOPFolder = /<hm:msgfolderroot>(.*?)<\/hm:msgfolderroot>/;
 const patternHotmailPOPTrash = /<hm:deleteditems>(.*?)<\/hm:deleteditems>/;
 const patternHotmailPOPMSGID = /[^\/]+$/;
 const patternHotmailPOPResponse = /<D:response>[\S\d\s\r\n]*?<\/D:response>/gm;
-const patternHotmailPOPTrashFolder = /<D:href>(.*?\/folders\/trash\/)<\/D:href>/i;
+const patternHotmailPOPTrashFolder = /<D:href>(.*?HM_BuLkMail.*?)<\/D:href>/i;
 const patternHotmailPOPinboxFolder = /<D:href>(.*?\/folders\/active\/)<\/D:href>/i;
 const patternHotmailPOPID = /<D:id>(.*?)<\/D:id>/;
-const patternHotmailPOPHref = /<D:href>(.*?)<\/D:href>/ig;
+const patternHotmailPOPHref = /<D:href>(.*?)<\/D:href>/;
 const patternHotmailPOPSize = /<D:getcontentlength>(.*?)<\/D:getcontentlength>/;
 /*******************************************************************************/
 
