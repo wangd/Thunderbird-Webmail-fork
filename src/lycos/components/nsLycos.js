@@ -7,6 +7,8 @@ const LycosFolderSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:
 const LycosMail = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:hm=\"urn:schemas:httpmail:\" xmlns:m=\"urn:schemas:mailheader:\">\r\n<D:prop>\r\n<D:isfolder/>\r\n<hm:read/>\r\n<m:hasattachment/>\r\n<m:to/>\r\n<m:from/>\r\n<m:subject/>\r\n<m:date/>\r\n<D:getcontentlength/>\r\n</D:prop>\r\n</D:propfind>";
 const LycosFolderPattern = /<hm:msgfolderroot>(.*?)<\/hm:msgfolderroot>/;
 const LycosTrashPattern = /<hm:deleteditems>(.*?)<\/hm:deleteditems>/;
+const LycosJunkPattern = /<D:href>(.*?Courrier%20ind%26eacute;sirable.*?)<\/D:href>/;
+const LycosInBoxPattern = /<D:href>(.*?inbox.*?)<\/D:href>/;
 const LycosMSGIDPattern = /[^\/]+$/;
 const LycosResponse = /<D:response>[\S\d\s\r\n]*?<\/D:response>/gm;
 const LycosID = /<D:id>(.*?)<\/D:id>/;
@@ -177,7 +179,7 @@ nsLycos.prototype =
             {
                 var szCookies =  httpChannel.getResponseHeader("Set-Cookie");
                 mainObject.m_LycosLog.Write("nsLycos.js - loginOnloadHandler - received cookies \n" + szCookies);  
-                mainObject.m_oCookies.addCookie( aszTempDomain[0], szCookies); 
+                mainObject.m_oCookies.addCookie( aszTempDomain[1], szCookies); 
             }
             catch(e)
             {
@@ -191,10 +193,10 @@ nsLycos.prototype =
 
             //bounce handler
             if ( httpChannel.responseStatus == 302)
-            {
+            { 
+                mainObject.m_iAuth=0; //reset login count
                 try
                 {
-                    mainObject.m_iAuth=0; //reset login count
                     var szLocation =  httpChannel.getResponseHeader("Location");
                     mainObject.m_LycosLog.Write("nsLycos.js - loginOnloadHandler - location \n" + szLocation);  
                 }
@@ -221,21 +223,16 @@ nsLycos.prototype =
             //Authenticate
             else if  (httpChannel.responseStatus == 401)
             {
+                if ( mainObject.m_iAuth==2) throw new Error("login error");
+                
                 try
-                {
-                    if ( mainObject.m_iAuth==2) throw new Error("login error");
-                    
+                {                
                     var szAuthenticate =  httpChannel.getResponseHeader("www-Authenticate");
                     mainObject.m_LycosLog.Write("nsLycos.js - loginOnloadHandler - www-Authenticate " + szAuthenticate);
                     mainObject.m_iAuth++;
                 }
                 catch(err)
-                {
-                     mainObject.m_LycosLog.DebugDump("nsLycos.js: loginHandler  Authenitcation: Exception : " 
-                                                      + err.name 
-                                                      + ".\nError message: " 
-                                                      + err.message);
-                                                      
+                {                   
                     throw new Error("szAuthenticate header not found")
                 }     
                     
@@ -372,7 +369,7 @@ nsLycos.prototype =
             {
                 var szCookies =  httpChannel.getResponseHeader("Set-Cookie");
                 mainObject.m_LycosLog.Write("nsLycos.js - mailBoxOnloadHandler - received cookies \n" + szCookies);  
-                mainObject.m_oCookies.addCookie( aszTempDomain[0], szCookies); 
+                mainObject.m_oCookies.addCookie( aszTempDomain[1], szCookies); 
             }
             catch(e)
             {
@@ -388,23 +385,12 @@ nsLycos.prototype =
                 case 0:  //get inbox and junkmail uri
                     mainObject.m_LycosLog.Write("nsLycos.js - mailBoxOnloadHandler - get folder list - START");         
                     
-                    var aszFolders = szResponse.match(LycosResponse);
-                    mainObject.m_LycosLog.Write("nsLycos.js - mailBoxOnloadHandler - get folder list - \n" + aszFolders);
-                    
-                    for (i=0; i<aszFolders.length; i++)
-                    {
-                        if (aszFolders[i].match(LycosID)[1] == 5) //in box
-                        {
-                            mainObject.m_szInBoxURI = aszFolders[i].match(LycosHref)[1]; 
-                            mainObject.m_LycosLog.Write("nsLycos.js - mailBoxOnloadHandler - inBox - " + mainObject.m_szInBoxURI); 
-                        }
-                        else if (aszFolders[i].match(LycosID)[1] == 13) // junk mail
-                        { 
-                            mainObject.m_szJunkMailURI = aszFolders[i].match(LycosHref)[1];
-                            mainObject.m_LycosLog.Write("nsLycos.js - mailBoxOnloadHandler - junkmail - " + mainObject.m_szJunkMailURI);
-                        }
-                    }
-                    
+                    mainObject.m_szInBoxURI = szResponse.match(LycosInBoxPattern)[1]; 
+                    mainObject.m_LycosLog.Write("nsLycos.js - mailBoxOnloadHandler - inBox - " + mainObject.m_szInBoxURI); 
+                       
+                    mainObject.m_szJunkMailURI = szResponse.match(LycosJunkPattern)[1];
+                    mainObject.m_LycosLog.Write("nsLycos.js - mailBoxOnloadHandler - junkmail - " + mainObject.m_szJunkMailURI);
+                  
                     //load mailbox
                     var szURL = ios.newURI(mainObject.m_szInBoxURI,null,null).prePath;
                     var aszHost = szURL.match(/.*?\.(.*?)$/); 
@@ -435,7 +421,7 @@ nsLycos.prototype =
                             mainObject.m_aszMsgIDStore.push(aszResponses[i].match(LycosHref)[1]); //mail url
                             
                             //size 
-                            var iSize = aszResponses[i].match(LycosSize)[1]
+                            var iSize = parseInt(aszResponses[i].match(LycosSize)[1]);
                             mainObject.m_iTotalSize += iSize;
                             mainObject.m_aiMsgSize.push(iSize);
                         }
@@ -477,7 +463,7 @@ nsLycos.prototype =
                         {      
                             mainObject.m_aszMsgIDStore.push(aszResponses[i].match(LycosHref)[1]); //mail url
                             //size 
-                            var iSize = aszResponses[i].match(LycosSize)[1]
+                            var iSize = parseInt(aszResponses[i].match(LycosSize)[1]);
                             mainObject.m_iTotalSize += iSize;
                             mainObject.m_aiMsgSize.push(iSize);
                         }
