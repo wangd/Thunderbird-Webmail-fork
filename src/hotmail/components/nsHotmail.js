@@ -13,12 +13,18 @@ const PatternHotmailLogOutExpire = /<img.*?name="ID0".*?src="(.*?)".*>/;
 const PatternHotmailLogOutReSet = /<img.*?name="ID1".*?src="(.*?)".*>/;
 const PatternHotmailMsgTable = /MsgTable.*?>(.*?)<\/table>/m;
 const PatternHotmail_UM = /_UM="(.*?)"/;
+const PatternHotmailFolderBase = /document.location = "(.*?)"\+f/; 
+const PatternHotmailFolderList =/href="javascript:G\('\/cgi-bin\/folders\?'\)"(.*?)<a href="javascript:G\('\/cgi-bin\/folders\?'\)"/;
+const PatternHotmailFolderLinks =/<a.*?>/g;
+const PatternHotmailHMFO =/HMFO\('(.*?)'\)/;
+const PatternHotmailTabindex =/tabindex="(.*?)"/;
 const PatternHotmailMultPageNum = /<select name="MultPageNum" onChange="window\.location\.href='(.*?)'\+_UM\+'(.*?)'.*?>(.*?)<\/select>/;
 const PatternHotmailPages = /<option value="(.*?)".*?>/g;
 const PatternHotmailEmailURL = /<a.*?href="javascript:G\('(.*?)'\)">/; 
 const PatternHotmailEmailLength = /.*?&len=(.*?)&/;
 const PatternHotmailEmailRead = /.*?&msgread=1&/;
 const PatternHotmailEmailID = /.*?msg=(.*?)&/;
+const PatterHotmailFolderID = /curmbox=(.*?)&/;
 
 
 /***********************  Hotmail ********************************/
@@ -36,6 +42,7 @@ function nsHotmail()
         {
             scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
             scriptLoader.loadSubScript("chrome://web-mail/content/common/CookieManager.js");
+            scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         }
         
         var date = new Date();
@@ -51,15 +58,28 @@ function nsHotmail()
         this.m_szMailboxURI = null;
         this.m_szLogOutURI = null;
         this.m_szLocationURI = null;
+        this.m_szJunkFolderURI = null;
+        this.m_bJunkMailDone = false;
         this.m_bAuthorised = false;
         this.m_aszMsgIDStore = new Array();
         this.m_aszPageURLS = new Array();
         this.m_iPagesURLS = 0;
+        this.m_iPageCount =0;
         this.m_iTotalSize = 0;
         this.m_iNum = 0;  
         this.m_szUM = null;
         this.m_oCookies = new CookieHandler(this.m_HotmailLog );    
-        this.m_iStage = 0;                                    
+        this.m_iStage = 0;  
+        
+        //do i download junkmail
+        var oPref = new Object();
+        oPref.Value = null;
+        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+        if (WebMailPrefAccess.Get("bool","hotmail.bUseJunkMail",oPref))
+            this.m_bUseJunkMail=oPref.Value;
+        else
+            this.m_bUseJunkMail=false;
+                                          
         this.m_HotmailLog.Write("nsHotmail.js - Constructor - END");  
     }
     catch(e)
@@ -282,180 +302,126 @@ nsHotmail.prototype =
             var ios=Components.classes["@mozilla.org/network/io-service;1"].
                                     getService(Components.interfaces.nsIIOService);
 
-
-            //page code                                
-            switch (mainObject.m_iStage)
+            if(httpChannel.responseStatus == 302) //redirect
+            { 
+                try
+                {
+                    var szLocation =  httpChannel.getResponseHeader("Location");
+                    mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - location \n" + szLocation);  
+                }
+                catch(e)
+                {
+                    throw new Error("Location header not found");
+                } 
+          
+                 //set cookies
+                var szURL = ios.newURI(szLocation,null,null).prePath;
+                var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
+                var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
+                
+                var bResult = mainObject.httpConnection(szLocation, 
+                                                "GET", 
+                                                null, 
+                                                aszCookie,
+                                                mainObject.loginOnloadHandler);
+                                            
+                if (!bResult) throw new Error("httpConnection returned false");
+            }
+            else  //pages
             {
-                case 0: // hotmail redirect 
-                    
-                    try
-                    {
-                        var szLocation =  httpChannel.getResponseHeader("Location");
-                        mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - location \n" + szLocation);  
-                    }
-                    catch(e)
-                    {
-                        throw new Error("Location header not found");
-                    } 
-              
-                    var bResult = mainObject.httpConnection(szLocation, 
-                                                    "GET", 
-                                                    null, 
-                                                    null,
-                                                    mainObject.loginOnloadHandler);
-                                                
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
-                break;
-                
-                case 1: // redirect destination
-                    var aBounceData = szResponse.match(patternHotmailBounce);
-                    if (aBounceData == null) 
-                        throw new Error("error parsing bounce web page");
-                    mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler "+ aBounceData);
-                    
-                    //set cookies
-                    var szURL = ios.newURI(aBounceData[1],null,null).prePath;
-                    var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
-                    var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                    mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - cookies - "+ aszCookie);
-                    
-                    //login page  
-                    var szData = "mspprawqs="+aBounceData[2]+"&mspppostint="+aBounceData[3];
-                    var bResult = mainObject.httpConnection(aBounceData[1], 
-                                                   "POST", 
-                                                   szData, 
-                                                   aszCookie,
-                                                   mainObject.loginOnloadHandler);
-                                                
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
-                break;
-               
-               
-                case 2: //login
-                    var aLogInURL = szResponse.match(patternHotmailLogIn);
-                    if (aLogInURL == null ) throw new Error("error parsing login page");  
-                    
-                   
-                    var szData = "notinframe=1&login="+encodeURIComponent(mainObject.m_szUserName)
-                                           +"&passwd="+encodeURIComponent(mainObject.m_szPassWord)
-                                           +"&submit1=+Sign+In+"; 
-                                                                    
-                    //set cookies
-                    var szURL = ios.newURI(aLogInURL[1],null,null).prePath;
-                    var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/); 
-                    var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                    mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - cookies - "+ aszCookie);
-                     
-                    var bResult = mainObject.httpConnection(aLogInURL[1], 
-                                                            "POST", 
-                                                            szData, 
-                                                            aszCookie,
-                                                            mainObject.loginOnloadHandler);
-                                                      
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
-                break;
-               
-                case 3: //login redirect
-                    try
-                    {
-                        var szLocation =  httpChannel.getResponseHeader("Location");
-                        mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - location \n" + szLocation);  
-                    }
-                    catch(e)
-                    {
-                        throw new Error("Location header not found")
-                    } 
-              
-                    //set cookies
-                    var szURL = ios.newURI(szLocation,null,null).prePath;
-                    var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/); 
-                    var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                    mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - cookies - "+ aszCookie);
-                    
-                    var bResult = mainObject.httpConnection(szLocation, 
-                                                    "GET", 
-                                                    null, 
-                                                    aszCookie,
-                                                    mainObject.loginOnloadHandler);
-                                                
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
-                break;
-                 
-                case 4: //refresh
-                    var aRefresh = szResponse.match(patternHotmailRefresh);
-                    mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler "+ aRefresh); 
-                    if (aRefresh == null) throw new Error("error parsing login page");
-                    
-                    //set cookies
-                    var szURL = ios.newURI(aRefresh[1],null,null).prePath;
-                    var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/); 
-                    var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                    mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - cookies - "+ aszCookie);
-                     
-                    var bResult = mainObject.httpConnection(aRefresh[1], 
-                                                      "GET", 
-                                                      null, 
-                                                      aszCookie,
-                                                      mainObject.loginOnloadHandler);  
-                                                      
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
-                break;
-                
+                //page code                                
+                switch (mainObject.m_iStage)
+                {             
+                    case 0: // redirect destination
+                        var aBounceData = szResponse.match(patternHotmailBounce);
+                        if (aBounceData == null) throw new Error("error parsing bounce web page");
+                        mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler "+ aBounceData);
                         
-                case 5: //mailbox redirect
-                    try
-                    {
-                        var szLocation =  httpChannel.getResponseHeader("Location");
-                        mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - location \n" + szLocation);  
-                    }
-                    catch(e)
-                    {
-                        throw new Error("Location header not found")
-                    } 
-              
-                    //set cookies
-                    var szURL = ios.newURI(szLocation,null,null).prePath;
-                    var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/); 
-                    var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                    mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - cookies - "+ aszCookie);
-                    
-                    var bResult = mainObject.httpConnection(szLocation, 
-                                                    "GET", 
-                                                    null, 
-                                                    aszCookie,
-                                                    mainObject.loginOnloadHandler);
-                                                
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
-                break;
-                
-                case 6:
-                    var szLocation = httpChannel.URI.spec;
-                    var iIndex = szLocation.indexOf("uilogin.srt");
-                    mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - page check : " + szLocation 
-                                                        + " index = " +  iIndex );
-                    if (iIndex != -1) throw new Error("error logging in ");
-                    
-                    //get urls for later use
-                    mainObject.m_szLocationURI = httpChannel.URI.prePath ;
-                    mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - m_szLocationURI : "+mainObject.m_szLocationURI );
-                    var aMailBoxURI = szResponse.match(PatternHotmailMailbox);
-                    mainObject.m_szMailboxURI = aMailBoxURI[1];
-                    mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - m_szMaiboxURI : "+mainObject.m_szMailboxURI );
-                    var aLogOutURI = szResponse.match(patternHotmailLogout);
-                    mainObject.m_szLogOutURI = aLogOutURI[1];
-                    mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - m_szLogOutURI : "+mainObject.m_szLogOutURI );
-                    
-                    //server response
-                    mainObject.serverComms("+OK Your in\r\n");
-                    mainObject.m_bAuthorised = true;
-                break;
-            };
+                        //set cookies
+                        var szURL = ios.newURI(aBounceData[1],null,null).prePath;
+                        var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
+                        var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
+                        
+                        //login page  
+                        var szData = "mspprawqs="+aBounceData[2]+"&mspppostint="+aBounceData[3];
+                        var bResult = mainObject.httpConnection(aBounceData[1], 
+                                                       "POST", 
+                                                       szData, 
+                                                       aszCookie,
+                                                       mainObject.loginOnloadHandler);
+                                                    
+                        if (!bResult) throw new Error("httpConnection returned false");
+                        mainObject.m_iStage++;
+                    break;
+                   
+                   
+                    case 1: //login
+                        var aLogInURL = szResponse.match(patternHotmailLogIn);
+                        if (aLogInURL == null ) throw new Error("error parsing login page");  
+                        
+                       
+                        var szData = "notinframe=1&login="+encodeURIComponent(mainObject.m_szUserName)
+                                               +"&passwd="+encodeURIComponent(mainObject.m_szPassWord)
+                                               +"&submit1=+Sign+In+"; 
+                                                                        
+                        //set cookies
+                        var szURL = ios.newURI(aLogInURL[1],null,null).prePath;
+                        var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/); 
+                        var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
+                         
+                        var bResult = mainObject.httpConnection(aLogInURL[1], 
+                                                                "POST", 
+                                                                szData, 
+                                                                aszCookie,
+                                                                mainObject.loginOnloadHandler);
+                                                          
+                        if (!bResult) throw new Error("httpConnection returned false");
+                        mainObject.m_iStage++;
+                    break;
+                     
+                    case 2: //refresh
+                        var aRefresh = szResponse.match(patternHotmailRefresh);
+                        mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler "+ aRefresh); 
+                        if (aRefresh == null) throw new Error("error parsing login page");
+                        
+                        //set cookies
+                        var szURL = ios.newURI(aRefresh[1],null,null).prePath;
+                        var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/); 
+                        var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
+                         
+                        var bResult = mainObject.httpConnection(aRefresh[1], 
+                                                          "GET", 
+                                                          null, 
+                                                          aszCookie,
+                                                          mainObject.loginOnloadHandler);  
+                                                          
+                        if (!bResult) throw new Error("httpConnection returned false");
+                        mainObject.m_iStage++;
+                    break;
+                                  
+                    case 3: 
+                        var szLocation = httpChannel.URI.spec;
+                        var iIndex = szLocation.indexOf("uilogin.srt");
+                        mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - page check : " + szLocation 
+                                                            + " index = " +  iIndex );
+                        if (iIndex != -1) throw new Error("error logging in ");
+                        
+                        //get urls for later use
+                        mainObject.m_szLocationURI = httpChannel.URI.prePath ;
+                        mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - m_szLocationURI : "+mainObject.m_szLocationURI );
+                        var aMailBoxURI = szResponse.match(PatternHotmailMailbox);
+                        mainObject.m_szMailboxURI = aMailBoxURI[1];
+                        mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - m_szMaiboxURI : "+mainObject.m_szMailboxURI );
+                        var aLogOutURI = szResponse.match(patternHotmailLogout);
+                        mainObject.m_szLogOutURI = aLogOutURI[1];
+                        mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - m_szLogOutURI : "+mainObject.m_szLogOutURI );
+                        
+                        //server response
+                        mainObject.serverComms("+OK Your in\r\n");
+                        mainObject.m_bAuthorised = true;
+                    break;
+                }
+            }
             
             mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - END");
         }
@@ -492,8 +458,7 @@ nsHotmail.prototype =
             var szURL = ios.newURI(szMailboxURI,null,null).prePath;
             var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/); 
             var aszCookie = this.m_oCookies.findCookie(aszHost);
-            this.m_HotmailLog.Write("nsHotmail.js - getNumMessages - cookies - "+ aszCookie);
-            
+                       
             this.m_iStage = 0;    
             var bResult = this.httpConnection(szMailboxURI, 
                                               "GET", 
@@ -554,108 +519,178 @@ nsHotmail.prototype =
             } 
             
             
-            //get UM
-            if (!mainObject.m_szUM)
+            // get trash folder uri      
+            if (!mainObject.m_szJunkFolderURI && mainObject.m_bUseJunkMail)
             {
+                try
+                {
+                    var szFolderURL = szResponse.match(PatternHotmailFolderBase)[1];
+                    mainObject.m_HotmailLog.Write("nsHotmail.js - mailBoxOnloadHandler - folder base: " +szFolderURL);
+                   
+                    var szFolderList = szResponse.match(PatternHotmailFolderList)[1];    
+                    mainObject.m_HotmailLog.Write("nsHotmail.js - mailBoxOnloadHandler - folder list: " +szFolderList);
+                    
+                    var aszFolderLinks = szFolderList.match(PatternHotmailFolderLinks);
+                    mainObject.m_HotmailLog.Write("nsHotmail.js - mailBoxOnloadHandler - folder links: " +aszFolderLinks
+                                                                       + " length " + aszFolderLinks.length);
+                   
+                    var szJunkFolder=null;
+                    for (i=0 ; i<aszFolderLinks.length-1; i++ )
+                    {
+                        
+                        mainObject.m_HotmailLog.Write("nsHotmail.js - mailBoxOnloadHandler - folder link: " +aszFolderLinks[i]);
+                        //get tabindex
+                        var iIndex = aszFolderLinks[i].match(PatternHotmailTabindex)[1]; 
+                        mainObject.m_HotmailLog.Write("nsHotmail.js - mailBoxOnloadHandler - folder index: " +iIndex);
+                        if(iIndex == 131)
+                        {
+                            szJunkFolder = aszFolderLinks[i].match(PatternHotmailHMFO)[1];
+                            mainObject.m_HotmailLog.Write("nsHotmail.js - mailBoxOnloadHandler - folder id: " +szJunkFolder);
+                        }
+                    }
+    
+                    mainObject.m_szJunkFolderURI = mainObject.m_szLocationURI + szFolderURL + szJunkFolder;
+                    mainObject.m_HotmailLog.Write("nsHotmail.js - mailBoxOnloadHandler - folder uri: " +mainObject.m_szJunkFolderURI);
+                }
+                catch(err)
+                {
+                    mainObject.m_HotmailLog.DebugDump("nsHotmail.js: mailBoxOnloadHandler folder: Exception : " 
+                                                      + err.name 
+                                                      + ".\nError message: " 
+                                                      + err.message);
+                }   
+            }
+                     
+                      
+            //get pages uri
+            if (mainObject.m_aszPageURLS.length==0)
+            {
+                //get UM
                 mainObject.m_szUM= szResponse.match(PatternHotmail_UM)[1];
                 mainObject.m_HotmailLog.Write("nsHotmail.js - mailBoxOnloadHandler -msg pages UM : " +mainObject.m_szUM)
+                
+                //any more pages
+                var aPages = szResponse.match(PatternHotmailMultPageNum);
+                mainObject.m_HotmailLog.Write("nsHotmail.js - mailBoxOnloadHandler -msg pages : " +aPages);
+                
+                if (aPages)
+                {   //more than one page
+                    var aNums = aPages[3].match(PatternHotmailPages);
+                    mainObject.m_HotmailLog.Write("nsHotmail.js - mailBoxOnloadHandler -msg pages num : " +aNums);
+                
+                    //construct page urls
+                    for (i =1 ; i < aNums.length ; i++)  //start at second page
+                    {
+                        mainObject.m_aszPageURLS.push(mainObject.m_szLocationURI + aPages[1] 
+                                                       + mainObject.m_szUM + aPages[2] + (i+1));        
+                    }
+                }
+                
+                 mainObject.m_HotmailLog.Write("nsHotmail.js - mailBoxOnloadHandler -msg pages url : " 
+                                                        + mainObject.m_aszPageURLS
+                                                        + " length "
+                                                        + mainObject.m_aszPageURLS.length);
             }
+            
+            
+            //get msg urls
+            var aMsgTable = szResponse.match(PatternHotmailMsgTable);
+            if (aMsgTable == null) throw new Error("aMsgTable == null");
+            mainObject.m_HotmailLog.Write("nsHotmail.js - mailBoxOnloadHandler -msg table : " +aMsgTable[1]);
+            var szMsgRows = aMsgTable[1].split(/<tr.*?>/);  //split on rows
+            mainObject.m_HotmailLog.Write("nsHotmail.js - mailBoxOnloadHandler -split msg table : " +szMsgRows);
+            if (szMsgRows == null) throw new Error("szMsgRows == null");//oops
+            
+            var tempTotalSize = 0;
+            var tempNum = 0; 
+            for (j = 0; j < szMsgRows.length; j++)
+            {
+                var aEmailURL = szMsgRows[j].match(PatternHotmailEmailURL);
+                mainObject.m_HotmailLog.Write("nsHotmail.js - mailBoxOnloadHandler - Email URL : " +aEmailURL);
+                if (aEmailURL)
+                {
+                    var szPath = mainObject.m_szLocationURI+aEmailURL[1]+"&"+mainObject.m_szUM+"&raw=1";
+                    mainObject.m_HotmailLog.Write("nsHotmail.js - mailBoxOnloadHandler - Email URL : " +szPath);
+                    mainObject.m_aszMsgIDStore.push(szPath);  
+                    var aEmailLength = aEmailURL[1].match(PatternHotmailEmailLength);
                     
-          
-                     
+                    var lSize = 0;
+                    if (aEmailLength) 
+                        lSize = parseInt(aEmailLength[1]);
+                    else
+                        lSize = 2000;
+                          
+                    mainObject.m_HotmailLog.Write("nsHotmail.js - mailBoxOnloadHandler - size : " +lSize);    
+                    tempTotalSize += lSize;
+                    tempNum ++; 
+                 }  
+            }
+            
+            mainObject.m_iNum += tempNum;
+            mainObject.m_iTotalSize += tempTotalSize;
+            mainObject.m_HotmailLog.Write("nsHotmail.js - mailBoxOnloadHandler - Num " + mainObject.m_iNum 
+                                                            +" Total " + mainObject.m_iTotalSize);
+            
+            
+            mainObject.m_HotmailLog.Write("nsHotmail.js - mailBoxOnloadHandler -msg pages : " +mainObject.m_aszPageURLS);    
+            
             var ios=Components.classes["@mozilla.org/network/io-service;1"].
                                     getService(Components.interfaces.nsIIOService);
-                                    
-            switch(mainObject.m_iStage)
-            {
-                case 0: 
-                    //get number of pages
-                    var aPages = szResponse.match(PatternHotmailMultPageNum);
-                    mainObject.m_HotmailLog.Write("nsHotmail.js - mailBoxOnloadHandler -msg pages : " +aPages);
             
-                    if (aPages)
-                    {   //more than one page
-                        var aNums = aPages[3].match(PatternHotmailPages);
-                        mainObject.m_HotmailLog.Write("nsHotmail.js - mailBoxOnloadHandler -msg pages num : " +aNums);
-                
-                        
-                        //construct page urls
-                        for (i =0 ; i < aNums.length ; i++)
-                        {
-                            mainObject.m_aszPageURLS.push(mainObject.m_szLocationURI+aPages[1]+mainObject.m_szUM+aPages[2]+(i+1));        
-                        }
-                        mainObject.m_HotmailLog.Write("nsHotmail.js - mailBoxOnloadHandler -msg pages url : " 
-                                                                    +mainObject.m_aszPageURLS
-                                                                    + " length "
-                                                                    +mainObject.m_aszPageURLS.length);
-                       
-                        var ios=Components.classes["@mozilla.org/network/io-service;1"].
-                                    getService(Components.interfaces.nsIIOService);
-                                    
-                        //set cookies
-                        var szURL = ios.newURI(mainObject.m_aszPageURLS[0],null,null).prePath;
-                        var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/); 
-                        var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                        mainObject.m_HotmailLog.Write("nsHotmail.js - mailBoxOnloadHandler - cookies - "+ aszCookie);
-                                                                      
-                        var bResult = mainObject.httpConnection(mainObject.m_aszPageURLS[0], 
+            mainObject.m_HotmailLog.Write("nsHotmail.js - mailBoxOnloadHandler -msg pages count : " 
+                                                + mainObject.m_aszPageURLS.length + " "
+                                                + mainObject.m_iPageCount);   
+                                                                             
+            if (mainObject.m_aszPageURLS.length!= mainObject.m_iPageCount)//more pages
+            {           
+                //set cookies
+                var szTempURI = mainObject.m_aszPageURLS[ mainObject.m_iPageCount];
+                mainObject.m_HotmailLog.Write("nsHotmail.js - mailBoxOnloadHandler - page: " + szTempURI); 
+                var szURL = ios.newURI(szTempURI,null,null).prePath;
+                var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/); 
+                var aszCookie = mainObject.m_oCookies.findCookie(aszHost);                                                             
+                var bResult = mainObject.httpConnection(szTempURI, 
                                                         "GET", 
                                                         null, 
                                                         aszCookie,
                                                         mainObject.mailBoxOnloadHandler);
-                                                        
-                        if (!bResult) throw new Error("httpConnection returned false");
-                    }
-                    else
-                    {   //only one page
-                        if (!mainObject.msgTableParse(szResponse)) 
-                            throw new Error("Error Parsing MsgTable");
-                 
-                        mainObject.serverComms("+OK "+ mainObject.m_iNum + " " + mainObject.m_iTotalSize + "\r\n");
-                    }
-                                            
-                    mainObject.m_iStage++;  
-                        
-                break;
-                
-                case 1:
-                    mainObject.m_iPagesURLS ++;
-                    
-                    mainObject.m_HotmailLog.Write("nsHotmail.js - mailBoxOnloadHandler -msg pages num : " 
-                                                                                + mainObject.m_iPagesURLS 
-                                                                                +"\n"
-                                                                                + szResponse);
-                    if (!mainObject.msgTableParse(szResponse)) 
-                        throw new Error("error parsing msg table"); 
-                    
-                    if (mainObject.m_iPagesURLS == mainObject.m_aszPageURLS.length)
-                    {
-                        mainObject.serverComms("+OK "+ mainObject.m_iNum + " " + mainObject.m_iTotalSize + "\r\n");
-                    }
-                    else
-                    {
-                        var ios=Components.classes["@mozilla.org/network/io-service;1"].
-                                    getService(Components.interfaces.nsIIOService);
-                                    
-                        //set cookies
-                        var szURL = ios.newURI(mainObject.m_aszPageURLS[mainObject.m_iPagesURLS],
-                                               null,
-                                               null).prePath;
-                        var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/); 
-                        var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                        mainObject.m_HotmailLog.Write("nsHotmail.js - mailBoxOnloadHandler - cookies - "+ aszCookie);
-                        
-                        var bResult = mainObject.httpConnection(mainObject.m_aszPageURLS[mainObject.m_iPagesURLS], 
-                                                         "GET", 
-                                                         null, 
-                                                         aszCookie,
-                                                         mainObject.mailBoxOnloadHandler);  
-                                                      
-                        if (!bResult) throw new Error("httpConnection returned false");   
-                    }   
-                break;
+               
+                mainObject.m_iPageCount++;                       
+                if (!bResult) throw new Error("httpConnection returned false");
             }
-
+            else  //done with mailbox
+            {  
+                mainObject.m_HotmailLog.Write("nsHotmail.js - mailBoxOnloadHandler - use junkmail: " 
+                                                        + mainObject.m_bUseJunkMail
+                                                        + " Done " + mainObject.m_bJunkMailDone
+                                                        + " uri " + mainObject.m_szJunkFolderURI );
+                 
+                if (!mainObject.m_bJunkMailDone && mainObject.m_bUseJunkMail && mainObject.m_szJunkFolderURI)
+                { //get junkmail
+                    mainObject.m_HotmailLog.Write("nsHotmail.js - mailBoxOnloadHandler - junkmail: " + mainObject.m_bUseJunkMail); 
+                    
+                    mainObject.m_bJunkMailDone = true;
+                    mainObject.m_iPageCount = 0; //reset array
+                    mainObject.m_aszPageURLS = new Array;
+                    
+                    //set cookies
+                    var szURL = ios.newURI(mainObject.m_szJunkFolderURI,null,null).prePath;
+                    var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/); 
+                    var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
+                                                                                      
+                    var bResult = mainObject.httpConnection(mainObject.m_szJunkFolderURI, 
+                                                            "GET", 
+                                                            null, 
+                                                            aszCookie,
+                                                            mainObject.mailBoxOnloadHandler);
+                                                    
+                    if (!bResult) throw new Error("httpConnection returned false");
+                }
+                else  //all uri's collected
+                {
+                   mainObject.serverComms("+OK "+ mainObject.m_iNum + " " + mainObject.m_iTotalSize + "\r\n");
+                }
+            }
             mainObject.m_HotmailLog.Write("nsHotmail.js - MailBoxOnload - END"); 
         }
         catch(err)
@@ -671,61 +706,6 @@ nsHotmail.prototype =
     },
  
     
-    
-    msgTableParse : function (szMailBox )
-    {
-        try
-        { 
-            this.m_HotmailLog.Write("nsHotmail.js - msgTableParse - START"); 
-            
-            var aMsgTable = szMailBox.match(PatternHotmailMsgTable);
-            if (aMsgTable == null) throw new Error("aMsgTable == null");
-            this.m_HotmailLog.Write("nsHotmail.js - msgTableParse -msg table : " +aMsgTable[1]);
-            var szMsgRows = aMsgTable[1].split(/<tr.*?>/);  //split on rows
-            this.m_HotmailLog.Write("nsHotmail.js - msgTableParse -split msg table : " +szMsgRows);
-            if (szMsgRows == null) throw new Error("szMsgRows == null");//oops
-            
-            var tempTotalSize = 0;
-            var tempNum = 0; 
-            for (j = 0; j < szMsgRows.length; j++)
-            {
-                var aEmailURL = szMsgRows[j].match(PatternHotmailEmailURL);
-                this.m_HotmailLog.Write("nsHotmail.js - msgTableParse - Email URL : " +aEmailURL);
-                if (aEmailURL)
-                {
-                    this.m_aszMsgIDStore.push(aEmailURL[1]);  
-                    var aEmailLength = aEmailURL[1].match(PatternHotmailEmailLength);
-                    
-                    var lSize = 0;
-                    if (aEmailLength) 
-                        lSize = aEmailLength[1];
-                    else
-                        lSize = 2000;
-                          
-                    this.m_HotmailLog.Write("nsHotmail.js - msgTableParse - size : " +lSize);    
-                    tempTotalSize += lSize;
-                    tempNum ++; 
-                 }  
-            }
-            
-            this.m_iNum += tempNum;
-            this.m_iTotalSize += tempTotalSize;
-            this.m_HotmailLog.Write("nsHotmail.js - msgTableParse - Num " + this.m_iNum +" Total " +  this.m_iTotalSize);
-            this.m_HotmailLog.Write("nsHotmail.js - msgTableParse - END"); 
-            return true;
-        }
-        catch(err)
-        {
-            this.m_HotmailLog.DebugDump("nsHotmail.js: msgTableParse : Exception : " 
-                                                              + err.name 
-                                                              + ".\nError message: " 
-                                                              + err.message);
-            return false;
-        }
-    },
-    
-    
-
                      
     //list
     //i'm not downloading the mailbox again. 
@@ -853,26 +833,20 @@ nsHotmail.prototype =
             var szTempMsg = new String();
             
             //get msg id
-            var szMsgID = this.m_aszMsgIDStore[lID-1];
-            this.m_HotmailLog.Write("nsHotmail.js - getMessage - msg id" + szMsgID); 
+            var szMsgURI = this.m_aszMsgIDStore[lID-1];
+            this.m_HotmailLog.Write("nsHotmail.js - getMessage - msg uri" + szMsgURI); 
             
             
             var ios=Components.classes["@mozilla.org/network/io-service;1"].
                                     getService(Components.interfaces.nsIIOService);
-            
-            var szDest = this.m_szLocationURI + szMsgID
-            if (this.m_szUM) szDest+= "&" + this.m_szUM;
-            szDest+= "&raw=1";
-            
-                                   
+                            
             //set cookies
-            var szURL = ios.newURI(szDest,null,null).prePath;
+            var szURL = ios.newURI(szMsgURI,null,null).prePath;
             var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/); 
             var aszCookie = this.m_oCookies.findCookie(aszHost);
-            this.m_HotmailLog.Write("nsHotmail.js - getNumMessages - cookies - "+ aszCookie);
-            
+                       
             //get msg from hotmail
-            var bResult = this.httpConnection(szDest, 
+            var bResult = this.httpConnection(szMsgURI, 
                                                 "GET", 
                                                 null,
                                                 aszCookie, 
@@ -928,7 +902,6 @@ nsHotmail.prototype =
                 var szURL = ios.newURI(szLocation,null,null).prePath;
                 var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/); 
                 var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                mainObject.m_HotmailLog.Write("nsHotmail.js - emailOnloadHandler - cookies - "+ aszCookie);
                 
                 //load new page
                 mainObject.httpConnection(szLocation, 
@@ -988,6 +961,7 @@ nsHotmail.prototype =
             //create URL
             var szTempID = this.m_aszMsgIDStore[lID-1];
             this.m_HotmailLog.Write("nsHotmail.js - deleteMessage - id " + szTempID );
+            //msg id
             var aTempID = szTempID.match(PatternHotmailEmailID); 
             var szID ;
             if (aTempID == null)
@@ -998,14 +972,20 @@ nsHotmail.prototype =
             }
             else
                 szID = aTempID[1];
+            this.m_HotmailLog.Write("nsHotmail.js - deleteMessage - MSGid " + szID );    
                 
-            this.m_HotmailLog.Write("nsHotmail.js - deleteMessage - id " + szID ); 
-            
+            //folder id
+            var szFolderID = szTempID.match(PatterHotmailFolderID)[1];
+            this.m_HotmailLog.Write("nsHotmail.js - deleteMessage - FolderId " + szFolderID );
+               
             //construct data
             var szPath = this.m_szLocationURI + "/cgi-bin/HoTMaiL" ;
             this.m_HotmailLog.Write("nsHotmail.js - deleteMessage - szPath " + szPath); 
-            var szData = "curmbox=F000000001&HrsTest=&js=&_HMaction=delete&wo=&page=1&tobox=F000000004&ReportLevel=&rj=&DoEmpty=&SMMF=0&"+ szID + "=on"; 
            
+            var szData = "curmbox=" + szFolderID;
+            szData += "&HrsTest=&js=&_HMaction=delete&wo=&page=1&tobox=F000000004&ReportLevel=&rj=&DoEmpty=&SMMF=0&"
+            szData += szID + "=on"; 
+            this.m_HotmailLog.Write("nsHotmail.js - deleteMessage - szData " + szData);           
            
             var ios=Components.classes["@mozilla.org/network/io-service;1"].
                                     getService(Components.interfaces.nsIIOService);
@@ -1014,7 +994,6 @@ nsHotmail.prototype =
             var szURL = ios.newURI(szPath,null,null).prePath;
             var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/); 
             var aszCookie = this.m_oCookies.findCookie(aszHost);
-            this.m_HotmailLog.Write("nsHotmail.js - getNumMessages - cookies - "+ aszCookie);
            
             //send request
             var bResult = this.httpConnection(szPath, 
