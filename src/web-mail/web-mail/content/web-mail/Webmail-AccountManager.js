@@ -17,18 +17,15 @@ function WebmailAccountManager()
                                   
         this.m_Log.Write("WebmailAccountManager.js - Constructor - START");
         
-        this.m_rdfService =  null;
         this.m_DataSource =  null;
-        this.m_SourceFile = null;
-        this.m_TargetFile = null;
-        
+        this.m_rdfService =  Components.classes["@mozilla.org/rdf/rdf-service;1"]
+                                        .getService(Components.interfaces.nsIRDFService);;
+                  
         var strBundleService = Components.classes["@mozilla.org/intl/stringbundle;1"].
                                     getService(Components.interfaces.nsIStringBundleService);
                                 
         this.m_ContentBundle = strBundleService.createBundle("chrome://web-mail/locale/Webmail-AccountWizard.properties");
-        
-        this.loadISP();                                        
-        
+                                               
         this.m_Log.Write("WebmailAccountManager.js - Constructor - END");  
     }
     catch(err)
@@ -42,69 +39,31 @@ function WebmailAccountManager()
 
 WebmailAccountManager.prototype =
 {    
-    loadISP : function()
-    { 
+    checkISP : function()
+    {
         try
         {
-            this.m_Log.Write("WebmailAccountManager.js - loadISP - START");   
-       
-            this.m_rdfService = Components.classes["@mozilla.org/rdf/rdf-service;1"]
-                                                .getService(Components.interfaces.nsIRDFService);
+            this.m_Log.Write("WebmailAccountManager.js - checkISP - START"); 
             
-            //get location of profile
-            this.m_SourceFile = Components.classes["@mozilla.org/file/directory_service;1"].
-                                      createInstance(Components.interfaces.nsIProperties).
-                                      get("ProfD", Components.interfaces.nsILocalFile);
-            this.m_SourceFile.append("extensions");                               //goto profile extension folder
-            this.m_SourceFile.append("{3c8e8390-2cf6-11d9-9669-0800200c9a66}");  //goto client extension folder
-            this.m_SourceFile.append("webmail.rdf");       
-            
-            var szlocation = Components.classes["@mozilla.org/network/protocol;1?name=file"]
-                                                .createInstance(Components.interfaces.nsIFileProtocolHandler)
-                                                .getURLSpecFromFile(this.m_SourceFile);
-                                                
-            this.m_Log.Write("WebmailAccountManager.js - loadISP - location " +szlocation);                                 
-             
-            this.m_DataSource = this.m_rdfService.GetDataSource(szlocation); 
-            this.m_DataSource.QueryInterface(Components.interfaces.nsIRDFXMLSink);
-            this.m_DataSource.addXMLSinkObserver(this);
-           
-            this.m_Log.Write("WebmailAccountManager.js - loadISP - END");
-        }
-        catch(e)
-        {
-            this.m_Log.DebugDump("WebmailAccountManager.js : loadISP" 
-                                    + err.name + 
-                                    ".\nError message: " 
-                                    + err.message);
-        }   
-    },
-   
-    
-    addISP: function ()
-    {   
-        try
-        {
-            this.m_Log.Write("WebmailAccountManager.js - addISP - START");
-    
-            //goto default folder in application
-            this.m_TargetFile = Components.classes["@mozilla.org/file/directory_service;1"].
+            var TargetFile = Components.classes["@mozilla.org/file/directory_service;1"].
                                    createInstance(Components.interfaces.nsIProperties).
                                       get("DefRt", Components.interfaces.nsILocalFile);
-            this.m_TargetFile.append("isp"); 
-            this.m_SourceFile.copyTo(this.m_TargetFile,null);   
-           
-            this.m_Log.Write("WebmailAccountManager.js - addISP - END");
+            TargetFile.append("isp"); 
+            TargetFile.append("webmail.rdf");   
+            var bResult =  TargetFile.isFile();           
+            this.m_Log.Write("WebmailAccountManager.js - checkISP - file exists " +bResult);           
+            this.m_Log.Write("WebmailAccountManager.js - checkISP - END "); 
+            return bResult;
         }
-        catch(e)
+        catch(err)
         {
-            this.m_Log.DebugDump("WebmailAccountManager.js : addISP" 
+            this.m_Log.DebugDump("WebmailAccountManager.js : checkISP" 
                                     + err.name + 
                                     ".\nError message: " 
                                     + err.message);
         }
     },
-    
+     
     
     deleteISP : function()
     { 
@@ -112,8 +71,15 @@ WebmailAccountManager.prototype =
         { 
             this.m_Log.Write("WebmailAccountManager.js - deleteISP - START");
             
-            this.m_TargetFile.append("webmail.rdf");  
-            this.m_TargetFile.remove(false);     //delete isp file  
+            if (this.checkISP())
+            {
+                var TargetFile = Components.classes["@mozilla.org/file/directory_service;1"].
+                                       createInstance(Components.interfaces.nsIProperties).
+                                          get("DefRt", Components.interfaces.nsILocalFile);
+                TargetFile.append("isp"); 
+                TargetFile.append("webmail.rdf");  
+                TargetFile.remove(false);     //delete isp file  
+            }
            
             this.m_Log.Write("WebmailAccountManager.js - deleteISP - END");
         }
@@ -126,6 +92,30 @@ WebmailAccountManager.prototype =
         }
     },
    
+   
+    createISP : function()
+    {
+        try
+        {
+            this.m_Log.Write("WebmailAccountManager.js - createISP - START"); 
+            
+            this.loadISP();
+            
+            this.m_Log.Write("WebmailAccountManager.js - createISP - END"); 
+        }
+        catch(err)
+        {
+            this.m_Log.DebugDump("WebmailAccountManager.js : createISP" 
+                                    + err.name + 
+                                    ".\nError message: " 
+                                    + err.message);
+        }
+    },
+    
+    
+    
+    ///////////////////private functions //////////////////////////////////////
+           
     updateISP: function()
     {
         try
@@ -150,6 +140,76 @@ WebmailAccountManager.prototype =
                                     + err.message);
         }
     },
+    
+    
+    
+    
+    loadISP : function()
+    { 
+        try
+        {
+            this.m_Log.Write("WebmailAccountManager.js - loadISP - START");   
+            
+            var SourceFile =  Components.classes["@mozilla.org/file/directory_service;1"].
+                                      createInstance(Components.interfaces.nsIProperties).
+                                      get("ProfD", Components.interfaces.nsILocalFile);
+            SourceFile.append("extensions");                               //goto profile extension folder
+            SourceFile.append("{3c8e8390-2cf6-11d9-9669-0800200c9a66}");  //goto client extension folder
+            SourceFile.append("webmail.rdf");
+                   
+            var szlocation = Components.classes["@mozilla.org/network/protocol;1?name=file"]
+                                                .createInstance(Components.interfaces.nsIFileProtocolHandler)
+                                                .getURLSpecFromFile(SourceFile);
+                                                
+            this.m_Log.Write("WebmailAccountManager.js - loadISP - location " +szlocation);                                 
+             
+            this.m_DataSource = this.m_rdfService.GetDataSource(szlocation); 
+            this.m_DataSource.QueryInterface(Components.interfaces.nsIRDFXMLSink);
+            this.m_DataSource.addXMLSinkObserver(this);
+           
+            this.m_Log.Write("WebmailAccountManager.js - loadISP - END");
+        }
+        catch(e)
+        {
+            this.m_Log.DebugDump("WebmailAccountManager.js : loadISP" 
+                                    + err.name + 
+                                    ".\nError message: " 
+                                    + err.message);
+        }   
+    },
+    
+    addISP: function ()
+    {   
+        try
+        {
+            this.m_Log.Write("WebmailAccountManager.js - addISP - START");
+    
+            //goto default folder in application
+            var TargetFile = Components.classes["@mozilla.org/file/directory_service;1"].
+                                   createInstance(Components.interfaces.nsIProperties).
+                                      get("DefRt", Components.interfaces.nsILocalFile);
+            TargetFile.append("isp"); 
+            
+            
+            var SourceFile =  Components.classes["@mozilla.org/file/directory_service;1"].
+                                      createInstance(Components.interfaces.nsIProperties).
+                                      get("ProfD", Components.interfaces.nsILocalFile);
+            SourceFile.append("extensions");                               //goto profile extension folder
+            SourceFile.append("{3c8e8390-2cf6-11d9-9669-0800200c9a66}");  //goto client extension folder
+            SourceFile.append("webmail.rdf");
+            SourceFile.copyTo(TargetFile,null);   
+           
+            this.m_Log.Write("WebmailAccountManager.js - addISP - END");
+        }
+        catch(e)
+        {
+            this.m_Log.DebugDump("WebmailAccountManager.js : addISP" 
+                                    + err.name + 
+                                    ".\nError message: " 
+                                    + err.message);
+        }
+    },
+    
     
     
     parseISP : function (datasource, root)

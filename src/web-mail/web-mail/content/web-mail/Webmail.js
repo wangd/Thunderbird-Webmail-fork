@@ -40,9 +40,15 @@ function WebmailStartUp()
         if (!('WebmailStop' in window)) window.WebmailStop = false;
    	
    	
-   	    g_AccountWizard = new WebmailAccountManager();  //create webmail.rdf file
-   	    
-    
+   	    //account wizard
+   	    var oPref = new Object();
+        oPref.Value = null;
+        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+        WebMailPrefAccess.Get("bool","webmail.UseAccountWizard",oPref); 
+        g_AccountWizard = new WebmailAccountManager();  //create webmail.rdf file
+        if (oPref.Value) g_AccountWizard.createISP();
+   	   
+           
         //start  service
         try
         {   //create service
@@ -103,8 +109,10 @@ function WebmailShutDown()
     
     gWebmailDebugLog.Write("Webmail: Webmail.js : WebmailShutDown - WebmailStop == true");
     if  (gPOP) gPOP.Stop(); //stop pop server
-
-    g_AccountWizard.deleteISP();  // delete wedmail.rdf file
-     
+    
+      
+    //account wizard
+    g_AccountWizard.deleteISP();
+       
     gWebmailDebugLog.Write("Webmail : Webmail.js : WebmailShutDown - END");
 }
