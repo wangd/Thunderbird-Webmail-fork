@@ -1,0 +1,11 @@
+<!ENTITY GeneralLogging.AccessKey "E">
+<!ENTITY GeneralLogging.Label "Habilitar registro">
+<!ENTITY JavaScriptConsole.Label "Usar consola javascript">
+<!ENTITY JavaScriptConsole1.AccessKey "J">
+<!ENTITY Location.Label "Ubicación">
+<!ENTITY Location1.AccessKey "o">
+<!ENTITY LogFile.Label "Usar fichero de registro">
+<!ENTITY LogFile1.AccessKey "l">
+<!ENTITY Logging.Label "Registro">
+<!ENTITY Note.Label "Los ficheros de registro contiene nombres de usuario y contraseñas.">
+<!ENTITY Restart.Label "Es necesario reiniciar Thunderbird para aplicar los cambios.">

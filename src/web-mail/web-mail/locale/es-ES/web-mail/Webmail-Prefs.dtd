@@ -1,0 +1,8 @@
+<!ENTITY Defaults.Button.Label "Por defecto">
+<!ENTITY Defaults.Button.Tip "Restaurar los valores por defecto">
+<!ENTITY Domains.Panel.szTitle "Dominios">
+<!ENTITY Logging.Panel.szTitle "Registro">
+<!ENTITY Options.szTitle "Opciones Web Mail">
+<!ENTITY Proxy.Panel.szTitle "Proxy">
+<!ENTITY Servers.Panel.szTitle "Servidor">
+<!ENTITY Status.Panel.szTitle "Estado">

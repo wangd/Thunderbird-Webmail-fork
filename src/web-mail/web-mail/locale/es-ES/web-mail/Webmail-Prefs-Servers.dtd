@@ -1,0 +1,10 @@
+<!ENTITY AccountWizard.AccessKey "A">
+<!ENTITY AccountWizard.Label "Añadir Webmail al asistente de cuentas">
+<!ENTITY AccountWizardWarning.Label "Requiere permiso de escritura a la carpeta del programa.">
+<!ENTITY Default.Label "Por defecto 110">
+<!ENTITY MailServers.Label "Servidor de correo">
+<!ENTITY Note.Label "Los puertos inferiores al 1024 pueden estar bloqueados por el Sistema Operativo">
+<!ENTITY Ports.AccessKey "P">
+<!ENTITY Ports.Label "Puertos">
+<!ENTITY Restart.Label "Es necesario reiniciar Thunderbird para aplicar los cambios.">
+<!ENTITY ServerStatus.Label "Estado del servidor">
