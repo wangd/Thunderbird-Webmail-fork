@@ -11,6 +11,7 @@
       headertitle="&MailServers.Label;"
       class ="background">
     
+    
     <script type="application/x-javascript">
         <![CDATA[
             var _elementIDs = ["chkJunkMail"];
@@ -25,8 +26,6 @@
                   accesskey="&JunkMail.AccessKey;"
                   id="chkJunkMail"
                   preftype="bool" 
-                  prefstring="hotmail.bUseJunkMail"
-                  onclick=""/>
-
+                  prefstring="hotmail.bUseJunkMail"/>
     </vbox>  
 </page>

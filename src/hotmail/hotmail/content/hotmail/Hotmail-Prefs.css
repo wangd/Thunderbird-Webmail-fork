@@ -83,3 +83,8 @@
     -moz-image-region: rect(0px, 96px, 32px, 64px)
 }
 
+#WebDavButton
+{
+    -moz-image-region: rect(0px, 128px, 32px, 96px)
+}
+

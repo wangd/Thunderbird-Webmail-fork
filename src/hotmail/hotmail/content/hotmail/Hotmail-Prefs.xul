@@ -9,9 +9,9 @@
 <dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         id="Hotmail-Prefs"
         title="&Options.szTitle;"
-        style="width: 26em; height: 27em"
+        style="width: 26em; height: 26em"
         onload="InitHotmailPrefs();"
-        onunload="LycosHotmailClose();"
+        onunload="HotmailPrefsClose();"
         ondialogaccept="return hPrefWindow.onOK(event);"
         ondialogcancel="return hPrefWindow.onCancel(event);">
      
@@ -28,6 +28,15 @@
               lastpanel="0" 
               onmouseover="focus();">
         
+             <!-- web dav -->
+            <button id="WebDavButton"  
+                    orient="vertical" 
+                    class="buttonBoxButton" 
+                    type="radio"
+                    group="categories"
+                    label="&WebDav.Panel.szTitle;"
+                    url="chrome://hotmail/content/Hotmail-Prefs-WebDav.xul" /> 
+                    
             <!-- pop -->
             <button id="POPbutton"  
                     orient="vertical" 
@@ -37,7 +46,7 @@
                     label="&POP.Panel.szTitle;"
                     url="chrome://hotmail/content/Hotmail-Prefs-POP.xul" />  
                     
-                     
+           
             <!-- imap  
             <button id="IMAPbutton"  
                       orient="vertical" 
