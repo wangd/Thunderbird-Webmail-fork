@@ -75,9 +75,13 @@
         <vbox class ="information">   
             <hbox>
                 <image src = "chrome://web-mail/skin/Error.png" /> 
-                <description style="margin-left: 10px"> 
-                    &Note.Label;
-                </description> 
+            </hbox>
+            <hbox>
+                <vbox flex="1">           
+                    <description style="margin-left: 25px"> 
+                        &Note.Label;
+                    </description> 
+                </vbox>
             </hbox>
         </vbox>
         
