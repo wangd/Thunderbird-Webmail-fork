@@ -1,0 +1,1 @@
+pref("lycos.bUseJunkMail", true);

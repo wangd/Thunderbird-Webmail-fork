@@ -1,0 +1,62 @@
+#LycosAboutDialog
+{
+    padding: 0px 0px 0px 0px;
+    background-color: #FFFFFF;
+    color: #000000;
+}
+
+
+#LycosName
+{
+    font-size: x-large;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 9px;
+}
+
+#LycosVersion
+{
+    color: #909090;
+    margin-bottom: 3px;
+}
+
+#LycosDescription
+{
+  color: #404040;
+}
+
+
+#LycosCreatorLabel
+{
+    border-top: 2px solid #C0C0C0;
+    padding: 5px 0px 3px 0px;
+    margin-top: 3px;
+    font-weight: bold;
+}
+
+#LycosContributorLabel
+{
+    padding: 5px 0px 3px 0px;
+    margin-top: 3px;
+    font-weight: bold;
+}
+
+.LycosCreatorText
+{
+    margin-left: 45px;
+    margin-top: 3px;
+}
+
+.LycosContributorText
+{
+    margin-left: 45px;
+}
+
+#LycosHomePage
+{
+    text-align: right;
+    color: #0000FF;
+    text-decoration: underline !important;
+    cursor: pointer;
+    margin-top: 30px;
+}
