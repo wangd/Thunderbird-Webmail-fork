@@ -229,7 +229,7 @@ nsLycos.prototype =
                     mainObject.m_LycosLog.Write("nsLycos.js - loginOnloadHandler - www-Authenticate " + szAuthenticate);
                     mainObject.m_iAuth++;
                 }
-                catch(e)
+                catch(err)
                 {
                      mainObject.m_LycosLog.DebugDump("nsLycos.js: loginHandler  Authenitcation: Exception : " 
                                                       + err.name 
