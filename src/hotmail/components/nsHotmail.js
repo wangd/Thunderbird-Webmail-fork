@@ -295,7 +295,7 @@ nsHotmail.prototype =
                     }
                     catch(e)
                     {
-                        throw new Error("Location header not found")
+                        throw new Error("Location header not found");
                     } 
               
                     var bResult = mainObject.httpConnection(szLocation, 
