@@ -17,6 +17,7 @@ function WebmailStartUp()
         if (scriptLoader)
         {
             scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
+            scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
             scriptLoader.loadSubScript("chrome://web-mail/content/Webmail-AccountManager.js");  
         }
                 
