@@ -1,8 +1,8 @@
 //project globals
-
 var gWebmailDebugLog = null;
 var gPOP = null;
 var g_DomainManager = null;
+var g_AccountWizard = null;
 
 window.addEventListener("load",   WebmailStartUp, false);
 window.addEventListener("unload", WebmailShutDown,  false);
@@ -11,10 +11,18 @@ window.addEventListener("unload", WebmailShutDown,  false);
 function WebmailStartUp()
 {   
     try
-    {        
+    {    
+        var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                                        .getService(Components.interfaces.mozIJSSubScriptLoader);
+        if (scriptLoader)
+        {
+            scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
+            scriptLoader.loadSubScript("chrome://web-mail/content/Webmail-AccountManager.js");  
+        }
+                
         //create debug log global 
-        gWebmailDebugLog = new DebugLog("webmail.logging.comms", 
-                                        "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
+        gWebmailDebugLog = new DebugLog("webmail.logging.comms",
+                                        "{3c8e8390-2cf6-11d9-9669-0800200c9a66}", 
                                         "general");
                                         
         gWebmailDebugLog.Write("Webmail: Webmail.js : WebmailStartUp - START");
@@ -30,8 +38,11 @@ function WebmailStartUp()
             return false;	
         }
         if (!('WebmailStop' in window)) window.WebmailStop = false;
-    	
-
+   	
+   	
+   	    g_AccountWizard = new WebmailAccountManager();  //create webmail.rdf file
+   	    
+    
         //start  service
         try
         {   //create service
@@ -54,7 +65,7 @@ function WebmailStartUp()
                 gWebmailDebugLog.Write("Webmail: Webmail.js : WebmailStartUp - pop server not started");
             }
             
-       }
+        }
         catch(e)
         {
             gWebmailDebugLog.Write("Webmail: Webmail.js : Starting POP servers Exception in WebmailStartUp " 
@@ -63,7 +74,6 @@ function WebmailStartUp()
                                     + e.message);
         }
         
-    	//window.removeEventListener("load",   WebmailStartUp, false);
     	window.setTimeout(function()
                           {
                               gWebmailDebugLog.Write("Webmail: Webmail.js : WebmailStartUP - removeEventListener");
@@ -80,6 +90,7 @@ function WebmailStartUp()
 }
 
 
+
 function WebmailShutDown()
 {
     gWebmailDebugLog.Write("Webmail : Webmail.js : WebmailShutDown - START");
@@ -92,6 +103,8 @@ function WebmailShutDown()
     
     gWebmailDebugLog.Write("Webmail: Webmail.js : WebmailShutDown - WebmailStop == true");
     if  (gPOP) gPOP.Stop(); //stop pop server
-  
+
+    g_AccountWizard.deleteISP();  // delete wedmail.rdf file
+     
     gWebmailDebugLog.Write("Webmail : Webmail.js : WebmailShutDown - END");
 }
