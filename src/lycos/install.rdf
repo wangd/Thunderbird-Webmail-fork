@@ -7,14 +7,14 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
 		<em:id>{10e6e940-8a9c-11d9-9669-0800200c9a66}</em:id>
 		<em:name>Lycos</em:name>
-		<em:version>0.2.9+</em:version>
+		<em:version>0.1.0</em:version>
 		<em:description>Lycos component for Web-Mail extension</em:description>
 		<em:creator>ComodoDragon</em:creator>
 		<em:homepageURL>http://webmail.mozdev.org</em:homepageURL>
 		<em:iconURL>chrome://lycos/skin/Lycos-SmallIcon.png</em:iconURL>
 		<em:aboutURL>chrome://lycos/content/Lycos-About.xul</em:aboutURL>
-		<!--<em:optionsURL>chrome://yahoo/content/Yahoo-Prefs.xul</em:optionsURL>-->
-		<!--<em:updateURL>http://webmail.mozdev.org/yahooUpdate.rdf</em:updateURL>-->
+		<em:optionsURL>chrome://lycos/content/Lycos-Prefs.xul</em:optionsURL>
+		<em:updateURL>http://webmail.mozdev.org/lycosUpdate.rdf</em:updateURL>
 		<em:file>
 			<Description about="urn:mozilla:extension:file:lycos.jar">
                 <em:skin>skin/classic/lycos/</em:skin>
