@@ -3,7 +3,7 @@ const nsYahooClassID = Components.ID("{bfacf8a0-6447-11d9-9669-0800200c9a66}");
 const nsYahooContactID = "@mozilla.org/Yahoo;1";
 const ExtYahooGuid = "{d7103710-6112-11d9-9669-0800200c9a66}";
 
-const patternYahooSecure = /<a href="(https:.*?)".*?>/;
+const patternYahooSecure = /<a href="(.*?https.*?)".*?>/;
 const patternYahooForm = /<form.*?name=login_form.*?>[\S\d\s\r\n]*?<\/form>/gm;
 const patternYahooAction = /<form.*?action="(.*?)".*?>/;
 const patternYahooLogIn = /<input type=hidden name=.*?value=.*?>/gm;
@@ -315,7 +315,34 @@ nsYahoo.prototype =
                     mainObject.m_iStage++;
                 break;
                 
-                case 1: // login page               
+                case 1: //bounce
+                    try
+                    {
+                        var szLocation =  httpChannel.getResponseHeader("Location");
+                        mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - location \n" + szLocation);  
+                    }
+                    catch(e)
+                    {
+                        throw new Error("Location header not found")
+                    } 
+                    
+                    //set cookies
+                    var szURL = ios.newURI(szLocation,null,null).prePath;
+                    var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
+                    var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
+                    mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - sending cookies - "+ aszCookie);
+                    
+                    var bResult = mainObject.httpConnection(szLocation, 
+                                                            "GET", 
+                                                            null, 
+                                                            aszCookie,
+                                                            mainObject.loginOnloadHandler);
+                                                
+                    if (!bResult) throw new Error("httpConnection returned false");
+                    mainObject.m_iStage++;
+                break;
+                
+                case 2: // login page               
                     var aLoginForm = szResponse.match(patternYahooForm);
                     if (aLoginForm == null)
                          throw new Error("error parsing yahoo login web page");
@@ -375,7 +402,7 @@ nsYahoo.prototype =
                     mainObject.m_iStage++;
                 break;
                
-                case 2: // redirect 
+                case 3: // redirect 
                     try
                     {
                         var szLocation =  httpChannel.getResponseHeader("Location");
@@ -403,7 +430,7 @@ nsYahoo.prototype =
                 break;
                
                 
-                case 3: //redirect
+                case 4: //redirect
                     var aLoginRedirect = szResponse.match(patternYahooRedirect);
                     if (aLoginRedirect == null)
                          throw new Error("error parsing yahoo login web page");
@@ -428,7 +455,7 @@ nsYahoo.prototype =
                 break;
             
                 
-                case 4: //mailbox
+                case 5: //mailbox
                     var szLocation = httpChannel.URI.spec;
                     var iIndex = szLocation.indexOf("uilogin.srt");
                     mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - page check : " + szLocation 
