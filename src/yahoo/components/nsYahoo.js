@@ -454,24 +454,52 @@ nsYahoo.prototype =
                     mainObject.m_iStage++;
                 break;
             
-                
-                case 5: //mailbox
-                    var szLocation = httpChannel.URI.spec;
-                    var iIndex = szLocation.indexOf("uilogin.srt");
-                    mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - page check : " + szLocation 
-                                                        + " index = " +  iIndex );
-                    if (iIndex != -1) throw new Error("error logging in ");
+                case 5: //mail box
+                    if ( httpChannel.responseStatus == 302)
+                    {
+                        try
+                        {
+                            var szLocation =  httpChannel.getResponseHeader("Location");
+                            mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - location \n" + szLocation);  
+                        }
+                        catch(e)
+                        {
+                            throw new Error("Location header not found")
+                        } 
                     
-                    //get urls for later use
-                    mainObject.m_szLocationURI = httpChannel.URI.prePath ;
-                    mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - m_szLocationURI : "+mainObject.m_szLocationURI );
-                    var aMailBoxURI = szResponse.match(patternYahooInbox);
-                    mainObject.m_szMailboxURI = aMailBoxURI[1];
-                    mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - m_szMaiboxURI : "+mainObject.m_szMailboxURI );
-                                      
-                    //server response
-                    mainObject.serverComms("+OK Your in\r\n");
-                    mainObject.m_bAuthorised = true;
+                        //set cookies
+                        var szURL = ios.newURI(szLocation,null,null).prePath;
+                        var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
+                        var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
+                        mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - sending cookies - "+ aszCookie);
+                        
+                        var bResult = mainObject.httpConnection(szLocation, 
+                                                                "GET", 
+                                                                null, 
+                                                                aszCookie,
+                                                                mainObject.loginOnloadHandler);
+                                                    
+                        if (!bResult) throw new Error("httpConnection returned false");
+                    }
+                    else
+                    {
+                        var szLocation = httpChannel.URI.spec;
+                        var iIndex = szLocation.indexOf("uilogin.srt");
+                        mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - page check : " + szLocation 
+                                                            + " index = " +  iIndex );
+                        if (iIndex != -1) throw new Error("error logging in ");
+                        
+                        //get urls for later use
+                        mainObject.m_szLocationURI = httpChannel.URI.prePath ;
+                        mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - m_szLocationURI : "+mainObject.m_szLocationURI );
+                        var aMailBoxURI = szResponse.match(patternYahooInbox);
+                        mainObject.m_szMailboxURI = aMailBoxURI[1];
+                        mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - m_szMaiboxURI : "+mainObject.m_szMailboxURI );
+                                          
+                        //server response
+                        mainObject.serverComms("+OK Your in\r\n");
+                        mainObject.m_bAuthorised = true;
+                    }
                 break;
             };
            
@@ -932,12 +960,12 @@ nsYahoo.prototype =
     {
         try
         {
-            this.m_YahooLog.Write("nsHotmail.js - deleteMessage - START");  
-            this.m_YahooLog.Write("nsHotmail.js - deleteMessage - id " + lID ); 
+            this.m_YahooLog.Write("nsYahoo.js - deleteMessage - START");  
+            this.m_YahooLog.Write("nsYahoo.js - deleteMessage - id " + lID ); 
                   
             //create URL
             var szTempID = this.m_aszMsgIDStore[lID-1];
-            this.m_YahooLog.Write("nsHotmail.js - deleteMessage - id " + szTempID );
+            this.m_YahooLog.Write("nsYahoo.js - deleteMessage - id " + szTempID );
             
             var szPath = this.m_szLocationURI + this.m_szDeleteURL ;
             this.m_YahooLog.Write("nsYahoo.js - deleteMessage - url - "+ szPath);                       
@@ -1012,17 +1040,17 @@ nsYahoo.prototype =
     {
         try
         {
-            this.m_YahooLog.Write("nsHotmail.js - logOUT - START"); 
+            this.m_YahooLog.Write("nsYahoo.js - logOUT - START"); 
             
             this.m_bAuthorised = false;
             this.serverComms("+OK Your Out\r\n");             
                                            
-            this.m_YahooLog.Write("nsHotmail.js - logOUT - END");  
+            this.m_YahooLog.Write("nsYahoo.js - logOUT - END");  
             return true;
         }
         catch(e)
         {
-            this.m_YahooLog.DebugDump("nsHotmail.js: logOUT : Exception : " 
+            this.m_YahooLog.DebugDump("nsYahoo.js: logOUT : Exception : " 
                                       + e.name 
                                       + ".\nError message: " 
                                       + e.message);
