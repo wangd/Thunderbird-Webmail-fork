@@ -28,20 +28,7 @@ function WebmailStartUp()
                                         
         gWebmailDebugLog.Write("Webmail: Webmail.js : WebmailStartUp - START");
     
-    
-        //stop reentry - removelistener isnt working
-        var hShellService = Components.classes["@mozilla.org/appshell/appShellService;1"].
-                                                getService(Components.interfaces.nsIAppShellService);
-    	var hHiddenWindow = hShellService.hiddenDOMWindow;
-    	if (hHiddenWindow.WebmailStart == true) 
-        {
-            gWebmailDebugLog.Write("Webmail: Webmail.js : WebmailStartUp - already running");
-            return false;	
-        }
-        if (!('WebmailStop' in window)) window.WebmailStop = false;
-   	
-   	
-   	    //account wizard
+        //account wizard
    	    var oPref = new Object();
         oPref.Value = null;
         var  WebMailPrefAccess = new WebMailCommonPrefAccess();
@@ -60,18 +47,9 @@ function WebmailStartUp()
                                           getService().QueryInterface(Components.interfaces.nsIPOPConnectionManager);
            
             if (gPOP.Start())
-            {
-                window.WebmailStop = true;
-                hHiddenWindow.WebmailStart = true;
                 gWebmailDebugLog.Write("Webmail: Webmail.js : WebmailStartUp - pop server started");
-            }
             else
-            {
-                window.WebmailStop = false;
-                hHiddenWindow.WebmailStart = false;
-                gWebmailDebugLog.Write("Webmail: Webmail.js : WebmailStartUp - pop server not started");
-            }
-            
+                gWebmailDebugLog.Write("Webmail: Webmail.js : WebmailStartUp - pop server not started");           
         }
         catch(e)
         {
@@ -101,16 +79,8 @@ function WebmailStartUp()
 function WebmailShutDown()
 {
     gWebmailDebugLog.Write("Webmail : Webmail.js : WebmailShutDown - START");
-    
-    if (window.WebmailStop  != true)
-    { 
-        gWebmailDebugLog.Write("Webmail: Webmail.js : WebmailShutDown - still running");
-        return false;
-    }
-    
-    gWebmailDebugLog.Write("Webmail: Webmail.js : WebmailShutDown - WebmailStop == true");
+   
     if  (gPOP) gPOP.Stop(); //stop pop server
-    
       
     //account wizard
     g_AccountWizard.deleteISP();

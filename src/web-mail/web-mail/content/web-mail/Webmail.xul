@@ -1,9 +1,7 @@
 <?xml version = "1.0" ?>
 
-<overlay id = "WebMail"
+<overlay id = "Webmail"
          xmlns = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
     
-    <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
-    <script type="application/x-javascript" src="chrome://web-mail/content/Webmail.js"/>
-       
 </overlay> 
