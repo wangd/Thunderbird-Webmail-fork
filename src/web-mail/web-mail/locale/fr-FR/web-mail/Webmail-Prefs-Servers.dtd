@@ -1,0 +1,8 @@
+<!ENTITY MailServers.Label "Serveur de courrier">
+<!ENTITY Ports.Label "Ports">
+<!ENTITY Ports.AccessKey "P">
+<!ENTITY ServerStatus.Label "Etat du serveur">
+<!ENTITY Default.Label "par défaut 110">
+<!ENTITY Note.Label "Les ports en dessous de 1024 risquent d'être bloqués par le système d'exploitation">
+<!ENTITY Restart.Label "Un redémarrage de Thunderbird est nécessaire pour que les changements effectués soient pris en considération.">
+

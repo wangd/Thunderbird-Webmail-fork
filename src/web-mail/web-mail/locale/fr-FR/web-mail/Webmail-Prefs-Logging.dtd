@@ -1,0 +1,13 @@
+<!ENTITY Logging.Label "Journaux">
+<!ENTITY GeneralLogging.Label "Activer l'enregistrement de fichiers journaux">
+<!ENTITY GeneralLogging.AccessKey "A">
+<!ENTITY JavaScriptConsole.Label "Utiliser la console JavaScript">
+<!ENTITY JavaScriptConsole1.AccessKey "J">
+<!ENTITY LogFile.Label "Utiliser un fichier journal">
+<!ENTITY LogFile1.AccessKey "l">
+<!ENTITY Location.Label "Emplacement">
+<!ENTITY Location1.AccessKey "m">
+<!ENTITY Note.Label "Ces fichiers journaux vont contenir les noms d'utilisateurs et les mots de passe.">
+<!ENTITY Restart.Label "Un redémarrage de Thunderbird est nécessaire pour que les changements effectués soient pris en considération.">
+
+

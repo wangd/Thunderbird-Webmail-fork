@@ -1,0 +1,8 @@
+<!ENTITY Options.szTitle "Web Mail Support">
+<!ENTITY Status.Panel.szTitle "Etat">
+<!ENTITY Servers.Panel.szTitle "Serveurs">
+<!ENTITY Domains.Panel.szTitle "Domaines">
+<!ENTITY Logging.Panel.szTitle "Journaux">
+<!ENTITY Proxy.Panel.szTitle "Proxy">
+<!ENTITY Defaults.Button.Label "Par défaut">
+<!ENTITY Defaults.Button.Tip "Restaurer les paramètres par défaut.">
