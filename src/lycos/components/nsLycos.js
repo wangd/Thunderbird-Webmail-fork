@@ -176,7 +176,7 @@ nsLycos.prototype =
             try
             {
                 var szCookies =  httpChannel.getResponseHeader("Set-Cookie");
-                mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - received cookies \n" + szCookies);  
+                mainObject.m_LycosLog.Write("nsLycos.js - loginOnloadHandler - received cookies \n" + szCookies);  
                 mainObject.m_oCookies.addCookie( aszTempDomain[0], szCookies); 
             }
             catch(e)
