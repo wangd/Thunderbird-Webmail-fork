@@ -38,22 +38,22 @@
                     url="chrome://lycos/content/Lycos-Prefs-POP.xul" />  
                     
                      
-            <!-- imap 
+            <!-- imap  
             <button id="IMAPbutton"  
                       orient="vertical" 
                       class="buttonBoxButton" 
                       type="radio"
                       group="categories"
                       label="test2"/>
-            -->
-            <!-- smpt
+           -->
+            <!-- smpt 
             <button id="SMTPbutton"  
                       orient="vertical" 
                       class="buttonBoxButton" 
                       type="radio"
                       group="categories"
                       label="test3"/>
-             -->            
+           -->             
         </vbox>
         
         <vbox flex="1" id ="panel" >
