@@ -13,7 +13,7 @@
 #WebMailContent 
 {
 	margin-left: 15pt;
-	margin-right: 25pt ! important;
+	margin-right: 25pt;
 	font-size: 12pt;
 	text-align: justify;
 	line-height: 15pt;
@@ -85,6 +85,16 @@
 	color: rgb(102, 0, 204) ! important;
 }
 
+#extensiontable 
+{
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#extensiontable td 
+{
+	padding: 10px;
+}
 
 .table 
 {
