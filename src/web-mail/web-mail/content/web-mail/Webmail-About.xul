@@ -1,0 +1,36 @@
+<?xml version="1.0"?> 
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?> 
+<?xml-stylesheet href="chrome://web-mail/content/Webmail-About.css" type="text/css"?> 
+
+<!DOCTYPE dialog SYSTEM "chrome://web-mail/locale/Webmail-About.dtd">
+
+<window class="dialog"
+        title= "&WebmailAbout.Title;"
+        orient="vertical"
+        autostretch="always"
+        onload="sizeToContent()"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        id = "WebmailAboutDialog">
+        
+    <groupbox align="center" orient="horizontal">
+        <vbox>
+            <text value="&WebmailAbout.ExtName;" id = "WebmailName"/>
+            <text value="&WebmailAbout.ExtVersion;" id = "WebmailVersion"/>
+            <text value="&WebmailAbout.ExtDescription;" id = "WebmailDescription"/>
+            <text value="&WebmailAbout.ExtCreaterTitle;" id = "WebmailCreatorLabel"/>
+            <text value="&WebmailAbout.ExtCreator;" class = "WebmailCreatorText"/>
+            <text value="&WebmailAbout.ExtContributorTitle;" id = "WebmailContributorLabel"/>
+            <text value="&WebmailAbout.ExtContributorNames;" class = "WebmailCreatorText"/>
+            <text value="&WebmailAbout.ExtHome;" 
+                  id = "WebmailHomePage"
+                  onclick="window.opener.openURL('&WebmailAbout.ExtHomeURL;');"/>
+        </vbox>
+        <spacer flex="1"/>
+        <image src="chrome://web-mail/skin/Webmail-VeryLargeIcon.png"/>
+    </groupbox>
+
+    <hbox>
+        <spacer flex="1"/>
+        <button label="&WebmailAbout.ExtButton;" oncommand="window.close();"/>
+    </hbox>
+</window>

@@ -1,0 +1,54 @@
+.textBox
+{
+    margin-left: 5px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.txtStatus
+{
+    text-align: center;
+    font-size:  medium;
+    color: #000000;
+}
+
+/* status indicators*/
+#colourStatus 
+{
+    list-style-image: url("chrome://web-mail/skin/StatusColour.png")
+}
+
+/* red - error*/
+.status[value="-1"]
+{
+    -moz-image-region: rect(0px 80px 20px 60px);
+}
+
+/* grey - off*/
+.status[value="0"]
+{
+    -moz-image-region: rect(0px 20px 20px 0px);
+}
+
+
+/* amber - waiting*/
+.status[value="1"]
+{
+    -moz-image-region: rect(0px 40px 20px 20px);
+}
+/* green - go */
+.status[value= "2"]
+{
+    -moz-image-region: rect(0px 60px 20px 40px);
+}
+
+
+.information
+{
+    margin-top: 15px;
+    border: 1px solid black;
+    background-color: #FFFFCC;
+    font-size: small;
+    padding: 5px;
+}
+

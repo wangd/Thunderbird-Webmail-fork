@@ -1,0 +1,12 @@
+<!ENTITY WebmailAbout.Title "Informazioni su Webmail">
+<!ENTITY WebmailAbout.ExtName "Web Mail">
+<!ENTITY WebmailAbout.ExtVersion "versione 0.2.6">
+<!ENTITY WebmailAbout.ExtDescription "Permette di consultare i propri account di posta 'solo web' tramite Thunderbird.">
+<!ENTITY WebmailAbout.ExtCreaterTitle "Creato da:">
+<!ENTITY WebmailAbout.ExtCreator "ComodoDragon">
+<!ENTITY WebmailAbout.ExtHome "Sito web">
+<!ENTITY WebmailAbout.ExtHomeURL "http://www.eskvale.plus.com/">
+<!ENTITY WebmailAbout.ExtButton "Chiudi">
+<!ENTITY WebmailAbout.ExtContributorTitle "Collaboratori:">
+<!ENTITY WebmailAbout.ExtContributorNames "MatrixIsAllOver by eXtenZilla (it-IT)">
+

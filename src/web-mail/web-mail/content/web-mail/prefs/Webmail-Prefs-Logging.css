@@ -1,0 +1,34 @@
+.checkBox
+{
+    margin-left: 5px;
+    margin-top: 10px;
+    margin-bottom: 1px;
+}
+
+.groupBox
+{
+    margin-left: 25px;
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+
+.locationBox
+{
+    margin-left: 8px;
+}
+
+
+.information
+{
+    margin-top: 10px;
+    border: 1px solid black;
+    background-color: #FFFFCC;
+    font-size: small;
+    padding: 5px;
+}
+
+
+.DisabledLabel[disabled="true"]
+{   
+     color: GrayText;
+}

@@ -1,0 +1,68 @@
+<?xml version="1.0"?> 
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?> 
+<?xml-stylesheet href="chrome://communicator/skin/pref/pref.css"?>
+<?xml-stylesheet href="chrome://web-mail/content/prefs/Webmail-Prefs.css" type="text/css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://web-mail/locale/Webmail-Prefs.dtd">
+
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        id="WebMail-Prefs"
+        title="&Options.szTitle;"
+        style="width: 46em; height: 37em"
+        onload="InitWebmailPrefs();"
+        onunload="WebMailPrefsClose();"
+        ondialogaccept="g_bServersDirty = true; return hPrefWindow.onOK(event);"
+        ondialogcancel="return hPrefWindow.onCancel(event);">
+     
+    <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>  
+    <script type="application/x-javascript" src="chrome://web-mail/content/prefs/Webmail-Prefs.js"/>      
+    <script type="application/x-javascript" src="chrome://global/content/nsWidgetStateManager.js"/>
+    <script type="application/x-javascript" src="chrome://communicator/content/pref/nsPrefWindow.js"/>
+
+    
+    <hbox flex="1">
+
+        <vbox orient="vertical" 
+              id="prefsCategories" 
+              oncommand="switchPage(event);" 
+              lastpanel="0" onmouseover="focus();">
+        
+            <!-- servers -->
+            <button id="servers"  
+                      orient="vertical" 
+                      class="buttonBoxButton" 
+                      type="radio"
+                      group="categories"
+                      label="&Servers.Panel.szTitle;"
+                      url="chrome://web-mail/content/prefs/Webmail-Prefs-Servers.xul" />      
+                    
+            <!-- domains -->
+            <button id="domains"  
+                      orient="vertical" 
+                      class="buttonBoxButton" 
+                      type="radio"
+                      group="categories"
+                      label="&Domains.Panel.szTitle;"
+                      url="chrome://web-mail/content/prefs/Webmail-Prefs-Domains.xul" />
+            
+            <!-- logging -->
+            <button id="logging"  
+                      orient="vertical" 
+                      class="buttonBoxButton" 
+                      type="radio"
+                      group="categories"
+                      label="&Logging.Panel.szTitle;"
+                      url="chrome://web-mail/content/prefs/Webmail-Prefs-Logging.xul" />
+                      
+        </vbox>
+        
+        <vbox flex="1" id ="panel" >
+            <dialogheader id="header"  hidden="true"/>
+            <iframe id="panelFrame"
+                    name="panelFrame" 
+                    flex = "1"/>
+        </vbox>
+    </hbox> 
+
+</dialog>

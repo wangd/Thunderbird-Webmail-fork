@@ -1,0 +1,8 @@
+<!ENTITY MailServers.Label "Server di posta">
+<!ENTITY Ports.Label "Porta">
+<!ENTITY Ports.AccessKey "P">
+<!ENTITY ServerStatus.Label "Stato del server">
+<!ENTITY Default.Label "predefinita 110">
+<!ENTITY Note.Label "Le porte sotto la 1024 potrebbero essere bloccate dal S.O.">
+<!ENTITY Restart.Label "Riavviare Mozilla Thunderbird per rendere effettive le modifiche.">
+

@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://messenger/skin/prefPanels.css" type="text/css"?>
+<?xml-stylesheet href="chrome://web-mail/content/prefs/Webmail-Prefs-Domains.css" type="text/css"?>
+<?xml-stylesheet href="chrome://web-mail/content/prefs/Webmail-Prefs-Common.css" type="text/css"?>
+
+
+<!DOCTYPE dialog SYSTEM "chrome://web-mail/locale/Webmail-Prefs-Domains.dtd">
+
+
+<page xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      onload = "parent.initPanel('chrome://web-mail/content/prefs/Webmail-Prefs-Domains.xul');"
+      headertitle = "Domains"
+      class = "background">
+
+    <script type="application/x-javascript" src="chrome://web-mail/content/prefs/Webmail-Prefs-Domains.js"/>
+    <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
+    <script type="application/x-javascript" src="chrome://web-mail/content/common/CommonPrefs.js"/>  
+     
+     
+    <vbox class="text">
+        <label value="&Domains.Label;" class ="textBox" />
+        
+        <listbox id="listView" class="listbox" rows="15">
+            <listcols>
+                <listcol flex="1"/>
+            </listcols>
+        </listbox>
+        
+    </vbox>
+    
+</page>

@@ -1,0 +1,13 @@
+<!ENTITY Logging.Label "Logging">
+<!ENTITY GeneralLogging.Label "Enable logging">
+<!ENTITY GeneralLogging.AccessKey "E">
+<!ENTITY JavaScriptConsole.Label "Use JavaScript console">
+<!ENTITY JavaScriptConsole1.AccessKey "J">
+<!ENTITY LogFile.Label "Use log file">
+<!ENTITY LogFile1.AccessKey "l">
+<!ENTITY Location.Label "Location">
+<!ENTITY Location1.AccessKey "o">
+<!ENTITY Note.Label "These logs will contain usernames and passwords.">
+<!ENTITY Restart.Label "A restart of Thunderbird is required before changes take effect.">
+
+

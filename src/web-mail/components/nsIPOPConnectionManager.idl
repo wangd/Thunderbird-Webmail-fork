@@ -1,0 +1,9 @@
+#include "nsISupports.idl"
+
+[scriptable, uuid(fff3e070-4167-11d9-9669-0800200c9a66)]
+interface nsIPOPConnectionManager : nsISupports
+{
+    boolean Start();
+    boolean Stop();
+    long GetStatus();
+};

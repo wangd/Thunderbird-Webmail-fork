@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<RDF:RDF xmlns:webmail="http://www.xulplanet.com/rdf/webmail/"
+         xmlns:NC="http://home.netscape.com/NC-rdf#"
+         xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <RDF:Seq RDF:about="http://www.xulplanet.com/rdf/webmail/protocol/smtp">
+  </RDF:Seq>
+  <RDF:Seq RDF:about="http://www.xulplanet.com/rdf/webmail/protocol/imap">
+  </RDF:Seq>
+  <RDF:Seq RDF:about="http://www.xulplanet.com/rdf/webmail/protocol/pop">
+  </RDF:Seq>
+</RDF:RDF>
