@@ -9,6 +9,11 @@
 	font-size: 37pt;
 }
 
+#counter 
+{
+    float: right;
+}
+
 #mozdev-date
 {
     background-color: rgb(255,255,255) !important;
