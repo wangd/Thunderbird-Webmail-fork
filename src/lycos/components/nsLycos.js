@@ -6,6 +6,7 @@ const LycosSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xml
 const LycosFolderSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:hm=\"urn:schemas:httpmail:\">\r\n<D:prop>\r\n<D:isfolder/>\r\n<D:displayname/>\r\n<hm:special/>\r\n<D:hassubs/>\r\n<D:nosubs/>\r\n<hm:unreadcount/>\r\n<D:visiblecount/>\r\n<hm:special/>\r\n</D:prop>\r\n</D:propfind>";
 const LycosMail = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:hm=\"urn:schemas:httpmail:\" xmlns:m=\"urn:schemas:mailheader:\">\r\n<D:prop>\r\n<D:isfolder/>\r\n<hm:read/>\r\n<m:hasattachment/>\r\n<m:to/>\r\n<m:from/>\r\n<m:subject/>\r\n<m:date/>\r\n<D:getcontentlength/>\r\n</D:prop>\r\n</D:propfind>";
 const LycosFolderPattern = /<hm:msgfolderroot>(.*?)<\/hm:msgfolderroot>/;
+const LycosTrashPattern = /<hm:deleteditems>(.*?)<\/hm:deleteditems>/;
 const LycosMSGIDPattern = /[^\/]+$/;
 const LycosResponse = /<D:response>[\S\d\s\r\n]*?<\/D:response>/gm;
 const LycosID = /<D:id>(.*?)<\/D:id>/;
@@ -48,6 +49,7 @@ function nsLycos()
         this.m_szInBoxURI= null;
         this.m_szJunkMailURI = null;
         this.m_szFolderURI = null;
+        this.m_szTrashURI=null;
         this.m_aszMsgIDStore = new Array();
         this.m_aiMsgSize = new Array();
         this.m_iTotalSize = 0;
@@ -108,6 +110,16 @@ nsLycos.prototype =
             var szLocation= null;
             if (szDomain.search(/lycos.co.uk/i)!=-1) 
                 szLocation= "http://webdav.lycos.co.uk/httpmail.asp";
+            else if (szDomain.search(/lycos.es/i)!=-1)
+                szLocation= "http://webdav.lycos.es/httpmail.asp";
+            else if (szDomain.search(/lycos.de/i)!=-1)    
+                szLocation= "http://webdav.lycos.de/httpmail.asp";
+            else if (szDomain.search(/lycos.it/i)!=-1)    
+                szLocation= "http://webdav.lycos.it/httpmail.asp";
+            else if (szDomain.search(/lycos.at/i)!=-1)    
+                szLocation= "http://webdav.lycos.at/httpmail.asp";  
+            else if (szDomain.search(/lycos.nl/i)!=-1)    
+                szLocation= "http://webdav.lycos.nl/httpmail.asp";    
             else
                 throw new Error("Unknown domain");
             
@@ -263,9 +275,10 @@ nsLycos.prototype =
             {
                 mainObject.m_LycosLog.Write("nsLycos.js - loginOnloadHandler - get url - start");
                 mainObject.m_iAuth=0; //reset login counter
-                mainObject.m_LycosLog.Write("nsLycos.js - loginOnloadHandler - get folder list - start");
                 mainObject.m_szFolderURI = szResponse.match(LycosFolderPattern)[1];
                 mainObject.m_LycosLog.Write("nsLycos.js - loginOnloadHandler - get folder url - " + mainObject.m_szFolderURI);
+                mainObject.m_szTrashURI = szResponse.match(LycosTrashPattern)[1];
+                mainObject.m_LycosLog.Write("nsLycos.js - loginOnloadHandler - get trash url - " + mainObject.m_szTrashURI);
                 
                 //server response
                 mainObject.serverComms("+OK Your in\r\n");
@@ -859,9 +872,7 @@ nsLycos.prototype =
             {
                 this.m_LycosLog.Write("nsLycos.js - httpConnection - adding Destination");
                 var szMsgID =  szURL.match(LycosMSGIDPattern); 
-                var szDestination= szURL.replace(/([^\/]+)\/[^\/]+$/, "trash");
-                this.m_LycosLog.Write("nsLycos.js - httpConnection - Destination " + szDestination );
-                szDestination += "/" + szMsgID;
+                var szDestination= this.m_szTrashURI + szMsgID
                 this.m_LycosLog.Write("nsLycos.js - httpConnection - Destination " + szDestination );
                 HttpRequest.setRequestHeader("Destination", szDestination , false);
             }
