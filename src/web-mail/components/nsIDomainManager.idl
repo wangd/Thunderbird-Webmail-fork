@@ -12,16 +12,27 @@ interface nsIDomainManager : nsISupports
     // 0 = error
     // 1 = ok
     
-    //gets domainhandler id for give domain
-    long getDomain(in string Address , out string contentID );
+    //protocol = pop, imap, smtp
     
-    //adds new doamin                  
-    long newDomain(in string Address, in string contentID);
+    //gets domainhandler id for give domain
+    long getDomain(in string Address, out string contentID ); 
+    long getDomainForProtocol(in string Address,in string szProtocol , out string contentID );      
+    
+    
+    //adds new doamin   
+    long newDomain(in string Address, in string contentID);                
+    long newDomainForProtocol(in string Address,  in string szProtocol,in string contentID);  
+    
      
-    //removes given domain                 
-    long removeDomain(in string szAddrees);
+    //removes given domain       
+    long removeDomain(in string szAddrees);           
+    long removeDomainForProtocol(in string szAddrees, in string szProtocol);  
+    
     
     //gets all domains 
     long getAllDomains(out PRUint32 count,
-                       [array, size_is(count)] out string Domains);
+                      [array, size_is(count)] out string Domains);
+    long getAllDomainsForProtocol(in string szProtocol,
+                                   out PRUint32 count,
+                                   [array, size_is(count)] out string Domains);
 };

@@ -1,7 +1,6 @@
 /*****************************  Globals   *************************************/                 
 const nsDomainManagerClassID = Components.ID("{76f4dcb0-284a-11d9-9669-0800200c9a66}");
 const nsDomainManagerContactID = "@mozilla.org/DomainManager;1";
-const ExtGuid = "{3c8e8390-2cf6-11d9-9669-0800200c9a66}";
 
 
 /***********************  DomainManager ********************************/
@@ -15,11 +14,13 @@ function nsDomainManager()
             scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
 
         this.m_DomainLog = new DebugLog("webmail.logging.comms", 
-                                        ExtGuid,
+                                        "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
                                         "Domainlog"); 
         
         this.m_DomainLog.Write("nsDomainManager.js - Constructor - START");   
         this.m_bReady = false;
+        this.m_DataSource = null;
+        this.m_rdfService = null;
         this.loadDataBase();
                                 
         this.m_DomainLog.Write("nsDomainManager.js - Constructor - END");  
@@ -41,29 +42,31 @@ nsDomainManager.prototype =
         return this.m_bReady;
     },
 
-    getDomain : function(szAddress, szContentID )
+    
+    getDomainForProtocol : function(szAddress, szProtocol , szContentID )
     {
         try
         {
-            this.m_DomainLog.Write("nsDomainManager.js - getDomain - START");  
-            this.m_DomainLog.Write("nsDomainManager.js - getDomain - " +szAddress.toLowerCase() ); 
+            this.m_DomainLog.Write("nsDomainManager.js - getDomainForProtocol - START");  
+            this.m_DomainLog.Write("nsDomainManager.js - getDomainForProtocol - " 
+                                                           +szAddress.toLowerCase() + " " 
+                                                           +szProtocol.toLowerCase()); 
             
             if (!this.m_bReady) 
             {
-                this.m_DomainLog.Write("nsDomainManager.js - getDomain - DB not Loaded" );
+                this.m_DomainLog.Write("nsDomainManager.js - getDomainForProtocol - DB not Loaded" );
                 return -1; 
             }
             
             //get protocol list
-            var szProtocolResource = "http://www.xulplanet.com/rdf/webmail/protocol/pop";
-            var protocolResource = this.m_rdfService.GetResource(szProtocolResource);    
+            var protocolResource = this.getProtocolResource(szProtocol);    
             var rdfContainerUtils = Components.classes["@mozilla.org/rdf/container-utils;1"].
                                             getService(Components.interfaces.nsIRDFContainerUtils);
             
             //check for registered protocol handlers     
             if (rdfContainerUtils.IsEmpty(this.m_DataSource,protocolResource))
             {
-                this.m_DomainLog.Write("nsDomainManager.js - getDomain - Container Empty");
+                this.m_DomainLog.Write("nsDomainManager.js - getDomainForProtocol - Container Empty");
                 return false;
             }
             
@@ -73,10 +76,10 @@ nsDomainManager.prototype =
             var iIndex = rdfContainerUtils.indexOf(this.m_DataSource,protocolResource,DomainResource);
             if (iIndex == -1)
             {
-                this.m_DomainLog.Write("nsDomainManager.js - getDomain - domain handler not found");
+                this.m_DomainLog.Write("nsDomainManager.js - getDomainForProtocol - domain handler not found");
                 return false;
             }
-            this.m_DomainLog.Write("nsDomainManager.js - getDomain - Domain index " +iIndex);
+            this.m_DomainLog.Write("nsDomainManager.js - getDomainForProtocol - Domain index " +iIndex);
           
            
             //get contentId
@@ -85,20 +88,20 @@ nsDomainManager.prototype =
             if (contentID instanceof Components.interfaces.nsIRDFLiteral)
             {
                 szContentID.value = contentID.Value;
-                this.m_DomainLog.Write("nsDomainManager.js - getDomain - contentID found " +szContentID.value);
+                this.m_DomainLog.Write("nsDomainManager.js - getDomainForProtocol - contentID found " +szContentID.value);
             }
             else
             {
-                this.m_DomainLog.Write("nsDomainManager.js - getDomain - contentID == null");
+                this.m_DomainLog.Write("nsDomainManager.js - getDomainForProtocol - contentID == null");
                 return false;
             }
             
-            this.m_DomainLog.Write("nsDomainManager.js - getDomain - END");
+            this.m_DomainLog.Write("nsDomainManager.js - getDomainForProtocol - END");
             return true;
         }
         catch(e)
         {
-            this.m_DomainLog.DebugDump("nsDomainManager.js: getDomain : Exception : " 
+            this.m_DomainLog.DebugDump("nsDomainManager.js: getDomainForProtocol : Exception : " 
                                           + e.name + 
                                           ".\nError message: " 
                                           + e.message);
@@ -107,16 +110,18 @@ nsDomainManager.prototype =
     },
 
 
-    removeDomain : function(szAddress)
+    removeDomainForProtocol : function(szAddress, szProtocol)
     {
         try
         {
-            this.m_DomainLog.Write("nsDomainManager.js - removeDomain -  START" );
-            this.m_DomainLog.Write("nsDomainManager.js - removeDomain - " + szAddress.toLowerCase() );
+            this.m_DomainLog.Write("nsDomainManager.js - removeDomainForProtocol -  START" );
+            this.m_DomainLog.Write("nsDomainManager.js - removeDomainForProtocol - " 
+                                                                    + szAddress + " "
+                                                                    + szProtocol);
               
             if (!this.m_bReady) 
             {
-                this.m_DomainLog.Write("nsDomainManager.js - removeDomain - DB not Loaded" );
+                this.m_DomainLog.Write("nsDomainManager.js - removeDomainForProtocol - DB not Loaded" );
                 return -1; 
             }        
             
@@ -125,7 +130,7 @@ nsDomainManager.prototype =
             var rdfContainerUtils = Components.classes["@mozilla.org/rdf/container-utils;1"].
                                             getService(Components.interfaces.nsIRDFContainerUtils);
         
-            var protocolResource = this.m_rdfService.GetResource("http://www.xulplanet.com/rdf/webmail/protocol/pop"); 
+            var protocolResource = this.getProtocolResource(szProtocol);
             var iIndex = rdfContainerUtils.indexOf(this.m_DataSource,protocolResource,DomainResource);             
             this.m_DomainLog.Write("nsDomainManager.js - removeDomain - pop " + iIndex);
                        
@@ -140,7 +145,7 @@ nsDomainManager.prototype =
             }
             catch(e)
             {
-                this.m_DomainLog.Write("nsDomainManager.js: removeDomain container: " 
+                this.m_DomainLog.Write("nsDomainManager.js: removeDomainForProtocol container: " 
                                           + e.name + 
                                           ".\nError message: " 
                                           + e.message);
@@ -163,12 +168,12 @@ nsDomainManager.prototype =
             this.m_DataSource.QueryInterface(Components.interfaces.nsIRDFRemoteDataSource);
             this.m_DataSource.Flush();  
             this.m_DataSource.QueryInterface(Components.interfaces.nsIRDFDataSource);            
-            this.m_DomainLog.Write("nsDomainManager.js - removeDomainProtocal -  END" ); 
+            this.m_DomainLog.Write("nsDomainManager.js - removeDomainForProtocol -  END" ); 
             return true;
         }
         catch(e)
         { 
-            this.m_DomainLog.DebugDump("nsDomainManager.js: removeDomainProtocal : Exception : " 
+            this.m_DomainLog.DebugDump("nsDomainManager.js: removeDomainForProtocol : Exception : " 
                                           + e.name + 
                                           ".\nError message: " 
                                           + e.message);
@@ -176,24 +181,25 @@ nsDomainManager.prototype =
         } 
     },
 
-
-    newDomain : function(szAddress, szContentID)
+    
+    newDomainForProtocol : function(szAddress, szProtocol, szContentID)
     {
         try
         {
-            this.m_DomainLog.Write("nsDomainManager.js - newDomain -  START" );
-            this.m_DomainLog.Write("nsDomainManager.js - newDomain -  " 
+            this.m_DomainLog.Write("nsDomainManager.js - newDomainForProtocol -  START" );
+            this.m_DomainLog.Write("nsDomainManager.js - newDomainForProtocol -  " 
                                                     +  "address " + szAddress.toLowerCase() 
-                                                    +  " Content " + szContentID ); 
+                                                    +  " Content " + szContentID
+                                                    +  " protocol " + szProtocol ); 
             
             if (!this.m_bReady) 
             {
-                this.m_DomainLog.Write("nsDomainManager.js - newDomain - DB not Loaded" );
+                this.m_DomainLog.Write("nsDomainManager.js - newDomainForProtocol - DB not Loaded" );
                 return -1; 
             }    
             
             //clear old entrys for the address
-            this.removeDomain(szAddress);
+            this.removeDomain(szAddress, szProtocol);
             
             //creat new entry
             var DomainResource = this.m_rdfService.GetResource("urn:"+szAddress.toLowerCase()); 
@@ -208,10 +214,7 @@ nsDomainManager.prototype =
             var container = Components.classes["@mozilla.org/rdf/container;1"].
                                                createInstance(Components.interfaces.nsIRDFContainer);
 
-            
-            var protocolResource = this.m_rdfService.GetResource("http://www.xulplanet.com/rdf/webmail/protocol/pop"); 
-            this.m_DomainLog.Write("nsDomainManager.js - newDomain - pop - " + protocolResource); 
-            container.Init(this.m_DataSource, protocolResource);  
+            container.Init(this.m_DataSource, this.getProtocolResource(szProtocol));  
             container.AppendElement(DomainResource);
  
                 
@@ -219,12 +222,12 @@ nsDomainManager.prototype =
             this.m_DataSource.Flush();  
             this.m_DataSource.QueryInterface(Components.interfaces.nsIRDFDataSource);   
             
-            this.m_DomainLog.Write("nsDomainManager.js - newDomain -  END" ); 
+            this.m_DomainLog.Write("nsDomainManager.js - newDomainForProtocol -  END" ); 
             return true;
         }
         catch(e)
         {
-            this.m_DomainLog.DebugDump("nsDomainManager.js: newDomain : Exception : " 
+            this.m_DomainLog.DebugDump("nsDomainManager.js: newDomainForProtocol : Exception : " 
                                           + e.name + 
                                           ".\nError message: " 
                                           + e.message);
@@ -232,28 +235,28 @@ nsDomainManager.prototype =
         }
     },
 
-
-    getAllDomains : function(iCount, aszDomains)
+       
+    getAllDomainsForProtocol : function(szProtocol, iCount, aszDomains)
     {
         try
         {
-            this.m_DomainLog.Write("nsDomainManager.js - getAllDomains -  START" ); 
+            this.m_DomainLog.Write("nsDomainManager.js - getAllDomainsForProtocol -  START " + szProtocol); 
             
             if (!this.m_bReady) 
             {
-                this.m_DomainLog.Write("nsDomainManager.js - getAllDomains - DB not Loaded" );
+                this.m_DomainLog.Write("nsDomainManager.js - getAllDomainsForProtocol - DB not Loaded" );
                 return -1; 
             }
             
-            var szProtocolResource = "http://www.xulplanet.com/rdf/webmail/protocol/pop";
-            var protocolResource = this.m_rdfService.GetResource(szProtocolResource);  
+           
+            var protocolResource =  this.getProtocolResource(szProtocol);
             var rdfContainerUtils = Components.classes["@mozilla.org/rdf/container-utils;1"].
                                             getService(Components.interfaces.nsIRDFContainerUtils);
             
             //check for registered protocol handlers     
             if (rdfContainerUtils.IsEmpty(this.m_DataSource,protocolResource))
             {
-                this.m_DomainLog.Write("nsDomainManager.js - getAllDomains - Container Empty");
+                this.m_DomainLog.Write("nsDomainManager.js - getAllDomainsForProtocol - Container Empty");
                 return false;
             }
             
@@ -278,7 +281,7 @@ nsDomainManager.prototype =
             }
             catch(e)
             {
-                this.m_DomainLog.Write("nsDomainManager.js: list container: " 
+                this.m_DomainLog.Write("nsDomainManager.js:  getAllDomainsForProtocol - list container: " 
                                                                       + e.name  
                                                                       +".\nError message: " 
                                                                       + e.message);
@@ -286,14 +289,14 @@ nsDomainManager.prototype =
             
             iCount.value = aTemp.length;
             aszDomains.value = aTemp;
-            this.m_DomainLog.Write("nsDomainManager.js - getAllDomains - " + iCount.value 
+            this.m_DomainLog.Write("nsDomainManager.js - getAllDomainsForProtocol - " + iCount.value 
                                                                            + aszDomains.value); 
-            this.m_DomainLog.Write("nsDomainManager.js - getAllDomains -  END" ); 
+            this.m_DomainLog.Write("nsDomainManager.js - getAllDomainsForProtocol -  END" ); 
             return true;
         }
         catch(e)
         {
-            this.m_DomainLog.DebugDump("nsDomainManager.js: getAllDomains : Exception : " 
+            this.m_DomainLog.DebugDump("nsDomainManager.js: getAllDomainsForProtocol : Exception : " 
                                           + e.name + 
                                           ".\nError message: " 
                                           + e.message);
@@ -302,6 +305,33 @@ nsDomainManager.prototype =
         }
     },
 
+
+    getProtocolResource : function(szProtocol)
+    {
+        this.m_DomainLog.Write("nsDomainManager.js - getProtocolResource -" + szProtocol +" START" ); 
+         
+        var szProtocolResource = null;
+        
+        switch(szProtocol.toLowerCase())
+        {
+            case "pop":  
+                 szProtocolResource = "http://www.xulplanet.com/rdf/webmail/protocol/pop";
+            break;
+            
+            case "smtp":
+                szProtocolResource = "http://www.xulplanet.com/rdf/webmail/protocol/smpt";
+            break;
+            
+            case "imap":
+                szProtocolResource = "http://www.xulplanet.com/rdf/webmail/protocol/imap";
+            break;
+        }
+        
+        this.m_DomainLog.Write("nsDomainManager.js - getProtocolResource - " + szProtocolResource);
+        var ProtocolResource = this.m_rdfService.GetResource(szProtocolResource);
+        this.m_DomainLog.Write("nsDomainManager.js - getProtocolResource - END");  
+        return ProtocolResource;
+    },
 
 
     loadDataBase : function()
@@ -316,7 +346,7 @@ nsDomainManager.prototype =
                                   createInstance(Components.interfaces.nsIProperties).
                                   get("ProfD", Components.interfaces.nsILocalFile);
         oNewFile.append("extensions");          //goto profile extension folder
-        oNewFile.append(ExtGuid);               //goto client extension folder
+        oNewFile.append("{3c8e8390-2cf6-11d9-9669-0800200c9a66}"); //goto client extension folder
         oNewFile.append("database.rdf");       //goto logfiles folder
         
         var szlocation =   Components.classes["@mozilla.org/network/protocol;1?name=file"]
@@ -343,6 +373,33 @@ nsDomainManager.prototype =
         this.m_DomainLog.Write("nsDomainManager.js - onEndLoad - " + this.m_bReady + " DB Loaded"); 
     },
 
+
+    ///deprecated functions
+    getDomain : function(szAddress,  szContentID )
+    {
+        this.m_DomainLog.Write("nsDomainManager.js - getDomain - START - DEPRECATED FUNCTION");
+        return this.getDomainForProtocol(szAddress , "pop", szContentID );
+          
+    },
+    
+    removeDomain : function(szAddress)
+    {
+        this.m_DomainLog.Write("nsDomainManager.js - removeDomain - START - DEPRECATED FUNCTION");
+        return this.removeDomainForProtocol(szAddress, "pop");
+    },
+    
+    newDomain : function(szAddress, szContentID)
+    {
+        this.m_DomainLog.Write("nsDomainManager.js - newDomain - START - DEPRECATED FUNCTION");
+        return this.newDomainForProtocol(szAddress, "pop" ,szContentID);    
+    },
+    
+    getAllDomains : function(iCount, aszDomains)
+    {
+        this.m_DomainLog.Write("nsDomainManager.js - getAllDomains - START - DEPRECATED FUNCTION");
+        return this.getAllDomainsForProtocol("pop",  iCount, aszDomains );
+    },
+    
 /******************************************************************************/
 /***************** XPCOM  stuff ***********************************************/
 /******************************************************************************/
