@@ -83,7 +83,7 @@ function switchPage(aEvent)
 } 
 
 
-function WebMailPrefsClose()
+function LycosPrefsClose()
 {
     try
     {
