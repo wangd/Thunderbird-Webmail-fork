@@ -16,16 +16,6 @@ function LycosStartUp()
                                        "Lycos");
                                         
         g_LycosDebugLog.Write("Lycos.js : LycosStartUp - START"); 
-         
-        //stop reentry - removelistener isnt working
-        var hShellService = Components.classes["@mozilla.org/appshell/appShellService;1"].
-                                                getService(Components.interfaces.nsIAppShellService);
-    	var hHiddenWindow = hShellService.hiddenDOMWindow;
-    	if (hHiddenWindow.LycosWebmailStart == true) 
-        {
-            g_LycosDebugLog.Write("Lycos.js : LycosStartUp - STOPPED");
-            return false;	
-        }
         
         var DomainManager = Components.classes["@mozilla.org/DomainManager;1"].
                                  getService().QueryInterface(Components.interfaces.nsIDomainManager);
@@ -53,8 +43,6 @@ function LycosStartUp()
                       },
                       15);
                       
-        hHiddenWindow.LycosWebmailStart = true;
-                     
         g_LycosDebugLog.Write("Lycos.js : LycosStartUp - END ");
     }
     catch(e)
@@ -89,9 +77,12 @@ var LycosDiagnosticTest =
                       
             //get domain handler contentid for pop protocol
             var bResult = DomainManager.getDomainForProtocol("lycos.co.uk", "pop",szContentID);
+            var bResult1= DomainManager.getDomainForProtocol("lycos.it", "pop",szContentID);
+            var bResult2= DomainManager.getDomainForProtocol("lycos.at", "pop",szContentID);
+            var bResult3= DomainManager.getDomainForProtocol("lycos.de", "pop",szContentID);
             var bPass = false;
             
-            if (bResult)
+            if (bResult && bResult1 && bResult2 && bResult3 )
             {
                 g_LycosDebugLog.Write("Lycos.js :TimerCallback - getDomain - OK");
                 
@@ -103,12 +94,18 @@ var LycosDiagnosticTest =
                 {
                     g_LycosDebugLog.Write("Lycos.js :TimerCallback - IDs failed - resetting");
                     DomainManager.newDomainForProtocol("lycos.co.uk", "pop" ,cszLycosContentID);
+                    DomainManager.newDomainForProtocol("lycos.it", "pop" ,cszLycosContentID);
+                    DomainManager.newDomainForProtocol("lycos.at", "pop",cszLycosContentID);
+                    DomainManager.newDomainForProtocol("lycos.de", "pop",cszLycosContentID);
                 }  
             }
             else
             {
                 g_LycosDebugLog.Write("Lycos.js :TimerCallback - setting domains");
                 if (!bResult) DomainManager.newDomainForProtocol("lycos.co.uk", "pop" ,cszLycosContentID);
+                if (!bResult1) DomainManager.newDomainForProtocol("lycos.it", "pop" ,cszLycosContentID);
+                if (!bResult2) DomainManager.newDomainForProtocol("lycos.at", "pop",cszLycosContentID);
+                if (!bResult3) DomainManager.newDomainForProtocol("lycos.de", "pop",cszLycosContentID);
             }       
 
             g_LycosDebugLog.Write("Lycos.js : TimerCallback - END");

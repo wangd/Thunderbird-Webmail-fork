@@ -6,7 +6,7 @@ function POPconnectionHandler(transport)
                                         "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
                                         "popConnectionlog"); 
                                         
-        this.m_POPLog.Write("nsPOPConnectionManager.js - POPconnectionHandler - START"); 
+        this.m_POPLog.Write("nsPOPConnectionHandler.js - POPconnectionHandler - START"); 
         
         this.transport = transport;
         this.bAuth = false;
@@ -28,11 +28,11 @@ function POPconnectionHandler(transport)
         var szOK  = "+OK POP3 thats cool man\r\n";
         this.ServerResponse.write(szOK,szOK.length);
         
-        this.m_POPLog.Write("nsPOPConnectionManager.js - POPconnectionHandler - END"); 
+        this.m_POPLog.Write("nsPOPConnectionHandler.js - POPconnectionHandler - END"); 
     }
     catch(e)
     {
-        this.m_POPLog.DebugDump("nsPOPConnectionManager.js: POPconnectionHandler Constructor : Exception : " 
+        this.m_POPLog.DebugDump("nsPOPConnectionHandler.js: POPconnectionHandler Constructor : Exception : " 
                                       + e.name + 
                                       ".\nError message: " 
                                       + e.message);

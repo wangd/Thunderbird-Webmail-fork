@@ -1,6 +1,6 @@
 <!ENTITY WebmailAbout.Title "Informazioni su Webmail">
 <!ENTITY WebmailAbout.ExtName "Web Mail">
-<!ENTITY WebmailAbout.ExtVersion "versione 0.3.0">
+<!ENTITY WebmailAbout.ExtVersion "versione 0.3.1">
 <!ENTITY WebmailAbout.ExtDescription "Permette di consultare i propri account di posta 'solo web' tramite Thunderbird.">
 <!ENTITY WebmailAbout.ExtCreaterTitle "Creato da:">
 <!ENTITY WebmailAbout.ExtCreator "ComodoDragon">

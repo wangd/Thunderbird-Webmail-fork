@@ -13,17 +13,17 @@ xmlns:chrome="http://www.mozilla.org/rdf/chrome#">
 		chrome:authorURL=""
 		chrome:name="lycos"
 		chrome:extension="true"
-		chrome:description="Lycos component for Web-Mail extension">
-        <!--chrome:settingsURL = "">-->
+		chrome:description="Lycos component for Web-Mail extension"
+        chrome:settingsURL = "chrome://lycos/content/Lycos-Prefs.xul">
 	</RDF:Description>
 
 
     <!-- overlay info -->
     <RDF:Seq about="urn:mozilla:overlays">
-        <RDF:li resource="chrome://messenger/content/mailWindowOverlay.xul"/>
+        <RDF:li resource="chrome://messenger/content/messenger.xul"/>
     </RDF:Seq>
-
-    <RDF:Seq about="chrome://messenger/content/mailWindowOverlay.xul">
-        <RDF:li>chrome://lycos/content/Lycos.xul</RDF:li>
+    
+    <RDF:Seq about="chrome://messenger/content/messenger.xul">
+        <RDF:li>chrome://lycos/content/Lycos-Start.xul</RDF:li>
     </RDF:Seq>
 </RDF:RDF>
