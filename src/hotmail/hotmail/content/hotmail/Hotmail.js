@@ -81,9 +81,10 @@ var HotmailDiagnosticTest =
             var bResult2 = DomainManager.getDomainForProtocol("msn.co.uk", "pop" ,szContentID);
             var bResult3 = DomainManager.getDomainForProtocol("msn.com", "pop" ,szContentID);
             var bResult4 = DomainManager.getDomainForProtocol("hotmail.it","pop" , szContentID);
+            var bResult5 = DomainManager.getDomainForProtocol("hotmail.fr","pop" , szContentID);
             var bPass = false;
             
-            if (bResult && bResult1 && bResult2 && bResult3 && bResult4)
+            if (bResult && bResult1 && bResult2 && bResult3 && bResult4 && bResult5)
             {
                 g_HotmailDebugLog.Write("Hotmail.js :HotmailStartUp - getDomain - OK");
                 
@@ -99,6 +100,7 @@ var HotmailDiagnosticTest =
                     DomainManager.newDomainForProtocol("msn.co.uk", "pop" ,cszHotmailContentID);
                     DomainManager.newDomainForProtocol("msn.com", "pop" ,cszHotmailContentID);
                     DomainManager.newDomainForProtocol("hotmail.it", "pop" ,cszHotmailContentID);
+                    DomainManager.newDomainForProtocol("hotmail.fr", "pop" ,cszHotmailContentID);
                 }  
             }
             else
@@ -109,6 +111,7 @@ var HotmailDiagnosticTest =
                 if (!bResult2)DomainManager.newDomainForProtocol("msn.co.uk", "pop" ,cszHotmailContentID);
                 if (!bResult3)DomainManager.newDomainForProtocol("msn.com", "pop" ,cszHotmailContentID);
                 if (!bResult4)DomainManager.newDomainForProtocol("hotmail.it", "pop" ,cszHotmailContentID);
+                if (!bResult5)DomainManager.newDomainForProtocol("hotmail.fr", "pop" ,cszHotmailContentID);
             }       
 
             g_HotmailDebugLog.Write("Hotmail: Hotmail.js : TimerCallback - END");
