@@ -8,9 +8,15 @@
         title= "&YahooAbout.Title;"
         orient="vertical"
         autostretch="always"
-        onload="sizeToContent()"
+        onload="AddNamesListItems();sizeToContent()"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         id = "YahooAboutDialog">
+     
+     <stringbundleset>
+	   <stringbundle id="stringsYahooAbout" src="chrome://Yahoo/locale/Yahoo-About.properties"/>
+	</stringbundleset>
+	
+    <script type="application/x-javascript" src="chrome://Yahoo/content/Yahoo-About.js"/>
         
     <groupbox align="center" orient="horizontal">
         <vbox>
@@ -20,7 +26,7 @@
             <text value="&YahooAbout.ExtCreaterTitle;" id = "YahooCreatorLabel"/>
             <text value="&YahooAbout.ExtCreator;" class = "YahooCreatorText"/>
             <text value="&YahooAbout.ExtContributorTitle;" id = "YahooContributorLabel"/>
-            <text value="&YahooAbout.ExtContributorNames;" class = "YahooCreatorText"/>
+            <vbox flex="1" id="YahooContributorBox"/>
             <text value="&YahooAbout.ExtHome;" 
                   id = "YahooHomePage"
                   onclick="window.opener.openURL('&YahooAbout.ExtHomeURL;');"/>

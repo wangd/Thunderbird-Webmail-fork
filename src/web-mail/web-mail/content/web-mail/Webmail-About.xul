@@ -8,9 +8,15 @@
         title= "&WebmailAbout.Title;"
         orient="vertical"
         autostretch="always"
-        onload="sizeToContent()"
+        onload="AddNamesListItems();sizeToContent()"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         id = "WebmailAboutDialog">
+    
+    <stringbundleset>
+	   <stringbundle id="stringsWebmailAbout" src="chrome://web-mail/locale/Webmail-About.properties"/>
+	</stringbundleset>
+	
+    <script type="application/x-javascript" src="chrome://web-mail/content/Webmail-About.js"/>
         
     <groupbox align="center" orient="horizontal">
         <vbox>
@@ -20,7 +26,7 @@
             <text value="&WebmailAbout.ExtCreaterTitle;" id = "WebmailCreatorLabel"/>
             <text value="&WebmailAbout.ExtCreator;" class = "WebmailCreatorText"/>
             <text value="&WebmailAbout.ExtContributorTitle;" id = "WebmailContributorLabel"/>
-            <text value="&WebmailAbout.ExtContributorNames;" class = "WebmailCreatorText"/>
+            <vbox flex="1" id="WebmailContributorBox"/>
             <text value="&WebmailAbout.ExtHome;" 
                   id = "WebmailHomePage"
                   onclick="window.opener.openURL('&WebmailAbout.ExtHomeURL;');"/>
