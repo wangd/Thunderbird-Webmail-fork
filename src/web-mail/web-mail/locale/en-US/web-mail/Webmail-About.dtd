@@ -1,11 +1,11 @@
 <!ENTITY WebmailAbout.Title "Webmail - About">
 <!ENTITY WebmailAbout.ExtName "Web Mail">
-<!ENTITY WebmailAbout.ExtVersion "version 0.2.6">
+<!ENTITY WebmailAbout.ExtVersion "version 0.2.7">
 <!ENTITY WebmailAbout.ExtDescription "Access web mail accounts using Thunderbird.">
 <!ENTITY WebmailAbout.ExtCreaterTitle "Created By:">
 <!ENTITY WebmailAbout.ExtCreator "ComodoDragon">
 <!ENTITY WebmailAbout.ExtHome "Home Page">
-<!ENTITY WebmailAbout.ExtHomeURL "http://www.eskvale.plus.com/">
+<!ENTITY WebmailAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY WebmailAbout.ExtButton "Close">
 <!ENTITY WebmailAbout.ExtContributorTitle "Contributors:">
 <!ENTITY WebmailAbout.ExtContributorNames "MatrixIsAllOver (it-IT)">

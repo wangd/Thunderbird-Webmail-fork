@@ -1,11 +1,11 @@
 <!ENTITY HotmailAbout.Title "Hotmail - About">
 <!ENTITY HotmailAbout.ExtName "Hotmail">
-<!ENTITY HotmailAbout.ExtVersion "version 0.3.5">
+<!ENTITY HotmailAbout.ExtVersion "version 0.3.6">
 <!ENTITY HotmailAbout.ExtDescription "Hotmail component for the Web-Mail extension.">
 <!ENTITY HotmailAbout.ExtCreaterTitle "Created By:">
 <!ENTITY HotmailAbout.ExtCreator "ComodoDragon">
 <!ENTITY HotmailAbout.ExtHome "Home Page">
-<!ENTITY HotmailAbout.ExtHomeURL "http://www.eskvale.plus.com/">
+<!ENTITY HotmailAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY HotmailAbout.ExtButton "Close">
 <!ENTITY HotmailAbout.ExtContributorTitle "Contributors:">
 <!ENTITY HotmailAbout.ExtContributorNames "MatrixIsAllOver (it-IT)">

@@ -1,11 +1,11 @@
 <!ENTITY YahooAbout.Title "Yahoo - About">
 <!ENTITY YahooAbout.ExtName "Yahoo">
-<!ENTITY YahooAbout.ExtVersion "version 0.2.6">
+<!ENTITY YahooAbout.ExtVersion "version 0.2.7">
 <!ENTITY YahooAbout.ExtDescription "Yahoo component for the Web-Mail extension.">
 <!ENTITY YahooAbout.ExtCreaterTitle "Created By:">
 <!ENTITY YahooAbout.ExtCreator "ComodoDragon">
 <!ENTITY YahooAbout.ExtHome "Home Page">
-<!ENTITY YahooAbout.ExtHomeURL "http://www.eskvale.plus.com/">
+<!ENTITY YahooAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY YahooAbout.ExtButton "Close">
 <!ENTITY YahooAbout.ExtContributorTitle "Contributors:">
 <!ENTITY YahooAbout.ExtContributorNames "MatrixIsAll (it-IT)">
