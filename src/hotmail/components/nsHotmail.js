@@ -953,12 +953,12 @@ nsHotmail.prototype =
             szMsg = szMsg.replace(/&gt;/g,">");
             szMsg = szMsg.replace(/&quot;/g, "\"");
             szMsg = szMsg.replace(/&amp;/g, "&");
-            
-            var szPOPResponse = "+OK " + szMsg.length + "\r\n";
-            szMsg = szMsg.replace(/^\./mg,"..");    //bit padding                       
+            szMsg = szMsg.replace(/^\./mg,"..");    //bit padding   
+            szMsg += "\r\n.\r\n";
+                                                    //.toString(8)
+            var szPOPResponse = "+OK " + szMsg.length + "\r\n";                  
             szPOPResponse += szMsg;
-            szPOPResponse += "\r\n.\r\n";
-                      
+
             mainObject.serverComms(szPOPResponse);           
            
             mainObject.m_HotmailLog.Write("nsHotmail.js - emailOnloadHandler - END");      
