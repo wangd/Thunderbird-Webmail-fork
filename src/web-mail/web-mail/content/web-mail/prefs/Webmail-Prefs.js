@@ -32,7 +32,7 @@ function InitWebmailPrefs()
                                        
         //create pref panel object
         hPrefWindow = new nsPrefWindow('panelFrame');      
-        if( !hPrefWindow ) throw "Failed to create prefwindow";
+        if( !hPrefWindow ) throw new Error("Failed to create prefwindow");
 
         hPrefWindow.init();
         
