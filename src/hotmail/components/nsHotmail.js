@@ -1,7 +1,7 @@
 /*****************************  Globals   *************************************/                 
 const nsHotmailClassID = Components.ID("{3f3822e0-6374-11d9-9669-0800200c9a66}"); 
 const nsHotmailContactID = "@mozilla.org/Hotmail;1";
-const ExtHotmailGuid = "{a6a33690-2c6a-11d9-9669-0800200c9a66}";
+
 
 const patternHotmailBounce = /<form.*action="(.*?)".*?>.*<input.*name="mspprawqs".*?value="(.*?)".*?>.*<input.*?name="mspppostint".*?value="(.*?)".*?>/;
 const patternHotmailLogIn = /<form.*? name="form1".*?action="(.*?)".*?>/;
@@ -48,7 +48,9 @@ function nsHotmail()
         var date = new Date();
         
         var  szLogFileName = "Hotmail Log - " + date.getHours()+ "-" + date.getMinutes() + "-"+ date.getUTCMilliseconds() +" -";
-        this.m_HotmailLog = new DebugLog("webmail.logging.comms", ExtHotmailGuid, szLogFileName); 
+        this.m_HotmailLog = new DebugLog("webmail.logging.comms", 
+                                         "{3c8e8390-2cf6-11d9-9669-0800200c9a66}", 
+                                         szLogFileName); 
         
         this.m_HotmailLog.Write("nsHotmail.js - Constructor - START");   
        
@@ -98,150 +100,26 @@ nsHotmail.prototype =
     get userName() {return this.m_szUserName;},
     set userName(userName) {return this.m_szUserName = userName;},
 
+    get passWord() {return this.m_szPassWord;},
+    set passWord(passWord) {return this.m_szPassWord = passWord;},
+    
     get bAuthorised() {return this.m_bAuthorised;},
   
     get ResponseStream() {return this.m_oResponseStream;},
     set ResponseStream(responseStream) {return this.m_oResponseStream = responseStream;},
     
     
-    serverComms : function (szMsg)
-    {
-        try
-        { 
-            this.m_HotmailLog.Write("nsHotmail.js - serverComms - START");
-            this.m_HotmailLog.Write("nsHotmail.js - serverComms msg " + szMsg);
-            var iCount = this.m_oResponseStream.write(szMsg,szMsg.length);
-            this.m_HotmailLog.Write("nsHotmail.js - serverComms sent count: " + iCount 
-                                                        +" msg length: " +szMsg.length);
-            this.m_HotmailLog.Write("nsHotmail.js - serverComms - END");  
-        }
-        catch(e)
-        {
-            this.m_HotmailLog.DebugDump("nsHotmail.js: serverComms : Exception : " 
-                                              + e.name 
-                                              + ".\nError message: " 
-                                              + e.message);
-        }
-    },
-   
-      
-    httpConnection : function (szURL, szType, szData, szCookies ,callBack)
-    {
-        try
-        {
-            this.m_HotmailLog.Write("nsHotmail.js - httpConnection - START");   
-            this.m_HotmailLog.Write("nsHotmail.js - httpConnection - " + szURL + "\n"
-                                                                    + szType + "\n"
-                                                                    + szCookies + "\n"
-                                                                    + szData );  
-            
-            
-            var ioService = Components.classes["@mozilla.org/network/io-service;1"].
-                                    getService(Components.interfaces.nsIIOService);
-      
-            var uri = ioService.newURI(szURL, null, null);
-            var channel = ioService.newChannelFromURI(uri);
-            var HttpRequest = channel.QueryInterface(Components.interfaces.nsIHttpChannel);                                     
-            HttpRequest.redirectionLimit = 0; //stops automatic redirect handling
-            
-            var component = this;             
-            
-              
-            //set cookies
-            if (szCookies)
-            {
-                this.m_HotmailLog.Write("nsHotmail.js - httpConnection - adding cookie \n" + szCookies); 
-                HttpRequest.setRequestHeader("x-CookieHack", "Hacker\r\nCookie: "  + szCookies , false);
-            }
-           
-            
-            //set data
-            if (szData)
-            {
-                this.m_HotmailLog.Write("nsHotmail.js - httpConnection - adding data");
-                
-                var uploadStream = Components.classes["@mozilla.org/io/string-input-stream;1"]
-                                    .createInstance(Components.interfaces.nsIStringInputStream);         
-                uploadStream.setData(szData, szData.length);
-        
-                var uploadChannel = channel.QueryInterface(Components.interfaces.nsIUploadChannel);
-                uploadChannel.setUploadStream(uploadStream, "application/x-www-form-urlencoded", -1); 
-            }
-            HttpRequest.requestMethod = szType;
-            
-            var listener = new this.downloadListener(callBack, this);
-            channel.asyncOpen(listener, null);  
-            
-            this.m_HotmailLog.Write("nsHotmail.js - httpConnection - END"); 
-            
-            return true;  
-        }
-        catch(e)
-        {
-            this.m_HotmailLog.DebugDump("nsHotmail.js: httpConnection : Exception : " 
-                                              + e.name 
-                                              + ".\nError message: " 
-                                              + e.message);
-            return false;
-        }
-    },
-    
-    
-    downloadListener : function(CallbackFunc, parent) 
-    {
-        return ({
-            m_data : "",
-            
-            onStartRequest : function (aRequest, aContext) 
-            {                 
-                this.m_data = "";
-            },
-            
-            
-            onDataAvailable : function (aRequest, aContext, aStream, aSourceOffset, aLength)
-            {               
-                var scriptableInputStream = Components.classes["@mozilla.org/scriptableinputstream;1"]
-                                 .createInstance(Components.interfaces.nsIScriptableInputStream);
-                scriptableInputStream.init(aStream);
-            
-                this.m_data += scriptableInputStream.read(aLength);
-            },
-            
-            
-            onStopRequest : function (aRequest, aContext, aStatus) 
-            {
-                CallbackFunc(this.m_data, aRequest, parent);
-            },
-            
-            
-            QueryInterface : function(aIID) 
-            {
-                if (aIID.equals(Components.interfaces.nsIStreamListener) ||
-                          aIID.equals(Components.interfaces.nsISupportsWeakReference) ||
-                          aIID.equals(Components.interfaces.nsIAlertListener) ||
-                          aIID.equals(Components.interfaces.nsISupports))
-                    return this;
-                
-                throw Components.results.NS_NOINTERFACE;
-            }            
-        });
-    },
-    
-    
-    
-    logIn : function(szPassword)
+    logIn : function()
     {
         try
         {
             this.m_HotmailLog.Write("nsHotmail.js - logIN - START");   
             this.m_HotmailLog.Write("nsHotmail.js - logIN - Username: " + this.m_szUserName 
-                                                   + " Password: " + szPassword 
+                                                   + " Password: " + this.m_szPassWord 
                                                    + " stream: " + this.m_oResponseStream);
             
-            if (!this.m_szUserName || !this.m_oResponseStream ) return false;
-            
-            this.m_szPassWord = szPassword;
-            
+            if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
+                     
             //get hotmail.com webpage
             var bResult = this.httpConnection("http://www.hotmail.com", 
                                               "GET", 
@@ -1071,7 +949,129 @@ nsHotmail.prototype =
     },  
     
      
+   serverComms : function (szMsg)
+    {
+        try
+        { 
+            this.m_HotmailLog.Write("nsHotmail.js - serverComms - START");
+            this.m_HotmailLog.Write("nsHotmail.js - serverComms msg " + szMsg);
+            var iCount = this.m_oResponseStream.write(szMsg,szMsg.length);
+            this.m_HotmailLog.Write("nsHotmail.js - serverComms sent count: " + iCount 
+                                                        +" msg length: " +szMsg.length);
+            this.m_HotmailLog.Write("nsHotmail.js - serverComms - END");  
+        }
+        catch(e)
+        {
+            this.m_HotmailLog.DebugDump("nsHotmail.js: serverComms : Exception : " 
+                                              + e.name 
+                                              + ".\nError message: " 
+                                              + e.message);
+        }
+    },
    
+      
+    httpConnection : function (szURL, szType, szData, szCookies ,callBack)
+    {
+        try
+        {
+            this.m_HotmailLog.Write("nsHotmail.js - httpConnection - START");   
+            this.m_HotmailLog.Write("nsHotmail.js - httpConnection - " + szURL + "\n"
+                                                                    + szType + "\n"
+                                                                    + szCookies + "\n"
+                                                                    + szData );  
+            
+            
+            var ioService = Components.classes["@mozilla.org/network/io-service;1"].
+                                    getService(Components.interfaces.nsIIOService);
+      
+            var uri = ioService.newURI(szURL, null, null);
+            var channel = ioService.newChannelFromURI(uri);
+            var HttpRequest = channel.QueryInterface(Components.interfaces.nsIHttpChannel);                                     
+            HttpRequest.redirectionLimit = 0; //stops automatic redirect handling
+            
+            var component = this;             
+            
+              
+            //set cookies
+            if (szCookies)
+            {
+                this.m_HotmailLog.Write("nsHotmail.js - httpConnection - adding cookie \n" + szCookies); 
+                HttpRequest.setRequestHeader("x-CookieHack", "Hacker\r\nCookie: "  + szCookies , false);
+            }
+           
+            
+            //set data
+            if (szData)
+            {
+                this.m_HotmailLog.Write("nsHotmail.js - httpConnection - adding data");
+                
+                var uploadStream = Components.classes["@mozilla.org/io/string-input-stream;1"]
+                                    .createInstance(Components.interfaces.nsIStringInputStream);         
+                uploadStream.setData(szData, szData.length);
+        
+                var uploadChannel = channel.QueryInterface(Components.interfaces.nsIUploadChannel);
+                uploadChannel.setUploadStream(uploadStream, "application/x-www-form-urlencoded", -1); 
+            }
+            HttpRequest.requestMethod = szType;
+            
+            var listener = new this.downloadListener(callBack, this);
+            channel.asyncOpen(listener, null);  
+            
+            this.m_HotmailLog.Write("nsHotmail.js - httpConnection - END"); 
+            
+            return true;  
+        }
+        catch(e)
+        {
+            this.m_HotmailLog.DebugDump("nsHotmail.js: httpConnection : Exception : " 
+                                              + e.name 
+                                              + ".\nError message: " 
+                                              + e.message);
+            return false;
+        }
+    },
+    
+    
+    downloadListener : function(CallbackFunc, parent) 
+    {
+        return ({
+            m_data : "",
+            
+            onStartRequest : function (aRequest, aContext) 
+            {                 
+                this.m_data = "";
+            },
+            
+            
+            onDataAvailable : function (aRequest, aContext, aStream, aSourceOffset, aLength)
+            {               
+                var scriptableInputStream = Components.classes["@mozilla.org/scriptableinputstream;1"]
+                                 .createInstance(Components.interfaces.nsIScriptableInputStream);
+                scriptableInputStream.init(aStream);
+            
+                this.m_data += scriptableInputStream.read(aLength);
+            },
+            
+            
+            onStopRequest : function (aRequest, aContext, aStatus) 
+            {
+                CallbackFunc(this.m_data, aRequest, parent);
+            },
+            
+            
+            QueryInterface : function(aIID) 
+            {
+                if (aIID.equals(Components.interfaces.nsIStreamListener) ||
+                          aIID.equals(Components.interfaces.nsISupportsWeakReference) ||
+                          aIID.equals(Components.interfaces.nsIAlertListener) ||
+                          aIID.equals(Components.interfaces.nsISupports))
+                    return this;
+                
+                throw Components.results.NS_NOINTERFACE;
+            }            
+        });
+    },
+    
                       
         
     
@@ -1082,7 +1082,7 @@ nsHotmail.prototype =
 /******************************************************************************/
     QueryInterface : function (iid)
     {
-        if (!iid.equals(Components.interfaces.nsIDomainHandler) 
+        if (!iid.equals(Components.interfaces.nsIPOPDomainHandler) 
         	                      && !iid.equals(Components.interfaces.nsISupports))
             throw Components.results.NS_ERROR_NO_INTERFACE;
             
