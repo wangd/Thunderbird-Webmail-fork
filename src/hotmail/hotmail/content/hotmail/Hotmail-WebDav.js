@@ -378,10 +378,14 @@ HotmailWebDav.prototype =
                     {
                         for (i=0; i<aszResponses.length; i++)
                         {
-                            mainObject.m_aszMsgIDStore.push(aszResponses[i].match(patternHotmailPOPHref)[1]); //mail url
+                            //mail url
+                            var szHref = aszResponses[i].match(patternHotmailPOPHref)[1];
+                            mainObject.m_HotmailLog.Write("HotmailWebDav.js - mailBoxOnloadHandler - href - "+ szHref);
+                            mainObject.m_aszMsgIDStore.push(szHref); 
                             
                             //size 
-                            var iSize = aszResponses[i].match(patternHotmailPOPSize)[1]
+                            var iSize = parseInt(aszResponses[i].match(patternHotmailPOPSize)[1]);
+                            mainObject.m_HotmailLog.Write("HotmailWebDav.js - mailBoxOnloadHandler - size - "+ iSize);
                             mainObject.m_iTotalSize += iSize;
                             mainObject.m_aiMsgSize.push(iSize);
                         }
@@ -429,10 +433,15 @@ HotmailWebDav.prototype =
                     if (aszResponses)
                     {
                         for (i=0; i<aszResponses.length; i++)
-                        {      
-                            mainObject.m_aszMsgIDStore.push(aszResponses[i].match(patternHotmailPOPHref)[1]); //mail url
+                        {   
+                            //mail url   
+                            var szHref = aszResponses[i].match(patternHotmailPOPHref)[1];
+                            mainObject.m_HotmailLog.Write("HotmailWebDav.js - mailBoxOnloadHandler - href - "+ szHref);
+                            mainObject.m_aszMsgIDStore.push(szHref); //mail url
+                            
                             //size 
-                            var iSize = aszResponses[i].match(patternHotmailPOPSize)[1]
+                            var iSize = parseInt(aszResponses[i].match(patternHotmailPOPSize)[1]);
+                            mainObject.m_HotmailLog.Write("HotmailWebDav.js - mailBoxOnloadHandler - size - "+ iSize);
                             mainObject.m_iTotalSize += iSize;
                             mainObject.m_aiMsgSize.push(iSize);
                         }
@@ -445,7 +454,7 @@ HotmailWebDav.prototype =
                 break;                    
             }                
              
-            mainObject.m_HotmailLog.Write("HotmailWebDav.js - getMessageSizes - END"); 
+            mainObject.m_HotmailLog.Write("HotmailWebDav.js - mailBoxOnloadHandler - END"); 
             return true;
         }
         catch(e)
@@ -652,7 +661,7 @@ HotmailWebDav.prototype =
                                           + ".\nError message: " 
                                           + err.message);
             
-            mainObject.serverComms("-ERR negative vibes\r\n");
+            mainObject.serverComms("-ERR webdav error\r\n");
         }
     },
     
@@ -737,7 +746,7 @@ HotmailWebDav.prototype =
                                                       + e.name 
                                                       + ".\nError message: " 
                                                       + e.message);
-            mainObject.serverComms("-ERR negative vibes\r\n");
+            mainObject.serverComms("-ERR webdav error\r\n");
         }
     },
     
