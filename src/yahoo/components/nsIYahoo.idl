@@ -1,0 +1,37 @@
+#include "nsISupports.idl"
+#include "nsIOutputStream.idl"
+
+[scriptable, uuid(4acae700-6446-11d9-9669-0800200c9a66)]
+
+//Return codes
+//1 OK
+//0 Failed 
+//-1 network error 
+//-2 ERROR 
+
+interface nsIDomainHandler : nsISupports
+{   
+    attribute string userName;
+    readonly attribute boolean bAuthorised;
+    attribute nsIOutputStream ResponseStream;
+    
+    
+    boolean logIn (in string szPassword);
+    boolean logOut();
+    
+    //stat
+    boolean getNumMessages();
+                        
+    //list
+    boolean getMessageSizes();
+    
+    //UIDL
+    boolean getMessageIDs();
+                          
+    //retr
+    boolean getMessage(in long lID);
+                        
+    //dele
+    boolean deleteMessage(in long lID);
+    
+};

@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+
+	<Description about="urn:mozilla:install-manifest">
+
+		<em:id>{d7103710-6112-11d9-9669-0800200c9a66}</em:id>
+		<em:name>Yahoo</em:name>
+		<em:version>0.2.5</em:version>
+		<em:description>Yahoo component for Web-Mail extension</em:description>
+		<em:creator>ComodoDragon</em:creator>
+		<em:homepageURL>http://www.eskvale.plus.com</em:homepageURL>
+		<em:iconURL>chrome://yahoo/skin/Yahoo-SmallIcon.png</em:iconURL>
+		<em:aboutURL>chrome://yahoo/content/Yahoo-About.xul</em:aboutURL>
+		<!--<em:optionsURL>chrome://yahoo/content/Yahoo-Prefs.xul</em:optionsURL>-->
+		<em:file>
+			<Description about="urn:mozilla:extension:file:yahoo.jar">
+                <em:skin>skin/classic/yahoo/</em:skin>
+                <em:locale>locale/en-US/yahoo/</em:locale>
+                <em:locale>locale/it-IT/yahoo/</em:locale>
+                <em:package>content/yahoo/</em:package>
+            </Description>
+		</em:file>
+
+        <em:targetApplication>
+			<Description>
+				<!-- Mozilla Thunderbird -->
+				<em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
+				<em:minVersion>0.7</em:minVersion>
+				<em:maxVersion>1.0</em:maxVersion>
+			</Description>
+		</em:targetApplication>
+
+        <em:requires>
+            <Description>
+                <!-- requires web-mail extension-->
+                <em:id>{3c8e8390-2cf6-11d9-9669-0800200c9a66}</em:id>
+                <em:minVersion>0.2.5/em:minVersion>
+                <em:maxVersion>0.3</em:maxVersion>
+            </Description>
+        </em:requires>
+	</Description>
+
+</RDF>
