@@ -895,11 +895,11 @@ nsYahoo.prototype =
                 
                 case 1: //body
                     var szMsg =  mainObject.m_szHeader;
-                    szMsg += szResponse;
+                    szMsg += szResponse;//.toString(8)
                                                                                                                          
-                    var szPOPResponse = "+OK " + szMsg.length.toString(8) + "\r\n";
+                    var szPOPResponse = "+OK " + szMsg.length + "\r\n";
                     szMsg = szMsg.replace(/^\./mg,"..");    //bit padding                       
-                    szPOPResponse += szMsg;
+                    szPOPResponse += szMsg +"\r\n\r\n";
                     szPOPResponse += "\r\n.\r\n";  //msg end
                               
                     mainObject.serverComms(szPOPResponse);           
