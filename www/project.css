@@ -12,8 +12,9 @@
 
 #WebMailContent 
 {
-	margin-left: 5pt;
-	font-size: 10pt;
+	margin-left: 15pt;
+	margin-right: 15pt;
+	font-size: 12pt;
 	text-align: justify;
 	line-height: 17pt;
 	font-family: Times New Roman, Times, serif ! important;
