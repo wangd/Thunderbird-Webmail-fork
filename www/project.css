@@ -97,13 +97,13 @@
 
 #setuplist ol
 {
-    margin-right: 50pt;
-	margin-left: 50pt;
+    margin-right: 100px;
+	margin-left: 50px;
 }
 
 #setuplist ol li
 {
-    margin-top: 30pt;
+    margin-top: 50px;
 }
 
 
