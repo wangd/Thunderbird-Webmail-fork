@@ -17,19 +17,14 @@
 #navbar 
 {
 	font-family: Times New Roman, Times, serif ! important;
-	font-size: 2em ! important;
+	font-size: 15pt ! important;
 	color: rgb(0, 0, 1) ! important;
-	background-repeat: no-repeat;
-	height: 115px;
-	background-position: center top;
 }
 
 #navbar ul 
 {
-	float: right;
 	position: relative;
 	display: inline;
-	padding-top: 55px;
 }
 
 #navbar ul li 
