@@ -8,9 +8,15 @@
         title= "&HotmailAbout.Title;"
         orient="vertical"
         autostretch="always"
-        onload="sizeToContent()"
+        onload="AddNamesListItems();sizeToContent()"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         id = "HotmailAboutDialog">
+     
+    <stringbundleset>
+	   <stringbundle id="stringsHotmailAbout" src="chrome://Hotmail/locale/Hotmail-About.properties"/>
+	</stringbundleset>
+	
+    <script type="application/x-javascript" src="chrome://Hotmail/content/Hotmail-About.js"/>
         
     <groupbox align="center" orient="horizontal">
         <vbox>
@@ -20,7 +26,7 @@
             <text value="&HotmailAbout.ExtCreaterTitle;" id = "HotmailCreatorLabel"/>
             <text value="&HotmailAbout.ExtCreator;" class = "HotmailCreatorText"/>
             <text value="&HotmailAbout.ExtContributorTitle;" id = "HotmailContributorLabel"/>
-            <text value="&HotmailAbout.ExtContributorNames;" class = "HotmailCreatorText"/>
+            <vbox flex="1" id="HotmailContributorBox"/>
             <text value="&HotmailAbout.ExtHome;" 
                   id = "HotmailHomePage"
                   onclick="window.opener.openURL('&HotmailAbout.ExtHomeURL;');"/>
