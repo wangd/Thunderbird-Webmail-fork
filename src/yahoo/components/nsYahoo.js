@@ -392,7 +392,7 @@ nsYahoo.prototype =
                                 szData += "&";
                         }
                         szData += "login=" + mainObject.m_szUserName.match(/(.*?)@/)[1].toLowerCase() + "&";
-                        szData += "passwd=" + mainObject.m_szPassWord + "&";
+                        szData += "passwd=" + encodeURIComponent(mainObject.m_szPassWord) + "&";
                         szData += ".save=Sign+In";
                         mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - login DATA \n" + szData);   
                               

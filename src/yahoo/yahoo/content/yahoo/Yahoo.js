@@ -79,11 +79,13 @@ var YahooDiagnosticTest =
             var bResult1 = DomainManager.getDomain("yahoo.es",szContentID);
             var bResult2 = DomainManager.getDomain("yahoo.co.uk", szContentID);
             var bResult3 = DomainManager.getDomain("yahoo.it",szContentID);
+            var bResult4 = DomainManager.getDomain("yahoo.com.cn",szContentID);
+            
            
             
             var bPass = false;
             
-            if (bResult && bResult1 && bResult2 && bResult3)
+            if (bResult && bResult1 && bResult2 && bResult3 && bResult4)
             {
                 g_YahooDebugLog.Write("Yahoo.js :YahooStartUp - getDomains ");
                 
@@ -97,7 +99,8 @@ var YahooDiagnosticTest =
                     DomainManager.newDomain("yahoo.com", cszYahooContentID);
                     DomainManager.newDomain("yahoo.co.uk", cszYahooContentID);
                     DomainManager.newDomain("yahoo.it", cszYahooContentID);  
-                    DomainManager.newDomain("yahoo.es", cszYahooContentID);  
+                    DomainManager.newDomain("yahoo.es", cszYahooContentID); 
+                    DomainManager.newDomain("yahoo.com.cn",cszYahooContentID); 
                 }  
             }
             else
@@ -106,7 +109,8 @@ var YahooDiagnosticTest =
                 if (!bResult) DomainManager.newDomain("yahoo.com", cszYahooContentID);
                 if (!bResult1)DomainManager.newDomain("yahoo.es", cszYahooContentID);  
                 if (!bResult2)DomainManager.newDomain("yahoo.co.uk", cszYahooContentID);
-                if (!bResult3)DomainManager.newDomain("yahoo.it", cszYahooContentID);  
+                if (!bResult3)DomainManager.newDomain("yahoo.it", cszYahooContentID); 
+                if (!bResult4)DomainManager.newDomain("yahoo.com.cn", cszYahooContentID);  
             }
                    
             g_YahooDebugLog.Write("Yahoo: Yahoo.js : TimerCallback - END");
