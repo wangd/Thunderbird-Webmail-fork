@@ -1,5 +1,15 @@
 @import url("http://www.mozdev.org/project.css");
 
+
+#project-name
+{
+	font-family: Times New Roman, Times, serif;
+	font-style: italic;
+	font-weight: normal;
+	line-height: 8pt;
+	font-size: 19pt;
+}
+
 #mozdev-date
 {
     background-color: rgb(255,255,255) !important;
