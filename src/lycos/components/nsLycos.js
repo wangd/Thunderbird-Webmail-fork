@@ -428,15 +428,17 @@ nsLycos.prototype =
                     
                     var aszResponses = szResponse.match(LycosResponse);
                     mainObject.m_LycosLog.Write("nsLycos.js - mailBoxOnloadHandler - inbox - \n" + aszResponses);
-                    
-                    for (i=0; i<aszResponses.length; i++)
+                    if (aszResponses)
                     {
-                        mainObject.m_aszMsgIDStore.push(aszResponses[i].match(LycosHref)[1]); //mail url
-                        
-                        //size                       
-                        var iSize = aszResponses[i].match(LycosSize)[1];
-                        mainObject.m_iTotalSize += iSize;
-                        mainObject.m_aiMsgSize.push(iSize); //size
+                        for (i=0; i<aszResponses.length; i++)
+                        {
+                            mainObject.m_aszMsgIDStore.push(aszResponses[i].match(LycosHref)[1]); //mail url
+                            
+                            //size 
+                            var iSize = aszResponses[i].match(LycosSize)[1]
+                            mainObject.m_iTotalSize += iSize;
+                            mainObject.m_aiMsgSize.push(aszResponses[i].match(LycosSize)[1]);
+                        }
                     }
                     
                     if (mainObject.m_bUseJunkMail)
@@ -472,9 +474,12 @@ nsLycos.prototype =
                     if (aszResponses)
                     {
                         for (i=0; i<aszResponses.length; i++)
-                        {
+                        {      
                             mainObject.m_aszMsgIDStore.push(aszResponses[i].match(LycosHref)[1]); //mail url
-                            mainObject.m_aiMsgSize.push(aszResponses[i].match(LycosSize)[1]); //size
+                            //size 
+                            var iSize = aszResponses[i].match(LycosSize)[1]
+                            mainObject.m_iTotalSize += iSize;
+                            mainObject.m_aiMsgSize.push(aszResponses[i].match(LycosSize)[1]);
                         }
                     }
                     
