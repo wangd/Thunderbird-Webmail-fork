@@ -17,16 +17,7 @@ function YahooStartUp()
                                         
         g_YahooDebugLog.Write("Yahoo: Yahoo.js : YahooStartUp - START");
     
-        //stop reentry - removelistener isnt working
-        var hShellService = Components.classes["@mozilla.org/appshell/appShellService;1"].
-                                                getService(Components.interfaces.nsIAppShellService);
-    	var hHiddenWindow = hShellService.hiddenDOMWindow;
-    	if (hHiddenWindow.YahooWebmailStart == true) 
-        {
-            g_YahooDebugLog.Write("Yahoo: Yahoo.js : YahooStartUp - STOPPED");
-            return false;	
-        }
-                 
+                     
         var DomainManager = Components.classes["@mozilla.org/DomainManager;1"].
                                  getService().QueryInterface(Components.interfaces.nsIDomainManager);
         if(DomainManager.isReady())
@@ -50,8 +41,7 @@ function YahooStartUp()
                           window.removeEventListener("load",YahooStartUp, false);
                       },
                       15);
-        
-        hHiddenWindow.YahooWebmailStart = true;            
+                  
     	g_YahooDebugLog.Write("Yahoo: Yahoo.js : YahooStartUP - END ");
     }
     catch(e)

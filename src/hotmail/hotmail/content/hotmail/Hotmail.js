@@ -17,16 +17,6 @@ function HotmailStartUp()
                                         
         g_HotmailDebugLog.Write("Hotmail: Hotmail.js : HotmailStartUp - START"); 
          
-        //stop reentry - removelistener isnt working
-        var hShellService = Components.classes["@mozilla.org/appshell/appShellService;1"].
-                                                getService(Components.interfaces.nsIAppShellService);
-    	var hHiddenWindow = hShellService.hiddenDOMWindow;
-    	if (hHiddenWindow.HotmailWebmailStart == true) 
-        {
-            g_HotmailDebugLog.Write("Hotmail: Hotmail.js : HotmailStartUp - STOPPED");
-            return false;	
-        }
-        
         var DomainManager = Components.classes["@mozilla.org/DomainManager;1"].
                                  getService().QueryInterface(Components.interfaces.nsIDomainManager);
         
@@ -52,9 +42,7 @@ function HotmailStartUp()
                           window.removeEventListener("load",HotmailStartUp, false);
                       },
                       15);
-                      
-        hHiddenWindow.HotmailWebmailStart = true;
-                     
+                    
         g_HotmailDebugLog.Write("Hotmail: Hotmail.js : HotmailStartUP - END ");
     }
     catch(e)
