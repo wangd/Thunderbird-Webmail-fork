@@ -3,5 +3,5 @@ pref("webmail.logging.comms.UseLog", false);
 pref("webmail.logging.comms.UseJSconsole", true);
 pref("webmail.logging.comms.UseFile", false);
 pref("webmail.logging.comms.FileLocation", "");
-pref("webmail.UseAccountWizard", false);
+pref("webmail.UseAccountWizard", true);
 
