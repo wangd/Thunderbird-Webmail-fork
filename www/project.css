@@ -56,10 +56,7 @@
 	padding: 10px;
 }    
 
-#mozdev-date
-{
-    background-color: rgb(255,255,255) !important;
-}
+
 
 #navbar 
 {
@@ -82,6 +79,7 @@
 	font-style: italic;
 	font-weight: lighter;
 	display: inline ! important;
+	margin-bottom: 10pt;
 }
 
 #navbar ul li a 
@@ -106,3 +104,44 @@
 {
 	padding: 10px;
 }
+
+
+#mozdev-date 
+{
+	visibility: collapse;
+}
+
+
+h1#mozdev-logo 
+{
+	background-position: center;
+	background-image: url(http://webmail.mozdev.org/WebMailTitle.png) ! important;
+	background-color: rgb(255, 255, 255) ! important;
+}
+
+
+h1#mozdev-logo a 
+{
+	color: rgb(255, 255, 255) ! important;
+	opacity: 0.495 ! important;
+	background-image: url(http://www.mozdev.org/sharedimages/mozdev-noir.png) ! important;
+	float: right ! important;
+	height: 12px;
+	background-position: right center;
+}
+
+
+#main-content-no-nav 
+{
+	margin-top: 0em;
+}
+
+
+.infoTab .infoHeader 
+{
+	background-image: url(http://webmail.mozdev.org/myTab.png)! important;;
+	background-position: left top;
+	background-color: rgb(255, 255, 255);
+}
+
+
