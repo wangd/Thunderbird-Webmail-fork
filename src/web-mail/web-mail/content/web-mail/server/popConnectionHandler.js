@@ -347,7 +347,7 @@ POPconnectionHandler.prototype.getDomainHandler = function(szUserName, szDomain)
                                               + " " 
                                               +szDomain);
                                               
-        if (DomainManager.getDomain(szDomain, szContentID)!=1)
+        if (DomainManager.getDomainForProtocol(szDomain,"pop",szContentID)!=1)
         {
             delete szContentID;
             this.m_POPLog.Write("POPconnectionHandler - getDomainHandler - DomainManger false");
@@ -361,15 +361,24 @@ POPconnectionHandler.prototype.getDomainHandler = function(szUserName, szDomain)
         {   
             delete szContentID;
             //delete bad record
-            DomainManager.removeDomain(szDomain);
+            DomainManager.removeDomainForProtocol(szDomain, "pop");
             this.m_POPLog.Write("POPconnectionHandler - getDomainHandler - DomainHandler does not exist");
             return false;
         }
         
         this.m_POPLog.Write("POPconnectionHandler - getDomainHandler - DomainHandler exist cID " +szContentID.value); 
-        this.m_DomainHandler = Components.classes[szContentID.value].createInstance();   
-        this.m_DomainHandler.QueryInterface(Components.interfaces.nsIDomainHandler);
-        this.m_POPLog.Write("POPconnectionHandler - getDomainHandler - DomainHandler created "); 
+        this.m_DomainHandler = Components.classes[szContentID.value].createInstance(); 
+        
+        try
+        {  
+            this.m_DomainHandler.QueryInterface(Components.interfaces.nsIPOPDomainHandler);
+            this.m_POPLog.Write("POPconnectionHandler - getDomainHandler - DomainHandler created "); 
+        }
+        catch(err)
+        {   
+            this.m_DomainHandler.QueryInterface(Components.interfaces.nsIDomainHandler);
+            this.m_POPLog.Write("POPconnectionHandler - getDomainHandler - DomainHandler created - DEPRECATED INTERFACE");
+        }
         
         this.m_DomainHandler.ResponseStream = this.ServerResponse;
         this.m_DomainHandler.userName = szUserName + "@" + szDomain;
