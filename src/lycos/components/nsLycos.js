@@ -209,7 +209,7 @@ nsLycos.prototype =
                 var aszCookie = mainObject.m_oCookies.findCookie(aszHost[1]);
                 mainObject.m_LycosLog.Write("nsLycos.js - loginOnloadHandler - sending cookies - "+ aszCookie);
                 
-                var bResult = mainObject.httpConnection(szURL, 
+                var bResult = mainObject.httpConnection(szLocation, 
                                                         "PROPFIND",
                                                         null,
                                                         LycosSchema, 
