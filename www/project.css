@@ -108,8 +108,8 @@
 
 .table 
 {
-    margin-left: 80px;
-	margin-right: 80px;
+    margin-left: 100px;
+	margin-right: 100px;
     /*width: 700px;*/
 	/*max-width:700px;*/
 	display: table;
@@ -117,8 +117,9 @@
 
 .row 
 {
-    margin-left: 80px;
-	margin-right: 80px;
+    margin-top: 10px;
+  /*  margin-left: 100px;*/
+/*	margin-right: 100px;*/
    /* width: 700px;*/
 /*	max-width: 700px;*/
 	display: table-row;
