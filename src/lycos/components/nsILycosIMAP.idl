@@ -1,0 +1,33 @@
+#include "nsISupports.idl"
+#include "nsIOutputStream.idl"
+
+[scriptable, uuid(86db33b0-9cb0-11d9-9669-0800200c9a66)]
+
+interface nsIIMAPDomainHandler : nsISupports
+{   
+    attribute string userName;
+    attribute string passWord;
+    attribute string tag;
+    attribute nsIOutputStream ResponseStream;
+    readonly attribute boolean bAuthorised;
+    
+    boolean logIn ();
+    boolean subscribe(in string szFolder);
+    boolean unSubscribe(in string szFolder);
+    boolean listSubscribe();
+    boolean list(in string szFolder);
+    boolean select(in string szFolder);
+    boolean fetch(in string szRange, in string szFlags);
+    boolean copy(in string szRange, in string szDestination);
+    boolean store(in string szRange, in string szData ,in string szDataItems);
+    boolean examine(in string szFolder);
+    boolean createFolder(in string szFolder);
+    boolean deleteFolder(in string szFolder);
+    boolean renameFolder(in string szOldFolderName, in string szNewFolder);
+    boolean check();
+    boolean noop();
+    boolean close();
+    boolean expunge();
+    boolean append();
+    boolean logOut();   
+};
