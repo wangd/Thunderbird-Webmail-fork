@@ -1,10 +1,11 @@
 var g_LycosDebugLog = null;
 var g_LycosTimer = null;
-
-                                  
-const cszLycosContentID = "@mozilla.org/Lycos;1";
+                              
+const cszLycosPOPContentID = "@mozilla.org/Lycos;1";
+const cszLycosIMAPContentID = "@mozilla.org/LycosIMAP;1";
 
 window.addEventListener("load", LycosStartUp, false);
+
 
 function LycosStartUp()
 {   
@@ -63,8 +64,9 @@ var LycosDiagnosticTest =
         {
             g_LycosDebugLog.Write("Lycos.js : TimerCallback -  START");
             
-            var DomainManager = Components.classes["@mozilla.org/DomainManager;1"].
-                                     getService().QueryInterface(Components.interfaces.nsIDomainManager);
+            var DomainManager = Components.classes["@mozilla.org/DomainManager;1"]
+                                          .getService()
+                                          .QueryInterface(Components.interfaces.nsIDomainManager);
             if(!DomainManager.isReady())
             {
                 g_LycosDebugLog.Write("Lycos.js : TimerCallback -  db not ready");
@@ -73,42 +75,51 @@ var LycosDiagnosticTest =
             timer.cancel();
          
             //get store ids
-            var szContentID = new Object;
+            var szContentPOPID = new Object;
+            var szContentIMAPID = new Object;
                       
             //get domain handler contentid for pop protocol
-            var bResult = DomainManager.getDomainForProtocol("lycos.co.uk", "pop",szContentID);
-            var bResult1= DomainManager.getDomainForProtocol("lycos.it", "pop",szContentID);
-            var bResult2= DomainManager.getDomainForProtocol("lycos.at", "pop",szContentID);
-            var bResult3= DomainManager.getDomainForProtocol("lycos.de", "pop",szContentID);
-            var bResult4= DomainManager.getDomainForProtocol("lycos.es", "pop",szContentID);
-            var bPass = false;
-            
-            if (bResult && bResult1 && bResult2 && bResult3 && bResult4 )
+            var bResultPOP = DomainManager.getDomainForProtocol("lycos.co.uk", "pop",szContentPOPID);
+            var bResultPOP1 = DomainManager.getDomainForProtocol("lycos.it", "pop",szContentPOPID);
+            var bResultPOP2 = DomainManager.getDomainForProtocol("lycos.at", "pop",szContentPOPID);
+            var bResultPOP3 = DomainManager.getDomainForProtocol("lycos.de", "pop",szContentPOPID);
+            var bResultPOP4 = DomainManager.getDomainForProtocol("lycos.es", "pop",szContentPOPID);
+            var bResultPOP5 = DomainManager.getDomainForProtocol("lycos.fr", "pop",szContentPOPID);
+            var bResultIMAP = DomainManager.getDomainForProtocol("lycos.co.uk", "imap",szContentIMAPID);
+           
+            if (bResultPOP && bResultPOP1 && bResultPOP2 && bResultPOP3 && bResultPOP4 && bResultPOP5
+                    && bResultIMAP)
             {
                 g_LycosDebugLog.Write("Lycos.js :TimerCallback - getDomain - OK");
                 
                 //check returned ids
-                if (szContentID.value == cszLycosContentID) bPass = true;  
-                
-                //test has failed set ids    
-                if (!bPass)
+                if (szContentPOPID.value != cszLycosPOPContentID) 
                 {
-                    g_LycosDebugLog.Write("Lycos.js :TimerCallback - IDs failed - resetting");
-                    DomainManager.newDomainForProtocol("lycos.co.uk", "pop" ,cszLycosContentID);
-                    DomainManager.newDomainForProtocol("lycos.it", "pop" ,cszLycosContentID);
-                    DomainManager.newDomainForProtocol("lycos.at", "pop",cszLycosContentID);
-                    DomainManager.newDomainForProtocol("lycos.de", "pop",cszLycosContentID);
-                     DomainManager.newDomainForProtocol("lycos.es", "pop",cszLycosContentID);
+                    g_LycosDebugLog.Write("Lycos.js :TimerCallback - POP IDs failed - resetting");
+                    DomainManager.newDomainForProtocol("lycos.co.uk", "pop" ,cszLycosPOPContentID);
+                    DomainManager.newDomainForProtocol("lycos.it", "pop" ,cszLycosPOPContentID);
+                    DomainManager.newDomainForProtocol("lycos.at", "pop",cszLycosPOPContentID);
+                    DomainManager.newDomainForProtocol("lycos.de", "pop",cszLycosPOPContentID);
+                    DomainManager.newDomainForProtocol("lycos.es", "pop",cszLycosPOPContentID);
+                    DomainManager.newDomainForProtocol("lycos.fr", "pop",cszLycosPOPContentID);
+                }
+                 
+                if (szContentIMAPID.value != cszLycosIMAPContentID) 
+                {
+                    g_LycosDebugLog.Write("Lycos.js :TimerCallback - IMAP IDs failed - resetting");
+                    DomainManager.newDomainForProtocol("lycos.co.uk", "imap" ,cszLycosIMAPContentID);
                 }  
             }
             else
             {
                 g_LycosDebugLog.Write("Lycos.js :TimerCallback - setting domains");
-                if (!bResult) DomainManager.newDomainForProtocol("lycos.co.uk", "pop" ,cszLycosContentID);
-                if (!bResult1) DomainManager.newDomainForProtocol("lycos.it", "pop" ,cszLycosContentID);
-                if (!bResult2) DomainManager.newDomainForProtocol("lycos.at", "pop",cszLycosContentID);
-                if (!bResult3) DomainManager.newDomainForProtocol("lycos.de", "pop",cszLycosContentID);
-                if (!bResult4) DomainManager.newDomainForProtocol("lycos.es", "pop",cszLycosContentID);
+                if (!bResultPOP) DomainManager.newDomainForProtocol("lycos.co.uk", "pop" ,cszLycosPOPContentID);
+                if (!bResultPOP1) DomainManager.newDomainForProtocol("lycos.it", "pop" ,cszLycosPOPContentID);
+                if (!bResultPOP2) DomainManager.newDomainForProtocol("lycos.at", "pop",cszLycosPOPContentID);
+                if (!bResultPOP3) DomainManager.newDomainForProtocol("lycos.de", "pop",cszLycosPOPContentID);
+                if (!bResultPOP4) DomainManager.newDomainForProtocol("lycos.es", "pop",cszLycosPOPContentID);
+                if (!bResultPOP5) DomainManager.newDomainForProtocol("lycos.fr", "pop",cszLycosPOPContentID);
+                if (!bResultIMAP) DomainManager.newDomainForProtocol("lycos.co.uk", "imap" ,cszLycosIMAPContentID);
             }       
 
             g_LycosDebugLog.Write("Lycos.js : TimerCallback - END");
