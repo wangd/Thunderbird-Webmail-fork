@@ -1,0 +1,9 @@
+#include "nsISupports.idl"
+
+[scriptable, uuid(53b62130-9bd3-11d9-9669-0800200c9a66)]
+interface nsIIMAPConnectionManager : nsISupports
+{
+    boolean Start();
+    boolean Stop();
+    long GetStatus();
+};
