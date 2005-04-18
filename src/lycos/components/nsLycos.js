@@ -2,18 +2,21 @@
 const nsLycosClassID = Components.ID("{222b6e70-8a87-11d9-9669-0800200c9a66}"); 
 const nsLycosContactID = "@mozilla.org/Lycos;1";
 
+const LycosMSGIDPattern = /[^\/]+$/;
+
 const LycosSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:h=\"http://schemas.microsoft.com/hotmail/\" xmlns:hm=\"urn:sc hemas:httpmail:\">\r\n<D:prop>\r\n<h:adbar/>\r\n<hm:contacts/>\r\n<hm:inbox/>\r\n<hm:outbox/>\r\n<hm:sendmsg/>\r\n<hm:sentitems/>\r\n<hm:deleteditems/>\r\n<hm:drafts/>\r\n<hm:msgfolderroot/>\r\n<h:maxpoll/>\r\n<h:sig/>\r\n</D:prop>\r\n</D:propfind>";
 const LycosFolderSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:hm=\"urn:schemas:httpmail:\">\r\n<D:prop>\r\n<D:isfolder/>\r\n<D:displayname/>\r\n<hm:special/>\r\n<D:hassubs/>\r\n<D:nosubs/>\r\n<hm:unreadcount/>\r\n<D:visiblecount/>\r\n<hm:special/>\r\n</D:prop>\r\n</D:propfind>";
-const LycosMail = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:hm=\"urn:schemas:httpmail:\" xmlns:m=\"urn:schemas:mailheader:\">\r\n<D:prop>\r\n<D:isfolder/>\r\n<hm:read/>\r\n<m:hasattachment/>\r\n<m:to/>\r\n<m:from/>\r\n<m:subject/>\r\n<m:date/>\r\n<D:getcontentlength/>\r\n</D:prop>\r\n</D:propfind>";
+const LycosMailSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:hm=\"urn:schemas:httpmail:\" xmlns:m=\"urn:schemas:mailheader:\">\r\n<D:prop>\r\n<D:isfolder/>\r\n<hm:read/>\r\n<m:hasattachment/>\r\n<m:to/>\r\n<m:from/>\r\n<m:subject/>\r\n<m:date/>\r\n<D:getcontentlength/>\r\n</D:prop>\r\n</D:propfind>";
+
+const LycosResponse = /<D:response>[\S\d\s\r\n]*?<\/D:response>/gm;
+
+const LycosHref = /<D:href>(.*?)<\/D:href>/i;
+const LycosSize = /<D:getcontentlength>(.*?)<\/D:getcontentlength>/i;
+
+const LycosJunkPattern  = /<D:href>(.*?Courrier%20ind%26eacute;sirable.*?)<\/D:href>/;
+const LycosInBoxPattern = /<D:href>(.*?inbox.*?)<\/D:href>/;
 const LycosFolderPattern = /<hm:msgfolderroot>(.*?)<\/hm:msgfolderroot>/;
 const LycosTrashPattern = /<hm:deleteditems>(.*?)<\/hm:deleteditems>/;
-const LycosJunkPattern = /<D:href>(.*?Courrier%20ind%26eacute;sirable.*?)<\/D:href>/;
-const LycosInBoxPattern = /<D:href>(.*?inbox.*?)<\/D:href>/;
-const LycosMSGIDPattern = /[^\/]+$/;
-const LycosResponse = /<D:response>[\S\d\s\r\n]*?<\/D:response>/gm;
-const LycosID = /<D:id>(.*?)<\/D:id>/;
-const LycosHref = /<D:href>(.*?)<\/D:href>/;
-const LycosSize = /<D:getcontentlength>(.*?)<\/D:getcontentlength>/;
 /***********************  Lycos ********************************/
 
 
@@ -398,7 +401,7 @@ nsLycos.prototype =
                     var bResult = mainObject.httpConnection(mainObject.m_szInBoxURI, 
                                                             "PROPFIND", 
                                                             mainObject.m_szAuthString,
-                                                            LycosMail, 
+                                                            LycosMailSchema, 
                                                             aszCookie,
                                                             mainObject.mailBoxOnloadHandler);
                                         
@@ -436,7 +439,7 @@ nsLycos.prototype =
                         var bResult = mainObject.httpConnection(mainObject.m_szJunkMailURI, 
                                                                 "PROPFIND", 
                                                                 mainObject.m_szAuthString,
-                                                                LycosMail, 
+                                                                LycosMailSchema, 
                                                                 aszCookie,
                                                                 mainObject.mailBoxOnloadHandler);
                                             
@@ -732,6 +735,8 @@ nsLycos.prototype =
             return false;
         } 
     },
+
+
 
     deleteMessageOnloadHandler : function (szResponse ,event , mainObject)
     {
