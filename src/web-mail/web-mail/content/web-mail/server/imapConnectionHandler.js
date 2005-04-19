@@ -202,7 +202,21 @@ IMAPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - noop - END");
             break;
             
-           
+            case "expunge":
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - expunge - START");
+                this.m_DomainHandler.tag = aCommand[0];
+                this.m_DomainHandler.expunge();
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - expunge - END");
+            break;
+            
+            case "examine":
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - examine - START");
+                this.m_DomainHandler.tag = aCommand[0];
+                this.m_DomainHandler.examine();
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - examine - END");
+            break;
+            
+            
             case "create":
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - create - START");
                 this.m_DomainHandler.tag = aCommand[0];
