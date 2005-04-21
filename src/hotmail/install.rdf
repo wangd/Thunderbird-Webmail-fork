@@ -22,7 +22,8 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
                 <em:locale>locale/en-US/hotmail/</em:locale>
                 <em:locale>locale/it-IT/hotmail/</em:locale>
                 <em:locale>locale/es-ES/hotmail/</em:locale>
-               <!-- <em:locale>locale/fr-FR/hotmail/</em:locale>-->
+                <em:locale>locale/fr-FR/hotmail/</em:locale>
+                <em:locale>locale/de-DE/hotmail/</em:locale>
                 <em:package>content/hotmail/</em:package>
             </Description>
 		</em:file>
