@@ -330,8 +330,21 @@ nsLycosIMAP.prototype =
             if (WebMailPrefAccess.Get("char","lycos.imap.subscribed."+this.m_szUserNameDomain,oPref))
                 szSubList = oPref.Value;
             this.m_LycosLog.Write("nsLycosIMAP.js - Subscribe - old list: " + szSubList);
+            
+            //check for new folder
+            var reg = new RegExp (szFolder,"i");
+            var bFound = false;
+            if (szSubList.length>0)
+            {
+                var aszFolder = szSubList.split("\r\n");
+                for (i=0; i<aszFolder.length; i++)
+                {
+                    if (aszFolder[i].search(reg)!=-1) bFound = true;
+                }
+            }
              
-            szSubList +=  szFolder + "\r\n";
+            if (!bFound) szSubList +=  szFolder + "\r\n";
+            
             this.m_LycosLog.Write("nsLycosIMAP.js - Subscribe - new list: " + szSubList);
             WebMailPrefAccess.Set("char","lycos.imap.subscribed."+this.m_szUserNameDomain,szSubList);
             
