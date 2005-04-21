@@ -1,0 +1,11 @@
+<!ENTITY MailServers.Label "Mail-Server">
+<!ENTITY Ports.Label "Port">
+<!ENTITY Ports.AccessKey "P">
+<!ENTITY ServerStatus.Label "Server-Status">
+<!ENTITY Default.Label "Standard: 110">
+<!ENTITY Note.Label "Ports unter 1024 könnten vom Betriebssystem blockiert werden.">
+<!ENTITY Restart.Label "Ein Neustart von Thunderbird ist erforderlich bevor die geänderten Einstellungen wirksam werden.">
+<!ENTITY AccountWizard.Label "WebMail zum Konten-Assistent hinzufügen">
+<!ENTITY AccountWizard.AccessKey "A">
+<!ENTITY AccountWizardWarning.Label "Benötigt Schreibzugriff auf den Programm-Ordner.">
+

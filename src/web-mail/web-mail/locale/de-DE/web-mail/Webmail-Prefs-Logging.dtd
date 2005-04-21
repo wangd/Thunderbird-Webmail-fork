@@ -1,0 +1,13 @@
+<!ENTITY Logging.Label "Protokoll">
+<!ENTITY GeneralLogging.Label "Protokoll aktivieren">
+<!ENTITY GeneralLogging.AccessKey "a">
+<!ENTITY JavaScriptConsole.Label "JavaScript-Konsole verwenden">
+<!ENTITY JavaScriptConsole1.AccessKey "J">
+<!ENTITY LogFile.Label "Protokoll-Datei anlegen">
+<!ENTITY LogFile1.AccessKey "D">
+<!ENTITY Location.Label "Ort">
+<!ENTITY Location1.AccessKey "O">
+<!ENTITY Note.Label "Protokoll enthält Benutzernamen und Passwörter">
+<!ENTITY Restart.Label "Ein Neustart von Thunderbird ist erforderlich bevor die geänderten Einstellungen wirksam werden.">
+
+
