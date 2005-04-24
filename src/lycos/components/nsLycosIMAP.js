@@ -877,14 +877,9 @@ nsLycosIMAP.prototype =
                             newMSG.setTo("<"+szTO+">");
                             
                             var szFROM;
-                            try
-                            {
-                                szFROM = aszResponses[i].match(LycosIMAPFrom)[1].match(/[\S\d]*@[\S\d]*/);
-                            }
-                            catch(e)
-                            {
-                                szFROM = aszResponses[i].match(LycosIMAPFrom)[1];
-                            }
+                            szFROM = aszResponses[i].match(LycosIMAPFrom)[1].match(/[\S\d]*@[\S\d]*/);
+                            if (!szFROM) szFROM = aszResponses[i].match(LycosIMAPFrom)[1];
+                            
                             mainObject.m_LycosLog.Write("nsLycosIMAP.js - selectOnloadHandler - from " + "<"+szFROM+">");
                             newMSG.setFrom("<"+szFROM+">");
                             
@@ -909,6 +904,7 @@ nsLycosIMAP.prototype =
                            
                         }
                     }
+                    aTarget[0].sortMsg();
                     
                     //send select ok message back to TB
                     var szSelectResponse= "* " +  aTarget[0].getMsgCount() + " EXISTS\r\n";
