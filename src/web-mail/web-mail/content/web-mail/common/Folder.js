@@ -147,7 +147,7 @@ Folder.prototype =
             if (!oMsg.getRead()) this.m_iUnRead++;
             
             this.m_aMSGs.push(oMsg); 
-            this.m_aMSGs = this.m_aMSGs.sort(this.sortUID);
+           
                         
             this.m_Log.Write("Folder.js - addMsg - END");
         }
@@ -160,11 +160,32 @@ Folder.prototype =
         }
     },
     
+    
+    sortMsg : function ()
+    {
+        try
+        {
+            this.m_Log.Write("Folder.js - sortMsg - START");
+            
+            this.m_aMSGs = this.m_aMSGs.sort(this.sortUID);
+                        
+            this.m_Log.Write("Folder.js - sortMsg - END");
+        }
+        catch(err)
+        {
+            this.m_Log.Write("Folder.js: sortMsg : Exception : " 
+                                          + err.name 
+                                          + ".\nError message: " 
+                                          + err.message);
+        }
+        
+    },
+    
+    
     sortUID : function (a,b)
     {
         return ((a.getUID()<b.getUID())?-1:1);
     },
-    
     
     getMsgUID : function (iStartUID, iEndUID)
     {
