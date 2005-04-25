@@ -1,0 +1,1 @@
+pref("yahoo.bUseJunkMail", true);
