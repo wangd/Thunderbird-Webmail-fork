@@ -1,0 +1,67 @@
+<?xml version="1.0"?> 
+<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?> 
+<?xml-stylesheet href="chrome://communicator/skin/pref/pref.css"?>
+<?xml-stylesheet href="chrome://yahoo/content/Yahoo-Prefs.css" type="text/css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://yahoo/locale/Yahoo-Prefs.dtd">
+
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        id="Yahoo-Prefs"
+        title="&Options.szTitle;"
+        style="width: 26em; height: 27em"
+        onload="InitYahooPrefs();"
+        onunload="YahooPrefsClose();"
+        ondialogaccept="return hPrefWindow.onOK(event);"
+        ondialogcancel="return hPrefWindow.onCancel(event);">
+     
+    <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/> 
+    <script type="application/x-javascript" src="chrome://yahoo/content/Yahoo-Prefs.js"/> 
+    <script type="application/x-javascript" src="chrome://global/content/nsWidgetStateManager.js"/>
+    <script type="application/x-javascript" src="chrome://communicator/content/pref/nsPrefWindow.js"/>
+        
+    <hbox flex="1">
+
+        <vbox orient="vertical" 
+              id="prefsCategories" 
+              oncommand="switchPage(event);" 
+              lastpanel="0" 
+              onmouseover="focus();">
+        
+            <!-- pop -->
+            <button id="POPbutton"  
+                    orient="vertical" 
+                    class="buttonBoxButton" 
+                    type="radio"
+                    group="categories"
+                    label="&POP.Panel.szTitle;"
+                    url="chrome://yahoo/content/Yahoo-Prefs-POP.xul" />  
+                    
+                     
+            <!-- imap  
+            <button id="IMAPbutton"  
+                      orient="vertical" 
+                      class="buttonBoxButton" 
+                      type="radio"
+                      group="categories"
+                      label="test2"/>
+           -->
+            <!-- smpt 
+            <button id="SMTPbutton"  
+                      orient="vertical" 
+                      class="buttonBoxButton" 
+                      type="radio"
+                      group="categories"
+                      label="test3"/>
+           -->             
+        </vbox>
+        
+        <vbox flex="1" id ="panel" >
+            <dialogheader id="header"  hidden="true"/>
+            <iframe id="panelFrame"
+                    name="panelFrame" 
+                    flex = "1"/>
+        </vbox>
+    </hbox> 
+
+</dialog>
