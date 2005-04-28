@@ -21,8 +21,6 @@
     <groupbox align="center" orient="horizontal">
         <vbox>
             <image id="Yahoo"/>
-            <!--<image src="chrome://yahoo/skin/Yahoo.png" id="YahooName"/>-->
-            <!--<text value="&YahooAbout.ExtName;" id = "YahooName"/>-->
             <text value="&YahooAbout.ExtVersion;" id = "YahooVersion"/>
             <text value="&YahooAbout.ExtDescription;" id = "YahooDescription"/>
             <text value="&YahooAbout.ExtCreaterTitle;" id = "YahooCreatorLabel"/>
