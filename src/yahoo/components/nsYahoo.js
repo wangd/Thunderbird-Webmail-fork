@@ -173,7 +173,7 @@ nsYahoo.prototype =
             HttpRequest.requestMethod = szType;
             
            // HttpRequest.setRequestHeader("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1;en-US; rv:1.7.5) Gecko/20041206 Thunderbird/1.0" , false);
-            HttpRequest.setRequestHeader("Accept-Language", "en-US" , false);
+           // HttpRequest.setRequestHeader("Accept-Language", "en-US" , false);
             
             var listener = new this.downloadListener(callBack, this);
             channel.asyncOpen(listener, null);  
