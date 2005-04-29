@@ -13,7 +13,9 @@ const patternYahooAltValue = /value=(.*?)>/;
 const patternYahooRedirect = /<a href="(.*?)">/;
 const patternYahooInbox = /<li id="inbox".*?<a href="(.*?Inbox.*?)".*?>/; 
 const patternYahooInboxFrame = /gInboxPage = "http:\/\/.*?(\/.*?)";/;
+const patternYahooWelcomeFrame = /gWelcomePage = "http:\/\/.*?(\/.*?)";/;
 const patternYahooBulkFrame = /<li id="bulk".*?><a href="(.*?)"/;
+const patternYahooInboxFrameAlt = /<li id="inbox".*?><a href="(.*?)"/;
 const patternYahooMSGIdTable = /<table id="datatable".*?>[\S\d\s\r\n]*?<\/table>/m;
 const patternYahooMsgRow = /<tr.*?>[\S\d\s\r\n]*?<\/tr>/gm;
 const patternYahooMsgID = /<a href="(.*?MsgId.*?)">/;
@@ -468,15 +470,43 @@ nsYahoo.prototype =
                             var aMailBoxURI =szResponse.match(patternYahooInbox);
                             mainObject.m_szMailboxURI = aMailBoxURI[1];
                             mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - m_szMaiboxURI : "+mainObject.m_szMailboxURI );
+                            
+                            //server response
+                            mainObject.serverComms("+OK Your in\r\n");
+                            mainObject.m_bAuthorised = true;
                         }
                         catch(e)
                         {
                             mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - m_szMaiboxURI frames found: ");
-                            var aMailBoxURI = szResponse.match(patternYahooInboxFrame);
-                            mainObject.m_szMailboxURI = aMailBoxURI[1];
-                            mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - m_szMaiboxURI : "+mainObject.m_szMailboxURI );
-                        }
-                                         
+                             
+                            var szWelcomeURI = mainObject.m_szLocationURI;
+                            szWelcomeURI += szResponse.match(patternYahooWelcomeFrame)[1];
+                            
+                            mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler -welcome: "+szWelcomeURI);
+                            var szURL = ios.newURI(szWelcomeURI,null,null).prePath;
+                            var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
+                            var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
+                            
+                            var bResult = mainObject.httpConnection(szWelcomeURI, 
+                                                                    "GET", 
+                                                                    null, 
+                                                                    aszCookie,
+                                                                    mainObject.loginOnloadHandler);
+                                                        
+                            if (!bResult) throw new Error("httpConnection returned false");
+                            mainObject.m_iStage++;
+                        }             
+                    break;
+                    
+                    case 4:// welcome page                           
+                        var szMailBox = szResponse.match(patternYahooInboxFrameAlt)[1];
+                        mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - szMailBox: "+szMailBox);
+                        mainObject.m_szMailboxURI = szMailBox;
+                         
+                        var szBulkMail = szResponse.match(patternYahooBulkFrame)[1];
+                        mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - szBulkMail: "+szBulkMail);
+                        mainObject.m_szBulkFolderURI = szBulkMail;
+                        
                         //server response
                         mainObject.serverComms("+OK Your in\r\n");
                         mainObject.m_bAuthorised = true;
