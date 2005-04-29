@@ -1,0 +1,4 @@
+<!ENTITY MailServers.Label "POP">
+<!ENTITY JunkMail.Label "Télécharger les Indésirables">
+<!ENTITY JunkMail.AccessKey "I">
+
