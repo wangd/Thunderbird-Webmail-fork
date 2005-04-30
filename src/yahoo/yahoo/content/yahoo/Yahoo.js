@@ -86,7 +86,7 @@ var YahooDiagnosticTest =
             
             var bPass = false;
             
-            if (bResult && bResult1 && bResult2 && bResult3 && bResult4 && bResult5 && bReault6)
+            if (bResult && bResult1 && bResult2 && bResult3 && bResult4 && bResult5 && bResult6)
             {
                 g_YahooDebugLog.Write("Yahoo.js :YahooStartUp - getDomains ");
                 
