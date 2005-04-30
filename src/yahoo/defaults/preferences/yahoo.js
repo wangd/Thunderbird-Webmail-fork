@@ -1,1 +1,1 @@
-pref("yahoo.bUseJunkMail", true);
+pref("yahoo.bUseJunkMail", false);

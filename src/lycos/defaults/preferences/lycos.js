@@ -1,1 +1,1 @@
-pref("lycos.bUseJunkMail", true);
+pref("lycos.bUseJunkMail", false);
