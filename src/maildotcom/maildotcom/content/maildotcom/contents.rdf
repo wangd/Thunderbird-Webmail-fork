@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+
+<RDF:RDF xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:chrome="http://www.mozilla.org/rdf/chrome#">
+
+	<RDF:Seq RDF:about="urn:mozilla:package:root">
+		<RDF:li RDF:resource="urn:mozilla:package:maildotcom"/>
+	</RDF:Seq>
+
+	<RDF:Description RDF:about="urn:mozilla:package:maildotcom"
+		chrome:displayName="MailDotCom"
+		chrome:author="ComodoDragon"
+		chrome:authorURL=""
+		chrome:name="maildotcom"
+		chrome:extension="true"
+		chrome:description="Mail.Com component for Web-Mail extension">
+        <!--chrome:settingsURL = "">-->
+	</RDF:Description>
+
+
+    <!-- overlay info -->   
+    <RDF:Seq about="urn:mozilla:overlays">
+        <RDF:li resource="chrome://messenger/content/messenger.xul"/>
+    </RDF:Seq>
+
+    <RDF:Seq about="chrome://messenger/content/messenger.xul">
+        <RDF:li>chrome://maildotcom/content/MailDotCom-Start.xul</RDF:li>
+    </RDF:Seq>
+</RDF:RDF>
