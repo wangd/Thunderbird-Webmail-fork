@@ -1,0 +1,45 @@
+<?xml version="1.0"?> 
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?> 
+<?xml-stylesheet href="chrome://maildotcom/content/MailDotCom-About.css" type="text/css"?> 
+
+<!DOCTYPE dialog SYSTEM "chrome://maildotcom/locale/MailDotCom-About.dtd">
+
+<window class="dialog"
+        title= "&MailDotComAbout.Title;"
+        orient="vertical"
+        autostretch="always"
+        onload="AddNamesMailDotComListItems();sizeToContent()"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        id = "MailDotComAboutDialog">
+     
+    <stringbundleset>
+	   <stringbundle id="stringsMailDotComAbout" src="chrome://maildotcom/locale/MailDotCom-About.properties"/>
+	</stringbundleset>
+	
+    <script type="application/x-javascript" src="chrome://maildotcom/content/MailDotCom-About.js"/>
+        
+    <groupbox align="center" orient="horizontal">
+        <vbox>
+            <hbox>
+                <spacer flex="1"/>
+                <image id="MailDotComImage"/>
+                <spacer flex="1"/>
+            </hbox>
+            <text value="&MailDotComAbout.ExtVersion;" id = "MailDotComVersion"/>
+            <text value="&MailDotComAbout.ExtDescription;" id = "MailDotComDescription"/>
+            <text value="&MailDotComAbout.ExtCreaterTitle;" id = "MailDotComCreatorLabel"/>
+            <text value="&MailDotComAbout.ExtCreator;" class = "MailDotComCreatorText"/>
+            <text value="&MailDotComAbout.ExtContributorTitle;" id = "MailDotComContributorLabel"/>
+            <vbox flex="1" id="MailDotComContributorBox"/>
+            <text value="&MailDotComAbout.ExtHome;" 
+                  id = "MailDotComHomePage"
+                  onclick="window.opener.openURL('&MailDotComAbout.ExtHomeURL;');"/>
+        </vbox>
+       
+    </groupbox>
+
+    <hbox>
+        <spacer flex="1"/>
+        <button label="&MailDotComAbout.ExtButton;" oncommand="window.close();"/>
+    </hbox>
+</window>
