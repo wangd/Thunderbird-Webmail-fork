@@ -75,10 +75,12 @@ var MailDotComDiagnosticTest =
             var szContentID = new Object;
                       
             //get domain handler contentid for pop protocol
-            var bResult = DomainManager.getDomain("mail.com", szContentID);           
+            var bResult = DomainManager.getDomain("mail.com", szContentID); 
+            var bResult1 = DomainManager.getDomain("email.com", szContentID);           
+            
             var bPass = false;
             
-            if (bResult)
+            if (bResult && bResult1)
             {
                 g_MailDotComDebugLog.Write("MailDotCom.js :MailDotComStartUp - getDomains ");
                 
@@ -90,12 +92,14 @@ var MailDotComDiagnosticTest =
                 {
                     g_MailDotComDebugLog.Write("MailDotCom.js :MailDotComStartUp - IDs failed - resetting");
                     DomainManager.newDomain("mail.com", cszMailDotComContentID);
+                    DomainManager.newDomain("email.com", cszMailDotComContentID);
                 }  
             }
             else
             {
                 g_MailDotComDebugLog.Write("MailDotCom.js :MailDotComStartUp - setting Domains");
                 if (!bResult) DomainManager.newDomain("mail.com", cszMailDotComContentID);
+                if (!bResult1) DomainManager.newDomain("email.com", cszMailDotComContentID);
             }
                    
             g_MailDotComDebugLog.Write("MailDotCom.js : TimerCallback - END");
