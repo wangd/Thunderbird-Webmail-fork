@@ -20,7 +20,12 @@
         
     <groupbox align="center" orient="horizontal">
         <vbox>
-            <text value="&HotmailAbout.ExtName;" id = "HotmailName"/>
+            <hbox>
+                <spacer flex="1"/>
+                <image id="HotmailImage"/>
+                <spacer flex="1"/>
+            </hbox>
+            <!--<text value="&HotmailAbout.ExtName;" id = "HotmailName"/>-->
             <text value="&HotmailAbout.ExtVersion;" id = "HotmailVersion"/>
             <text value="&HotmailAbout.ExtDescription;" id = "HotmailDescription"/>
             <text value="&HotmailAbout.ExtCreaterTitle;" id = "HotmailCreatorLabel"/>
@@ -31,8 +36,6 @@
                   id = "HotmailHomePage"
                   onclick="window.opener.openURL('&HotmailAbout.ExtHomeURL;');"/>
         </vbox>
-        <spacer flex="1"/>
-        <image src="chrome://hotmail/skin/Hotmail-VeryLargeIcon.png"/>
     </groupbox>
 
     <hbox>
