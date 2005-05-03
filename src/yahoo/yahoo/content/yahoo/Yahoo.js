@@ -82,11 +82,14 @@ var YahooDiagnosticTest =
             var bResult4 = DomainManager.getDomain("yahoo.com.cn",szContentID);
             var bResult5 = DomainManager.getDomain("yahoo.fr",szContentID);
             var bResult6 = DomainManager.getDomain("yahoo.de",szContentID);
+            var bResult7 = DomainManager.getDomain("yahoo.ca",szContentID);
+            
                        
             
             var bPass = false;
             
-            if (bResult && bResult1 && bResult2 && bResult3 && bResult4 && bResult5 && bResult6)
+            if (bResult && bResult1 && bResult2 && bResult3 && bResult4 && bResult5 && bResult6
+                    && bResult7)
             {
                 g_YahooDebugLog.Write("Yahoo.js :YahooStartUp - getDomains ");
                 
@@ -103,7 +106,8 @@ var YahooDiagnosticTest =
                     DomainManager.newDomain("yahoo.es", cszYahooContentID); 
                     DomainManager.newDomain("yahoo.com.cn",cszYahooContentID); 
                     DomainManager.newDomain("yahoo.fr",cszYahooContentID); 
-                    DomainManager.newDomain("yahoo.de",cszYahooContentID); 
+                    DomainManager.newDomain("yahoo.de",cszYahooContentID);
+                    DomainManager.newDomain("yahoo.ca",cszYahooContentID); 
                 }  
             }
             else
@@ -115,7 +119,8 @@ var YahooDiagnosticTest =
                 if (!bResult3)DomainManager.newDomain("yahoo.it", cszYahooContentID); 
                 if (!bResult4)DomainManager.newDomain("yahoo.com.cn", cszYahooContentID);  
                 if (!bResult5)DomainManager.newDomain("yahoo.fr", cszYahooContentID);  
-                if (!bResult6)DomainManager.newDomain("yahoo.de", cszYahooContentID);  
+                if (!bResult6)DomainManager.newDomain("yahoo.de", cszYahooContentID); 
+                if (!bResult7)DomainManager.newDomain("yahoo.ca", cszYahooContentID);  
             }
                    
             g_YahooDebugLog.Write("Yahoo: Yahoo.js : TimerCallback - END");
