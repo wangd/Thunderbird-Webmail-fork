@@ -646,8 +646,8 @@ HotmailWebDav.prototype =
             //server response
             var szMsg =  szResponse;
             szMsg = szMsg.replace(/^\./mg,"..");    //bit padding 
-            if (szMsg.lastIndexOf("\r\n") == -1) szMsg += "\r\n";
-            szMsg += ".\r\n";  //msg end 
+            szMsg += "\r\n.\r\n";//msg end 
+            
                                                                                                               
             var szPOPResponse = "+OK " + szMsg.length + "\r\n";                     
             szPOPResponse += szMsg;
