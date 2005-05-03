@@ -8,6 +8,7 @@ const patternYahooForm = /<form.*?name=login_form.*?>[\S\d\s\r\n]*?<\/form>/gm;
 const patternYahooAction = /<form.*?action="(.*?)".*?>/;
 const patternYahooLogIn = /<input type=hidden name=.*?value=.*?>/gm;
 const patternYahooName = /name="(.*?)"/;
+const patternYahooNameAlt = /name=([\S\d]*)/;
 const patternYahooValue = /value="(.*?)"/;
 const patternYahooAltValue = /value=(.*?)>/;
 const patternYahooRedirect = /<a href="(.*?)">/;
@@ -258,7 +259,16 @@ nsYahoo.prototype =
                         var szData = null;
                         for (i=0; i<aLoginData.length; i++)
                         {
-                            var szName = aLoginData[i].match(patternYahooName)[1];
+                            var szName=null;
+                            try
+                            { 
+                                szName= aLoginData[i].match(patternYahooName)[1];
+                            }
+                            catch(e)
+                            {
+                                szName= aLoginData[i].match(patternYahooNameAlt)[1];
+                            }
+                            
                             mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - loginData name " + szName);
                             
                             var szValue
