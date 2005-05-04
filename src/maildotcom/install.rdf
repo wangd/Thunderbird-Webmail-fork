@@ -19,6 +19,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 			<Description about="urn:mozilla:extension:file:maildotcom.jar">
                 <em:skin>skin/classic/maildotcom/</em:skin>
                 <em:locale>locale/en-US/maildotcom/</em:locale>
+                <em:locale>locale/de-DE/maildotcom/</em:locale>
                 <em:package>content/maildotcom/</em:package>
             </Description>
 		</em:file>
