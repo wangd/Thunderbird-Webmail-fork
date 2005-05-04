@@ -20,7 +20,12 @@
         
     <groupbox align="center" orient="horizontal">
         <vbox>
-            <text value="&LycosAbout.ExtName;" id = "LycosName"/>
+            <hbox>
+                <spacer flex="1"/>
+                <image id="LycosImage"/>
+                <spacer flex="1"/>
+            </hbox>
+            <!--<text value="&LycosAbout.ExtName;" id = "LycosName"/>-->
             <text value="&LycosAbout.ExtVersion;" id = "LycosVersion"/>
             <text value="&LycosAbout.ExtDescription;" id = "LycosDescription"/>
             <text value="&LycosAbout.ExtCreaterTitle;" id = "LycosCreatorLabel"/>
@@ -31,8 +36,6 @@
                   id = "LycosHomePage"
                   onclick="window.opener.openURL('&LycosAbout.ExtHomeURL;');"/>
         </vbox>
-        <spacer flex="1"/>
-        <image src="chrome://lycos/skin/Lycos-VeryLargeIcon.png"/>
     </groupbox>
 
     <hbox>

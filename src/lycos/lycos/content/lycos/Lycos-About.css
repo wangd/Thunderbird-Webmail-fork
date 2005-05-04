@@ -14,6 +14,14 @@
     margin-bottom: 9px;
 }
 
+
+#LycosImage
+{
+    list-style-image: url("chrome://lycos/skin/Lycos.png");
+    margin-bottom: 9px;
+}
+
+
 #LycosVersion
 {
     color: #909090;
@@ -49,8 +57,48 @@
 
 .LycosContributorText
 {
-    margin-left: 45px;
+   /* margin-left: 45px;*/
+    margin-top: 10px;
 }
+
+
+#flagImage
+{
+    margin-left: 20px;
+    list-style-image: url("chrome://lycos/skin/flags.png");
+}
+
+.flag[value="-1"]/*world*/
+{
+     -moz-image-region: rect(0px, 32px, 32px, 0px)
+}
+
+
+.flag[value="0"] /*italy*/
+{
+    -moz-image-region: rect(0px, 64px, 32px, 32px)
+}
+
+.flag[value="1"]/*spain*/
+{
+     -moz-image-region: rect(0px, 96px, 32px, 64px)
+}
+
+.flag[value="2"]/*france*/
+{
+     -moz-image-region: rect(0px, 128px, 32px, 96px)
+}
+
+.flag[value="3"]/*germany*/
+{
+     -moz-image-region: rect(0px, 160px, 32px, 128px)
+}
+
+.flag[value>"4"]/*world*/
+{
+     -moz-image-region: rect(0px, 32px, 32px, 0px)
+}
+
 
 #LycosHomePage
 {
