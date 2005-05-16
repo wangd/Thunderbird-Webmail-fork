@@ -386,10 +386,17 @@ nsYahoo.prototype =
                         var szMailBox = szResponse.match(patternYahooInboxFrameAlt)[1];
                         mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - szMailBox: "+szMailBox);
                         mainObject.m_szMailboxURI = szMailBox;
-                         
-                        var szBulkMail = szResponse.match(patternYahooBulkFrame)[1];
-                        mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - szBulkMail: "+szBulkMail);
-                        mainObject.m_szBulkFolderURI = szBulkMail;
+                        
+                        try
+                        { 
+                            var szBulkMail = szResponse.match(patternYahooBulkFrame)[1];
+                            mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - szBulkMail: "+szBulkMail);
+                            mainObject.m_szBulkFolderURI = szBulkMail;
+                        }
+                        catch(e)
+                        {
+                            mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - no junk folder");
+                        }
                         
                         //server response
                         mainObject.serverComms("+OK Your in\r\n");
@@ -496,8 +503,15 @@ nsYahoo.prototype =
         
             if (!mainObject.m_szBulkFolderURI)
             {
-                mainObject.m_szBulkFolderURI = szResponse.match(patternYahooBulkFrame)[1];
-                mainObject.m_YahooLog.Write("nsYahoo.js - mailBoxOnloadHandler - bulk URL :" + mainObject.m_szBulkFolderURI);
+                try
+                {
+                    mainObject.m_szBulkFolderURI = szResponse.match(patternYahooBulkFrame)[1];
+                    mainObject.m_YahooLog.Write("nsYahoo.js - mailBoxOnloadHandler - bulk URL :" + mainObject.m_szBulkFolderURI);
+                }
+                catch(e)
+                {
+                    mainObject.m_YahooLog.Write("nsYahoo.js - mailBoxOnloadHandler - no junk folder");
+                }
             }
                 
         
