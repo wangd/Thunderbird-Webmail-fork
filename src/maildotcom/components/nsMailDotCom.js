@@ -18,6 +18,7 @@ const patternMailDotComFolderName=/&folder=(.*?)$/;
 const patternMailDotComAddURI = /document.location.href="(.*?)"/;
 const patternMailDotComMsgTable = /<tbody>[\S\s\D\d]*<\/tbody>/igm;
 const patternMailDotComNext = /<a href="(.*?mailbox.mail.*?)" class="fl">Next<\/a>/;
+const patternMailDotComDelete = /<form action="(\/scripts\/mail\/mailbox.mail\?.ob=.*?)" method="POST" name="inBoxMessages">/;
 const patternMailDotComMsgRows = /<tr.*?>[[\S\d\s\r\n]*?<\/tr>/igm;
 const patternMailDotComMsgData = /<td.*?>[\S\d\s\r\n]*?<\/td>/igm;
 const patternMailDotComHref = /href="(.*?)"/i;
@@ -59,7 +60,8 @@ function nsMailDotCom()
         
         var date = new Date();
         
-        var  szLogFileName = "nsMailDotCom Log - " + date.getHours()+ "-" + date.getMinutes() + "-"+ date.getUTCMilliseconds() +" -";
+        var  szLogFileName = "nsMailDotCom Log - " + date.getHours()+ "-" 
+                                    + date.getMinutes() + "-"+ date.getUTCMilliseconds() +" -";
         this.m_MailDotComLog = new DebugLog("webmail.logging.comms", ExtMailDotComGuid, szLogFileName); 
         
         this.m_MailDotComLog.Write("nsMailDotCom.js - Constructor - START");   
@@ -75,6 +77,7 @@ function nsMailDotCom()
         this.m_szFolderList=null;
         this.m_szInboxURI=null;
         this.m_szTrashURI=null;
+        this.m_szDeleteURI = null;
         this.m_bAds=false;
         this.m_iBeforeAdsStage = 0;
         this.m_iTotalSize = 0; 
@@ -590,6 +593,15 @@ nsMailDotCom.prototype =
                             mainObject.m_aiMsgSize.push(iSize);    
                         }
             
+            
+                        //get delete uri
+                        if (!mainObject.m_szDeleteURI)
+                        {
+                            mainObject.m_szDeleteURI = szResponse.match(patternMailDotComDelete)[1];
+                            mainObject.m_MailDotComLog.Write("nsMailDotCom.js - mailBoxOnloadHandler - delete uri " + mainObject.m_szDeleteURI); 
+                        }
+                        
+                        
                         var aszNext = szResponse.match(patternMailDotComNext);
                         mainObject.m_MailDotComLog.Write("nsMailDotCom.js - mailBoxOnloadHandler - Next Table " + aszNext ); 
                          
@@ -816,7 +828,7 @@ nsMailDotCom.prototype =
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
                       
             //check status should be 200.
-            mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - msg :" + httpChannel.responseStatus);
+            mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - msg code :" + httpChannel.responseStatus);
             if (httpChannel.responseStatus != 200 && httpChannel.responseStatus != 302) 
                 throw new Error("error status " + httpChannel.responseStatus);   
             
@@ -871,7 +883,7 @@ nsMailDotCom.prototype =
                                                         aszCookie,
                                                         mainObject.emailOnloadHandler);
                 
-                mainObject.m_iStage = mainObject.m_iBeforeAdsStage;
+                mainObject.m_iBeforeAdsStage=mainObject.m_iStage;
                 mainObject.m_iStage= 2;                    
                 if (!bResult) throw new Error("httpConnection returned false");
             }
@@ -978,7 +990,14 @@ nsMailDotCom.prototype =
                             {
                                 
                                 var aszHTMLBody = szResponse.match(patternMailDotComHTMLBody);
-                                mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - msg body :" +aszHTMLBody);
+                                mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - msg 1 body :" +aszHTMLBody);
+                                
+                                if (!aszHTMLBody)//get everything
+                                {
+                                    aszHTMLBody = szResponse.match(patternMailDotComAttchments)[1].split(/^<HR SIZE=1>$/igm);
+                                    mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - msg 2 body :" +aszHTMLBody);
+                                }
+                                
                                 mainObject.m_szEmail += aszHTMLBody;
                             }
                             else //get plain text body
@@ -1047,19 +1066,21 @@ nsMailDotCom.prototype =
                                     switch (iContentType)
                                     {
                                         case 0: //uri
+                                            mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - adding attach start");                                            var oAttach = new AttachmentData();
                                             var oAttach = new AttachmentData();
                                             oAttach.addHeaders(szHeaders);
                                             var szURI = szBody.match(patternMailDotComAttachURI)[1];
                                             mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - attach body uri "+szURI);
                                     
-                                            oAttach.addURI(szURI);
+                                            oAttach.addURI(mainObject.m_szLocation+szURI);
                                              
                                             mainObject.m_Attachment.push(oAttach);
+                                            mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - adding attach end");
                                         break;
                                         
                                         case 1: //plain
                                             mainObject.m_szEmail+= "--" + mainObject.m_szBoundary + "\r\n";
-                                            mainObject.m_szEmail+= szHeaders + "\r\n\r\n";
+                                            mainObject.m_szEmail+= szHeaders + "\r\n";
                                             szBody = szBody.match(patternMailDotComMsgTextBody)[1];
                                             mainObject.m_szEmail+= szBody + "\r\n\r\n";
                                             mainObject.m_szEmail+= "--" + mainObject.m_szBoundary + "--\r\n";
@@ -1067,7 +1088,7 @@ nsMailDotCom.prototype =
                                         
                                         case 2: //html
                                             mainObject.m_szEmail+= "--" + mainObject.m_szBoundary + "\r\n";
-                                            mainObject.m_szEmail+= szHeaders + "\r\n\r\n";
+                                            mainObject.m_szEmail+= szHeaders + "\r\n";
                                             mainObject.m_szEmail+= szRawBody + "\r\n\r\n";
                                             mainObject.m_szEmail+= "--" + mainObject.m_szBoundary + "--\r\n";
                                         break;
@@ -1094,24 +1115,60 @@ nsMailDotCom.prototype =
                         }
                         else //download next attachment
                         {
-                            mainObject.m_iStage++;
-                        }
-                         
+                            mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - download attach");
+                            
+                            var oTemp = mainObject.m_Attachment.shift();
+                            var szTempURI = oTemp.getURI();
+                            mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - download attach uri " +szTempURI);
+                            
+                            var szTempHeaders = oTemp.getHeaders();
+                            mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - download attach headers " +szTempHeaders);
+                            
+                            
+                            mainObject.m_szEmail+= "--" + mainObject.m_szBoundary + "\r\n";
+                            mainObject.m_szEmail+= szTempHeaders + "\r\n";
+                          
+                            
+                            var szURL = ios.newURI(szTempURI,null,null).prePath;
+                            var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
+                            var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
+                
+                            var bResult = mainObject.httpConnection(szTempURI, 
+                                                                    "GET", 
+                                                                    null, 
+                                                                    aszCookie,
+                                                                    mainObject.emailOnloadHandler);
+                             
+                                         
+                            if (!bResult) throw new Error("httpConnection returned false");
+                            mainObject.m_iStage++;             
+                        }   
                     break;
                     
                     
                     case 1: //download attachments
-                       /*
-                        szMsg += szResponse;
-                        szMsg = szMsg.replace(/^\./mg,"..");    //bit padding 
-                        if (szMsg.lastIndexOf("\r\n") == -1) szMsg += "\r\n";
-                        szMsg += ".\r\n";  //msg end 
-                                                                                                                          
-                        var szPOPResponse = "+OK " + szMsg.length + "\r\n";                     
-                        szPOPResponse += szMsg;
-                                                     
-                        mainObject.serverComms(szPOPResponse);           
-                       */
+                        mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - attach downloaded");
+                          
+                        mainObject.m_szEmail+= "test" + "\r\n\r\n";
+                        mainObject.m_szEmail+= "--" + mainObject.m_szBoundary + "--\r\n";   
+                        
+                        if (mainObject.m_Attachment.length==0)
+                        {
+                            /*
+                            szMsg += szResponse;
+                            szMsg = szMsg.replace(/^\./mg,"..");    //bit padding 
+                            if (szMsg.lastIndexOf("\r\n") == -1) szMsg += "\r\n";*/
+                            mainObject.m_szEmail += "\r\n.\r\n";  //msg end 
+                                                                                                                              
+                            var szPOPResponse = "+OK " + szMsg.length + "\r\n";                     
+                            szPOPResponse += mainObject.m_szEmail;
+                                                         
+                            mainObject.serverComms(szPOPResponse);           
+                        }
+                        else // more attachments
+                        {
+                             mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - download next attach");
+                        }
                     break;
                     
                     
@@ -1119,7 +1176,7 @@ nsMailDotCom.prototype =
                         var szMailBox = szResponse.match(patternMailDotComFrame)[1];
                         if (!szMailBox) 
                             throw new Error("error parsing mail.com login web page");
-                        mainObject.m_MailDotComLog.Write("nsMailDotCom.js - loginOnloadHandler - mailbox " + szMailBox);
+                        mainObject.m_MailDotComLog.Write("nsMailDotCom.js - emailOnloadHandler - mailbox " + szMailBox);
                     
                         var szURL = ios.newURI(szMailBox,null,null).prePath;
                         var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
@@ -1133,6 +1190,7 @@ nsMailDotCom.prototype =
                                             
                         if (!bResult) throw new Error("httpConnection returned false");
                         mainObject.m_iStage= mainObject.m_iBeforeAdsStage;
+                        mainObject.m_MailDotComLog.Write("nsMailDotCom.js - emailOnloadHandler - stage " +  mainObject.m_iStage);
                     break;
                 }         
             }
@@ -1165,10 +1223,17 @@ nsMailDotCom.prototype =
             var szDest = this.m_aszMsgIDStore[lID-1];
             this.m_MailDotComLog.Write("nsMailDotCom.js - deleteMessage - id " + szDest );
             
-            this.serverComms("+OK its history\r\n");
-            return true;
-             /*  
-           
+            var szPath = this.m_szLocation + this.m_szDeleteURI;
+            this.m_MailDotComLog.Write("nsMailDotCom.js - deleteMessage - URI " + szPath );
+             
+            var szID = szDest.match(patternMailDotComMsgId)[1];
+            var szData = "folder=INBOX&order=Newest&changeview=0&mview=a&mstart=1";
+            szData += "&delete_selected=yes&move_selected=&flag_selected=&flags=&";
+            szData += "views=a&folder_name=Trash&";
+            szData += "sel_"+ szID +"=ON&";
+            szData += "matchfield=fr&mpat=";
+            this.m_MailDotComLog.Write("nsMailDotCom.js - deleteMessage - data - "+szData);
+                      
             var ios=Components.classes["@mozilla.org/network/io-service;1"].
                                     getService(Components.interfaces.nsIIOService);
                                    
@@ -1176,11 +1241,7 @@ nsMailDotCom.prototype =
             var szURL = ios.newURI(szPath,null,null).prePath;
             var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/); 
             var aszCookie = this.m_oCookies.findCookie(aszHost);
-                      
-            this.m_MailDotComLog.Write("nsMailDotCom.js - deleteMessage - data - "+ aszTempID[1]);
-            var szData = aszTempID[1] + "Mid=" + aszTempID[0].match(PatternMailDotComID)[1];
-            this.m_MailDotComLog.Write("nsMailDotCom.js - deleteMessage - data - "+ szData);
-            
+                    
             //send request
             var bResult = this.httpConnection(szPath, 
                                               "POST", 
@@ -1189,7 +1250,8 @@ nsMailDotCom.prototype =
                                               this.deleteMessageOnloadHandler);  
                                            
             if (!bResult) throw new Error("httpConnection returned false");            
-            */
+          
+          
             this.m_MailDotComLog.Write("nsMailDotCom.js - deleteMessage - END");     
             return true;
         }
@@ -1203,6 +1265,8 @@ nsMailDotCom.prototype =
         } 
     },
 
+
+
     
     deleteMessageOnloadHandler : function (szResponse ,event , mainObject)
     {
@@ -1212,13 +1276,13 @@ nsMailDotCom.prototype =
             mainObject.m_MailDotComLog.Write("nsMailDotCom.js - deleteMessageOnload :\n" + szResponse); 
            
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
-            /*
+           
             //check status should be 200.
             mainObject.m_MailDotComLog.Write("nsMailDotCom.js - deleteMessageOnload :" + httpChannel.responseStatus);
             if (httpChannel.responseStatus != 200 ) 
                 throw new Error("error status " + httpChannel.responseStatus);   
                  
-            mainObject.serverComms("+OK its history\r\n");   */   
+            mainObject.serverComms("+OK its history\r\n");    
             mainObject.m_MailDotComLog.Write("nsMailDotCom.js - deleteMessageOnload - END");      
         }
         catch(e)
@@ -1231,6 +1295,7 @@ nsMailDotCom.prototype =
         }
     },
     
+
 
 
     //cookies are deleted when the connection ends so i dont need to download pages
