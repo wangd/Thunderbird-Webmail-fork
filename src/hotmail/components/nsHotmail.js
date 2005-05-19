@@ -5,8 +5,14 @@ const nsHotmailContactID = "@mozilla.org/Hotmail;1";
 /************************Screen Rippper constants******************************/
 const patternHotmailPOPSRuri =/[^\.\/]+\.[^\.\/]+$/;
 const patternHotmailPOPSRBounce = /<form.*action="(.*?)".*?>.*<input.*name="mspprawqs".*?value="(.*?)".*?>.*<input.*?name="mspppostint".*?value="(.*?)".*?>/;
-const patternHotmailPOPSRLogIn = /<form.*? name="form1".*?action="(.*?)".*?>/;
-const patternHotmailPOPSRRefresh =/<META.*?HTTP-EQUIV="REFRESH".*?URL=(.*?)".*?>/;
+const patternHotmailPOPSRBounceAlt = /<form.*action="(.*?)".*?>.*<input.*?name="mspppostint".*?value="(.*?)".*?>/;
+const patternHotmailPOPSRLogIn = /<form.*?name="form1".*?action="(.*?)".*?>/;
+const patternHotmailPOPSRLogInAlt = /<form.*?action="(.*?)".*?>/;
+const patternHotmailPOPSRForm = /<input.*?name=".*?".*?value=".*?".*?>/igm;
+const patternHotmailPOPSRType = /type="(.*?)"/i;
+const patternHotmailPOPSRName = /name="(.*?)"/i;
+const patternHotmailPOPSRValue = /value="(.*?)"/i;
+const patternHotmailPOPSRRefresh =/<META.*?HTTP-EQUIV="REFRESH".*?URL=(.*?)".*?>/i;
 const patternHotmailPOPSRLogout = /<td><a.*?href="(.*?\/cgi-bin\/logout\?curmbox=.*?").*?>/m;
 const PatternHotmailPOPSRFolderBase = /document.location = "(.*?)"\+f/; 
 const PatternHotmailPOPSRFolderList =/href="javascript:G\('\/cgi-bin\/folders\?'\)"(.*?)<a href="javascript:G\('\/cgi-bin\/folders\?'\)"/;

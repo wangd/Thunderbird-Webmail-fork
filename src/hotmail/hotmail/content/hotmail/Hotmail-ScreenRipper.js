@@ -121,175 +121,161 @@ HotmailScreenRipper.prototype =
             var ios=Components.classes["@mozilla.org/network/io-service;1"].
                                     getService(Components.interfaces.nsIIOService);
 
-                       
             
-            //page code                                
-            switch (mainObject.m_iStage)
+            if (httpChannel.responseStatus == 302)  //bounce
             {
-                case 0: // hotmail redirect 
-                    try
-                    {
-                        var szLocation =  httpChannel.getResponseHeader("Location");
-                        mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - location \n" + szLocation);  
-                    }
-                    catch(e)
-                    {
-                        throw new Error("Location header not found")
-                    } 
-              
-                    var bResult = mainObject.httpConnection(szLocation, 
-                                                    "GET", 
-                                                    null, 
-                                                    null,
-                                                    mainObject.loginOnloadHandler);
-                                                
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
-                break;
+                try
+                {
+                    var szLocation =  httpChannel.getResponseHeader("Location");
+                    mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - location \n" + szLocation);  
+                }
+                catch(e)
+                {
+                    throw new Error("Location header not found")
+                } 
+          
+                //set cookies
+                var szURL = ios.newURI(szLocation,null,null).prePath;
+                var aszHost = szURL.match(patternHotmailPOPSRuri); 
+                var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
+                mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - cookies - "+ aszCookie);
                 
-                case 1: // redirect destination
-                    var aBounceData = szResponse.match(patternHotmailPOPSRBounce);
-                    if (aBounceData == null) throw new Error("error parsing bounce web page");
-                    mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler "+ aBounceData);
-                    
-                    //set cookies
-                    var szURL = ios.newURI(aBounceData[1],null,null).prePath;
-                    var aszHost = szURL.match(patternHotmailPOPSRuri);  
-                    var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                    
-                    //login page  
-                    var szData = "mspprawqs="+aBounceData[2]+"&mspppostint="+aBounceData[3];
-                    var bResult = mainObject.httpConnection(aBounceData[1], 
-                                                   "POST", 
-                                                   szData, 
-                                                   aszCookie,
-                                                   mainObject.loginOnloadHandler);
-                                                
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
-                break;
-                
-                
-                case 2: //login
-                    var aLogInURL = szResponse.match(patternHotmailPOPSRLogIn);
-                    if (aLogInURL == null ) throw new Error("error parsing login page");  
-                    
-                   
-                    var szData = "notinframe=1&login="+encodeURIComponent(mainObject.m_szUserName)
-                                           +"&passwd="+encodeURIComponent(mainObject.m_szPassWord)
-                                           +"&submit1=+Sign+In+"; 
-                                                                    
-                    //set cookies
-                    var szURL = ios.newURI(aLogInURL[1],null,null).prePath;
-                    var aszHost = szURL.match(patternHotmailPOPSRuri); 
-                    var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                     
-                    var bResult = mainObject.httpConnection(aLogInURL[1], 
-                                                            "POST", 
-                                                            szData, 
-                                                            aszCookie,
-                                                            mainObject.loginOnloadHandler);
-                                                      
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
-                break;
-                 
-                case 3: //login redirect
-                    try
-                    {
-                        var szLocation =  httpChannel.getResponseHeader("Location");
-                        mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - location \n" + szLocation);  
-                    }
-                    catch(e)
-                    {
-                        throw new Error("Location header not found")
-                    } 
-              
-                    //set cookies
-                    var szURL = ios.newURI(szLocation,null,null).prePath;
-                    var aszHost = szURL.match(patternHotmailPOPSRuri); 
-                    var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                    mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - cookies - "+ aszCookie);
-                    
-                    var bResult = mainObject.httpConnection(szLocation, 
-                                                    "GET", 
-                                                    null, 
-                                                    aszCookie,
-                                                    mainObject.loginOnloadHandler);
-                                                
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
-                break;
-                
-                case 4: //refresh
-                    var aRefresh = szResponse.match(patternHotmailPOPSRRefresh);
-                    mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler "+ aRefresh); 
-                    if (aRefresh == null) throw new Error("error parsing login page");
-                    
-                    //set cookies
-                    var szURL = ios.newURI(aRefresh[1],null,null).prePath;
-                    var aszHost = szURL.match(patternHotmailPOPSRuri); 
-                    var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                     
-                    var bResult = mainObject.httpConnection(aRefresh[1], 
-                                                      "GET", 
-                                                      null, 
-                                                      aszCookie,
-                                                      mainObject.loginOnloadHandler);  
-                                                      
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
-                break;
-                
-                case 5: //login redirect
-                    try
-                    {
-                        var szLocation =  httpChannel.getResponseHeader("Location");
-                        mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - location \n" + szLocation);  
-                    }
-                    catch(e)
-                    {
-                        throw new Error("Location header not found")
-                    } 
-              
-                    //set cookies
-                    var szURL = ios.newURI(szLocation,null,null).prePath;
-                    var aszHost = szURL.match(patternHotmailPOPSRuri); 
-                    var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                    mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - cookies - "+ aszCookie);
-                    
-                    var bResult = mainObject.httpConnection(szLocation, 
-                                                    "GET", 
-                                                    null, 
-                                                    aszCookie,
-                                                    mainObject.loginOnloadHandler);
-                                                
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
-                break;
-                              
-                case 6: 
-                    var szLocation = httpChannel.URI.spec;
-                    var iIndex = szLocation.search("uilogin.srt");
-                    mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler - page check : " + szLocation 
-                                                        + " index = " +  iIndex );
-                    if (iIndex != -1) throw new Error("error logging in ");
-                    
-                    //get urls for later use
-                    mainObject.m_szLocationURI = httpChannel.URI.prePath ;
-                    mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler - m_szLocationURI : "+mainObject.m_szLocationURI );
-                    var aMailBoxURI = szResponse.match(patternHotmailPOPSRMailbox);
-                    mainObject.m_szMailboxURI = aMailBoxURI[1];
-                    mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler - m_szMaiboxURI : "+mainObject.m_szMailboxURI );
-                    var aLogOutURI = szResponse.match(patternHotmailPOPSRLogout);
-                    mainObject.m_szLogOutURI = aLogOutURI[1];
-                    mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler - m_szLogOutURI : "+mainObject.m_szLogOutURI );
-                    
-                    //server response
-                    mainObject.serverComms("+OK Your in\r\n");
-                    mainObject.m_Parent.m_bAuthorised = true;
-                break;
+                var bResult = mainObject.httpConnection(szLocation, 
+                                                "GET", 
+                                                null, 
+                                                aszCookie,
+                                                mainObject.loginOnloadHandler);
+                                            
+                if (!bResult) throw new Error("httpConnection returned false");
             }
+            else //everything else
+            {
+                //page code                                
+                switch (mainObject.m_iStage)
+                {
+                    case 0: // redirect destination
+                       var aBounceData = szResponse.match(patternHotmailPOPSRBounceAlt);
+                       mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler "+ aBounceData);
+                        
+                       var  szData = "mspppostint="+encodeURIComponent(aBounceData[2]);
+                      
+                        //set cookies
+                        var szURL = ios.newURI(aBounceData[1],null,null).prePath;
+                        var aszHost = szURL.match(patternHotmailPOPSRuri);  
+                        var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
+                        
+                        //login page  
+                        var bResult = mainObject.httpConnection(aBounceData[1], 
+                                                       "POST", 
+                                                       szData, 
+                                                       aszCookie,
+                                                       mainObject.loginOnloadHandler);
+                                                    
+                        if (!bResult) throw new Error("httpConnection returned false");
+                        mainObject.m_iStage++;
+                    break;
+                    
+                    
+                    case 1: //login
+                        var aLogInURL = szResponse.match(patternHotmailPOPSRLogInAlt); 
+                        if (!aLogInURL) throw new Error("error parsing login page");
+                        var szData = "";
+                        
+                        //get form data
+                        var aszForm =  szResponse.match(patternHotmailPOPSRForm); 
+                        mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - form data " + aszForm);
+                        
+                        for (i=0; i<aszForm.length; i++)
+                        {
+                            var szType = aszForm[i].match(patternHotmailPOPSRType)[1]; 
+                            mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - form type " + szType);
+                            var szName = aszForm[i].match(patternHotmailPOPSRName)[1]; 
+                            mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - form name " + szName);
+                            var szValue = aszForm[i].match(patternHotmailPOPSRValue)[1]; 
+                            mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - form value " + szValue);
+                            
+                            if (szType.search(/submit/i)==-1)
+                            {
+                                if (szType.search(/radio/i)!=-1)
+                                {
+                                    if (aszForm[i].search(/checked/i)!=-1)
+                                        szData += szName +"=" + szValue + "&";
+                                }
+                                else
+                                {
+                                    szData += szName +"=";
+                                        
+                                    if (szName.search(/login/i)!=-1)
+                                        szData += encodeURIComponent(mainObject.m_szUserName)+"&";
+                                    else if (szName.search(/passwd/i)!=-1)
+                                        szData += encodeURIComponent(mainObject.m_szPassWord)+"&";
+                                    else 
+                                        szData += szValue+"&";
+                                }
+                            }
+                        }
+                        mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - data " + szData);
+                        
+                        //set cookies
+                        var szURL = ios.newURI(aLogInURL[1],null,null).prePath;
+                        var aszHost = szURL.match(patternHotmailPOPSRuri); 
+                        var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
+                         
+                        var bResult = mainObject.httpConnection(aLogInURL[1], 
+                                                                "POST", 
+                                                                szData, 
+                                                                aszCookie,
+                                                                mainObject.loginOnloadHandler);
+                                                          
+                        if (!bResult) throw new Error("httpConnection returned false");
+                        mainObject.m_iStage++;
+                    break;
+                   
+                    case 2: //refresh
+                        var aRefresh = szResponse.match(patternHotmailPOPSRRefresh);
+                        mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler "+ aRefresh); 
+                        if (aRefresh == null) throw new Error("error parsing login page");
+                        
+                        //set cookies
+                        var szURL = ios.newURI(aRefresh[1],null,null).prePath;
+                        var aszHost = szURL.match(patternHotmailPOPSRuri); 
+                        var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
+                         
+                        var bResult = mainObject.httpConnection(aRefresh[1], 
+                                                          "GET", 
+                                                          null, 
+                                                          aszCookie,
+                                                          mainObject.loginOnloadHandler);  
+                                                          
+                        if (!bResult) throw new Error("httpConnection returned false");
+                        mainObject.m_iStage++;
+                    break;
+                   
+                    case 3:
+                        var szLocation = httpChannel.URI.spec;
+                        var iIndex = szLocation.search("uilogin.srt");
+                        mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler - page check : " + szLocation 
+                                                            + " index = " +  iIndex );
+                        if (iIndex != -1) throw new Error("error logging in ");
+                        
+                        //get urls for later use
+                        mainObject.m_szLocationURI = httpChannel.URI.prePath ;
+                        mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler - m_szLocationURI : "+mainObject.m_szLocationURI );
+                        var aMailBoxURI = szResponse.match(patternHotmailPOPSRMailbox);
+                        mainObject.m_szMailboxURI = aMailBoxURI[1];
+                        mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler - m_szMaiboxURI : "+mainObject.m_szMailboxURI );
+                        var aLogOutURI = szResponse.match(patternHotmailPOPSRLogout);
+                        mainObject.m_szLogOutURI = aLogOutURI[1];
+                        mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler - m_szLogOutURI : "+mainObject.m_szLogOutURI );
+                        
+                        //server response
+                        mainObject.serverComms("+OK Your in\r\n");
+                        mainObject.m_Parent.m_bAuthorised = true;
+                    break;
+                }
+            }         
+            
+            
            
             
             mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler - END");
