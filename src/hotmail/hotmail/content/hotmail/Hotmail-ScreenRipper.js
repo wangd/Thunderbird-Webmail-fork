@@ -154,10 +154,25 @@ HotmailScreenRipper.prototype =
                 switch (mainObject.m_iStage)
                 {
                     case 0: // redirect destination
-                       var aBounceData = szResponse.match(patternHotmailPOPSRBounceAlt);
-                       mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler "+ aBounceData);
+                        var aBounceData = szResponse.match(patternHotmailPOPSRBounce);
+                        mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler "+ aBounceData);
+                        var  szData=null;
+                        if (!aBounceData)
+                        {
+                            aBounceData = szResponse.match(patternHotmailPOPSRBounceAlt);
+                            mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler "+ aBounceData);
+                            if (!aBounceData)
+                                throw new Error("error parsing bounce web page");
+                            else
+                            {
+                                szData = "mspppostint="+encodeURIComponent(aBounceData[2]);
+                            }
+                        }
+                        else
+                        {
+                            szData = "mspprawqs="+aBounceData[2]+"&mspppostint="+aBounceData[3];
+                        }
                         
-                       var  szData = "mspppostint="+encodeURIComponent(aBounceData[2]);
                       
                         //set cookies
                         var szURL = ios.newURI(aBounceData[1],null,null).prePath;
@@ -177,43 +192,54 @@ HotmailScreenRipper.prototype =
                     
                     
                     case 1: //login
-                        var aLogInURL = szResponse.match(patternHotmailPOPSRLogInAlt); 
-                        if (!aLogInURL) throw new Error("error parsing login page");
                         var szData = "";
-                        
-                        //get form data
-                        var aszForm =  szResponse.match(patternHotmailPOPSRForm); 
-                        mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - form data " + aszForm);
-                        
-                        for (i=0; i<aszForm.length; i++)
-                        {
-                            var szType = aszForm[i].match(patternHotmailPOPSRType)[1]; 
-                            mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - form type " + szType);
-                            var szName = aszForm[i].match(patternHotmailPOPSRName)[1]; 
-                            mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - form name " + szName);
-                            var szValue = aszForm[i].match(patternHotmailPOPSRValue)[1]; 
-                            mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - form value " + szValue);
+                        var aLogInURL = szResponse.match(patternHotmailPOPSRLogIn);
+                        if (!aLogInURL) 
+                        {   
+                            aLogInURL = szResponse.match(patternHotmailPOPSRLogInAlt); 
+                            if (!aLogInURL) throw new Error("error parsing login page");
                             
-                            if (szType.search(/submit/i)==-1)
+                            //get form data
+                            var aszForm =  szResponse.match(patternHotmailPOPSRForm); 
+                            mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - form data " + aszForm);
+                            
+                            for (i=0; i<aszForm.length; i++)
                             {
-                                if (szType.search(/radio/i)!=-1)
+                                var szType = aszForm[i].match(patternHotmailPOPSRType)[1]; 
+                                mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - form type " + szType);
+                                var szName = aszForm[i].match(patternHotmailPOPSRName)[1]; 
+                                mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - form name " + szName);
+                                var szValue = aszForm[i].match(patternHotmailPOPSRValue)[1]; 
+                                mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - form value " + szValue);
+                                
+                                if (szType.search(/submit/i)==-1)
                                 {
-                                    if (aszForm[i].search(/checked/i)!=-1)
-                                        szData += szName +"=" + szValue + "&";
-                                }
-                                else
-                                {
-                                    szData += szName +"=";
-                                        
-                                    if (szName.search(/login/i)!=-1)
-                                        szData += encodeURIComponent(mainObject.m_szUserName)+"&";
-                                    else if (szName.search(/passwd/i)!=-1)
-                                        szData += encodeURIComponent(mainObject.m_szPassWord)+"&";
-                                    else 
-                                        szData += szValue+"&";
+                                    if (szType.search(/radio/i)!=-1)
+                                    {
+                                        if (aszForm[i].search(/checked/i)!=-1)
+                                            szData += szName +"=" + szValue + "&";
+                                    }
+                                    else
+                                    {
+                                        szData += szName +"=";
+                                            
+                                        if (szName.search(/login/i)!=-1)
+                                            szData += encodeURIComponent(mainObject.m_szUserName)+"&";
+                                        else if (szName.search(/passwd/i)!=-1)
+                                            szData += encodeURIComponent(mainObject.m_szPassWord)+"&";
+                                        else 
+                                            szData += szValue+"&";
+                                    }
                                 }
                             }
                         }
+                        else
+                        {
+                             szData = "notinframe=1&login="+encodeURIComponent(mainObject.m_szUserName)
+                                           +"&passwd="+encodeURIComponent(mainObject.m_szPassWord)
+                                           +"&submit1=+Sign+In+"; 
+                        }
+                        
                         mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - data " + szData);
                         
                         //set cookies
