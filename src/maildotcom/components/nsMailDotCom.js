@@ -32,7 +32,7 @@ const patternMailDotComStdHeaderData =/<font.*class="ft"><b>(.*?)<\/b><\/font>[\
 const patternMailDotComOtherHeaders =/<font.*class="ft"><B>[\S\s]*?<\/font>/gm;
 const patternMailDotComOtherHeaderDate = /<B>(.*?)<\/B>(.*?)$/;
 const patternMailDotComBoundary = /boundary=&#34;(.*?)&#34;/i;
-const patternMailDotComMsgTextBody = /<PRE>([\S\s\n]*)<\/PRE>/i;
+const patternMailDotComMsgTextBody = /<PRE>[\S\s\n]*<\/PRE>/i;
 const patternMailDotComAttchments = /<table.*?><tr><td><span.*id="obmessage">([\S\s\n]*)<\/span><\/td><\/tr>/i;
 const patternMailDotComAttchHeaders = /<B>.*?<\/B>.*?<BR>/igm;
 const patternMailDotComAttchHeadersData = /<B>(.*?)<\/B>(.*?)<BR>/i;
@@ -84,9 +84,12 @@ function nsMailDotCom()
         this.m_aiMsgSize = new Array();
         this.m_aszMsgIDStore = new Array();
         
-        this.m_szEmail = null;
-        this.m_szBoundary=null;
-        this.m_Attachment = new Array();
+        this.m_szHeaders = null;
+        this.m_szBody = null;
+        this.m_szBoundary = null;
+        this.m_Attachment= new Array();
+        this.m_AttachmentRaw = new Array();
+        
                                              
         this.m_MailDotComLog.Write("nsMailDotCom.js - Constructor - END");  
     }
@@ -575,24 +578,28 @@ nsMailDotCom.prototype =
                         mainObject.m_MailDotComLog.Write("nsMailDotCom.js - mailBoxOnloadHandler - MsgTable " + aszMsgTable );     
                         var aszMSGs = aszMsgTable[0].match(patternMailDotComMsgRows);
                         mainObject.m_MailDotComLog.Write("nsMailDotCom.js - mailBoxOnloadHandler - MSGs Rows" + aszMSGs ); 
-                        for (i=0; i<aszMSGs.length; i++ )
+                        
+                        
+                        if(aszMSGs)
                         {
-                            var aszData = aszMSGs[i].match(patternMailDotComMsgData);
-                            mainObject.m_MailDotComLog.Write("nsMailDotCom.js - mailBoxOnloadHandler - MSG Data" + aszData );
-                            
-                            var szHref = mainObject.m_szLocation + aszData[1].match(patternMailDotComHref)[1];
-                            mainObject.m_MailDotComLog.Write("nsMailDotCom.js - mailBoxOnloadHandler - href " + szHref );
-                            mainObject.m_aszMsgIDStore.push(szHref);
-                            
-                            var szSize = aszData[3].match(patternMailDotComSize)[1];
-                            mainObject.m_MailDotComLog.Write("nsMailDotCom.js - mailBoxOnloadHandler - size " + szSize );
-                            var iSize = parseInt(szSize);
-                            if (szSize.indexOf('k')!= -1) iSize*=1000;
-                            mainObject.m_MailDotComLog.Write("nsMailDotCom.js - mailBoxOnloadHandler - msg size :" + i + " " +iSize);
-                            mainObject.m_iTotalSize += iSize;
-                            mainObject.m_aiMsgSize.push(iSize);    
+                            for (i=0; i<aszMSGs.length; i++ )
+                            {
+                                var aszData = aszMSGs[i].match(patternMailDotComMsgData);
+                                mainObject.m_MailDotComLog.Write("nsMailDotCom.js - mailBoxOnloadHandler - MSG Data" + aszData );
+                                
+                                var szHref = mainObject.m_szLocation + aszData[1].match(patternMailDotComHref)[1];
+                                mainObject.m_MailDotComLog.Write("nsMailDotCom.js - mailBoxOnloadHandler - href " + szHref );
+                                mainObject.m_aszMsgIDStore.push(szHref);
+                                
+                                var szSize = aszData[3].match(patternMailDotComSize)[1];
+                                mainObject.m_MailDotComLog.Write("nsMailDotCom.js - mailBoxOnloadHandler - size " + szSize );
+                                var iSize = parseInt(szSize);
+                                if (szSize.indexOf('k')!= -1) iSize*=1000;
+                                mainObject.m_MailDotComLog.Write("nsMailDotCom.js - mailBoxOnloadHandler - msg size :" + i + " " +iSize);
+                                mainObject.m_iTotalSize += iSize;
+                                mainObject.m_aiMsgSize.push(iSize);    
+                            }
                         }
-            
             
                         //get delete uri
                         if (!mainObject.m_szDeleteURI)
@@ -892,7 +899,7 @@ nsMailDotCom.prototype =
                 switch (mainObject.m_iStage)
                 {
                     case 0: //parse email web page
-                         mainObject.m_szEmail = "";
+                         mainObject.m_szHeaders = "";
                          
                         //get headers            
                         var szRawHeaders = szResponse.match(patternMailDotComRawHeaders)[0];
@@ -914,8 +921,8 @@ nsMailDotCom.prototype =
                             {
                                 var szFrom =  aszFrom[0].match(patternMailDotComFromData)[1];
                                 szFrom += aszFrom[1].match(patternMailDotComFromData)[1];
-                                mainObject.m_szEmail += szFrom + "\r\n"; 
-                                mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - from : " +mainObject.m_szEmail);
+                                mainObject.m_szHeaders += szFrom + "\r\n"; 
+                                mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - from : " +mainObject.m_szHeaders);
                             }
                             catch(err)
                             {
@@ -934,16 +941,13 @@ nsMailDotCom.prototype =
                                     mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - std headers raw: " +aszHeaders);
                                     var szHeader = aszHeaders[1] + aszHeaders[2] + "\r\n"; 
                                     mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - std headers : " +szHeader);
-                                    mainObject.m_szEmail += szHeader; 
+                                    mainObject.m_szHeaders += szHeader; 
                                 }
                                 catch(err)
                                 {
                                 }
                             }
                         }
-                        
-                        
-                        var iContentType = 0;//0=uri; 1=plain; 2=html
                         
                         //other headers
                         if (aszOthHeader)
@@ -954,65 +958,53 @@ nsMailDotCom.prototype =
                                 {
                                     var aszHeaders = aszOthHeader[i].match(patternMailDotComOtherHeaderDate);
                                     mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - other headers raw:" +aszHeaders);
-                                    var szHeader = aszHeaders[1] + aszHeaders[2] + "\r\n"; 
-                                    mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - other headers :" +szHeader);
-                                    
-                                    if (aszHeaders[1].search(/Content-Type/)!=-1)
-                                    {
-                                        mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - content-type found");
-                                    
-                                        if (aszHeaders[2].search(/boundary/)!=-1)
-                                        {
-                                            mainObject.m_szBoundary=aszHeaders[2].match(patternMailDotComBoundary)[1];
-                                            mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - boundary :" +mainObject.m_szBoundary);
-                                        }
-                                        
-                                        if (aszHeaders[2].search(/text\/html/i)!=-1) 
-                                            iContentType = 2;                                        
-                                    }
-                                    mainObject.m_szEmail += szHeader; 
+                                 
+                                    if (aszHeaders[1].search(/Content-Type/)==-1)
+                                    {   
+                                        var szHeader = aszHeaders[1] + aszHeaders[2] + "\r\n";  
+                                        mainObject.m_szHeaders += szHeader;
+                                        mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - other headers :" +szHeader);                               
+                                    }  
                                 }
                                 catch(err)
                                 {
                                 }
                             }
                         }
-                        
-                        mainObject.m_szEmail = mainObject.m_szEmail.replace(/&#34;/g,"\"");
-                        mainObject.m_szEmail = mainObject.m_szEmail.replace(/&lt;/g,"<");
-                        mainObject.m_szEmail = mainObject.m_szEmail.replace(/&gt;/g,">");
-                        mainObject.m_szEmail += "\r\n"; //end of headers
-                        mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - headers :" +mainObject.m_szEmail);
+                        mainObject.m_szHeaders = mainObject.m_szHeaders.replace(/&#34;/g,"\"");
+                        mainObject.m_szHeaders = mainObject.m_szHeaders.replace(/&lt;/g,"<");
+                        mainObject.m_szHeaders = mainObject.m_szHeaders.replace(/&gt;/g,">");
+                        mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - headers :" +mainObject.m_szHeaders);
                       
+                        
+                        //Message Body
                         try
-                        {
-                            if (iContentType==2)//get HTML text body
-                            {
-                                
-                                var aszHTMLBody = szResponse.match(patternMailDotComHTMLBody);
-                                mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - msg 1 body :" +aszHTMLBody);
-                                
-                                if (!aszHTMLBody)//get everything
+                        {   //html message
+                            var aszBody = szResponse.match(patternMailDotComHTMLBody);
+                            mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - msg body :" +aszBody);
+                            
+                            if (!aszBody)
+                            {   //plain text email
+                                aszBody = szResponse.match(patternMailDotComMsgTextBody);
+                                mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - msg  1 body :" +aszBody);
+                                                          
+                                if (!aszBody)//get everything
                                 {
-                                    aszHTMLBody = szResponse.match(patternMailDotComAttchments)[1].split(/^<HR SIZE=1>$/igm);
-                                    mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - msg 2 body :" +aszHTMLBody);
+                                    aszBody = szResponse.match(patternMailDotComAttchments)[1].split(/^<HR SIZE=1>$/igm);
+                                    mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - msg 2 body :" +aszBody);
                                 }
-                                
-                                mainObject.m_szEmail += aszHTMLBody;
-                            }
-                            else //get plain text body
-                            {
-                                var aszPlainBody = szResponse.match(patternMailDotComMsgTextBody);
-                                mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - msg body :" +aszPlainBody);
-                                mainObject.m_szEmail += aszPlainBody[1];
-                            }
+                            }    
+                            
+                            mainObject.m_szBody = "<html><body>";
+                            mainObject.m_szBody += aszBody;
+                            mainObject.m_szBody += "</body></html>";
                         }
                         catch(e)
                         {
                             mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - No body");
                         } 
                         
-                        
+                       
                         //get attachments
                         var aszRawBody = null;
                         try
@@ -1026,6 +1018,7 @@ nsMailDotCom.prototype =
                             mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - no attchments ");
                         }
                         
+                        var iContentType = 0;//0=uri; 1=plain; 2=html
                         
                         if (aszRawBody)
                         {
@@ -1047,14 +1040,13 @@ nsMailDotCom.prototype =
                                         mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - attachData raw "+aszHData);
                                     
                                         szHeaders += aszHData[1]+aszHData[2]+"\r\n";
-                                        
+                                        /*
                                         if (aszHData[1].search(/Content-Type/)!=-1)
                                         {
-                                            if (aszHData[2].search(/text\/plain/i)!=-1)
+                                            if (aszHData[2].search(/text\/plain/i)!=-1 ||
+                                                        aszHData[2].search(/text\/html/i)!=-1)
                                                 iContentType = 1; 
-                                            else if (aszHData[2].search(/text\/html/i)!=-1)
-                                                iContentType = 2;
-                                        }
+                                        }*/
                                     }
                                     mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - attach Headers "+szHeaders);
                                     
@@ -1063,35 +1055,18 @@ nsMailDotCom.prototype =
                                     mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - attach body raw "+szRawBody);
                                     
                                     var szBody;
-                                    switch (iContentType)
+                                    if (iContentType == 0)//uri
                                     {
-                                        case 0: //uri
-                                            mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - adding attach start");                                            var oAttach = new AttachmentData();
-                                            var oAttach = new AttachmentData();
-                                            oAttach.addHeaders(szHeaders);
-                                            var szURI = szBody.match(patternMailDotComAttachURI)[1];
-                                            mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - attach body uri "+szURI);
-                                    
-                                            oAttach.addURI(mainObject.m_szLocation+szURI);
-                                             
-                                            mainObject.m_Attachment.push(oAttach);
-                                            mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - adding attach end");
-                                        break;
-                                        
-                                        case 1: //plain
-                                            mainObject.m_szEmail+= "--" + mainObject.m_szBoundary + "\r\n";
-                                            mainObject.m_szEmail+= szHeaders + "\r\n";
-                                            szBody = szBody.match(patternMailDotComMsgTextBody)[1];
-                                            mainObject.m_szEmail+= szBody + "\r\n\r\n";
-                                            mainObject.m_szEmail+= "--" + mainObject.m_szBoundary + "--\r\n";
-                                        break;
-                                        
-                                        case 2: //html
-                                            mainObject.m_szEmail+= "--" + mainObject.m_szBoundary + "\r\n";
-                                            mainObject.m_szEmail+= szHeaders + "\r\n";
-                                            mainObject.m_szEmail+= szRawBody + "\r\n\r\n";
-                                            mainObject.m_szEmail+= "--" + mainObject.m_szBoundary + "--\r\n";
-                                        break;
+                                        mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - adding attach start");                                            var oAttach = new AttachmentData();
+                                        var oAttach = new AttachmentData();
+                                        oAttach.addHeaders(szHeaders);
+                                        var szURI = szBody.match(patternMailDotComAttachURI)[1];
+                                        mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - attach body uri "+szURI);
+                                
+                                        oAttach.addURI(mainObject.m_szLocation+szURI);
+                                         
+                                        mainObject.m_Attachment.push(oAttach);
+                                        mainObject.m_MailDotComLog.Write("m_MailDotComLog.js - emailOnloadHandler - adding attach end");
                                     }
                                 }
                                 catch(e)
@@ -1102,8 +1077,14 @@ nsMailDotCom.prototype =
                         
                         if (mainObject.m_Attachment.length==0 ) //no another parts 
                         {
+                            //construct email 
+                            mainObject.m_szEmail = mainObject.m_szHeaders;
+                            mainObject.m_szEmail +="Content-Type: text/html\r\n"
+                            mainObject.m_szEmail += "\r\n"; //end of headers
+                            mainObject.m_szEmail += mainObject.m_szBody;
                             mainObject.m_szEmail += "\r\n\r\n"; // end of email
                             
+                            //pop encode
                             mainObject.m_szEmail = mainObject.m_szEmail.replace(/^\./mg,"..");    //bit padding 
                             if (mainObject.m_szEmail.lastIndexOf("\r\n") == -1) mainObject.m_szEmail += "\r\n";
                             mainObject.m_szEmail += ".\r\n";  //msg end 
