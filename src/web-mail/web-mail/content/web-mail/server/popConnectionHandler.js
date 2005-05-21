@@ -3,10 +3,14 @@ function POPconnectionHandler(transport)
     try
     {
         this.m_POPLog = new DebugLog("webmail.logging.comms", 
-                                        "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
-                                        "popConnectionlog"); 
-                                        
-        this.m_POPLog.Write("nsPOPConnectionHandler.js - POPconnectionHandler - START"); 
+                                     "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
+                                     "popConnectionlog"); 
+        
+        var date = new Date();
+        this.iID = date.getHours()+ "-" + date.getMinutes() + "-"+ date.getUTCMilliseconds();                                
+        
+        this.m_POPLog.Write("nsPOPConnectionHandler.js - POPconnectionHandler - START - "+ this.iID); 
+        
         
         this.transport = transport;
         this.bAuth = false;
@@ -28,7 +32,7 @@ function POPconnectionHandler(transport)
         var szOK  = "+OK POP3 thats cool man\r\n";
         this.ServerResponse.write(szOK,szOK.length);
         
-        this.m_POPLog.Write("nsPOPConnectionHandler.js - POPconnectionHandler - END"); 
+        this.m_POPLog.Write("nsPOPConnectionHandler.js - POPconnectionHandler - END - "+ this.iID); 
     }
     catch(e)
     {
@@ -40,13 +44,15 @@ function POPconnectionHandler(transport)
 }
 
 POPconnectionHandler.prototype.bRunning = true;
+POPconnectionHandler.prototype.iID = 0;
+
 
 
 POPconnectionHandler.prototype.onDataAvailable = function(request, context, inputStream, offset, count)
 {
     try
     {
-        this.m_POPLog.Write("POPconnectionHandler - onDataWritable - START"); 
+        this.m_POPLog.Write("POPconnectionHandler - onDataWritable - START - "+ this.iID); 
        
         var instream = Components.classes["@mozilla.org/scriptableinputstream;1"]
                      .createInstance(Components.interfaces.nsIScriptableInputStream);
@@ -61,7 +67,7 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
         {    
             //AUTHORIZATION state
             case "user":
-                this.m_POPLog.Write("POPconnectionHandler - onDataWritable - user - START"); 
+                this.m_POPLog.Write("POPconnectionHandler - onDataWritable - user - START - "+ this.iID); 
                                               
                 var aszDomain = aCommand[1].split("@");     //split username and domain                         
                 if (this.getDomainHandler(aszDomain[0], aszDomain[1]))
@@ -85,7 +91,7 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                     this.ServerResponse.write(szTemp,szTemp.length);
                 }  
                 
-                this.m_POPLog.Write("POPconnectionHandler - onDataWritable - user - END");              
+                this.m_POPLog.Write("POPconnectionHandler - onDataWritable - user - END " + this.iID);              
             break;
             
             
@@ -94,7 +100,8 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                 {
                     this.m_POPLog.Write("POPconnectionHandler - onDataWritable - pass START " 
                                                 + aCommand[0] + " " 
-                                                + aCommand[1]);
+                                                + aCommand[1] + " "
+                                                + this.iID);
                                                 
                     if (this.iLoginReTryCount == 0) 
                         throw new Error("ran out of login re-trys");
@@ -113,7 +120,7 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                             throw new Error("login failed");
                     }
                         
-                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - pass END");
+                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - pass END " +this.iID);
                 }
                 catch(e)
                 { 
@@ -137,7 +144,7 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
             case "stat":
                 try
                 {
-                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - stat - START ");
+                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - stat - START "+ this.iID);
                     
                     if (!this.m_DomainHandler.bAuthorised) 
                         throw new Error("not logged how did you here?");  
@@ -146,7 +153,7 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                     if (!this.m_DomainHandler.getNumMessages()) 
                         throw new Error("getNumMessages returned false");
                         
-                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - stat - END "); 
+                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - stat - END   "+ this.iID); 
                 }
                 catch(e)
                 {
@@ -161,7 +168,7 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
             case "list":
                 try
                 {
-                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - list - START"); 
+                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - list - START "+ this.iID); 
                     
                     if (!this.m_DomainHandler.bAuthorised) 
                         throw new Error("not logged how did you here?");
@@ -169,7 +176,7 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                     if (!this.m_DomainHandler.getMessageSizes())
                         throw new Error("getMessageSizes returned false");   
                                         
-                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - list - END"); 
+                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - list - END   "+ this.iID); 
                 }
                 catch(e)
                 {
@@ -184,7 +191,7 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
             case "uidl":
                 try
                 {
-                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - uidl - START"); 
+                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - uidl - START "+ this.iID); 
                     
                     if (!this.m_DomainHandler.bAuthorised) 
                         throw new Error("not logged how did you here?");
@@ -192,7 +199,7 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                     if (!this.m_DomainHandler.getMessageIDs())
                         throw new Error("getMessageIDs returned false");
                    
-                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - uidl - END");
+                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - uidl - END   "+ this.iID);
                 }
                 catch(e)
                 {
@@ -207,7 +214,7 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
             case "retr":
                 try
                 {
-                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - retr - START");
+                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - retr - START "+ this.iID);
                     
                     if (!this.m_DomainHandler.bAuthorised) 
                         throw new Error("not logged how did you here?");
@@ -216,7 +223,7 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                     if (!this.m_DomainHandler.getMessage( aCommand[1]))
                         throw new Error("getMessage returned false");
                    
-                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - retr - END");
+                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - retr - END   "+ this.iID);
                 }
                 catch(e)
                 {
@@ -232,7 +239,7 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
             case "dele":
                 try
                 { 
-                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - dele - START");  
+                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - dele - START "+ this.iID);  
                     
                     if (!this.m_DomainHandler.bAuthorised) 
                         throw new Error("not logged how did you here?");
@@ -241,7 +248,7 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                     if (!this.m_DomainHandler.deleteMessage(aCommand[1]))
                         throw new Error("deleteMessage return false");
                         
-                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - dele - END");
+                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - dele - END   "+ this.iID);
                 }
                 catch(e)
                 {
@@ -258,7 +265,7 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
             case "quit":
                 try
                 {
-                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - quit - START");
+                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - quit - START - "+ this.iID);
                     
                     if (!this.m_DomainHandler.bAuthorised) 
                         throw new Error("not logged how did you here?");
@@ -266,7 +273,7 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                     if (!this.m_DomainHandler.logOut())
                         throw new Error("logout returned false");
                         
-                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - quit - END");
+                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - quit - END "+ this.iID);
                 }
                 catch(e)
                 {
@@ -303,7 +310,7 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
             break;
         }
         
-        this.m_POPLog.Write("POPconnectionHandler - onDataWritable - END"); 
+        this.m_POPLog.Write("POPconnectionHandler - onDataWritable - END "+ this.iID); 
     }
     catch(e)
     {
@@ -316,19 +323,19 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
 
 POPconnectionHandler.prototype.onStopRequest = function(request, context, status)
 {
-    this.m_POPLog.Write("POPconnectionHandler - onStopRequest - START"); 
+    this.m_POPLog.Write("POPconnectionHandler - onStopRequest - START "+ this.iID); 
     
     this.ServerResponse.close();
     this.ServerRequest.close();
     this.bRunning = false;
     
-    this.m_POPLog.Write("POPconnectionHandler - onStopRequest - END"); 
+    this.m_POPLog.Write("POPconnectionHandler - onStopRequest - END   "+ this.iID); 
 }
 
 POPconnectionHandler.prototype.onStartRequest = function(request, context)
 {
-    this.m_POPLog.Write("POPconnectionHandler - onStartRequest - START"); 
-    this.m_POPLog.Write("POPconnectionHandler - onStartRequest - END"); 
+    this.m_POPLog.Write("POPconnectionHandler - onStartRequest - START "+ this.iID); 
+    this.m_POPLog.Write("POPconnectionHandler - onStartRequest - END   "+ this.iID); 
 }
 
 

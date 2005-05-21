@@ -63,7 +63,7 @@ nsPOPConnectionManager.prototype.Start = function()
             if (!this.bGarbage)
             {//start garbage collection
                 this.GarbageTimer.initWithCallback(this, 
-                                                   10000,  //10 seconds 
+                                                   20000,  //20 seconds 
                                                    Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
                 this.bGarbage = true;
             }
@@ -219,17 +219,17 @@ nsPOPConnectionManager.prototype.notify = function()
                 if (this.aPOPConnections[0] != undefined)
                 {  
                     var temp = this.aPOPConnections.shift();  //get first item
-                    this.m_POPLog.Write("nsPOPConnectionManager.js - connection " + i + " "+ temp.bRunning)
+                    this.m_POPLog.Write("nsPOPConnectionManager.js - connection " + i + " "+ temp.bRunning + " " +temp.iID);
                    
                     if (temp.bRunning == false)
                     { 
                         delete temp; 
-                        this.m_POPLog.Write("nsPOPConnectionManager.js - notify - dead connection deleted"); 
+                        this.m_POPLog.Write("nsPOPConnectionManager.js - notify - dead connection deleted " + temp.iID); 
                     }
                     else
                     {
                         this.aPOPConnections.push(temp);
-                        this.m_POPLog.Write("nsPOPConnectionManager.js - notify - restored live connection"); 
+                        this.m_POPLog.Write("nsPOPConnectionManager.js - notify - restored live connection " + temp.iID); 
                     }
                 }
             }
