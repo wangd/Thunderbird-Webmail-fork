@@ -1,7 +1,6 @@
 //project globals
 var gWebmailDebugLog = null;
 var gPOP = null;
-var gIMAP = null;
 var g_DomainManager = null;
 var g_AccountWizard = null;
 
@@ -52,18 +51,7 @@ function WebmailStartUp()
             if (gPOP.Start())
                 gWebmailDebugLog.Write("Webmail: Webmail.js : WebmailStartUp - pop server started");
             else
-                gWebmailDebugLog.Write("Webmail: Webmail.js : WebmailStartUp - pop server not started");  
-                
-            
-            gIMAP = Components.classes["@mozilla.org/IMAPConnectionManager;1"]
-                             .getService()
-                             .QueryInterface(Components.interfaces.nsIIMAPConnectionManager);     
-            
-            if (gIMAP.Start())
-                gWebmailDebugLog.Write("Webmail: Webmail.js : WebmailStartUp - IMAP server started");
-            else
-                gWebmailDebugLog.Write("Webmail: Webmail.js : WebmailStartUp - IMAP server started");
-                     
+                gWebmailDebugLog.Write("Webmail: Webmail.js : WebmailStartUp - pop server not started");                      
         }
         catch(e)
         {
@@ -95,8 +83,7 @@ function WebmailShutDown()
     gWebmailDebugLog.Write("Webmail : Webmail.js : WebmailShutDown - START");
    
     if  (gPOP) gPOP.Stop(); //stop pop server
-    if  (gIMAP) gIMAP.Stop(); //stop imap server
-      
+          
     //account wizard
     g_AccountWizard.deleteISP();
        
