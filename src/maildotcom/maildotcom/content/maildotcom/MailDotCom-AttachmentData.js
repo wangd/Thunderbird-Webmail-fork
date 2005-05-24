@@ -2,6 +2,7 @@ function AttachmentData()
 {
     this.m_szHeaders= null;
     this.m_szURI = null;
+    this.m_szBody= null;
 }
 
 
@@ -28,4 +29,14 @@ AttachmentData.prototype =
     {
         return this.m_szURI
     },
+    
+    setBody : function (szBody)
+    {
+        this.m_szBody = szBody;
+    },
+    
+    getBody : function ()
+    {
+        return this.m_szBody;
+    }
 }
