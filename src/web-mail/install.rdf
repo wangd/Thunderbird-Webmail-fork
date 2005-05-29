@@ -23,6 +23,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 				<em:locale>locale/es-ES/web-mail/</em:locale>
 				<em:locale>locale/fr-FR/web-mail/</em:locale>
 				<em:locale>locale/de-DE/web-mail/</em:locale>
+				<em:locale>locale/ca-AD/web-mail/</em:locale>
 				<em:skin>skin/classic/web-mail/</em:skin>
 			</Description>
 		</em:file>
