@@ -94,7 +94,13 @@
      -moz-image-region: rect(0px, 160px, 32px, 128px)
 }
 
-.flag[value>"4"]/*world*/
+
+.flag[value="4"]/*catalan*/
+{
+     -moz-image-region: rect(0px, 192px, 32px, 160px)
+}
+
+.flag[value>"5"]/*world*/
 {
      -moz-image-region: rect(0px, 32px, 32px, 0px)
 }
