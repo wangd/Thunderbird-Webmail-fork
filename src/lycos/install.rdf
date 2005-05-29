@@ -23,6 +23,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
                 <em:locale>locale/es-ES/lycos/</em:locale>
                 <em:locale>locale/fr-FR/lycos/</em:locale>
                 <em:locale>locale/de-DE/lycos/</em:locale>
+                <em:locale>locale/ca-AD/lycos/</em:locale>
                 <em:package>content/lycos/</em:package>
             </Description>
 		</em:file>
