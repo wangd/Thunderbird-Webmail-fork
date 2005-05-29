@@ -28,7 +28,10 @@
             <text value="&MailDotComAbout.ExtVersion;" id = "MailDotComVersion"/>
             <text value="&MailDotComAbout.ExtDescription;" id = "MailDotComDescription"/>
             <text value="&MailDotComAbout.ExtCreaterTitle;" id = "MailDotComCreatorLabel"/>
-            <text value="&MailDotComAbout.ExtCreator;" class = "MailDotComCreatorText"/>
+            <hbox>
+                <image id="LionImage"/>
+                <text value="&MailDotComAbout.ExtCreator;" class = "MailDotComCreatorText"/>
+            </hbox>
             <text value="&MailDotComAbout.ExtContributorTitle;" id = "MailDotComContributorLabel"/>
             <vbox flex="1" id="MailDotComContributorBox"/>
             <text value="&MailDotComAbout.ExtHome;" 
