@@ -1,0 +1,11 @@
+#include "nsISupports.idl"
+
+[scriptable, uuid(e9f0f560-4167-11d9-9669-0800200c9a66)]
+interface nsISMTPConnectionManager : nsISupports
+{
+    boolean Start();
+    boolean Stop();
+    long GetStatus();
+};
+
+
