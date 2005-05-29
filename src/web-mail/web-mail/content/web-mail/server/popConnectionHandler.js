@@ -19,7 +19,9 @@ function POPconnectionHandler(transport)
         //get streams
         this.ServerRequest = this.transport.openInputStream(0,0,0);
         if (!this.ServerRequest) throw new Error("Error getting input stream.");
-        this.ServerResponse =  this.transport.openOutputStream(2,0,0);
+        this.ServerResponse =  this.transport.openOutputStream(Components.interfaces.nsITransport.OPEN_UNBUFFERED,
+                                                               0,
+                                                               0);
         if (!this.ServerResponse) throw new Error("Error getting output stream.");
         
         //create stream watcher
