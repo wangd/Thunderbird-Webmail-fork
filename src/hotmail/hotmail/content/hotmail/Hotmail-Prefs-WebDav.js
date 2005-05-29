@@ -20,7 +20,7 @@ function Startup()
             var szHostName = currentServer.hostName;
             parent.gHotmailPrefsLog.Write("Hotmail: Hotmail-Prefs-WebDav.js : Startup - HostName " + szHostName);
             
-            if (szHostName.search(/localhost/i)!=-1)
+            if (szHostName.search(/localhost/i)!=-1 || szHostName.search(/127\.0\.0\.1/)!=-1 )
             {
                 var szUserName = currentServer.username;
                 parent.gHotmailPrefsLog.Write("Hotmail: Hotmail-Prefs-WebDav.js : Startup - userName " + szUserName);
