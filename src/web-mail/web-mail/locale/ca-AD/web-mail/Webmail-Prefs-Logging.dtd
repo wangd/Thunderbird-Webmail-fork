@@ -1,0 +1,13 @@
+<!ENTITY Logging.Label "Registre">
+<!ENTITY GeneralLogging.Label "Habilita el registre">
+<!ENTITY GeneralLogging.AccessKey "H">
+<!ENTITY JavaScriptConsole.Label "Utilitza la consola de JavaScript">
+<!ENTITY JavaScriptConsole1.AccessKey "J">
+<!ENTITY LogFile.Label "Utilitza un fitxer de registre">
+<!ENTITY LogFile1.AccessKey "g">
+<!ENTITY Location.Label "Ubicació">
+<!ENTITY Location1.AccessKey "U">
+<!ENTITY Note.Label "Aquests registres contindran noms d'usuaris i contrasenyes.">
+<!ENTITY Restart.Label "Cal que es reiniciï el Thunderbird per a que els canvis tinguin efecte.">
+
+

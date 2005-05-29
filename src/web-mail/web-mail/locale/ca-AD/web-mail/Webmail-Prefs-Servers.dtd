@@ -1,0 +1,11 @@
+<!ENTITY MailServers.Label "Servidor de correu">
+<!ENTITY Ports.Label "Ports">
+<!ENTITY Ports.AccessKey "P">
+<!ENTITY ServerStatus.Label "Estat del servidor">
+<!ENTITY Default.Label "(110 per defecte)">
+<!ENTITY Note.Label "El sistema operatiu pot blocar els ports per sota del 1024">
+<!ENTITY Restart.Label "Cal que es reiniciï el Thunderbird per a que els canvis tinguin efecte.">
+<!ENTITY AccountWizard.Label "Afegeix l'opció 'Correu web' a l'auxiliar de comptes">
+<!ENTITY AccountWizard.AccessKey "A">
+<!ENTITY AccountWizardWarning.Label "Es necessiten permisos d'escriptura a la carpeta de l'aplicació.">
+
