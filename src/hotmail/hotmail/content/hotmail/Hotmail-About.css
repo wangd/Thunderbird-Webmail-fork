@@ -67,7 +67,7 @@
     list-style-image: url("chrome://hotmail/skin/flags.png");
 }
 
-.flag[value="-1"]/*world*/
+.flag/*world*/
 {
      -moz-image-region: rect(0px, 32px, 32px, 0px)
 }
@@ -98,10 +98,7 @@
      -moz-image-region: rect(0px, 192px, 32px, 160px)
 }
 
-.flag[value>"5"]/*world*/
-{
-     -moz-image-region: rect(0px, 32px, 32px, 0px)
-}
+
 
 
 #HotmailHomePage

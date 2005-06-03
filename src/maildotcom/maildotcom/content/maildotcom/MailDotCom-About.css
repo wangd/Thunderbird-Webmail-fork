@@ -79,7 +79,7 @@
     list-style-image: url("chrome://maildotcom/skin/flags.png");
 }
 
-.flag[value="-1"]/*world*/
+.flag/*world*/
 {
      -moz-image-region: rect(0px, 32px, 32px, 0px)
 }
@@ -103,11 +103,6 @@
 .flag[value="3"]/*germany*/
 {
      -moz-image-region: rect(0px, 160px, 32px, 128px)
-}
-
-.flag[value>"4"]/*world*/
-{
-     -moz-image-region: rect(0px, 32px, 32px, 0px)
 }
 
 
