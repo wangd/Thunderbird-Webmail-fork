@@ -1,32 +1,24 @@
 <?xml version="1.0"?>
 
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
 	<Description about="urn:mozilla:install-manifest">
 
 		<em:id>{3c8e8390-2cf6-11d9-9669-0800200c9a66}</em:id>
-		<em:name>Web Mail</em:name>
+		<em:type>2</em:type>
 		<em:version>0.4.0</em:version>
+		
+		<em:name>WebMail</em:name>
 		<em:description>Lets Thunderbird access web mail</em:description>
 		<em:creator>ComodoDragon</em:creator>
 		<em:homepageURL>http://webmail.mozdev.org</em:homepageURL>
+		
 		<em:iconURL>chrome://web-mail/skin/Webmail-SmallIcon.png</em:iconURL>
 		<em:aboutURL>chrome://web-mail/content/Webmail-About.xul</em:aboutURL>
 		<em:optionsURL>chrome://web-mail/content/prefs/Webmail-Prefs.xul</em:optionsURL>
-		<em:updateURL>http://webmail.mozdev.org/webmailUpdate.rdf</em:updateURL>
-		<em:file>
-			<Description about="urn:mozilla:extension:file:web-mail.jar">
-				<em:package>content/web-mail/</em:package>
-				<em:locale>locale/en-US/web-mail/</em:locale>
-				<em:locale>locale/it-IT/web-mail/</em:locale>
-				<em:locale>locale/es-ES/web-mail/</em:locale>
-				<em:locale>locale/fr-FR/web-mail/</em:locale>
-				<em:locale>locale/de-DE/web-mail/</em:locale>
-				<em:locale>locale/ca-AD/web-mail/</em:locale>
-				<em:skin>skin/classic/web-mail/</em:skin>
-			</Description>
-		</em:file>
+		
+        <em:updateURL>http://webmail.mozdev.org/webmailUpdate.rdf</em:updateURL>
 
         <em:targetApplication>
 			<Description>
