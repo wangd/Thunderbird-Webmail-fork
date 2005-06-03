@@ -13,16 +13,8 @@ function AddNamesMailDotComListItems()
         var aData = aszNames[i].split("|");
         var szName = aData[0];
         var szNum = -1;
-        try
-        {
-            szNum = aData[1];
-        }
-        catch(e)
-        {
-            szNum = -1;
-        }
-        
-        
+        if (aData.length>1) szNum = aData[1];
+                
         var flagImage = document.createElement("image");
         flagImage.setAttribute("id", "flagImage");
         flagImage.setAttribute("class", "flag");
