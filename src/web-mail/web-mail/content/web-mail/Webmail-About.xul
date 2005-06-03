@@ -20,19 +20,24 @@
         
     <groupbox align="center" orient="horizontal">
         <vbox>
-            <text value="&WebmailAbout.ExtName;" id = "WebmailName"/>
+            <hbox>
+                <spacer flex="1"/>
+                <image id="WebmailImage"/>
+                <spacer flex="1"/>
+            </hbox>
             <text value="&WebmailAbout.ExtVersion;" id = "WebmailVersion"/>
             <text value="&WebmailAbout.ExtDescription;" id = "WebmailDescription"/>
             <text value="&WebmailAbout.ExtCreaterTitle;" id = "WebmailCreatorLabel"/>
-            <text value="&WebmailAbout.ExtCreator;" class = "WebmailCreatorText"/>
+            <hbox>
+                <image id="LionImage"/>
+                <text value="&WebmailAbout.ExtCreator;" class = "WebmailCreatorText"/>
+            </hbox>          
             <text value="&WebmailAbout.ExtContributorTitle;" id = "WebmailContributorLabel"/>
             <vbox flex="1" id="WebmailContributorBox"/>
             <text value="&WebmailAbout.ExtHome;" 
                   id = "WebmailHomePage"
                   onclick="window.opener.openURL('&WebmailAbout.ExtHomeURL;');"/>
         </vbox>
-        <spacer flex="1"/>
-        <image src="chrome://web-mail/skin/Webmail-VeryLargeIcon.png"/>
     </groupbox>
 
     <hbox>

@@ -14,6 +14,12 @@
     margin-bottom: 9px;
 }
 
+#WebmailImage
+{
+    list-style-image: url("chrome://web-mail/skin/Webmail.png");
+    margin-bottom: 9px;
+}
+
 #WebmailVersion
 {
     color: #909090;
@@ -43,14 +49,15 @@
 
 .WebmailCreatorText
 {
-    padding: 5px 0px 3px 0px;
-    margin-left: 45px;
-    margin-top: 3px;
+    /*margin-left: 45px;*/
+    margin-top: 10px; /*3px;*/
+    margin-left: 5px;
 }
 
 .WebmailContributorText
 {
-    margin-left: 45px;
+    /*margin-left: 45px;*/
+    margin-top: 10px;
 }
 
 #WebmailHomePage
@@ -60,4 +67,51 @@
     text-decoration: underline !important;
     cursor: pointer;
     margin-top: 15px;
+}
+
+
+
+#LionImage
+{   
+    margin-left: 20px;
+    list-style-image: url("chrome://web-mail/skin/Dragon.png");
+    
+}
+
+
+#flagImage
+{
+    margin-left: 20px;
+    list-style-image: url("chrome://web-mail/skin/flags.png");
+}
+
+
+.flag/*world*/
+{
+     -moz-image-region: rect(0px, 32px, 32px, 0px)
+}
+
+.flag[value="0"] /*italy*/
+{
+    -moz-image-region: rect(0px, 64px, 32px, 32px)
+}
+
+.flag[value="1"]/*spain*/
+{
+     -moz-image-region: rect(0px, 96px, 32px, 64px)
+}
+
+.flag[value="2"]/*france*/
+{
+     -moz-image-region: rect(0px, 128px, 32px, 96px)
+}
+
+.flag[value="3"]/*germany*/
+{
+     -moz-image-region: rect(0px, 160px, 32px, 128px)
+}
+
+.flag[value="4"]/*Catalan*/
+{
+     -moz-image-region: rect(0px, 192px, 32px, 160px)
 }
