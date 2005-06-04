@@ -3,6 +3,3 @@
 <!ENTITY Servers.Panel.szTitle "Servers">
 <!ENTITY Domains.Panel.szTitle "Domains">
 <!ENTITY Logging.Panel.szTitle "Logging">
-<!ENTITY Proxy.Panel.szTitle "Proxy">
-<!ENTITY Defaults.Button.Label "Defaults">
-<!ENTITY Defaults.Button.Tip "Restore settings to default values.">
