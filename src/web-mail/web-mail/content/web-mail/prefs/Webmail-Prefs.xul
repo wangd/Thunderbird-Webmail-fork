@@ -12,26 +12,33 @@
     %prefsDTD;
 ]>
 
+
 <prefwindow type="prefwindow"
             id="WebMail-Prefs"
             title="&Options.szTitle;"
             xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
             style="width: 46em; height: 37em"
-            lastSelected = "ServersPanel"
+            lastSelected = "paneServers"
             buttons="accept, cancel">
   
-    <!-- servers   --> 
-    <prefpane id="ServersPanel" 
+      
+    <!-- servers --> 
+    <prefpane id="paneServers" 
               label="&Servers.Panel.szTitle;"
               src="chrome://web-mail/content/prefs/Webmail-Prefs-Servers.xul"/>
   
+    <!-- general --> 
+    <prefpane id="paneGeneral" 
+              label="&General.Panel.szTitle;"
+              src="chrome://web-mail/content/prefs/Webmail-Prefs-General.xul"/>
+    
     <!-- domains -->
-    <prefpane id="DomainsPanel" 
+    <prefpane id="paneDomains" 
               label="&Domains.Panel.szTitle;"
               src="chrome://web-mail/content/prefs/Webmail-Prefs-Domains.xul"/>
     
     <!-- logging -->
-    <prefpane id="LoggingPanel" 
+    <prefpane id="paneLogging" 
               label="&Logging.Panel.szTitle;"
               src="chrome://web-mail/content/prefs/Webmail-Prefs-Logging.xul"/>
               
