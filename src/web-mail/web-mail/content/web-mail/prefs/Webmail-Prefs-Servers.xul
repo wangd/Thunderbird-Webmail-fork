@@ -1,135 +1,112 @@
 <?xml version="1.0"?>
-<?xml-stylesheet href="chrome://messenger/skin/prefPanels.css" type="text/css"?>
-<?xml-stylesheet href="chrome://web-mail/content/prefs/Webmail-Prefs-Servers.css" type="text/css"?>
-<?xml-stylesheet href="chrome://web-mail/content/prefs/Webmail-Prefs-Common.css" type="text/css"?>
+<?xml-stylesheet href="chrome://global/skin/global.css"?>
+<?xml-stylesheet href="chrome://web-mail/content/prefs/Webmail-Prefs-Servers.css"?>
 
 <!DOCTYPE dialog SYSTEM "chrome://web-mail/locale/Webmail-Prefs-Servers.dtd">
 
 
-<page xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-      onload="parent.initPanel('chrome://web-mail/content/prefs/Webmail-Prefs-Servers.xul');"
-      headertitle="&MailServers.Label;"
-      class ="background">
+<overlay id="paneServersOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+           
+    <prefpane id = "paneServers" onpaneload= "gServersPane.init();"> 
     
-    <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
-    <script type="application/x-javascript" src="chrome://web-mail/content/prefs/Webmail-Prefs-Servers.js"/>
-    <script type="application/x-javascript" src="chrome://web-mail/content/common/CommonPrefs.js"/>  
-    <script type="application/x-javascript">
-        <![CDATA[
-            var _elementIDs = ["txtPopPort",
-                               "chkAccountWizard"];
-        ]]>
-    </script>
-    
-    <stringbundleset>
-	   <stringbundle id="stringsWebmailPrefs-Servers" src="chrome://web-mail/locale/Webmail-Prefs-Servers.properties"/>
-	</stringbundleset>
-    
-    
-    <vbox>
-        <!--STATUS-->
-        <hbox flex="1" align="center" id = "colourStatus" style="margin-bottom: 10px">
-            <spacer flex="1"/>
-            <groupbox>
-                <caption class = "text">
-                    <hbox align="center">
-                        <label value="&ServerStatus.Label;"/>
-                    </hbox>
-                </caption>
-                <hbox>
-                    <spacer flex="1"/>
-                    <!--value : -1 = ERROR (RED); 0 = Stopped (GREY); 1 = WAITING (AMBER)2 = Running (GREEN)-->
-                    <image id ="imgPopStatus" 
-                           class = "status" 
-                           align ="centre" 
-                           value="1"/>
-                    <spacer flex="1"/>
-                </hbox>
-                <textbox id="txtPopStatus" 
-                         class = "txtStatus" 
-                         size = "6" 
-                         readonly = "true" 
-                         disabled = "true" 
-                         value="TODO"/>
-            </groupbox> 
-            <spacer flex="1"/>  
-        </hbox>
+        <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
+        <script type="application/x-javascript" src="chrome://web-mail/content/prefs/Webmail-Prefs-Servers.js"/>
         
-        <spacer flex="2"/> 
+        <stringbundle id="stringsWebmailPrefs-Servers" src="chrome://web-mail/locale/Webmail-Prefs-Servers.properties"/>
+       
+        <preferences>
+            <preference id="portPOP" name="webmail.server.port.pop" type="int"/>
+        </preferences>
+         
         
-        
-        <!--ports-->
-        <vbox class = "port">  
-            <hbox align="center">
-                <label class = "textPort"
-                       value="&Ports.Label;" 
-                       accesskey= "&Ports.AccessKey;" 
-                       control="txtPopPort"/>
-                        
-                <textbox id="txtPopPort" 
-                         size = "4" 
-                         maxlength = "4" 
-                         preftype="int"
-                         prefstring="webmail.server.port.pop"
-                         class= "text"/>
-                
-                 <label class = "textPort"
-                        value= "&Default.Label;"
-                        control="txtPopPort"/>
-                        
+        <vbox>
+            <!--STATUS-->
+            <hbox flex="1" align="center" id = "colourStatus" style="margin-bottom: 10px">
                 <spacer flex="1"/>
+                <groupbox>
+                    <caption class = "text">
+                        <hbox align="center">
+                            <label value="&ServerStatus.Label;"/>
+                        </hbox>
+                    </caption>
+                    <hbox>
+                        <spacer flex="1"/>
+                        <!--value : -1 = ERROR (RED); 0 = Stopped (GREY); 1 = WAITING (AMBER)2 = Running (GREEN)-->
+                        <image id ="imgPopStatus" 
+                               class = "status" 
+                               align ="centre" 
+                               value="-1"/>
+                        <spacer flex="1"/>
+                    </hbox>
+                    <textbox id="txtPopStatus" 
+                             class = "txtStatus" 
+                             size = "6" 
+                             readonly = "true" 
+                             disabled = "true" 
+                             value="ERROR"/>
+                </groupbox> 
+                <spacer flex="1"/>  
             </hbox>
             
-            <spacer flex="1"/>
-            
-            <!-- information -->   
-       
-            <hbox>
-                <description style="margin-left: 25px"> 
-                    &Note.Label;
-                </description> 
-            </hbox>
+            <spacer flex="2"/> 
+           
+            <!--ports-->
+            <vbox>  
+                <groupbox>
+                    <caption class = "text">
+                        <hbox align="center">
+                            <label value="&Ports.Label;"
+                                   accesskey= "&Ports.AccessKey;"/>
+                        </hbox>
+                    </caption>
+                    
+                    <!--POP-->
+                    <hbox  align="center">
+                        <label class = "text"
+                               value="&Pop.Label;" 
+                               accesskey= "&Pop.AccessKey;" 
+                               control="txtPopPort"/>
+                                
+                        <textbox id="txtPopPort" 
+                                 size = "4" 
+                                 maxlength = "4" 
+                                 preference="portPOP"
+                                 class= "text"/>
+                        
+                        <label class = "text"
+                               value= "&POP.Default.Label;"
+                               control="txtPopPort"/>
+                    </hbox>        
+                    <spacer flex="1"/>
+                    
+                    
+                    <!-- information -->   
+                    <hbox>
+                        <description style="margin-left: 30px"> 
+                            &Note.Label;
+                        </description> 
+                    </hbox>
+                </groupbox>
+            </vbox>    
+                
+            <spacer flex="2"/>
+                  
+            <!-- restart information -->   
+            <vbox class = "information">   
+                <hbox>
+                    <image src = "chrome://web-mail/skin/Message.png" /> 
+                </hbox>
+                <hbox >
+                    <vbox flex="1" >
+                        <description style="margin-left: 25px"> 
+                            &Restart.Label;
+                        </description> 
+                    </vbox> 
+                </hbox>
+            </vbox> 
         </vbox>
         
-       
-        <spacer flex="2"/>
-        
-        <!--account wizard-->
-        <vbox class = "accountwizard">
-            <checkbox label="&AccountWizard.Label;" 
-                      accesskey="&AccountWizard.AccessKey;"
-                      id="chkAccountWizard"
-                      preftype="bool" 
-                      prefstring="webmail.UseAccountWizard"
-                      onclick=""/>
-                      
-            <spacer flex="1"/>
-            
-            <!-- application folder information -->   
-       
-            <hbox >
-                <description style="margin-left: 25px"> 
-                    &AccountWizardWarning.Label;
-                </description> 
-            </hbox>
-        </vbox>
-        
-        
-        <spacer flex="2"/>
-        
-        <!-- restart information -->   
-        <vbox class = "information">   
-            <hbox>
-                <image src = "chrome://web-mail/skin/Message.png" /> 
-            </hbox>
-            <hbox >
-                <vbox flex="1" >
-                    <description style="margin-left: 25px"> 
-                        &Restart.Label;
-                    </description> 
-                </vbox> 
-            </hbox>
-        </vbox>
-        
-    </vbox>  
-</page>
+    </prefpane>
+    
+</overlay>

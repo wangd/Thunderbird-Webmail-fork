@@ -1,126 +1,89 @@
-
-
-
-function Startup()
+var gServersPane = 
 {
-    try
+    m_DebugLog : null,
+    m_POPServer : null,
+    
+    
+    init: function ()
     {
-        parent.gWebmailLog.Write("Webmail: Webmail-Prefs-Servers.js : Startup - START");
+    
+        this.m_DebugLog = new DebugLog("webmail.logging.comms", 
+                                       "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
+                                       "webmailPrefs");
+                                   
+        this.m_DebugLog.Write("Webmail-Prefs-Servers : init - START");
         
-        parent.hPrefWindow.registerOKCallbackFunc(onOK);
-        parent.hPrefWindow.registerCancelCallbackFunc(onCancel);
+        try
+        {
+            //get pop service
+            this.m_POPServer = Components.classes["@mozilla.org/POPConnectionManager;1"].
+                                 getService().QueryInterface(Components.interfaces.nsIPOPConnectionManager);
+        }
+        catch(e)
+        {
+             this.m_DebugLog.Write("Webmail-Prefs-Servers: m_POPServer ERROR"
+                                                             + e.name + 
+                                                             ".\nError message: " 
+                                                             + e.message);    
+        }  
         
-        UpdateStatus();
-       
-        //update status every 10s
-        //get timer 
-        parent.gWebMailUpdateTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);  
-        parent.gWebMailUpdateTimer.initWithCallback(TimerCallback, 60000, Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
-        
-        parent.gWebmailLog.Write("Webmail: Webmail-Prefs-Servers.js : Startup - END");
-    }
-    catch(e)
+        this.updateStatus();
+         
+        this.m_DebugLog.Write("Webmail-Prefs-Servers : init - END");
+    },
+    
+    
+    updateStatus : function ()
     {
-         parent.gWebmailLog.DebugDump("Webmail: Webmail-Prefs-Servers.js : Exception in Startup : " 
+        try
+        {
+            this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - START");
+            
+            //pop status
+            var iPOPvalue = -1;
+            this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - getting pop status");
+            if (this.m_POPServer)
+            {
+                iPOPvalue = this.m_POPServer.GetStatus();
+                this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - this.m_POPServer.GetStatus()" + iPOPvalue);
+            }
+            else
+            {
+                this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - this.m_POPServer == null");
+            }
+    
+            document.getElementById("imgPopStatus").setAttribute("value",iPOPvalue); //set pop status colour
+            document.getElementById("txtPopStatus").setAttribute("value",this.StatusText(iPOPvalue)); //set status text 
+            
+            this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - END");
+        }
+        catch(err)
+        {
+            this.m_DebugLog.DebugDump("Webmail-Prefs-Servers : Exception in updateStatus : " 
                                       + e.name + 
                                       ".\nError message: " 
                                       + e.message);
-    }
-}
-
-
-function onOK()
-{
-    try
-    {
-        parent.gWebmailLog.Write("Webmail: Webmail-Prefs-Servers.js : onOK - START");
-        //cancel status page timer
-        if (parent.gWebMailUpdateTimer) parent.gWebMailUpdateTimer.cancel(); 
-        parent.gWebmailLog.Write("Webmail: Webmail-Prefs-Servers.js : onOK - END");
-    }
-    catch(e)
-    {
-        parent.gWebmailLog.DebugDump("Webmail: Webmail-Prefs-Servers.js : Exception in onOK : " 
-                                      + e.name + 
-                                      ".\nError message: " 
-                                      + e.message);
-    }
-}
-
-function onCancel()
-{
-    try
-    {
-        parent.gWebmailLog.Write("Webmail: Webmail-Prefs-Servers.js : onCancel - START");
-        //cancel status page timer
-        if (parent.gWebMailUpdateTimer) parent.gWebMailUpdateTimer.cancel(); 
-        parent.gWebmailLog.Write("Webmail: Webmail-Prefs-Servers.js : onCancel - START");
-    }
-    catch(e)
-    {
-        parent.gWebmailLog.DebugDump("Webmail: Webmail-Prefs-Servers.js : Exception in onCancel : " 
-                                      + e.name + 
-                                      ".\nError message: " 
-                                      + e.message);
-    }
-}
-
-
-
-function StatusText(iValue)
-{ 
-    parent.gWebmailLog.Write("Webmail: Webmail-Prefs-Servers.js : StatusText - " + iValue + "- START");
+        }
+    },
     
-    var strbundle=document.getElementById("stringsWebmailPrefs-Servers");
-    var szString="";
     
-    switch(iValue)
-    {// -1 = ERROR (RED); 0 = WAITING (AMBER); 1 = Stopped (GREY); 2 = Running (GREEN)
-        case -1:  szString = strbundle.getString("ERROR"); break              
-        case 0:   szString = strbundle.getString("Stop"); break
-        case 1:   szString = strbundle.getString("Wait"); break
-        case 2:   szString = strbundle.getString("Go"); break
-    }
     
-    parent.gWebmailLog.Write("Webmail: Webmail-Prefs-Servers.js : StatusText - " + szString + " END");
-    return szString;
-}
-
-
-
-function UpdateStatus()
-{
-    parent.gWebmailLog.Write("Webmail: Webmail-Prefs-Servers.js : UpdateStatus - START");
-      
-    //pop status
-    var iPOPvalue = -1;
-    parent.gWebmailLog.Write("Webmail: Webmail-Prefs-Servers.js : Startup - getting pop status");
-    if (parent.gWebmailPOP)
+    StatusText : function (iValue)
     {
-        iPOPvalue = parent.gWebmailPOP.GetStatus();
-        parent.gWebmailLog.Write("Webmail: Webmail-Prefs-Servers.js : Startup - parent.gPOP.GetStatus()" + iPOPvalue);
-    }
-    else
-    {
-        parent.gWebmailLog.Write("Webmail: Webmail-Prefs-Servers.js : Startup - parent.gPOP == null");
-    }
+        this.m_DebugLog.Write("Webmail-Prefs-Servers : StatusText - " + iValue + "- START");
     
-    document.getElementById("imgPopStatus").setAttribute("value",iPOPvalue); //set pop status colour
-    document.getElementById("txtPopStatus").setAttribute("value",StatusText(iPOPvalue)); //set status text 
-    
-    parent.gWebmailLog.Write("Webmail: Webmail-Prefs-Servers.js : UpdateStatus - END");
-}
-
-
-
-//timer
-var TimerCallback = {
-    notify: function(timer)
-    {
-        parent.gWebmailLog.Write("Webmail: Webmail-Prefs-Servers.js : TimerCallback - START");
+        var strbundle=document.getElementById("stringsWebmailPrefs-Servers");
+        var szString="";
         
-        UpdateStatus(); 
+        switch(iValue)
+        {// -1 = ERROR (RED); 0 = WAITING (AMBER); 1 = Stopped (GREY); 2 = Running (GREEN)
+            case -1:  szString = strbundle.getString("ERROR"); break              
+            case 0:   szString = strbundle.getString("Stop"); break
+            case 1:   szString = strbundle.getString("Wait"); break
+            case 2:   szString = strbundle.getString("Go"); break
+        }
         
-        parent.gWebmailLog.Write("Webmail: Webmail-Prefs-Servers.js : TimerCallback - END");
-    } 
-} 
+        this.m_DebugLog.Write("Webmail-Prefs-Servers : StatusText - " + szString + " END");
+        return szString;
+    }, 
+};
