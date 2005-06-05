@@ -1,0 +1,4 @@
+<!ENTITY AccountWizard.Label "Add WebMail to Account Wizard">
+<!ENTITY AccountWizard.AccessKey "A">
+<!ENTITY AccountWizardWarning.Label "Requires write access to application folder.">
+<!ENTITY Restart.Label "A restart of Thunderbird is required before changes take effect.">
