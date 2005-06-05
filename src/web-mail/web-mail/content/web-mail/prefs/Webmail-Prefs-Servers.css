@@ -12,6 +12,10 @@
     color: #000000;
 }
 
+#iconMessage
+{
+    list-style-image: url("chrome://web-mail/skin/Message.png");
+}
 
 .information
 {
