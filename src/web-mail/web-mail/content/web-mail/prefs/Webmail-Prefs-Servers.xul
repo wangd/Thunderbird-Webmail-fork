@@ -95,7 +95,7 @@
             <!-- restart information -->   
             <vbox class = "information">   
                 <hbox>
-                    <image src = "chrome://web-mail/skin/Message.png" /> 
+                    <image id = "iconMessage" /> 
                 </hbox>
                 <hbox >
                     <vbox flex="1" >
