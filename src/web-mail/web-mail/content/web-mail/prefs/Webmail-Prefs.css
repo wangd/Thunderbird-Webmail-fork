@@ -8,25 +8,28 @@
 radio[pane] 
 {
     list-style-image: url("chrome://messenger/skin/preferences/mail-options.png"); 
-    -moz-appearance: none;
-    border: 1px solid transparent;
-    background-color: transparent;
-    margin: 1px;
 }
 
-radio[pane=ServersPanel]
+radio[pane=paneServers]
 {
 	-moz-image-region: rect(0px, 32px, 32px, 0px)
 }
 
-
-radio[pane=DomainsPanel]
+radio[pane=paneGeneral]
 {
-	-moz-image-region: rect(0px, 64px, 32px, 32px)
+    -moz-image-region: rect(0px, 64px, 32px, 32px)
 }
 
-
-radio[pane=LoggingPanel]
+radio[pane=paneDomains]
 {
 	-moz-image-region: rect(0px, 96px, 32px, 64px)
 }
+
+
+radio[pane=paneLogging]
+{
+	-moz-image-region: rect(0px, 128px, 32px, 96px)
+}
+
+
+
