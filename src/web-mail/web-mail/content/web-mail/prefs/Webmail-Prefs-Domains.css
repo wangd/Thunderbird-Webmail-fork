@@ -1,3 +1,8 @@
+.text
+{
+    font-size: small;
+}
+
 .textBox
 {
     margin-left: 5px;
