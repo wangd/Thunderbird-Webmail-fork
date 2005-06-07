@@ -21,7 +21,7 @@
                 Extensions that are also compatible with newer versions of 
                 the app. -->
         
-        <em:version>0.3.5</em:version>
+        <em:version>0.3.4</em:version>
         <em:updateLink>http://download.mozdev.org/webmail/webmail-0-3-4.xpi</em:updateLink>
     
     </RDF:Description>
