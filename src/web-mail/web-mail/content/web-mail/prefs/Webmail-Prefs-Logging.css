@@ -1,5 +1,6 @@
 .checkBox
 {
+    font-size: small;
     margin-left: 5px;
     margin-top: 10px;
     margin-bottom: 1px;
@@ -7,6 +8,7 @@
 
 .groupBox
 {
+    font-size: small;
     margin-left: 25px;
     margin-top: 0px;
     margin-bottom: 10px;
@@ -23,10 +25,18 @@
     margin-top: 10px;
     border: 1px solid black;
     background-color: #FFFFCC;
-    font-size: small;
     padding: 5px;
 }
 
+#iconMessage
+{
+    list-style-image: url("chrome://web-mail/skin/Message.png");
+}
+
+#iconWarning
+{
+    list-style-image: url("chrome://web-mail/skin/Error.png");
+}
 
 .DisabledLabel[disabled="true"]
 {   
