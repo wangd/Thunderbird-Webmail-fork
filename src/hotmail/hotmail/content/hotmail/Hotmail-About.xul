@@ -29,7 +29,10 @@
             <text value="&HotmailAbout.ExtVersion;" id = "HotmailVersion"/>
             <text value="&HotmailAbout.ExtDescription;" id = "HotmailDescription"/>
             <text value="&HotmailAbout.ExtCreaterTitle;" id = "HotmailCreatorLabel"/>
-            <text value="&HotmailAbout.ExtCreator;" class = "HotmailCreatorText"/>
+            <hbox>
+                <image id="LionImage"/>
+                <text value="&HotmailAbout.ExtCreator;" class = "HotmailCreatorText"/>
+            </hbox>
             <text value="&HotmailAbout.ExtContributorTitle;" id = "HotmailContributorLabel"/>
             <vbox flex="1" id="HotmailContributorBox"/>
             <text value="&HotmailAbout.ExtHome;" 
