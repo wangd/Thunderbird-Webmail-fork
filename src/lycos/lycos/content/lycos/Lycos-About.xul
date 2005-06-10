@@ -29,7 +29,10 @@
             <text value="&LycosAbout.ExtVersion;" id = "LycosVersion"/>
             <text value="&LycosAbout.ExtDescription;" id = "LycosDescription"/>
             <text value="&LycosAbout.ExtCreaterTitle;" id = "LycosCreatorLabel"/>
-            <text value="&LycosAbout.ExtCreator;" class = "LycosCreatorText"/>
+            <hbox>
+                <image id="LionImage"/>
+                <text value="&LycosAbout.ExtCreator;" class = "LycosCreatorText"/>
+            </hbox>
             <text value="&LycosAbout.ExtContributorTitle;" id = "LycosContributorLabel"/>
             <vbox flex="1" id="LycosContributorBox"/>
             <text value="&LycosAbout.ExtHome;" 

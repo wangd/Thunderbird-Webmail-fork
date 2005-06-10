@@ -14,6 +14,12 @@
     margin-bottom: 9px;
 }
 
+#LionImage
+{   
+    margin-left: 20px;
+    list-style-image: url("chrome://lycos/skin/Dragon.png");
+    
+}
 
 #LycosImage
 {
@@ -49,15 +55,15 @@
     font-weight: bold;
 }
 
+
 .LycosCreatorText
 {
-    margin-left: 45px;
-    margin-top: 3px;
+    margin-top: 10px; 
+    margin-left: 5px;
 }
 
 .LycosContributorText
 {
-   /* margin-left: 45px;*/
     margin-top: 10px;
 }
 
