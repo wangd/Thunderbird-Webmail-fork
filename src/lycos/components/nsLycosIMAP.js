@@ -41,9 +41,9 @@ function nsLycosIMAP()
             scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
             scriptLoader.loadSubScript("chrome://web-mail/content/common/CookieManager.js");
             scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
-            scriptLoader.loadSubScript("chrome://web-mail/content/common/FolderManager.js");
-            scriptLoader.loadSubScript("chrome://web-mail/content/common/Folder.js");
-            scriptLoader.loadSubScript("chrome://web-mail/content/common/MSG.js");
+            scriptLoader.loadSubScript("chrome://lycos/content/Lycos-FolderManager.js");
+            scriptLoader.loadSubScript("chrome://lycos/content/Lycos-Folder.js");
+            scriptLoader.loadSubScript("chrome://lycos/content/Lycos-MSG.js");
             scriptLoader.loadSubScript("chrome://web-mail/content/common/crc.js");
             scriptLoader.loadSubScript("chrome://lycos/content/base64.js");
         }
