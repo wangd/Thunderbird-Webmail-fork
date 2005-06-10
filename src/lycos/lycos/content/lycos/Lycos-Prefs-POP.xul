@@ -1,32 +1,30 @@
 <?xml version="1.0"?>
-<?xml-stylesheet href="chrome://messenger/skin/prefPanels.css" type="text/css"?>
-<?xml-stylesheet href="chrome://lycos/content/Lycos-Prefs-POP.css" type="text/css"?>
-<?xml-stylesheet href="chrome://lycos/content/Lycos-Prefs-Common.css" type="text/css"?>
+<?xml-stylesheet href="chrome://global/skin/global.css"?>
+<?xml-stylesheet href="chrome://lycos/content/Lycos-Prefs-POP.css"?>
 
 <!DOCTYPE dialog SYSTEM "chrome://lycos/locale/Lycos-Prefs-POP.dtd">
 
 
-<page xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-      onload="parent.initPanel('chrome://lycos/content/Lycos-Prefs-POP.xul');"
-      headertitle="&MailServers.Label;"
-      class ="background">
+<overlay id="panePOPOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+           
+    <prefpane id = "panePOP" onpaneload= ""> 
+        
+        <preferences>
+            <preference id="useJunkMail" name="lycos.bUseJunkMail" type="bool"/>
+        </preferences>
+        
+        <vbox>
+                
+            <!--download junk mail-->
+            <checkbox label="&JunkMail.Label;" 
+                      accesskey="&JunkMail.AccessKey;"
+                      preference = "useJunkMail"
+                      id="chkJunkMail"/>
+        </vbox>   
+        
+    </prefpane>
     
-    <script type="application/x-javascript">
-        <![CDATA[
-            var _elementIDs = ["chkJunkMail"];
-        ]]>
-    </script>
-    
-    <vbox>
-            
-        <!--download junk mail-->
-       
-        <checkbox label="&JunkMail.Label;" 
-                  accesskey="&JunkMail.AccessKey;"
-                  id="chkJunkMail"
-                  preftype="bool" 
-                  prefstring="lycos.bUseJunkMail"
-                  onclick=""/>
+</overlay>
 
-    </vbox>  
-</page>
+
