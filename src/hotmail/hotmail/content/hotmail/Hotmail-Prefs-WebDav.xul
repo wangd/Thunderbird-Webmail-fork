@@ -1,33 +1,34 @@
 <?xml version="1.0"?>
-<?xml-stylesheet href="chrome://messenger/skin/prefPanels.css" type="text/css"?>
-<?xml-stylesheet href="chrome://hotmail/content/Hotmail-Prefs-POP.css" type="text/css"?>
-<?xml-stylesheet href="chrome://hotmail/content/Hotmail-Prefs-Common.css" type="text/css"?>
+<?xml-stylesheet href="chrome://global/skin/global.css"?>
+
 
 <!DOCTYPE dialog SYSTEM "chrome://hotmail/locale/Hotmail-Prefs-WebDav.dtd">
 
 
-<page xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-      onload="parent.initPanel('chrome://hotmail/content/Hotmail-Prefs-WebDav.xul');"
-      headertitle="&MailServers.Label;"
-      class ="background">
-    
-    <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
-    <script type="application/x-javascript" src="chrome://web-mail/content/common/CommonPrefs.js"/> 
-    <script type="application/x-javascript" src="chrome://hotmail/content/Hotmail-Prefs-WebDav.js"/> 
+<overlay id="paneWebDavOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+           
+    <prefpane id = "paneWebDav" onpaneload= "gWebDavPane.init();"> 
+        <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
+        <script type="application/x-javascript" src="chrome://web-mail/content/common/CommonPrefs.js"/>
+        <script type="application/x-javascript" src="chrome://hotmail/content/Hotmail-Prefs-WebDav.js"/>
         
-    <vbox>
-         <listbox id="listView" class="listbox" rows="13">
-            <listhead>
-                <listheader label="&UserName.Label;"/>
-                <listheader label="&ScreenRipper.Label;"/>
-                <listheader label="&WebDav.Label;"/>
-            </listhead>
-            
-            <listcols>
-                <listcol flex="4"/>
-                <listcol flex="1"/>
-                <listcol flex="1"/>
-            </listcols>
-        </listbox>      
-    </vbox>  
-</page>
+        <vbox>
+            <listbox id="listView" class="listbox" rows="13">
+                <listhead>
+                    <listheader label="&UserName.Label;"/>
+                    <listheader label="&ScreenRipper.Label;"/>
+                    <listheader label="&WebDav.Label;"/>
+                </listhead>
+                
+                <listcols>
+                    <listcol flex="4"/>
+                    <listcol flex="1"/>
+                    <listcol flex="1"/>
+                </listcols>
+            </listbox>             
+        </vbox>  
+        
+    </prefpane>
+    
+</overlay>

@@ -1,76 +1,31 @@
 <?xml version="1.0"?> 
-<?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?> 
-<?xml-stylesheet href="chrome://communicator/skin/pref/pref.css"?>
+
+<?xml-stylesheet href="chrome://global/skin/global.css"?>
+<?xml-stylesheet href="chrome://messenger/skin/preferences/preferences.css"?>
+<?xml-stylesheet href="chrome://mozapps/content/preferences/preferences.css"?>
+
 <?xml-stylesheet href="chrome://hotmail/content/Hotmail-Prefs.css" type="text/css"?>
 
 <!DOCTYPE dialog SYSTEM "chrome://hotmail/locale/Hotmail-Prefs.dtd">
 
 
-<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-        id="Hotmail-Prefs"
-        title="&Options.szTitle;"
-        style="width: 26em; height: 26em"
-        onload="InitHotmailPrefs();"
-        onunload="HotmailPrefsClose();"
-        ondialogaccept="return hPrefWindow.onOK(event);"
-        ondialogcancel="return hPrefWindow.onCancel(event);">
-     
-    <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/> 
-    <script type="application/x-javascript" src="chrome://hotmail/content/Hotmail-Prefs.js"/> 
-    <script type="application/x-javascript" src="chrome://global/content/nsWidgetStateManager.js"/>
-    <script type="application/x-javascript" src="chrome://communicator/content/pref/nsPrefWindow.js"/>
-        
-    <hbox flex="1">
-
-        <vbox orient="vertical" 
-              id="prefsCategories" 
-              oncommand="switchPage(event);" 
-              lastpanel="0" 
-              onmouseover="focus();">
-        
-             <!-- web dav -->
-            <button id="WebDavButton"  
-                    orient="vertical" 
-                    class="buttonBoxButton" 
-                    type="radio"
-                    group="categories"
-                    label="&WebDav.Panel.szTitle;"
-                    url="chrome://hotmail/content/Hotmail-Prefs-WebDav.xul" /> 
-                    
-            <!-- pop -->
-            <button id="POPbutton"  
-                    orient="vertical" 
-                    class="buttonBoxButton" 
-                    type="radio"
-                    group="categories"
-                    label="&POP.Panel.szTitle;"
-                    url="chrome://hotmail/content/Hotmail-Prefs-POP.xul" />  
-                    
-           
-            <!-- imap  
-            <button id="IMAPbutton"  
-                      orient="vertical" 
-                      class="buttonBoxButton" 
-                      type="radio"
-                      group="categories"
-                      label="test2"/>
-           -->
-            <!-- smpt 
-            <button id="SMTPbutton"  
-                      orient="vertical" 
-                      class="buttonBoxButton" 
-                      type="radio"
-                      group="categories"
-                      label="test3"/>
-           -->             
-        </vbox>
-        
-        <vbox flex="1" id ="panel" >
-            <dialogheader id="header"  hidden="true"/>
-            <iframe id="panelFrame"
-                    name="panelFrame" 
-                    flex = "1"/>
-        </vbox>
-    </hbox> 
-
-</dialog>
+<prefwindow type="prefwindow"
+            id="WebMail-Prefs"
+            title="&Options.szTitle;"
+            xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+            style="width: 36em; height: 26em"
+            lastSelected = "paneWebDav"
+            buttons="accept, cancel">
+  
+      
+    <!-- webdav --> 
+    <prefpane id="paneWebDav" 
+              label="&WebDav.Panel.szTitle;"
+              src="chrome://hotmail/content/Hotmail-Prefs-WebDav.xul"/>
+  
+    <!-- pop --> 
+    <prefpane id="panePOP" 
+              label="&POP.Panel.szTitle;"
+              src="chrome://hotmail/content/Hotmail-Prefs-POP.xul"/>
+                  
+</prefwindow>
