@@ -1,0 +1,4 @@
+<!ENTITY AccountWizard.Label "WebMail zum Konten-Assistent hinzufügen">
+<!ENTITY AccountWizard.AccessKey "A">
+<!ENTITY AccountWizardWarning.Label "Benötigt Schreibzugriff auf den Programm-Ordner.">
+<!ENTITY Restart.Label "Ein Neustart von Thunderbird ist erforderlich bevor die geänderten Einstellungen wirksam werden.">
