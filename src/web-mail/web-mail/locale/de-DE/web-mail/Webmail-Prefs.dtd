@@ -1,8 +1,5 @@
 <!ENTITY Options.szTitle "WebMail Einstellungen">
-<!ENTITY Status.Panel.szTitle "Status">
 <!ENTITY Servers.Panel.szTitle "Server">
 <!ENTITY Domains.Panel.szTitle "Websites">
 <!ENTITY Logging.Panel.szTitle "Protokoll">
-<!ENTITY Proxy.Panel.szTitle "Proxy">
-<!ENTITY Defaults.Button.Label "Zurücksetzen">
-<!ENTITY Defaults.Button.Tip "Auf Standard zurücksetzen">
+<!ENTITY General.Panel.szTitle "General">
