@@ -1,8 +1,5 @@
 <!ENTITY Options.szTitle "Supporto posta 'solo web'">
-<!ENTITY Status.Panel.szTitle "Stato">
 <!ENTITY Servers.Panel.szTitle "Server">
 <!ENTITY Domains.Panel.szTitle "Domini">
 <!ENTITY Logging.Panel.szTitle "Dati di login">
-<!ENTITY Proxy.Panel.szTitle "Proxy">
-<!ENTITY Defaults.Button.Label "Predefiniti">
-<!ENTITY Defaults.Button.Tip "Ripristina impostazioni predefinite.">
+<!ENTITY General.Panel.szTitle "General">

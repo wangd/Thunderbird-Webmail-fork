@@ -1,11 +1,10 @@
-<!ENTITY MailServers.Label "Server di posta">
+<!ENTITY ServerStatus.Label "Stato del server">
 <!ENTITY Ports.Label "Porta">
 <!ENTITY Ports.AccessKey "P">
-<!ENTITY ServerStatus.Label "Stato del server">
-<!ENTITY Default.Label "predefinita 110">
+<!ENTITY Pop.Label "POP">
+<!ENTITY Pop.AccessKey "o">
+<!ENTITY POP.Default.Label "default 110">
 <!ENTITY Note.Label "Le porte sotto la 1024 potrebbero essere bloccate dal S.O.">
 <!ENTITY Restart.Label "Riavviare Thunderbird per rendere effettive le modifiche.">
-<!ENTITY AccountWizard.Label "Aggiungere Web Mail al wizard di creazione nuovo account">
-<!ENTITY AccountWizard.AccessKey "A">
-<!ENTITY AccountWizardWarning.Label "Richiede il permesso di scrittura per la cartella dell'applicazione.">
+
 

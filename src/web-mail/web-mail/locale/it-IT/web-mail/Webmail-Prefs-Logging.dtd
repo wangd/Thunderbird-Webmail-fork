@@ -1,13 +1,12 @@
-<!ENTITY Logging.Label "Dati di login">
 <!ENTITY GeneralLogging.Label "Memorizza dati di login">
 <!ENTITY GeneralLogging.AccessKey "M">
 <!ENTITY JavaScriptConsole.Label "Usa console JavaScript">
-<!ENTITY JavaScriptConsole1.AccessKey "J">
+<!ENTITY JavaScriptConsole.AccessKey "J">
 <!ENTITY LogFile.Label "Usa file di log">
-<!ENTITY LogFile1.AccessKey "l">
+<!ENTITY LogFile.AccessKey "l">
 <!ENTITY Location.Label "Cartella">
-<!ENTITY Location1.AccessKey "a">
+<!ENTITY Location.AccessKey "a">
 <!ENTITY Note.Label "Questi file di log conterranno i dati di nome utente e password.">
 <!ENTITY Restart.Label "Riavviare Mozilla Thunderbird per rendere effettive le modifiche.">
-
-
+<!ENTITY Button.Label "Browse...">
+<!ENTITY Button.AccessKey "B">
