@@ -1,0 +1,12 @@
+overlay chrome://messenger/content/messenger.xul    chrome://yahoo/content/Yahoo-Start.xul
+
+content yahoo    jar:chrome/yahoo.jar!/content/yahoo/
+
+skin	yahoo	 classic/1.0     jar:chrome/yahoo.jar!/skin/classic/yahoo/
+
+locale	yahoo    en-US   jar:chrome/yahoo.jar!/locale/en-US/yahoo/
+locale  yahoo    it-IT   jar:chrome/yahoo.jar!/locale/it-IT/yahoo/
+locale  yahoo    es-ES   jar:chrome/yahoo.jar!/locale/es-ES/yahoo/
+locale  yahoo    fr-FR   jar:chrome/yahoo.jar!/locale/fr-FR/yahoo/
+locale  yahoo    de-DE   jar:chrome/yahoo.jar!/locale/de-DE/yahoo/
+locale  yahoo    ca-AD   jar:chrome/yahoo.jar!/locale/ca-AD/yahoo/
