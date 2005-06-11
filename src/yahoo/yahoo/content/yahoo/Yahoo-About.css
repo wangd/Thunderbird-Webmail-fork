@@ -30,7 +30,7 @@
 
 #YahooDescription
 {
-  color: #404040;
+    color: #404040;
 }
 
 
@@ -49,16 +49,24 @@
     font-weight: bold;
 }
 
+
+#LionImage
+{   
+    margin-left: 20px;
+    list-style-image: url("chrome://yahoo/skin/Dragon.png");
+    
+}
+
+
 .YahooCreatorText
 {
-    margin-left: 45px;
-    margin-top: 3px;
+    margin-top: 10px; 
+    margin-left: 5px;
 }
 
 
 .YahooContributorText
 {
-    /*margin-left: 45px;*/
     margin-top: 10px;
 }
 

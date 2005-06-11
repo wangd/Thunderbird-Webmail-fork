@@ -24,7 +24,10 @@
             <text value="&YahooAbout.ExtVersion;" id = "YahooVersion"/>
             <text value="&YahooAbout.ExtDescription;" id = "YahooDescription"/>
             <text value="&YahooAbout.ExtCreaterTitle;" id = "YahooCreatorLabel"/>
-            <text value="&YahooAbout.ExtCreator;" class = "YahooCreatorText"/>
+            <hbox>
+                <image id="LionImage"/>
+                <text value="&YahooAbout.ExtCreator;" class = "YahooCreatorText"/>
+            </hbox>
             <text value="&YahooAbout.ExtContributorTitle;" id = "YahooContributorLabel"/>
             <vbox flex="1" id="YahooContributorBox"/>
             <text value="&YahooAbout.ExtHome;" 
