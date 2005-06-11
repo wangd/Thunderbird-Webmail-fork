@@ -1,8 +1,5 @@
 <!ENTITY Options.szTitle "Implementacions de correu web">
-<!ENTITY Status.Panel.szTitle "Estat">
 <!ENTITY Servers.Panel.szTitle "Servidors">
 <!ENTITY Domains.Panel.szTitle "Dominis">
 <!ENTITY Logging.Panel.szTitle "Registre">
-<!ENTITY Proxy.Panel.szTitle "Servidor intermediari">
-<!ENTITY Defaults.Button.Label "Paràmetres per defecte">
-<!ENTITY Defaults.Button.Tip "Restaura la configuració als valors per defecte.">
+<!ENTITY General.Panel.szTitle "General">
