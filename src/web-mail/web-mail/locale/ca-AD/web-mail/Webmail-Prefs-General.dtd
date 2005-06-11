@@ -1,0 +1,4 @@
+<!ENTITY AccountWizard.Label "Afegeix l'opció 'Correu web' a l'auxiliar de comptes">
+<!ENTITY AccountWizard.AccessKey "A">
+<!ENTITY AccountWizardWarning.Label "Es necessiten permisos d'escriptura a la carpeta de l'aplicació.">
+<!ENTITY Restart.Label "Cal que es reiniciï el Thunderbird per a que els canvis tinguin efecte.">
