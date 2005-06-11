@@ -1,11 +1,8 @@
-<!ENTITY MailServers.Label "Serveur Mail">
+<!ENTITY ServerStatus.Label "État du serveur">
 <!ENTITY Ports.Label "Ports">
 <!ENTITY Ports.AccessKey "P">
-<!ENTITY ServerStatus.Label "État du serveur">
-<!ENTITY Default.Label "par défaut 110">
+<!ENTITY Pop.Label "POP">
+<!ENTITY Pop.AccessKey "o">
+<!ENTITY POP.Default.Label "default 110">
 <!ENTITY Note.Label "Les ports inférieurs à 1024 peuvent être bloqués par le système">
 <!ENTITY Restart.Label "Un redémarrage de Thunderbird est nécessaire pour que les changements prennent effet.">
-<!ENTITY AccountWizard.Label "Ajouter Web Mail au gestionnaire de comptes">
-<!ENTITY AccountWizard.AccessKey "A">
-<!ENTITY AccountWizardWarning.Label "Nécessite les droits d'écriture sur le dossier de l'application.">
-

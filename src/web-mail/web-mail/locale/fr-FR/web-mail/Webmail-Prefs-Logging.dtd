@@ -1,13 +1,12 @@
-<!ENTITY Logging.Label "Archivage">
 <!ENTITY GeneralLogging.Label "Activer l'archivage">
 <!ENTITY GeneralLogging.AccessKey "A">
 <!ENTITY JavaScriptConsole.Label "Utiliser la console Javascript">
-<!ENTITY JavaScriptConsole1.AccessKey "J">
+<!ENTITY JavaScriptConsole.AccessKey "J">
 <!ENTITY LogFile.Label "Utiliser le fichier d'archive">
-<!ENTITY LogFile1.AccessKey "U">
+<!ENTITY LogFile.AccessKey "U">
 <!ENTITY Location.Label "Chemin">
-<!ENTITY Location1.AccessKey "C">
+<!ENTITY Location.AccessKey "C">
 <!ENTITY Note.Label "Ces archives contiendront des noms d'utilisateurs et des mots de passe.">
 <!ENTITY Restart.Label "Un redémarrage de Thunderbird est nécessaire pour que les changements prennent effet.">
-
-
+<!ENTITY Button.Label "Browse...">
+<!ENTITY Button.AccessKey "B">
