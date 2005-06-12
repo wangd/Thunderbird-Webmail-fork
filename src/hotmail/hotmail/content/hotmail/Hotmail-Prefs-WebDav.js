@@ -100,10 +100,12 @@ var gWebDavPane =
                     var newItem = document.createElement("listitem"); 
                     newItem.setAttribute("allowevents", "true");
                     newItem.setAttribute("id", aHotmailUserNames[i]);
-                    
+                                        
                     //user name
                     var UserNameCell =  document.createElement("listcell"); 
                     UserNameCell.setAttribute("label", aHotmailUserNames[i]);
+                    UserNameCell.setAttribute("class", "listitem-iconic");
+                    UserNameCell.setAttribute("image", "chrome://hotmail/skin/Person.png");
                     newItem.appendChild(UserNameCell);
                   
                     //screen ripper
