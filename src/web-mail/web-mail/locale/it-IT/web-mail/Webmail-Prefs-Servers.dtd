@@ -1,9 +1,10 @@
-<!ENTITY ServerStatus.Label "Estado del servidor">
-<!ENTITY Ports.Label "Puertos">
+﻿<!ENTITY ServerStatus.Label "Stato del server">
+<!ENTITY Ports.Label "Porta">
 <!ENTITY Ports.AccessKey "P">
 <!ENTITY Pop.Label "POP">
 <!ENTITY Pop.AccessKey "o">
-<!ENTITY POP.Default.Label "Por defecto 110">
-<!ENTITY Note.Label "Los puertos inferiores al 1024 pueden estar bloqueados por el Sistema Operativo">
-<!ENTITY Restart.Label "Es necesario reiniciar Thunderbird para aplicar los cambios.">
+<!ENTITY POP.Default.Label "predefinita 110">
+<!ENTITY Note.Label "Le porte sotto la 1024 potrebbero essere bloccate dal S.O.">
+<!ENTITY Restart.Label "Riavviare Thunderbird per rendere effettive le modifiche.">
+
 

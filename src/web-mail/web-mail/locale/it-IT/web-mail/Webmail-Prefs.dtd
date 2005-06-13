@@ -1,5 +1,5 @@
-<!ENTITY Options.szTitle "Opciones Web Mail">
-<!ENTITY Servers.Panel.szTitle "Servidor">
-<!ENTITY Domains.Panel.szTitle "Dominios">
-<!ENTITY Logging.Panel.szTitle "Registro">
-<!ENTITY General.Panel.szTitle "General">
+﻿<!ENTITY Options.szTitle "Impostazioni di Webmail">
+<!ENTITY Servers.Panel.szTitle "Server">
+<!ENTITY Domains.Panel.szTitle "Domini">
+<!ENTITY Logging.Panel.szTitle "Dati di login">
+<!ENTITY General.Panel.szTitle "Generali">
