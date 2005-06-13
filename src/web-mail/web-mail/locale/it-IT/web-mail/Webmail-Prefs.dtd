@@ -1,5 +1,5 @@
-<!ENTITY Options.szTitle "Supporto posta 'solo web'">
+﻿<!ENTITY Options.szTitle "Impostazioni di Webmail">
 <!ENTITY Servers.Panel.szTitle "Server">
 <!ENTITY Domains.Panel.szTitle "Domini">
 <!ENTITY Logging.Panel.szTitle "Dati di login">
-<!ENTITY General.Panel.szTitle "General">
+<!ENTITY General.Panel.szTitle "Generali">
