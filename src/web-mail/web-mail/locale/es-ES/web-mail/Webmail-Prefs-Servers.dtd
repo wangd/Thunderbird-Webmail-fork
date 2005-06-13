@@ -3,7 +3,7 @@
 <!ENTITY Ports.AccessKey "P">
 <!ENTITY Pop.Label "POP">
 <!ENTITY Pop.AccessKey "o">
-<!ENTITY POP.Default.Label "default 110">
+<!ENTITY POP.Default.Label "Por defecto 110">
 <!ENTITY Note.Label "Los puertos inferiores al 1024 pueden estar bloqueados por el Sistema Operativo">
 <!ENTITY Restart.Label "Es necesario reiniciar Thunderbird para aplicar los cambios.">
 

@@ -8,5 +8,5 @@
 <!ENTITY Location.AccessKey "o">
 <!ENTITY Note.Label "Los ficheros de registro contiene nombres de usuario y contraseñas.">
 <!ENTITY Restart.Label "Es necesario reiniciar Thunderbird para aplicar los cambios.">
-<!ENTITY Button.Label "Browse...">
+<!ENTITY Button.Label "Elegir...">
 <!ENTITY Button.AccessKey "B">
