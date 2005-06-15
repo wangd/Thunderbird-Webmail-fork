@@ -8,5 +8,5 @@
 <!ENTITY Location.AccessKey "U">
 <!ENTITY Note.Label "Aquests registres contindran noms d'usuaris i contrasenyes.">
 <!ENTITY Restart.Label "Cal que es reiniciï el Thunderbird per a que els canvis tinguin efecte.">
-<!ENTITY Button.Label "Browse...">
-<!ENTITY Button.AccessKey "B">
+<!ENTITY Button.Label "Navega...">
+<!ENTITY Button.AccessKey "N">
