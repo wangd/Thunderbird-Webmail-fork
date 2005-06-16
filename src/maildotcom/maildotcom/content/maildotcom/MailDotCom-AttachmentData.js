@@ -32,7 +32,10 @@ AttachmentData.prototype =
     
     setBody : function (szBody)
     {
-        this.m_szBody = szBody;
+        if (!this.m_szBody)
+            this.m_szBody = szBody;
+        else
+            this.m_szBody += szBody;
     },
     
     getBody : function ()
