@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://messenger/skin/prefPanels.css" type="text/css"?>
+<?xml-stylesheet href="chrome://maildotcom/content/MailDotCom-Prefs-POP.css" type="text/css"?>
+<?xml-stylesheet href="chrome://maildotcom/content/MailDotCom-Prefs-Common.css" type="text/css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://maildotcom/locale/MailDotCom-Prefs-POP.dtd">
+
+
+<page xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      onload="parent.initPanel('chrome://maildotcom/content/MailDotCom-Prefs-POP.xul');"
+      headertitle="&MailServers.Label;"
+      class ="background">
+    
+    <script type="application/x-javascript">
+        <![CDATA[
+            var _elementIDs = ["chkEmptyTrash"];
+        ]]>
+    </script>
+    
+    <vbox>
+            
+        <!--download junk mail-->
+       
+        <checkbox label="&EmptyTrash.Label;" 
+                  accesskey="&EmptyTrash.AccessKey;"
+                  id="chkEmptyTrash"
+                  preftype="bool" 
+                  prefstring="maildotcom.bEmptyTrash"
+                  onclick=""/>
+
+    </vbox>  
+</page>
