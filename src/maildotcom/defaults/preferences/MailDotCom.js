@@ -1,0 +1,1 @@
+pref("maildotcom.bEmptyTrash", false);
