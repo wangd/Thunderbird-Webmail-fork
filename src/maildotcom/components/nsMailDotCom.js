@@ -931,9 +931,40 @@ nsMailDotCom.prototype =
         {
             this.Log.Write("nsMailDotCom.js - logOUT - START"); 
             
-            this.m_bAuthorised = false;
-            this.serverComms("+OK Your Out\r\n");             
+            var oPref = new Object();
+            oPref.Value = null;
+            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+            WebMailPrefAccess.Get("bool","maildotcom.bEmptyTrash",oPref);
+        
+            if (!oPref.Value)
+            {
+                this.m_bAuthorised = false;
+                this.serverComms("+OK Your Out\r\n");
+                return true;
+            }
+            
+            //create URL
+            var szPath = this.m_szLocation + "/scripts/mail/Outblaze.mail?emptytrash=1&current_folder=Trash";
+            this.Log.Write("nsMailDotCom.js - logOUT - empty trash " + szPath );
+           
+            var ios=Components.classes["@mozilla.org/network/io-service;1"].
+                                    getService(Components.interfaces.nsIIOService);
+                                   
+            //set cookies
+            var szURL = ios.newURI(szPath,null,null).prePath;
+            var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/); 
+            var aszCookie = this.m_oCookies.findCookie(aszHost);
+                    
+            //send request
+            var bResult = this.httpConnection(szPath, 
+                                              "GET", 
+                                              null,
+                                              aszCookie, 
+                                              this.logOutOnloadHandler);  
                                            
+            if (!bResult) throw new Error("httpConnection returned false"); 
+           
+                                               
             this.Log.Write("nsMailDotCom.js - logOUT - END");  
             return true;
         }
@@ -949,6 +980,53 @@ nsMailDotCom.prototype =
     
     
     
+    logOutOnloadHandler : function (szResponse ,event , mainObject)
+    {
+        try
+        {
+            mainObject.Log.Write("nsMailDotCom.js - logOutOnloadHandler - START");    
+            mainObject.Log.Write("nsMailDotCom.js - logOutOnloadHandler :\n" + szResponse); 
+           
+            var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
+           
+            //check status should be 200.
+            mainObject.Log.Write("nsMailDotCom.js - logOutOnloadHandler :" + httpChannel.responseStatus);
+            if (httpChannel.responseStatus != 200 && httpChannel.responseStatus != 302 
+                   && httpChannel.responseStatus != 301 ) 
+                throw new Error("error status " + httpChannel.responseStatus);   
+            
+            //bounce handler
+            if ( httpChannel.responseStatus == 302 || httpChannel.responseStatus == 301)
+            {
+                var bBounce = mainObject.bounce(httpChannel, mainObject.emailOnloadHandler);
+                if (!bBounce)throw new Error("Bounce Handler failed");
+                return;   
+            }
+            
+            //ads handler
+            if (httpChannel.URI.spec.search(/intr.main/)!=-1)
+            { 
+                var bAd = mainObject.ads(szResponse, mainObject.emailOnloadHandler);
+                if (!bAd)throw new Error("Ad Handler failed");
+                return;
+            }
+                 
+            mainObject.m_bAuthorised = false;
+            mainObject.serverComms("+OK Your Out\r\n");
+               
+            mainObject.Log.Write("nsMailDotCom.js - logOutOnloadHandler - END");      
+        }
+        catch(e)
+        {
+            mainObject.Log.DebugDump("nsMailDotCom.js: logOutOnloadHandler : Exception : " 
+                                              + e.name 
+                                              + ".\nError message: " 
+                                              + e.message);
+            mainObject.serverComms("-ERR negative vibes\r\n");
+        }
+    },
+    
+     
      
     ads : function (szResponse, callback) 
     {
