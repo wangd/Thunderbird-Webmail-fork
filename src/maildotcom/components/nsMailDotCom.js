@@ -468,29 +468,32 @@ nsMailDotCom.prototype =
               
             //get msg table
             var aszMsgTable = szResponse.match(patternMailDotComMsgTable);
-            mainObject.Log.Write("nsMailDotCom.js - mailBoxOnloadHandler - MsgTable " + aszMsgTable );     
-            var aszMSGs = aszMsgTable[0].match(patternMailDotComMsgRows);
-            mainObject.Log.Write("nsMailDotCom.js - mailBoxOnloadHandler - MSGs Rows" + aszMSGs ); 
-            
-            
-            if(aszMSGs)
-            {
-                for (i=0; i<aszMSGs.length; i++ )
+            mainObject.Log.Write("nsMailDotCom.js - mailBoxOnloadHandler - MsgTable " + aszMsgTable );  
+            if (aszMsgTable)
+            {   
+                var aszMSGs = aszMsgTable[0].match(patternMailDotComMsgRows);
+                mainObject.Log.Write("nsMailDotCom.js - mailBoxOnloadHandler - MSGs Rows" + aszMSGs ); 
+                
+                
+                if(aszMSGs)
                 {
-                    var aszData = aszMSGs[i].match(patternMailDotComMsgData);
-                    mainObject.Log.Write("nsMailDotCom.js - mailBoxOnloadHandler - MSG Data" + aszData );
-                    
-                    var szHref = mainObject.m_szLocation + aszData[1].match(patternMailDotComHref)[1];
-                    mainObject.Log.Write("nsMailDotCom.js - mailBoxOnloadHandler - href " + szHref );
-                    mainObject.m_aszMsgIDStore.push(szHref);
-                    
-                    var szSize = aszData[3].match(patternMailDotComSize)[1];
-                    mainObject.Log.Write("nsMailDotCom.js - mailBoxOnloadHandler - size " + szSize );
-                    var iSize = parseInt(szSize);
-                    if (szSize.indexOf('k')!= -1) iSize*=1000;
-                    mainObject.Log.Write("nsMailDotCom.js - mailBoxOnloadHandler - msg size :" + i + " " +iSize);
-                    mainObject.m_iTotalSize += iSize;
-                    mainObject.m_aiMsgSize.push(iSize);    
+                    for (i=0; i<aszMSGs.length; i++ )
+                    {
+                        var aszData = aszMSGs[i].match(patternMailDotComMsgData);
+                        mainObject.Log.Write("nsMailDotCom.js - mailBoxOnloadHandler - MSG Data" + aszData );
+                        
+                        var szHref = mainObject.m_szLocation + aszData[1].match(patternMailDotComHref)[1];
+                        mainObject.Log.Write("nsMailDotCom.js - mailBoxOnloadHandler - href " + szHref );
+                        mainObject.m_aszMsgIDStore.push(szHref);
+                        
+                        var szSize = aszData[3].match(patternMailDotComSize)[1];
+                        mainObject.Log.Write("nsMailDotCom.js - mailBoxOnloadHandler - size " + szSize );
+                        var iSize = parseInt(szSize);
+                        if (szSize.indexOf('k')!= -1) iSize*=1000;
+                        mainObject.Log.Write("nsMailDotCom.js - mailBoxOnloadHandler - msg size :" + i + " " +iSize);
+                        mainObject.m_iTotalSize += iSize;
+                        mainObject.m_aiMsgSize.push(iSize);    
+                    }
                 }
             }
 
@@ -998,7 +1001,7 @@ nsMailDotCom.prototype =
             //bounce handler
             if ( httpChannel.responseStatus == 302 || httpChannel.responseStatus == 301)
             {
-                var bBounce = mainObject.bounce(httpChannel, mainObject.emailOnloadHandler);
+                var bBounce = mainObject.bounce(httpChannel, mainObject.logOutOnloadHandler);
                 if (!bBounce)throw new Error("Bounce Handler failed");
                 return;   
             }
@@ -1006,7 +1009,7 @@ nsMailDotCom.prototype =
             //ads handler
             if (httpChannel.URI.spec.search(/intr.main/)!=-1)
             { 
-                var bAd = mainObject.ads(szResponse, mainObject.emailOnloadHandler);
+                var bAd = mainObject.ads(szResponse, mainObject.logOutOnloadHandler);
                 if (!bAd)throw new Error("Ad Handler failed");
                 return;
             }
