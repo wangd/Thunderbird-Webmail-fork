@@ -1,0 +1,10 @@
+<!ENTITY MailDotComAbout.ExtButton "Cerrar">
+<!ENTITY MailDotComAbout.ExtContributorTitle "Colaboradores:">
+<!ENTITY MailDotComAbout.ExtCreaterTitle "Creada por:">
+<!ENTITY MailDotComAbout.ExtCreator "ComodoDragon">
+<!ENTITY MailDotComAbout.ExtDescription "Módulo MailDotCom para la extensión Web-Mail">
+<!ENTITY MailDotComAbout.ExtHome "Página web">
+<!ENTITY MailDotComAbout.ExtHomeURL "http://webmail.mozdev.org/">
+<!ENTITY MailDotComAbout.ExtName "MailDotCom">
+<!ENTITY MailDotComAbout.ExtVersion "Versión 0.1.0">
+<!ENTITY MailDotComAbout.Title "MailDotCom - Acerca de">
