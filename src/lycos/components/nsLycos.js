@@ -31,7 +31,7 @@ function nsLycos()
             scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
             scriptLoader.loadSubScript("chrome://web-mail/content/common/CookieManager.js");
             scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
-            scriptLoader.loadSubScript("chrome://lycos/content/base64.js");
+            scriptLoader.loadSubScript("chrome://web-mail/content/common/base64.js");
         }
         
         var date = new Date();

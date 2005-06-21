@@ -45,7 +45,7 @@ function nsLycosIMAP()
             scriptLoader.loadSubScript("chrome://lycos/content/Lycos-Folder.js");
             scriptLoader.loadSubScript("chrome://lycos/content/Lycos-MSG.js");
             scriptLoader.loadSubScript("chrome://web-mail/content/common/crc.js");
-            scriptLoader.loadSubScript("chrome://lycos/content/base64.js");
+            scriptLoader.loadSubScript("chrome://web-mail/content/common/base64.js");
         }
         
         var date = new Date();
