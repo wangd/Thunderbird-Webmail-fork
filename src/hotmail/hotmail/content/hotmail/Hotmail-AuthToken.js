@@ -7,7 +7,7 @@ function Token(errorLog)
         if (scriptLoader)
         {
             scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-            scriptLoader.loadSubScript("chrome://hotmail/content/md5.js");
+            scriptLoader.loadSubScript("chrome://web-mail/content/common/md5.js");
         }
            
         this.m_Log = errorLog; 
