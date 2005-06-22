@@ -132,7 +132,7 @@ WebmailAccountManager.prototype =
             
             this.m_Log.Write("WebmailAccountManager.js - updateISP - END"); 
         }
-        catch(e)
+        catch(err)
         {
             this.m_Log.DebugDump("WebmailAccountManager.js : updateISP" 
                                     + err.name + 
@@ -169,7 +169,7 @@ WebmailAccountManager.prototype =
            
             this.m_Log.Write("WebmailAccountManager.js - loadISP - END");
         }
-        catch(e)
+        catch(err)
         {
             this.m_Log.DebugDump("WebmailAccountManager.js : loadISP" 
                                     + err.name + 
@@ -201,7 +201,7 @@ WebmailAccountManager.prototype =
            
             this.m_Log.Write("WebmailAccountManager.js - addISP - END");
         }
-        catch(e)
+        catch(err)
         {
             this.m_Log.DebugDump("WebmailAccountManager.js : addISP" 
                                     + err.name + 
@@ -331,7 +331,7 @@ WebmailAccountManager.prototype =
           
             this.m_Log.Write("WebmailAccountManager.js - onEndLoad - END"); 
         }
-        catch(e)
+        catch(err)
         {
             this.m_Log.DebugDump("WebmailAccountManager.js : onEndLoad" 
                                     + err.name + 
