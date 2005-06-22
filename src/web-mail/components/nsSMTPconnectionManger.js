@@ -111,7 +111,7 @@ nsSMTPConnectionManager.prototype.Stop = function()
      
         if (this.iStatus != 0) //only enter is not stopped
         {   
-            this.m_POPLog.Write("nsSMTPConnectionManager.js - Stop - stopping");
+            this.m_SMTPLog.Write("nsSMTPConnectionManager.js - Stop - stopping");
             this.m_serverSocket.close();  //stop new conections
             this.iStatus = 1;  //set status to waiting = 1
         }
