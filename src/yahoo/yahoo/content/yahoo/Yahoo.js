@@ -75,14 +75,14 @@ var YahooDiagnosticTest =
             var szContentID = new Object;
                       
             //get domain handler contentid for pop protocol
-            var bResult = DomainManager.getDomain("yahoo.com", szContentID);
-            var bResult1 = DomainManager.getDomain("yahoo.es",szContentID);
-            var bResult2 = DomainManager.getDomain("yahoo.co.uk", szContentID);
-            var bResult3 = DomainManager.getDomain("yahoo.it",szContentID);
-            var bResult4 = DomainManager.getDomain("yahoo.com.cn",szContentID);
-            var bResult5 = DomainManager.getDomain("yahoo.fr",szContentID);
-            var bResult6 = DomainManager.getDomain("yahoo.de",szContentID);
-            var bResult7 = DomainManager.getDomain("yahoo.ca",szContentID);
+            var bResult = DomainManager.getDomainForProtocol("yahoo.com","POP", szContentID);
+            var bResult1 = DomainManager.getDomainForProtocol("yahoo.es","POP",szContentID);
+            var bResult2 = DomainManager.getDomainForProtocol("yahoo.co.uk","POP", szContentID);
+            var bResult3 = DomainManager.getDomainForProtocol("yahoo.it","POP",szContentID);
+            var bResult4 = DomainManager.getDomainForProtocol("yahoo.com.cn","POP",szContentID);
+            var bResult5 = DomainManager.getDomainForProtocol("yahoo.fr","POP",szContentID);
+            var bResult6 = DomainManager.getDomainForProtocol("yahoo.de","POP",szContentID);
+            var bResult7 = DomainManager.getDomainForProtocol("yahoo.ca","POP",szContentID);
             
                        
             
@@ -100,27 +100,27 @@ var YahooDiagnosticTest =
                 if (!bPass)
                 {
                     g_YahooDebugLog.Write("Yahoo.js :YahooStartUp - IDs failed - resetting");
-                    DomainManager.newDomain("yahoo.com", cszYahooContentID);
-                    DomainManager.newDomain("yahoo.co.uk", cszYahooContentID);
-                    DomainManager.newDomain("yahoo.it", cszYahooContentID);  
-                    DomainManager.newDomain("yahoo.es", cszYahooContentID); 
-                    DomainManager.newDomain("yahoo.com.cn",cszYahooContentID); 
-                    DomainManager.newDomain("yahoo.fr",cszYahooContentID); 
-                    DomainManager.newDomain("yahoo.de",cszYahooContentID);
-                    DomainManager.newDomain("yahoo.ca",cszYahooContentID); 
+                    DomainManager.newDomainForProtocol("yahoo.com", "POP", cszYahooContentID);
+                    DomainManager.newDomainForProtocol("yahoo.co.uk","POP", cszYahooContentID);
+                    DomainManager.newDomainForProtocol("yahoo.it","POP", cszYahooContentID);  
+                    DomainManager.newDomainForProtocol("yahoo.es","POP", cszYahooContentID); 
+                    DomainManager.newDomainForProtocol("yahoo.com.cn","POP",cszYahooContentID); 
+                    DomainManager.newDomainForProtocol("yahoo.fr","POP",cszYahooContentID); 
+                    DomainManager.newDomainForProtocol("yahoo.de","POP",cszYahooContentID);
+                    DomainManager.newDomainForProtocol("yahoo.ca","POP",cszYahooContentID); 
                 }  
             }
             else
             {
                 g_YahooDebugLog.Write("Yahoo.js :YahooStartUp - setting Domains");
-                if (!bResult) DomainManager.newDomain("yahoo.com", cszYahooContentID);
-                if (!bResult1)DomainManager.newDomain("yahoo.es", cszYahooContentID);  
-                if (!bResult2)DomainManager.newDomain("yahoo.co.uk", cszYahooContentID);
-                if (!bResult3)DomainManager.newDomain("yahoo.it", cszYahooContentID); 
-                if (!bResult4)DomainManager.newDomain("yahoo.com.cn", cszYahooContentID);  
-                if (!bResult5)DomainManager.newDomain("yahoo.fr", cszYahooContentID);  
-                if (!bResult6)DomainManager.newDomain("yahoo.de", cszYahooContentID); 
-                if (!bResult7)DomainManager.newDomain("yahoo.ca", cszYahooContentID);  
+                if (!bResult) DomainManager.newDomainForProtocol("yahoo.com","POP", cszYahooContentID);
+                if (!bResult1)DomainManager.newDomainForProtocol("yahoo.es", "POP",cszYahooContentID);  
+                if (!bResult2)DomainManager.newDomainForProtocol("yahoo.co.uk","POP", cszYahooContentID);
+                if (!bResult3)DomainManager.newDomainForProtocol("yahoo.it","POP", cszYahooContentID); 
+                if (!bResult4)DomainManager.newDomainForProtocol("yahoo.com.cn","POP", cszYahooContentID);  
+                if (!bResult5)DomainManager.newDomainForProtocol("yahoo.fr","POP", cszYahooContentID);  
+                if (!bResult6)DomainManager.newDomainForProtocol("yahoo.de","POP", cszYahooContentID); 
+                if (!bResult7)DomainManager.newDomainForProtocol("yahoo.ca","POP", cszYahooContentID);  
             }
                    
             g_YahooDebugLog.Write("Yahoo: Yahoo.js : TimerCallback - END");
