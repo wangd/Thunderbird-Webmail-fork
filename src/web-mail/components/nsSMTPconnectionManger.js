@@ -140,7 +140,7 @@ nsSMTPConnectionManager.prototype.GetStatus = function ()
         
         if ( this.iStatus == 1)  //waiting to stop
         {
-            this.g_SMTPLog.Write("nsSMTPConnectionManager.js - GetStatus - connections " 
+            this.m_SMTPLog.Write("nsSMTPConnectionManager.js - GetStatus - connections " 
                                                         + this.aSMTPConnections.length);
             var iCount = 0;
             if (this.aSMTPConnections.length>0)
@@ -150,7 +150,7 @@ nsSMTPConnectionManager.prototype.GetStatus = function ()
                     if (this.aSMTPConnections[i] != undefined)
                     {
                         iCount++;
-                        this.g_SMTPLog.Write("nsSMTPConnectionManager.js - GetStatus - connections " + iCount);
+                        this.m_SMTPLog.Write("nsSMTPConnectionManager.js - GetStatus - connections " + iCount);
                     }
                 }
             } 
