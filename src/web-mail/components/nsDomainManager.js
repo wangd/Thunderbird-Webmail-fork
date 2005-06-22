@@ -46,11 +46,14 @@ nsDomainManager.prototype =
     getDomainForProtocol : function(szAddress, szProtocol , szContentID )
     {
         try
-        {
+        { 
             this.m_DomainLog.Write("nsDomainManager.js - getDomainForProtocol - START");  
+            
+            var szTempAddress = szAddress.toLowerCase();
+            var szTempProtocol = szProtocol.toLowerCase();          
             this.m_DomainLog.Write("nsDomainManager.js - getDomainForProtocol - " 
-                                                           +szAddress.toLowerCase() + " " 
-                                                           +szProtocol.toLowerCase()); 
+                                                        +szTempAddress+ " " 
+                                                        +szTempProtocol); 
             
             if (!this.m_bReady) 
             {
@@ -59,7 +62,7 @@ nsDomainManager.prototype =
             }
             
             //get protocol list
-            var protocolResource = this.getProtocolResource(szProtocol);    
+            var protocolResource = this.getProtocolResource(szTempProtocol);    
             var rdfContainerUtils = Components.classes["@mozilla.org/rdf/container-utils;1"].
                                             getService(Components.interfaces.nsIRDFContainerUtils);
             
@@ -72,7 +75,7 @@ nsDomainManager.prototype =
             
             //search protocol list for domain
             //get domains index
-            var DomainResource = this.m_rdfService.GetResource("urn:"+szAddress.toLowerCase()); 
+            var DomainResource = this.m_rdfService.GetResource("urn:"+szTempAddress); 
             var iIndex = rdfContainerUtils.indexOf(this.m_DataSource,protocolResource,DomainResource);
             if (iIndex == -1)
             {
@@ -83,7 +86,7 @@ nsDomainManager.prototype =
           
            
             //get contentId
-            var contentIDResource = this.m_rdfService.GetResource("http://www.xulplanet.com/rdf/webmail/"+szProtocol);    
+            var contentIDResource = this.m_rdfService.GetResource("http://www.xulplanet.com/rdf/webmail/"+szTempProtocol);    
             var contentID = this.m_DataSource.GetTarget(DomainResource, contentIDResource, true);
             if (contentID instanceof Components.interfaces.nsIRDFLiteral)
             {
@@ -114,10 +117,12 @@ nsDomainManager.prototype =
     {
         try
         {
-            this.m_DomainLog.Write("nsDomainManager.js - removeDomainForProtocol -  START" );
+            this.m_DomainLog.Write("nsDomainManager.js - removeDomainForProtocol -  START" );  
+            var szTempAddress = szAddress.toLowerCase();
+            var szTempProtocol = szProtocol.toLowerCase();
             this.m_DomainLog.Write("nsDomainManager.js - removeDomainForProtocol - " 
-                                                                    + szAddress + " "
-                                                                    + szProtocol);
+                                                                + szTempAddress+ " "
+                                                                + szTempProtocol);
               
             if (!this.m_bReady) 
             {
@@ -125,14 +130,14 @@ nsDomainManager.prototype =
                 return -1; 
             }        
             
-            var DomainResource = this.m_rdfService.GetResource("urn:"+szAddress.toLowerCase());   
+            var DomainResource = this.m_rdfService.GetResource("urn:"+szTempAddress);   
           
             var rdfContainerUtils = Components.classes["@mozilla.org/rdf/container-utils;1"].
                                             getService(Components.interfaces.nsIRDFContainerUtils);
         
-            var protocolResource = this.getProtocolResource(szProtocol);
+            var protocolResource = this.getProtocolResource(szTempProtocol);
             var iIndex = rdfContainerUtils.indexOf(this.m_DataSource,protocolResource,DomainResource);             
-            this.m_DomainLog.Write("nsDomainManager.js - removeDomain - "+szProtocol + " " + iIndex);
+            this.m_DomainLog.Write("nsDomainManager.js - removeDomain - "+szTempProtocol+ " " + iIndex);
                        
                        
             //remove from list    
@@ -153,7 +158,7 @@ nsDomainManager.prototype =
             
             //delete contentId
             var szContentID;
-            var contentIDResource = this.m_rdfService.GetResource("http://www.xulplanet.com/rdf/webmail/"+szProtocol);    
+            var contentIDResource = this.m_rdfService.GetResource("http://www.xulplanet.com/rdf/webmail/"+szTempProtocol);    
             var contentID = this.m_DataSource.GetTarget(DomainResource, contentIDResource, true);
             if (contentID instanceof Components.interfaces.nsIRDFLiteral)
                 this.m_DataSource.Unassert(DomainResource, contentIDResource, contentID);
@@ -187,10 +192,12 @@ nsDomainManager.prototype =
         try
         {
             this.m_DomainLog.Write("nsDomainManager.js - newDomainForProtocol -  START" );
+            var szTempAddress = szAddress.toLowerCase();
+            var szTempProtocol = szProtocol.toLowerCase();
             this.m_DomainLog.Write("nsDomainManager.js - newDomainForProtocol -  " 
-                                                    +  "address " + szAddress.toLowerCase() 
+                                                    +  "address " + szTempAddress 
                                                     +  " Content " + szContentID
-                                                    +  " protocol " + szProtocol ); 
+                                                    +  " protocol " + szTempProtocol ); 
             
             if (!this.m_bReady) 
             {
@@ -199,13 +206,13 @@ nsDomainManager.prototype =
             }    
             
             //clear old entrys for the address
-            this.removeDomainForProtocol(szAddress, szProtocol);
+            this.removeDomainForProtocol(szTempAddress, szTempProtocol);
             
             //creat new entry
-            var DomainResource = this.m_rdfService.GetResource("urn:"+szAddress.toLowerCase()); 
+            var DomainResource = this.m_rdfService.GetResource("urn:"+szTempAddress); 
            
             // contentId
-            var contentIDResource = this.m_rdfService.GetResource("http://www.xulplanet.com/rdf/webmail/"+szProtocol);    
+            var contentIDResource = this.m_rdfService.GetResource("http://www.xulplanet.com/rdf/webmail/"+szTempProtocol);    
             this.m_DataSource.Assert(DomainResource, 
                                      contentIDResource, 
                                      this.m_rdfService.GetLiteral(szContentID), 
@@ -214,7 +221,7 @@ nsDomainManager.prototype =
             var container = Components.classes["@mozilla.org/rdf/container;1"].
                                                createInstance(Components.interfaces.nsIRDFContainer);
 
-            container.Init(this.m_DataSource, this.getProtocolResource(szProtocol));  
+            container.Init(this.m_DataSource, this.getProtocolResource(szTempProtocol));  
             container.AppendElement(DomainResource);
  
                 
@@ -241,7 +248,9 @@ nsDomainManager.prototype =
         try
         {
             this.m_DomainLog.Write("nsDomainManager.js - getAllDomainsForProtocol -  START " + szProtocol); 
-            
+    
+            var szTempProtocol = szProtocol.toLowerCase();
+    
             if (!this.m_bReady) 
             {
                 this.m_DomainLog.Write("nsDomainManager.js - getAllDomainsForProtocol - DB not Loaded" );
@@ -249,7 +258,7 @@ nsDomainManager.prototype =
             }
             
            
-            var protocolResource =  this.getProtocolResource(szProtocol);
+            var protocolResource =  this.getProtocolResource(szTempProtocol);
             var rdfContainerUtils = Components.classes["@mozilla.org/rdf/container-utils;1"].
                                             getService(Components.interfaces.nsIRDFContainerUtils);
             
