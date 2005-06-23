@@ -1,6 +1,7 @@
 const cszYahooContentID = "@mozilla.org/Yahoo;1";
 const cszYahooSMTPContentID = "@mozilla.org/YahooSMTP;1";
 
+window.addEventListener("load", function() {gYahooStartUp.init();} , false);
 
 var gYahooStartUp =
 {   
@@ -30,9 +31,8 @@ var gYahooStartUp =
                                           Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
             this.m_Log.Write("Yahoo.js : YahooStartUp - DB not loaded");
            
-         
-            window.setTimeout(this.killTimer, 15);
-                      
+            window.removeEventListener("load", function() {gYahooStartUp.init();} , false);
+                    
         	this.m_Log.Write("Yahoo.js : YahooStartUP - END ");
         }
         catch(e)
@@ -43,15 +43,7 @@ var gYahooStartUp =
                                         + e.message);
         }
     },  
-      
-      
-    killTimer : function ()
-    {
-        this.m_Log.Write("Yahoo.js : killTimer START");
-        window.removeEventListener("load",this, false);
-        this.m_Log.Write("Yahoo.js : killTimer END");
-    },  
-      
+       
         
     notify: function(timer)
     {
@@ -102,7 +94,7 @@ var gYahooStartUp =
         if (this.m_DomainManager.getDomainForProtocol(szDomain,szProtocol, szContentID))
         {
             this.m_Log.Write("Yahoo.js : idCheck - found");
-            if (szContentID.value != cszYahooContentID)
+            if (szContentID.value != szYahooContentID)
             {
                 this.m_Log.Write("Yahoo.js : idCheck - wrong id");
                 this.m_DomainManager.newDomainForProtocol(szDomain, szProtocol, szYahooContentID);
@@ -119,4 +111,4 @@ var gYahooStartUp =
 };
 
 
-window.addEventListener("load", gYahooStartUp.init(), false);
+
