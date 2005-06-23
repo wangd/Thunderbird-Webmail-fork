@@ -328,7 +328,7 @@ nsDomainManager.prototype =
             break;
             
             case "smtp":
-                szProtocolResource = "http://www.xulplanet.com/rdf/webmail/protocol/smpt";
+                szProtocolResource = "http://www.xulplanet.com/rdf/webmail/protocol/smtp";
             break;
             
             case "imap":
