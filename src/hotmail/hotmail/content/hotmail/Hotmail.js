@@ -1,127 +1,106 @@
-var g_HotmailDebugLog = null;
-var g_HotmailTimer = null;
-
-                                  
 const cszHotmailContentID = "@mozilla.org/Hotmail;1";
 
-window.addEventListener("load", HotmailStartUp, false);
+window.addEventListener("load", function() {gHotmailStartUp.init();} , false);
 
-function HotmailStartUp()
+var gHotmailStartUp =
 {   
-    try
-    {         
-        //create debug log global 
-        g_HotmailDebugLog = new DebugLog("webmail.logging.comms", 
-                                         "{a6a33690-2c6a-11d9-9669-0800200c9a66}",
-                                         "hotmail");
-                                        
-        g_HotmailDebugLog.Write("Hotmail: Hotmail.js : HotmailStartUp - START"); 
-         
-        var DomainManager = Components.classes["@mozilla.org/DomainManager;1"].
-                                 getService().QueryInterface(Components.interfaces.nsIDomainManager);
-        
-                              
-        if(DomainManager.isReady())
-        {
-            g_HotmailDebugLog.Write("Hotmail: Hotmail.js : HotmailStartUp - DB loaded");
-            HotmailDiagnosticTest();
-        }
-        else
-        {
-            g_HotmailTimer = Components.classes["@mozilla.org/timer;1"]
-                                            .createInstance(Components.interfaces.nsITimer); 
-            g_HotmailTimer.initWithCallback(HotmailDiagnosticTest, 
-                                            2000, 
-                                            Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
-            g_HotmailDebugLog.Write("Hotmail: Hotmail.js : HotmailStartUp - DB not loaded");
-        }
-      
-    	window.setTimeout(function()
-                      {
-                          g_HotmailDebugLog.Write("Hotmail: Hotmail.js : HotmailStartUp - removeEventListener");
-                          window.removeEventListener("load",HotmailStartUp, false);
-                      },
-                      15);
-                    
-        g_HotmailDebugLog.Write("Hotmail: Hotmail.js : HotmailStartUP - END ");
-    }
-    catch(e)
+    m_DomainManager : null,
+    m_Log : null,
+    m_Timer : null,
+                            
+    init : function ()
     {
-        g_HotmailDebugLog.DebugDump("Hotmail: Hotmail.js : Exception in HotmailStartUp " 
-                                    + e.name + 
-                                    ".\nError message: " 
-                                    + e.message);
-    }
-}
-
-//timer
-var HotmailDiagnosticTest = 
-{
+        try
+        {     
+            //create debug log global 
+            this.m_Log = new DebugLog("webmail.logging.comms", 
+                                      "{d7103710-6112-11d9-9669-0800200c9a66}",
+                                      "hotmail");
+                                            
+            this.m_Log.Write("Hotmail.js : init - START");
+        
+                         
+            this.m_DomainManager = Components.classes["@mozilla.org/DomainManager;1"].
+                                     getService().QueryInterface(Components.interfaces.nsIDomainManager);
+           
+            this.m_Timer = Components.classes["@mozilla.org/timer;1"]
+                                            .createInstance(Components.interfaces.nsITimer); 
+            this.m_Timer.initWithCallback(this, 
+                                          2000, 
+                                          Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
+            this.m_Log.Write("Hotmail.js : init - DB not loaded");
+           
+            window.removeEventListener("load", function() {gHotmailStartUp.init();} , false);
+                    
+        	this.m_Log.Write("Hotmail.js : init - END ");
+        }
+        catch(e)
+        {
+            this.m_Log.DebugDump("Hotmail.js : Exception in init " 
+                                        + e.name + 
+                                        ".\nError message: " 
+                                        + e.message);
+        }
+    },  
+       
+        
     notify: function(timer)
     {
         try
         {
-            g_HotmailDebugLog.Write("Hotmail: Hotmail.js : TimerCallback -  START");
+            this.m_Log.Write("Hotmail.js : notify -  START");
             
-            var DomainManager = Components.classes["@mozilla.org/DomainManager;1"].
-                                     getService().QueryInterface(Components.interfaces.nsIDomainManager);
-            if(!DomainManager.isReady())
+           
+            if(!this.m_DomainManager.isReady())
             {
-                g_HotmailDebugLog.Write("Hotmail: Hotmail.js : TimerCallback -  db not ready");
+                this.m_Log.Write("Hotmail.js : notify -  db not ready");
                 return;
             }    
             timer.cancel();
          
             //get store ids
-            var szContentID = new Object;
-                      
-            //get domain handler contentid for pop protocol
-            var bResult = DomainManager.getDomainForProtocol("hotmail.com", "pop" , szContentID);
-            var bResult1 = DomainManager.getDomainForProtocol("hotmail.co.uk","pop" , szContentID);
-            var bResult2 = DomainManager.getDomainForProtocol("msn.co.uk", "pop" ,szContentID);
-            var bResult3 = DomainManager.getDomainForProtocol("msn.com", "pop" ,szContentID);
-            var bResult4 = DomainManager.getDomainForProtocol("hotmail.it","pop" , szContentID);
-            var bResult5 = DomainManager.getDomainForProtocol("hotmail.fr","pop" , szContentID);
-            var bPass = false;
-            
-            if (bResult && bResult1 && bResult2 && bResult3 && bResult4 && bResult5)
-            {
-                g_HotmailDebugLog.Write("Hotmail.js :HotmailStartUp - getDomain - OK");
-                
-                //check returned ids
-                if (szContentID.value == cszHotmailContentID) bPass = true;  
-                
-                //test has failed set ids    
-                if (!bPass)
-                {
-                    g_HotmailDebugLog.Write("Hotmail.js :HotmailStartUp - IDs failed - resetting");
-                    DomainManager.newDomainForProtocol("hotmail.com", "pop" ,cszHotmailContentID);
-                    DomainManager.newDomainForProtocol("hotmail.co.uk","pop" , cszHotmailContentID);
-                    DomainManager.newDomainForProtocol("msn.co.uk", "pop" ,cszHotmailContentID);
-                    DomainManager.newDomainForProtocol("msn.com", "pop" ,cszHotmailContentID);
-                    DomainManager.newDomainForProtocol("hotmail.it", "pop" ,cszHotmailContentID);
-                    DomainManager.newDomainForProtocol("hotmail.fr", "pop" ,cszHotmailContentID);
-                }  
-            }
-            else
-            {
-                g_HotmailDebugLog.Write("Hotmail.js :HotmailStartUp - setting domains");
-                if (!bResult) DomainManager.newDomainForProtocol("hotmail.com", "pop" ,cszHotmailContentID);
-                if (!bResult1)DomainManager.newDomainForProtocol("hotmail.co.uk","pop" , cszHotmailContentID);
-                if (!bResult2)DomainManager.newDomainForProtocol("msn.co.uk", "pop" ,cszHotmailContentID);
-                if (!bResult3)DomainManager.newDomainForProtocol("msn.com", "pop" ,cszHotmailContentID);
-                if (!bResult4)DomainManager.newDomainForProtocol("hotmail.it", "pop" ,cszHotmailContentID);
-                if (!bResult5)DomainManager.newDomainForProtocol("hotmail.fr", "pop" ,cszHotmailContentID);
-            }       
-
-            g_HotmailDebugLog.Write("Hotmail: Hotmail.js : TimerCallback - END");
+            this.idCheck("hotmail.com", "pop" ,cszHotmailContentID)
+            this.idCheck("hotmail.co.uk","pop" , cszHotmailContentID);
+            this.idCheck("msn.co.uk", "pop" ,cszHotmailContentID);
+            this.idCheck("msn.com", "pop" ,cszHotmailContentID);
+            this.idCheck("hotmail.it", "pop" ,cszHotmailContentID);  
+            this.idCheck("hotmail.fr", "pop" ,cszHotmailContentID);
+                           
+            this.m_Log.Write("Hotmail.js : notify - END");
         }
         catch(e)
         {
-            g_HotmailDebugLog.DebugDump("Hotmail: Hotmail.js : TimerCallback - Exception in notify : " 
+            this.m_Log.DebugDump("Hotmail.js : notify - Exception in notify : " 
                                         + e.name + 
                                         ".\nError message: " 
                                         + e.message);
         }
-    }
-}
+    },
+    
+    
+    idCheck : function(szDomain, szProtocol, szYahooContentID)
+    {
+        this.m_Log.Write("Hotmail.js : idCheck - START");
+        this.m_Log.Write("Hotmail.js : idCheck - " +szDomain + " "
+                                                + szProtocol+ " "
+                                                + szYahooContentID);
+         
+        var szContentID = new Object;
+        if (this.m_DomainManager.getDomainForProtocol(szDomain,szProtocol, szContentID))
+        {
+            this.m_Log.Write("Hotmail.js : idCheck - found");
+            if (szContentID.value != szYahooContentID)
+            {
+                this.m_Log.Write("Hotmail.js : idCheck - wrong id");
+                this.m_DomainManager.newDomainForProtocol(szDomain, szProtocol, szYahooContentID);
+            }
+        }
+        else
+        {
+            this.m_Log.Write("Hotmail.js : idCheck - not found");
+            this.m_DomainManager.newDomainForProtocol(szDomain, szProtocol, szYahooContentID);    
+        }
+        
+        this.m_Log.Write("Hotmail.js : idCheck - END");
+    },
+};
