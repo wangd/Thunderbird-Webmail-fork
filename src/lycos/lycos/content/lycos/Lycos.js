@@ -1,126 +1,106 @@
-var g_LycosDebugLog = null;
-var g_LycosTimer = null;
-                              
 const cszLycosPOPContentID = "@mozilla.org/Lycos;1";
 
-window.addEventListener("load", LycosStartUp, false);
+window.addEventListener("load", function() {gLycosStartUp.init();} , false);
 
-
-function LycosStartUp()
+var gLycosStartUp =
 {   
-    try
-    {         
-        //create debug log global 
-        g_LycosDebugLog = new DebugLog("webmail.logging.comms", 
-                                       "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
-                                       "Lycos");
-                                        
-        g_LycosDebugLog.Write("Lycos.js : LycosStartUp - START"); 
-        
-        var DomainManager = Components.classes["@mozilla.org/DomainManager;1"].
-                                 getService().QueryInterface(Components.interfaces.nsIDomainManager);
-        
-                              
-        if(DomainManager.isReady())
-        {
-            g_LycosDebugLog.Write("Lycos.js : LycosStartUp - DB loaded");
-            LycosDiagnosticTest();
-        }
-        else
-        {
-            g_LycosTimer = Components.classes["@mozilla.org/timer;1"]
-                                            .createInstance(Components.interfaces.nsITimer); 
-            g_LycosTimer.initWithCallback(LycosDiagnosticTest, 
-                                            2000, 
-                                            Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
-            g_LycosDebugLog.Write("Lycos.js : LycosStartUp - DB not loaded");
-        }
-      
-    	window.setTimeout(function()
-                      {
-                          g_LycosDebugLog.Write("Lycos.js: LycosStartUp - removeEventListener");
-                          window.removeEventListener("load",LycosStartUp, false);
-                      },
-                      15);
-                      
-        g_LycosDebugLog.Write("Lycos.js : LycosStartUp - END ");
-    }
-    catch(e)
+    m_DomainManager : null,
+    m_Log : null,
+    m_Timer : null,
+                            
+    init : function ()
     {
-        g_LycosDebugLog.DebugDump("Lycos.js :LycosStartUp - Exception" 
-                                    + e.name + 
-                                    ".\nError message: " 
-                                    + e.message);
-    }
-}
-
-//timer
-var LycosDiagnosticTest = 
-{
+        try
+        {     
+            //create debug log global 
+            this.m_Log = new DebugLog("webmail.logging.comms", 
+                                      "{d7103710-6112-11d9-9669-0800200c9a66}",
+                                      "lycos");
+                                            
+            this.m_Log.Write("Lycos.js : init - START");
+        
+                         
+            this.m_DomainManager = Components.classes["@mozilla.org/DomainManager;1"].
+                                     getService().QueryInterface(Components.interfaces.nsIDomainManager);
+           
+            this.m_Timer = Components.classes["@mozilla.org/timer;1"]
+                                            .createInstance(Components.interfaces.nsITimer); 
+            this.m_Timer.initWithCallback(this, 
+                                          2000, 
+                                          Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
+            this.m_Log.Write("Lycos.js : init - DB not loaded");
+           
+            window.removeEventListener("load", function() {gLycosStartUp.init();} , false);
+                    
+        	this.m_Log.Write("Lycos.js : init - END ");
+        }
+        catch(e)
+        {
+            this.m_Log.DebugDump("Lycos.js : Exception in init " 
+                                        + e.name + 
+                                        ".\nError message: " 
+                                        + e.message);
+        }
+    },  
+       
+        
     notify: function(timer)
     {
         try
         {
-            g_LycosDebugLog.Write("Lycos.js : TimerCallback -  START");
+            this.m_Log.Write("Lycos.js : notify -  START");
             
-            var DomainManager = Components.classes["@mozilla.org/DomainManager;1"]
-                                          .getService()
-                                          .QueryInterface(Components.interfaces.nsIDomainManager);
-            if(!DomainManager.isReady())
+           
+            if(!this.m_DomainManager.isReady())
             {
-                g_LycosDebugLog.Write("Lycos.js : TimerCallback -  db not ready");
+                this.m_Log.Write("Lcyos.js : notify -  db not ready");
                 return;
             }    
             timer.cancel();
          
             //get store ids
-            var szContentPOPID = new Object;
-            var szContentIMAPID = new Object;
-                      
-            //get domain handler contentid for pop protocol
-            var bResultPOP = DomainManager.getDomainForProtocol("lycos.co.uk", "pop",szContentPOPID);
-            var bResultPOP1 = DomainManager.getDomainForProtocol("lycos.it", "pop",szContentPOPID);
-            var bResultPOP2 = DomainManager.getDomainForProtocol("lycos.at", "pop",szContentPOPID);
-            var bResultPOP3 = DomainManager.getDomainForProtocol("lycos.de", "pop",szContentPOPID);
-            var bResultPOP4 = DomainManager.getDomainForProtocol("lycos.es", "pop",szContentPOPID);
-            var bResultPOP5 = DomainManager.getDomainForProtocol("lycos.fr", "pop",szContentPOPID);
-            
-           
-            if (bResultPOP && bResultPOP1 && bResultPOP2 && bResultPOP3 && bResultPOP4 && bResultPOP5)
-            {
-                g_LycosDebugLog.Write("Lycos.js :TimerCallback - getDomain - OK");
-                
-                //check returned ids
-                if (szContentPOPID.value != cszLycosPOPContentID) 
-                {
-                    g_LycosDebugLog.Write("Lycos.js :TimerCallback - POP IDs failed - resetting");
-                    DomainManager.newDomainForProtocol("lycos.co.uk", "pop" ,cszLycosPOPContentID);
-                    DomainManager.newDomainForProtocol("lycos.it", "pop" ,cszLycosPOPContentID);
-                    DomainManager.newDomainForProtocol("lycos.at", "pop",cszLycosPOPContentID);
-                    DomainManager.newDomainForProtocol("lycos.de", "pop",cszLycosPOPContentID);
-                    DomainManager.newDomainForProtocol("lycos.es", "pop",cszLycosPOPContentID);
-                    DomainManager.newDomainForProtocol("lycos.fr", "pop",cszLycosPOPContentID);
-                } 
-            }
-            else
-            {
-                g_LycosDebugLog.Write("Lycos.js :TimerCallback - setting domains");
-                if (!bResultPOP) DomainManager.newDomainForProtocol("lycos.co.uk", "pop" ,cszLycosPOPContentID);
-                if (!bResultPOP1) DomainManager.newDomainForProtocol("lycos.it", "pop" ,cszLycosPOPContentID);
-                if (!bResultPOP2) DomainManager.newDomainForProtocol("lycos.at", "pop",cszLycosPOPContentID);
-                if (!bResultPOP3) DomainManager.newDomainForProtocol("lycos.de", "pop",cszLycosPOPContentID);
-                if (!bResultPOP4) DomainManager.newDomainForProtocol("lycos.es", "pop",cszLycosPOPContentID);
-                if (!bResultPOP5) DomainManager.newDomainForProtocol("lycos.fr", "pop",cszLycosPOPContentID);
-            }       
-
-            g_LycosDebugLog.Write("Lycos.js : TimerCallback - END");
+            this.idCheck("lycos.co.uk", "pop" ,cszLycosPOPContentID)
+            this.idCheck("lycos.it","pop" , cszLycosPOPContentID);
+            this.idCheck("lycos.at", "pop" ,cszLycosPOPContentID);
+            this.idCheck("lycos.de", "pop" ,cszLycosPOPContentID);
+            this.idCheck("lycos.es", "pop" ,cszLycosPOPContentID);  
+            this.idCheck("lycos.fr", "pop" ,cszLycosPOPContentID);
+                                     
+            this.m_Log.Write("Lycos.js : notify - END");
         }
         catch(e)
         {
-            g_LycosDebugLog.DebugDump("Lycos.js : TimerCallback - Exception in notify : " 
+            this.m_Log.DebugDump("Lycos.js : notify - Exception in notify : " 
                                         + e.name + 
                                         ".\nError message: " 
                                         + e.message);
         }
-    }
-}
+    },
+    
+    
+    idCheck : function(szDomain, szProtocol, szYahooContentID)
+    {
+        this.m_Log.Write("Lycos.js : idCheck - START");
+        this.m_Log.Write("Lycos.js : idCheck - " +szDomain + " "
+                                                + szProtocol+ " "
+                                                + szYahooContentID);
+         
+        var szContentID = new Object;
+        if (this.m_DomainManager.getDomainForProtocol(szDomain,szProtocol, szContentID))
+        {
+            this.m_Log.Write("Lycos.js : idCheck - found");
+            if (szContentID.value != szYahooContentID)
+            {
+                this.m_Log.Write("Lycos.js : idCheck - wrong id");
+                this.m_DomainManager.newDomainForProtocol(szDomain, szProtocol, szYahooContentID);
+            }
+        }
+        else
+        {
+            this.m_Log.Write("Lycos.js : idCheck - not found");
+            this.m_DomainManager.newDomainForProtocol(szDomain, szProtocol, szYahooContentID);    
+        }
+        
+        this.m_Log.Write("Lycos.js : idCheck - END");
+    },
+};
