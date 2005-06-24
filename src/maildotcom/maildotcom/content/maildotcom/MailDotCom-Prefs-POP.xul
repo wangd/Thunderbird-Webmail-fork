@@ -1,32 +1,29 @@
 <?xml version="1.0"?>
-<?xml-stylesheet href="chrome://messenger/skin/prefPanels.css" type="text/css"?>
-<?xml-stylesheet href="chrome://maildotcom/content/MailDotCom-Prefs-POP.css" type="text/css"?>
-<?xml-stylesheet href="chrome://maildotcom/content/MailDotCom-Prefs-Common.css" type="text/css"?>
+<?xml-stylesheet href="chrome://global/skin/global.css"?>
+<?xml-stylesheet href="chrome://maildotcom/content/Maildotcom-Prefs-POP.css"?>
 
-<!DOCTYPE dialog SYSTEM "chrome://maildotcom/locale/MailDotCom-Prefs-POP.dtd">
+<!DOCTYPE dialog SYSTEM "chrome://maildotcom/locale/Maildotcom-Prefs-POP.dtd">
 
 
-<page xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-      onload="parent.initPanel('chrome://maildotcom/content/MailDotCom-Prefs-POP.xul');"
-      headertitle="&MailServers.Label;"
-      class ="background">
-    
-    <script type="application/x-javascript">
-        <![CDATA[
-            var _elementIDs = ["chkEmptyTrash"];
-        ]]>
-    </script>
-    
-    <vbox>
+<overlay id="panePOPOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+           
+    <prefpane id = "panePOP" onpaneload= ""> 
+        
+        <preferences>
+            <preference id="emptyTrash" name="maildotcom.bEmptyTrash" type="bool"/>
+        </preferences>
+        
+        <vbox>
+                
+            <!--empty trash-->
+             <checkbox label="&EmptyTrash.Label;" 
+                       accesskey="&EmptyTrash.AccessKey;"
+                       preference = "emptyTrash"
+                       id="chkEmptyTrash"/>
             
-        <!--download junk mail-->
-       
-        <checkbox label="&EmptyTrash.Label;" 
-                  accesskey="&EmptyTrash.AccessKey;"
-                  id="chkEmptyTrash"
-                  preftype="bool" 
-                  prefstring="maildotcom.bEmptyTrash"
-                  onclick=""/>
-
-    </vbox>  
-</page>
+        </vbox>   
+        
+    </prefpane>
+    
+</overlay>
