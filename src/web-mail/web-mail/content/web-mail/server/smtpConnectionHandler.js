@@ -1,19 +1,20 @@
-
 function SMTPconnectionHandler(transport)
 {
     try
-    {
+    { 
+        var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"].
+                                getService(Components.interfaces.mozIJSSubScriptLoader);
+                       
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/base64.js");
+        
         this.m_SMTPLog = new DebugLog("webmail.logging.comms", 
                                       "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
                                       "SMTPConnectionlog"); 
                                         
-        this.m_SMTPLog.Write("nsSMTPConnectionManager.js - SMTPconnectionHandler - START"); 
+        this.m_SMTPLog.Write("nsSMTPConnectionHander.js - START"); 
         
-        var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"].
-                                getService(Components.interfaces.mozIJSSubScriptLoader);
-                       
-        if (scriptLoader)
-            scriptLoader.loadSubScript("chrome://web-mail/content/common/base64.js");
+       
         
         var date = new Date();
         this.iID = date.getHours()+ "-" + date.getMinutes() + "-"+ date.getUTCMilliseconds(); 
@@ -21,11 +22,12 @@ function SMTPconnectionHandler(transport)
         this.transport = transport;
         this.bAuth = false;
         this.iLoginReTryCount = 1;
+        this.m_bData = false;
                                   
         //get streams
         this.ServerRequest = this.transport.openInputStream(0,0,0);
         if (!this.ServerRequest) throw new Error("Error getting input stream.");
-        this.ServerResponse =  this.transport.openOutputStream(2,0,0);
+        this.ServerResponse =  this.transport.openOutputStream(0,0,0);
         if (!this.ServerResponse) throw new Error("Error getting output stream.");
         
         //create stream watcher
@@ -35,14 +37,15 @@ function SMTPconnectionHandler(transport)
         this.Pump.asyncRead(this,null);
         
         //connection made send ok
-        var szOK  = "220 SMTP thats so cool man\r\n";
+        var szOK  = "220 WebMail ESMTP\r\n";
+        this.m_SMTPLog.Write("nsSMTPConnectionHandler.js - "+ szOK); 
         this.ServerResponse.write(szOK,szOK.length);
         
-        this.m_SMTPLog.Write("nsSMTPConnectionManager.js - SMTPconnectionHandler - END"); 
+        this.m_SMTPLog.Write("nsSMTPConnectionHandler.js - END"); 
     }
     catch(e)
     {
-        this.m_SMTPLog.DebugDump("nsSMTPConnectionManager.js: SMTPconnectionHandler Constructor : Exception : " 
+        this.m_SMTPLog.DebugDump("nsSMTPConnectionManager.js: Constructor : Exception : " 
                                       + e.name + 
                                       ".\nError message: " 
                                       + e.message);
@@ -64,95 +67,136 @@ SMTPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
         instream.init(inputStream);
         var szStream = instream.read(count);
         
-        //remove \n\r from request
-        var aStream = szStream.split("\r\n");  //split string on return carrage line feed
-        var aCommand = aStream[0].split(" "); //split string on space
+        this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - "+ szStream);
         
-        switch(aCommand[0].toLowerCase())  //first element is command
-        {   
-            case "ehlo":
-                this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - ehlo - START "+ this.iID); 
-                var szResponse = "250-localhost\r\n250 AUTH PLAIN\r\n";
-                this.ServerResponse.write(szResponse, szResponse.length); 
-                this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - ehlo\n"+ szResponse);
-                this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - ehlo - END");   
-            break;
+        if (this.m_bData)
+        {
+            this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - Data MSG - START "+ this.iID); 
+            this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - Data MSG -\n"+ szStream);
             
-            case "auth":
-                this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - auth - START "+ this.iID); 
-                this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - auth -\n"+ aCommand); 
-                 
-                switch(aCommand[1].toLowerCase())
-                {
-                    case "plain":
-                        this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - plain - START "+ this.iID); 
-                           
-                        //decode base 64 encodec text
-                        var aszDecoded =  DecBase64(aCommand[2]).split("\0");
-                        this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - decoded -" +aszDecoded); 
-                        
-                        var aszUserName = aszDecoded[1].split("@");
-                        var szPassword = aszDecoded[2];
-                        
-                        if (this.getDomainHandler(aszUserName[0], aszUserName[1]))
-                        { 
-                            this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - got domain handler");  
-                        
-                            this.m_DomainHandler.bSMTP = true;
-                            if (!this.m_DomainHandler.logIn(szPassword))
-                                throw new Error("login failed");      
-                        }
-                        else
-                        {
-                            var szTemp = "550 "+ aszUserName[1] + " is a unsupported domain\r\n"              
-                            this.ServerResponse.write(szTemp,szTemp.length);
-                            this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - unsuppoorted domain");    
-                        }
-                        this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - plain - END "+ this.iID); 
-                    break;
-                    
-                    default:
-                        this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - !plain - START "+ this.iID); 
-                        var szErr = "504 Unrecognized authentication type\r\n";
-                        this.ServerResponse.write(szErr, szErr.length);
-                        this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - !plain - END "+ this.iID); 
-                    break;
-                } 
+            this.m_bData = false;
+            
+            if (!this.m_DomainHandler.rawMSG(szStream))
+                throw new Error("msg upload failed");           
+            
+            this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - rcpt - END "+ this.iID); 
+        }
+        else
+        {  
+            //remove \n\r from request
+            var aStream = szStream.split("\r\n");  //split string on return carrage line feed
+            var aCommand = aStream[0].split(" "); //split string on space
+            
+            switch(aCommand[0].toLowerCase())  //first element is command
+            {   
+                case "ehlo":
+                    this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - ehlo - START "+ this.iID); 
+                    var szResponse = "250-WebMail\r\n250 AUTH plain\r\n";
+                    this.ServerResponse.write(szResponse, szResponse.length); 
+                    this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - ehlo\n"+ szResponse);
+                    this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - ehlo - END");   
+                break;
                 
-                this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - auth - END "+ this.iID); 
-            break;
-            
-            
-            case "mail":
-                this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - mail - START "+ this.iID); 
-                this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - mail -\n"+ aCommand); 
-                var aszMail = aCommand[1].split(":");
-                switch(aszMail[0].toLowerCase())
-                {
-                    case "from":
-                        this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - from - START "+ this.iID);
-                        this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - from -\n"+ aszMail); 
+                
+                case "auth":
+                    this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - auth - START "+ this.iID); 
+                    this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - auth - "+ aCommand); 
+                     
+                    switch(aCommand[1].toLowerCase())
+                    {
+                        case "plain":
+                            this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - plain - START "+ this.iID); 
+                               
+                            //decode base 64 encodec text
+                            var aszDecoded =  DecBase64(aCommand[2]).split("\0");
+                            this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - decoded -" +aszDecoded); 
+                            
+                            var aszUserName = aszDecoded[1].split("@");
+                            var szPassword = aszDecoded[2];
+                            
+                            if (this.getDomainHandler(aszUserName[0], aszUserName[1]))
+                            { 
+                                this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - got domain handler");  
+                            
+                                this.m_DomainHandler.passWord = szPassword; 
+                                this.m_DomainHandler.logIn();    
+                            }
+                            else
+                            {
+                                var szTemp = "550 "+ aszUserName[1] + " is a unsupported domain\r\n"              
+                                this.ServerResponse.write(szTemp,szTemp.length);
+                                this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - unsuppoorted domain");    
+                            }
+                            this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - plain - END "+ this.iID); 
+                        break;
                         
-                        //address
-                        var aszAddress = aszMail[1].split("<")[1].split(">");
-                        this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - from -address\n"+ aszAddress[0]); 
-                       
-                        var szResponse = "250 thats cool\r\n";
-                        this.ServerResponse.write(szResponse, szResponse.length); 
-                       
-                        this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - from - END "+ this.iID);
-                    break; 
-                }
-                this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - mail - END "+ this.iID); 
-            break;
-            //all unsupported commands
-            default:
-                var szErr = "502 negative vibes\r\n";
-                this.ServerResponse.write(szErr, szErr.length);
-                this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - default " 
-                                                   + szStream 
-                                                   + szErr); 
-            break;
+                        default:
+                            this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - auth default - START "+ this.iID); 
+                            var szErr = "504 Unrecognized authentication type\r\n";
+                            this.ServerResponse.write(szErr, szErr.length);
+                            this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - auth default - END "+ this.iID); 
+                        break;
+                    } 
+                    
+                    this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - auth - END "+ this.iID); 
+                break;
+                
+                
+                
+                //requires login
+                case "mail":
+                    this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - mail - START "+ this.iID); 
+                    this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - mail -\n"+ aCommand); 
+                    
+                    var szResponse = "250 OK\r\n";
+                    this.ServerResponse.write(szResponse, szResponse.length);
+                     
+                    this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - mail - END "+ this.iID); 
+                break;
+                
+                
+                case "rcpt":
+                    this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - rcpt - START "+ this.iID); 
+                    this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - rcpt -\n"+ aCommand);
+                    
+                    var szResponse = "250 OK\r\n";
+                    this.ServerResponse.write(szResponse, szResponse.length);
+                    
+                    this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - rcpt - END "+ this.iID);  
+                break;
+                
+                
+                case "data":
+                    this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - data - START "+ this.iID); 
+                    this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - data -\n"+ aCommand);
+                    
+                    var szResponse = "354 OK\r\n";
+                    this.ServerResponse.write(szResponse, szResponse.length);
+                    this.m_bData = true;
+                    this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - data - END "+ this.iID);  
+                break;
+                
+                
+                case "quit":
+                    this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - quit - START "+ this.iID); 
+                    this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - quit -\n"+ aCommand);
+                    
+                    var szResponse = "221 OK\r\n";
+                    this.ServerResponse.write(szResponse, szResponse.length);
+                    
+                    this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - quit - END "+ this.iID);  
+                break;
+                
+                
+                //all unsupported commands
+                default:
+                    var szErr = "502 negative vibes\r\n";
+                    this.ServerResponse.write(szErr, szErr.length);
+                    this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - default " 
+                                                       + szStream 
+                                                       + szErr); 
+                break;
+            }
         }
         
         this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - END "+ this.iID); 
@@ -161,7 +205,7 @@ SMTPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
     {
         var szErr = "502 negative vibes\r\n";
         this.ServerResponse.write(szErr, szErr.length);
-        this.m_SMTPLog.DebugDump("nsSMTPConnectionManager.js: SMTPconnectionHandler onDataAvailable : Exception : " 
+        this.m_SMTPLog.DebugDump("nsSMTPConnectionManager.js: onDataAvailable : Exception : " 
                                               + e.name 
                                               + ".\nError message: " 
                                               + e.message);
@@ -196,8 +240,7 @@ SMTPconnectionHandler.prototype.getDomainHandler = function(szUserName, szDomain
 {
     try
     {
-        this.m_SMTPLog.Write("POPconnectionHandler - getDomainHandler - START"); 
-        
+        this.m_SMTPLog.Write("POPconnectionHandler - getDomainHandler - START");   
         this.m_SMTPLog.Write("POPconnectionHandler - getDomainHandler - " 
                                                 + szUserName 
                                                 + " " 
@@ -235,15 +278,14 @@ SMTPconnectionHandler.prototype.getDomainHandler = function(szUserName, szDomain
         }
         
         this.m_SMTPLog.Write("SMTPconnectionHandler - getDomainHandler - DomainHandler exist cID " +szContentID.value); 
-        this.m_DomainHandler = Components.classes[szContentID.value].
-                                createInstance(Components.interfaces.nsISMTPDomainHandler);   
+        this.m_DomainHandler = Components.classes[szContentID.value].createInstance(); 
+        this.m_DomainHandler.QueryInterface(Components.interfaces.nsISMTPDomainHandler);
         this.m_SMTPLog.Write("SMTPconnectionHandler - getDomainHandler - DomainHandler created "); 
         
         this.m_DomainHandler.ResponseStream = this.ServerResponse; 
         this.m_DomainHandler.userName = szUserName + "@" + szDomain;
         this.m_SMTPLog.Write("SMTPconnectionHandler - getDomainHandler - " +this.m_DomainHandler.userName);                                                                                                   
-        
-        
+              
         delete szContentID;    
                 
         this.m_SMTPLog.Write("SMTPconnectionHandler - getDomainHandler - END"); 
