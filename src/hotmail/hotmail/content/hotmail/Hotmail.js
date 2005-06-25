@@ -14,7 +14,7 @@ var gHotmailStartUp =
         {     
             //create debug log global 
             this.m_Log = new DebugLog("webmail.logging.comms", 
-                                      "{d7103710-6112-11d9-9669-0800200c9a66}",
+                                      "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
                                       "hotmail");
                                             
             this.m_Log.Write("Hotmail.js : init - START");

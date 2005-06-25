@@ -15,7 +15,7 @@ var gYahooStartUp =
         {     
             //create debug log global 
             this.m_Log = new DebugLog("webmail.logging.comms", 
-                                      "{a6a33690-2c6a-11d9-9669-0800200c9a66}",
+                                      "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
                                       "yahoo");
                                             
             this.m_Log.Write("Yahoo.js : YahooStartUp - START");

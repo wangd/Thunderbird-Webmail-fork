@@ -1,115 +1,102 @@
-var g_MailDotComDebugLog = null;
-var g_MailDotComTimer = null;
-      
 const cszMailDotComContentID = "@mozilla.org/MailDotCom;1";
 
-window.addEventListener("load", MailDotComStartUp, false);
+window.addEventListener("load", function() {gMailDotComStartUp.init();} , false);
 
-
-function MailDotComStartUp()
+var gMailDotComStartUp =
 {   
-    try
-    {     
-        //create debug log global 
-        g_MailDotComDebugLog = new DebugLog("webmail.logging.comms", 
-                                            "{1ad5b3b0-b908-11d9-9669-0800200c9a66}",
-                                            "maildotcom");
-                                        
-        g_MailDotComDebugLog.Write("MailDotCom.js : MailDotComStartUp - START");
-    
-                     
-        var DomainManager = Components.classes["@mozilla.org/DomainManager;1"].
-                                 getService().QueryInterface(Components.interfaces.nsIDomainManager);
-        if(DomainManager.isReady())
-        {
-            g_MailDotComDebugLog.Write("MailDotCom.js : MailDotComStartUp - DB loaded");
-            MailDotComDiagnosticTest();
-        }
-        else
-        {
-            g_MailDotComTimer = Components.classes["@mozilla.org/timer;1"]
+    m_DomainManager : null,
+    m_Log : null,
+    m_Timer : null,
+                            
+    init : function ()
+    {
+        try
+        {     
+            //create debug log global 
+            this.m_Log = new DebugLog("webmail.logging.comms", 
+                                      "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
+                                      "maildotcom");
+                                            
+            this.m_Log.Write("MailDotCom.js : init - START");
+        
+                         
+            this.m_DomainManager = Components.classes["@mozilla.org/DomainManager;1"].
+                                     getService().QueryInterface(Components.interfaces.nsIDomainManager);
+           
+            this.m_Timer = Components.classes["@mozilla.org/timer;1"]
                                             .createInstance(Components.interfaces.nsITimer); 
-            g_MailDotComTimer.initWithCallback(MailDotComDiagnosticTest, 
+            this.m_Timer.initWithCallback(this, 
                                           2000, 
                                           Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
-            g_MailDotComDebugLog.Write("MailDotCom.js : MailDotComStartUp - DB not loaded");
+            this.m_Log.Write("MailDotCom.js : init - DB not loaded");
+           
+            window.removeEventListener("load", function() {gMailDotComStartUp.init();} , false);
+                    
+        	this.m_Log.Write("MailDotCom.js : init - END ");
         }
-     
-        window.setTimeout(function()
-                      {
-                          g_MailDotComDebugLog.Write("MailDotCom.js : MailDotComStartUp - removeEventListener");
-                          window.removeEventListener("load",MailDotComStartUp, false);
-                      },
-                      15);
-                  
-    	g_MailDotComDebugLog.Write("MailDotCom.js : MailDotComStartUP - END ");
-    }
-    catch(e)
-    {
-        g_MailDotComDebugLog.DebugDump("MailDotCom.js : Exception in MailDotComStartUp " 
-                                    + e.name + 
-                                    ".\nError message: " 
-                                    + e.message);
-    }
-}
-
-//timer
-var MailDotComDiagnosticTest = 
-{
+        catch(e)
+        {
+            this.m_Log.DebugDump("Lycos.js : Exception in init " 
+                                        + e.name + 
+                                        ".\nError message: " 
+                                        + e.message);
+        }
+    },  
+       
+        
     notify: function(timer)
     {
         try
         {
-            g_MailDotComDebugLog.Write("MailDotCom.js : TimerCallback -  START");
+            this.m_Log.Write("MailDotCom.js : notify -  START");
             
-            var DomainManager = Components.classes["@mozilla.org/DomainManager;1"].
-                                     getService().QueryInterface(Components.interfaces.nsIDomainManager);
-            if(!DomainManager.isReady())
+           
+            if(!this.m_DomainManager.isReady())
             {
-                g_MailDotComDebugLog.Write("MailDotCom.js : TimerCallback -  db not ready");
+                this.m_Log.Write("MailDotCom.js : notify -  db not ready");
                 return;
             }    
             timer.cancel();
          
             //get store ids
-            var szContentID = new Object;
-                      
-            //get domain handler contentid for pop protocol
-            var bResult = DomainManager.getDomainForProtocol("mail.com", "POP", szContentID); 
-            var bResult1 = DomainManager.getDomainForProtocol("email.com", "POP", szContentID);           
-            
-            var bPass = false;
-            
-            if (bResult && bResult1)
-            {
-                g_MailDotComDebugLog.Write("MailDotCom.js :MailDotComStartUp - getDomains ");
-                
-                //check returned ids
-                if (szContentID.value == cszMailDotComContentID) bPass = true; 
-                
-                //test has failed set ids    
-                if (!bPass)
-                {
-                    g_MailDotComDebugLog.Write("MailDotCom.js :MailDotComStartUp - IDs failed - resetting");
-                    DomainManager.newDomainForProtocol("mail.com","POP", cszMailDotComContentID);
-                    DomainManager.newDomainForProtocol("email.com","POP", cszMailDotComContentID);
-                }  
-            }
-            else
-            {
-                g_MailDotComDebugLog.Write("MailDotCom.js :MailDotComStartUp - setting Domains");
-                if (!bResult) DomainManager.newDomainForProtocol("mail.com", "POP",cszMailDotComContentID);
-                if (!bResult1) DomainManager.newDomainForProtocol("email.com", "POP", cszMailDotComContentID);
-            }
-                   
-            g_MailDotComDebugLog.Write("MailDotCom.js : TimerCallback - END");
+            this.idCheck("mail.com","POP", cszMailDotComContentID);
+            this.idCheck("email.com","POP", cszMailDotComContentID);
+                                                 
+            this.m_Log.Write("MailDotCom.js : notify - END");
         }
         catch(e)
         {
-            g_MailDotComDebugLog.DebugDump("MailDotCom.js : TimerCallback - Exception in notify : " 
+            this.m_Log.DebugDump("MailDotCom.js : notify - Exception in notify : " 
                                         + e.name + 
                                         ".\nError message: " 
                                         + e.message);
         }
-    }
-}
+    },
+    
+    
+    idCheck : function(szDomain, szProtocol, szYahooContentID)
+    {
+        this.m_Log.Write("MailDotCom.js : idCheck - START");
+        this.m_Log.Write("MailDotCom.js : idCheck - " +szDomain + " "
+                                                + szProtocol+ " "
+                                                + szYahooContentID);
+         
+        var szContentID = new Object;
+        if (this.m_DomainManager.getDomainForProtocol(szDomain,szProtocol, szContentID))
+        {
+            this.m_Log.Write("MailDotCom.js : idCheck - found");
+            if (szContentID.value != szYahooContentID)
+            {
+                this.m_Log.Write("MailDotCom.js : idCheck - wrong id");
+                this.m_DomainManager.newDomainForProtocol(szDomain, szProtocol, szYahooContentID);
+            }
+        }
+        else
+        {
+            this.m_Log.Write("MailDotCom.js : idCheck - not found");
+            this.m_DomainManager.newDomainForProtocol(szDomain, szProtocol, szYahooContentID);    
+        }
+        
+        this.m_Log.Write("MailDotCom.js : idCheck - END");
+    },
+};
