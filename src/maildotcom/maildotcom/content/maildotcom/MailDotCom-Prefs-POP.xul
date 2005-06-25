@@ -2,7 +2,7 @@
 <?xml-stylesheet href="chrome://global/skin/global.css"?>
 <?xml-stylesheet href="chrome://maildotcom/content/Maildotcom-Prefs-POP.css"?>
 
-<!DOCTYPE dialog SYSTEM "chrome://maildotcom/locale/Maildotcom-Prefs-POP.dtd">
+<!DOCTYPE dialog SYSTEM "chrome://maildotcom/locale/MailDotCom-Prefs-POP.dtd">
 
 
 <overlay id="panePOPOverlay"

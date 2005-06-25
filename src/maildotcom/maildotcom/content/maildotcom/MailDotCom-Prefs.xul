@@ -6,7 +6,7 @@
 
 <?xml-stylesheet href="chrome://maildotcom/content/MailDotCom-Prefs.css"?>
 
-<!DOCTYPE dialog SYSTEM "chrome://maildotcom/locale/Maildotcom-Prefs.dtd">
+<!DOCTYPE dialog SYSTEM "chrome://maildotcom/locale/MailDotCom-Prefs.dtd">
 
 
 <prefwindow type="prefwindow"
