@@ -3,13 +3,14 @@ const nsMailDotComClassID = Components.ID("{304bef20-b908-11d9-9669-0800200c9a66
 const nsMailDotComContactID = "@mozilla.org/MailDotCom;1";
 const ExtMailDotComGuid = "{1ad5b3b0-b908-11d9-9669-0800200c9a66}";
 
+const patternMailRefresh = /<head>[\s]<meta http-equiv="Refresh" content="0;URL=(.*?)">[\s\S]*<\/head>/i;
 const patternMailDotComLoginForm =/<form.*?>[\S\d\s\r\n]*?<\/form>/igm;
 const patternMailDotComLoginURI = /action="(.*?)"/;
 const patternMailDotComLoginInput = /<input type=(?!"submit").*?>/igm;
 const patternMailDotComType = /type="(.*?)"/i;
 const patternMailDotComValue = /value="(.*?)"/i;
 const patternMailDotComName = /name="(.*?)"/i;
-const patternMailDotComFrame = /<frame src="(.*?)" name="mailcomframe" SCROLLING=AUTO">/;
+const patternMailDotComFrame = /<frame.*?src="(.*?)".*?name="mailcomframe".*?SCROLLING="AUTO">/;
 const patternMailDotComFolders = /href="(.*?folders.mail.*?)".*?class="nltxt"/;
 const patternMailDotComFolderList = /href=".*?".*?class="fb"/gm;
 const patternMailDotComFolderURI= /href="(.*?)"/;
@@ -184,7 +185,7 @@ nsMailDotCom.prototype =
             {
                 var bBounce = mainObject.bounce(httpChannel, mainObject.loginOnloadHandler);
                 if (!bBounce)throw new Error("Bounce Handler failed");
-                return;   
+                return true;   
             }
             
             //ads handler
@@ -192,13 +193,31 @@ nsMailDotCom.prototype =
             { 
                 var bAd = mainObject.ads(szResponse, mainObject.loginOnloadHandler);
                 if (!bAd)throw new Error("Ad Handler failed");
-                return;
+                return true;
             }
             
+                       
             //page code                                
             switch (mainObject.m_iStage)
             {
-                case 0: //login page
+                case 0: //refresh page
+                    var szRefreshURI = szResponse.match(patternMailRefresh)[1];
+                    mainObject.Log.Write("nsMailDotCom.js - loginOnloadHandler - Refresh URI " + szRefreshURI);
+                    var szURL = ios.newURI(szRefreshURI,null,null).prePath;
+                    var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
+                    var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
+           
+                    var bResult = mainObject.httpConnection(szRefreshURI, 
+                                                      "GET", 
+                                                      null, 
+                                                      aszCookie,
+                                                      mainObject.loginOnloadHandler);
+                                        
+                    if (!bResult) throw new Error("httpConnection returned false");
+                    mainObject.m_iStage++;
+                break;
+                
+                case 1: //login page
                     //get login form
                     var szForm= szResponse.match(patternMailDotComLoginForm)[0];
                     if (!szForm) 
@@ -264,10 +283,10 @@ nsMailDotCom.prototype =
                                                 
                     if (!bResult) throw new Error("httpConnection returned false");
             
-                    mainObject.m_iStage++
+                    mainObject.m_iStage++;
                 break;
                 
-                case 1: //frame
+                case 2: //frame
                      //get mail box
                     var szMailBox = szResponse.match(patternMailDotComFrame)[1];
                     if (!szMailBox) 
@@ -289,7 +308,7 @@ nsMailDotCom.prototype =
                 break;
                 
                 
-                case 2://get folder list
+                case 3://get folder list
                     var szLocation = httpChannel.URI.spec;
                     mainObject.Log.Write("nsMailDotCom.js - loginOnloadHandler - location "+ szLocation);
                     if (szLocation.search(/frontpage.main/)==-1)
@@ -317,7 +336,7 @@ nsMailDotCom.prototype =
                 break;
                 
                 
-                case 3: //get folder urls
+                case 4: //get folder urls
                     var szLocation = httpChannel.URI.spec;
                     mainObject.Log.Write("nsMailDotCom.js - loginOnloadHandler - location "+ szLocation);
                     if (szLocation.search(/folders.mail/)==-1)
