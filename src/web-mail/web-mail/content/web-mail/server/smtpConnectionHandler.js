@@ -21,6 +21,7 @@ function SMTPconnectionHandler(transport)
         
         this.transport = transport;
         this.bAuth = false;
+        this.szRcptList = null;
         this.iLoginReTryCount = 1;
         this.m_bData = false;
                                   
@@ -76,7 +77,9 @@ SMTPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
             
             this.m_bData = false;
             
-            if (!this.m_DomainHandler.rawMSG(szStream))
+            var szEmail = "x-Rcpt: " + this.szRcptList + "\r\n" 
+            szEmail += szStream;
+            if (!this.m_DomainHandler.rawMSG(szEmail))
                 throw new Error("msg upload failed");           
             
             this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - rcpt - END "+ this.iID); 
@@ -158,6 +161,11 @@ SMTPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
                 case "rcpt":
                     this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - rcpt - START "+ this.iID); 
                     this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - rcpt -\n"+ aCommand);
+                    
+                    var szTemp = aCommand[1].match(/<(.*?)>/)[1];
+                    
+                    this.szRcptList ? this.szRcptList += ","+szTemp : this.szRcptList = szTemp;
+                    this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - rcpt - List "+ this.szRcptList);
                     
                     var szResponse = "250 OK\r\n";
                     this.ServerResponse.write(szResponse, szResponse.length);
