@@ -26,7 +26,7 @@ function SMTPconnectionHandler(transport)
         this.m_bData = false;
                                   
         //get streams
-        this.ServerRequest = this.transport.openInputStream(0,0,0);
+        this.ServerRequest = this.transport.openInputStream(0,0,-1);
         if (!this.ServerRequest) throw new Error("Error getting input stream.");
         this.ServerResponse =  this.transport.openOutputStream(0,0,0);
         if (!this.ServerResponse) throw new Error("Error getting output stream.");
