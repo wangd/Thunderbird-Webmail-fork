@@ -93,8 +93,8 @@ email.prototype.parse = function (szRawEmail)
                 {
                     //files
                     this.m_Log.Write("email.js - parse - files");
-                    var temp = new attchements(this.m_Log,
-                                               aTempAttach[j].headers,
+                    var temp = new attachments(this.m_Log,
+                                               aTempAttach[j].headers.getAllHeaders(),
                                                aTempAttach[j].body.getBody(0))
                     this.attachments.push(temp);
                 }
