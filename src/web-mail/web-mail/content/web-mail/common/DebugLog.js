@@ -161,7 +161,7 @@ DebugLog.prototype.WriteToFile = function(msg)
         szTempMSG += today.toLocaleTimeString();
         szTempMSG += "--";
         szTempMSG += msg;
-        if (szTempMSG.lastIndexOf("\r\n") == -1) szTempMSG += "\r\n";
+        if (szTempMSG.lastIndexOf("\r\n") != szTempMSG.length-2) szTempMSG += "\r\n";
     
         outputStream.write( szTempMSG, szTempMSG.length );
         outputStream.close(); 
