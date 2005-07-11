@@ -93,9 +93,11 @@ email.prototype.parse = function (szRawEmail)
                 {
                     //files
                     this.m_Log.Write("email.js - parse - files");
+                     
+                    var szEncoding = aTempAttach[j].headers.getEncoderType();
                     var temp = new attachments(this.m_Log,
                                                aTempAttach[j].headers.getAllHeaders(),
-                                               aTempAttach[j].body.getBody(0))
+                                               aTempAttach[j].body.getBody(0));
                     this.attachments.push(temp);
                 }
             }                       

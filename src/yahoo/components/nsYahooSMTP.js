@@ -29,6 +29,7 @@ function nsYahooSMTP()
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CookieManager.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Email.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/base64.js");
         
         var date = new Date();
         var  szLogFileName = "Yahoo SMTP Log - " + date.getHours()
@@ -695,11 +696,19 @@ nsYahooSMTP.prototype =
                             mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Filename " + szFileName); 
                             szData += szFileName +"\"\r\n";
                             szData +="Content-Type: application/octet-stream\r\n";
-                            szData +="Content-Transfer-Encoding: ";
                             var szEncoding = oAttach.headers.getEncoderType();
-                            szData +=szEncoding + "\r\n\r\n";
+                            if (szEncoding.search(/base64/i)!=-1)
+                            {
+                                 szData +="Content-Transfer-Encoding: base64\r\n";    
+                            //    var oBase64 = new base64();
+                              //  szBody = oBase64.decode(szBody.replace(/\r\n/gm,""));
+                            }
+                            szData += "\r\n"; //end of headers
+                            
                             //body
-                            szData += oAttach.body.getBody(0) + "\r\n\r\n";
+                            var szBody = oAttach.body.getBody(0);
+                                                       
+                            szData += szBody + "\r\n";
                         }
                         else
                             szData += "\r\n\r\n\r\n";    
@@ -855,17 +864,26 @@ nsYahooSMTP.prototype =
             {
                 this.m_Log.Write("nsYahooSMTP.js - httpConnection - adding data");
                 
-                var uploadStream = Components.classes["@mozilla.org/io/string-input-stream;1"]
-                                    .createInstance(Components.interfaces.nsIStringInputStream);         
-                uploadStream.setData(szData, szData.length);
-        
                 var uploadChannel = channel.QueryInterface(Components.interfaces.nsIUploadChannel);
                 var szContentType= null;
-                if (szBoundary) 
+                              
+                if (szBoundary)  //binary data
+                { 
+                    var uploadStream = Components.classes["@mozilla.org/io/string-input-stream;1"]
+                    uploadStream = uploadStream.createInstance(Components.interfaces.nsIStringInputStream);         
+                    uploadStream.setData(szData, szData.length);
                     szContentType = "multipart/form-data; boundary=" +szBoundary;
+                    uploadChannel.setUploadStream(uploadStream, szContentType , -1); 
+                }
                 else
-                    szContentType = "application/x-www-form-urlencoded";
-                uploadChannel.setUploadStream(uploadStream, szContentType , -1); 
+                {
+                    szContentType = "application/x-www-form-urlencoded";  
+                    var uploadStream = Components.classes["@mozilla.org/io/string-input-stream;1"]
+                    uploadStream = uploadStream.createInstance(Components.interfaces.nsIStringInputStream);         
+                    uploadStream.setData(szData, szData.length);
+                    uploadChannel.setUploadStream(uploadStream, szContentType , -1);   
+                }
+                
             }
             HttpRequest.requestMethod = szType;
             

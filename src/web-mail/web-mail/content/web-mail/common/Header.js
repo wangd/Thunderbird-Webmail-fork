@@ -178,17 +178,17 @@ headers.prototype =
                 
                 case 1: // type
                     szContent= szContentType.match(/(.*?)\/.*?;/)[1];
-                    szContent.replace(" ","");
+                    szContent = szContent.replace(" ","");
                 break;
                 
                 case 2://subtype
                     szContent= szContentType.match(/.*?\/(.*?);/)[1];
-                    szContent.replace(" ","");
+                    szContent = szContent.replace(" ","");
                 break;
                 
                 case 3://boundary
                     szContent= szContentType.match(/ boundary="(.*?)"/)[1];
-                    szContent.replace(" ","");
+                    szContent = szContent.replace(" ","");
                 break;
                 
                 case 4://name
@@ -251,7 +251,7 @@ headers.prototype =
             if (!this.szHeaders) return null;  
             
             var szContentType = this.szHeaders.match(/Content-Transfer-Encoding:(.*?)$/im)[1];
-            szContentType.replace(" ","");
+            szContentType = szContentType.replace(" ","");
             this.m_Log.Write("headers.js - getEncoderType - "+ szContentType);
             this.m_Log.Write("headers.js - getEncoderType - END");
             return szContentType;
