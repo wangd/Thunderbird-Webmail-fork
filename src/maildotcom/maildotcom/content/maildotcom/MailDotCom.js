@@ -61,6 +61,8 @@ var gMailDotComStartUp =
             //get store ids
             this.idCheck("mail.com","POP", cszMailDotComContentID);
             this.idCheck("email.com","POP", cszMailDotComContentID);
+            this.idCheck("journalism.com","POP", cszMailDotComContentID);
+            this.idCheck("iname.com","POP", cszMailDotComContentID);
                                                  
             this.m_Log.Write("MailDotCom.js : notify - END");
         }
