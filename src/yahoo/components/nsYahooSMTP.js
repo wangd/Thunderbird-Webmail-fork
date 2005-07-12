@@ -696,25 +696,23 @@ nsYahooSMTP.prototype =
                             mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Filename " + szFileName); 
                             szData += szFileName +"\"\r\n";
                             szData +="Content-Type: application/octet-stream\r\n";
-                            var szEncoding = oAttach.headers.getEncoderType();
-                            if (szEncoding.search(/base64/i)!=-1)
-                            {
-                                 szData +="Content-Transfer-Encoding: base64\r\n";    
-                            //    var oBase64 = new base64();
-                              //  szBody = oBase64.decode(szBody.replace(/\r\n/gm,""));
-                            }
                             szData += "\r\n"; //end of headers
-                            
+                            var szEncoding = oAttach.headers.getEncoderType();
+                                                      
                             //body
                             var szBody = oAttach.body.getBody(0);
-                                                       
+                            if (szEncoding.search(/base64/i)!=-1)
+                            {
+                                var oBase64 = new base64();
+                                szBody = oBase64.decode(szBody.replace(/\r\n/gm,""));
+                            }                          
                             szData += szBody + "\r\n";
                         }
                         else
                             szData += "\r\n\r\n\r\n";    
                     }
                     
-                    szData+="--"+szBoundary+"--\r\n\r\n";
+                    szData+="--"+szBoundary+"--\r\n";
                     
                     mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Data " + szData);
                     
@@ -868,12 +866,73 @@ nsYahooSMTP.prototype =
                 var szContentType= null;
                               
                 if (szBoundary)  //binary data
-                { 
+                { /*
                     var uploadStream = Components.classes["@mozilla.org/io/string-input-stream;1"]
                     uploadStream = uploadStream.createInstance(Components.interfaces.nsIStringInputStream);         
-                    uploadStream.setData(szData, szData.length);
+                    uploadStream.setData(szData, szData.length);*/
+                    var delimiter = "\r\n--"+szBoundary+"\r\n" ;
+                    var delimstrm = Components.classes["@mozilla.org/io/string-input-stream;1"];
+                    delimstrm = delimstrm.createInstance(Components.interfaces.nsIStringInputStream);
+                    delimstrm.setData(delimiter,-1);
+                
+                    var close_delim = "\r\n--"+szBoundary+"--" ;
+                    var cdelimstrm = Components.classes["@mozilla.org/io/string-input-stream;1"];
+                    cdelimstrm = cdelimstrm.createInstance( Components.interfaces.nsIStringInputStream );
+                    cdelimstrm.setData(close_delim,-1);
+                    
+                    var multiStream = Components.classes["@mozilla.org/io/multiplex-input-stream;1"];
+                    multiStream = multiStream.createInstance( Components.interfaces.nsIMultiplexInputStream );
+                    var valueStream = Components.classes["@mozilla.org/io/string-input-stream;1"];
+                    valueStream = valueStream.createInstance( Components.interfaces.nsIStringInputStream );
+                    var mimestrm = Components.classes["@mozilla.org/network/mime-input-stream;1"];
+                    mimestrm = mimestrm.createInstance(Components.interfaces.nsIMIMEInputStream );
+                    mimestrm.addContentLength = false;
+                    
+                    //start element
+                    multiStream.appendStream(delimstrm);
+                
+                    //the part in a multipart stream
+                    mimestrm.addHeader("Content-disposition","Content-Disposition: form-data; name=\"SaveCopy\"");
+                    valueStream.setData("YES",-1);
+                    mimestrm.setData(valueStream);
+                    multiStream.appendStream(mimestrm);
+                    multiStream.appendStream(delimstrm);
+                   
+                    mimestrm.addHeader("Content-disposition","Content-Disposition: form-data; name=\"NumAtt\"");
+                    valueStream.setData("1",-1);
+                    mimestrm.setData(valueStream);
+                    multiStream.appendStream(mimestrm);
+                    multiStream.appendStream(delimstrm);
+                    
+                    mimestrm.addHeader("Content-disposition","Content-Disposition: form-data; name=\"UplData\"");
+                    valueStream.setData("Attach Files",-1);
+                    mimestrm.setData(valueStream);
+                    multiStream.appendStream(mimestrm);
+                    multiStream.appendStream(delimstrm);
+                    
+                    mimestrm.addHeader("Content-disposition","Content-Disposition: form-data; name=\"UPL\"");
+                    valueStream.setData("Attach Files",-1);
+                    mimestrm.setData(valueStream);
+                    multiStream.appendStream(mimestrm);
+                    multiStream.appendStream(delimstrm);
+                    
+                    mimestrm.addHeader("Content-disposition","Content-Disposition: form-data; name=\"userFile1\"; filename=\"fr-FR.rar\"");
+                    mimestrm.addHeader("Content-Type","application/octet-stream");
+                    var file = Components.classes["@mozilla.org/file/local;1"];
+                	file = file.createInstance(Components.interfaces.nsILocalFile);
+                	file.initWithPath("C:\\Documents and Settings\\Andrew\\My Documents\\My Downloads\\fr-FR.rar");
+                    var inputStream = Components.classes["@mozilla.org/network/file-input-stream;1"];
+                	inputStream = inputStream.createInstance(Components.interfaces.nsIFileInputStream);
+                    inputStream.init(file,0 ,0 , 0);
+                    var buffer = Components.classes["@mozilla.org/network/buffered-input-stream;1"];
+                    buffer = buffer.createInstance(Components.interfaces.nsIBufferedInputStream);
+                    buffer.init(inputStream, inputStream.available());
+                    mimestrm.setData(buffer);
+                    multiStream.appendStream(mimestrm);
+                    multiStream.appendStream(cdelimstrm);
+                    
                     szContentType = "multipart/form-data; boundary=" +szBoundary;
-                    uploadChannel.setUploadStream(uploadStream, szContentType , -1); 
+                    uploadChannel.setUploadStream(multiStream, szContentType , -1); 
                 }
                 else
                 {
