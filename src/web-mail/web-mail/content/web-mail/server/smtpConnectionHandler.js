@@ -111,7 +111,8 @@ SMTPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
                             this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - plain - START "+ this.iID); 
                                
                             //decode base 64 encodec text
-                            var aszDecoded =  DecBase64(aCommand[2]).split("\0");
+                            var oBase64 = new base64();
+                            var aszDecoded =  oBase64.decode(aCommand[2]).split("\0");
                             this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - decoded -" +aszDecoded); 
                             
                             var aszUserName = aszDecoded[1].split("@");
@@ -194,7 +195,8 @@ SMTPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
                     
                     this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - quit - END "+ this.iID);  
                 break;
-   
+                
+                
                 //all unsupported commands
                 default:
                     var szErr = "502 negative vibes\r\n";
@@ -204,7 +206,6 @@ SMTPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
                                                        + szErr); 
                 break;
             }
-
         }
         
         this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - END "+ this.iID); 
