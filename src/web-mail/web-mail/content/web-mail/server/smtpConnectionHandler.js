@@ -194,8 +194,7 @@ SMTPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
                     
                     this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - quit - END "+ this.iID);  
                 break;
-                
-                
+   
                 //all unsupported commands
                 default:
                     var szErr = "502 negative vibes\r\n";
@@ -205,6 +204,7 @@ SMTPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
                                                        + szErr); 
                 break;
             }
+
         }
         
         this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - END "+ this.iID); 
