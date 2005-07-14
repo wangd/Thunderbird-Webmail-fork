@@ -22,7 +22,7 @@
                 the app. -->
         
         <em:version>0.4.2</em:version>
-        <em:updateLink>http://download.mozdev.org/webmail/hotmail-0-4-2.xpi</em:updateLink>
+        <em:updateLink>http://download.mozdev.org/webmail/hotmail-0-4-2[inter2].xpi</em:updateLink>
     
     </RDF:Description>
 
@@ -39,7 +39,7 @@
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
             	<em:minVersion>1.0</em:minVersion>
             	<em:maxVersion>1.0</em:maxVersion>
-                <em:updateLink>http://download.mozdev.org/webmail/hotmail-0-4-2.xpi</em:updateLink>
+                <em:updateLink>http://download.mozdev.org/webmail/hotmail-0-4-2[inter2].xpi</em:updateLink>
           </Description>
         </em:targetApplication>
     </RDF:Description>  
