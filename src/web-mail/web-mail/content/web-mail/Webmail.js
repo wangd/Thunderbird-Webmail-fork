@@ -91,13 +91,22 @@ var gWebMail =
         {
             this.m_Log.Write("Webmail.js : shutDown - START");
            
-            if  (this.m_POP) this.m_POP.Stop(); //stop pop server
-            if  (this.m_SMTP) this.m_SMTP.Stop(); //stop SMTP server
+            if  (this.m_POP) 
+            {
+                this.m_Log.Write("Webmail.js : shutDown - POP stop");
+                this.m_POP.Stop(); //stop pop server
+            }
+            
+            if  (this.m_SMTP) 
+            {
+                this.m_Log.Write("Webmail.js : shutDown - SMTP stop");
+                this.m_SMTP.Stop(); //stop SMTP server
+            }
                   
             //account wizard
             this.m_AccountWizard.deleteISP();
                
-            this.m_Log..Write("Webmail.js : shutDown - END");
+            this.m_Log.Write("Webmail.js : shutDown - END");
         }
         catch(e)
         {
