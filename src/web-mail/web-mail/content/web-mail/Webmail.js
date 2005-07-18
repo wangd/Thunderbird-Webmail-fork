@@ -101,7 +101,7 @@ var gWebMail =
         }
         catch(e)
         {
-            this.m_Log..DebugDump("Webmail.js : Exception in shutDown " 
+            this.m_Log.DebugDump("Webmail.js : Exception in shutDown " 
                                             + e.name 
                                             + ".\nError message: " 
                                             + e.message);
