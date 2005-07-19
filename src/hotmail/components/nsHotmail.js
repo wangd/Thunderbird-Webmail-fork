@@ -12,6 +12,7 @@ const patternHotmailPOPSRForm = /<input.*?name=".*?".*?value=".*?".*?>/igm;
 const patternHotmailPOPSRType = /type="(.*?)"/i;
 const patternHotmailPOPSRName = /name="(.*?)"/i;
 const patternHotmailPOPSRValue = /value="(.*?)"/i;
+const patternHotmailPOPJavaRefresh = /top.location.replace\("(.*?)"\);/i
 const patternHotmailPOPSRRefresh =/<META.*?HTTP-EQUIV="REFRESH".*?URL=(.*?)".*?>/i;
 const patternHotmailPOPSRLogout = /<td><a.*?href="(.*?\/cgi-bin\/logout\?curmbox=.*?").*?>/m;
 const PatternHotmailPOPSRFolderBase = /document.location = "(.*?)"\+f/; 

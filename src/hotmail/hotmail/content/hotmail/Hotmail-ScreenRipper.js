@@ -259,6 +259,8 @@ HotmailScreenRipper.prototype =
                    
                     case 2: //refresh
                         var aRefresh = szResponse.match(patternHotmailPOPSRRefresh);
+                        if (!aRefresh)
+                            aRefresh = szResponse.match(patternHotmailPOPJavaRefresh);
                         mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler "+ aRefresh); 
                         if (aRefresh == null) throw new Error("error parsing login page");
                         
