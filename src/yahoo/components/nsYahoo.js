@@ -6,7 +6,7 @@ const ExtYahooGuid = "{d7103710-6112-11d9-9669-0800200c9a66}";
 const patternYahooSecure = /<a href="(.*?https.*?)".*?>/;
 const patternYahooForm = /<form.*?name=login_form.*?>[\S\d\s\r\n]*?<\/form>/gm;
 const patternYahooAction = /<form.*?action="(.*?)".*?>/;
-const patternYahooLogIn = /<input type=hidden name=.*?value=.*?>/gm;
+const patternYahooLogIn = /<input type="*hidden"*.*?name=.*?value=.*?>/gm;
 const patternYahooName = /name="(.*?)"/;
 const patternYahooNameAlt = /name=([\S\d]*)/;
 const patternYahooValue = /value="(.*?)"/;
@@ -213,122 +213,165 @@ nsYahoo.prototype =
                                                         mainObject.loginOnloadHandler);
                                             
                 if (!bResult) throw new Error("httpConnection returned false");
+                return;
             }
-            else  //everything else
+            
+            //page code                                
+            switch (mainObject.m_iStage)
             {
-                //page code                                
-                switch (mainObject.m_iStage)
-                {
-                    case 0: //secure web page
-                        var aSecureLoginURL = szResponse.match(patternYahooSecure);
-                        if (aSecureLoginURL == null)
-                             throw new Error("error parsing yahoo login web page");
-                        
-                        mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - Secure URL " + aSecureLoginURL);
-                        
-                        var szSecureURL = aSecureLoginURL[1];
-                        
-                        //set  cookies
-                        var szURL = ios.newURI(szSecureURL,null,null).prePath;
-                        var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
-                        var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                        mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - sending cookies - "+ aszCookie);
-                       
-                        var bResult = mainObject.httpConnection(szSecureURL, 
-                                                                "GET", 
-                                                                null, 
-                                                                aszCookie,
-                                                                mainObject.loginOnloadHandler);
-                                                 
-                        if (!bResult) throw new Error("httpConnection returned false");
-                        mainObject.m_iStage++;
-                    break;
-                   
+                case 0: //secure web page
+                    var aSecureLoginURL = szResponse.match(patternYahooSecure);
+                    if (aSecureLoginURL == null)
+                         throw new Error("error parsing yahoo login web page");
                     
-                    case 1: // login page               
-                        var aLoginForm = szResponse.match(patternYahooForm);
-                        if (aLoginForm == null)
-                             throw new Error("error parsing yahoo login web page");
-                        mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - loginForm " + aLoginForm);
-                        
-                        var szLoginURL = aLoginForm[0].match(patternYahooAction)[1];
-                        mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - loginURL " + szLoginURL);
-                        
-                        var aLoginData = aLoginForm[0].match(patternYahooLogIn);
-                        mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - loginData " + aLoginData);
-                        var szData = null;
-                        for (i=0; i<aLoginData.length; i++)
-                        {
-                            var szName=null;
-                            try
-                            { 
-                                szName= aLoginData[i].match(patternYahooName)[1];
-                            }
-                            catch(e)
-                            {
-                                szName= aLoginData[i].match(patternYahooNameAlt)[1];
-                            }
-                            
-                            mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - loginData name " + szName);
-                            
-                            var szValue
-                            try
-                            {
-                                szValue = aLoginData[i].match(patternYahooValue)[1];
-                            }
-                            catch(err)
-                            {
-                                szValue = aLoginData[i].match(patternYahooAltValue)[1];
-                            }
-                            
-                            mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - loginData value " + szValue);
-                            
-                            if (!szData)
-                                szData = szName + "=" ;
-                            else
-                                szData += szName + "=" ;
-                           
-                            if(szValue.length>0)  
-                                szData +=  encodeURIComponent(szValue) + "&";
-                            else
-                                szData += "&";
+                    mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - Secure URL " + aSecureLoginURL);
+                    
+                    var szSecureURL = aSecureLoginURL[1];
+                    
+                    //set  cookies
+                    var szURL = ios.newURI(szSecureURL,null,null).prePath;
+                    var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
+                    var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
+                    mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - sending cookies - "+ aszCookie);
+                   
+                    var bResult = mainObject.httpConnection(szSecureURL, 
+                                                            "GET", 
+                                                            null, 
+                                                            aszCookie,
+                                                            mainObject.loginOnloadHandler);
+                                             
+                    if (!bResult) throw new Error("httpConnection returned false");
+                    mainObject.m_iStage++;
+                break;
+               
+                
+                case 1: // login page               
+                    var aLoginForm = szResponse.match(patternYahooForm);
+                    if (aLoginForm == null)
+                         throw new Error("error parsing yahoo login web page");
+                    mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - loginForm " + aLoginForm);
+                    
+                    var szLoginURL = aLoginForm[0].match(patternYahooAction)[1];
+                    mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - loginURL " + szLoginURL);
+                    
+                    var aLoginData = aLoginForm[0].match(patternYahooLogIn);
+                    mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - loginData " + aLoginData);
+                    var szData = null;
+                    for (i=0; i<aLoginData.length; i++)
+                    {
+                        var szName=null;
+                        try
+                        { 
+                            szName= aLoginData[i].match(patternYahooName)[1];
                         }
-                        szData += "login=" + mainObject.m_szUserName.match(/(.*?)@/)[1].toLowerCase() + "&";
-                        szData += "passwd=" + encodeURIComponent(mainObject.m_szPassWord) + "&";
-                        szData += ".save=Sign+In";
-                        mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - login DATA \n" + szData);   
-                              
-                        //set  cookies
-                        var szURL = ios.newURI(szLoginURL,null,null).prePath;
-                        var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
-                        var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                        mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - sending cookies - "+ aszCookie);
+                        catch(e)
+                        {
+                            szName= aLoginData[i].match(patternYahooNameAlt)[1];
+                        }
+                        
+                        mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - loginData name " + szName);
+                        
+                        var szValue
+                        try
+                        {
+                            szValue = aLoginData[i].match(patternYahooValue)[1];
+                        }
+                        catch(err)
+                        {
+                            szValue = aLoginData[i].match(patternYahooAltValue)[1];
+                        }
+                        
+                        mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - loginData value " + szValue);
+                        
+                        if (!szData)
+                            szData = szName + "=" ;
+                        else
+                            szData += szName + "=" ;
                        
-                        var bResult = mainObject.httpConnection(szLoginURL, 
-                                                                "POST", 
-                                                                szData, 
-                                                                aszCookie,
-                                                                mainObject.loginOnloadHandler);
-                                                 
-                        if (!bResult) throw new Error("httpConnection returned false");
-                        mainObject.m_iStage++;
-                    break;
-                                      
-                    case 2: //redirect
-                        var aLoginRedirect = szResponse.match(patternYahooRedirect);
-                        if (aLoginRedirect == null)
-                             throw new Error("error parsing yahoo login web page");
-                        mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - login redirect " + aLoginRedirect);
+                        if(szValue.length>0)  
+                            szData +=  encodeURIComponent(szValue) + "&";
+                        else
+                            szData += "&";
+                    }
+                    szData += "login=" + mainObject.m_szUserName.match(/(.*?)@/)[1].toLowerCase() + "&";
+                    szData += "passwd=" + encodeURIComponent(mainObject.m_szPassWord) + "&";
+                    szData += ".save=Sign+In";
+                    mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - login DATA \n" + szData);   
                           
-                        var szLocation = aLoginRedirect[1];
+                    //set  cookies
+                    var szURL = ios.newURI(szLoginURL,null,null).prePath;
+                    var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
+                    var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
+                    mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - sending cookies - "+ aszCookie);
+                   
+                    var bResult = mainObject.httpConnection(szLoginURL, 
+                                                            "POST", 
+                                                            szData, 
+                                                            aszCookie,
+                                                            mainObject.loginOnloadHandler);
+                                             
+                    if (!bResult) throw new Error("httpConnection returned false");
+                    mainObject.m_iStage++;
+                break;
+                                  
+                case 2: //redirect
+                    var aLoginRedirect = szResponse.match(patternYahooRedirect);
+                    if (aLoginRedirect == null)
+                         throw new Error("error parsing yahoo login web page");
+                    mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - login redirect " + aLoginRedirect);
+                      
+                    var szLocation = aLoginRedirect[1];
+                    
+                    //set cookies
+                    var szURL = ios.newURI(szLocation,null,null).prePath;
+                    var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
+                    var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
+                    mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - sending cookies - "+ aszCookie);
+                    
+                    var bResult = mainObject.httpConnection(szLocation, 
+                                                            "GET", 
+                                                            null, 
+                                                            aszCookie,
+                                                            mainObject.loginOnloadHandler);
+                                                
+                    if (!bResult) throw new Error("httpConnection returned false");
+                    mainObject.m_iStage++;
+                break;
+            
+                case 3: //mail box
+                    var szLocation = httpChannel.URI.spec;
+                    var iIndex = szLocation.indexOf("uilogin.srt");
+                    mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - page check : " + szLocation 
+                                                        + " index = " +  iIndex );
+                    if (iIndex != -1) throw new Error("error logging in ");
+                    
+                    //get urls for later use
+                    mainObject.m_szLocationURI = httpChannel.URI.prePath ;
+                    mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - m_szLocationURI : "+mainObject.m_szLocationURI );
+                    
+                    try
+                    {
+                        var aMailBoxURI =szResponse.match(patternYahooInbox);
+                        mainObject.m_szMailboxURI = aMailBoxURI[1];
+                        mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - m_szMaiboxURI : "+mainObject.m_szMailboxURI );
                         
-                        //set cookies
-                        var szURL = ios.newURI(szLocation,null,null).prePath;
+                        //server response
+                        mainObject.serverComms("+OK Your in\r\n");
+                        mainObject.m_bAuthorised = true;
+                    }
+                    catch(e)
+                    {
+                        mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - m_szMaiboxURI frames found: ");
+                         
+                        var szWelcomeURI = mainObject.m_szLocationURI;
+                        szWelcomeURI += szResponse.match(patternYahooWelcomeFrame)[1];
+                        
+                        mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler -welcome: "+szWelcomeURI);
+                        var szURL = ios.newURI(szWelcomeURI,null,null).prePath;
                         var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
                         var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                        mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - sending cookies - "+ aszCookie);
                         
-                        var bResult = mainObject.httpConnection(szLocation, 
+                        var bResult = mainObject.httpConnection(szWelcomeURI, 
                                                                 "GET", 
                                                                 null, 
                                                                 aszCookie,
@@ -336,75 +379,31 @@ nsYahoo.prototype =
                                                     
                         if (!bResult) throw new Error("httpConnection returned false");
                         mainObject.m_iStage++;
-                    break;
+                    }             
+                break;
                 
-                    case 3: //mail box
-                        var szLocation = httpChannel.URI.spec;
-                        var iIndex = szLocation.indexOf("uilogin.srt");
-                        mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - page check : " + szLocation 
-                                                            + " index = " +  iIndex );
-                        if (iIndex != -1) throw new Error("error logging in ");
-                        
-                        //get urls for later use
-                        mainObject.m_szLocationURI = httpChannel.URI.prePath ;
-                        mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - m_szLocationURI : "+mainObject.m_szLocationURI );
-                        
-                        try
-                        {
-                            var aMailBoxURI =szResponse.match(patternYahooInbox);
-                            mainObject.m_szMailboxURI = aMailBoxURI[1];
-                            mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - m_szMaiboxURI : "+mainObject.m_szMailboxURI );
-                            
-                            //server response
-                            mainObject.serverComms("+OK Your in\r\n");
-                            mainObject.m_bAuthorised = true;
-                        }
-                        catch(e)
-                        {
-                            mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - m_szMaiboxURI frames found: ");
-                             
-                            var szWelcomeURI = mainObject.m_szLocationURI;
-                            szWelcomeURI += szResponse.match(patternYahooWelcomeFrame)[1];
-                            
-                            mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler -welcome: "+szWelcomeURI);
-                            var szURL = ios.newURI(szWelcomeURI,null,null).prePath;
-                            var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
-                            var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                            
-                            var bResult = mainObject.httpConnection(szWelcomeURI, 
-                                                                    "GET", 
-                                                                    null, 
-                                                                    aszCookie,
-                                                                    mainObject.loginOnloadHandler);
-                                                        
-                            if (!bResult) throw new Error("httpConnection returned false");
-                            mainObject.m_iStage++;
-                        }             
-                    break;
+                case 4:// welcome page                           
+                    var szMailBox = szResponse.match(patternYahooInboxFrameAlt)[1];
+                    mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - szMailBox: "+szMailBox);
+                    mainObject.m_szMailboxURI = szMailBox;
                     
-                    case 4:// welcome page                           
-                        var szMailBox = szResponse.match(patternYahooInboxFrameAlt)[1];
-                        mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - szMailBox: "+szMailBox);
-                        mainObject.m_szMailboxURI = szMailBox;
-                        
-                        try
-                        { 
-                            var szBulkMail = szResponse.match(patternYahooBulkFrame)[1];
-                            mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - szBulkMail: "+szBulkMail);
-                            mainObject.m_szBulkFolderURI = szBulkMail;
-                        }
-                        catch(e)
-                        {
-                            mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - no junk folder");
-                        }
-                        
-                        //server response
-                        mainObject.serverComms("+OK Your in\r\n");
-                        mainObject.m_bAuthorised = true;
-                    break;
-                };
-            }
-           
+                    try
+                    { 
+                        var szBulkMail = szResponse.match(patternYahooBulkFrame)[1];
+                        mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - szBulkMail: "+szBulkMail);
+                        mainObject.m_szBulkFolderURI = szBulkMail;
+                    }
+                    catch(e)
+                    {
+                        mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - no junk folder");
+                    }
+                    
+                    //server response
+                    mainObject.serverComms("+OK Your in\r\n");
+                    mainObject.m_bAuthorised = true;
+                break;
+            };
+                      
             mainObject.m_YahooLog.Write("nsYahoo.js - loginOnloadHandler - END");
         }
         catch(err)
