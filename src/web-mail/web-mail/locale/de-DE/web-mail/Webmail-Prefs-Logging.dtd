@@ -8,6 +8,5 @@
 <!ENTITY Location.AccessKey "O">
 <!ENTITY Note.Label "Protokoll enthält Benutzernamen und Passwörter">
 <!ENTITY Restart.Label "Ein Neustart von Thunderbird ist erforderlich bevor die geänderten Einstellungen wirksam werden.">
-<!ENTITY Button.Label "Browse...">
-<!ENTITY Button.AccessKey "B">
-
+<!ENTITY Button.Label "Durchsuchen...">
+<!ENTITY Button.AccessKey "s">
