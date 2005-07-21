@@ -30,6 +30,7 @@ function nsYahooSMTP()
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Email.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/base64.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/Quoted-Printable.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/comms.js");
         
         
@@ -691,13 +692,22 @@ nsYahooSMTP.prototype =
                             var szBody = oAttach.body.getBody(0);
                             if (szEncoding.search(/base64/i)!=-1)
                             {
+                                mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - encoded B64"); 
                                 var oBase64 = new base64();
                                 szBody = oBase64.decode(szBody.replace(/\r\n/gm,""));
                                 mainObject.m_HttpComms.addFormData(szName,szBody,true,szFileName,true); 
                             } 
+                            eles if (szEncoding.search(/base64/i)!=-1)
+                            {
+                                mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - encoded QP");  
+                                var oQP = new quoted-printable()
+                                szBody = oQP.decode(szBody);
+                                mainObject.m_HttpComms.addFormData(szName,szBody,true,szFileName,false);    
+                            }
                             else
                             {
-                                 mainObject.m_HttpComms.addFormData(szName,szBody,true,szFileName,false); 
+                                mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - no encoding"); 
+                                mainObject.m_HttpComms.addFormData(szName,szBody,true,szFileName,false); 
                             }
                         }
                         else
