@@ -107,7 +107,7 @@ nsPOPConnectionManager.prototype.Stop = function()
     {
         this.m_POPLog.Write("nsPOPConnectionManager.js - Stop - START");
         
-        if (this.iStatus != 0) //only enter if server has not stopped
+        if (this.iStatus != 0 || this.iStatus != -1) //only enter if server has not stopped
         {
             this.m_POPLog.Write("nsPOPConnectionManager.js - Stop - stopping");
             this.m_serverSocket.close();  //stop new conections
