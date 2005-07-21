@@ -14,9 +14,8 @@ var gWebMail =
     {   
         try
         {
-            var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-                                          .getService(Components.interfaces.mozIJSSubScriptLoader);
-            
+            var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
+            scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
             scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
             scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
             scriptLoader.loadSubScript("chrome://web-mail/content/Webmail-AccountManager.js");  
@@ -41,13 +40,13 @@ var gWebMail =
             //start  service
             try
             {   //create service
-                this.m_DomainManager = Components.classes["@mozilla.org/DomainManager;1"]
-                                            .getService()
-                                            .QueryInterface(Components.interfaces.nsIDomainManager);
+                this.m_DomainManager = Components.classes["@mozilla.org/DomainManager;1"];
+                this.m_DomainManager = this.m_DomainManager.getService();
+                this.m_DomainManager.QueryInterface(Components.interfaces.nsIDomainManager);
                 
                 this.m_POP = Components.classes["@mozilla.org/POPConnectionManager;1"];
                 this.m_POP = this.m_POP.getService();
-                this.m_POP = this.m_POP.QueryInterface(Components.interfaces.nsIPOPConnectionManager);
+                this.m_POP.QueryInterface(Components.interfaces.nsIPOPConnectionManager);
                 
                 WebMailPrefAccess.Get("bool","webmail.bUsePOPServer",oPref); 
                 if (oPref.Value) 
@@ -62,7 +61,7 @@ var gWebMail =
                 
                 this.m_SMTP = Components.classes["@mozilla.org/SMTPConnectionManager;1"];
                 this.m_SMTP = this.m_SMTP.getService();
-                this.m_SMTP = this.m_SMTP.QueryInterface(Components.interfaces.nsISMTPConnectionManager);
+                this.m_SMTP.QueryInterface(Components.interfaces.nsISMTPConnectionManager);
                 
                 WebMailPrefAccess.Get("bool","webmail.bUseSMTPServer",oPref); 
                 if (oPref.Value)
@@ -78,7 +77,7 @@ var gWebMail =
                 
                 this.m_IMAP = Components.classes["@mozilla.org/IMAPConnectionManager;1"]
                 this.m_IMAP = this.m_IMAP.getService();
-                this.m_IMAP = this.m_IMAP.QueryInterface(Components.interfaces.nsIIMAPConnectionManager);
+                this.m_IMAP.QueryInterface(Components.interfaces.nsIIMAPConnectionManager);
                                  
                 WebMailPrefAccess.Get("bool","webmail.bUseIMAPServer",oPref); 
                 if (oPref.Value)
