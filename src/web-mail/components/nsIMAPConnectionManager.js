@@ -105,7 +105,8 @@ nsIMAPConnectionManager.prototype.Stop = function()
     {
         this.m_IMAPLog.Write("nsIMAPConnectionManager.js - Stop - START");
         
-        if (this.iStatus != 0 || this.iStatus!=-1) //only enter if server has not stopped
+         this.m_IMAPLog.Write("nsIMAPConnectionManager.js - Stop - "+ this.iStatus);
+        if (this.iStatus != 0 && this.iStatus!=-1) //only enter if server has not stopped
         {
             this.m_IMAPLog.Write("nsIMAPConnectionManager.js - Stop - stopping");
             this.m_serverSocket.close();  //stop new conections
