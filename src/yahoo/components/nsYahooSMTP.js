@@ -697,7 +697,7 @@ nsYahooSMTP.prototype =
                                 szBody = oBase64.decode(szBody.replace(/\r\n/gm,""));
                                 mainObject.m_HttpComms.addFormData(szName,szBody,true,szFileName,true); 
                             } 
-                            eles if (szEncoding.search(/base64/i)!=-1)
+                            eles if (szEncoding.search(/quoted-printable/i)!=-1)
                             {
                                 mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - encoded QP");  
                                 var oQP = new quoted-printable()
