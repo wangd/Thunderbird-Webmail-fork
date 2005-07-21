@@ -24,6 +24,7 @@ function SMTPconnectionHandler(transport)
         this.szRcptList = null;
         this.iLoginReTryCount = 1;
         this.m_bData = false;
+        this.m_szEmail = null;
                                   
         //get streams
         this.ServerRequest = this.transport.openInputStream(0,0,-1);
@@ -61,28 +62,38 @@ SMTPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
 {
     try
     {
-        this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - START"+ this.iID); 
+        this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - START "+ this.iID); 
        
         var instream = Components.classes["@mozilla.org/scriptableinputstream;1"]
                      .createInstance(Components.interfaces.nsIScriptableInputStream);
         instream.init(inputStream);
         var szStream = instream.read(count);
         
-        this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - "+ szStream);
+        this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - STREAM "+this.iID+"\n"+ szStream);
         
         if (this.m_bData)
         {
-            this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - Data MSG - START "+ this.iID); 
-            this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - Data MSG -\n"+ szStream);
+            this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - Data MSG Cont - START "+ this.iID); 
             
-            this.m_bData = false;
+            if (szStream.search(/^\.$/m)!=-1)
+            {
+                this.m_bData = false;
             
-            var szEmail = "x-Rcpt: " + this.szRcptList + "\r\n" 
-            szEmail += szStream;
-            if (!this.m_DomainHandler.rawMSG(szEmail))
-                throw new Error("msg upload failed");           
-            
-            this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - rcpt - END "+ this.iID); 
+                var szEmail = "x-Rcpt: " + this.szRcptList + "\r\n";
+                this.m_szEmail? szEmail += this.m_szEmail :"";
+                szEmail += szStream;
+               
+                if (!this.m_DomainHandler.rawMSG(szEmail))
+                    throw new Error("msg upload failed");           
+            }
+            else // there's more
+            {
+                if (this.m_szEmail)
+                    this.m_szEmail+= szStream; 
+                else
+                    this.m_szEmail= szStream;     
+            }    
+            this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - Data MSG Cont - END "+ this.iID); 
         }
         else
         {  
@@ -255,9 +266,9 @@ SMTPconnectionHandler.prototype.getDomainHandler = function(szUserName, szDomain
                                                 + " " 
                                                 + szDomain);
                                                 
-        var DomainManager = Components.classes["@mozilla.org/DomainManager;1"].
-                                getService().
-                                QueryInterface(Components.interfaces.nsIDomainManager);
+        var DomainManager = Components.classes["@mozilla.org/DomainManager;1"];
+        DomainManager = DomainManager.getService();
+        DomainManager.QueryInterface(Components.interfaces.nsIDomainManager);
         var szContentID = new Object;
        
         
