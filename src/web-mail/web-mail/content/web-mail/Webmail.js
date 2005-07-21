@@ -5,7 +5,8 @@ var gWebMail =
 {
     m_Log : null,
     m_POP : null,
-    n_SMTP : null,
+    m_SMTP : null,
+    m_IMAP : null,
     m_DomainManager : null,
     m_AccountWizard : null,
     
@@ -15,12 +16,11 @@ var gWebMail =
         {
             var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                                           .getService(Components.interfaces.mozIJSSubScriptLoader);
-            if (scriptLoader)
-            {
-                scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-                scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
-                scriptLoader.loadSubScript("chrome://web-mail/content/Webmail-AccountManager.js");  
-            }
+            
+            scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
+            scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
+            scriptLoader.loadSubScript("chrome://web-mail/content/Webmail-AccountManager.js");  
+           
             
             //create debug log global 
             this.m_Log = new DebugLog("webmail.logging.comms",
@@ -45,24 +45,50 @@ var gWebMail =
                                             .getService()
                                             .QueryInterface(Components.interfaces.nsIDomainManager);
                 
-                this.m_POP = Components.classes["@mozilla.org/POPConnectionManager;1"]
-                                 .getService()
-                                 .QueryInterface(Components.interfaces.nsIPOPConnectionManager);
+                this.m_POP = Components.classes["@mozilla.org/POPConnectionManager;1"];
+                this.m_POP = this.m_POP.getService();
+                this.m_POP = this.m_POP.QueryInterface(Components.interfaces.nsIPOPConnectionManager);
                 
-                if (this.m_POP.Start())
-                    this.m_Log.Write("Webmail.js : startUp - pop server started");
-                else
-                    this.m_Log.Write("Webmail.js : startUp - pop server not started"); 
-                    
+                WebMailPrefAccess.Get("bool","webmail.bUsePOPServer",oPref); 
+                if (oPref.Value) 
+                {
+                    this.m_Log.Write("Webmail.js : startUp - POP server wanted");
+                    if (this.m_POP.Start())
+                        this.m_Log.Write("Webmail.js : startUp - pop server started");
+                    else
+                        this.m_Log.Write("Webmail.js : startUp - pop server not started"); 
+                }    
                 
-                this.m_SMTP = Components.classes["@mozilla.org/SMTPConnectionManager;1"]
-                                 .getService()
-                                 .QueryInterface(Components.interfaces.nsISMTPConnectionManager);
                 
-                if (this.m_SMTP.Start())
-                    this.m_Log.Write("Webmail.js : startUp - SMTP server started");
-                else
-                    this.m_Log.Write("Webmail.js : startUp - SMTP server not started");                      
+                this.m_SMTP = Components.classes["@mozilla.org/SMTPConnectionManager;1"];
+                this.m_SMTP = this.m_SMTP.getService();
+                this.m_SMTP = this.m_SMTP.QueryInterface(Components.interfaces.nsISMTPConnectionManager);
+                
+                WebMailPrefAccess.Get("bool","webmail.bUseSMTPServer",oPref); 
+                if (oPref.Value)
+                {
+                    this.m_Log.Write("Webmail.js : startUp - SMTP server wanted");
+                    if (this.m_SMTP.Start())
+                        this.m_Log.Write("Webmail.js : startUp - SMTP server started");
+                    else
+                        this.m_Log.Write("Webmail.js : startUp - SMTP server not started");                      
+                }
+                
+                
+                
+                this.m_IMAP = Components.classes["@mozilla.org/IMAPConnectionManager;1"]
+                this.m_IMAP = this.m_IMAP.getService()
+                this.m_IMAP = this.m_IMAP.QueryInterface(Components.interfaces.nsIIMAPConnectionManager);
+                                 
+                WebMailPrefAccess.Get("bool","webmail.bUseIMAPServer",oPref); 
+                if (oPref.Value)
+                {
+                    this.m_Log.Write("Webmail.js : startUp - IMAP server wanted");
+                    if (this.m_IMAP.Start())
+                        this.m_Log.Write("Webmail.js : startUp - IMAP server started");
+                    else
+                        this.m_Log.Write("Webmail.js : startUp - IMAP server not started");                      
+                }
             }
             catch(e)
             {
