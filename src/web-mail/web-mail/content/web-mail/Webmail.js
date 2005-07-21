@@ -77,7 +77,7 @@ var gWebMail =
                 
                 
                 this.m_IMAP = Components.classes["@mozilla.org/IMAPConnectionManager;1"]
-                this.m_IMAP = this.m_IMAP.getService()
+                this.m_IMAP = this.m_IMAP.getService();
                 this.m_IMAP = this.m_IMAP.QueryInterface(Components.interfaces.nsIIMAPConnectionManager);
                                  
                 WebMailPrefAccess.Get("bool","webmail.bUseIMAPServer",oPref); 
@@ -128,7 +128,13 @@ var gWebMail =
                 this.m_Log.Write("Webmail.js : shutDown - SMTP stop");
                 this.m_SMTP.Stop(); //stop SMTP server
             }
-                  
+             
+            if  (this.m_IMAP) 
+            {
+                this.m_Log.Write("Webmail.js : shutDown - IMAP stop");
+                this.m_IMAP.Stop(); //stop IMAP server
+            }      
+            
             //account wizard
             this.m_AccountWizard.deleteISP();
                
