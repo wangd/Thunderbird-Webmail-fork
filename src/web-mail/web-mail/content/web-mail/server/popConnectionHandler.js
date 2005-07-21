@@ -23,8 +23,8 @@ function POPconnectionHandler(transport)
         if (!this.ServerResponse) throw new Error("Error getting output stream.");
         
         //create stream watcher
-        this.Pump = Components.classes["@mozilla.org/network/input-stream-pump;1"].
-                        createInstance(Components.interfaces.nsIInputStreamPump);
+        this.Pump = Components.classes["@mozilla.org/network/input-stream-pump;1"];
+        this.Pump = this.Pump.createInstance(Components.interfaces.nsIInputStreamPump);
         this.Pump.init(this.ServerRequest, -1, -1, 0, 0, false);
         this.Pump.asyncRead(this,null);
         
@@ -351,9 +351,9 @@ POPconnectionHandler.prototype.getDomainHandler = function(szUserName, szDomain)
                                                 + " " 
                                                 + szDomain);
                                                 
-        var DomainManager = Components.classes["@mozilla.org/DomainManager;1"].
-                                getService().
-                                QueryInterface(Components.interfaces.nsIDomainManager);
+        var DomainManager = Components.classes["@mozilla.org/DomainManager;1"];
+        DomainManager = DomainManager.getService();
+        DomainManager.QueryInterface(Components.interfaces.nsIDomainManager);
         var szContentID = new Object;
        
         

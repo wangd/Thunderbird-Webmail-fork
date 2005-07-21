@@ -12,15 +12,12 @@ function nsIMAPConnectionManager()
                                 createInstance(Components.interfaces.nsIServerSocket);
         
        
-        var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"].
-                                getService(Components.interfaces.mozIJSSubScriptLoader);
-                                        
-        if (scriptLoader)
-        {
-            scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-            scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
-            scriptLoader.loadSubScript("chrome://web-mail/content/server/imapConnectionHandler.js")
-        }
+        var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
+        scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/server/imapConnectionHandler.js")
+        
           
         this.m_IMAPLog = new DebugLog("webmail.logging.comms", 
                                       "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
@@ -32,8 +29,8 @@ function nsIMAPConnectionManager()
         this.iStatus = -1;               //error
         this.aIMAPConnections = new Array();
         
-        this.GarbageTimer = Components.classes["@mozilla.org/timer;1"].
-                                       createInstance(Components.interfaces.nsITimer);  
+        this.GarbageTimer = Components.classes["@mozilla.org/timer;1"];
+        this.GarbageTimer = this.GarbageTimer.createInstance(Components.interfaces.nsITimer);  
         this.bGarbage = false;
       
         this.m_IMAPLog.Write("nsIMAPConnectionManager.js - Constructor - END");   
@@ -60,7 +57,7 @@ nsIMAPConnectionManager.prototype.Start = function()
             if (!this.bGarbage)
             {//start garbage collection
                 this.GarbageTimer.initWithCallback(this, 
-                                                   10000, //10 seconds 
+                                                   20000, //20 seconds 
                                                    Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
                 this.bGarbage = true;
             }
@@ -216,17 +213,17 @@ nsIMAPConnectionManager.prototype.notify = function()
                 if (this.aIMAPConnections[0] != undefined)
                 {  
                     var temp = this.aIMAPConnections.shift();  //get first item
-                    this.m_IMAPLog.Write("nsIMAPConnectionManager.js - connection " + i + " "+ temp.bRunning)
+                    this.m_IMAPLog.Write("nsIMAPConnectionManager.js - connection " + i + " "+ temp.bRunning+ " " +temp.iID);
                    
                     if (temp.bRunning == false)
                     { 
                         delete temp; 
-                        this.m_IMAPLog.Write("nsIMAPConnectionManager.js - notify - dead connection deleted"); 
+                        this.m_IMAPLog.Write("nsIMAPConnectionManager.js - notify - dead connection deleted"+ " " +temp.iID); 
                     }
                     else
                     {
                         this.aIMAPConnections.push(temp);
-                        this.m_IMAPLog.Write("nsIMAPConnectionManager.js - notify - restored live connection"); 
+                        this.m_IMAPLog.Write("nsIMAPConnectionManager.js - notify - restored live connection"+ " " +temp.iID); 
                     }
                 }
             }

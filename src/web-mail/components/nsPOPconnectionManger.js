@@ -11,23 +11,19 @@ function nsPOPConnectionManager()
 {
     try
     {
-        this.m_serverSocket = Components.classes["@mozilla.org/network/server-socket;1"].
-                                createInstance(Components.interfaces.nsIServerSocket);
+        this.m_serverSocket = Components.classes["@mozilla.org/network/server-socket;1"]
+                              .createInstance(Components.interfaces.nsIServerSocket);
         
        
-        var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"].
-                                getService(Components.interfaces.mozIJSSubScriptLoader);
-                                        
-        if (scriptLoader)
-        {
-            scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-            scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
-            scriptLoader.loadSubScript("chrome://web-mail/content/server/popConnectionHandler.js")
-        }
-          
+        var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
+        scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/server/popConnectionHandler.js")
+                  
         this.m_POPLog = new DebugLog("webmail.logging.comms", 
-                                "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
-                                "popServerlog"); 
+                                     "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
+                                     "popServerlog"); 
         
         this.m_POPLog.Write("nsPOPConnectionManager.js - Constructor - START");   
                     
@@ -35,8 +31,8 @@ function nsPOPConnectionManager()
         this.iStatus = -1;               //error
         this.aPOPConnections = new Array();
         
-        this.GarbageTimer = Components.classes["@mozilla.org/timer;1"].
-                                                createInstance(Components.interfaces.nsITimer);  
+        this.GarbageTimer = Components.classes["@mozilla.org/timer;1"];
+        this.GarbageTimer = this.GarbageTimer.createInstance(Components.interfaces.nsITimer);  
         this.bGarbage = false;
       
         this.m_POPLog.Write("nsPOPConnectionManager.js - Constructor - END");   

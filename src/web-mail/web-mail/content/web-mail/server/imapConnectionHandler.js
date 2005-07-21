@@ -5,8 +5,12 @@ function IMAPconnectionHandler(transport)
         this.m_IMAPLog = new DebugLog("webmail.logging.comms", 
                                      "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
                                       "imapConnectionlog"); 
+        
+        var date = new Date();
+        this.iID = date.getHours()+ "-" + date.getMinutes() + "-"+ date.getUTCMilliseconds();      
                                         
-        this.m_IMAPLog.Write("nsIMAPConnectionHandler.js - IMAPconnectionHandler - START"); 
+        this.m_IMAPLog.Write("nsIMAPConnectionHandler.js - IMAPconnectionHandler - START - "+this.IID); 
+        
         
         this.transport = transport;
         this.bAuth = false;
@@ -18,8 +22,8 @@ function IMAPconnectionHandler(transport)
         if (!this.ServerResponse) throw new Error("Error getting output stream.");
         
         //create stream watcher
-        this.Pump = Components.classes["@mozilla.org/network/input-stream-pump;1"].
-                        createInstance(Components.interfaces.nsIInputStreamPump);
+        this.Pump = Components.classes["@mozilla.org/network/input-stream-pump;1"];
+        this.Pump = this.Pump.createInstance(Components.interfaces.nsIInputStreamPump);
         this.Pump.init(this.ServerRequest, -1, -1, 0, 0, false);
         this.Pump.asyncRead(this,null);
         
@@ -27,7 +31,7 @@ function IMAPconnectionHandler(transport)
         var szCAP  = "* OK IMAP4rev1 server ready\r\n";
         this.ServerResponse.write(szCAP,szCAP.length);
         
-        this.m_IMAPLog.Write("nsIMAPConnectionHandler.js - IMAPconnectionHandler - END"); 
+        this.m_IMAPLog.Write("nsIMAPConnectionHandler.js - IMAPconnectionHandler - END " +this.IID); 
     }
     catch(e)
     {
@@ -39,16 +43,16 @@ function IMAPconnectionHandler(transport)
 }
 
 IMAPconnectionHandler.prototype.bRunning = true;
-
+IMAPconnectionHandler.prototype.iID = 0;
 
 IMAPconnectionHandler.prototype.onDataAvailable = function(request, context, inputStream, offset, count)
 {
     try
     {
-        this.m_IMAPLog.Write("IMAPconnectionHandler - onDataWritable - START"); 
+        this.m_IMAPLog.Write("IMAPconnectionHandler - onDataWritable - START " +this.IID); 
        
-        var instream = Components.classes["@mozilla.org/scriptableinputstream;1"]
-                     .createInstance(Components.interfaces.nsIScriptableInputStream);
+        var instream = Components.classes["@mozilla.org/scriptableinputstream;1"];
+        instream = instream.createInstance(Components.interfaces.nsIScriptableInputStream);
         instream.init(inputStream);
         var szStream = instream.read(count);
         
@@ -62,17 +66,17 @@ IMAPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
         switch(aCommand[1].toLowerCase())  //first element is command
         {   
             case "capability":
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - capability - START");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - capability - START " +this.IID);
                 var szResponse ="* CAPABILITY IMAP4rev1 CHILDREN NAMESPACE\r\n";
                 szResponse+=aCommand[0]+" OK CAPABILITY completed\r\n"
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - capability - \n"+ szResponse);
                 this.ServerResponse.write(szResponse,szResponse.length);
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - capability - END");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - capability - END " +this.IID);
             break;
             
              
             case "login":
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - login - START");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - login - START "+this.IID);
                 
                 var szDomain = aCommand[2].substring(1,aCommand[2].length-1);
                 var szPassWord = aCommand[3].substring(1,aCommand[3].length-1);
@@ -95,68 +99,68 @@ IMAPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
                     this.ServerResponse.write(szTemp,szTemp.length);
                 }  
                 
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - login - END");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - login - END " +this.IID);
             break;
             
             
             case "namespace":
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - namespace - START");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - namespace - START " +this.IID);
                 var szResponse="* NAMESPACE ((\"INBOX.\"\".\")) NIL NIL\r\n";
                 szResponse +=aCommand[0]+" OK NAMESPACE complete\r\n" 
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - namespace - \n"+ szResponse);
                 this.ServerResponse.write(szResponse,szResponse.length);
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - namespace - END");    
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - namespace - END "+this.IID);    
             break;
             
             
             case "lsub":
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - lsub - START");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - lsub - START " +this.IID);
                 this.m_DomainHandler.tag = aCommand[0];
                 this.m_DomainHandler.listSubscribe();
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - lsub - END");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - lsub - END "+this.IID);
             break;
             
             
             
             case "subscribe":
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - subscribe - START");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - subscribe - START " +this.IID);
                 this.m_DomainHandler.tag = aCommand[0];
                 var szFolders = aStream[0].substring( aStream[0].indexOf("\"")+1,aStream[0].lastIndexOf("\""));
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - subscribe - folders " +szFolders );
                 this.m_DomainHandler.subscribe(szFolders);
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - subscribe - END");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - subscribe - END "+this.IID);
             break;
             
             
             case "unsubscribe":
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - unsubscribe - START");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - unsubscribe - START "+this.IID);
                 this.m_DomainHandler.tag = aCommand[0];
                 var szFolders = aStream[0].substring( aStream[0].indexOf("\"")+1,aStream[0].lastIndexOf("\""));
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - unsubscribe - folder " + szFolders);
                 this.m_DomainHandler.unSubscribe(szFolders);
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - unsubscribe - END");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - unsubscribe - END "+this.IID);
             break;
             
             
             case "list":
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - list - START");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - list - START "+this.IID);
                 this.m_DomainHandler.tag = aCommand[0];
                 var szHierarchy = aCommand[3].substring(1,aCommand[3].length-1); 
                 this.m_DomainHandler.list(szHierarchy);
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - list - END");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - list - END "+this.IID);
             break;
             
             case "select":
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - select - START");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - select - START "+this.IID);
                 this.m_DomainHandler.tag = aCommand[0];
                 var szHierarchy = aCommand[2].substring(1,aCommand[2].length-1); 
                 this.m_DomainHandler.select(szHierarchy);
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - select - END");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - select - END "+this.IID);
             break;
             
             
             case "uid":
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - uid - START");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - uid - START "+this.IID);
                 
                 if (aCommand[2].toLowerCase() == "fetch")
                 {
@@ -183,60 +187,60 @@ IMAPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
                 {
                     throw new Error("unknown command")
                 }
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - uid - END");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - uid - END "+this.IID);
             break;
             
             
             case "check":
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - check - START");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - check - START "+this.IID);
                 this.m_DomainHandler.tag = aCommand[0];
                 this.m_DomainHandler.check();
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - check - END");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - check - END "+this.IID);
             break;
 
             
             case "noop":
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - noop - START");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - noop - START "+this.IID);
                 this.m_DomainHandler.tag = aCommand[0];
                 this.m_DomainHandler.noop();
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - noop - END");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - noop - END "+this.IID);
             break;
             
             case "expunge":
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - expunge - START");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - expunge - START "+this.IID);
                 this.m_DomainHandler.tag = aCommand[0];
                 this.m_DomainHandler.expunge();
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - expunge - END");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - expunge - END "+this.IID);
             break;
             
             case "examine":
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - examine - START");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - examine - START "+this.IID);
                 this.m_DomainHandler.tag = aCommand[0];
                 this.m_DomainHandler.examine();
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - examine - END");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - examine - END "+this.IID);
             break;
             
             
             case "create":
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - create - START");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - create - START "+this.IID);
                 this.m_DomainHandler.tag = aCommand[0];
                 var szFolders = aStream[0].substring( aStream[0].indexOf("\"")+1,aStream[0].lastIndexOf("\""));
                 this.m_DomainHandler.createFolder(szFolders);
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - create - END");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - create - END "+this.IID);
             break;
          
          
             case "delete":
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - delete - START");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - delete - START "+this.IID);
                 this.m_DomainHandler.tag = aCommand[0];
                 var szFolders = aStream[0].substring( aStream[0].indexOf("\"")+1,aStream[0].lastIndexOf("\""));
                 this.m_DomainHandler.deleteFolder(szFolders);
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - delete - END");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - delete - END "+this.IID);
             break;
             
             
             case "rename":
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - rename - START");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - rename - START "+this.IID);
                 this.m_DomainHandler.tag = aCommand[0];
                 
                 //get start of old folder
@@ -257,15 +261,15 @@ IMAPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - rename new- " +szNewFolder); 
                 
                 this.m_DomainHandler.renameFolder(szOldFolder, szNewFolder);
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - rename - END");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - rename - END "+this.IID);
             break;
            
            
             case "logout":
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - logout - START");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - logout - START "+this.IID);
                 this.m_DomainHandler.tag = aCommand[0];
                 this.m_DomainHandler.logOut();
-                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - logout - END");
+                this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - logout - END "+this.IID);
             break;
                     
                     
@@ -279,7 +283,7 @@ IMAPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
             break;
         }
         
-        this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - END"); 
+        this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - END "+this.IID); 
     }
     catch(e)
     {
@@ -295,19 +299,19 @@ IMAPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
 
 IMAPconnectionHandler.prototype.onStopRequest = function(request, context, status)
 {
-    this.m_IMAPLog.Write("nsIMAPConnectionHandler - onStopRequest - START"); 
+    this.m_IMAPLog.Write("nsIMAPConnectionHandler - onStopRequest - START "+this.IID); 
     
     this.ServerResponse.close();
     this.ServerRequest.close();
     this.bRunning = false;
     
-    this.m_IMAPLog.Write("nsIMAPConnectionHandler - onStopRequest - END"); 
+    this.m_IMAPLog.Write("nsIMAPConnectionHandler - onStopRequest - END "+this.IID); 
 }
 
 IMAPconnectionHandler.prototype.onStartRequest = function(request, context)
 {
-    this.m_IMAPLog.Write("nsIMAPConnectionHandler - onStartRequest - START"); 
-    this.m_IMAPLog.Write("nsIMAPConnectionHandler - onStartRequest - END"); 
+    this.m_IMAPLog.Write("nsIMAPConnectionHandler - onStartRequest - START "+this.IID); 
+    this.m_IMAPLog.Write("nsIMAPConnectionHandler - onStartRequest - END "+this.IID); 
 }
 
 
@@ -316,16 +320,16 @@ IMAPconnectionHandler.prototype.getDomainHandler = function(szUserName, szDomain
 {
     try
     {
-        this.m_IMAPLog.Write("IMAPconnectionHandler - getDomainHandler - START"); 
+        this.m_IMAPLog.Write("IMAPconnectionHandler - getDomainHandler - START "+this.IID); 
         
         this.m_IMAPLog.Write("IMAPconnectionHandler - getDomainHandler - " 
                                                 + szUserName 
                                                 + " " 
                                                 + szDomain);
                                                 
-        var DomainManager = Components.classes["@mozilla.org/DomainManager;1"].
-                                getService().
-                                QueryInterface(Components.interfaces.nsIDomainManager);
+        var DomainManager = Components.classes["@mozilla.org/DomainManager;1"];
+        DomainManager = DomainManager.getService();
+        DomainManager.QueryInterface(Components.interfaces.nsIDomainManager);
         var szContentID = new Object;
        
         
@@ -361,7 +365,7 @@ IMAPconnectionHandler.prototype.getDomainHandler = function(szUserName, szDomain
                                                                                                     
         delete szContentID;    
                 
-        this.m_IMAPLog.Write("IMAPconnectionHandler - getDomainHandler - END"); 
+        this.m_IMAPLog.Write("IMAPconnectionHandler - getDomainHandler - END "+this.IID); 
         return true;
     }
     catch(e)
