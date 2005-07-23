@@ -438,7 +438,11 @@ Comms.prototype =
         try
         {
             this.m_Log.Write("comms.js - readBinaryFile - START");
-                   
+            
+            var deletefile = Components.classes["@mozilla.org/uriloader/external-helper-app-service;1"];
+            deletefile = deletefile.getService(Components.interfaces.nsPIExternalAppLauncher);
+            deletefile.deleteTemporaryFileOnExit(nsIFile);       
+            
             //read for file
             var file = Components.classes["@mozilla.org/file/local;1"];
         	file = file.createInstance(Components.interfaces.nsILocalFile);
