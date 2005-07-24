@@ -637,6 +637,8 @@ nsYahoo.prototype =
                     //no more pages report back to mozilla
                     mainObject.serverComms("+OK "+ mainObject.m_aiMsgSize.length 
                                             + " " + mainObject.m_iTotalSize + "\r\n");
+                    delete mainObject.m_aDeleteData;
+                    mainObject.m_aDeleteData = new Array();
                 }
             }
             else if ( mainObject.m_bUseJunkMail && mainObject.m_szBulkFolderURI && !mainObject.m_bJunkChecked)
@@ -666,6 +668,9 @@ nsYahoo.prototype =
             {   //no emails
                 mainObject.serverComms("+OK "+ mainObject.m_aiMsgSize.length + " " 
                                         + mainObject.m_iTotalSize + "\r\n");
+                
+                delete mainObject.m_aDeleteData;
+                mainObject.m_aDeleteData = new Array();
             }
       
             mainObject.m_Log.Write("nsYahoo.js - MailBoxOnload - END"); 
