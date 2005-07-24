@@ -10,7 +10,7 @@ const patternYahooInput = /<input.*?type=['|"]*hidden['|"]*.*?name=.*?value=.*?>
 const patternYahooFile = /<input.*?type="*file"*.*?name=.*?>/igm;
 const patternYahooNameAlt = /name=['|"]*([\S]*)['|"]*/;
 const patternYahooAltValue = /value=['|"]*([\S]*)['|"]*>/;
-const patternYahooRedirect = /<a href="(.*?)">/;
+const patternYahooRedirect = /<a href=['|"]*(.*?)['|"]*>/;
 const patternYahooCompose = /location="*(http:\/\/.*?Compose\?YY=.*?)"*/i;
 const patternYahooComposeForm = /<form.*?name="*Compose"*.*?>[\S\s]*?<\/form>/igm;
 const patternYahooAttachmentForm = /<form.*?name="*Attachments"*.*?>[\S\s]*?<\/form>/igm;
@@ -261,10 +261,9 @@ nsYahooSMTP.prototype =
                         var szValue = aLoginData[i].match(patternYahooAltValue)[1]
                         szValue = szValue.replace(/"/gm,"");
                         szValue = szValue.replace(/'/gm,""); 
-                        if (szValue) szData += encodeURIComponent(szValue);              
                         mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - loginData value " + szValue);
                         
-                        mainObject.m_HttpComms.addValuePair(szName,(szValue? szValue:""));
+                        mainObject.m_HttpComms.addValuePair(szName,(szValue? encodeURIComponent(szValue):""));
                     }
                     
                     var szLogin = mainObject.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
