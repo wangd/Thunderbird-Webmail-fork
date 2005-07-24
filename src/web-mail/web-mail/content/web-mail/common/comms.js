@@ -258,12 +258,7 @@ Comms.prototype =
             {
                 MultiStream = Components.classes["@mozilla.org/io/multiplex-input-stream;1"];
                 MultiStream = MultiStream.createInstance(Components.interfaces.nsIMultiplexInputStream);
-            
-                var szBoundary = this.createBoundary();
-                this.m_Log.Write("comms.js - send - boundary " + szBoundary);   
-                var startBoundary = "\r\n--"+szBoundary+"\r\n" ;              
-                var endBoundary = "\r\n--"+szBoundary+"--\r\n" ;
-                
+                            
                 for (j=0; j<this.m_aFormData.length; j++)
                 {
                     var oTemp = this.m_aFormData[j];
@@ -274,7 +269,12 @@ Comms.prototype =
                                                                        
                    
                     if (this.m_iContentType == 1) //formdata
-                    {   
+                    {    
+                        var szBoundary = this.createBoundary();
+                        this.m_Log.Write("comms.js - send - boundary " + szBoundary);   
+                        var startBoundary = "\r\n--"+szBoundary+"\r\n" ;              
+                        var endBoundary = "\r\n--"+szBoundary+"--\r\n" ;
+                        
                         this.m_Log.Write("comms.js - addFormData - adding start boundary");            
                         var startStream = Components.classes["@mozilla.org/io/string-input-stream;1"];
                         startStream = startStream.createInstance(Components.interfaces.nsIStringInputStream);
@@ -344,7 +344,7 @@ Comms.prototype =
                     }
                     else//urlencoded
                     {
-                        if (j>1)
+                        if (j>0)
                         { 
                             var andStream = Components.classes["@mozilla.org/io/string-input-stream;1"];
                             andStream = andStream.createInstance(Components.interfaces.nsIStringInputStream);
