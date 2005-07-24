@@ -71,7 +71,15 @@ var gYahooStartUp =
             this.idCheck("yahoo.com.au","POP", cszYahooContentID);          
            
             this.idCheck("yahoo.com","SMTP",cszYahooSMTPContentID);                  
-                         
+            this.idCheck("yahoo.es","SMTP", cszYahooSMTPContentID);
+            this.idCheck("yahoo.co.uk","SMTP" ,cszYahooSMTPContentID);
+            this.idCheck("yahoo.it","SMTP", cszYahooSMTPContentID);
+            this.idCheck("yahoo.com.cn","SMTP", cszYahooSMTPContentID);  
+            this.idCheck("yahoo.fr","SMTP", cszYahooSMTPContentID);
+            this.idCheck("yahoo.de","SMTP", cszYahooSMTPContentID);
+            this.idCheck("yahoo.ca","SMTP", cszYahooSMTPContentID); 
+            this.idCheck("yahoo.com.au","SMTP", cszYahooSMTPContentID);  
+                        
             this.m_Log.Write("Yahoo.js : TimerCallback - END");
         }
         catch(e)
@@ -110,6 +118,3 @@ var gYahooStartUp =
         this.m_Log.Write("Yahoo.js : idCheck - END");
     },
 };
-
-
-
