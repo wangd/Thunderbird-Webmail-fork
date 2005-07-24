@@ -58,15 +58,14 @@ function nsYahoo()
         this.m_szMailboxURI = null;
         this.m_szBulkFolderURI = null;
         this.m_szDeleteURL = null; 
-        
-        this.m_bJunkChecked = false;
-        this.m_aszMsgIDStore = new Array();
-        this.m_aDeleteData = new Array();
-        this.m_aiMsgSize = new Array();
-        this.m_iTotalSize = 0;
         this.m_oCookies = new CookieHandler(this.m_Log);   
         this.m_HttpComms = new Comms(this , this.m_Log); 
-        this.m_iStage = 0;  
+        this.m_iStage = 0; 
+        
+        this.m_bJunkChecked = false;
+        this.m_aMsgDataStore = new Array();
+        this.m_aDeleteData = new Array();
+        this.m_iTotalSize = 0;
         this.m_szHeader = null;  
         this.m_szMsgID = null;  
         this.m_szBox = null;
@@ -579,10 +578,10 @@ nsYahoo.prototype =
                         var iSize = parseInt(szSize);
                         if (szSize.indexOf('k')!= -1) iSize*=1000;
                         mainObject.m_Log.Write("nsYahoo.js - mailBoxOnloadHandler - msg size :" + i + " " +iSize);
-                       
+                        data.iSize = iSize;
+                        
                         mainObject.m_iTotalSize += iSize;
-                        mainObject.m_aszMsgIDStore.push(data);
-                        mainObject.m_aiMsgSize.push(iSize);    
+                        mainObject.m_aMsgDataStore.push(data);   
                     }
                 }
                 
@@ -635,7 +634,7 @@ nsYahoo.prototype =
                 else
                 {
                     //no more pages report back to mozilla
-                    mainObject.serverComms("+OK "+ mainObject.m_aiMsgSize.length 
+                    mainObject.serverComms("+OK "+ mainObject.m_aMsgDataStore.length 
                                             + " " + mainObject.m_iTotalSize + "\r\n");
                     delete mainObject.m_aDeleteData;
                     mainObject.m_aDeleteData = new Array();
@@ -666,7 +665,7 @@ nsYahoo.prototype =
             }
             else
             {   //no emails
-                mainObject.serverComms("+OK "+ mainObject.m_aiMsgSize.length + " " 
+                mainObject.serverComms("+OK "+ mainObject.m_aMsgDataStore.length + " " 
                                         + mainObject.m_iTotalSize + "\r\n");
                 
                 delete mainObject.m_aDeleteData;
@@ -700,27 +699,16 @@ nsYahoo.prototype =
         {
             this.m_Log.Write("nsYahoo.js - getMessageSizes - START"); 
             
-            var iTempNum = 0;
-            var aTempSize = new Array();
-            
-            for (i = 0; i <  this.m_aiMsgSize.length; i++)
+            var szPOPResponse = "+OK " + this.m_aMsgDataStore.length + " Messages\r\n"; 
+            this.m_Log.Write("nsYahoo.js - getMessagesSizes - : " + this.m_aMsgDataStore.length);
+ 
+            for (i = 0; i <  this.m_aMsgDataStore.length; i++)
             {
-                var iEmailSize = this.m_aiMsgSize[i];
-                this.m_Log.Write("nsYahoo.js - getMessageSizes - Email Size : " +iEmailSize);
-        
-                aTempSize.push(iEmailSize);
-                iTempNum++; 
+                var data = this.m_aMsgDataStore[i];
+                var iEmailSize = data.iSize;
+                szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";       
             }         
     
-            this.m_Log.Write("nsYahoo.js - getMessagesSizes - : " 
-                                                            + aTempSize + " " 
-                                                            + iTempNum); 
-            
-            var szPOPResponse = "+OK " + iTempNum + " Messages\r\n"; 
-            for (i =0 ; i<iTempNum; i++)
-            {
-                szPOPResponse+=(i+1) + " " + aTempSize[i] + "\r\n";                        
-            }
             szPOPResponse += ".\r\n";
             
             this.serverComms(szPOPResponse);
@@ -746,31 +734,21 @@ nsYahoo.prototype =
         {
             this.m_Log.Write("nsYahoo.js - getMessageIDs - START"); 
     
-            var iTempNum = 0;
-            var aTempIDs = new Array();
-            
-            for (i = 0; i <  this.m_aszMsgIDStore.length; i++)
+            var szPOPResponse = "+OK " + this.m_aMsgDataStore.length + " Messages\r\n";
+            this.m_Log.Write("nsYahoo.js - getMessageIDs - return : " + this.m_aMsgDataStore.length ); 
+                                                
+            for (i = 0; i <  this.m_aMsgDataStore.length; i++)
             {
-                var oMSGData = this.m_aszMsgIDStore[i];
+                var oMSGData = this.m_aMsgDataStore[i];
                 var szEmailURL = oMSGData.szMSGUri;
                 this.m_Log.Write("nsYahoo.js - getMessageIDs - Email URL : " +szEmailURL);
                
                 var szEmailID = szEmailURL.match(PatternYahooID)[1];
                                     
                 this.m_Log.Write("nsYahoo.js - getMessageIDs - IDS : " +szEmailID);    
-                aTempIDs.push(szEmailID);
-                iTempNum++; 
+                szPOPResponse+=(i+1) + " " +szEmailID + "\r\n";  
             }         
-     
-            this.m_Log.Write("nsYahoo.js - getMessageIDs - return : " 
-                                                + aTempIDs + " "
-                                                + iTempNum); 
-                                                
-            var szPOPResponse = "+OK " + iTempNum + " Messages\r\n";
-            for (i =0 ; i<iTempNum; i++)
-            {
-                szPOPResponse+=(i+1) + " " + aTempIDs[i] + "\r\n";                        
-            }
+               
             szPOPResponse += ".\r\n";
             this.serverComms(szPOPResponse);           
           
@@ -800,7 +778,7 @@ nsYahoo.prototype =
             this.m_Log.Write("nsYahoo.js - getMessage - msg num" + lID); 
                      
             //get msg id
-            var oMSGData = this.m_aszMsgIDStore[lID-1]
+            var oMSGData = this.m_aMsgDataStore[lID-1]
             this.m_szMsgID = oMSGData.szMSGUri;
             this.m_Log.Write("nsYahoo.js - getMessage - msg id" + this.m_szMsgID); 
             
@@ -940,7 +918,7 @@ nsYahoo.prototype =
             this.m_Log.Write("nsYahoo.js - deleteMessage - id " + lID ); 
                   
             //create URL
-            var oMSGData = this.m_aszMsgIDStore[lID-1];
+            var oMSGData = this.m_aMsgDataStore[lID-1];
            
             var szPath = this.m_szLocationURI + oMSGData.szDeleteUri;
             this.m_Log.Write("nsYahoo.js - deleteMessage - url - "+ szPath);                       
