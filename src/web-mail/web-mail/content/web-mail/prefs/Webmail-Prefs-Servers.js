@@ -85,7 +85,7 @@ var gServersPane =
             document.getElementById("imgSMTPStatus").setAttribute("value",iSMTPvalue); //set SMTP status colour
             document.getElementById("txtSMTPStatus").setAttribute("value",this.StatusText(iSMTPvalue)); //set status text 
             
-            /*
+            
             //IMAP
             var iIMAPvalue = -1;
             this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - getting IMAP status");
@@ -99,9 +99,9 @@ var gServersPane =
                 this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - this.m_IMAPServer == null");
             }
     
-            document.getElementById("imgIMAPStatus").setAttribute("value",iImapvalue); //set pop status colour
-            document.getElementById("txtIMAPStatus").setAttribute("value",this.StatusText(iImapvalue)); //set status text 
-            */
+            document.getElementById("imgIMAPStatus").setAttribute("value",iIMAPvalue); //set pop status colour
+            document.getElementById("txtIMAPStatus").setAttribute("value",this.StatusText(iIMAPvalue)); //set status text 
+           
             
             this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - END");
         }
