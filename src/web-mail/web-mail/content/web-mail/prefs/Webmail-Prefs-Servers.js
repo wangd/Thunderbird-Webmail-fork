@@ -2,6 +2,8 @@ var gServersPane =
 {
     m_DebugLog : null,
     m_POPServer : null,
+    m_SMTPServer : null,
+    m_IMAPServer : null,
     
     
     init: function ()
@@ -16,15 +18,26 @@ var gServersPane =
         try
         {
             //get pop service
-            this.m_POPServer = Components.classes["@mozilla.org/POPConnectionManager;1"].
-                                 getService().QueryInterface(Components.interfaces.nsIPOPConnectionManager);
+            this.m_POPServer = Components.classes["@mozilla.org/POPConnectionManager;1"];
+            this.m_POPServer = this.m_POPServer.getService();
+            this.m_POPServer.QueryInterface(Components.interfaces.nsIPOPConnectionManager);
+            
+            //get SMTP service
+            this.m_SMTPServer = Components.classes["@mozilla.org/SMTPConnectionManager;1"];
+            this.m_SMTPServer = this.m_SMTPServer.getService();
+            this.m_SMTPServer.QueryInterface(Components.interfaces.nsISMTPConnectionManager);
+            
+            //get IMAP service
+            this.m_IMAPServer = Components.classes["@mozilla.org/IMAPConnectionManager;1"];
+            this.m_IMAPServer = this.m_IMAPServer.getService();
+            this.m_IMAPServer.QueryInterface(Components.interfaces.nsIIMAPConnectionManager);
         }
         catch(e)
         {
-             this.m_DebugLog.Write("Webmail-Prefs-Servers: m_POPServer ERROR"
-                                                             + e.name + 
-                                                             ".\nError message: " 
-                                                             + e.message);    
+             this.m_DebugLog.Write("Webmail-Prefs-Servers: ERROR"
+                                                         + e.name + 
+                                                         ".\nError message: " 
+                                                         + e.message);    
         }  
         
         this.updateStatus();
@@ -54,6 +67,41 @@ var gServersPane =
     
             document.getElementById("imgPopStatus").setAttribute("value",iPOPvalue); //set pop status colour
             document.getElementById("txtPopStatus").setAttribute("value",this.StatusText(iPOPvalue)); //set status text 
+            
+            
+            //SMTP
+            var iSMTPvalue = -1;
+            this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - getting smtp status");
+            if (this.m_SMTPServer)
+            {
+                iSMTPvalue = this.m_SMTPServer.GetStatus();
+                this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - this.m_SMTPServer.GetStatus()" + iSMTPvalue);
+            }
+            else
+            {
+                this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - this.m_SMTPServer == null");
+            }
+    
+            document.getElementById("imgSMTPStatus").setAttribute("value",iSMTPvalue); //set SMTP status colour
+            document.getElementById("txtSMTPStatus").setAttribute("value",this.StatusText(iSMTPvalue)); //set status text 
+            
+            /*
+            //IMAP
+            var iIMAPvalue = -1;
+            this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - getting IMAP status");
+            if (this.m_IMAPServer)
+            {
+                iIMAPvalue = this.m_IMAPServer.GetStatus();
+                this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - this.m_IMAPServer.GetStatus()" + iIMAPvalue);
+            }
+            else
+            {
+                this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - this.m_IMAPServer == null");
+            }
+    
+            document.getElementById("imgIMAPStatus").setAttribute("value",iImapvalue); //set pop status colour
+            document.getElementById("txtIMAPStatus").setAttribute("value",this.StatusText(iImapvalue)); //set status text 
+            */
             
             this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - END");
         }

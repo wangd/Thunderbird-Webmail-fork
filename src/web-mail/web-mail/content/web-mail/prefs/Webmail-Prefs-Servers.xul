@@ -14,99 +14,249 @@
         <script type="application/x-javascript" src="chrome://web-mail/content/prefs/Webmail-Prefs-Servers.js"/>
         
         <stringbundle id="stringsWebmailPrefs-Servers" src="chrome://web-mail/locale/Webmail-Prefs-Servers.properties"/>
-       
+          
         <preferences>
             <preference id="portPOP" name="webmail.server.port.pop" type="int"/>
+            <preference id="portSMTP" name="webmail.server.port.smtp" type="int"/>
+            <preference id="portIMAP" name="webmail.server.port.imap" type="int"/>
+            <preference id="enablePOP" name="webmail.bUsePOPServer" type="bool"/>
+            <preference id="enableSMTP" name="webmail.bUseSMTPServer" type="bool"/>
+            <preference id="enableIMAP" name="webmail.bUseIMAPServer" type="bool"/>
         </preferences>
-         
         
         <vbox>
-            <!--STATUS-->
-            <hbox flex="1" align="center" id = "colourStatus" style="margin-bottom: 10px">
-                <spacer flex="1"/>
-                <groupbox>
-                    <caption class = "text">
-                        <hbox align="center">
-                            <label value="&ServerStatus.Label;"/>
-                        </hbox>
-                    </caption>
-                    <hbox>
-                        <spacer flex="1"/>
-                        <!--value : -1 = ERROR (RED); 0 = Stopped (GREY); 1 = WAITING (AMBER)2 = Running (GREEN)-->
-                        <image id ="imgPopStatus" 
-                               class = "status" 
-                               align ="centre" 
-                               value="-1"/>
-                        <spacer flex="1"/>
-                    </hbox>
-                    <textbox id="txtPopStatus" 
-                             class = "txtStatus" 
-                             size = "6" 
-                             readonly = "true" 
-                             disabled = "true" 
-                             value="ERROR"/>
-                </groupbox> 
-                <spacer flex="1"/>  
-            </hbox>
-            
-            <spacer flex="2"/> 
-           
-            <!--ports-->
-            <vbox>  
-                <groupbox>
-                    <caption class = "text">
-                        <hbox align="center">
-                            <label value="&Ports.Label;"
-                                   accesskey= "&Ports.AccessKey;"/>
-                        </hbox>
-                    </caption>
-                    
-                    <!--POP-->
-                    <hbox  align="center">
-                        <label class = "text"
-                               value="&Pop.Label;" 
-                               accesskey= "&Pop.AccessKey;" 
-                               control="txtPopPort"/>
+            <tabbox flex="1">
+                <tabs>
+                    <tab label="&Status.Label;" accesskey="&Status.AccessKey;"/>
+                    <tab label="&Enable.Label;" accesskey="&Enable.AccessKey;"/>
+                    <tab label="&Ports.Label;"  accesskey="&Ports.AccessKey;"/>
+                </tabs>
+      
+                <tabpanels flex="1">
+                    <!-- status --> 
+                    <tabpanel orient="vertical">   
+                        <hbox flex="1" align="center" id = "colourStatus" style="margin-top: 3em">
+                            <spacer flex="1"/>
+                            
+                            <!--value : -1 = ERROR (RED); 0 = Stopped (GREY); 1 = WAITING (AMBER)2 = Running (GREEN)-->
+                            <!--POP-->
+                            <groupbox>
+                                <caption class = "text">
+                                    <hbox align="center">
+                                        <label value="&Pop.Label;"/>
+                                    </hbox>
+                                </caption>
+                                <hbox>
+                                    <spacer flex="1"/>
+                                    <image id ="imgPopStatus" 
+                                           class = "status" 
+                                           align ="centre" 
+                                           value="-1"/>
+                                    <spacer flex="1"/>
+                                </hbox>
+                                <spacer flex="2"/>
+                                <textbox style="margin-top: 10px"
+                                         id="txtPopStatus" 
+                                         class = "txtStatus" 
+                                         size = "6" 
+                                         readonly = "true" 
+                                         disabled = "true" 
+                                         value="ERROR"/>
+                            </groupbox>
+                            
+                            <spacer flex="1"/>
+                            <!--SMTP-->
+                            <groupbox>
+                                <caption class = "text">
+                                    <hbox align="center">
+                                        <label value="&SMTP.Label;"/>
+                                    </hbox>
+                                </caption>
+                                <hbox>
+                                    <spacer flex="1"/>       
+                                    <image id ="imgSMTPStatus" 
+                                           class = "status" 
+                                           align ="centre" 
+                                           value="-1"/>
+                                    <spacer flex="1"/>
+                                </hbox>
+                                <textbox style="margin-top: 10px"
+                                         id="txtSMTPStatus" 
+                                         class = "txtStatus" 
+                                         size = "6" 
+                                         readonly = "true" 
+                                         disabled = "true" 
+                                         value="ERROR"/>
+                            </groupbox>
+                            
+                            <spacer flex="1"/>
+                            <!--IMAP-->
+                            <groupbox>
+                                <caption class = "text">
+                                    <hbox align="center">
+                                        <label value="&IMAP.Label;"/>
+                                    </hbox>
+                                </caption>
+                                <hbox>
+                                    <spacer flex="1"/>
+                                    <image id ="imgIMAPStatus" 
+                                           class = "status" 
+                                           align ="centre" 
+                                           value="-1"/>
+                                    <spacer flex="1"/>
+                                </hbox>
                                 
-                        <textbox id="txtPopPort" 
-                                 size = "4" 
-                                 maxlength = "4" 
-                                 preference="portPOP"
-                                 class= "text"/>
+                                <textbox id="txtIMAPStatus"
+                                         style="margin-top: 10px" 
+                                         class = "txtStatus" 
+                                         size = "6" 
+                                         readonly = "true" 
+                                         disabled = "true" 
+                                         value="ERROR"/>
+                            </groupbox> 
+                            
+                            <spacer flex="1"/>              
+                        </hbox>
                         
-                        <label class = "text"
-                               value= "&POP.Default.Label;"
-                               control="txtPopPort"/>
-                    </hbox>        
-                    <spacer flex="1"/>
+                        <hbox style="margin-top: 11em"></hbox>
+                        
+                    </tabpanel>
                     
                     
-                    <!-- information -->   
-                    <hbox>
-                        <description style="margin-left: 30px"> 
-                            &Note.Label;
-                        </description> 
-                    </hbox>
-                </groupbox>
-            </vbox>    
-                
-            <spacer flex="2"/>
-                  
-            <!-- restart information -->   
-            <vbox class = "information">   
-                <hbox>
-                    <image id = "iconMessage" /> 
-                </hbox>
-                <hbox >
-                    <vbox flex="1" >
-                        <description style="margin-left: 25px"> 
-                            &Restart.Label;
-                        </description> 
-                    </vbox> 
-                </hbox>
-            </vbox> 
-        </vbox>
+                    <!-- enable --> 
+                    <tabpanel orient="vertical">  
+                        <!--POP-->
+                        <checkbox label="&Enable.POP.Label;" 
+                                  accesskey="&Enable.POP.AccessKey;"
+                                  preference = "enablePOP"
+                                  class = "text"
+                                  id="chkEnablePOP"/>
+                        
+                        <!--SMTP-->          
+                        <checkbox label="&Enable.SMTP.Label;" 
+                                  accesskey="&Enable.SMTP.AccessKey;"
+                                  preference = "enableSMTP"
+                                  class = "text"
+                                  id="chkEnableSMTP"/>
+                         
+                        <!--IMAP-->         
+                        <checkbox label="&Enable.IMAP.Label;" 
+                                  accesskey="&Enable.IMAP.AccessKey;"
+                                  class = "text"
+                                  preference = "enableIMAP"
+                                  id="chkEnableIMAP"/>
+                                  
+                        <!-- restart information -->   
+                        <vbox class = "information" style="margin-top: 12em">   
+                            <hbox>
+                                <image id = "iconMessage" /> 
+                            </hbox>
+                            <hbox >
+                                <vbox flex="1" >
+                                    <description style="margin-left: 25px"> 
+                                        &Restart.Label;
+                                    </description> 
+                                </vbox> 
+                            </hbox>
+                        </vbox>      
+                    </tabpanel>
         
+        
+                    <!-- ports --> 
+                    <tabpanel orient="vertical">
+                        <grid flex="1">
+                            <columns>
+                                <column/>
+                                <column/>
+                                <column flex="1"/>
+                            </columns>
+                        
+                            <rows>
+                                <row> <!--POP-->
+                                    <label class = "text"
+                                           value="&Pop.Label;" 
+                                           accesskey= "&Pop.AccessKey;" 
+                                           style="margin-top: 5px"
+                                           control="txtPopPort"/>
+                                        
+                                    <textbox class = "text"
+                                             id="txtPopPort" 
+                                             size = "4" 
+                                             maxlength = "4" 
+                                             preference="portPOP"/>
+                                
+                                    <label class = "text"
+                                           value= "&POP.Default.Label;"
+                                           style="margin-top: 5px"
+                                           control="txtPopPort"/>
+                                </row>
+                                
+                                <row><!--SMTP-->
+                                    <label value="&SMTP.Label;" 
+                                           accesskey= "&SMTP.AccessKey;" 
+                                           control="txtSmptPort"
+                                           class = "text"
+                                           style="margin-top: 5px"/>
+                                        
+                                    <textbox id="txtSmptPort" 
+                                             size = "4" 
+                                             maxlength = "4" 
+                                             class = "text"
+                                             preference="portSMTP"/>
+                                    
+                                    <label value= "&SMTP.Default.Label;"
+                                           control="txtSmtpPort"
+                                           class = "text"
+                                           style="margin-top: 5px"/>
+                                </row>
+                            
+                                <row><!--IMAP-->
+                                    <label value="&IMAP.Label;" 
+                                           accesskey= "&IMAP.AccessKey;" 
+                                           class = "text"
+                                           style="margin-top: 5px"
+                                           control="txtImapPort"/>
+                                        
+                                    <textbox id="txtImapPort" 
+                                             size = "4" 
+                                             maxlength = "4" 
+                                             class = "text"
+                                             preference="portIMAP"/>
+                                
+                                    <label value= "&IMAP.Default.Label;"
+                                           class = "text" 
+                                           style="margin-top: 5px"
+                                           control="txtImapPort"/>
+                                </row> 
+                                
+                                <!-- information -->   
+                                <hbox>
+                                    <description style="margin-left: 30px"> 
+                                        &Note.Label;
+                                    </description> 
+                                </hbox>
+                            </rows>
+                        </grid>
+                       
+                        
+                        <!-- restart information -->   
+                        <vbox class = "information" style="margin-top: 4em">   
+                            <hbox>
+                                <image id = "iconMessage" /> 
+                            </hbox>
+                            <hbox >
+                                <vbox flex="1" >
+                                    <description style="margin-left: 25px"> 
+                                        &Restart.Label;
+                                    </description> 
+                                </vbox> 
+                            </hbox>
+                        </vbox>             
+                    </tabpanel>
+                    
+                </tabpanels>
+            </tabbox>
+        </vbox>      
     </prefpane>
     
 </overlay>
