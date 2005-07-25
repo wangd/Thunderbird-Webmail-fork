@@ -6,3 +6,19 @@
 <!ENTITY POP.Default.Label "(110 per defecte)">
 <!ENTITY Note.Label "El sistema operatiu pot blocar els ports per sota del 1024">
 <!ENTITY Restart.Label "Cal que es reiniciï el Thunderbird per a que els canvis tinguin efecte.">
+<!ENTITY SMTP.Label "SMTP">
+<!ENTITY SMTP.AccessKey "S">
+<!ENTITY SMTP.Default.Label "default 25">
+<!ENTITY IMAP.Label "IMAP">
+<!ENTITY IMAP.AccessKey "I">
+<!ENTITY IMAP.Default.Label "default 143">
+<!ENTITY Enable.POP.Label "Enable POP server.">
+<!ENTITY Enable.POP.AccessKey "P">
+<!ENTITY Enable.SMTP.Label "Enable SMTP server.">
+<!ENTITY Enable.SMTP.AccessKey "T">
+<!ENTITY Enable.IMAP.Label "Enabel IMAP server.">
+<!ENTITY Enable.IMAP.AccessKey "M">
+<!ENTITY Enable.Label "Enable">
+<!ENTITY Enable.AccessKey "E">
+<!ENTITY Status.Label "Status">
+<!ENTITY Status.AccessKey "u">

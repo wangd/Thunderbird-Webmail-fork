@@ -6,5 +6,21 @@
 <!ENTITY POP.Default.Label "default 110">
 <!ENTITY Note.Label "Ports unter 1024 könnten vom Betriebssystem blockiert werden.">
 <!ENTITY Restart.Label "Ein Neustart von Thunderbird ist erforderlich bevor die geänderten Einstellungen wirksam werden.">
+<!ENTITY SMTP.Label "SMTP">
+<!ENTITY SMTP.AccessKey "S">
+<!ENTITY SMTP.Default.Label "default 25">
+<!ENTITY IMAP.Label "IMAP">
+<!ENTITY IMAP.AccessKey "I">
+<!ENTITY IMAP.Default.Label "default 143">
+<!ENTITY Enable.POP.Label "Enable POP server.">
+<!ENTITY Enable.POP.AccessKey "P">
+<!ENTITY Enable.SMTP.Label "Enable SMTP server.">
+<!ENTITY Enable.SMTP.AccessKey "T">
+<!ENTITY Enable.IMAP.Label "Enabel IMAP server.">
+<!ENTITY Enable.IMAP.AccessKey "M">
+<!ENTITY Enable.Label "Enable">
+<!ENTITY Enable.AccessKey "E">
+<!ENTITY Status.Label "Status">
+<!ENTITY Status.AccessKey "u">
 
 
