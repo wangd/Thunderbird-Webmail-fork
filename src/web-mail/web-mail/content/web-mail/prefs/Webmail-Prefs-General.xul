@@ -41,7 +41,7 @@
             <spacer flex="5"/>
             
             <!-- restart information -->   
-            <vbox class = "information">   
+            <vbox class = "information" style="margin-top: 16em">   
                 <hbox>
                     <image id ="iconMessage"/> 
                 </hbox>
