@@ -15,12 +15,12 @@
             lastSelected = "paneServers"
             buttons="accept, cancel">
   
-      
-    <!-- servers --> 
+    
+   <!-- servers --> 
     <prefpane id="paneServers" 
               label="&Servers.Panel.szTitle;"
               src="chrome://web-mail/content/prefs/Webmail-Prefs-Servers.xul"/>
-  
+              
     <!-- general --> 
     <prefpane id="paneGeneral" 
               label="&General.Panel.szTitle;"
