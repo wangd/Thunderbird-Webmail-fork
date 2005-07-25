@@ -29,7 +29,7 @@ function nsSMTPConnectionManager()
         this.m_SMTPLog.Write("nsSMTPConnectionManager.js - Constructor - START");   
            
         //-1 error , 0 = stopped ,1 = waiting, 2= ruuning                    
-        this.iStatus = -1;          
+        this.iStatus = 0;          
         this.aSMTPConnections = new Array();
         
         this.GarbageTimer = Components.classes["@mozilla.org/timer;1"].
@@ -125,6 +125,7 @@ nsSMTPConnectionManager.prototype.Stop = function()
                                       + e.name 
                                       + ".\nError message: " 
                                       + e.message);
+        this.iStatus = -1;  //error
                               
         return false;
     }
@@ -167,6 +168,8 @@ nsSMTPConnectionManager.prototype.GetStatus = function ()
                                       + e.name 
                                       + ".\nError message: " 
                                       + e.message);
+        this.iStatus = -1;  //error
+        return this.iStatus; 
     }
 }
 

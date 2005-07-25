@@ -28,7 +28,7 @@ function nsPOPConnectionManager()
         this.m_POPLog.Write("nsPOPConnectionManager.js - Constructor - START");   
                     
         //-1 error , 0 = stopped ,1 = waiting, 2= ruuning                       
-        this.iStatus = -1;               //error
+        this.iStatus = 0;               //error
         this.aPOPConnections = new Array();
         
         this.GarbageTimer = Components.classes["@mozilla.org/timer;1"];
@@ -123,6 +123,7 @@ nsPOPConnectionManager.prototype.Stop = function()
                                       + e.name 
                                       + ".\nError message: " 
                                       + e.message);
+        this.iStatus = -1;  //error
                               
         return false;
     }
@@ -165,6 +166,9 @@ nsPOPConnectionManager.prototype.GetStatus = function ()
                                       + e.name 
                                       + ".\nError message: " 
                                       + e.message);
+                                      
+        this.iStatus = -1;  //error
+        return this.iStatus; 
     }
 }
 

@@ -26,7 +26,7 @@ function nsIMAPConnectionManager()
         this.m_IMAPLog.Write("nsIMAPConnectionManager.js - Constructor - START");   
                     
         //-1 error , 0 = stopped ,1 = waiting, 2= ruuning                       
-        this.iStatus = -1;               //error
+        this.iStatus = 0;               //error
         this.aIMAPConnections = new Array();
         
         this.GarbageTimer = Components.classes["@mozilla.org/timer;1"];
@@ -122,7 +122,8 @@ nsIMAPConnectionManager.prototype.Stop = function()
                                       + e.name 
                                       + ".\nError message: " 
                                       + e.message);
-                              
+        
+        this.iStatus = -1;  //error                      
         return false;
     }
 }
@@ -164,6 +165,8 @@ nsIMAPConnectionManager.prototype.GetStatus = function ()
                                       + e.name 
                                       + ".\nError message: " 
                                       + e.message);
+        this.iStatus = -1;  //error
+        return this.iStatus; 
     }
 }
 
