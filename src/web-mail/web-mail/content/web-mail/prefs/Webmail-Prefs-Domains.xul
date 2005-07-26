@@ -12,17 +12,19 @@
         <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
         <script type="application/x-javascript" src="chrome://web-mail/content/prefs/Webmail-Prefs-Domains.js"/>
        
+        <stringbundle id="stringsWebmailPrefs-Domains" src="chrome://web-mail/locale/Webmail-Prefs-Domains.properties"/>       
        
-        <vbox class="text">
-        
-            <label value="&Domains.Label;" class ="textBox" />
-            
-            <listbox id="listView" class="listbox" rows="13">
-                <listcols>
-                    <listcol flex="1"/>
-                </listcols>
-            </listbox>
-        
+        <vbox class="listText">
+            <tree rows="15" 
+                  hidecolumnpicker="true" 
+                  hideheader="true" 
+                  id="domainTree">   
+               
+                <treecols>
+                    <treecol id="domain" primary="true" flex="1"  label="&Domains.Label;"/>
+                </treecols> 
+                      
+            </tree>
         </vbox>
     
     </prefpane>
