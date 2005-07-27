@@ -16,7 +16,7 @@
 <!ENTITY Enable.POP.AccessKey "P">
 <!ENTITY Enable.SMTP.Label "Enable SMTP server.">
 <!ENTITY Enable.SMTP.AccessKey "T">
-<!ENTITY Enable.IMAP.Label "Enabel IMAP server.">
+<!ENTITY Enable.IMAP.Label "Enable IMAP server.">
 <!ENTITY Enable.IMAP.AccessKey "M">
 <!ENTITY Enable.Label "Enable">
 <!ENTITY Enable.AccessKey "E">
