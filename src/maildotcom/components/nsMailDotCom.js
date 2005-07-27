@@ -612,7 +612,7 @@ nsMailDotCom.prototype =
         {
             this.Log.Write("nsMailDotCom.js - getMessageIDs - START"); 
                 
-            var szPOPResponse = "+OK " + iTempNum + " Messages\r\n";
+            var szPOPResponse = "+OK " + this.m_aszMsgIDStore.length + " Messages\r\n";
             for (i = 0; i <  this.m_aszMsgIDStore.length; i++)
             {
                 var szEmailURL = this.m_aszMsgIDStore[i];

@@ -606,7 +606,7 @@ nsYahoo.prototype =
                     mainObject.m_HttpComms.addRequestHeader("x-CookieHack", 
                                                             "Hacker\r\nCookie: " + aszCookie, 
                                                             false);
-                    var bResult = this.m_HttpComms.send(mainObject.mailBoxOnloadHandler); 
+                    var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler); 
                     if (!bResult) throw new Error("httpConnection returned false");
                 }
                 else if ( mainObject.m_bUseJunkMail && mainObject.m_szBulkFolderURI && !mainObject.m_bJunkChecked)
@@ -624,7 +624,7 @@ nsYahoo.prototype =
                     mainObject.m_HttpComms.addRequestHeader("x-CookieHack", 
                                         "Hacker\r\nCookie: " + mainObject.m_oCookies.findCookie(aszHost), 
                                         false);
-                    var bResult = this.m_HttpComms.send(mainObject.mailBoxOnloadHandler); 
+                    var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler); 
                     if (!bResult) throw new Error("httpConnection returned false");
                     
                     delete mainObject.m_aDeleteData;
@@ -656,7 +656,7 @@ nsYahoo.prototype =
                 mainObject.m_HttpComms.addRequestHeader("x-CookieHack", 
                                     "Hacker\r\nCookie: " + mainObject.m_oCookies.findCookie(aszHost), 
                                     false);
-                var bResult = this.m_HttpComms.send(mainObject.mailBoxOnloadHandler); 
+                var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler); 
                 if (!bResult) throw new Error("httpConnection returned false");
                 
                 delete mainObject.m_aDeleteData;
