@@ -1,11 +1,3 @@
-/*---------must remove---------*/
-.chromeclass-toolbar
-{
-  display: -moz-box ! important;
-}
-/*-----------*/
-
-
 radio[pane] 
 {
     list-style-image: url("chrome://lycos/skin/Lycos-Prefs.png"); 
