@@ -497,27 +497,14 @@ nsLycos.prototype =
         try
         {
             this.m_LycosLog.Write("nsLycos.js - getMessageSizes - START"); 
-                                  
-            var iTempNum = 0;
-            var aTempSize = new Array();
-       
+            
+            var szPOPResponse = "+OK " +  this.m_aiMsgSize.length + " Messages\r\n"; 
             for (i = 0; i < this.m_aiMsgSize.length; i++)
             {
                 var iEmailSize = this.m_aiMsgSize[i];
                 this.m_LycosLog.Write("nsLycos.js - getMessageSizes - Email Size : " +iEmailSize);
-        
-                aTempSize.push(iEmailSize);
-                iTempNum++; 
-            }         
-    
-            this.m_LycosLog.Write("nsLycos.js - getMessagesSizes - : " + aTempSize + " " + iTempNum); 
-            
-            //sever response
-            var szPOPResponse = "+OK " + iTempNum + " Messages\r\n"; 
-            for (i =0 ; i<iTempNum; i++)
-            {
-                szPOPResponse+=(i+1) + " " + aTempSize[i] + "\r\n";                        
-            }
+                szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";   
+            } 
             szPOPResponse += ".\r\n";
             
             this.serverComms(szPOPResponse);
@@ -544,9 +531,7 @@ nsLycos.prototype =
         {
             this.m_LycosLog.Write("nsLycos.js - getMessageIDs - START"); 
             
-            var iTempNum = 0;
-            var aTempIDs = new Array();
-            
+            var szPOPResponse = "+OK " + this.m_aszMsgIDStore.length + " Messages\r\n";
             for (i = 0; i <  this.m_aszMsgIDStore.length; i++)
             {
                 var szEmailURL = this.m_aszMsgIDStore[i];
@@ -555,16 +540,8 @@ nsLycos.prototype =
                 var szEmailID = szEmailURL.match(LycosMSGIDPattern);
                                     
                 this.m_LycosLog.Write("nsLycos.js - getMessageIDs - IDS : " +szEmailID);    
-                aTempIDs.push(szEmailID);
-                iTempNum++; 
+                szPOPResponse+=(i+1) + " " + szEmailID + "\r\n"; 
             }         
-     
-            //server response                                    
-            var szPOPResponse = "+OK " + iTempNum + " Messages\r\n";
-            for (i =0 ; i<iTempNum; i++)
-            {
-                szPOPResponse+=(i+1) + " " + aTempIDs[i] + "\r\n";                        
-            }
             szPOPResponse += ".\r\n";
             this.serverComms(szPOPResponse);           
                      

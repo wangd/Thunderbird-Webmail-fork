@@ -577,27 +577,15 @@ nsMailDotCom.prototype =
         try
         {
             this.Log.Write("nsMailDotCom.js - getMessageSizes - START"); 
-            
-            var iTempNum = 0;
-            var aTempSize = new Array();
+                    
+            var szPOPResponse = "+OK " + this.m_aiMsgSize.length + " Messages\r\n"; 
             
             for (i = 0; i <  this.m_aiMsgSize.length; i++)
             {
                 var iEmailSize = this.m_aiMsgSize[i];
                 this.Log.Write("nsMailDotCom.js - getMessageSizes - Email Size : " +iEmailSize);
         
-                aTempSize.push(iEmailSize);
-                iTempNum++; 
-            }         
-    
-            this.Log.Write("nsMailDotCom.js - getMessagesSizes - : " 
-                                                            + aTempSize + " " 
-                                                            + iTempNum); 
-            
-            var szPOPResponse = "+OK " + iTempNum + " Messages\r\n"; 
-            for (i =0 ; i<iTempNum; i++)
-            {
-                szPOPResponse+=(i+1) + " " + aTempSize[i] + "\r\n";                        
+                szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";  
             }
             szPOPResponse += ".\r\n";
             
@@ -623,30 +611,15 @@ nsMailDotCom.prototype =
         try
         {
             this.Log.Write("nsMailDotCom.js - getMessageIDs - START"); 
-    
-            var iTempNum = 0;
-            var aTempIDs = new Array();
-            
+                
+            var szPOPResponse = "+OK " + iTempNum + " Messages\r\n";
             for (i = 0; i <  this.m_aszMsgIDStore.length; i++)
             {
                 var szEmailURL = this.m_aszMsgIDStore[i];
                 this.Log.Write("nsMailDotCom.js - getMessageIDs - Email URL : " +szEmailURL);
-               
-                var szEmailID = szEmailURL.match(patternMailDotComMsgId)[1];
-                                    
+                var szEmailID = szEmailURL.match(patternMailDotComMsgId)[1];                   
                 this.Log.Write("nsMailDotCom.js - getMessageIDs - IDS : " +szEmailID);    
-                aTempIDs.push(szEmailID);
-                iTempNum++; 
-            }         
-     
-            this.Log.Write("nsMailDotCom.js - getMessageIDs - return : " 
-                                                + aTempIDs + " "
-                                                + iTempNum); 
-                                                
-            var szPOPResponse = "+OK " + iTempNum + " Messages\r\n";
-            for (i =0 ; i<iTempNum; i++)
-            {
-                szPOPResponse+=(i+1) + " " + aTempIDs[i] + "\r\n";                        
+                szPOPResponse+=(i+1) + " " + szEmailID + "\r\n";
             }
             szPOPResponse += ".\r\n";
             this.serverComms(szPOPResponse);           
