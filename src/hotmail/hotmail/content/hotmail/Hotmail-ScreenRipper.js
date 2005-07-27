@@ -598,9 +598,7 @@ HotmailScreenRipper.prototype =
         {
             this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - getMessageSizes - START"); 
             
-            var iTempNum = 0;
-            var aTempSize = new Array();
-            
+            var szPOPResponse = "+OK " + this.m_aszMsgIDStore.length + " Messages\r\n";
             for (i = 0; i <  this.m_aszMsgIDStore.length; i++)
             {
                 var szEmailURL = this.m_aszMsgIDStore[i];
@@ -615,19 +613,9 @@ HotmailScreenRipper.prototype =
                     lSize = 2000;
                     
                 this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - getMessageSizes - size : " +lSize);    
-                aTempSize.push(lSize);
-                iTempNum++; 
+                szPOPResponse+=(i+1) + " " + lSize + "\r\n";  
             }         
     
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - getMessagesSizes - : " 
-                                                            + aTempSize + " " 
-                                                            + iTempNum); 
-            
-            var szPOPResponse = "+OK " + iTempNum + " Messages\r\n"; 
-            for (i =0 ; i<iTempNum; i++)
-            {
-                szPOPResponse+=(i+1) + " " + aTempSize[i] + "\r\n";                        
-            }
             szPOPResponse += ".\r\n";
             
             this.serverComms(szPOPResponse);
@@ -653,8 +641,7 @@ HotmailScreenRipper.prototype =
         {
             this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - getMessageIDs - START"); 
             
-            var iTempNum = 0;
-            var aTempIDs = new Array();
+             var szPOPResponse = "+OK " + this.m_aszMsgIDStore.length + " Messages\r\n";
             
             for (i = 0; i <  this.m_aszMsgIDStore.length; i++)
             {
@@ -672,19 +659,9 @@ HotmailScreenRipper.prototype =
                     szEmailID = aEmailID[1];
                     
                 this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - getMessageIDs - IDS : " +szEmailID);    
-                aTempIDs.push(szEmailID);
-                iTempNum++; 
+                szPOPResponse+=(i+1) + " " + szEmailID + "\r\n";   
             }         
      
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - getMessageIDs - return : " 
-                                                + aTempIDs + " "
-                                                + iTempNum); 
-                                                
-            var szPOPResponse = "+OK " + iTempNum + " Messages\r\n";
-            for (i =0 ; i<iTempNum; i++)
-            {
-                szPOPResponse+=(i+1) + " " + aTempIDs[i] + "\r\n";                        
-            }
             szPOPResponse += ".\r\n";
             this.serverComms(szPOPResponse);           
            
