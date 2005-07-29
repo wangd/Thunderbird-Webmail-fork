@@ -1,8 +1,8 @@
-﻿<!ENTITY GeneralLogging.Label "Memorizza dati di login">
+﻿<!ENTITY GeneralLogging.Label "Memorizza i dati di login">
 <!ENTITY GeneralLogging.AccessKey "M">
-<!ENTITY JavaScriptConsole.Label "Usa console JavaScript">
+<!ENTITY JavaScriptConsole.Label "Usa la console JavaScript">
 <!ENTITY JavaScriptConsole.AccessKey "J">
-<!ENTITY LogFile.Label "Usa file di log">
+<!ENTITY LogFile.Label "Usa il file di log">
 <!ENTITY LogFile.AccessKey "l">
 <!ENTITY Location.Label "Cartella">
 <!ENTITY Location.AccessKey "a">

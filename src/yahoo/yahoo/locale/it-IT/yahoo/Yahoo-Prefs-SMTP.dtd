@@ -1,8 +1,8 @@
-<!ENTITY SaveSentItems.Label "Save copy in sent items.">
+<!ENTITY SaveSentItems.Label "Salva una copia del messaggio in 'Posta inviata'">
 <!ENTITY SaveSentItems.AccessKey "s">
-<!ENTITY AlternativeGroup.Label "Alternative\Multipart emails">
-<!ENTITY SendPlain.Label "Send plain text">
+<!ENTITY AlternativeGroup.Label " Messaggi alternativi\in più parti">
+<!ENTITY SendPlain.Label "Invia in testo semplice">
 <!ENTITY SendPlain.AccessKey "p">
-<!ENTITY SendHtml.Label "Send html text">
-<!ENTITY SendHtml.AccessKey "h">
+<!ENTITY SendHtml.Label "Invia in HTML">
+<!ENTITY SendHtml.AccessKey "H">
 

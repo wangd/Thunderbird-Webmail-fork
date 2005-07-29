@@ -9,7 +9,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 		<em:type>2</em:type>
 		<em:version>0.5.1</em:version>
 		
-		<em:name>Hotmail</em:name>
+		<em:name>WebMail - Hotmail</em:name>
 		<em:description>Hotmail component for Web-Mail extension</em:description>
 		<em:creator>ComodoDragon</em:creator>
 		<em:homepageURL>http://webmail.mozdev.org</em:homepageURL>

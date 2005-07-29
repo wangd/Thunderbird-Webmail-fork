@@ -1,8 +1,8 @@
-<!ENTITY WebmailAbout.Title "Informazioni su Webmail">
-<!ENTITY WebmailAbout.ExtName "Web Mail">
-<!ENTITY WebmailAbout.ExtVersion "versione 0.4.0">
-<!ENTITY WebmailAbout.ExtDescription "Permette di consultare i propri account di posta 'solo web' tramite Thunderbird.">
-<!ENTITY WebmailAbout.ExtCreaterTitle "Creato da:">
+<!ENTITY WebmailAbout.Title "Informazioni su WebMail">
+<!ENTITY WebmailAbout.ExtName "WebMail">
+<!ENTITY WebmailAbout.ExtVersion "versione 0.5.0">
+<!ENTITY WebmailAbout.ExtDescription "Permette di consultare i propri account di posta 'solo web' tramite Thunderbird">
+<!ENTITY WebmailAbout.ExtCreaterTitle "Creata da:">
 <!ENTITY WebmailAbout.ExtCreator "ComodoDragon">
 <!ENTITY WebmailAbout.ExtHome "Sito web">
 <!ENTITY WebmailAbout.ExtHomeURL "http://webmail.mozdev.org/">
