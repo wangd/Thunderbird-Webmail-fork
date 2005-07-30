@@ -9,7 +9,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 		<em:type>2</em:type>
         <em:version>0.2.1</em:version>	
 		
-        <em:name>MailDotCom</em:name>
+        <em:name>WebMail - MailDotCom</em:name>
 		<em:description>Mail.Com component for Web-Mail extension</em:description>
 		<em:creator>ComodoDragon</em:creator>
 		

@@ -9,7 +9,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 		<em:type>2</em:type>
 		<em:version>0.2.0</em:version>
 		
-        <em:name>Lycos</em:name>
+        <em:name>WebMail - Lycos</em:name>
 		<em:description>Lycos component for Web-Mail extension</em:description>
 		<em:creator>ComodoDragon</em:creator>
 		<em:homepageURL>http://webmail.mozdev.org</em:homepageURL>
