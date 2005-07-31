@@ -26,7 +26,6 @@ function nsYahooSMTP()
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/CookieManager.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Email.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/base64.js");
@@ -46,13 +45,13 @@ function nsYahooSMTP()
         this.m_szUserName = null;   
         this.m_szPassWord = null; 
         this.m_oResponseStream = null;  
-        this.m_szComposeURI = null;
-        this.m_szLocationURI = null;
-        this.m_oCookies = new CookieHandler(this.m_Log);    
-        this.m_Email = new email(this.m_Log);
-        this.m_iStage = 0;
-        this.m_bAttHandled = false;
         this.m_HttpComms = new Comms(this , this.m_Log);
+        this.m_iStage = 0;
+        
+        this.m_szComposeURI = null;
+        this.m_szLocationURI = null; 
+        this.m_Email = new email(this.m_Log);
+        this.m_bAttHandled = false;
         
         //do i save copy
         var oPref = new Object();
@@ -142,70 +141,15 @@ nsYahooSMTP.prototype =
         {
             mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - START"); 
             
-            mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler : " 
-                                                    + mainObject.m_iStage + "\n"
-                                                    + szResponse);  
+            mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler : " + mainObject.m_iStage );  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             
             //if this fails we've gone somewhere new
             mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - status :" +httpChannel.responseStatus );
-            if (httpChannel.responseStatus != 200 
-                        && httpChannel.responseStatus != 302
-                                    && httpChannel.responseStatus != 301) 
+            if (httpChannel.responseStatus != 200) 
                 throw new Error("return status " + httpChannel.responseStatus);
             
-            var szURL = httpChannel.URI.host;
-            mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - url - " + szURL);  
-            var aszTempDomain = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
-            mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - domain - " + aszTempDomain[0]); 
-            
-            //get cookies
-            try
-            {
-                var szCookies =  httpChannel.getResponseHeader("Set-Cookie");
-                mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - received cookies \n" + szCookies);  
-                mainObject.m_oCookies.addCookie( aszTempDomain[0], szCookies); 
-            }
-            catch(e)
-            {
-                mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - no cookies found"); 
-            } 
-            
-            var ios=Components.classes["@mozilla.org/network/io-service;1"];
-            ios = ios.getService(Components.interfaces.nsIIOService);
-
-
-
-            //bounce handler
-            if ( httpChannel.responseStatus == 302 || httpChannel.responseStatus == 301)
-            {
-                try
-                {
-                    var szLocation =  httpChannel.getResponseHeader("Location");
-                    mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - location \n" + szLocation);  
-                }
-                catch(e)
-                {
-                    throw new Error("Location header not found")
-                } 
-            
-                //set cookies
-                var szURL = ios.newURI(szLocation,null,null).prePath;
-                var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
-                var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                
-                mainObject.m_HttpComms.clean();
-                mainObject.m_HttpComms.setURI(szLocation);
-                mainObject.m_HttpComms.setRequestMethod("GET");
-                mainObject.m_Log.Write("nsYahooSMTP.js - - adding cookie \n"+ aszCookie);
-                mainObject.m_HttpComms.addRequestHeader("x-CookieHack", 
-                                                        "Hacker\r\nCookie: " + aszCookie, 
-                                                        false);
-                var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);
-                if (!bResult) throw new Error("httpConnection returned false");
-                return;
-            }
             
             //page code                                
             switch (mainObject.m_iStage)
@@ -216,21 +160,11 @@ nsYahooSMTP.prototype =
                          throw new Error("error parsing yahoo login web page");
                     
                     mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - Secure URL " + aSecureLoginURL);
-                    
                     var szSecureURL = aSecureLoginURL[1];
-                    
-                    //set  cookies
-                    var szURL = ios.newURI(szSecureURL,null,null).prePath;
-                    var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
-                    var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                   
+    
                     mainObject.m_HttpComms.clean();
                     mainObject.m_HttpComms.setURI(szSecureURL);
                     mainObject.m_HttpComms.setRequestMethod("GET");
-                    mainObject.m_Log.Write("nsYahooSMTP.js - - adding cookie \n"+ aszCookie);
-                    mainObject.m_HttpComms.addRequestHeader("x-CookieHack", 
-                                                            "Hacker\r\nCookie: " + aszCookie, 
-                                                            false);
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);                       
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
@@ -274,18 +208,9 @@ nsYahooSMTP.prototype =
                    
                     mainObject.m_HttpComms.addValuePair(".save","Sign+In");
                                         
-                    //set  cookies
-                    var szURL = ios.newURI(szLoginURL,null,null).prePath;
-                    var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
-                    var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                   
                     mainObject.m_HttpComms.setURI(szLoginURL);
                     mainObject.m_HttpComms.setRequestMethod("POST");
                     mainObject.m_HttpComms.setContentType(0);
-                    mainObject.m_Log.Write("nsYahooSMTP.js - adding cookie \n"+ aszCookie);
-                    mainObject.m_HttpComms.addRequestHeader("x-CookieHack", 
-                                                            "Hacker\r\nCookie: " + aszCookie, 
-                                                            false);
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
@@ -295,22 +220,12 @@ nsYahooSMTP.prototype =
                     var aLoginRedirect = szResponse.match(patternYahooRedirect);
                     if (aLoginRedirect == null)
                          throw new Error("error parsing yahoo login web page");
-                    mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - login redirect " + aLoginRedirect);
-                      
+                    mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - login redirect " + aLoginRedirect);    
                     var szLocation = aLoginRedirect[1];
-                    
-                    //set cookies
-                    var szURL = ios.newURI(szLocation,null,null).prePath;
-                    var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
-                    var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                    
+                  
                     mainObject.m_HttpComms.clean();
                     mainObject.m_HttpComms.setURI(szLocation);
                     mainObject.m_HttpComms.setRequestMethod("GET");
-                    mainObject.m_Log.Write("nsYahooSMTP.js - adding cookie \n"+ aszCookie);
-                    mainObject.m_HttpComms.addRequestHeader("x-CookieHack", 
-                                                            "Hacker\r\nCookie: " + aszCookie, 
-                                                            false);
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
@@ -362,21 +277,10 @@ nsYahooSMTP.prototype =
             if (!this.m_Email.parse(szEmail))
                 throw new Error ("Parse Failed")
             
-            var ios=Components.classes["@mozilla.org/network/io-service;1"];
-            ios = ios.getService(Components.interfaces.nsIIOService);
-                                    
-            var szURL = ios.newURI(this.m_szComposeURI,null,null).prePath;
-            var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
-            var aszCookie = this.m_oCookies.findCookie(aszHost);
-            
             //get composer page
             this.m_HttpComms.clean();
             this.m_HttpComms.setURI(this.m_szComposeURI);
-            this.m_HttpComms.setRequestMethod("GET");
-            this.m_Log.Write("nsYahooSMTP.js - adding cookie \n"+ aszCookie);
-            this.m_HttpComms.addRequestHeader("x-CookieHack", 
-                                              "Hacker\r\nCookie: " + aszCookie, 
-                                              false);
+            this.m_HttpComms.setRequestMethod("GET");       
             var bResult = this.m_HttpComms.send(this.composerOnloadHandler);  
             if (!bResult) throw new Error("httpConnection returned false");
             
@@ -411,27 +315,7 @@ nsYahooSMTP.prototype =
             if (httpChannel.responseStatus != 200) 
                 throw new Error("return status " + httpChannel.responseStatus);
             
-            var szURL = httpChannel.URI.host;
-            mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - url - " + szURL);  
-            var aszTempDomain = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
-            mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - domain - " + aszTempDomain[0]); 
-            mainObject.m_HttpComms.clean();
             
-            //get cookies
-            try
-            {
-                var szCookies =  httpChannel.getResponseHeader("Set-Cookie");
-                mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - received cookies \n" + szCookies);  
-                mainObject.m_oCookies.addCookie( aszTempDomain[0], szCookies); 
-            }
-            catch(e)
-            {
-                mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - no cookies found"); 
-            } 
-            
-            var ios=Components.classes["@mozilla.org/network/io-service;1"].
-                                    getService(Components.interfaces.nsIIOService);
-
             if (mainObject.m_Email.attachments.length>0 && !mainObject.m_bAttHandled)
                 mainObject.m_iStage = 2;
         
@@ -542,17 +426,9 @@ nsYahooSMTP.prototype =
                     }
                     
                     mainObject.m_iStage++;
-                    var szURL = ios.newURI(szActionURI,null,null).prePath;
-                    var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
-                    var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                    
                     mainObject.m_HttpComms.setContentType(0);
                     mainObject.m_HttpComms.setURI(szActionURI);
                     mainObject.m_HttpComms.setRequestMethod("POST");
-                    mainObject.m_Log.Write("nsYahooSMTP.js - adding cookie \n"+ aszCookie);
-                    mainObject.m_HttpComms.addRequestHeader("x-CookieHack", 
-                                              "Hacker\r\nCookie: " + aszCookie, 
-                                              false);
                     var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);                                                    
                     if (!bResult) throw new Error("httpConnection returned false");
                 break;
@@ -613,17 +489,9 @@ nsYahooSMTP.prototype =
                     mainObject.m_HttpComms.addValuePair("Body","");
                  
                     mainObject.m_iStage = 3; 
-                    var szURL = ios.newURI(szActionURI,null,null).prePath;
-                    var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
-                    var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                    
                     mainObject.m_HttpComms.setContentType(0);
                     mainObject.m_HttpComms.setURI(szActionURI);
                     mainObject.m_HttpComms.setRequestMethod("POST");
-                    mainObject.m_Log.Write("nsYahooSMTP.js - adding cookie \n"+ aszCookie);
-                    mainObject.m_HttpComms.addRequestHeader("x-CookieHack", 
-                                              "Hacker\r\nCookie: " + aszCookie, 
-                                              false);
                     var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);  
                     if (!bResult) throw new Error("httpConnection returned false");
                 break;
@@ -713,17 +581,9 @@ nsYahooSMTP.prototype =
                             mainObject.m_HttpComms.addFormData(szName, null, true, null, false); 
                     }
                    
-                    var szURL = ios.newURI(szAction,null,null).prePath;
-                    var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
-                    var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                    
                     mainObject.m_HttpComms.setContentType(1);
                     mainObject.m_HttpComms.setURI(szAction);
                     mainObject.m_HttpComms.setRequestMethod("POST");
-                    mainObject.m_Log.Write("nsYahooSMTP.js - adding cookie \n"+ aszCookie);
-                    mainObject.m_HttpComms.addRequestHeader("x-CookieHack", 
-                                              "Hacker\r\nCookie: " + aszCookie, 
-                                              false);
                     var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);  
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage = 4;
@@ -765,17 +625,9 @@ nsYahooSMTP.prototype =
                                                         (szValue.length>0)? szValue : "");
                     }
                    
-                    var szURL = ios.newURI(szAction,null,null).prePath;
-                    var aszHost = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
-                    var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                    
                     mainObject.m_HttpComms.setContentType(0);
                     mainObject.m_HttpComms.setURI(szAction);
                     mainObject.m_HttpComms.setRequestMethod("POST");
-                    mainObject.m_Log.Write("nsYahooSMTP.js - adding cookie \n"+ aszCookie);
-                    mainObject.m_HttpComms.addRequestHeader("x-CookieHack", 
-                                              "Hacker\r\nCookie: " + aszCookie, 
-                                              false);
                     var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);  
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage = 0;
