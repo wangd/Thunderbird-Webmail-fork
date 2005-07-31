@@ -137,7 +137,7 @@ headers.prototype =
             var szSubject = null;
             try
             {
-                szSubject = this.szHeaders.match(/Subject:(.*?)$/im)[1];
+                szSubject = this.szHeaders.match(/Subject:\s(.*?)$/im)[1];
             }
             catch(e){}
             
