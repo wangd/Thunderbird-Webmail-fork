@@ -359,7 +359,7 @@ nsYahooSMTP.prototype =
                         }
                     }
                     
-                    var szTo = mainObject.m_Email.headers.getTo() 
+                    var szTo = mainObject.m_Email.headers.getTo(); 
                     mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - TO " + szTo);
                     mainObject.m_HttpComms.addValuePair("To", (szTo? szTo : ""));
                                         
@@ -386,14 +386,13 @@ nsYahooSMTP.prototype =
                         if (szContentType.search(/plain/)!=-1)
                         {
                             mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - plain");
-                            mainObject.m_HttpComms.addValuePair("Format","plain");
-                            mainObject.m_HttpComms.addValuePair("Body",encodeURIComponent(szTxtBody));
+                            mainObject.m_HttpComms.addValuePair("Body",mainObject.escapeStr(szTxtBody));
                         }
                         else if (szContentType.search(/html/)!=-1)
                         {
                             mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - html");
                             mainObject.m_HttpComms.addValuePair("Format","html");
-                            mainObject.m_HttpComms.addValuePair("Body",encodeURIComponent(szHtmlBody));
+                            mainObject.m_HttpComms.addValuePair("Body",mainObject.escapeStr(szHtmlBody));
                         }
                         else if (szContentType.search(/alternative/i)!=-1 ||
                                            szContentType.search(/mixed/i)!=-1)
@@ -407,7 +406,6 @@ nsYahooSMTP.prototype =
                             else if (!mainObject.m_bSendHtml && szTxtBody)
                             {
                                 mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - !bSendHtml szTxtBody");
-                                mainObject.m_HttpComms.addValuePair("Format","plain");
                                 mainObject.m_HttpComms.addValuePair("Body",encodeURIComponent(szTxtBody));
                             }
                             else if (szHtmlBody)
@@ -648,6 +646,12 @@ nsYahooSMTP.prototype =
     },
     
     
+    escapeStr : function(szMSG)
+    {
+        var szEncode = encodeURIComponent(szMSG);
+        szEncode = szEncode.replace(/%20/gm,"+"); //replace space
+        return szEncode;
+    },
     
     
     ////////////////////////////////////////////////////////////////////////////
