@@ -7,6 +7,7 @@ function Comms(parent , log)
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CookieManager.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/commsData.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/CookieManager.js");
         
         this.m_Log = log;
         this.m_Log.Write("comms.js - constructor - START");
@@ -14,6 +15,11 @@ function Comms(parent , log)
         this.m_IOService = Components.classes["@mozilla.org/network/io-service;1"];
         this.m_IOService = this.m_IOService.getService(Components.interfaces.nsIIOService);
         
+        this.m_oCookies = new CookieHandler(this.m_Log);
+        
+        this.m_bHandleCookie = true;
+        this.m_bHandleBounce = true;
+                
         this.m_URI = null;
         this.m_aHeaders = new Array();
         this.m_aFormData = new Array();
@@ -22,6 +28,7 @@ function Comms(parent , log)
         this.m_CallBack = null;
         this.m_iContentType = -1;
         this.m_parent = parent;
+        
         
         this.m_Log.Write("comms.js - constructor - END");  
     }
@@ -53,6 +60,17 @@ Comms.prototype =
         this.m_aFormData = new Array();
     },
   
+    
+    setHandleCookies : function (bState)
+    {
+        this.m_bHandleCookie = bState;
+    },
+    
+    
+    setHandleBounce : function (bState)
+    {
+        this.m_bHandleBounce = bState;
+    },
     
     
     setURI : function (szURI)
@@ -241,9 +259,23 @@ Comms.prototype =
            
             var HttpRequest = channel.QueryInterface(Components.interfaces.nsIHttpChannel);                                     
             HttpRequest.redirectionLimit = 0; //stops automatic redirect handling
-                      
-            //todo  add cookies
-            //set headers
+            
+            //set headers          
+            
+            //add cookies
+            if (this.m_bHandleCookie)
+            {
+                var aszHost = this.m_URI.prePath.match(/[^\.\/]+\.[^\.\/]+$/);  
+                var aszCookie = this.m_oCookies.findCookie(aszHost);
+                if (aszCookie)
+                {
+                    HttpRequest.setRequestHeader("x-CookieHack",
+                                                 "Hacker\r\nCookie: " + aszCookie, 
+                                                 false);
+                }
+            }
+            
+            //other headers
             for (i=0; i<this.m_aHeaders.length; i++)
             {   
                 var oTemp = this.m_aHeaders[i];
@@ -450,10 +482,7 @@ Comms.prototype =
         	
             var inputStream = Components.classes["@mozilla.org/network/file-input-stream;1"];
         	inputStream = inputStream.createInstance(Components.interfaces.nsIFileInputStream);
-            inputStream.init(nsIFile, 
-                             0x01 ,
-                             0 , 
-                             null);//inputStream.CLOSE_ON_EOF |inputStream.DELETE_ON_CLOSE);
+            inputStream.init(nsIFile, 0x01 , 0 , null);
               
             var binaryStream = Components.classes["@mozilla.org/binaryinputstream;1"];
             binaryStream = binaryStream.createInstance(Components.interfaces.nsIBinaryInputStream);
@@ -501,11 +530,65 @@ Comms.prototype =
         try
         {
             mainObject.m_Log.Write("comms.js - callback - START");
-           
-            //todo
-            //check for bounce
-            //handle cookies
+            mainObject.m_Log.Write("comms.js - callback : \n" + szResponse);  
             
+            //handle repsonse
+            var httpChannel = null;
+            if (mainObject.m_bHandleCookie || mainObject.m_bHandleBounce )
+            {
+                httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
+                mainObject.m_Log.Write("commd.js - callback - status :" +httpChannel.responseStatus );
+                 
+                //handle cookies
+                if (mainObject.m_bHandleCookie)
+                {
+                    mainObject.m_Log.Write("comms.js - callback - Handling cookies");
+                    
+                    var szURL = httpChannel.URI.host;
+                    mainObject.m_Log.Write("comms.js - callback - url - " + szURL);  
+                    var aszTempDomain = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
+                    mainObject.m_Log.Write("comms.js - callback - domain - " + aszTempDomain[0]); 
+                    
+                    //get cookies
+                    try
+                    {
+                        var szCookies =  httpChannel.getResponseHeader("Set-Cookie");
+                        mainObject.m_Log.Write("comms.js - callback - received cookies \n" + szCookies);  
+                        mainObject.m_oCookies.addCookie( aszTempDomain[0], szCookies); 
+                    }
+                    catch(e)
+                    {
+                        mainObject.m_Log.Write("comms.js - callback - no cookies found"); 
+                    }     
+                }
+                
+                
+                //bounce handler
+                if (mainObject.m_bHandleBounce)
+                {
+                    if ( httpChannel.responseStatus > 300 && httpChannel.responseStatus < 400)
+                    {   var szLocation = null;
+                        try
+                        {
+                            szLocation =  httpChannel.getResponseHeader("Location");
+                            mainObject.m_Log.Write("comms.js - callback - location \n" + szLocation);  
+                        }
+                        catch(e)
+                        {
+                            throw new Error("Location header not found")
+                        } 
+                        var oCallback = mainObject.m_CallBack;        
+                        mainObject.clean();
+                        mainObject.setURI(szLocation);
+                        mainObject.setRequestMethod("GET");
+                        var bResult = mainObject.send(oCallback);                             
+                        if (!bResult) throw new Error("httpConnection returned false");
+                        return;
+                    }
+                }
+            }
+            
+            //let component handle response
             mainObject.m_CallBack (szResponse, event, mainObject.m_parent);
             
             mainObject.m_Log.Write("comms.js - callback - END");
