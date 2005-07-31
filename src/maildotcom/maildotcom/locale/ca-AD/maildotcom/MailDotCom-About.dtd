@@ -1,0 +1,11 @@
+<!ENTITY MailDotComAbout.Title "Quant al MailDotCom">
+<!ENTITY MailDotComAbout.ExtName "MailDotCom">
+<!ENTITY MailDotComAbout.ExtVersion "versió 0.2.1">
+<!ENTITY MailDotComAbout.ExtDescription "Component de MailDotCom per a l'extensió Web-Mail.">
+<!ENTITY MailDotComAbout.ExtCreaterTitle "Creat per:">
+<!ENTITY MailDotComAbout.ExtCreator "ComodoDragon">
+<!ENTITY MailDotComAbout.ExtHome "Pàgina d'inici">
+<!ENTITY MailDotComAbout.ExtHomeURL "http://webmail.mozdev.org/">
+<!ENTITY MailDotComAbout.ExtButton "Tanca">
+<!ENTITY MailDotComAbout.ExtContributorTitle "Col·laboradors:">
+

@@ -5,20 +5,20 @@
 <!ENTITY Pop.AccessKey "o">
 <!ENTITY POP.Default.Label "(110 per defecte)">
 <!ENTITY Note.Label "El sistema operatiu pot blocar els ports per sota del 1024">
-<!ENTITY Restart.Label "Cal que es reiniciï el Thunderbird per a que els canvis tinguin efecte.">
+<!ENTITY Restart.Label "Cal que es reiniciï el Thunderbird perquè els canvis tinguin efecte.">
 <!ENTITY SMTP.Label "SMTP">
 <!ENTITY SMTP.AccessKey "S">
-<!ENTITY SMTP.Default.Label "default 25">
+<!ENTITY SMTP.Default.Label "25, per defecte">
 <!ENTITY IMAP.Label "IMAP">
 <!ENTITY IMAP.AccessKey "I">
-<!ENTITY IMAP.Default.Label "default 143">
-<!ENTITY Enable.POP.Label "Enable POP server.">
+<!ENTITY IMAP.Default.Label "143, per defecte">
+<!ENTITY Enable.POP.Label "Habilita el servidor POP.">
 <!ENTITY Enable.POP.AccessKey "P">
-<!ENTITY Enable.SMTP.Label "Enable SMTP server.">
+<!ENTITY Enable.SMTP.Label "Habilita el servidor SMTP.">
 <!ENTITY Enable.SMTP.AccessKey "T">
-<!ENTITY Enable.IMAP.Label "Enabel IMAP server.">
+<!ENTITY Enable.IMAP.Label "Habilita el servidor IMAP.">
 <!ENTITY Enable.IMAP.AccessKey "M">
-<!ENTITY Enable.Label "Enable">
-<!ENTITY Enable.AccessKey "E">
-<!ENTITY Status.Label "Status">
-<!ENTITY Status.AccessKey "u">
+<!ENTITY Enable.Label "Habilita">
+<!ENTITY Enable.AccessKey "H">
+<!ENTITY Status.Label "Estat">
+<!ENTITY Status.AccessKey "a">
