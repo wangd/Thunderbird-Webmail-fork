@@ -10,3 +10,4 @@ locale  yahoo    es-ES   jar:chrome/yahoo.jar!/locale/es-ES/yahoo/
 locale  yahoo    fr-FR   jar:chrome/yahoo.jar!/locale/fr-FR/yahoo/
 locale  yahoo    de-DE   jar:chrome/yahoo.jar!/locale/de-DE/yahoo/
 locale  yahoo    ca-AD   jar:chrome/yahoo.jar!/locale/ca-AD/yahoo/
+locale  yahoo    nl-NL   jar:chrome/yahoo.jar!/locale/nl-NL/yahoo/
