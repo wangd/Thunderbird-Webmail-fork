@@ -1,0 +1,11 @@
+<!ENTITY MailDotComAbout.Title "Over MailDotCom">
+<!ENTITY MailDotComAbout.ExtName "MailDotCom">
+<!ENTITY MailDotComAbout.ExtVersion "versie 0.2.1">
+<!ENTITY MailDotComAbout.ExtDescription "MailDotCom-module voor de Webmail extensie.">
+<!ENTITY MailDotComAbout.ExtCreaterTitle "Gemaakt door:">
+<!ENTITY MailDotComAbout.ExtCreator "ComodoDragon">
+<!ENTITY MailDotComAbout.ExtHome "Homepage">
+<!ENTITY MailDotComAbout.ExtHomeURL "http://webmail.mozdev.org/">
+<!ENTITY MailDotComAbout.ExtButton "Afsluiten">
+<!ENTITY MailDotComAbout.ExtContributorTitle "Medewerk(st)ers:">
+
