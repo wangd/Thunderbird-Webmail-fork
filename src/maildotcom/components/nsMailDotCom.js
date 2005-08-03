@@ -8,8 +8,8 @@ const patternMailDotComLoginForm =/<form.*?>[\S\d\s\r\n]*?<\/form>/igm;
 const patternMailDotComLoginURI = /action="(.*?)"/;
 const patternMailDotComLoginInput = /<input type=(?!"submit").*?>/igm;
 const patternMailDotComType = /type="(.*?)"/i;
-const patternMailDotComValue = /value="(.*?)"/i;
-const patternMailDotComName = /name="(.*?)"/i;
+const patternMailDotComValue = /value=['|"]*([\S\s]*)['|"]*>/i;
+const patternMailDotComName = /name=['|"]*([\S]*)['|"]*/i;
 const patternMailDotComFrame = /<frame.*?src="(.*?)".*?name="mailcomframe".*?SCROLLING="AUTO">/;
 const patternMailDotComFolders = /href="(.*?folders.mail.*?)".*?class="nltxt"/;
 const patternMailDotComFolderList = /href=".*?".*?class="fb"/gm;
@@ -239,21 +239,26 @@ nsMailDotCom.prototype =
                         var szTempData="";
                                                   
                         var szName=aszLoginInput[i].match(patternMailDotComName)[1];
+                        szName = szName.replace(/"/gm,"");
+                        szName = szName.replace(/'/gm,"");
                         mainObject.Log.Write("nsMailDotCom.js - loginOnloadHandler - name " + szName);
                 
                         if (szName.search(/login/i)!=-1)
                         {
-                            szTempData+= szName + "=" + escape(mainObject.m_szUserName);
+                            szTempData+= szName + "=" + encodeURIComponent(mainObject.m_szUserName);
                         }
                         else if (szName.search(/password/i)!=-1)
                         {
-                            szTempData+= szName + "=" + escape(mainObject.m_szPassWord);
+                            szTempData+= szName + "=" + encodeURIComponent(mainObject.m_szPassWord);
                         }
                         else if (szName.search(/siteselected/i)!=-1)
                         {
                             if(aszLoginInput[i].search(/checked/i)!=-1)
                             {
                                 var szValue=aszLoginInput[i].match(patternMailDotComValue)[1];
+                                szValue = szValue.replace(/"/gm,"");
+                                szValue = szValue.replace(/'/gm,"");  
+                                szValue = encodeURIComponent(szValue);
                                 mainObject.Log.Write("nsMailDotCom.js - loginOnloadHandler - value " + szValue);
                                 szTempData+= szName + "=" + szValue;
                             }
@@ -261,8 +266,11 @@ nsMailDotCom.prototype =
                         else
                         {
                             var szValue=aszLoginInput[i].match(patternMailDotComValue)[1];
+                            szValue = szValue.replace(/"/gm,"");
+                            szValue = szValue.replace(/'/gm,"");
+                            szValue = encodeURIComponent(szValue);  
                             mainObject.Log.Write("nsMailDotCom.js - loginOnloadHandler - value " + szValue);
-                            szTempData+= szName + "=" + escape(szValue);     
+                            szTempData+= szName + "=" +szValue;     
                         }
                                                     
                         if (i<aszLoginInput.length-1) szTempData+="&";
