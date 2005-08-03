@@ -68,7 +68,8 @@ var gYahooStartUp =
             this.idCheck("yahoo.fr","POP", cszYahooContentID);
             this.idCheck("yahoo.de","POP", cszYahooContentID);
             this.idCheck("yahoo.ca","POP", cszYahooContentID); 
-            this.idCheck("yahoo.com.au","POP", cszYahooContentID);          
+            this.idCheck("yahoo.com.au","POP", cszYahooContentID); 
+            this.idCheck("yahoo.com.hk","POP", cszYahooContentID);          
            
             this.idCheck("yahoo.com","SMTP",cszYahooSMTPContentID);                  
             this.idCheck("yahoo.es","SMTP", cszYahooSMTPContentID);
