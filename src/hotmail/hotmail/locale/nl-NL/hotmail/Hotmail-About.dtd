@@ -1,0 +1,10 @@
+<!ENTITY HotmailAbout.Title "Over Hotmail">
+<!ENTITY HotmailAbout.ExtName "Hotmail">
+<!ENTITY HotmailAbout.ExtVersion "Versie 0.5.1">
+<!ENTITY HotmailAbout.ExtDescription "Hotmail-module voor de Webmail extensie.">
+<!ENTITY HotmailAbout.ExtCreaterTitle "Gemaakt door:">
+<!ENTITY HotmailAbout.ExtCreator "ComodoDragon">
+<!ENTITY HotmailAbout.ExtHome "Homepage">
+<!ENTITY HotmailAbout.ExtHomeURL "http://webmail.mozdev.org/">
+<!ENTITY HotmailAbout.ExtButton "Afsluiten">
+<!ENTITY HotmailAbout.ExtContributorTitle "Medewerk(st)ers:">

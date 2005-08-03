@@ -1,0 +1,10 @@
+<!ENTITY LycosAbout.Title "Over Lycos">
+<!ENTITY LycosAbout.ExtName "Lycos">
+<!ENTITY LycosAbout.ExtVersion "version 0.2.0">
+<!ENTITY LycosAbout.ExtDescription "Lycos-module voor de Webmail extensie.">
+<!ENTITY LycosAbout.ExtCreaterTitle "Gemaakt door:">
+<!ENTITY LycosAbout.ExtCreator "ComodoDragon">
+<!ENTITY LycosAbout.ExtHome "Homepage">
+<!ENTITY LycosAbout.ExtHomeURL "http://webmail.mozdev.org/">
+<!ENTITY LycosAbout.ExtButton "Afsluiten">
+<!ENTITY LycosAbout.ExtContributorTitle "Medewerk(st)ers:">

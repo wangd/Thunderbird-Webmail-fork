@@ -10,3 +10,4 @@ locale  lycos    es-ES   jar:chrome/lycos.jar!/locale/es-ES/lycos/
 locale  lycos    fr-FR   jar:chrome/lycos.jar!/locale/fr-FR/lycos/
 locale  lycos    de-DE   jar:chrome/lycos.jar!/locale/de-DE/lycos/
 locale  lycos    ca-AD   jar:chrome/lycos.jar!/locale/ca-AD/lycos/
+locale  lycos    nl-NL   jar:chrome/lycos.jar!/locale/nl-NL/lycos/
