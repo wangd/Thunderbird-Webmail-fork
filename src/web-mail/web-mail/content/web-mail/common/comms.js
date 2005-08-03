@@ -24,9 +24,9 @@ function Comms(parent , log)
         this.m_aHeaders = new Array();
         this.m_aFormData = new Array();
         this.m_szMethod = null;
-        this.m_szContentType = null;
         this.m_CallBack = null;
-        this.m_iContentType = -1;
+        this.m_szContentType = "application/x-www-form-urlencoded";
+        this.m_iContentType = 0;
         this.m_parent = parent;
         
         
@@ -49,9 +49,9 @@ Comms.prototype =
     {
         this.m_URI = null;
         this.m_szMethod = null;
-        this.m_szContentType = null;
         this.m_CallBack = null;
-        this.m_iContentType =-1;
+        this.m_szContentType = "application/x-www-form-urlencoded";
+        this.m_iContentType = 0;
                 
         delete this.m_aHeaders;
         this.m_aHeaders = new Array();
@@ -167,8 +167,10 @@ Comms.prototype =
             if (iType>0) return false;
              
             this.m_iContentType = iType;
+            if (iType==-1) this.m_szContentType= null;
             if (iType==0) this.m_szContentType= "application/x-www-form-urlencoded";
             if (iType==1) this.m_szContentType= "multipart/form-data";
+            
            
             this.m_Log.Write("comms.js - setContentType - END");
             return true;
