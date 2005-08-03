@@ -52,7 +52,7 @@ Comms.prototype =
         this.m_szContentType = null;
         this.m_CallBack = null;
         this.m_iContentType =-1;
-        
+                
         delete this.m_aHeaders;
         this.m_aHeaders = new Array();
         
@@ -164,10 +164,12 @@ Comms.prototype =
             this.m_Log.Write("comms.js - setContentType - START");
             this.m_Log.Write("comms.js - setContentType - " + iType);
             
-            if (iType>1) return false;
+            if (iType>0) return false;
              
             this.m_iContentType = iType;
-          
+            if (iType==0) this.m_szContentType= "application/x-www-form-urlencoded";
+            if (iType==1) this.m_szContentType= "multipart/form-data";
+           
             this.m_Log.Write("comms.js - setContentType - END");
             return true;
         }
@@ -246,6 +248,27 @@ Comms.prototype =
     },
     
     
+    addData : function (szData, szContentType)
+    {
+        try
+        {
+            this.m_Log.Write("comms.js - addData - START");
+            this.m_Log.Write("comms.js - addData - " + szContentType + "\n" 
+                                                     + szData);
+                       
+            var oData = new commsData();
+            oData.szName = null;
+            oData.szValue = szData;
+            this.m_szContentType = szContentType;    
+            this.m_aFormData.push(oData);
+                    
+            this.m_Log.Write("comms.js - addFormData - END");
+            return true;
+        }
+        catch(err)
+        {
+        }
+    },
     
     send : function (callback)
     {
@@ -374,7 +397,7 @@ Comms.prototype =
                             endStream.close();
                         }
                     }
-                    else//urlencoded
+                    else if (this.m_iContentType==0)//urlencoded
                     {
                         if (j>0)
                         { 
@@ -392,16 +415,25 @@ Comms.prototype =
                         MultiStream.appendStream(dataStream);
                         dataStream.close();
                     }
+                    else  //other
+                    {
+                        var dataStream = Components.classes["@mozilla.org/io/string-input-stream;1"];
+                        dataStream = dataStream.createInstance(Components.interfaces.nsIStringInputStream);
+                        var szData = oTemp.szValue;
+                        dataStream.setData(szData,-1); 
+                        MultiStream.appendStream(dataStream);
+                        dataStream.close();     
+                    }
                 }
                 
                 var szContentType=null;
-                if (this.m_iContentType == 1)
+                if (this.m_iContentType == 1) //"application/x-www-form-urlencoded"
                 {   
-                    szContentType = "multipart/form-data; boundary=" +szBoundary;
+                    szContentType = this.m_szContentType +"; boundary=" +szBoundary;
                 }
                 else
                 {
-                    szContentType= "application/x-www-form-urlencoded";
+                    szContentType =  this.m_szContentType;
                 }
                 this.m_Log.Write("comms.js - send - contentType "+szContentType);
                 
