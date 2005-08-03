@@ -79,7 +79,8 @@ var gYahooStartUp =
             this.idCheck("yahoo.fr","SMTP", cszYahooSMTPContentID);
             this.idCheck("yahoo.de","SMTP", cszYahooSMTPContentID);
             this.idCheck("yahoo.ca","SMTP", cszYahooSMTPContentID); 
-            this.idCheck("yahoo.com.au","SMTP", cszYahooSMTPContentID);  
+            this.idCheck("yahoo.com.au","SMTP", cszYahooSMTPContentID); 
+            this.idCheck("yahoo.com.hk","SMTP", cszYahooContentID); 
                         
             this.m_Log.Write("Yahoo.js : TimerCallback - END");
         }
