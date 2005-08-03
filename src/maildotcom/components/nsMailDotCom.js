@@ -8,7 +8,7 @@ const patternMailDotComLoginForm =/<form.*?>[\S\d\s\r\n]*?<\/form>/igm;
 const patternMailDotComLoginURI = /action="(.*?)"/;
 const patternMailDotComLoginInput = /<input type=(?!"submit").*?>/igm;
 const patternMailDotComType = /type="(.*?)"/i;
-const patternMailDotComValue = /value=['|"]*([\S\s]*)['|"]*>/i;
+const patternMailDotComValue = /value=['|"]*(\S*)['|"]*.*?>/i;
 const patternMailDotComName = /name=['|"]*([\S]*)['|"]*/i;
 const patternMailDotComFrame = /<frame.*?src="(.*?)".*?name="mailcomframe".*?SCROLLING="AUTO">/;
 const patternMailDotComFolders = /href="(.*?folders.mail.*?)".*?class="nltxt"/;
@@ -243,7 +243,7 @@ nsMailDotCom.prototype =
                         szName = szName.replace(/'/gm,"");
                         mainObject.Log.Write("nsMailDotCom.js - loginOnloadHandler - name " + szName);
                 
-                        if (szName.search(/login/i)!=-1)
+                        if (szName.search(/^login$/i)!=-1)
                         {
                             szTempData+= szName + "=" + encodeURIComponent(mainObject.m_szUserName);
                         }
@@ -281,7 +281,7 @@ nsMailDotCom.prototype =
                     mainObject.Log.Write("nsMailDotCom.js - loginOnloadHandler - data " + szData);
                     
                     //construct fake cookie
-                    var szFakeCookie = "loginName2=" + escape(mainObject.m_szUserName)+ "; sitetype=normal;";
+                    var szFakeCookie = "loginName2=" + encodeURIComponent(mainObject.m_szUserName)+ "; sitetype=normal;";
     
                     var bResult = mainObject.httpConnection(szLoginURI,
                                                             "POST", 
