@@ -63,7 +63,8 @@ var gMailDotComStartUp =
             this.idCheck("email.com","POP", cszMailDotComContentID);
             this.idCheck("journalism.com","POP", cszMailDotComContentID);
             this.idCheck("iname.com","POP", cszMailDotComContentID);
-                                                 
+            this.idCheck("scientist.com","POP", cszMailDotComContentID);
+                                          
             this.m_Log.Write("MailDotCom.js : notify - END");
         }
         catch(e)
