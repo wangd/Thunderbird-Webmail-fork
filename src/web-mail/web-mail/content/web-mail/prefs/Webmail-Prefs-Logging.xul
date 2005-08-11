@@ -60,8 +60,8 @@
                              id="txtLoggingFile"
                              preference-editable="true"
                              preference="fileLocation"
-                             onpreferenceread="return gLoggingPane.readFolderPref();"
-                             onpreferencewrite="return gLoggingPane.writeFolderPref();"/>
+                             onsyncfrompreference ="return gLoggingPane.readFolderPref();"
+                             onsynctopreference ="return gLoggingPane.writeFolderPref();"/>
                              
                     <button label="&Button.Label;"
                             accesskey="&Button.AccessKey;" 
