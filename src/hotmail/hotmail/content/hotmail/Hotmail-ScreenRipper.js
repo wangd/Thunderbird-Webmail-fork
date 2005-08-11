@@ -977,7 +977,7 @@ HotmailScreenRipper.prototype =
             if (szCookies)
             {
                 this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - httpConnection - adding cookie \n" + szCookies); 
-                HttpRequest.setRequestHeader("x-CookieHack", "Hacker\r\nCookie: "  + szCookies , false);
+                HttpRequest.setRequestHeader("Cookie",szCookies , false);
             }
            
             

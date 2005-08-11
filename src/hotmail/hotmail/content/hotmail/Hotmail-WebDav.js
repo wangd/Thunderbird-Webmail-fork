@@ -459,7 +459,7 @@ HotmailWebDav.prototype =
         }
         catch(e)
         {
-            this.m_HotmailLog.DebugDump("HotmailWebDav.js: getMessageSizes : Exception : " 
+            mainObject.m_HotmailLog.DebugDump("HotmailWebDav.js: getMessageSizes : Exception : " 
                                               + e.name 
                                               + ".\nError message: " 
                                               + e.message);
@@ -813,7 +813,7 @@ HotmailWebDav.prototype =
             if (szCookies)
             {
                 this.m_HotmailLog.Write("HotmailWebDav.js - httpConnection - adding cookie \n"+ szCookies);
-                HttpRequest.setRequestHeader("x-CookieHack", "Hacker\r\nCookie: "  + szCookies , false);
+                HttpRequest.setRequestHeader("Cookie", szCookies , false);
             }
            
            
