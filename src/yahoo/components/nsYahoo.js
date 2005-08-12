@@ -152,6 +152,8 @@ nsYahoo.prototype =
             if (httpChannel.responseStatus != 200) 
                 throw new Error("return status " + httpChannel.responseStatus);
     
+            mainObject.m_HttpComms.clean();
+            mainObject.m_HttpComms.setContentType(0);
             
             //page code                                
             switch (mainObject.m_iStage)
@@ -165,7 +167,6 @@ nsYahoo.prototype =
                     
                     var szSecureURL = aSecureLoginURL[1];
                                     
-                    mainObject.m_HttpComms.clean();
                     mainObject.m_HttpComms.setURI(szSecureURL);
                     mainObject.m_HttpComms.setRequestMethod("GET");
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);      
@@ -186,8 +187,6 @@ nsYahoo.prototype =
                     var aLoginData = aLoginForm[0].match(patternYahooLogIn);
                     mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - loginData " + aLoginData);
                    
-                    mainObject.m_HttpComms.clean();
-                    
                     for (i=0; i<aLoginData.length; i++)
                     {
                         var szName=aLoginData[i].match(patternYahooNameAlt)[1];
@@ -228,7 +227,6 @@ nsYahoo.prototype =
                       
                     var szLocation = aLoginRedirect[1];
                 
-                    mainObject.m_HttpComms.clean();
                     mainObject.m_HttpComms.setURI(szLocation);
                     mainObject.m_HttpComms.setRequestMethod("GET");
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);
@@ -265,7 +263,6 @@ nsYahoo.prototype =
                         szWelcomeURI += szResponse.match(patternYahooWelcomeFrame)[1];
                         mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler -welcome: "+szWelcomeURI);
                     
-                        mainObject.m_HttpComms.clean();
                         mainObject.m_HttpComms.setURI(szWelcomeURI);
                         mainObject.m_HttpComms.setRequestMethod("GET");
                         var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);
