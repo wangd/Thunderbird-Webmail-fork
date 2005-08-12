@@ -293,11 +293,7 @@ Comms.prototype =
                 var aszHost = this.m_URI.prePath.match(/[^\.\/]+\.[^\.\/]+$/);  
                 var aszCookie = this.m_oCookies.findCookie(aszHost);
                 if (aszCookie)
-                {
-                    HttpRequest.setRequestHeader("x-CookieHack",
-                                                 "Hacker\r\nCookie: " + aszCookie, 
-                                                 false);
-                }
+                    HttpRequest.setRequestHeader("Cookie", aszCookie, false);
             }
             
             //other headers
