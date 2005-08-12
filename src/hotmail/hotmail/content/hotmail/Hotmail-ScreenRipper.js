@@ -2,44 +2,39 @@ function HotmailScreenRipper(parent)
 {
     try
     {       
-        var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-                              .getService(Components.interfaces.mozIJSSubScriptLoader);
-        if (scriptLoader)
-        {
-            scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-            scriptLoader.loadSubScript("chrome://web-mail/content/common/CookieManager.js");
-        }
-         
-        this.m_HotmailLog = parent.m_HotmailLog; 
-                
-        this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - Constructor - START");   
+        var scriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
+        scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/comms.js");
+        scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-MSG.js");
        
         this.m_Parent = parent; 
+        this.m_Log = this.m_Parent.m_HotmailLog; 
+                
+        this.m_Log.Write("Hotmail-SR - Constructor - START");   
+       
         this.m_szUserName = parent.m_szUserName;   
         this.m_szPassWord = parent.m_szPassWord; 
         this.m_oResponseStream = parent.m_oResponseStream;  
-        this.m_bUseJunkMail = parent.m_bUseJunkMail;    
+        this.m_bUseJunkMail = parent.m_bUseJunkMail;  
+        this.m_HttpComms = new Comms(this,this.m_Log);   
         this.m_szMailboxURI = null;
         this.m_szLogOutURI = null;
         this.m_szLocationURI = null;
         this.m_szJunkFolderURI = null;
         this.m_bJunkMailDone = false;
-        this.m_aszMsgIDStore = new Array();
+        this.m_aMsgDataStore = new Array();
         this.m_aszPageURLS = new Array();
-        this.m_iPagesURLS = 0;
         this.m_iPageCount =0;
-        this.m_iTotalSize = 0;
-        this.m_iNum = 0;  
+        this.m_iTotalSize = 0; 
         this.m_szUM = null;
-        this.m_oCookies = new CookieHandler(this.m_HotmailLog );    
         this.m_iStage = 0;  
-        this.m_iRetryCount = 0;
-                                                 
-        this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - Constructor - END");  
+                                                       
+        this.m_Log.Write("Hotmail-SR.js - Constructor - END");  
     }
     catch(e)
     {
-        DebugDump("Hotmail-ScreenRipper.js: Constructor : Exception : " 
+        DebugDump("Hotmail-SR: Constructor : Exception : " 
                                       + e.name 
                                       + ".\nError message: " 
                                       + e.message);
@@ -54,28 +49,28 @@ HotmailScreenRipper.prototype =
     {
         try
         {
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - logIN - START");   
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - logIN - Username: " + this.m_szUserName 
+            this.m_Log.Write("Hotmail-SR - logIN - START");   
+            this.m_Log.Write("Hotmail-SR - logIN - Username: " + this.m_szUserName 
                                                    + " Password: " + this.m_szPassWord 
                                                    + " stream: " + this.m_oResponseStream);
             
             if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
                      
             //get hotmail.com webpage
-            var bResult = this.httpConnection("http://www.hotmail.com", 
-                                              "GET", 
-                                              null,
-                                              null, 
-                                              this.loginOnloadHandler);
-                                                
+            this.m_iStage= 0;
+            this.m_HttpComms.clean();
+            this.m_HttpComms.setContentType(-1);
+            this.m_HttpComms.setURI("http://www.hotmail.com");
+            this.m_HttpComms.setRequestMethod("GET");
+            var bResult = this.m_HttpComms.send(this.loginOnloadHandler);  
             if (!bResult) throw new Error("httpConnection returned false");
             
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - logIN - END");    
+            this.m_Log.Write("Hotmail-SR - logIN - END");    
             return true;
         }
         catch(e)
         {
-            this.m_HotmailLog.DebugDump("Hotmail-ScreenRipper.js: logIN : Exception : " 
+            this.m_Log.DebugDump("Hotmail-SR: logIN : Exception : " 
                                               + e.name + 
                                               ".\nError message: " 
                                               + e.message);
@@ -88,229 +83,153 @@ HotmailScreenRipper.prototype =
     {
         try
         {
-            mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler - START"); 
-            
-            mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler : " 
-                                         + mainObject.m_iStage + "\n"
-                                         + szResponse);  
+            mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler - START"); 
+            mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
+            mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler - status :" +httpChannel.responseStatus );
             
             //if this fails we've gone somewhere new
-            mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler - status :" +httpChannel.responseStatus );
-            if (httpChannel.responseStatus != 200 && httpChannel.responseStatus != 302) 
+            if (httpChannel.responseStatus != 200 ) 
                 throw new Error("return status " + httpChannel.responseStatus);
-            
-            var szURL = httpChannel.URI.host;
-            mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler - url - " + szURL);  
-            var aszTempDomain = szURL.match(patternHotmailPOPSRuri);  
-            mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler - domain - " + aszTempDomain[0]); 
-            
-            //get cookies
-            try
+  
+            mainObject.m_HttpComms.clean();
+            mainObject.m_HttpComms.setContentType(0);
+             
+            //page code                                
+            switch (mainObject.m_iStage)
             {
-                var szCookies =  httpChannel.getResponseHeader("Set-Cookie");
-                mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler - cookies \n" + szCookies);  
-                mainObject.m_oCookies.addCookie( aszTempDomain[0], szCookies); 
-            }
-            catch(e)
-            {
-                mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler - no cookies found"); 
-            } 
-            
-            var ios=Components.classes["@mozilla.org/network/io-service;1"].
-                                    getService(Components.interfaces.nsIIOService);
-
-            
-            if (httpChannel.responseStatus == 302)  //bounce
-            {
-                try
-                {
-                    var szLocation =  httpChannel.getResponseHeader("Location");
-                    mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - location \n" + szLocation);  
-                }
-                catch(e)
-                {
-                    throw new Error("Location header not found")
-                } 
-          
-                //set cookies
-                var szURL = ios.newURI(szLocation,null,null).prePath;
-                var aszHost = szURL.match(patternHotmailPOPSRuri); 
-                var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - cookies - "+ aszCookie);
-                
-                var bResult = mainObject.httpConnection(szLocation, 
-                                                "GET", 
-                                                null, 
-                                                aszCookie,
-                                                mainObject.loginOnloadHandler);
-                                            
-                if (!bResult) throw new Error("httpConnection returned false");
-            }
-            else //everything else
-            {
-                //page code                                
-                switch (mainObject.m_iStage)
-                {
-                    case 0: // redirect destination
-                        var aBounceData = szResponse.match(patternHotmailPOPSRBounce);
-                        mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler "+ aBounceData);
-                        var  szData=null;
+                case 0: // redirect destination
+                    var aBounceData = szResponse.match(patternHotmailPOPSRBounce);
+                    mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler "+ aBounceData);
+                    
+                    if (!aBounceData)
+                    {
+                        aBounceData = szResponse.match(patternHotmailPOPSRBounceAlt);
+                        mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler "+ aBounceData);
                         if (!aBounceData)
-                        {
-                            aBounceData = szResponse.match(patternHotmailPOPSRBounceAlt);
-                            mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler "+ aBounceData);
-                            if (!aBounceData)
-                                throw new Error("error parsing bounce web page");
-                            else
-                            {
-                                szData = "mspppostint="+encodeURIComponent(aBounceData[2]);
-                            }
-                        }
+                            throw new Error("error parsing bounce web page");
                         else
-                        {
-                            szData = "mspprawqs="+aBounceData[2]+"&mspppostint="+aBounceData[3];
-                        }
-                        
-                      
-                        //set cookies
-                        var szURL = ios.newURI(aBounceData[1],null,null).prePath;
-                        var aszHost = szURL.match(patternHotmailPOPSRuri);  
-                        var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                        
-                        //login page  
-                        var bResult = mainObject.httpConnection(aBounceData[1], 
-                                                       "POST", 
-                                                       szData, 
-                                                       aszCookie,
-                                                       mainObject.loginOnloadHandler);
-                                                    
-                        if (!bResult) throw new Error("httpConnection returned false");
-                        mainObject.m_iStage++;
-                    break;
-                    
-                    
-                    case 1: //login
-                        var szData = "";
-                        var aLogInURL = szResponse.match(patternHotmailPOPSRLogIn);
-                        if (!aLogInURL) 
                         {   
-                            aLogInURL = szResponse.match(patternHotmailPOPSRLogInAlt); 
-                            if (!aLogInURL) throw new Error("error parsing login page");
+                            var  szValue = encodeURIComponent(aBounceData[2]);
+                            mainObject.m_HttpComms.addValuePair("mspppostint", szValue);
+                        }
+                    }
+                    else
+                    {
+                        mainObject.m_HttpComms.addValuePair("mspprawqs",aBounceData[2]);
+                        mainObject.m_HttpComms.addValuePair("mspppostint",aBounceData[3]);
+                    }
+                  
+                    mainObject.m_HttpComms.setURI(aBounceData[1]);
+                    mainObject.m_HttpComms.setRequestMethod("POST");
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);   
+                    if (!bResult) throw new Error("httpConnection returned false");
+                    mainObject.m_iStage++;
+                break;
+                
+                
+                case 1: //login
+                    var aLogInURL = szResponse.match(patternHotmailPOPSRLogIn);
+                    if (!aLogInURL) 
+                    {   
+                        aLogInURL = szResponse.match(patternHotmailPOPSRLogInAlt); 
+                        if (!aLogInURL) throw new Error("error parsing login page");
+                        
+                        //get form data
+                        var aszForm =  szResponse.match(patternHotmailPOPSRForm); 
+                        mainObject.m_Log.Write("nsHotmail.js - loginOnloadHandler - form data " + aszForm);
+                        
+                        for (i=0; i<aszForm.length; i++)
+                        {
+                            var szType = aszForm[i].match(patternHotmailPOPSRType)[1]; 
+                            mainObject.m_Log.Write("nsHotmail.js - loginOnloadHandler - form type " + szType);
+                            var szName = aszForm[i].match(patternHotmailPOPSRName)[1]; 
+                            mainObject.m_Log.Write("nsHotmail.js - loginOnloadHandler - form name " + szName);
+                            var szValue = aszForm[i].match(patternHotmailPOPSRValue)[1]; 
+                            mainObject.m_Log.Write("nsHotmail.js - loginOnloadHandler - form value " + szValue);
                             
-                            //get form data
-                            var aszForm =  szResponse.match(patternHotmailPOPSRForm); 
-                            mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - form data " + aszForm);
-                            
-                            for (i=0; i<aszForm.length; i++)
+                            if (szType.search(/submit/i)==-1)
                             {
-                                var szType = aszForm[i].match(patternHotmailPOPSRType)[1]; 
-                                mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - form type " + szType);
-                                var szName = aszForm[i].match(patternHotmailPOPSRName)[1]; 
-                                mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - form name " + szName);
-                                var szValue = aszForm[i].match(patternHotmailPOPSRValue)[1]; 
-                                mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - form value " + szValue);
-                                
-                                if (szType.search(/submit/i)==-1)
+                                if (szType.search(/radio/i)!=-1)
                                 {
-                                    if (szType.search(/radio/i)!=-1)
-                                    {
-                                        if (aszForm[i].search(/checked/i)!=-1)
-                                            szData += szName +"=" + szValue + "&";
-                                    }
-                                    else
-                                    {
-                                        szData += szName +"=";
-                                            
-                                        if (szName.search(/login/i)!=-1)
-                                            szData += encodeURIComponent(mainObject.m_szUserName)+"&";
-                                        else if (szName.search(/passwd/i)!=-1)
-                                            szData += encodeURIComponent(mainObject.m_szPassWord)+"&";
-                                        else 
-                                            szData += szValue+"&";
-                                    }
+                                    if (aszForm[i].search(/checked/i)!=-1)
+                                        mainObject.m_HttpComms.addValuePair(szName,szValue);
+                                }
+                                else
+                                {
+                                    var szData = null;   
+                                    if (szName.search(/login/i)!=-1)
+                                        szData = encodeURIComponent(mainObject.m_szUserName);
+                                    else if (szName.search(/passwd/i)!=-1)
+                                        szData = encodeURIComponent(mainObject.m_szPassWord);
+                                    else 
+                                        szData = szValue;
+                                        
+                                    mainObject.m_HttpComms.addValuePair(szName,szData);
                                 }
                             }
                         }
-                        else
-                        {
-                             szData = "notinframe=1&login="+encodeURIComponent(mainObject.m_szUserName)
-                                           +"&passwd="+encodeURIComponent(mainObject.m_szPassWord)
-                                           +"&submit1=+Sign+In+"; 
-                        }
-                        
-                        mainObject.m_HotmailLog.Write("nsHotmail.js - loginOnloadHandler - data " + szData);
-                        
-                        //set cookies
-                        var szURL = ios.newURI(aLogInURL[1],null,null).prePath;
-                        var aszHost = szURL.match(patternHotmailPOPSRuri); 
-                        var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                         
-                        var bResult = mainObject.httpConnection(aLogInURL[1], 
-                                                                "POST", 
-                                                                szData, 
-                                                                aszCookie,
-                                                                mainObject.loginOnloadHandler);
-                                                          
-                        if (!bResult) throw new Error("httpConnection returned false");
-                        mainObject.m_iStage++;
-                    break;
-                   
-                    case 2: //refresh
-                        var aRefresh = szResponse.match(patternHotmailPOPSRRefresh);
-                        if (!aRefresh)
-                            aRefresh = szResponse.match(patternHotmailPOPJavaRefresh);
-                        mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler "+ aRefresh); 
-                        if (aRefresh == null) throw new Error("error parsing login page");
-                        
-                        //set cookies
-                        var szURL = ios.newURI(aRefresh[1],null,null).prePath;
-                        var aszHost = szURL.match(patternHotmailPOPSRuri); 
-                        var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                         
-                        var bResult = mainObject.httpConnection(aRefresh[1], 
-                                                          "GET", 
-                                                          null, 
-                                                          aszCookie,
-                                                          mainObject.loginOnloadHandler);  
-                                                          
-                        if (!bResult) throw new Error("httpConnection returned false");
-                        mainObject.m_iStage++;
-                    break;
-                   
-                    case 3:
-                        var szLocation = httpChannel.URI.spec;
-                        var iIndex = szLocation.search("uilogin.srt");
-                        mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler - page check : " + szLocation 
-                                                            + " index = " +  iIndex );
-                        if (iIndex != -1) throw new Error("error logging in ");
-                        
-                        //get urls for later use
-                        mainObject.m_szLocationURI = httpChannel.URI.prePath ;
-                        mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler - m_szLocationURI : "+mainObject.m_szLocationURI );
-                        var aMailBoxURI = szResponse.match(patternHotmailPOPSRMailbox);
-                        mainObject.m_szMailboxURI = aMailBoxURI[1];
-                        mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler - m_szMaiboxURI : "+mainObject.m_szMailboxURI );
-                        var aLogOutURI = szResponse.match(patternHotmailPOPSRLogout);
-                        mainObject.m_szLogOutURI = aLogOutURI[1];
-                        mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler - m_szLogOutURI : "+mainObject.m_szLogOutURI );
-                        
-                        //server response
-                        mainObject.serverComms("+OK Your in\r\n");
-                        mainObject.m_Parent.m_bAuthorised = true;
-                    break;
-                }
-            }         
+                    }
+                    else
+                    {
+                        mainObject.m_HttpComms.addValuePair("notinframe","1");
+                        var szUser = encodeURIComponent(mainObject.m_szUserName);
+                        mainObject.m_HttpComms.addValuePair("login",szUser);
+                        var szPass = encodeURIComponent(mainObject.m_szPassWord);
+                        mainObject.m_HttpComms.addValuePair("passwd",szPass);
+                        mainObject.m_HttpComms.addValuePair("submit1","+Sign+In+");
+                    }
+                                        
+                    mainObject.m_HttpComms.setURI(aLogInURL[1]);
+                    mainObject.m_HttpComms.setRequestMethod("POST");
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);                   
+                    if (!bResult) throw new Error("httpConnection returned false");
+                    mainObject.m_iStage++;
+                break;
+               
+                case 2: //refresh
+                    var aRefresh = szResponse.match(patternHotmailPOPSRRefresh);
+                    if (!aRefresh)
+                        aRefresh = szResponse.match(patternHotmailPOPJavaRefresh);
+                    mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler "+ aRefresh); 
+                    if (aRefresh == null) throw new Error("error parsing login page");
+                    
+                    mainObject.m_HttpComms.setURI(aRefresh[1]);
+                    mainObject.m_HttpComms.setRequestMethod("GET");
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);   
+                    if (!bResult) throw new Error("httpConnection returned false");
+                    mainObject.m_iStage++;
+                break;
+               
+                case 3:
+                    var szLocation = httpChannel.URI.spec;
+                    var iIndex = szLocation.search("uilogin.srt");
+                    mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler - page check : " + szLocation 
+                                                        + " index = " +  iIndex );
+                    if (iIndex != -1) throw new Error("error logging in ");
+                    
+                    //get urls for later use
+                    mainObject.m_szLocationURI = httpChannel.URI.prePath ;
+                    mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler - m_szLocationURI : "+mainObject.m_szLocationURI );
+                    var aMailBoxURI = szResponse.match(patternHotmailPOPSRMailbox);
+                    mainObject.m_szMailboxURI = aMailBoxURI[1];
+                    mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler - m_szMaiboxURI : "+mainObject.m_szMailboxURI );
+                    var aLogOutURI = szResponse.match(patternHotmailPOPSRLogout);
+                    mainObject.m_szLogOutURI = aLogOutURI[1];
+                    mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler - m_szLogOutURI : "+mainObject.m_szLogOutURI );
+                    
+                    //server response
+                    mainObject.serverComms("+OK Your in\r\n");
+                    mainObject.m_Parent.m_bAuthorised = true;
+                break;
+            }
             
-            
-           
-            
-            mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - loginOnloadHandler - END");
+            mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler - END");
         }
         catch(err)
         {
-            mainObject.m_HotmailLog.DebugDump("Hotmail-ScreenRipper.js: loginHandler : Exception : " 
+            mainObject.m_Log.DebugDump("Hotmail-SR: loginHandler : Exception : " 
                                           + err.name 
                                           + ".\nError message: " 
                                           + err.message);
@@ -328,35 +247,25 @@ HotmailScreenRipper.prototype =
     {
         try
         {
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - getNumMessages - START"); 
+            this.m_Log.Write("Hotmail-SR - getNumMessages - START"); 
             
             if (this.m_szMailboxURI == null) return false;
             var szMailboxURI = this.m_szLocationURI + this.m_szMailboxURI; 
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - getNumMessages - mail box url " + szMailboxURI); 
+            this.m_Log.Write("Hotmail-SR - getNumMessages - mail box url " + szMailboxURI); 
             
-            var ios=Components.classes["@mozilla.org/network/io-service;1"].
-                                    getService(Components.interfaces.nsIIOService);
-                                    
-            //set cookies
-            var szURL = ios.newURI(szMailboxURI,null,null).prePath;
-            var aszHost = szURL.match(patternHotmailPOPSRuri); 
-            var aszCookie = this.m_oCookies.findCookie(aszHost);
-                       
-            this.m_iStage = 0;    
-            var bResult = this.httpConnection(szMailboxURI, 
-                                              "GET", 
-                                              null,
-                                              aszCookie, 
-                                              this.mailBoxOnloadHandler);  
-                                              
+            this.m_iStage = 0;  
+            this.m_HttpComms.clean();
+            this.m_HttpComms.setURI(szMailboxURI);
+            this.m_HttpComms.setRequestMethod("GET");
+            var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler); 
             if (!bResult) throw new Error("httpConnection returned false");
-            
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - getNumMessages - END"); 
+                        
+            this.m_Log.Write("Hotmail-SR - getNumMessages - END"); 
             return true;
         }
         catch(e)
         {
-            this.m_HotmailLog.DebugDump("Hotmail-ScreenRipper.js: getNumMessages : Exception : " 
+            this.m_Log.DebugDump("Hotmail-SR: getNumMessages : Exception : " 
                                           + e.name 
                                           + ".\nError message: " 
                                           + e.message);
@@ -371,72 +280,52 @@ HotmailScreenRipper.prototype =
     {
         try
         {
-            mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - mailBoxOnloadHandler - START"); 
-            
-            mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - mailBoxOnloadHandler : " 
-                                         + mainObject.m_iStage + "\n"
-                                         + szResponse);  
+            mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - START"); 
+            mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
-                      
+            mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - Mailbox :" + httpChannel.responseStatus);          
+            
             //check status should be 200.
-            mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - mailBoxOnloadHandler - Mailbox :" + httpChannel.responseStatus);
             if (httpChannel.responseStatus != 200 ) 
                 throw new Error("error status " + httpChannel.responseStatus);   
             
-            var szURL = httpChannel.URI.host;
-            mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - mailBoxOnloadHandler - url - " + szURL);  
-            var aszTempDomain = szURL.match(patternHotmailPOPSRuri);  
-            mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - mailBoxOnloadHandler - domain - " + aszTempDomain[0]); 
-            
-            //get cookies
-            try
-            {
-                var szCookies =  httpChannel.getResponseHeader("Set-Cookie");
-                mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - mailBoxOnloadHandler - cookies \n" + szCookies);  
-                mainObject.m_oCookies.addCookie( aszTempDomain[0], szCookies); 
-            }
-            catch(e)
-            {
-                mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - mailBoxOnloadHandler - no cookies found"); 
-            } 
-            
-            
+           
             // get trash folder uri      
             if (!mainObject.m_szJunkFolderURI && mainObject.m_bUseJunkMail)
             {
                 try
                 {
                     var szFolderURL = szResponse.match(PatternHotmailPOPSRFolderBase)[1];
-                    mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - mailBoxOnloadHandler - folder base: " +szFolderURL);
+                    mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - folder base: " +szFolderURL);
                           
                     var szFolderList = szResponse.match(PatternHotmailPOPSRFolderList)[1];    
-                    mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - mailBoxOnloadHandler - folder list: " +szFolderList);
+                    mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - folder list: " +szFolderList);
                     
                     var aszFolderLinks = szFolderList.match(PatternHotmailPOPSRFolderLinks);
-                    mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - mailBoxOnloadHandler - folder links: " +aszFolderLinks
+                    mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - folder links: " +aszFolderLinks
                                                                        + " length " + aszFolderLinks.length);
                    
                     var szJunkFolder=null;
                     for (i=0 ; i<aszFolderLinks.length-1; i++ )
                     {
-                        mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - mailBoxOnloadHandler - folder link: " +aszFolderLinks[i]);
+                        mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - folder link: " +aszFolderLinks[i]);
                         //get tabindex
                         var iIndex = aszFolderLinks[i].match(PatternHotmailPOPSRTabindex)[1]; 
-                        mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - mailBoxOnloadHandler - folder index: " +iIndex);
+                        mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - folder index: " +iIndex);
                         if(iIndex == 131)
                         {
                             szJunkFolder = aszFolderLinks[i].match(PatternHotmailPOPSRHMFO)[1];
-                            mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - mailBoxOnloadHandler - folder id: " +szJunkFolder);
+                            mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - folder id: " +szJunkFolder);
                         }
                     }
     
                     mainObject.m_szJunkFolderURI = mainObject.m_szLocationURI + szFolderURL + szJunkFolder;
-                    mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - mailBoxOnloadHandler - folder uri: " +mainObject.m_szJunkFolderURI);
+                    mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - folder uri: " +mainObject.m_szJunkFolderURI);
                 }
                 catch(err)
                 {
-                    mainObject.m_HotmailLog.DebugDump("Hotmail-ScreenRipper.js: mailBoxOnloadHandler folder: Exception : " 
+                    mainObject.m_Log.DebugDump("Hotmail-SR: mailBoxOnloadHandler folder: Exception : " 
                                                       + err.name 
                                                       + ".\nError message: " 
                                                       + err.message);
@@ -449,16 +338,16 @@ HotmailScreenRipper.prototype =
             {
                 //get UM
                 mainObject.m_szUM= szResponse.match(patternHotmailPOPSR_UM)[1];
-                mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - mailBoxOnloadHandler -msg pages UM : " +mainObject.m_szUM)
+                mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler -msg pages UM : " +mainObject.m_szUM)
                 
                 //any more pages
                 var aPages = szResponse.match(patternHotmailPOPSRMultPageNum);
-                mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - mailBoxOnloadHandler -msg pages : " +aPages);
+                mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler -msg pages : " +aPages);
                 
                 if (aPages)
                 {   //more than one page
                     var aNums = aPages[3].match(patternHotmailPOPSRPages);
-                    mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - mailBoxOnloadHandler -msg pages num : " +aNums);
+                    mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler -msg pages num : " +aNums);
                 
                     //construct page urls
                     for (i =1 ; i < aNums.length ; i++)  //start at second page
@@ -468,7 +357,7 @@ HotmailScreenRipper.prototype =
                     }
                 }
                 
-                 mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - mailBoxOnloadHandler -msg pages url : " 
+                 mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler -msg pages url : " 
                                                         + mainObject.m_aszPageURLS
                                                         + " length "
                                                         + mainObject.m_aszPageURLS.length);
@@ -478,106 +367,86 @@ HotmailScreenRipper.prototype =
             //get msg urls
             var aMsgTable = szResponse.match(patternHotmailPOPSRMsgTable);
             if (aMsgTable == null) throw new Error("aMsgTable == null");
-            mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - mailBoxOnloadHandler -msg table : " +aMsgTable[1]);
+            mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler -msg table : " +aMsgTable[1]);
             var szMsgRows = aMsgTable[1].split(/<tr.*?>/);  //split on rows
-            mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - mailBoxOnloadHandler -split msg table : " +szMsgRows);
+            mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler -split msg table : " +szMsgRows);
             if (szMsgRows == null) throw new Error("szMsgRows == null");//oops
             
-            var tempTotalSize = 0;
-            var tempNum = 0; 
+           
             for (j = 0; j < szMsgRows.length; j++)
             {
                 var aEmailURL = szMsgRows[j].match(patternHotmailPOPSREmailURL);
-                mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - mailBoxOnloadHandler - Email URL : " +aEmailURL);
+                mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - Email URL : " +aEmailURL);
                 if (aEmailURL)
                 {
+                    var oMSG = new HotmailMSG();
                     var szPath = mainObject.m_szLocationURI+aEmailURL[1]+"&"+mainObject.m_szUM+"&raw=1";
-                    mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - mailBoxOnloadHandler - Email URL : " +szPath);
-                    mainObject.m_aszMsgIDStore.push(szPath);  
-                    var aEmailLength = aEmailURL[1].match(patternHotmailPOPSREmailLength);
+                    mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - Email URL : " +szPath);
+                    oMSG.szMSGUri = szPath;
+                                        
+                    var aEmailLength = aEmailURL[1].match(patternHotmailPOPSREmailLength);                    
+                    var iSize = aEmailLength?  parseInt(aEmailLength[1]) : 2000;
+                    mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - size : " +iSize);
+                    oMSG.iSize = iSize;    
+                    mainObject.m_iTotalSize += iSize;
                     
-                    var lSize = 0;
-                    if (aEmailLength) 
-                        lSize = parseInt(aEmailLength[1]);
-                    else
-                        lSize = 2000;
-                          
-                    mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - mailBoxOnloadHandler - size : " +lSize);    
-                    tempTotalSize += lSize;
-                    tempNum ++; 
+                    oMSG.bTrashFolder = mainObject.m_bJunkMailDone;
+                    
+                    mainObject.m_aMsgDataStore.push(oMSG); 
                  }  
             }
-            
-            mainObject.m_iNum += tempNum;
-            mainObject.m_iTotalSize += tempTotalSize;
-            mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - mailBoxOnloadHandler - Num " + mainObject.m_iNum 
-                                                            +" Total " + mainObject.m_iTotalSize);
-            
-            
-            mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - mailBoxOnloadHandler -msg pages : " +mainObject.m_aszPageURLS);    
-            
-            var ios=Components.classes["@mozilla.org/network/io-service;1"].
-                                    getService(Components.interfaces.nsIIOService);
-            
-            mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - mailBoxOnloadHandler -msg pages count : " 
-                                                + mainObject.m_aszPageURLS.length + " "
-                                                + mainObject.m_iPageCount);   
+    
+            mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler -msg pages : " +mainObject.m_aszPageURLS);    
+            mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler -msg pages count : " 
+                                                        + mainObject.m_aszPageURLS.length + " "
+                                                        + mainObject.m_iPageCount);   
                                                                              
             if (mainObject.m_aszPageURLS.length!= mainObject.m_iPageCount)//more pages
             {           
                 //set cookies
                 var szTempURI = mainObject.m_aszPageURLS[ mainObject.m_iPageCount];
-                mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - mailBoxOnloadHandler - page: " + szTempURI); 
-                var szURL = ios.newURI(szTempURI,null,null).prePath;
-                var aszHost = szURL.match(patternHotmailPOPSRuri); 
-                var aszCookie = mainObject.m_oCookies.findCookie(aszHost);                                                             
-                var bResult = mainObject.httpConnection(szTempURI, 
-                                                        "GET", 
-                                                        null, 
-                                                        aszCookie,
-                                                        mainObject.mailBoxOnloadHandler);
+                mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - page: " + szTempURI); 
                
-                mainObject.m_iPageCount++;                       
+                mainObject.m_HttpComms.clean();
+                mainObject.m_HttpComms.setURI(szTempURI);
+                mainObject.m_HttpComms.setRequestMethod("GET");
+                var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler); 
                 if (!bResult) throw new Error("httpConnection returned false");
+                
+                mainObject.m_iPageCount++;                       
             }
             else  //done with mailbox
             {  
-                mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - mailBoxOnloadHandler - use junkmail: " 
+                mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - use junkmail: " 
                                                         + mainObject.m_bUseJunkMail
                                                         + " Done " + mainObject.m_bJunkMailDone
                                                         + " uri " + mainObject.m_szJunkFolderURI );
                  
                 if (!mainObject.m_bJunkMailDone && mainObject.m_bUseJunkMail && mainObject.m_szJunkFolderURI)
                 { //get junkmail
-                    mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - mailBoxOnloadHandler - junkmail: " + mainObject.m_bUseJunkMail); 
+                    mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - junkmail: " + mainObject.m_bUseJunkMail); 
                     
                     mainObject.m_bJunkMailDone = true;
                     mainObject.m_iPageCount = 0; //reset array
                     mainObject.m_aszPageURLS = new Array;
                     
-                    //set cookies
-                    var szURL = ios.newURI(mainObject.m_szJunkFolderURI,null,null).prePath;
-                    var aszHost = szURL.match(patternHotmailPOPSRuri); 
-                    var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                                                                                      
-                    var bResult = mainObject.httpConnection(mainObject.m_szJunkFolderURI, 
-                                                            "GET", 
-                                                            null, 
-                                                            aszCookie,
-                                                            mainObject.mailBoxOnloadHandler);
-                                                    
+                    mainObject.m_HttpComms.clean();
+                    mainObject.m_HttpComms.setURI(mainObject.m_szJunkFolderURI);
+                    mainObject.m_HttpComms.setRequestMethod("GET");
+                    var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler); 
                     if (!bResult) throw new Error("httpConnection returned false");
                 }
                 else  //all uri's collected
                 {
-                   mainObject.serverComms("+OK "+ mainObject.m_iNum + " " + mainObject.m_iTotalSize + "\r\n");
+                   mainObject.serverComms("+OK "+ mainObject.m_aMsgDataStore.length + " " 
+                                                + mainObject.m_iTotalSize + "\r\n");
                 }
             }
-            mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - MailBoxOnload - END"); 
+            mainObject.m_Log.Write("Hotmail-SR - MailBoxOnload - END"); 
         }
         catch(err)
         {
-             mainObject.m_HotmailLog.DebugDump("Hotmail-ScreenRipper.js: MailboxOnload : Exception : " 
+             mainObject.m_Log.DebugDump("Hotmail-SR: MailboxOnload : Exception : " 
                                               + err.name 
                                               + ".\nError message: " 
                                               + err.message);
@@ -596,35 +465,24 @@ HotmailScreenRipper.prototype =
     {
         try
         {
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - getMessageSizes - START"); 
+            this.m_Log.Write("Hotmail-SR - getMessageSizes - START"); 
             
-            var szPOPResponse = "+OK " + this.m_aszMsgIDStore.length + " Messages\r\n";
-            for (i = 0; i <  this.m_aszMsgIDStore.length; i++)
+            var szPOPResponse = "+OK " + this.m_aMsgDataStore.length + " Messages\r\n";
+            for (i = 0; i <  this.m_aMsgDataStore.length; i++)
             {
-                var szEmailURL = this.m_aszMsgIDStore[i];
-                this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - getMessageSizes - Email URL : " +szEmailURL);
-               
-                //get size 
-                var aEmailLength = szEmailURL.match(patternHotmailPOPSREmailLength);
-                var lSize = 0
-                if (aEmailLength) 
-                    lSize = aEmailLength[1];
-                else
-                    lSize = 2000;
-                    
-                this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - getMessageSizes - size : " +lSize);    
-                szPOPResponse+=(i+1) + " " + lSize + "\r\n";  
-            }         
-    
+                var iSize = this.m_aMsgDataStore[i].iSize;
+                this.m_Log.Write("Hotmail-SR - getMessageSizes - size : " +iSize);    
+                szPOPResponse+=(i+1) + " " + iSize + "\r\n";  
+            }
             szPOPResponse += ".\r\n";
             
             this.serverComms(szPOPResponse);
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - getMessageSizes - END"); 
+            this.m_Log.Write("Hotmail-SR - getMessageSizes - END"); 
             return true;
         }
         catch(e)
         {
-            this.m_HotmailLog.DebugDump("Hotmail-ScreenRipper.js: getMessageSizes : Exception : " 
+            this.m_Log.DebugDump("Hotmail-SR: getMessageSizes : Exception : " 
                                           + e.name 
                                           + ".\nError message: " 
                                           + e.message);
@@ -639,14 +497,14 @@ HotmailScreenRipper.prototype =
     {
         try
         {
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - getMessageIDs - START"); 
+            this.m_Log.Write("Hotmail-SR - getMessageIDs - START"); 
             
-             var szPOPResponse = "+OK " + this.m_aszMsgIDStore.length + " Messages\r\n";
+             var szPOPResponse = "+OK " + this.m_aMsgDataStore.length + " Messages\r\n";
             
-            for (i = 0; i <  this.m_aszMsgIDStore.length; i++)
+            for (i = 0; i <  this.m_aMsgDataStore.length; i++)
             {
-                var szEmailURL = this.m_aszMsgIDStore[i];
-                this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - getMessageIDs - Email URL : " +szEmailURL);
+                var szEmailURL = this.m_aMsgDataStore[i].szMSGUri;
+                this.m_Log.Write("Hotmail-SR - getMessageIDs - Email URL : " +szEmailURL);
         
                 var aEmailID = szEmailURL.match(patternHotmailPOPSREmailID);
                 var szEmailID;
@@ -658,19 +516,19 @@ HotmailScreenRipper.prototype =
                 else
                     szEmailID = aEmailID[1];
                     
-                this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - getMessageIDs - IDS : " +szEmailID);    
+                this.m_Log.Write("Hotmail-SR - getMessageIDs - IDS : " +szEmailID);    
                 szPOPResponse+=(i+1) + " " + szEmailID + "\r\n";   
             }         
      
             szPOPResponse += ".\r\n";
             this.serverComms(szPOPResponse);           
            
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - getMessageIDs - END"); 
+            this.m_Log.Write("Hotmail-SR - getMessageIDs - END"); 
             return true;
         }
         catch(e)
         {
-            this.m_HotmailLog.DebugDump("Hotmail-ScreenRipper.js: getMessageIDs : Exception : " 
+            this.m_Log.DebugDump("Hotmail-SR: getMessageIDs : Exception : " 
                                           + e.name 
                                           + ".\nError message: " 
                                           + e.message);
@@ -687,38 +545,27 @@ HotmailScreenRipper.prototype =
     {
         try
         {
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - getMessage - START"); 
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - getMessage - msg num" + lID); 
+            this.m_Log.Write("Hotmail-SR - getMessage - START"); 
+            this.m_Log.Write("Hotmail-SR - getMessage - msg num" + lID); 
             var szTempMsg = new String();
             
             //get msg id
-            var szMsgURI = this.m_aszMsgIDStore[lID-1];
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - getMessage - msg uri" + szMsgURI); 
-            
-            
-            var ios=Components.classes["@mozilla.org/network/io-service;1"].
-                                    getService(Components.interfaces.nsIIOService);
-                            
-            //set cookies
-            var szURL = ios.newURI(szMsgURI,null,null).prePath;
-            var aszHost = szURL.match(patternHotmailPOPSRuri); 
-            var aszCookie = this.m_oCookies.findCookie(aszHost);
-                       
+            var szMsgURI = this.m_aMsgDataStore[lID-1].szMSGUri;
+            this.m_Log.Write("Hotmail-SR - getMessage - msg uri" + szMsgURI); 
+           
             //get msg from hotmail
-            var bResult = this.httpConnection(szMsgURI, 
-                                                "GET", 
-                                                null,
-                                                aszCookie, 
-                                                this.emailOnloadHandler);  
-                                           
-            if (!bResult) throw new Error("httpConnection returned false"); 
-             
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - getMessage - END"); 
+            this.m_HttpComms.clean();
+            this.m_HttpComms.setURI(szMsgURI);
+            this.m_HttpComms.setRequestMethod("GET");
+            var bResult = this.m_HttpComms.send(this.emailOnloadHandler); 
+            if (!bResult) throw new Error("httpConnection returned false");
+            
+            this.m_Log.Write("Hotmail-SR - getMessage - END"); 
             return true;
         }
         catch(e)
         {
-             this.m_HotmailLog.DebugDump("Hotmail-ScreenRipper.js: getMessage : Exception : " 
+             this.m_Log.DebugDump("Hotmail-SR: getMessage : Exception : " 
                                           + e.name + 
                                           ".\nError message: " 
                                           + e.message);
@@ -731,45 +578,15 @@ HotmailScreenRipper.prototype =
     {
         try
         {
-            mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - emailOnloadHandler - START");
-            
-            mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - emailOnloadHandler - msg :\n" + szResponse); 
-            
+            mainObject.m_Log.Write("Hotmail-SR - emailOnloadHandler - START");
+             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
-                      
+            mainObject.m_Log.Write("Hotmail-SR - emailOnloadHandler - msg :" + httpChannel.responseStatus);
+                       
             //check status should be 200.
-            mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - emailOnloadHandler - msg :" + httpChannel.responseStatus);
-            if (httpChannel.responseStatus != 200 && httpChannel.responseStatus != 302) 
+            if (httpChannel.responseStatus != 200) 
                 throw new Error("error status " + httpChannel.responseStatus);   
-            
-            //test code
-            if (httpChannel.responseStatus == 302)
-            {
-                //get location
-                try
-                {
-                    var szLocation =  httpChannel.getResponseHeader("Location");
-                    mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - emailOnloadHandler - location \n" + szLocation);  
-                }
-                catch(e)
-                {
-                    throw new Error("Location header not found")
-                } 
-                
-                var ios=Components.classes["@mozilla.org/network/io-service;1"].
-                                    getService(Components.interfaces.nsIIOService);
-                var szURL = ios.newURI(szLocation,null,null).prePath;
-                var aszHost = szURL.match(patternHotmailPOPSRuri); 
-                var aszCookie = mainObject.m_oCookies.findCookie(aszHost);
-                
-                //load new page
-                mainObject.httpConnection(szLocation, 
-                                          "GET", 
-                                          null,
-                                          aszCookie, 
-                                          mainObject.emailOnloadHandler);
-                return true;
-            }   
+           
                                                                                  
             //get msg
             var aTemp = szResponse.split(/<pre>\s+/); 
@@ -793,11 +610,11 @@ HotmailScreenRipper.prototype =
 
             mainObject.serverComms(szPOPResponse);           
            
-            mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - emailOnloadHandler - END");      
+            mainObject.m_Log.Write("Hotmail-SR - emailOnloadHandler - END");      
         }
         catch(err)
         {
-            mainObject.m_HotmailLog.DebugDump("Hotmail-ScreenRipper.js: emailOnloadHandler : Exception : " 
+            mainObject.m_Log.DebugDump("Hotmail-SR: emailOnloadHandler : Exception : " 
                                           + err.name 
                                           + ".\nError message: " 
                                           + err.message);
@@ -814,61 +631,57 @@ HotmailScreenRipper.prototype =
     {
         try
         {
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - deleteMessage - START");  
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - deleteMessage - id " + lID ); 
+            this.m_Log.Write("Hotmail-SR - deleteMessage - START");  
+            this.m_Log.Write("Hotmail-SR - deleteMessage - id " + lID ); 
                    
             //create URL
-            var szTempID = this.m_aszMsgIDStore[lID-1];
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - deleteMessage - id " + szTempID );
+            var szTempID = this.m_aMsgDataStore[lID-1].szMSGUri;
+            this.m_Log.Write("Hotmail-SR - deleteMessage - id " + szTempID );
             //msg id
             var aTempID = szTempID.match(patternHotmailPOPSREmailID); 
             var szID ;
             if (aTempID == null)
             {
                 var iTempID = szTempID.indexOf("=");
-                this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - deleteMessage - id " + iTempID ); 
+                this.m_Log.Write("Hotmail-SR - deleteMessage - id " + iTempID ); 
                 szID = szTempID.substring(iTempID+1,szTempID.length);
             }
             else
                 szID = aTempID[1];
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - deleteMessage - MSGid " + szID );    
+            this.m_Log.Write("Hotmail-SR - deleteMessage - MSGid " + szID );    
                 
             //folder id
             var szFolderID = szTempID.match(PatterHotmailPOPSRFolderID)[1];
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - deleteMessage - FolderId " + szFolderID );
+            this.m_Log.Write("Hotmail-SR - deleteMessage - FolderId " + szFolderID );
                
             //construct data
             var szPath = this.m_szLocationURI + "/cgi-bin/HoTMaiL" ;
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - deleteMessage - szPath " + szPath); 
+            this.m_Log.Write("Hotmail-SR - deleteMessage - szPath " + szPath); 
            
-            var szData = "curmbox=" + szFolderID;
-            szData += "&HrsTest=&js=&_HMaction=delete&wo=&page=1&tobox=F000000004&ReportLevel=&rj=&DoEmpty=&SMMF=0&"
-            szData += szID + "=on"; 
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - deleteMessage - szData " + szData);           
-           
-            var ios=Components.classes["@mozilla.org/network/io-service;1"].
-                                    getService(Components.interfaces.nsIIOService);
-                                   
-            //set cookies
-            var szURL = ios.newURI(szPath,null,null).prePath;
-            var aszHost = szURL.match(patternHotmailPOPSRuri); 
-            var aszCookie = this.m_oCookies.findCookie(aszHost);
-           
-            //send request
-            var bResult = this.httpConnection(szPath, 
-                                              "POST", 
-                                              szData,
-                                              aszCookie, 
-                                              this.deleteMessageOnloadHandler);  
-                                           
-            if (!bResult) throw new Error("httpConnection returned false");            
-             
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - deleteMessage - END");     
+            this.m_HttpComms.clean();
+            this.m_HttpComms.setContentType(0);
+            this.m_HttpComms.setRequestMethod("POST");
+            this.m_HttpComms.setURI(szPath);
+            this.m_HttpComms.addValuePair("curmbox",szFolderID);
+            this.m_HttpComms.addValuePair("HrsTest","");
+            this.m_HttpComms.addValuePair("js","");
+            this.m_HttpComms.addValuePair("_HMaction","delete");
+            this.m_HttpComms.addValuePair("wo","");
+            this.m_HttpComms.addValuePair("tobox","F000000004");
+            this.m_HttpComms.addValuePair("ReportLevel","");
+            this.m_HttpComms.addValuePair("rj","");
+            this.m_HttpComms.addValuePair("DoEmpty","");
+            this.m_HttpComms.addValuePair("SMMF","0");
+            this.m_HttpComms.addValuePair(szID,"on");                 
+            var bResult = this.m_HttpComms.send(this.deleteMessageOnloadHandler);                   
+            if (!bResult) throw new Error("httpConnection returned false");
+
+            this.m_Log.Write("Hotmail-SR - deleteMessage - END");     
             return true;
         }
         catch(e)
         {
-            this.m_HotmailLog.DebugDump("Hotmail-ScreenRipper.js: deleteMessage : Exception : " 
+            this.m_Log.DebugDump("Hotmail-SR: deleteMessage : Exception : " 
                                           + e.name + 
                                           ".\nError message: " 
                                           + e.message);
@@ -881,22 +694,21 @@ HotmailScreenRipper.prototype =
     {
         try
         {
-            mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - deleteMessageOnload - START");    
-            mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - deleteMessageOnload :\n" + szResponse); 
-            
+            mainObject.m_Log.Write("Hotmail-SR - deleteMessageOnload - START");    
+                    
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             
             //check status should be 200.
-            mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - deleteMessageOnload :" + httpChannel.responseStatus);
+            mainObject.m_Log.Write("Hotmail-SR - deleteMessageOnload :" + httpChannel.responseStatus);
             if (httpChannel.responseStatus != 200 ) 
                 throw new Error("error status " + httpChannel.responseStatus);   
                     
             mainObject.serverComms("+OK its history\r\n");      
-            mainObject.m_HotmailLog.Write("Hotmail-ScreenRipper.js - deleteMessageOnload - END");      
+            mainObject.m_Log.Write("Hotmail-SR - deleteMessageOnload - END");      
         }
         catch(e)
         {
-            mainObject.m_HotmailLog.DebugDump("Hotmail-ScreenRipper.js: deleteMessageOnload : Exception : " 
+            mainObject.m_Log.DebugDump("Hotmail-SR: deleteMessageOnload : Exception : " 
                                               + e.name 
                                               + ".\nError message: " 
                                               + e.message);
@@ -906,22 +718,21 @@ HotmailScreenRipper.prototype =
     
 
 
-    //cookies are deleted when the connection ends so i dont need to download pages
     logOut : function()
     {
         try
         {
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - logOUT - START"); 
+            this.m_Log.Write("Hotmail-SR - logOUT - START"); 
             
             this.m_Parent.m_bAuthorised = false;
             this.serverComms("+OK Your Out\r\n");             
                                            
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - logOUT - END");  
+            this.m_Log.Write("Hotmail-SR - logOUT - END");  
             return true;
         }
         catch(e)
         {
-            this.m_HotmailLog.DebugDump("Hotmail-ScreenRipper.js: logOUT : Exception : " 
+            this.m_Log.DebugDump("Hotmail-SR: logOUT : Exception : " 
                                       + e.name 
                                       + ".\nError message: " 
                                       + e.message);
@@ -934,122 +745,19 @@ HotmailScreenRipper.prototype =
     {
         try
         { 
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - serverComms - START");
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - serverComms msg " + szMsg);
+            this.m_Log.Write("Hotmail-SR - serverComms - START");
+            this.m_Log.Write("Hotmail-SR - serverComms msg " + szMsg);
             var iCount = this.m_oResponseStream.write(szMsg,szMsg.length);
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - serverComms sent count: " + iCount 
+            this.m_Log.Write("Hotmail-SR - serverComms sent count: " + iCount 
                                                         +" msg length: " +szMsg.length);
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - serverComms - END");  
+            this.m_Log.Write("Hotmail-SR - serverComms - END");  
         }
         catch(e)
         {
-            this.m_HotmailLog.DebugDump("Hotmail-ScreenRipper.js: serverComms : Exception : " 
+            this.m_Log.DebugDump("Hotmail-SR: serverComms : Exception : " 
                                               + e.name 
                                               + ".\nError message: " 
                                               + e.message);
         }
-    },
-   
-      
-    httpConnection : function (szURL, szType, szData, szCookies ,callBack)
-    {
-        try
-        {
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - httpConnection - START");   
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - httpConnection - " + szURL + "\n"
-                                                                    + szType + "\n"
-                                                                    + szCookies + "\n"
-                                                                    + szData );  
-            
-            
-            var ioService = Components.classes["@mozilla.org/network/io-service;1"].
-                                    getService(Components.interfaces.nsIIOService);
-      
-            var uri = ioService.newURI(szURL, null, null);
-            var channel = ioService.newChannelFromURI(uri);
-            var HttpRequest = channel.QueryInterface(Components.interfaces.nsIHttpChannel);                                     
-            HttpRequest.redirectionLimit = 0; //stops automatic redirect handling
-            
-            var component = this;             
-            
-              
-            //set cookies
-            if (szCookies)
-            {
-                this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - httpConnection - adding cookie \n" + szCookies); 
-                HttpRequest.setRequestHeader("Cookie",szCookies , false);
-            }
-           
-            
-            //set data
-            if (szData)
-            {
-                this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - httpConnection - adding data");
-                
-                var uploadStream = Components.classes["@mozilla.org/io/string-input-stream;1"]
-                                    .createInstance(Components.interfaces.nsIStringInputStream);         
-                uploadStream.setData(szData, szData.length);
-        
-                var uploadChannel = channel.QueryInterface(Components.interfaces.nsIUploadChannel);
-                uploadChannel.setUploadStream(uploadStream, "application/x-www-form-urlencoded", -1); 
-            }
-            HttpRequest.requestMethod = szType;
-            
-            var listener = new this.downloadListener(callBack, this);
-            channel.asyncOpen(listener, null);  
-            
-            this.m_HotmailLog.Write("Hotmail-ScreenRipper.js - httpConnection - END"); 
-            
-            return true;  
-        }
-        catch(e)
-        {
-            this.m_HotmailLog.DebugDump("Hotmail-ScreenRipper.js: httpConnection : Exception : " 
-                                              + e.name 
-                                              + ".\nError message: " 
-                                              + e.message);
-            return false;
-        }
-    },
-    
-    
-    downloadListener : function(CallbackFunc, parent) 
-    {
-        return ({
-            m_data : "",
-            
-            onStartRequest : function (aRequest, aContext) 
-            {                 
-                this.m_data = "";
-            },
-            
-            
-            onDataAvailable : function (aRequest, aContext, aStream, aSourceOffset, aLength)
-            {               
-                var scriptableInputStream = Components.classes["@mozilla.org/scriptableinputstream;1"]
-                                 .createInstance(Components.interfaces.nsIScriptableInputStream);
-                scriptableInputStream.init(aStream);
-            
-                this.m_data += scriptableInputStream.read(aLength);
-            },
-            
-            
-            onStopRequest : function (aRequest, aContext, aStatus) 
-            {
-                CallbackFunc(this.m_data, aRequest, parent);
-            },
-            
-            
-            QueryInterface : function(aIID) 
-            {
-                if (aIID.equals(Components.interfaces.nsIStreamListener) ||
-                          aIID.equals(Components.interfaces.nsISupportsWeakReference) ||
-                          aIID.equals(Components.interfaces.nsIAlertListener) ||
-                          aIID.equals(Components.interfaces.nsISupports))
-                    return this;
-                
-                throw Components.results.NS_NOINTERFACE;
-            }            
-        });
     },
 }
