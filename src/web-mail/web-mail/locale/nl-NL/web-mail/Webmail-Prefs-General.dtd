@@ -1,0 +1,4 @@
+<!ENTITY AccountWizard.Label "Voegt WebMail aan de Accountwizard toe">
+<!ENTITY AccountWizard.AccessKey "V">
+<!ENTITY AccountWizardWarning.Label "Schrijfrechten in de programmamap zijn noodzakelijk.">
+<!ENTITY Restart.Label "Veranderingen worden doorgevoerd na een herstart van Thunderbird.">

@@ -1,0 +1,12 @@
+<!ENTITY GeneralLogging.Label "Bijwerken logboekgegevens inschakelen">
+<!ENTITY GeneralLogging.AccessKey "i">
+<!ENTITY JavaScriptConsole.Label "JavaScript console gebruiken">
+<!ENTITY JavaScriptConsole.AccessKey "J">
+<!ENTITY LogFile.Label "Logboek gebruiken">
+<!ENTITY LogFile.AccessKey "L">
+<!ENTITY Location.Label "Locatie">
+<!ENTITY Location.AccessKey "o">
+<!ENTITY Note.Label "Gebruikersnamen en wachtwoorden worden opgeslagen.">
+<!ENTITY Restart.Label "Veranderingen worden doorgevoerd na een herstart van Thunderbird.">
+<!ENTITY Button.Label "Browse...">
+<!ENTITY Button.AccessKey "B">

@@ -1,0 +1,24 @@
+<!ENTITY ServerStatus.Label "Status van de server">
+<!ENTITY Ports.Label "Poorten">
+<!ENTITY Ports.AccessKey "r">
+<!ENTITY Pop.Label "POP">
+<!ENTITY Pop.AccessKey "O">
+<!ENTITY POP.Default.Label "standaard 110">
+<!ENTITY Note.Label "Het besturingssysteem kan poorten < 1024 blokkeren">
+<!ENTITY Restart.Label "Veranderingen worden doorgevoerd na een herstart van Thunderbird.">
+<!ENTITY SMTP.Label "SMTP">
+<!ENTITY SMTP.AccessKey "S">
+<!ENTITY SMTP.Default.Label "standaard 25">
+<!ENTITY IMAP.Label "IMAP">
+<!ENTITY IMAP.AccessKey "I">
+<!ENTITY IMAP.Default.Label "standaard 143">
+<!ENTITY Enable.POP.Label "POP-server inschakelen.">
+<!ENTITY Enable.POP.AccessKey "P">
+<!ENTITY Enable.SMTP.Label "SMTP-server inschakelen.">
+<!ENTITY Enable.SMTP.AccessKey "T">
+<!ENTITY Enable.IMAP.Label "IMAP-server inschakelen.">
+<!ENTITY Enable.IMAP.AccessKey "M">
+<!ENTITY Enable.Label "Inschakelen">
+<!ENTITY Enable.AccessKey "k">
+<!ENTITY Status.Label "Status">
+<!ENTITY Status.AccessKey "u">
