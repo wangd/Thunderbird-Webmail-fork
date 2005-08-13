@@ -69,7 +69,11 @@ var gYahooStartUp =
             this.idCheck("yahoo.de","POP", cszYahooContentID);
             this.idCheck("yahoo.ca","POP", cszYahooContentID); 
             this.idCheck("yahoo.com.au","POP", cszYahooContentID); 
-            this.idCheck("yahoo.com.hk","POP", cszYahooContentID);          
+            this.idCheck("yahoo.com.hk","POP", cszYahooContentID); 
+            this.idCheck("talk21.com","POP", cszYahooContentID); 
+            this.idCheck("btinternet.com","POP", cszYahooContentID); 
+            this.idCheck("btopenworld.com","POP", cszYahooContentID);          
+           
            
             this.idCheck("yahoo.com","SMTP",cszYahooSMTPContentID);                  
             this.idCheck("yahoo.es","SMTP", cszYahooSMTPContentID);
@@ -80,7 +84,10 @@ var gYahooStartUp =
             this.idCheck("yahoo.de","SMTP", cszYahooSMTPContentID);
             this.idCheck("yahoo.ca","SMTP", cszYahooSMTPContentID); 
             this.idCheck("yahoo.com.au","SMTP", cszYahooSMTPContentID); 
-            this.idCheck("yahoo.com.hk","SMTP", cszYahooContentID); 
+            this.idCheck("yahoo.com.hk","SMTP", cszYahooSMTPContentID); 
+            this.idCheck("talk21.com","SMTP", cszYahooSMTPContentID); 
+            this.idCheck("btinternet.com","SMTP", cszYahooSMTPContentID); 
+            this.idCheck("btopenworld.com","SMTP", cszYahooSMTPContentID);
                         
             this.m_Log.Write("Yahoo.js : TimerCallback - END");
         }
