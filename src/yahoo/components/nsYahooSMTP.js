@@ -200,7 +200,7 @@ nsYahooSMTP.prototype =
                         mainObject.m_HttpComms.addValuePair(szName,(szValue? encodeURIComponent(szValue):""));
                     }
                     
-                    var szLogin = mainObject.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
+                    var szLogin = encodeURIComponent(mainObject.m_szUserName);
                     mainObject.m_HttpComms.addValuePair("login", szLogin);
                     
                     var szPass = encodeURIComponent(mainObject.m_szPassWord);
