@@ -8,7 +8,8 @@
         title= "&WebmailAbout.Title;"
         orient="vertical"
         autostretch="always"
-        onload="AddNamesWebmailListItems();sizeToContent()"
+        onload="gWebMailAbout.init();sizeToContent()"
+        onunload ="gWebMailAbout.stop()"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         id = "WebmailAboutDialog">
     
