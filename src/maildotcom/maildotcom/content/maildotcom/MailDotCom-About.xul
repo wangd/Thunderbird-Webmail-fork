@@ -8,7 +8,8 @@
         title= "&MailDotComAbout.Title;"
         orient="vertical"
         autostretch="always"
-        onload="AddNamesMailDotComListItems();sizeToContent()"
+        onload="gMailDotComAbout.init();sizeToContent()"
+        onunload ="gMailDotComAbout.stop()"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         id = "MailDotComAboutDialog">
      
