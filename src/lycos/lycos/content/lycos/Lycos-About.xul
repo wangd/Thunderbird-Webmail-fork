@@ -8,7 +8,8 @@
         title= "&LycosAbout.Title;"
         orient="vertical"
         autostretch="always"
-        onload="AddNamesLycosListItems();sizeToContent()"
+        onload="gLycosAbout.init();sizeToContent()"
+        onunload ="gLycosAbout.stop()"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         id = "LycosAboutDialog">
      
