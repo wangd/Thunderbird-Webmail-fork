@@ -3,7 +3,7 @@ var gWebMailAbout =
     m_iDeckCount : 0,
     m_iCurrentDeck : 0,
     m_Timer : null,
-    m_iElementCount : 3,
+    m_iElementCount : 2,
     m_iTime : 3000,
 
     init : function()
@@ -12,6 +12,9 @@ var gWebMailAbout =
         var szContributors = strBundle.getString("ExtContributorNames");
         var aszNames = szContributors.split(";");
         var list = document.getElementById("WebmailContributorBox");
+        
+        this.m_Timer = Components.classes["@mozilla.org/timer;1"];
+        this.m_Timer = this.m_Timer.createInstance(Components.interfaces.nsITimer); 
         
         if (aszNames.length > this.m_iElementCount)
             this.createDeck(list, aszNames);
@@ -53,8 +56,6 @@ var gWebMailAbout =
         
         base.appendChild(deck);
         
-        this.m_Timer = Components.classes["@mozilla.org/timer;1"].
-                                    createInstance(Components.interfaces.nsITimer); 
         this.m_Timer.initWithCallback(this, 
                                       this.m_iTime, 
                                       Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
