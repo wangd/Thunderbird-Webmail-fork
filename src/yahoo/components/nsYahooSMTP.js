@@ -313,10 +313,7 @@ nsYahooSMTP.prototype =
         try
         {
             mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - START"); 
-            
-            mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler : " 
-                                                    + mainObject.m_iStage + "\n"
-                                                    + szResponse);  
+            mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             
