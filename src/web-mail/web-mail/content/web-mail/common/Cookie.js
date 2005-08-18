@@ -2,10 +2,9 @@ function Cookie(errorLog)
 {
     try
     {
-        var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-                                      .getService(Components.interfaces.mozIJSSubScriptLoader);
-        if (scriptLoader)
-            scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
+        var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
+        scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
            
         this.m_Log = errorLog; 
         

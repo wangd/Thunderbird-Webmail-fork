@@ -2,13 +2,10 @@ function CookieHandler(errorLog)
 {  
     try
     {
-        var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-                                  .getService(Components.interfaces.mozIJSSubScriptLoader);
-        if (scriptLoader)
-        {
-            scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-            scriptLoader.loadSubScript("chrome://web-mail/content/common/Cookie.js");
-        }
+        var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
+        scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/Cookie.js");
         
         this.m_Log = errorLog;
         
@@ -38,45 +35,29 @@ CookieHandler.prototype =
             if (!szDomain || !szCookie) return false; 
            
             //search cookies for domain
-            var oCookie = null;
-            if (this.m_aCookies.length !=0)   
+            var iMax = this.m_aCookies.length;
+            if (iMax != 0)   
             {           
-                var iMax = this.m_aCookies.length;
+                
                 for (var i = 0 ; i<iMax ; i++)
                 {
-                    this.m_Log.Write("CookieManger.js - findCookies " + this.m_aCookies[0]);
-                    
-                    if (this.m_aCookies[0] != undefined)
-                    {  
-                        var temp = this.m_aCookies.shift();  //get first item
-                        this.m_Log.Write("CookieManger.js - findCookie " + i + " "+ temp.getDomain());
-                       
-                        if (szDomain == temp.getDomain())
-                        { 
-                            this.m_Log.Write("CookieManger.js - findCookie - found domain");
-                            temp.setCookieValue(szCookie);
-                            this.m_aCookies.push(temp);
-                            this.m_Log.Write("CookieManger.js - findCookie - found domain END");
-                            return true;
-                        }
-                        else
-                        {
-                            this.m_aCookies.push(temp);
-                            this.m_Log.Write("CookieManger.js - findCookies - not found domain"); 
-                        }
+                    var temp = this.m_aCookies[i];  //get first item
+                    this.m_Log.Write("CookieManger.js - findCookie " + i + " "+ temp.getDomain());
+                   
+                    if (szDomain == temp.getDomain())
+                    { 
+                        temp.setCookieValue(szCookie);
+                        this.m_Log.Write("CookieManger.js - findCookie - found domain END");
+                        return true;
                     }
                 } 
             }
               
+            this.m_Log.Write("CookieManger.js - findCookies - not found domain"); 
             
-            
-            if (oCookie == null) //domain  not found
-            {
-                this.m_Log.Write("CookieManager.js - addCookie - creating new cookie"); 
-                //domain not found create new cookie         
-                oCookie = new Cookie( this.m_Log);
-                oCookie.newCookie(szDomain, szCookie);                                   
-            }
+            var oCookie = new Cookie( this.m_Log);
+            oCookie.newCookie(szDomain, szCookie); 
+            this.m_Log.Write("CookieManager.js - addCookie - creating new cookie"); 
             this.m_aCookies.push(oCookie); //place cookie in array
             
             this.m_Log.Write("CookieManager.js - addCookie - END"); 
@@ -100,29 +81,19 @@ CookieHandler.prototype =
             this.m_Log.Write("CookieManger.js - findCookie - START");
             this.m_Log.Write("CookieManger.js - findCookie - target domain - " + szDomain);
             if (!szDomain) return null;
-            if (this.m_aCookies.length == 0) return null;   
             
             var iMax = this.m_aCookies.length;
+            if (iMax == 0) return null;   
+                       
             for (var i = 0 ; i<iMax ; i++)
             {
-                this.m_Log.Write("CookieManger.js - findCookies " + this.m_aCookies[0]);
-                
-                if (this.m_aCookies[0] != undefined)
-                {  
-                    var temp = this.m_aCookies.shift();  //get first item
-                    this.m_Log.Write("CookieManger.js - findCookie " + i + " "+ temp.getDomain());
-                   
-                    if (szDomain == temp.getDomain())
-                    { 
-                        this.m_Log.Write("CookieManger.js - findCookie - found domain"); 
-                        this.m_aCookies.push(temp);
-                        return temp.getCookieString();
-                    }
-                    else
-                    {
-                        this.m_aCookies.push(temp);
-                        this.m_Log.Write("CookieManger.js - findCookies - not found domain"); 
-                    }
+                var temp = this.m_aCookies[i]
+                this.m_Log.Write("CookieManger.js - findCookie " + i + " "+ temp.getDomain());
+               
+                if (szDomain == temp.getDomain())
+                { 
+                    this.m_Log.Write("CookieManger.js - findCookie - found domain END"); 
+                    return temp.getCookieString();
                 }
             }
             
