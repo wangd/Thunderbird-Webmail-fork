@@ -8,6 +8,7 @@ var gWebMail =
     m_SMTP : null,
     m_IMAP : null,
     m_DomainManager : null,
+    m_DataBase : null,
     m_AccountWizard : null,
     
     startUp : function ()
@@ -28,6 +29,13 @@ var gWebMail =
                                         
             this.m_Log.Write("Webmail.js : startUp - START");
     
+            var iCount = this.windowCount();
+            if (iCount >1) 
+            {
+                this.m_Log.Write("Webmail.js : shutUp - another window - END");
+                return;
+            }
+            
             //account wizard
        	    var oPref = new Object();
             oPref.Value = null;
@@ -116,6 +124,13 @@ var gWebMail =
         {
             this.m_Log.Write("Webmail.js : shutDown - START");
            
+            var iCount = this.windowCount();
+            if (iCount !=0) 
+            {
+                this.m_Log.Write("Webmail.js : shutDown - Another window - END");
+                return;
+            }
+            
             if  (this.m_POP) 
             {
                 this.m_Log.Write("Webmail.js : shutDown - POP stop");
@@ -138,6 +153,36 @@ var gWebMail =
             this.m_AccountWizard.deleteISP();
                
             this.m_Log.Write("Webmail.js : shutDown - END");
+        }
+        catch(e)
+        {
+            this.m_Log.DebugDump("Webmail.js : Exception in shutDown " 
+                                            + e.name 
+                                            + ".\nError message: " 
+                                            + e.message);
+        }
+    },
+    
+    windowCount : function()
+    {
+        try
+        {
+            this.m_Log.Write("Webmail.js : windowCount - START");
+            
+            var iWindowCount = 0;
+            var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"];
+            wm = wm.getService(Components.interfaces.nsIWindowMediator);
+            var e = wm.getEnumerator(null);
+  
+            while (e.hasMoreElements()) 
+            {
+                var w = e.getNext();
+                if (++iWindowCount == 2) 
+                break;
+            }
+            
+            this.m_Log.Write("Webmail.js : windowCount - "+ iWindowCount +" END ");
+            return iWindowCount;
         }
         catch(e)
         {
