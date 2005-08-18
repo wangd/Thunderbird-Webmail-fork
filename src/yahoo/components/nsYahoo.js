@@ -118,8 +118,17 @@ nsYahoo.prototype =
             if (!this.m_szUserName || !this.m_oResponseStream  || !this.m_szPassWord) return false;
             
             //get YahooLog.com webpage
+            var szPath = "http://mail.yahoo.com";
+            
+            if (this.m_szUserName.search(/@talk21.com$/)!=-1 ||  
+                this.m_szUserName.search(/@btinternet.com$/)!=-1  ||
+                this.m_szUserName.search(/@btopenworld.com$/)!=-1 )
+            {
+                szPath = "http://bt.yahoo.com/";
+            }      
+            
             this.m_HttpComms.clean();
-            this.m_HttpComms.setURI("http://mail.yahoo.com");
+            this.m_HttpComms.setURI(szPath);
             this.m_HttpComms.setRequestMethod("GET");
             var bResult = this.m_HttpComms.send(this.loginOnloadHandler);                             
             if (!bResult) throw new Error("httpConnection returned false");        
