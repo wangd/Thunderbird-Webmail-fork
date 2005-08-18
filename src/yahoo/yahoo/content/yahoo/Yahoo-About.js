@@ -35,7 +35,12 @@ var gYahooAbout =
                 
         for(i =0 ; i< aszNames.length; i++)
         {
-            if (iCount == this.m_iElementCount+1)
+            if (iCount == 0) vbox = document.createElement("vbox"); 
+            var hBox = this.processListItem(aszNames[i]);
+            vbox.appendChild(hBox);
+            iCount++;
+            
+            if (iCount > this.m_iElementCount)
             {
                 deck.appendChild(vbox);
                 iCount = 0; 
@@ -46,12 +51,6 @@ var gYahooAbout =
                 deck.appendChild(vbox);
                 this.m_iDeckCount++;
             }
-               
-            if (iCount == 0) vbox = document.createElement("vbox"); 
-            
-            var hBox = this.processListItem(aszNames[i]);
-            vbox.appendChild(hBox);
-            iCount++;
         }
         
         base.appendChild(deck);
