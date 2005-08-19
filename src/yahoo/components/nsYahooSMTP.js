@@ -3,7 +3,7 @@ const nsYahooSMTPClassID = Components.ID("{958266e0-e2a6-11d9-8cd6-0800200c9a66}
 const nsYahooSMTPContactID = "@mozilla.org/YahooSMTP;1";
 const ExtYahooGuid = "{d7103710-6112-11d9-9669-0800200c9a66}";
 
-const patternYahooSecure = /<a href="(.*?https.*?)".*?>/;
+const patternYahooSecure = /<a href="(.*?https.*?login.*?)".*?>/;
 const patternYahooLoginForm = /<form.*?name="*login_form"*.*?>[\S\s]*?<\/form>/gm;
 const patternYahooAction = /<form.*?action="(.*?)".*?>/;
 const patternYahooInput = /<input.*?type=['|"]*hidden['|"]*.*?name=.*?value=.*?>/gm;
