@@ -60,6 +60,10 @@ Comms.prototype =
         this.m_aFormData = new Array();
     },
   
+    setUser : function (szUser)
+    {
+        //for future use
+    },
     
     setHandleCookies : function (bState)
     {
