@@ -21,7 +21,6 @@ function SMTPconnectionHandler(transport)
         
         this.transport = transport;
         this.bAuth = false;
-        this.szRcptList = null;
         this.iLoginReTryCount = 1;
         this.m_bData = false;
         this.m_szEmail = null;
@@ -50,7 +49,8 @@ function SMTPconnectionHandler(transport)
         this.m_SMTPLog.DebugDump("nsSMTPConnectionManager.js: Constructor : Exception : " 
                                       + e.name + 
                                       ".\nError message: " 
-                                      + e.message);
+                                      + e.message +"\n" 
+                                      + e.lineNumber);
     }
 }
 
@@ -79,8 +79,7 @@ SMTPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
             {
                 this.m_bData = false;
             
-                var szEmail = "x-Rcpt: " + this.szRcptList + "\r\n";
-                this.m_szEmail? szEmail += this.m_szEmail :"";
+                var szEmail = (this.m_szEmail)? this.m_szEmail :"";
                 szEmail += szStream;
                
                 if (!this.m_DomainHandler.rawMSG(szEmail))
@@ -163,6 +162,9 @@ SMTPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
                     this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - mail - START "+ this.iID); 
                     this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - mail -\n"+ aCommand); 
                     
+                    var szTemp = aCommand[1].match(/<(.*?)>/)[1];
+                    this.m_DomainHandler.from = szTemp; 
+                    
                     var szResponse = "250 OK\r\n";
                     this.ServerResponse.write(szResponse, szResponse.length);
                      
@@ -175,9 +177,7 @@ SMTPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
                     this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - rcpt -\n"+ aCommand);
                     
                     var szTemp = aCommand[1].match(/<(.*?)>/)[1];
-                    
-                    this.szRcptList ? this.szRcptList += ","+szTemp : this.szRcptList = szTemp;
-                    this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - rcpt - List "+ this.szRcptList);
+                    this.m_DomainHandler.to = szTemp; 
                     
                     var szResponse = "250 OK\r\n";
                     this.ServerResponse.write(szResponse, szResponse.length);
@@ -228,7 +228,8 @@ SMTPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
         this.m_SMTPLog.DebugDump("nsSMTPConnectionManager.js: onDataAvailable : Exception : " 
                                               + e.name 
                                               + ".\nError message: " 
-                                              + e.message);
+                                              + e.message+"\n" 
+                                              + e.lineNumber);
     }
 }
 
@@ -316,7 +317,8 @@ SMTPconnectionHandler.prototype.getDomainHandler = function(szUserName, szDomain
         this.m_SMTPLog.DebugDump("SMTPconnectionHandler.js : getDomainHandler : Exception : " 
                                       + e.name 
                                       + ".\nError message: "
-                                      + e.message);
+                                      + e.message+"\n" 
+                                      + e.lineNumber);
         return false;      
     }
 }
