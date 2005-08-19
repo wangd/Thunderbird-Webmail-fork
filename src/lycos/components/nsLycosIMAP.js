@@ -36,10 +36,6 @@ function nsLycosIMAP()
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/comms.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
-        scriptLoader.loadSubScript("chrome://lycos/content/Lycos-FolderManager.js");
-        scriptLoader.loadSubScript("chrome://lycos/content/Lycos-Folder.js");
-        scriptLoader.loadSubScript("chrome://lycos/content/Lycos-MSG.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/crc.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/base64.js");
        
         var date = new Date();
