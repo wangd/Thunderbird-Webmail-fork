@@ -1,4 +1,6 @@
 const cszLycosPOPContentID = "@mozilla.org/Lycos;1";
+const cszLycosIMAPContentID = "@mozilla.org/LycosIMAP;1";
+const cszLycosSMTPContentID = "@mozilla.org/LycosSMTP;1";
 
 window.addEventListener("load", function() {gLycosStartUp.init();} , false);
 
@@ -59,13 +61,29 @@ var gLycosStartUp =
             timer.cancel();
          
             //get store ids
-            this.idCheck("lycos.co.uk", "pop" ,cszLycosPOPContentID)
+            this.idCheck("lycos.co.uk", "pop" ,cszLycosPOPContentID);
             this.idCheck("lycos.it","pop" , cszLycosPOPContentID);
             this.idCheck("lycos.at", "pop" ,cszLycosPOPContentID);
             this.idCheck("lycos.de", "pop" ,cszLycosPOPContentID);
             this.idCheck("lycos.es", "pop" ,cszLycosPOPContentID);  
             this.idCheck("lycos.fr", "pop" ,cszLycosPOPContentID);
-                                     
+           
+           /*
+            this.idCheck("lycos.co.uk", "imap" ,cszLycosIMAPContentID); 
+            this.idCheck("lycos.it", "imap" ,cszLycosIMAPContentID);
+            this.idCheck("lycos.at", "imap" ,cszLycosIMAPContentID);
+            this.idCheck("lycos.de", "imap" ,cszLycosIMAPContentID);
+            this.idCheck("lycos.es", "imap" ,cszLycosIMAPContentID);  
+            this.idCheck("lycos.fr", "imap" ,cszLycosIMAPContentID); 
+           */
+           
+            this.idCheck("lycos.co.uk", "smtp" ,cszLycosSMTPContentID); 
+            this.idCheck("lycos.it", "smtp" ,cszLycosSMTPContentID);
+            this.idCheck("lycos.at", "smtp" ,cszLycosSMTPContentID);
+            this.idCheck("lycos.de", "smtp" ,cszLycosSMTPContentID);
+            this.idCheck("lycos.es", "smtp" ,cszLycosSMTPContentID);  
+            this.idCheck("lycos.fr", "smtp" ,cszLycosSMTPContentID); 
+                               
             this.m_Log.Write("Lycos.js : notify - END");
         }
         catch(e)
