@@ -1,2 +1,4 @@
 <!ENTITY Options.szTitle "Opciones Lycos">
 <!ENTITY POP.Panel.szTitle "POP">
+<!ENTITY SMTP.Panel.szTitle "SMTP">
+<!ENTITY IMAP.Panel.szTitle "IMAP">
