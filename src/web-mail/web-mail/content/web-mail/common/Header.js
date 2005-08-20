@@ -41,61 +41,7 @@ headers.prototype =
             return null;          
         }
     },
-    
-    
-    getBcc : function ()
-    {
-        try
-        {
-            this.m_Log.Write("headers.js - getBcc - START");
-            if (!this.szHeaders) return null;
-            
-            var szBcc = null;
-            var szTo = this.getTo();
-            var szCc = this.getCc();
-            
-            var szAddress = null;
-            if (szTo) szAddress = szTo;
-            if (szCc) szAddress = (szTo ? (szAddress + ","+ szCc) : szCc);
-            this.m_Log.Write("headers.js - getBcc - szAddress " + szAddress);
-            
-            var szRcptList = this.szHeaders.match(/x-Rcpt:(.*?)$/im)[1];
-            szRcptList = this.addressClean(szRcptList);
-            this.m_Log.Write("headers.js - getBcc - szRcptList " + szRcptList);  
-           
-            if (!szAddress) 
-                szBcc = szRcptList;
-            else
-            {     
-                var aszRcptList = szRcptList.split(",");
-                this.m_Log.Write("headers.js - getBcc - aszAddress " + aszRcptList);
-                for (i=0; i<aszRcptList.length; i++)
-                {
-                    var regExp = new RegExp(aszRcptList[i]);
-                    if (szAddress.search(regExp)==-1)
-                    {    
-                        szBcc? (szBcc += aszRcptList[i]) : (szBcc = aszRcptList[i]);
-                        szBcc +=",";
-                    }
-                }
-            }
-            this.m_Log.Write("headers.js - getBcc szBcc- " + szBcc);
-            
-            this.m_Log.Write("headers.js - getBcc - End");
-            return szBcc;  
-        }
-        catch(err)
-        {
-            this.m_Log.DebugDump("headers.js: getBcc : Exception : " 
-                                                  + err.name 
-                                                  + ".\nError message: " 
-                                                  + err.message);
-                                                  
-            return null;
-        }
-    },
-    
-    
+       
     
     getCc : function ()
     {
