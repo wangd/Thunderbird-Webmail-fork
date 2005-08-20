@@ -47,6 +47,8 @@ function nsYahooSMTP()
         this.m_oResponseStream = null;  
         this.m_HttpComms = new Comms(this , this.m_Log);
         this.m_iStage = 0;
+        this.m_aszTo = new Array;
+        this.m_szFrom = null;
         
         this.m_szComposeURI = null;
         this.m_szLocationURI = null; 
@@ -99,6 +101,12 @@ nsYahooSMTP.prototype =
     get ResponseStream() {return this.m_oResponseStream;},
     set ResponseStream(responseStream) {return this.m_oResponseStream = responseStream;},
     
+    get to() {return this.m_aszTo;},
+    set to(szAddress) {return this.m_aszTo.push(szAddress);},
+    
+    get from() {return this.m_szFrom;},
+    set from(szAddress) {return this.m_szFrom = szAddress;},
+    
     
     logIn : function()
     {
@@ -135,7 +143,8 @@ nsYahooSMTP.prototype =
             this.m_Log.DebugDump("nsYahooSMTP.js: logIN : Exception : " 
                                               + e.name + 
                                               ".\nError message: " 
-                                              + e.message);
+                                              + e.message+ " "
+                                              + e.lineNumber);
                                               
             this.serverComms("502 negative vibes\r\n");
             
@@ -268,7 +277,8 @@ nsYahooSMTP.prototype =
             mainObject.m_Log.DebugDump("nsYahooSMTP.js: loginHandler : Exception : " 
                                           + err.name 
                                           + ".\nError message: " 
-                                          + err.message);
+                                          + err.message+ " "
+                                          + err.lineNumber);
                                             
             mainObject.serverComms("502 negative vibes\r\n");
         }
@@ -302,7 +312,8 @@ nsYahooSMTP.prototype =
             this.m_Log.DebugDump("nsYahooSMTP.js: rawMSG : Exception : " 
                                               + err.name + 
                                               ".\nError message: " 
-                                              + err.message);
+                                              + err.message+ " "
+                                              + err.lineNumber);
             return false;
         }
     },
@@ -369,14 +380,16 @@ nsYahooSMTP.prototype =
                     var szTo = mainObject.m_Email.headers.getTo(); 
                     mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - TO " + szTo);
                     mainObject.m_HttpComms.addValuePair("To", (szTo? szTo : ""));
-                                        
-                    var szBCC = mainObject.m_Email.headers.getBcc();
+                    
+                    var szCc = mainObject.m_Email.headers.getCc();
+                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - CC " + szCc);
+                    mainObject.m_HttpComms.addValuePair("Cc", (szCc? szCc : ""));                    
+                    
+                    var szBCC = mainObject.getBcc(szTo, szCc);
                     mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Bcc " + szBCC);
                     mainObject.m_HttpComms.addValuePair("Bcc", (szBCC? szBCC : ""));
                   
-                    var szCc = mainObject.m_Email.headers.getCc();
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - CC " + szCc);
-                    mainObject.m_HttpComms.addValuePair("Cc", (szCc? szCc : ""));
+                    
 
                     var szSubject = mainObject.m_Email.headers.getSubject(); 
                     mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Subject " + szSubject);
@@ -646,7 +659,8 @@ nsYahooSMTP.prototype =
             mainObject.m_Log.DebugDump("nsYahooSMTP.js: composerOnloadHandler : Exception : " 
                                           + err.name 
                                           + ".\nError message: " 
-                                          + err.message);
+                                          + err.message + " "
+                                          + err.lineNumber);
                                             
             mainObject.serverComms("502 negative vibes\r\n");
         }
@@ -661,6 +675,50 @@ nsYahooSMTP.prototype =
     },
     
     
+    getBcc : function (szTo,szCc)
+    {
+        try
+        {
+            this.m_Log.Write("nsYahooSMTP.js - getBcc - START");
+            if (this.m_aszTo.length==0) return null;
+            this.m_Log.Write("nsYahooSMTP.js - getBcc - szRcptList " + this.m_aszTo);  
+            
+            var szBcc = null;
+            var szAddress = null;
+            if (szTo) szAddress = szTo;
+            if (szCc) szAddress = (szTo ? (szAddress + ","+ szCc) : szCc);
+            this.m_Log.Write("nsYahooSMTP.js - getBcc - szAddress " + szAddress);
+           
+            if (!szAddress) 
+                szBcc = this.m_aszTo;
+            else
+            {     
+                for (i=0; i<this.m_aszTo.length; i++)
+                {
+                    var regExp = new RegExp(this.m_aszTo[i]);
+                    if (szAddress.search(regExp)==-1)
+                    {    
+                        szBcc? (szBcc += this.m_aszTo[i]) : (szBcc = this.m_aszTo[i]);
+                        szBcc +=",";
+                    }
+                }
+            }
+            this.m_Log.Write("nsYahooSMTP.js - getBcc szBcc- " + szBcc);
+            
+            this.m_Log.Write("nsYahooSMTP.js - getBcc - End");
+            return szBcc;  
+        }
+        catch(err)
+        {
+            this.m_Log.DebugDump("nsYahooSMTP.js: getBcc : Exception : " 
+                                                  + err.name 
+                                                  + ".\nError message: " 
+                                                  + err.message + " "
+                                                  + err.lineNumber);
+                                                  
+            return null;
+        }
+    },
     ////////////////////////////////////////////////////////////////////////////
     /////  Comms                  
     
@@ -680,7 +738,8 @@ nsYahooSMTP.prototype =
             this.m_Log.DebugDump("nsYahooSMTP.js: serverComms : Exception : " 
                                               + e.name 
                                               + ".\nError message: " 
-                                              + e.message);
+                                              + e.message+ " "
+                                              + err.lineNumber);
         }
     },
     
