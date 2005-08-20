@@ -47,7 +47,13 @@ var gWebMail =
            
             //start  service
             try
+        
             {   //create service
+        /*        this.m_DataBase =  Components.classes["@mozilla.org/DataBaseManager;1"];
+                this.m_DataBase = this.m_DataBase.getService();
+                this.m_DataBase.QueryInterface(Components.interfaces.nsIDataBaseManager);
+          */      
+                
                 this.m_DomainManager = Components.classes["@mozilla.org/DomainManager;1"];
                 this.m_DomainManager = this.m_DomainManager.getService();
                 this.m_DomainManager.QueryInterface(Components.interfaces.nsIDomainManager);
@@ -170,15 +176,18 @@ var gWebMail =
             this.m_Log.Write("Webmail.js : windowCount - START");
             
             var iWindowCount = 0;
-            var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"];
-            wm = wm.getService(Components.interfaces.nsIWindowMediator);
-            var e = wm.getEnumerator(null);
+            var winman = Components.classes["@mozilla.org/appshell/window-mediator;1"];
+            winman = winman.getService(Components.interfaces.nsIWindowMediator);
+            var e = winman.getEnumerator(null);
   
             while (e.hasMoreElements()) 
             {
-                var w = e.getNext();
-                if (++iWindowCount == 2) 
-                break;
+                var win = e.getNext();
+                win.QueryInterface(Components.interfaces.nsIDOMWindowInternal);
+                var szValue = win.document.documentElement.getAttribute("id");
+                this.m_Log.Write("Webmail.js : windowCount - "+ szValue);
+                
+                if (szValue =="messengerWindow")iWindowCount++;   
             }
             
             this.m_Log.Write("Webmail.js : windowCount - "+ iWindowCount +" END ");
