@@ -10,9 +10,9 @@ interface nsISMTPDomainHandler : nsISupports
     attribute string passWord;
     readonly attribute boolean bAuthorised;
     attribute nsIOutputStream ResponseStream;
+    attribute string to;
+    attribute string from;   
        
-    
     boolean logIn ();
     boolean rawMSG (in string Email);
-    
 };
