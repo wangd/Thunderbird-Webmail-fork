@@ -9,7 +9,7 @@ const patternYahooAction = /<form.*?action="(.*?)".*?>/;
 const patternYahooInput = /<input.*?type=['|"]*hidden['|"]*.*?name=.*?value=.*?>/gm;
 const patternYahooFile = /<input.*?type="*file"*.*?name=.*?>/igm;
 const patternYahooNameAlt = /name=['|"]*([\S]*)['|"]*/;
-const patternYahooAltValue = /value=['|"]*([\S]*)['|"]*>/;
+const patternYahooAltValue = /value=['|"]*([\S\s]*)['|"]*[\s]*>/;
 const patternYahooRedirect = /<a href=['|"]*(.*?)['|"]*>/;
 const patternYahooCompose = /location="*(http:\/\/.*?Compose\?YY=.*?)"*/i;
 const patternYahooComposeForm = /<form.*?name="*Compose"*.*?>[\S\s]*?<\/form>/igm;
@@ -739,7 +739,7 @@ nsYahooSMTP.prototype =
                                               + e.name 
                                               + ".\nError message: " 
                                               + e.message+ " "
-                                              + err.lineNumber);
+                                              + e.lineNumber);
         }
     },
     
