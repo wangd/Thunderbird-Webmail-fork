@@ -8,7 +8,7 @@ const patternYahooForm = /<form.*?name="*login_form"*.*?>[\S\s]*?<\/form>/gm;
 const patternYahooAction = /<form.*?action="(.*?)".*?>/;
 const patternYahooLogIn = /<input.*?type=['|"]*hidden['|"]*.*?name=.*?value=.*?>/gm;
 const patternYahooNameAlt = /name=['|"]*([\S]*)['|"]*/;
-const patternYahooAltValue = /value=['|"]*([\S\s]*)['|"]*>/;
+const patternYahooAltValue = /value=['|"]*([\S\s]*)['|"]*[\s]*>/;
 const patternYahooRedirect = /<a href=['|"]*(.*?)['|"]*>/;
 const patternYahooInbox = /<li id="inbox".*?<a href="(.*?Inbox.*?)".*?>/; 
 const patternYahooInboxFrame = /gInboxPage = "http:\/\/.*?(\/.*?)";/;
@@ -84,7 +84,8 @@ function nsYahoo()
         DebugDump("nsYahoo.js: Constructor : Exception : " 
                                       + e.name 
                                       + ".\nError message: " 
-                                      + e.message);
+                                      + e.message+ "\n"
+                                      + e.lineNumber);
     }
 }
 
@@ -142,7 +143,8 @@ nsYahoo.prototype =
             this.m_Log.DebugDump("nsYahoo.js: logIN : Exception : " 
                                               + e.name + 
                                               ".\nError message: " 
-                                              + e.message);
+                                              + e.message+ "\n"
+                                              + e.lineNumber);
             return false;
         }
     },
@@ -311,7 +313,8 @@ nsYahoo.prototype =
             mainObject.m_Log.DebugDump("nsYahoo.js: loginHandler : Exception : " 
                                           + err.name 
                                           + ".\nError message: " 
-                                          + err.message);
+                                          + err.message + "\n"
+                                          + err.lineNumber);
                                               
             mainObject.serverComms("-ERR negative vibes\r\n");
         }
@@ -346,7 +349,8 @@ nsYahoo.prototype =
             this.m_Log.DebugDump("nsYahoo.js: getNumMessages : Exception : " 
                                           + e.name 
                                           + ".\nError message: " 
-                                          + e.message);
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
             return false;
         }
     },
@@ -545,7 +549,8 @@ nsYahoo.prototype =
              mainObject.m_Log.DebugDump("nsYahoo.js: MailboxOnload : Exception : " 
                                               + err.name 
                                               + ".\nError message: " 
-                                              + err.message);
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
             
              mainObject.serverComms("-ERR negative vibes\r\n");
         }   
@@ -626,7 +631,8 @@ nsYahoo.prototype =
             this.m_Log.DebugDump("nsYahoo.js: getMessageIDs : Exception : " 
                                           + e.name 
                                           + ".\nError message: " 
-                                          + e.message);
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
             return false;
         }
     },
@@ -682,7 +688,8 @@ nsYahoo.prototype =
              this.m_Log.DebugDump("m_YahooLog.js: getMessage : Exception : " 
                                           + e.name + 
                                           ".\nError message: " 
-                                          + e.message);
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
             return false;
         }
     },    
@@ -752,7 +759,8 @@ nsYahoo.prototype =
             mainObject.m_Log.DebugDump("m_YahooLog.js: emailOnloadHandler : Exception : " 
                                           + err.name 
                                           + ".\nError message: " 
-                                          + err.message);
+                                          + err.message+ "\n"
+                                          + err.lineNumber);
             
             mainObject.serverComms("-ERR negative vibes\r\n");
         }
@@ -798,7 +806,8 @@ nsYahoo.prototype =
             this.m_Log.DebugDump("nsYahoo.js: deleteMessage : Exception : " 
                                           + e.name + 
                                           ".\nError message: " 
-                                          + e.message);
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
             return false;
         } 
     },
@@ -825,7 +834,8 @@ nsYahoo.prototype =
             mainObject.m_Log.DebugDump("nsYahoo.js: deleteMessageOnload : Exception : " 
                                               + e.name 
                                               + ".\nError message: " 
-                                              + e.message);
+                                              + e.message+ "\n"
+                                              + e.lineNumber);
             mainObject.serverComms("-ERR negative vibes\r\n");
         }
     },
@@ -850,7 +860,8 @@ nsYahoo.prototype =
             this.m_Log.DebugDump("nsYahoo.js: logOUT : Exception : " 
                                       + e.name 
                                       + ".\nError message: " 
-                                      + e.message);
+                                      + e.message+ "\n"
+                                      + e.lineNumber);
             return false;
         }
     },  
@@ -875,7 +886,8 @@ nsYahoo.prototype =
             this.m_Log.DebugDump("nsYahoo.js: serverComms : Exception : " 
                                               + e.name 
                                               + ".\nError message: " 
-                                              + e.message);
+                                              + e.message+ "\n"
+                                              + e.lineNumber);
         }
     },
    
