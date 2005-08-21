@@ -57,6 +57,7 @@ function nsLycos()
         
         this.m_aMsgDataStore = new Array();
         this.m_iTotalSize = 0;     
+        this.m_bJunkMail = false;
         
         //do i download junkmail
         var oPref = new Object();
@@ -325,7 +326,7 @@ nsLycos.prototype =
                             data.szMSGUri = aszResponses[i].match(LycosHref)[1]; //uri
                             data.iSize = parseInt(aszResponses[i].match(LycosSize)[1]);//size 
                             mainObject.m_iTotalSize += data.iSize;
-                            data.bTrashFolder = false;
+                            data.bJunkFolder = false;
                             mainObject.m_aMsgDataStore.push(data);
                         }
                     }
@@ -364,7 +365,7 @@ nsLycos.prototype =
                             data.szMSGUri = aszResponses[i].match(LycosHref)[1]; //uri
                             data.iSize = parseInt(aszResponses[i].match(LycosSize)[1]);//size 
                             mainObject.m_iTotalSize += data.iSize;
-                            data.bTrashFolder = true;
+                            data.bJunkFolder = true;
                             mainObject.m_aMsgDataStore.push(data);
                         }
                     }
@@ -469,10 +470,12 @@ nsLycos.prototype =
             this.m_iStage=0;
                                   
             //get msg id
-            var szMsgID = this.m_aMsgDataStore[lID-1].szMSGUri;
+            var oMSG = this.m_aMsgDataStore[lID-1]
+            var szMsgID = oMSG.szMSGUri;
             this.m_Log.Write("nsLycos.js - getMessage - msg id" + szMsgID); 
            
-            
+            this.m_bJunkFolder = oMSG.bJunkFolder;
+             
             //get msg from lycos
             this.m_HttpComms.clean();
             this.m_HttpComms.setContentType(-1);
@@ -511,7 +514,10 @@ nsLycos.prototype =
                 throw new Error("return status " + httpChannel.responseStatus);
             
             //server response
-            var szMsg =  szResponse;
+            var szMsg =  "X-WebMail: true\r\n";
+            szMsg += "X-JunkFolder: " +(mainObject.m_bJunkFolder? "true":"false")+"\r\n";
+            szMsg += szResponse;
+            
             szMsg = szMsg.replace(/^\./mg,"..");    //bit padding 
             if (szMsg.lastIndexOf("\r\n") == -1) szMsg += "\r\n";
             szMsg += ".\r\n";  //msg end 
