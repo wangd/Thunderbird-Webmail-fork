@@ -28,9 +28,12 @@ function HotmailWebDav(parent)
         this.m_szMsgID = null;
         this.m_aMsgDataStore = new Array();
         this.m_iTotalSize = 0;
+      
         this.m_IOS = Components.classes["@mozilla.org/network/io-service;1"];
         this.m_IOS = this.m_IOS.getService(Components.interfaces.nsIIOService);
-      
+        
+        this.m_bJunkMail = false;
+        
         this.m_Log.Write("HotmailWebDav.js - Constructor - END");  
     }
     catch(e)
@@ -77,7 +80,8 @@ HotmailWebDav.prototype =
             this.m_Log.DebugDump("HotmailWebDav.js: logIN : Exception : " 
                                               + e.name + 
                                               ".\nError message: " 
-                                              + e.message);
+                                              + e.message+ "\n"
+                                              + e.lineNumber);
             return false;
         }
     },
@@ -141,7 +145,8 @@ HotmailWebDav.prototype =
                      mainObject.m_Log.DebugDump("HotmailWebDav.js: loginHandler  Authenitcation: Exception : " 
                                                       + err.name 
                                                       + ".\nError message: " 
-                                                      + err.message);
+                                                      + err.message+ "\n"
+                                                      + err.lineNumber);
                                                       
                     throw new Error("szAuthenticate header not found")
                 }     
@@ -197,7 +202,8 @@ HotmailWebDav.prototype =
             mainObject.m_Log.DebugDump("HotmailWebDav.js: loginHandler : Exception : " 
                                           + err.name 
                                           + ".\nError message: " 
-                                          + err.message);
+                                          + err.message+ "\n"
+                                          + err.lineNumber);
             
             mainObject.serverComms("-ERR webdav error\r\n");
         }
@@ -242,7 +248,8 @@ HotmailWebDav.prototype =
             this.m_Log.DebugDump("HotmailWebDav.js: getNumMessages : Exception : " 
                                           + e.name 
                                           + ".\nError message: " 
-                                          + e.message);
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
             return false;
         }
     },
@@ -370,7 +377,7 @@ HotmailWebDav.prototype =
                             mainObject.m_iTotalSize += iSize;
                             oMSG.iSize = iSize;
                             
-                            oMSG.bTrashFolder = true;
+                            oMSG.bJunkFolder = true;
                             
                             mainObject.m_aMsgDataStore.push(oMSG);
                         }
@@ -391,7 +398,8 @@ HotmailWebDav.prototype =
             mainObject.m_Log.DebugDump("HotmailWebDav.js: getMessageSizes : Exception : " 
                                               + e.name 
                                               + ".\nError message: " 
-                                              + e.message);
+                                              + e.message+ "\n"
+                                              + e.lineNumber);
                                               
             mainObject.serverComms("-ERR webdav error\r\n");
             return false;
@@ -428,7 +436,8 @@ HotmailWebDav.prototype =
             this.m_Log.DebugDump("HotmailWebDav.js: getMessageSizes : Exception : " 
                                               + e.name 
                                               + ".\nError message: " 
-                                              + e.message);
+                                              + e.message+ "\n"
+                                              + e.lineNumber);
             return false;
         }
     },
@@ -464,7 +473,8 @@ HotmailWebDav.prototype =
              this.m_Log.DebugDump("HotmailWebDav.js: getMessageIDs : Exception : " 
                                           + e.name + 
                                           ".\nError message: " 
-                                          + e.message);
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
             return false;
         }
     },    
@@ -480,7 +490,8 @@ HotmailWebDav.prototype =
             this.m_iStage=0;
                                   
             //get msg id
-            var szMsgID = this.m_aMsgDataStore[lID-1].szMSGUri;
+            var oMSG = this.m_aMsgDataStore[lID-1];
+            var szMsgID = oMSG.szMSGUri;
             this.m_Log.Write("HotmailWebDav.js - getMessage - msg id" + szMsgID); 
                       
             //Auth 
@@ -488,6 +499,8 @@ HotmailWebDav.prototype =
             var aszRealm = szURL.match(patternHotmailPOPSRuri); 
             var szAuthString = this.m_AuthToken.findToken(aszRealm);
             this.m_Log.Write("HotmailWebDav.js - getNumMessages - Auth " + szAuthString);                   
+            
+            this.m_bJunkMail = oMSG.bJunkFolder;
             
             //get email
             this.m_HttpComms.clean();
@@ -506,7 +519,8 @@ HotmailWebDav.prototype =
              this.m_Log.DebugDump("HotmailWebDav.js: getMessage : Exception : " 
                                           + e.name + 
                                           ".\nError message: " 
-                                          + e.message);
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
             return false;
         }
     },    
@@ -524,7 +538,9 @@ HotmailWebDav.prototype =
                 throw new Error("return status " + httpChannel.responseStatus);
                          
             //server response
-            var szMsg =  szResponse;
+            var szMsg = "X-WebMail: true\r\n";
+            szMsg += "X-JunkFolder: " +(mainObject.m_bJunkMail? "true":"false")+ "\r\n";
+            szMsg +=szResponse;
             szMsg = szMsg.replace(/^\./mg,"..");    //bit padding 
             szMsg += "\r\n.\r\n";//msg end 
             
@@ -539,7 +555,8 @@ HotmailWebDav.prototype =
             mainObject.m_Log.DebugDump("HotmailWebDav.js: emailOnloadHandler : Exception : " 
                                           + err.name 
                                           + ".\nError message: " 
-                                          + err.message);
+                                          + err.message+ "\n"
+                                          + err.lineNumber);
             
             mainObject.serverComms("-ERR webdav error\r\n");
         }
@@ -588,7 +605,8 @@ HotmailWebDav.prototype =
             this.m_Log.DebugDump("HotmailWebDav.js: deleteMessage : Exception : " 
                                               + e.name + 
                                               ".\nError message: " 
-                                              + e.message);
+                                              + e.message+ "\n"
+                                              + e.lineNumber);
             return false;
         } 
     },
@@ -617,7 +635,8 @@ HotmailWebDav.prototype =
             mainObject.m_Log.DebugDump("HotmailWebDav.js: deleteMessageOnload : Exception : " 
                                                       + e.name 
                                                       + ".\nError message: " 
-                                                      + e.message);
+                                                      + e.message+ "\n"
+                                                      + e.lineNumber);
             mainObject.serverComms("-ERR webdav error\r\n");
         }
     },
@@ -640,7 +659,8 @@ HotmailWebDav.prototype =
             this.m_Log.DebugDump("HotmailWebDav.js: logOUT : Exception : " 
                                       + e.name 
                                       + ".\nError message: " 
-                                      + e.message);
+                                      + e.message+ "\n"
+                                      + e.lineNumber);
             return false;
         }
     },  
@@ -662,7 +682,8 @@ HotmailWebDav.prototype =
             this.m_Log.DebugDump("HotmailWebDav.js: serverComms : Exception : " 
                                               + e.name 
                                               + ".\nError message: " 
-                                              + e.message);
+                                              + e.message+ "\n"
+                                              + e.lineNumber);
         }
     },   
 }

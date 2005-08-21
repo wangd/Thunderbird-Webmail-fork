@@ -29,7 +29,8 @@ function HotmailScreenRipper(parent)
         this.m_iTotalSize = 0; 
         this.m_szUM = null;
         this.m_iStage = 0;  
-                                                       
+        this.m_bJunkMail = false;
+                                              
         this.m_Log.Write("Hotmail-SR.js - Constructor - END");  
     }
     catch(e)
@@ -37,7 +38,8 @@ function HotmailScreenRipper(parent)
         DebugDump("Hotmail-SR: Constructor : Exception : " 
                                       + e.name 
                                       + ".\nError message: " 
-                                      + e.message);
+                                      + e.message + "\n"
+                                      + e.lineNumber);
     }
 }
 
@@ -73,7 +75,8 @@ HotmailScreenRipper.prototype =
             this.m_Log.DebugDump("Hotmail-SR: logIN : Exception : " 
                                               + e.name + 
                                               ".\nError message: " 
-                                              + e.message);
+                                              + e.message+ "\n"
+                                              + e.lineNumber);
             return false;
         }
     },
@@ -232,7 +235,8 @@ HotmailScreenRipper.prototype =
             mainObject.m_Log.DebugDump("Hotmail-SR: loginHandler : Exception : " 
                                           + err.name 
                                           + ".\nError message: " 
-                                          + err.message);
+                                          + err.message+ "\n"
+                                          + err.lineNumber);
             
             mainObject.serverComms("-ERR negative vibes\r\n");
         }
@@ -268,7 +272,8 @@ HotmailScreenRipper.prototype =
             this.m_Log.DebugDump("Hotmail-SR: getNumMessages : Exception : " 
                                           + e.name 
                                           + ".\nError message: " 
-                                          + e.message);
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
             return false;
         }
     },
@@ -328,7 +333,8 @@ HotmailScreenRipper.prototype =
                     mainObject.m_Log.DebugDump("Hotmail-SR: mailBoxOnloadHandler folder: Exception : " 
                                                       + err.name 
                                                       + ".\nError message: " 
-                                                      + err.message);
+                                                      + err.message+ "\n"
+                                                      + err.lineNumber);
                 }   
             }
                      
@@ -390,7 +396,7 @@ HotmailScreenRipper.prototype =
                     oMSG.iSize = iSize;    
                     mainObject.m_iTotalSize += iSize;
                     
-                    oMSG.bTrashFolder = mainObject.m_bJunkMailDone;
+                    oMSG.bJunkFolder = mainObject.m_bJunkMailDone;
                     
                     mainObject.m_aMsgDataStore.push(oMSG); 
                  }  
@@ -449,7 +455,8 @@ HotmailScreenRipper.prototype =
              mainObject.m_Log.DebugDump("Hotmail-SR: MailboxOnload : Exception : " 
                                               + err.name 
                                               + ".\nError message: " 
-                                              + err.message);
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
             
              mainObject.serverComms("-ERR negative vibes\r\n");
             
@@ -485,7 +492,8 @@ HotmailScreenRipper.prototype =
             this.m_Log.DebugDump("Hotmail-SR: getMessageSizes : Exception : " 
                                           + e.name 
                                           + ".\nError message: " 
-                                          + e.message);
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
             return false;
         }
     },
@@ -531,7 +539,8 @@ HotmailScreenRipper.prototype =
             this.m_Log.DebugDump("Hotmail-SR: getMessageIDs : Exception : " 
                                           + e.name 
                                           + ".\nError message: " 
-                                          + e.message);
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
             return false;
         }
     },
@@ -550,9 +559,12 @@ HotmailScreenRipper.prototype =
             var szTempMsg = new String();
             
             //get msg id
-            var szMsgURI = this.m_aMsgDataStore[lID-1].szMSGUri;
+            var oMSG = this.m_aMsgDataStore[lID-1];
+            var szMsgURI = oMSG.szMSGUri;
             this.m_Log.Write("Hotmail-SR - getMessage - msg uri" + szMsgURI); 
            
+            this.m_bJunkMail = oMSG.bJunkFolder;
+            
             //get msg from hotmail
             this.m_HttpComms.clean();
             this.m_HttpComms.setURI(szMsgURI);
@@ -568,7 +580,8 @@ HotmailScreenRipper.prototype =
              this.m_Log.DebugDump("Hotmail-SR: getMessage : Exception : " 
                                           + e.name + 
                                           ".\nError message: " 
-                                          + e.message);
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
             return false;
         }
     },    
@@ -587,15 +600,18 @@ HotmailScreenRipper.prototype =
             if (httpChannel.responseStatus != 200) 
                 throw new Error("error status " + httpChannel.responseStatus);   
            
+            var szMsg = "X-WebMail: true\r\n";
+            szMsg += "X-JunkFolder: " + (mainObject.m_bJunkMail? "true":"false")+ "\r\n";
                                                                                  
             //get msg
             var aTemp = szResponse.split(/<pre>\s+/); 
             if (aTemp.length == 0)
                 throw new Error("Message START  not found");     
-            var szMsg = aTemp[1].split(/<\/pre>/)[0];
-             if (szMsg.length == 0)
+            var szEmail = aTemp[1].split(/<\/pre>/)[0];
+             if (szEmail.length == 0)
                 throw new Error("Message END  not found"); 
             
+            szMsg += szEmail;
             
             //clean up msg
             szMsg = szMsg.replace(/&lt;/g,"<");
@@ -617,7 +633,8 @@ HotmailScreenRipper.prototype =
             mainObject.m_Log.DebugDump("Hotmail-SR: emailOnloadHandler : Exception : " 
                                           + err.name 
                                           + ".\nError message: " 
-                                          + err.message);
+                                          + err.message+ "\n"
+                                          + err.lineNumber);
             
             mainObject.serverComms("-ERR negative vibes\r\n");
         }
@@ -684,7 +701,8 @@ HotmailScreenRipper.prototype =
             this.m_Log.DebugDump("Hotmail-SR: deleteMessage : Exception : " 
                                           + e.name + 
                                           ".\nError message: " 
-                                          + e.message);
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
             return false;
         } 
     },
@@ -711,7 +729,8 @@ HotmailScreenRipper.prototype =
             mainObject.m_Log.DebugDump("Hotmail-SR: deleteMessageOnload : Exception : " 
                                               + e.name 
                                               + ".\nError message: " 
-                                              + e.message);
+                                              + e.message+ "\n"
+                                              + e.lineNumber);
             mainObject.serverComms("-ERR negative vibes\r\n");
         }
     },
@@ -735,7 +754,8 @@ HotmailScreenRipper.prototype =
             this.m_Log.DebugDump("Hotmail-SR: logOUT : Exception : " 
                                       + e.name 
                                       + ".\nError message: " 
-                                      + e.message);
+                                      + e.message+ "\n"
+                                      + e.lineNumber);
             return false;
         }
     },  
@@ -757,7 +777,8 @@ HotmailScreenRipper.prototype =
             this.m_Log.DebugDump("Hotmail-SR: serverComms : Exception : " 
                                               + e.name 
                                               + ".\nError message: " 
-                                              + e.message);
+                                              + e.message+ "\n"
+                                              + e.lineNumber);
         }
     },
 }
