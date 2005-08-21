@@ -1,6 +1,7 @@
 /*****************************  Globals component ******************************/                 
 const nsHotmailClassID = Components.ID("{3f3822e0-6374-11d9-9669-0800200c9a66}"); 
 const nsHotmailContactID = "@mozilla.org/Hotmail;1";
+const ExtHotmailGuid = "{3c8e8390-2cf6-11d9-9669-0800200c9a66}";
 
 /************************Screen Rippper constants******************************/
 const patternHotmailPOPSRuri =/[^\.\/]+\.[^\.\/]+$/;
@@ -67,10 +68,10 @@ function nsHotmail()
         
         var date = new Date();
         
-        var  szLogFileName = "Hotmail Log - " + date.getHours()+ "-" + date.getMinutes() + "-"+ date.getUTCMilliseconds() +" -";
-        this.m_HotmailLog = new DebugLog("webmail.logging.comms", 
-                                         "{3c8e8390-2cf6-11d9-9669-0800200c9a66}", 
-                                         szLogFileName); 
+        var  szLogFileName = "Hotmail Log - " + date.getHours()+ "-" 
+                                              + date.getMinutes() + "-"
+                                              + date.getUTCMilliseconds() +" -";
+        this.m_HotmailLog = new DebugLog("webmail.logging.comms", ExtHotmailGuid, szLogFileName); 
         
         this.m_HotmailLog.Write("nsHotmail.js - Constructor - START");   
        
