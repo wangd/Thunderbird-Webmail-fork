@@ -67,7 +67,8 @@ function nsYahoo()
         this.m_szHeader = null;  
         this.m_szMsgID = null;  
         this.m_szBox = null;
-      
+        this.m_bJunkFolder = false;
+        
         //do i download junkmail
         var oPref = new Object();
         oPref.Value = null;
@@ -454,7 +455,7 @@ nsYahoo.prototype =
                         data.szMSGUri = szMsgID;
                         data.szDeleteUri = mainObject.m_szDeleteURL;
                         data.aData = mainObject.m_aDeleteData;
-                        data.bTrashFolder = mainObject.m_bJunkChecked;
+                        data.bJunkFolder = mainObject.m_bJunkChecked;
                         
                         //get msg size
                         var aMsgSize = aMsgRows[i].match(patternYahooMsgSize);
@@ -663,7 +664,7 @@ nsYahoo.prototype =
             //get headers
             var szDest = this.m_szLocationURI + this.m_szMsgID.match(/.*?&/) + this.m_szBox +"&bodyPart=HEADER";
             this.m_Log.Write("nsYahoo.js - getNumMessages - url - "+ szDest);                       
-           
+            this.m_bJunkFolder = oMSGData.bJunkFolder;
             this.m_iStage = 0;   
             
             //get msg from yahoo
@@ -705,7 +706,11 @@ nsYahoo.prototype =
             switch(mainObject.m_iStage)
             {
                 case 0:  ///header
-                    mainObject.m_szHeader = szResponse;
+                    mainObject.m_szHeader = "X-WebMail: true\r\n";
+                    mainObject.m_szHeader += "X-TrashFolder: " +
+                                            (mainObject.m_bJunkFolder? "true":"false")+
+                                            "\r\n";
+                    mainObject.m_szHeader +=szResponse;
                     mainObject.m_iStage++;
                     
                     //get body
