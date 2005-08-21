@@ -5,7 +5,7 @@ function YahooMSG()
 
 YahooMSG.prototype.szMSGUri = null;
 
-YahooMSG.prototype.bTrashFolder = false;
+YahooMSG.prototype.bJunkFolder = false;
 
 YahooMSG.prototype.aData = null;
 
