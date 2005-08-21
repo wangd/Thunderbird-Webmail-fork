@@ -39,7 +39,8 @@ function POPconnectionHandler(transport)
         this.m_POPLog.DebugDump("nsPOPConnectionHandler.js: POPconnectionHandler Constructor : Exception : " 
                                       + e.name + 
                                       ".\nError message: " 
-                                      + e.message);
+                                      + e.message+ "\n"
+                                      + e.lineNumber);
     }
 }
 
@@ -136,7 +137,8 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                     this.m_POPLog.Write("POPconnectionHandler - onDataWritable - pass " 
                                                 + aCommand[0] + " " 
                                                 + aCommand[1] + "\n" 
-                                                + e.message);   
+                                                + e.message+ "\n"
+                                                + e.lineNumber);   
                 }
             break;
             
@@ -161,7 +163,8 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                     this.m_POPLog.DebugDump("popHandler.js: stat : Exception : " 
                                                       + e.name 
                                                       + ".\nError message: " 
-                                                      + e.message);
+                                                      + e.message+ "\n"
+                                                      + e.lineNumber);
                 }
             break;
             
@@ -184,7 +187,8 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                     this.m_POPLog.DebugDump("popHandler.js: list : Exception : " 
                                                   + e.name 
                                                   + ".\nError message: " 
-                                                  + e.message);
+                                                  + e.message+ "\n"
+                                                  + e.lineNumber);
                 }
             break;
             
@@ -207,7 +211,40 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                     this.m_POPLog.DebugDump("popHandler.js: uidl : Exception : " 
                                                   + e.name 
                                                   + ".\nError message: " 
-                                                  + e.message);
+                                                  + e.message+ "\n"
+                                                  + e.lineNumber);
+                }    
+            break;
+            
+            case "top" :
+                try
+                {
+                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - top - START "+ this.iID); 
+                    
+                    if (!this.m_DomainHandler.bAuthorised) 
+                        throw new Error("not logged how did you here?");
+                    
+                    try
+                    {
+                        if (!this.m_DomainHandler.getHeaders())
+                            throw new Error("TOP NOT supported");
+                    }
+                    catch(e)
+                    {
+                        this.ServerResponse.write(szERR,szERR.length);
+                        this.m_POPLog.Write("POPconnectionHandler - onDataWritable - top - Not Supported");
+                    }
+                   
+                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - top - END   "+ this.iID);
+                }
+                catch(e)
+                {
+                    this.ServerResponse.write(szERR,szERR.length);
+                    this.m_POPLog.Write("popHandler.js: top : Exception : " 
+                                                  + e.name 
+                                                  + ".\nError message: " 
+                                                  + e.message + "\n"
+                                                  + e.lineNumber);
                 }    
             break;
             
@@ -231,7 +268,8 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                     this.m_POPLog.DebugDump("popHandler.js: retr : Exception : " 
                                                   + e.name 
                                                   + ".\nError message: " 
-                                                  + e.message);
+                                                  + e.message+ "\n"
+                                                  + e.lineNumber);
                 }
             break;
             
@@ -256,7 +294,8 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                     this.m_POPLog.DebugDump("popHandler.js: dele : Exception : " 
                                                   + e.name 
                                                   + ".\nError message: " 
-                                                  + e.message);
+                                                  + e.message+ "\n"
+                                                  + e.lineNumber);
                 }
             break;
             
@@ -281,14 +320,15 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                     this.m_POPLog.DebugDump("popHandler.js: quit : Exception : " 
                                                   + e.name 
                                                   + ".\nError message: " 
-                                                  + e.message);
+                                                  + e.message+ "\n"
+                                                  + e.lineNumber);
                 }
             break;
             
             
             
             case "capa":
-                var szTemp = "+OK \r\nUSER\r\nUIDL\r\n.\r\n"
+                var szTemp = "+OK \r\nUSER\r\nUIDL\r\nTOP\r\n.\r\n"
                 this.m_POPLog.Write("POPconnectionHandler - onDataWritable - capa "+ szTemp);
                 this.ServerResponse.write(szTemp,szTemp.length);
             break;
@@ -317,7 +357,8 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
         this.m_POPLog.DebugDump("nsPOPConnectionManager.js: POPconnectionHandler onDataAvailable : Exception : " 
                                               + e.name 
                                               + ".\nError message: " 
-                                              + e.message);
+                                              + e.message+ "\n"
+                                              + e.lineNumber);
     }
 }
 
@@ -411,7 +452,8 @@ POPconnectionHandler.prototype.getDomainHandler = function(szUserName, szDomain)
         this.m_POPLog.DebugDump("POPconnectionHandler.js : getDomainHandler : Exception : " 
                                       + e.name 
                                       + ".\nError message: "
-                                      + e.message);
+                                      + e.message+ "\n"
+                                      + e.lineNumber);
         return false;      
     }
 }
