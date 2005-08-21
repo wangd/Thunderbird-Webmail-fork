@@ -4,6 +4,6 @@ function HotmailMSG()
 
 HotmailMSG.prototype.szMSGUri = null;
 
-HotmailMSG.prototype.bTrashFolder = false;
+HotmailMSG.prototype.bJunkFolder = false;
 
 HotmailMSG.prototype.iSize = 0;
