@@ -66,10 +66,10 @@ function nsMailDotCom()
         this.m_szTrashURI=null;
         this.m_szDeleteURI = null;
         this.m_szMSGID = null;
-               
+                       
         this.m_iTotalSize = 0; 
         this.m_aMsgDataStore = new Array();
-        
+        this.m_bJunkMail= false;
         this.m_szHeaders = null;
                    
         this.m_Log.Write("nsMailDotCom.js - Constructor - END");  
@@ -545,13 +545,16 @@ nsMailDotCom.prototype =
             this.m_Log.Write("nsMailDotCom.js - getMessage - msg num " + lID); 
            
             //get msg id
-            var szHref = this.m_aMsgDataStore[lID-1].szMSGUri;
+            var oMSG = this.m_aMsgDataStore[lID-1]
+            var szHref = oMSG.szMSGUri;
             this.m_Log.Write("nsMailDotCom.js - getMessage - msg id" + szHref); 
             this.m_szMSGID = szHref.match(patternMailDotComMsgId)[1];
             var szMsgURI = this.m_szLocation;
             szMsgURI += "/scripts/mail/mesg.mail";
             szMsgURI += "?folder=INBOX&msg_uid=" + this.m_szMSGID+"&mhead=f&print=1";
-         
+            
+            this.m_bJunkMail = oMSG.bJunkFolder;
+            
             this.m_iStage = 0;   
             //get msg from MailDotCom
             this.m_HttpComms.clean();
@@ -600,7 +603,10 @@ nsMailDotCom.prototype =
             switch (mainObject.m_iStage)
             {
                 case 0: //parse email web page
-                    mainObject.m_szHeaders = "";
+                    mainObject.m_szHeaders = "X-WebMail: true\r\n";
+                    mainObject.m_szHeaders += "X-JunkFolder: " +
+                                            (mainObject.m_bJunkMail? "true":"false")+
+                                            "\r\n";
                      
                     //get message block
                     var aszMSG = szResponse.match(patternMailDotComMSG);

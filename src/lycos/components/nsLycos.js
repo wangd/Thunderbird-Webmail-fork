@@ -474,7 +474,7 @@ nsLycos.prototype =
             var szMsgID = oMSG.szMSGUri;
             this.m_Log.Write("nsLycos.js - getMessage - msg id" + szMsgID); 
            
-            this.m_bJunkFolder = oMSG.bJunkFolder;
+            this.m_bJunkMail = oMSG.bJunkFolder;
              
             //get msg from lycos
             this.m_HttpComms.clean();
@@ -515,7 +515,7 @@ nsLycos.prototype =
             
             //server response
             var szMsg =  "X-WebMail: true\r\n";
-            szMsg += "X-JunkFolder: " +(mainObject.m_bJunkFolder? "true":"false")+"\r\n";
+            szMsg += "X-JunkFolder: " +(mainObject.m_bJunkMail? "true":"false")+"\r\n";
             szMsg += szResponse;
             
             szMsg = szMsg.replace(/^\./mg,"..");    //bit padding 
