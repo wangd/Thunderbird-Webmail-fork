@@ -4,6 +4,6 @@ function LycosPOPMSG()
 
 LycosPOPMSG.prototype.szMSGUri = null;
 
-LycosPOPMSG.prototype.bTrashFolder = false;
+LycosPOPMSG.prototype.bJunkFolder = false;
 
 LycosPOPMSG.prototype.iSize = 0;
