@@ -707,7 +707,7 @@ nsYahoo.prototype =
             {
                 case 0:  ///header
                     mainObject.m_szHeader = "X-WebMail: true\r\n";
-                    mainObject.m_szHeader += "X-TrashFolder: " +
+                    mainObject.m_szHeader += "X-JunkFolder: " +
                                             (mainObject.m_bJunkFolder? "true":"false")+
                                             "\r\n";
                     mainObject.m_szHeader +=szResponse;
