@@ -56,16 +56,14 @@ function nsHotmail()
 {
     try
     {       
-        var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-                              .getService(Components.interfaces.mozIJSSubScriptLoader);
-        if (scriptLoader)
-        {
-            scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-            scriptLoader.loadSubScript("chrome://web-mail/content/common/CookieManager.js");
-            scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
-            scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-WebDav.js");
-            scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-ScreenRipper.js");
-        }
+        var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
+        scriptLoader= scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/CookieManager.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
+        scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-WebDav.js");
+        scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-ScreenRipper.js");
+       
         
         var date = new Date();
         
@@ -98,7 +96,8 @@ function nsHotmail()
         DebugDump("nsHotmail.js: Constructor : Exception : " 
                                       + e.name 
                                       + ".\nError message: " 
-                                      + e.message);
+                                      + e.message+ "\n"
+                                      + e.lineNumber);
     }
 }
 
@@ -169,7 +168,8 @@ nsHotmail.prototype =
             this.m_HotmailLog.DebugDump("nsHotmail.js: logIN : Exception : " 
                                               + e.name + 
                                               ".\nError message: " 
-                                              + e.message);
+                                              + e.message+ "\n"
+                                              + e.lineNumber);
             return false;
         }
     },
@@ -196,7 +196,8 @@ nsHotmail.prototype =
             this.m_HotmailLog.DebugDump("nsHotmail.js: getNumMessages : Exception : " 
                                           + e.name 
                                           + ".\nError message: " 
-                                          + e.message);
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
             return false;
         }
     },
@@ -225,7 +226,8 @@ nsHotmail.prototype =
             this.m_HotmailLog.DebugDump("nsHotmail.js: getMessageSizes : Exception : " 
                                           + e.name 
                                           + ".\nError message: " 
-                                          + e.message);
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
             return false;
         }
     },
@@ -249,7 +251,8 @@ nsHotmail.prototype =
             this.m_HotmailLog.DebugDump("nsHotmail.js: getMessageIDs : Exception : " 
                                           + e.name 
                                           + ".\nError message: " 
-                                          + e.message);
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
             return false;
         }
     },
@@ -275,7 +278,8 @@ nsHotmail.prototype =
              this.m_HotmailLog.DebugDump("nsHotmail.js: getMessage : Exception : " 
                                           + e.name + 
                                           ".\nError message: " 
-                                          + e.message);
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
             return false;
         }
     },    
@@ -301,7 +305,8 @@ nsHotmail.prototype =
             this.m_HotmailLog.DebugDump("nsHotmail.js: deleteMessage : Exception : " 
                                           + e.name + 
                                           ".\nError message: " 
-                                          + e.message);
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
             return false;
         } 
     },
@@ -327,7 +332,8 @@ nsHotmail.prototype =
             this.m_HotmailLog.DebugDump("nsHotmail.js: logOUT : Exception : " 
                                       + e.name 
                                       + ".\nError message: " 
-                                      + e.message);
+                                      + e.message+ "\n"
+                                      + e.lineNumber);
             return false;
         }
     },  
