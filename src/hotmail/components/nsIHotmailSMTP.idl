@@ -1,0 +1,18 @@
+#include "nsISupports.idl"
+#include "nsIOutputStream.idl"
+
+[scriptable, uuid(50d0f3e0-e2a6-11d9-8cd6-0800200c9a66)]
+
+
+interface nsISMTPDomainHandler : nsISupports
+{   
+    attribute string userName;
+    attribute string passWord;
+    readonly attribute boolean bAuthorised;
+    attribute nsIOutputStream ResponseStream;
+    attribute string to;
+    attribute string from;   
+       
+    boolean logIn ();
+    boolean rawMSG (in string Email);
+};
