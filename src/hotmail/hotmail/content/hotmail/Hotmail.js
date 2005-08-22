@@ -1,4 +1,5 @@
 const cszHotmailContentID = "@mozilla.org/Hotmail;1";
+const cszHotmailSMTPContentID = "@mozilla.org/HotmailSMTP;1";
 
 window.addEventListener("load", function() {gHotmailStartUp.init();} , false);
 
@@ -39,7 +40,8 @@ var gHotmailStartUp =
             this.m_Log.DebugDump("Hotmail.js : Exception in init " 
                                         + e.name + 
                                         ".\nError message: " 
-                                        + e.message);
+                                        + e.message + "\n"
+                                        + e.lineNumber);
         }
     },  
        
@@ -65,6 +67,13 @@ var gHotmailStartUp =
             this.idCheck("msn.com", "pop" ,cszHotmailContentID);
             this.idCheck("hotmail.it", "pop" ,cszHotmailContentID);  
             this.idCheck("hotmail.fr", "pop" ,cszHotmailContentID);
+            
+            this.idCheck("hotmail.com", "smtp" ,cszHotmailSMTPContentID)
+            this.idCheck("hotmail.co.uk","smtp" , cszHotmailSMTPContentID);
+            this.idCheck("msn.co.uk", "smtp" ,cszHotmailSMTPContentID);
+            this.idCheck("msn.com", "smtp" ,cszHotmailSMTPContentID);
+            this.idCheck("hotmail.it", "smtp" ,cszHotmailSMTPContentID);  
+            this.idCheck("hotmail.fr", "smtp" ,cszHotmailSMTPContentID);
                            
             this.m_Log.Write("Hotmail.js : notify - END");
         }
@@ -73,7 +82,8 @@ var gHotmailStartUp =
             this.m_Log.DebugDump("Hotmail.js : notify - Exception in notify : " 
                                         + e.name + 
                                         ".\nError message: " 
-                                        + e.message);
+                                        + e.message+ "\n"
+                                        + e.lineNumber);
         }
     },
     
