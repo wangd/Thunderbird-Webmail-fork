@@ -1,4 +1,4 @@
-function HotmailScreenRipper(parent)
+function HotmailScreenRipper(oResponseStream, oLog, bUseJunkMail)
 {
     try
     {       
@@ -8,15 +8,14 @@ function HotmailScreenRipper(parent)
         scriptLoader.loadSubScript("chrome://web-mail/content/common/comms.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-MSG.js");
        
-        this.m_Parent = parent; 
-        this.m_Log = this.m_Parent.m_HotmailLog; 
+        this.m_Log = oLog; 
                 
         this.m_Log.Write("Hotmail-SR - Constructor - START");   
        
-        this.m_szUserName = parent.m_szUserName;   
-        this.m_szPassWord = parent.m_szPassWord; 
-        this.m_oResponseStream = parent.m_oResponseStream;  
-        this.m_bUseJunkMail = parent.m_bUseJunkMail;  
+        this.m_szUserName = null;   
+        this.m_szPassWord = null; 
+        this.m_oResponseStream = oResponseStream;  
+        this.m_bUseJunkMail = bUseJunkMail;  
         this.m_HttpComms = new Comms(this,this.m_Log);   
         this.m_szMailboxURI = null;
         this.m_szLogOutURI = null;
@@ -47,14 +46,17 @@ function HotmailScreenRipper(parent)
 
 HotmailScreenRipper.prototype =
 { 
-    logIn : function()
+    logIn : function(szUserName, szPassWord)
     {
         try
         {
             this.m_Log.Write("Hotmail-SR - logIN - START");   
-            this.m_Log.Write("Hotmail-SR - logIN - Username: " + this.m_szUserName 
-                                                   + " Password: " + this.m_szPassWord 
+            this.m_Log.Write("Hotmail-SR - logIN - Username: " + szUserName 
+                                                   + " Password: " + szPassWord 
                                                    + " stream: " + this.m_oResponseStream);
+            
+            this.m_szUserName = szUserName;
+            this.m_szPassWord = szPassWord;
             
             if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
                      
@@ -224,7 +226,7 @@ HotmailScreenRipper.prototype =
                     
                     //server response
                     mainObject.serverComms("+OK Your in\r\n");
-                    mainObject.m_Parent.m_bAuthorised = true;
+                    mainObject.m_bAuthorised = true;
                 break;
             }
             
@@ -743,7 +745,7 @@ HotmailScreenRipper.prototype =
         {
             this.m_Log.Write("Hotmail-SR - logOUT - START"); 
             
-            this.m_Parent.m_bAuthorised = false;
+            this.m_bAuthorised = false;
             this.serverComms("+OK Your Out\r\n");             
                                            
             this.m_Log.Write("Hotmail-SR - logOUT - END");  

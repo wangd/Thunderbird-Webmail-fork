@@ -1,4 +1,4 @@
-function HotmailWebDav(parent)
+function HotmailWebDav(oResponseStream, oLog, bUseJunkMail)
 {
     try
     {       
@@ -8,15 +8,14 @@ function HotmailWebDav(parent)
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-AuthTokenManager.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/comms.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-MSG.js");
-        
-        this.m_Parent = parent;        
-        this.m_Log = this.m_Parent.m_HotmailLog; 
+              
+        this.m_Log = oLog; 
         this.m_Log.Write("HotmailWebDav.js - Constructor - START");   
                 
-        this.m_szUserName = parent.m_szUserName;   
-        this.m_szPassWord = parent.m_szPassWord; 
-        this.m_oResponseStream = parent.m_oResponseStream;       
-        this.m_bUseJunkMail = parent.m_bUseJunkMail;
+        this.m_szUserName = null;   
+        this.m_szPassWord = null; 
+        this.m_oResponseStream = oResponseStream;       
+        this.m_bUseJunkMail = bUseJunkMail;
         this.m_HttpComms = new Comms(this,this.m_Log); 
         this.m_HttpComms.setHandleBounce(false);
         this.m_AuthToken = new AuthTokenHandler(this.m_Log);
@@ -40,10 +39,9 @@ function HotmailWebDav(parent)
     {
         DebugDump("HotmailWebDav.js: Constructor : Exception : " 
                                       + e.name 
-                                      + " line " 
-                                      + e.linenumber
                                       + ".\nError message: " 
-                                      + e.message);
+                                      + e.message + "\n"
+                                      + e.lineNumber);
     }
 }
 
@@ -52,14 +50,17 @@ function HotmailWebDav(parent)
 HotmailWebDav.prototype =
 {
    
-    logIn : function()
+    logIn : function(szUserName, szPassWord)
     {
         try
         {
             this.m_Log.Write("HotmailWebDav.js - logIN - START");   
-            this.m_Log.Write("HotmailWebDav.js - logIN - Username: " + this.m_szUserName 
-                                                   + " Password: " + this.m_szPassWord 
+            this.m_Log.Write("HotmailWebDav.js - logIN - Username: " + szUserName 
+                                                   + " Password: " + szPassWord 
                                                    + " stream: " + this.m_oResponseStream);
+            
+            this.m_szUserName = szUserName;
+            this.m_szPassWord = szPassWord;
             
             if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
             
@@ -191,7 +192,7 @@ HotmailWebDav.prototype =
                 
                 //server response
                 mainObject.serverComms("+OK Your in\r\n");
-                mainObject.m_Parent.m_bAuthorised = true;
+                mainObject.m_bAuthorised = true;
                         
                 mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - get url - end"); 
             }
@@ -648,7 +649,7 @@ HotmailWebDav.prototype =
         {
             this.m_Log.Write("HotmailWebDav.js - logOUT - START"); 
             
-            this.m_Parent.m_bAuthorised = false;
+            this.m_bAuthorised = false;
             this.serverComms("+OK Your Out\r\n");             
                                            
             this.m_Log.Write("HotmailWebDav.js - logOUT - END");  

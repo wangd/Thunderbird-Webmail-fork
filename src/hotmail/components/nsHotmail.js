@@ -112,7 +112,10 @@ nsHotmail.prototype =
     get passWord() {return this.m_szPassWord;},
     set passWord(passWord) {return this.m_szPassWord = passWord;},
     
-    get bAuthorised() {return this.m_bAuthorised;},
+    get bAuthorised() 
+    {
+        return (this.m_CommMethod)? this.m_CommMethod.m_bAuthorised: false;
+    },
   
     get ResponseStream() {return this.m_oResponseStream;},
     set ResponseStream(responseStream) {return this.m_oResponseStream = responseStream;},
@@ -151,15 +154,20 @@ nsHotmail.prototype =
                     if (this.m_szUserName.match(reg))
                     {
                         this.m_HotmailLog.Write("nsHotmail.js - logIN - username found");  
-                        this.m_CommMethod = new HotmailWebDav(this);    
+                        this.m_CommMethod = new HotmailWebDav(this.m_oResponseStream, 
+                                                              this.m_HotmailLog, 
+                                                              this.m_bUseJunkMail);    
                     } 
                 }
             }
            
             if (!this.m_CommMethod)
-                this.m_CommMethod = new HotmailScreenRipper(this);
+                this.m_CommMethod = new HotmailScreenRipper(this.m_oResponseStream, 
+                                                            this.m_HotmailLog, 
+                                                            this.m_bUseJunkMail);
              
-            var bResult = this.m_CommMethod.logIn();
+            var bResult = this.m_CommMethod.logIn(this.m_szUserName,   
+                                                  this.m_szPassWord);
                        
             this.m_HotmailLog.Write("nsHotmail.js - logIN - "+ bResult +"- END");    
             return bResult;
