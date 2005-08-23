@@ -2,6 +2,7 @@
 const nsDataBaseManagerClassID = Components.ID("{75874110-09e5-11da-8cd6-0800200c9a66}");
 const nsDataBaseManagerContactID = "@mozilla.org/DataBaseManager;1";
 
+const cCurrentDBVersion = 1;
 
 /***********************  DomainManager ********************************/
 function nsDataBaseManager()
@@ -18,15 +19,18 @@ function nsDataBaseManager()
             
         this.m_Log.Write("nsDataBaseManager.js - Constructor - START");
         
-        this.m_dbService = Components.classes["@mozilla.org/storage/service;1"].
-                            getService(Components.interfaces.mozIStorageService);
+        this.m_dbService = Components.classes["@mozilla.org/storage/service;1"];
+        this.m_dbService = this.m_dbService.getService(Components.interfaces.mozIStorageService);
        
         this.m_dbConn = null;
         
         this.loadDB();
-        if (!this.checkDB()) this.updateDB();
+        var iVersion = this.getDBVersion();
+        if (iVersion == -1) 
+            this.createDB();
+        else if (iVersion != cCurrentDBVersion)
+            this.updateDB(iVersion);
             
-        
         this.m_Log.Write("nsDataBaseManager.js - Constructor - END");
     }
     catch(e)
@@ -48,9 +52,9 @@ nsDataBaseManager.prototype =
             this.m_Log.Write("nsDataBaseManager.js - loadDB - START");
              
             //get location of DB
-            var fileDB = Components.classes["@mozilla.org/file/directory_service;1"].
-	                     createInstance(Components.interfaces.nsIProperties).
-	                     get("ProfD", Components.interfaces.nsILocalFile);
+            var fileDB = Components.classes["@mozilla.org/file/directory_service;1"];
+	        fileDB = fileDB.createInstance(Components.interfaces.nsIProperties);
+	        fileDB = fileDB.get("ProfD", Components.interfaces.nsILocalFile);
             fileDB.append("WebMail.db3");         //sqlite database
             fileDB.QueryInterface(Components.interfaces.nsIFile)
             this.m_Log.Write("nsDataBaseManager.js - loadDB - fileDB "+ fileDB.path);
@@ -74,40 +78,100 @@ nsDataBaseManager.prototype =
     },
 
 
-    checkDB : function ()
+
+    getDBVersion : function ()
     {
         try
         {
-            this.m_Log.Write("nsDataBaseManager.js - checkDB - START");
-            this.m_Log.Write("nsDataBaseManager.js - checkDB - END");
+            this.m_Log.Write("nsDataBaseManager.js - getDBVersion - START");
+            
+            var iVersion = -1;
+            var szVersion = "SELECT version FROM webmail_schema_version LIMIT 1";
+            var select = null;
+            
+            try 
+            {
+                select = this.createDBQuery(szVersion);
+                if (select.step()) iVersion = select.row.version;
+            } 
+            catch (e) 
+            { 
+                iVersion = -1;
+            }
+            if (select) select.reset();
+            
+            this.m_Log.Write("nsDataBaseManager.js - getDBVersion - "+ iVersion);   
+            this.m_Log.Write("nsDataBaseManager.js - getDBVersion - END"); 
+            return iVersion;
         }
         catch(err)
         {
-            this.m_Log.DebugDump("nsDataBaseManager.js: checkDB : Exception : " 
-                                          + e.name
+            this.m_Log.DebugDump("nsDataBaseManager.js: getDBVersion : Exception : " 
+                                          + err.name
                                           + "\nError message: " 
-                                          + e.message +"\n"
-                                          + e.lineNumber);
-            return false;
+                                          + err.message +"\n"
+                                          + err.lineNumber);
+            return -1;
         }
     },
 
      
+    createDB : function ()
+    {
+        try
+        {
+            this.m_Log.Write("nsDataBaseManager.js - createDB - START");
+             
+            var szSQL = "CREATE TABLE webmail_schema_version (version INTEGER);";
+            this.m_dbConn.executeSimpleSQL(szSQL);
+            szSQL = "INSERT INTO webmail_schema_version VALUES(1);";
+            this.m_dbConn.executeSimpleSQL(szSQL); 
+            
+            szSQL ="CREATE TABLE webmail_folders (folder_hierarchy STRING, folder_id INTEGER PRIMARY KEY, folder_name STRING, user_id INTEGER);";
+            this.m_dbConn.executeSimpleSQL(szSQL); 
+            
+            szSQL = "CREATE TABLE webmail_message (attachment BOOLEAN, date TEXT, delete_msg BOOLEAN, folder_id INTEGER, sender STRING, href TEXT, msg_id INTEGER PRIMARY KEY, read BOOLEAN, size INTEGER, subject TEXT, time TEXT, recipient TEXT, user_id INTEGER);";
+            this.m_dbConn.executeSimpleSQL(szSQL); 
+            
+            szSQL = "CREATE TABLE webmail_subscribe_list (folder_name STRING, user_id INTEGER);";
+            this.m_dbConn.executeSimpleSQL(szSQL); 
+            
+            szSQL = "CREATE TABLE webmail_user (user_id INTEGER PRIMARY KEY, user_name TEXT);";
+            this.m_dbConn.executeSimpleSQL(szSQL); 
+            
+           
+                                  
+            this.m_Log.Write("nsDataBaseManager.js - createDB - END");
+        }
+        catch(err)
+        {
+            this.m_Log.DebugDump("nsDataBaseManager.js: createDB : Exception : " 
+                                          + err.name + 
+                                          "\nError message: " 
+                                          + err.message +"\n"
+                                          + "DB Error " + "\n"
+                                          + this.m_dbConn.lastError +"\n"
+                                          + err.lineNumber);
+            return false;
+        }
+    },
     
-    updateDB : function ()
+    
+    updateDB : function (iVersion)
     {
         try
         {
             this.m_Log.Write("nsDataBaseManager.js - updateDB - START");
+            this.m_Log.Write("nsDataBaseManager.js - updateDB - "+iVersion);
             this.m_Log.Write("nsDataBaseManager.js - updateDB - END");
         }
         catch(err)
         {
             this.m_Log.DebugDump("nsDataBaseManager.js: updateDB : Exception : " 
-                                          + e.name + 
+                                          + err.name + 
                                           "\nError message: " 
-                                          + e.message +"\n"
-                                          + e.lineNumber);
+                                          + err.message +"\n"
+                                          + err.lineNumber);
             return false;
         }
     },
@@ -118,37 +182,28 @@ nsDataBaseManager.prototype =
         try
         {
             this.m_Log.Write("nsDataBaseManager.js - createDBQuery - START");
-            this.m_Log.Write("nsDataBaseManager.js - createDBQuery - END");
+                      
+            var statement = this.m_dbConn.createStatement(query);
+            
+            var wStatement = Components.classes["@mozilla.org/storage/statement-wrapper;1"];
+            wStatement = wStatement.createInstance(Components.interfaces.mozIStorageStatementWrapper);
+            wStatement.initialize(statement);
+                     
+            this.m_Log.Write("nsDataBaseManager.js - createDBQuery - END"); 
+            return wStatement;
         }
         catch(err)
         {
             this.m_Log.DebugDump("nsDataBaseManager.js: createDBQuery : Exception : " 
-                                          + e.name + 
+                                          + err.name + 
                                           "\nError message: " 
-                                          + e.message+"\n"
-                                          + e.lineNumber);
+                                          + err.message+"\n"
+                                          + err.lineNumber);
             return null;
         }
     },
     
     
-    queryDB : function (sqlCommand)
-    {
-        try
-        {
-            this.m_Log.Write("nsDataBaseManager.js - queryDB - START");
-            this.m_Log.Write("nsDataBaseManager.js - queryDB - END");
-        }
-        catch(err)
-        {
-            this.m_Log.DebugDump("nsDataBaseManager.js: queryDB : Exception : " 
-                                          + e.name + 
-                                          "\nError message: " 
-                                          + e.message +"\n"
-                                          + e.lineNumber);
-            return null;
-        }
-    },
     
 /******************************************************************************/
 /***************** XPCOM  stuff ***********************************************/
