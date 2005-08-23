@@ -49,10 +49,17 @@ var gWebMail =
             try
         
             {   //create service
-        /*        this.m_DataBase =  Components.classes["@mozilla.org/DataBaseManager;1"];
-                this.m_DataBase = this.m_DataBase.getService();
-                this.m_DataBase.QueryInterface(Components.interfaces.nsIDataBaseManager);
-          */      
+            
+                if (Components.classes["@mozilla.org/storage/service;1"])
+                {
+                    this.m_Log.Write("Webmail.js : startUp - SQL components installed");
+                    this.m_DataBase =  Components.classes["@mozilla.org/DataBaseManager;1"];
+                    this.m_DataBase = this.m_DataBase.getService();
+                    this.m_DataBase.QueryInterface(Components.interfaces.nsIDataBaseManager);
+                }
+                else
+                    this.m_Log.Write("Webmail.js : startUp - SQL components NOT installed");
+                                
                 
                 this.m_DomainManager = Components.classes["@mozilla.org/DomainManager;1"];
                 this.m_DomainManager = this.m_DomainManager.getService();
