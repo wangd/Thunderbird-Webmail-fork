@@ -6,6 +6,9 @@ function HotmailSMTPScreenRipper(oResponseStream, oLog, bSaveCopy)
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/comms.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/Email.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/base64.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/Quoted-Printable.js");
                
         this.m_Log = oLog; 
                 
@@ -16,7 +19,12 @@ function HotmailSMTPScreenRipper(oResponseStream, oLog, bSaveCopy)
         this.m_oResponseStream = oResponseStream;  
         this.m_bSaveCopy =  bSaveCopy;
         this.m_HttpComms = new Comms(this,this.m_Log);   
-               
+        this.m_szUM = null;
+        this.m_szLocationURI = null;
+        this.m_szComposer = null;
+        this.aszTo = null;
+        this.szFrom = null;
+        this.m_Email = new email(this.m_Log);
         this.m_iStage = 0;  
                                                      
         this.m_Log.Write("Hotmail-SR-SMTP.js - Constructor - END");  
@@ -94,28 +102,28 @@ HotmailSMTPScreenRipper.prototype =
             switch (mainObject.m_iStage)
             {
                 case 0: // redirect destination
-                    var aBounceData = szResponse.match(patternHotmailPOPSRBounce);
-                    mainObject.m_Log.Write("Hotmail-SR-SMTP - loginOnloadHandler "+ aBounceData);
+                    var aForm = szResponse.match(patternHotmailSMTPForm);
+                    if (!aForm) throw new Error("error parsing login page");
+                    mainObject.m_Log.Write("Hotmail-SR-SMTP - loginOnloadHandler "+ aForm);
                     
-                    if (!aBounceData)
+                    //action
+                    var szAction = aForm[0].match(patternHotmailSMTPAction)[1];
+                    mainObject.m_Log.Write("Hotmail-SR-SMTP - loginOnloadHandler "+ szAction);
+                    mainObject.m_HttpComms.setURI(szAction);
+                    
+                    //name value
+                    var aInput = aForm[0].match(patternHotmailSMTPInput);
+                    mainObject.m_Log.Write("Hotmail-SR-SMTP - loginOnloadHandler "+ aInput);
+                    for (i=0; i<aInput.length ; i++)
                     {
-                        aBounceData = szResponse.match(patternHotmailPOPSRBounceAlt);
-                        mainObject.m_Log.Write("Hotmail-SR-SMTP - loginOnloadHandler "+ aBounceData);
-                        if (!aBounceData)
-                            throw new Error("error parsing bounce web page");
-                        else
-                        {   
-                            var  szValue = encodeURIComponent(aBounceData[2]);
-                            mainObject.m_HttpComms.addValuePair("mspppostint", szValue);
-                        }
+                        var szName =  aInput[i].match(patternHotmailSMTPName)[1];
+                        mainObject.m_Log.Write("Hotmail-SR-SMTP - loginOnloadHandler "+ szName);  
+                        var szValue =  aInput[i].match(patternHotmailSMTPValue)[1];
+                        mainObject.m_Log.Write("Hotmail-SR-SMTP - loginOnloadHandler "+ szValue);
+                        szValue = encodeURIComponent(szValue);
+                        mainObject.m_HttpComms.addValuePair(szName, szValue);
                     }
-                    else
-                    {
-                        mainObject.m_HttpComms.addValuePair("mspprawqs",aBounceData[2]);
-                        mainObject.m_HttpComms.addValuePair("mspppostint",aBounceData[3]);
-                    }
-                  
-                    mainObject.m_HttpComms.setURI(aBounceData[1]);
+                    
                     mainObject.m_HttpComms.setRequestMethod("POST");
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);   
                     if (!bResult) throw new Error("httpConnection returned false");
@@ -124,58 +132,48 @@ HotmailSMTPScreenRipper.prototype =
                 
                 
                 case 1: //login
-                    var aLogInURL = szResponse.match(patternHotmailPOPSRLogIn);
-                    if (!aLogInURL) 
-                    {   
-                        aLogInURL = szResponse.match(patternHotmailPOPSRLogInAlt); 
-                        if (!aLogInURL) throw new Error("error parsing login page");
+                    var aForm = szResponse.match(patternHotmailSMTPForm);
+                    if (!aForm) throw new Error("error parsing login page");
                         
-                        //get form data
-                        var aszForm =  szResponse.match(patternHotmailPOPSRForm); 
-                        mainObject.m_Log.Write("nsHotmail.js - loginOnloadHandler - form data " + aszForm);
+                    //get form data
+                    var aInput =  aForm[0].match(patternHotmailSMTPInput); 
+                    mainObject.m_Log.Write("nsHotmail.js - loginOnloadHandler - form data " + aInput);
+                    
+                    for (i=0; i<aInput.length; i++)
+                    {
+                        var szType = aInput[i].match(patternHotmailSMTPType)[1]; 
+                        mainObject.m_Log.Write("nsHotmail.js - loginOnloadHandler - form type " + szType);
+                        var szName = aInput[i].match(patternHotmailSMTPName)[1]; 
+                        mainObject.m_Log.Write("nsHotmail.js - loginOnloadHandler - form name " + szName);
+                        var szValue = aInput[i].match(patternHotmailSMTPValue)[1]; 
+                        mainObject.m_Log.Write("nsHotmail.js - loginOnloadHandler - form value " + szValue);
                         
-                        for (i=0; i<aszForm.length; i++)
+                        if (szType.search(/submit/i)==-1)
                         {
-                            var szType = aszForm[i].match(patternHotmailPOPSRType)[1]; 
-                            mainObject.m_Log.Write("nsHotmail.js - loginOnloadHandler - form type " + szType);
-                            var szName = aszForm[i].match(patternHotmailPOPSRName)[1]; 
-                            mainObject.m_Log.Write("nsHotmail.js - loginOnloadHandler - form name " + szName);
-                            var szValue = aszForm[i].match(patternHotmailPOPSRValue)[1]; 
-                            mainObject.m_Log.Write("nsHotmail.js - loginOnloadHandler - form value " + szValue);
-                            
-                            if (szType.search(/submit/i)==-1)
+                            if (szType.search(/radio/i)!=-1)
                             {
-                                if (szType.search(/radio/i)!=-1)
-                                {
-                                    if (aszForm[i].search(/checked/i)!=-1)
-                                        mainObject.m_HttpComms.addValuePair(szName,szValue);
-                                }
-                                else
-                                {
-                                    var szData = null;   
-                                    if (szName.search(/login/i)!=-1)
-                                        szData = encodeURIComponent(mainObject.m_szUserName);
-                                    else if (szName.search(/passwd/i)!=-1)
-                                        szData = encodeURIComponent(mainObject.m_szPassWord);
-                                    else 
-                                        szData = szValue;
-                                        
-                                    mainObject.m_HttpComms.addValuePair(szName,szData);
-                                }
+                                if (aInput[i].search(/checked/i)!=-1)
+                                    mainObject.m_HttpComms.addValuePair(szName,szValue);
+                            }
+                            else
+                            {
+                                var szData = null;   
+                                if (szName.search(/login/i)!=-1)
+                                    szData = encodeURIComponent(mainObject.m_szUserName);
+                                else if (szName.search(/passwd/i)!=-1)
+                                    szData = encodeURIComponent(mainObject.m_szPassWord);
+                                else 
+                                    szData = szValue;
+                                    
+                                mainObject.m_HttpComms.addValuePair(szName,szData);
                             }
                         }
                     }
-                    else
-                    {
-                        mainObject.m_HttpComms.addValuePair("notinframe","1");
-                        var szUser = encodeURIComponent(mainObject.m_szUserName);
-                        mainObject.m_HttpComms.addValuePair("login",szUser);
-                        var szPass = encodeURIComponent(mainObject.m_szPassWord);
-                        mainObject.m_HttpComms.addValuePair("passwd",szPass);
-                        mainObject.m_HttpComms.addValuePair("submit1","+Sign+In+");
-                    }
-                                        
-                    mainObject.m_HttpComms.setURI(aLogInURL[1]);
+                    
+                    var szAction = aForm[0].match(patternHotmailSMTPAction)[1];
+                    mainObject.m_Log.Write("Hotmail-SR-SMTP - loginOnloadHandler "+ szAction);
+                    mainObject.m_HttpComms.setURI(szAction);                    
+                    
                     mainObject.m_HttpComms.setRequestMethod("POST");
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);                   
                     if (!bResult) throw new Error("httpConnection returned false");
@@ -183,9 +181,9 @@ HotmailSMTPScreenRipper.prototype =
                 break;
                
                 case 2: //refresh
-                    var aRefresh = szResponse.match(patternHotmailPOPSRRefresh);
+                    var aRefresh = szResponse.match(patternHotmailSMTPRefresh);
                     if (!aRefresh)
-                        aRefresh = szResponse.match(patternHotmailPOPJavaRefresh);
+                        aRefresh = szResponse.match(patternHotmailSMTPJavaRefresh);
                     mainObject.m_Log.Write("Hotmail-SR-SMTP - loginOnloadHandler "+ aRefresh); 
                     if (aRefresh == null) throw new Error("error parsing login page");
                     
@@ -204,9 +202,15 @@ HotmailSMTPScreenRipper.prototype =
                     if (iIndex != -1) throw new Error("error logging in ");
                     
                     //get urls for later use
+                    mainObject.m_szUM = szResponse.match(patternHotmailSMTP_UM)[1];
+                    mainObject.m_Log.Write("Hotmail-SR-SMTP - loginOnloadHandler - UM : "+mainObject.m_szUM );
+                    
                     mainObject.m_szLocationURI = httpChannel.URI.prePath ;
                     mainObject.m_Log.Write("Hotmail-SR-SMTP - loginOnloadHandler - m_szLocationURI : "+mainObject.m_szLocationURI );
                    
+                    mainObject.m_szComposer = szResponse.match(patternHotmailSMTPComposer)[1];
+                    mainObject.m_Log.Write("Hotmail-SR-SMTP - loginOnloadHandler - m_szComposer : "+mainObject.m_szComposer );
+                    
                     //server response
                     mainObject.serverComms("235 Your In\r\n");
                     mainObject.m_bAuthorised = true;
@@ -217,7 +221,7 @@ HotmailSMTPScreenRipper.prototype =
         }
         catch(err)
         {
-            mainObject.m_Log.DebugDump("Hotmail-SR-SMTP: loginHandler : Exception : " 
+             mainObject.m_Log.DebugDump("Hotmail-SR-SMTP: loginHandler : Exception : " 
                                           + err.name 
                                           + ".\nError message: " 
                                           + err.message+ "\n"
@@ -232,9 +236,36 @@ HotmailSMTPScreenRipper.prototype =
     {
         try
         {
+            this.m_Log.Write("Hotmail-SR-SMTP.js - rawMSG - START"); 
+            
+            
+            if (!this.m_Email.parse(szEmail))
+                throw new Error ("Parse Failed")
+             
+            this.aszTo = aszTo;
+            this.szFrom = szFrom;
+            
+            this.m_iStage=0;
+            this.m_HttpComms.clean();
+            var szUri = this.m_szLocationURI + this.m_szComposer + this.m_szUM;
+            this.m_HttpComms.setURI(szUri);
+            this.m_HttpComms.setRequestMethod("GET");
+            var bResult = this.m_HttpComms.send(this.composerOnloadHandler);      
+            if (!bResult) throw new Error("httpConnection returned false");
+            
+            this.m_Log.Write("Hotmail-SR-SMTP.js - rawMSG - END"); 
+            return true;
         }
         catch(err)
         {
+            this.m_Log.DebugDump("Hotmail-SR-SMTP: rawMSG : Exception : " 
+                                          + err.name 
+                                          + ".\nError message: " 
+                                          + err.message+ "\n"
+                                          + err.lineNumber);
+            
+            this.serverComms("502 negative vibes\r\n");
+            return false;
         } 
     },
     
@@ -244,28 +275,160 @@ HotmailSMTPScreenRipper.prototype =
     {
         try
         {
-            mainObject.m_Log.Write("nsLycosSMTP.js - composerOnloadHandler - START"); 
-            mainObject.m_Log.Write("nsLycosSMTP.js - composerOnloadHandler : " + mainObject.m_iStage + "\n");  
+            mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - START"); 
+            mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler : " + mainObject.m_iStage );  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
-            
+            mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - status :" +httpChannel.responseStatus );
+           
             //if this fails we've gone somewhere new
-            mainObject.m_Log.Write("nsLycosSMTP.js - composerOnloadHandler - status :" +httpChannel.responseStatus );
             if (httpChannel.responseStatus != 200) 
                 mainObject.serverComms("502 Error Sending Email\r\n");  
              
-            mainObject.serverComms("250 OK\r\n");       
-            mainObject.m_Log.Write("nsLycosSMTP.js - composerOnloadHandler - END");
+            mainObject.m_HttpComms.clean();
+            
+            //page code                                
+            switch (mainObject.m_iStage)
+            {
+                case 0:  //MSG handler
+                    mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - Send MSG"); 
+                    
+                    var szForm = szResponse.match(patternHotmailSMTPCompForm)[0];
+                    mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - Form " + szForm);
+                    
+                    var szAction = szForm.match(patternHotmailSMTPAction)[1];
+                    mainObject.m_HttpComms.setURI(szAction);
+                    mainObject.m_HttpComms.setRequestMethod("POST");
+                    
+                    var aInput = szForm.match(patternHotmailSMTPInput);
+                    mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - INPUT " + aInput);
+                    
+                    for (i=0; i<aInput.length; i++)
+                    {   
+                        var szName = aInput[i].match(patternHotmailSMTPName)[1]; 
+                        mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - name " + szName);                       
+                        
+                        var szValue = null;
+                        try
+                        {
+                            szValue = aInput[i].match(patternHotmailSMTPValue)[1]; 
+                        }
+                        catch(err)
+                        {
+                            szValue = "";
+                        }
+                                                                              
+                        if (szName.search(/to/i)!=-1) 
+                        {
+                            var szTo = mainObject.m_Email.headers.getTo();
+                            szValue = szTo? szTo:"";
+                        }
+                        else if (szName.search(/cc/i)!=-1) 
+                        {
+                            var szCc = mainObject.m_Email.headers.getCc();
+                            szValue = szCc? szCc:"";
+                        }
+                        else if (szName.search(/bcc/i)!=-1) 
+                        {
+                            var szTo = mainObject.m_Email.headers.getTo();
+                            var szCc = mainObject.m_Email.headers.getCc();
+                            var szBcc = mainObject.getBcc(szTo, szCc);
+                            szValue = szBcc? szBcc:"";
+                        }
+                        else if (szName.search(/subject/i)!=-1)
+                        {   
+                            var szSubject = mainObject.m_Email.headers.getSubject(); 
+                            szValue = szSubject? encodeURIComponent(szSubject) : "%20";
+                        }
+                        else if (szName.search(/outgoing/i)!=-1)
+                        {
+                            szValue = mainObject.m_bSaveCopy? "on":"off";
+                        }
+                      
+                        mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - value " + szValue);
+                        mainObject.m_HttpComms.addValuePair(szName,szValue);
+                    }
+                    
+                    var szTxtBody = mainObject.m_Email.body.getBody(0);
+                    mainObject.m_HttpComms.addValuePair("body",szTxtBody);
+                    
+                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);      
+                    if (!bResult) throw new Error("httpConnection returned false");
+                    mainObject.m_iStage=1;
+                break;
+                
+                case 1: ////MSG OK handler 
+                    mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - MSG OK"); 
+                    mainObject.serverComms("250 OK\r\n");    
+                break;
+                
+                case 2://Add Attachment
+                    mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - Send Attach"); 
+                break;
+                
+                case 3://attach OK
+                    mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - Attach OK"); 
+                break;
+            }  
+              
+            mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - END");
         }
         catch(err)
         {
-            mainObject.m_Log.DebugDump("nsLycosSMTP.js: composerOnloadHandler : Exception : " 
+            mainObject.m_Log.DebugDump("Hotmail-SR-SMTP.js: composerOnloadHandler : Exception : " 
                                           + err.name 
                                           + ".\nError message: " 
                                           + err.message +"\n" +
                                             err.lineNumber);
                                             
             mainObject.serverComms("502 negative vibes\r\n");
+        }
+    },
+    
+    
+    
+    getBcc : function (szTo,szCc)
+    {
+        try
+        {
+            this.m_Log.Write("Hotmail-SR-SMTP.js - getBcc - START");
+            if (this.m_aszTo.length==0) return null;
+            this.m_Log.Write("Hotmail-SR-SMTP.js - getBcc - szRcptList " + this.m_aszTo);  
+            
+            var szBcc = null;
+            var szAddress = null;
+            if (szTo) szAddress = szTo;
+            if (szCc) szAddress = (szTo ? (szAddress + ","+ szCc) : szCc);
+            this.m_Log.Write("Hotmail-SR-SMTP.js - getBcc - szAddress " + szAddress);
+           
+            if (!szAddress) 
+                szBcc = this.m_aszTo;
+            else
+            {     
+                for (i=0; i<this.m_aszTo.length; i++)
+                {
+                    var regExp = new RegExp(this.m_aszTo[i]);
+                    if (szAddress.search(regExp)==-1)
+                    {    
+                        szBcc? (szBcc += this.m_aszTo[i]) : (szBcc = this.m_aszTo[i]);
+                        szBcc +=",";
+                    }
+                }
+            }
+            this.m_Log.Write("Hotmail-SR-SMTP.js - getBcc szBcc- " + szBcc);
+            
+            this.m_Log.Write("Hotmail-SR-SMTP.js - getBcc - End");
+            return szBcc;  
+        }
+        catch(err)
+        {
+            this.m_Log.DebugDump("Hotmail-SR-SMTP.js: getBcc : Exception : " 
+                                                  + err.name 
+                                                  + ".\nError message: " 
+                                                  + err.message + "\n"
+                                                  + err.lineNumber);
+                                                  
+            return null;
         }
     },
     

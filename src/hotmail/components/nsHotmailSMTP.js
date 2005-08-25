@@ -14,6 +14,18 @@ const HotmailSMTPFolderSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=
 const HotmailSMTPMailSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:hm=\"urn:schemas:httpmail:\" xmlns:m=\"urn:schemas:mailheader:\">\r\n<D:prop>\r\n<D:isfolder/>\r\n<hm:read/>\r\n<m:hasattachment/>\r\n<m:to/>\r\n<m:from/>\r\n<m:subject/>\r\n<m:date/>\r\n<D:getcontentlength/>\r\n</D:prop>\r\n</D:propfind>";
 const HotmailSendMsgPattern = /<hm:sendmsg>(.*?)<\/hm:sendmsg>/;
 
+/*************************Screen Ripper Constants *****************************/
+const patternHotmailSMTPForm = /<form.*?>[\S\s]*?<\/form>/;
+const patternHotmailSMTPAction = /<form.*?action="(.*?)".*?>/;
+const patternHotmailSMTPInput = /<input.*?>/igm;
+const patternHotmailSMTPType = /type="(.*?)"/i;
+const patternHotmailSMTPName = /name="(.*?)"/i;
+const patternHotmailSMTPValue = /value="(.*?)"/i;
+const patternHotmailSMTPRefresh =/<META.*?HTTP-EQUIV="REFRESH".*?URL=(.*?)".*?>/i;
+const patternHotmailSMTPJavaRefresh = /top.location.replace\("(.*?)"\);/i
+const patternHotmailSMTP_UM = /_UM="(.*?)"/;
+const patternHotmailSMTPComposer = /onclick="G\('(.*?compose\?.*?)'\);"/i;
+const patternHotmailSMTPCompForm = /<form\s+name="composeform".*?>[\S\s]*?<\/form>/igm;
 
 /******************************  Hotmail ***************************************/
 function nsHotmailSMTP()
