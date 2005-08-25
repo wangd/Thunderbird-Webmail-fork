@@ -5,31 +5,29 @@ const ExtHotmailGuid = "{3c8e8390-2cf6-11d9-9669-0800200c9a66}";
 
 /************************Screen Rippper constants******************************/
 const patternHotmailPOPSRuri =/[^\.\/]+\.[^\.\/]+$/;
-const patternHotmailPOPSRBounce = /<form.*action="(.*?)".*?>.*<input.*name="mspprawqs".*?value="(.*?)".*?>.*<input.*?name="mspppostint".*?value="(.*?)".*?>/;
-const patternHotmailPOPSRBounceAlt = /<form.*action="(.*?)".*?>.*<input.*?name="mspppostint".*?value="(.*?)".*?>/;
-const patternHotmailPOPSRLogIn = /<form.*?name="form1".*?action="(.*?)".*?>/;
-const patternHotmailPOPSRLogInAlt = /<form.*?action="(.*?)".*?>/;
-const patternHotmailPOPSRForm = /<input.*?name=".*?".*?value=".*?".*?>/igm;
-const patternHotmailPOPSRType = /type="(.*?)"/i;
-const patternHotmailPOPSRName = /name="(.*?)"/i;
-const patternHotmailPOPSRValue = /value="(.*?)"/i;
+const patternHotmailPOPForm = /<form.*?>[\S\s]*?<\/form>/;
+const patternHotmailPOPAction = /<form.*?action="(.*?)".*?>/;
+const patternHotmailPOPInput = /<input.*?>/igm;
+const patternHotmailPOPType = /type="(.*?)"/i;
+const patternHotmailPOPName = /name="(.*?)"/i;
+const patternHotmailPOPValue = /value="(.*?)"/i;
 const patternHotmailPOPJavaRefresh = /top.location.replace\("(.*?)"\);/i
-const patternHotmailPOPSRRefresh =/<META.*?HTTP-EQUIV="REFRESH".*?URL=(.*?)".*?>/i;
-const patternHotmailPOPSRLogout = /<td><a.*?href="(.*?\/cgi-bin\/logout\?curmbox=.*?").*?>/m;
-const PatternHotmailPOPSRFolderBase = /document.location = "(.*?)"\+f/; 
-const PatternHotmailPOPSRFolderList =/href="javascript:G\('\/cgi-bin\/folders\?'\)"(.*?)<a href="javascript:G\('\/cgi-bin\/folders\?'\)"/;
-const PatternHotmailPOPSRFolderLinks =/<a.*?>/g;
-const PatternHotmailPOPSRTabindex =/tabindex="(.*?)"/;
-const PatternHotmailPOPSRHMFO =/HMFO\('(.*?)'\)/;
-const patternHotmailPOPSRMailbox = /<a href="(\/cgi-bin\/HoTMaiL.*?)".*?tabindex=121/;
-const patternHotmailPOPSRMsgTable = /MsgTable.*?>(.*?)<\/table>/m;
-const patternHotmailPOPSR_UM = /_UM="(.*?)"/;
-const patternHotmailPOPSRMultPageNum = /<select name="MultPageNum" onChange="window\.location\.href='(.*?)'\+_UM\+'(.*?)'.*?>(.*?)<\/select>/;
-const patternHotmailPOPSRPages = /<option value="(.*?)".*?>/g;
-const patternHotmailPOPSREmailURL = /<a.*?href="javascript:G\('(.*?)'\)">/; 
-const patternHotmailPOPSREmailLength = /.*?&len=(.*?)&/;
-const patternHotmailPOPSREmailID = /.*?msg=(.*?)&/;
-const PatterHotmailPOPSRFolderID = /curmbox=(.*?)&/;
+const patternHotmailPOPRefresh =/<META.*?HTTP-EQUIV="REFRESH".*?URL=(.*?)".*?>/i;
+const patternHotmailPOPLogout = /<td><a.*?href="(.*?\/cgi-bin\/logout\?curmbox=.*?").*?>/m;
+const patternHotmailPOPMailbox = /<a href="(\/cgi-bin\/HoTMaiL.*?)".*?tabindex=121.*?class="E">/;
+const PatternHotmailPOPFolderBase = /document.location = "(.*?)"\+f/; 
+const PatternHotmailPOPFolderList =/href="javascript:G\('\/cgi-bin\/folders\?'\)"(.*?)<a href="javascript:G\('\/cgi-bin\/folders\?'\)"/;
+const PatternHotmailPOPFolderLinks =/<a.*?>/g;
+const PatternHotmailPOPTabindex =/tabindex="(.*?)"/;
+const PatternHotmailPOPHMFO =/HMFO\('(.*?)'\)/;
+const patternHotmailPOPMsgTable = /MsgTable.*?>(.*?)<\/table>/m;
+const patternHotmailPOPMultPageNum = /<select name="MultPageNum" onChange="window\.location\.href='(.*?)'\+_UM\+'(.*?)'.*?>(.*?)<\/select>/;
+const patternHotmailPOPPages = /<option value="(.*?)".*?>/g;
+const patternHotmailPOPEmailURL = /<a.*?href="javascript:G\('(.*?)'\)">/; 
+const patternHotmailPOPEmailLength = /.*?&len=(.*?)&/;
+const patternHotmailPOPEmailID = /.*?msg=(.*?)&/;
+const patternHotmailPOPUM = /_UM="(.*?)"/;
+const patterHotmailPOPFolderID = /curmbox=(.*?)&/;
 /*******************************************************************************/
 
 
