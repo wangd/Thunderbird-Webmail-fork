@@ -26,6 +26,9 @@ function HotmailSMTPScreenRipper(oResponseStream, oLog, bSaveCopy)
         this.szFrom = null;
         this.m_Email = new email(this.m_Log);
         this.m_iStage = 0;  
+        this.m_bAttHandled = false;
+        this.m_iAttCount = 0;
+        this.m_iAttNum = 0;
                                                      
         this.m_Log.Write("Hotmail-SR-SMTP.js - Constructor - END");  
     }
@@ -287,6 +290,9 @@ HotmailSMTPScreenRipper.prototype =
              
             mainObject.m_HttpComms.clean();
             
+            if (mainObject.m_Email.attachments.length>0 && !mainObject.m_bAttHandled)
+                mainObject.m_iStage = 2;
+                
             //page code                                
             switch (mainObject.m_iStage)
             {
@@ -306,7 +312,6 @@ HotmailSMTPScreenRipper.prototype =
                     for (i=0; i<aInput.length; i++)
                     {   
                         var szName = aInput[i].match(patternHotmailSMTPName)[1]; 
-                        mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - name " + szName);                       
                         
                         var szValue = null;
                         try
@@ -344,8 +349,8 @@ HotmailSMTPScreenRipper.prototype =
                         {
                             szValue = mainObject.m_bSaveCopy? "on":"off";
                         }
-                      
-                        mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - value " + szValue);
+                        else if szName.search(/_HMaction/i)!=-1) szValue = "Send";
+                        
                         mainObject.m_HttpComms.addValuePair(szName,szValue);
                     }
                     
@@ -359,14 +364,56 @@ HotmailSMTPScreenRipper.prototype =
                 
                 case 1: ////MSG OK handler 
                     mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - MSG OK"); 
-                    mainObject.serverComms("250 OK\r\n");    
+                    if (szResponse.search(patternHotmailAD)!=-1)
+                        mainObject.serverComms("250 OK\r\n");    
+                    else
+                        mainObject.serverComms("502 Failed\r\n"); 
                 break;
                 
-                case 2://Add Attachment
-                    mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - Send Attach"); 
+                case 2://Add Attachment Request
+                    mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - Attach Request");
+                    
+                    var szForm = szResponse.match(patternHotmailSMTPCompForm)[0];
+                    mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - Form " + szForm);
+                    
+                    var szAction = szForm.match(patternHotmailSMTPAction)[1];
+                    mainObject.m_HttpComms.setURI(szAction);
+                    mainObject.m_HttpComms.setRequestMethod("POST");
+                    
+                    var aInput = szForm.match(patternHotmailSMTPInput);
+                    mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - INPUT " + aInput);
+                    
+                    for (i=0; i<aInput.length; i++)
+                    {   
+                        var szName = aInput[i].match(patternHotmailSMTPName)[1]; 
+                        
+                        var szValue = null;
+                        try
+                        {
+                            szValue = aInput[i].match(patternHotmailSMTPValue)[1]; 
+                        }
+                        catch(err)
+                        {
+                            szValue = "";
+                        }
+                                                                              
+                        if (szName.search(/to/i)!=-1) szValue = ""; 
+                        else if (szName.search(/cc/i)!=-1) szValue = ""; 
+                        else if (szName.search(/bcc/i)!=-1) szValue = ""; 
+                        else if (szName.search(/subject/i)!=-1) szValue = "";
+                        else if szName.search(/_HMaction/i)!=-1) szValue = "AttachFile";
+
+                        mainObject.m_HttpComms.addValuePair(szName,szValue);
+                    }
+                                       
+                    mainObject.m_HttpComms.addValuePair("body","");
+                    
+                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);      
+                    if (!bResult) throw new Error("httpConnection returned false");
+                    mainObject.m_iStage=3 
                 break;
                 
-                case 3://attach OK
+                case 3://Add Attach
                     mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - Attach OK"); 
                 break;
             }  
