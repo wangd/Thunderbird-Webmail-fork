@@ -333,6 +333,7 @@ nsYahooSMTP.prototype =
             if (httpChannel.responseStatus != 200) 
                 throw new Error("return status " + httpChannel.responseStatus);
             
+            mainObject.m_HttpComms.clean();
             
             if (mainObject.m_Email.attachments.length>0 && !mainObject.m_bAttHandled)
                 mainObject.m_iStage = 2;
@@ -345,11 +346,11 @@ nsYahooSMTP.prototype =
                     var szForm = szResponse.match(patternYahooComposeForm)[0];
                     mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Form " + szForm);
              
-                    var szAction = szForm.match(patternYahooAction)[1];
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Action " + szAction);
-                    var szActionURI = mainObject.m_szLocationURI + szAction;
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - ActionURI " + szActionURI);
-            
+                    var szActionURI = szForm.match(patternYahooAction)[1];
+                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Action " + szActionURI);
+                    if (szActionURI.search(/^http/i)==-1)
+                        szActionURI = mainObject.m_szLocationURI + szActionURI;
+                        
                     var aszInput = szForm.match(patternYahooInput);
                     mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Input " + aszInput);
                     
@@ -360,7 +361,7 @@ nsYahooSMTP.prototype =
                         szName = szName.replace(/'/mg,"");
                         mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Name " + szName); 
                                     
-                        if (szName.search(/Send/i)!=-1)
+                        if (szName.search(/^Send$/i)!=-1)
                             mainObject.m_HttpComms.addValuePair(szName,"1"); 
                         else if (szName.search(/SaveCopy/i)!=-1)
                         {
@@ -371,33 +372,25 @@ nsYahooSMTP.prototype =
                         {
                             var szValue = aszInput[i].match(patternYahooAltValue)[1]
                             szValue = szValue.replace(/"/mg,"");
-                            szValue = szValue.replace(/'/mg,"");              
-                            mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler -  value " + szValue);
+                            szValue = szValue.replace(/'/mg,"");
                             mainObject.m_HttpComms.addValuePair(szName, (szValue? szValue : ""));
                         }
                     }
                     
                     var szTo = mainObject.m_Email.headers.getTo(); 
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - TO " + szTo);
                     mainObject.m_HttpComms.addValuePair("To", (szTo? szTo : ""));
                     
                     var szCc = mainObject.m_Email.headers.getCc();
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - CC " + szCc);
                     mainObject.m_HttpComms.addValuePair("Cc", (szCc? szCc : ""));                    
                     
                     var szBCC = mainObject.getBcc(szTo, szCc);
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Bcc " + szBCC);
                     mainObject.m_HttpComms.addValuePair("Bcc", (szBCC? szBCC : ""));
                   
-                    
-
                     var szSubject = mainObject.m_Email.headers.getSubject(); 
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Subject " + szSubject);
                     mainObject.m_HttpComms.addValuePair("Subj",
                                             (szSubject? encodeURIComponent(szSubject) : "%20"));
                    
                     var szContentType = mainObject.m_Email.headers.getContentType(2);
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - ContentType " + szContentType);
                     if (szContentType)
                     {
                         var szTxtBody = mainObject.m_Email.body.getBody(0);
@@ -466,11 +459,11 @@ nsYahooSMTP.prototype =
                     var szForm = szResponse.match(patternYahooComposeForm)[0];
                     mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Form " + szForm);
              
-                    var szAction = szForm.match(patternYahooAction)[1];
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Action " + szAction);
-                    var szActionURI = mainObject.m_szLocationURI + szAction;
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - ActionURI " + szActionURI);
-            
+                    var szActionURI = szForm.match(patternYahooAction)[1];
+                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Action " + szActionURI);
+                    if (szActionURI.search(/^http/i)==-1)
+                        szActionURI = mainObject.m_szLocationURI + szActionURI;
+                        
                     var aszInput = szForm.match(patternYahooInput);
                     mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Input " + aszInput);
                     
@@ -522,7 +515,9 @@ nsYahooSMTP.prototype =
                     
                     var szAction = szForm.match(patternYahooAction)[1];
                     mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Action " + szAction);
-                   
+                    if (szAction.search(/^http/i)==-1)
+                        szAction = mainObject.m_szLocationURI + szAction;
+                    
                     var aszInput = szForm.match(patternYahooInput);
                     mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Input " + aszInput);
                    
@@ -536,10 +531,9 @@ nsYahooSMTP.prototype =
                         szName = szName.replace(/'/mg,"");
                         mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Name " + szName); 
                         
-        
                         if(szName.search(/^UPL$/i)!=-1)
                         {
-                            mainObject.m_HttpComms.addFormData(szName,"Attach Files",null,false);          
+                            mainObject.m_HttpComms.addValuePair(szName,"Attach Files");          
                         }
                         else
                         { 
@@ -548,11 +542,7 @@ nsYahooSMTP.prototype =
                             szValue = szValue.replace(/"/mg,""); 
                             szValue = szValue.replace(/'/mg,"");              
                             mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - value " + szValue);
-                            mainObject.m_HttpComms.addFormData(szName,
-                                                               (szValue.length>0) ? szValue : "",
-                                                               false,
-                                                               null,
-                                                               false);  
+                            mainObject.m_HttpComms.addValuePair(szName, (szValue.length>0) ? szValue : "");  
                         }
                     }
                     
@@ -562,8 +552,6 @@ nsYahooSMTP.prototype =
                         szName = szName.replace(/"/mg,"");
                         mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Name " + szName); 
                         
-                        szData+="Content-Disposition: form-data; name=\""
-                        szData += szName +"\"";
                         if (i < mainObject.m_Email.attachments.length)
                         {
                             //headers
@@ -580,23 +568,23 @@ nsYahooSMTP.prototype =
                                 mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - encoded B64"); 
                                 var oBase64 = new base64();
                                 szBody = oBase64.decode(szBody.replace(/\r\n/gm,""));
-                                mainObject.m_HttpComms.addFormData(szName,szBody,true,szFileName,true); 
+                                mainObject.m_HttpComms.addFile(szName, szFileName, true, szBody); 
                             } 
                             else if (szEncoding.search(/quoted-printable/i)!=-1)
                             {
                                 mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - encoded QP");  
                                 var oQP = new QuotedPrintable();
                                 szBody = oQP.decode(szBody);
-                                mainObject.m_HttpComms.addFormData(szName,szBody,true,szFileName,false);    
+                                mainObject.m_HttpComms.addFormData(szName, szFileName, false,szBody);    
                             }
                             else
                             {
                                 mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - no encoding"); 
-                                mainObject.m_HttpComms.addFormData(szName,szBody,true,szFileName,false); 
+                                mainObject.m_HttpComms.addFile(szName, szFileName, false, szBody); 
                             }
                         }
                         else
-                            mainObject.m_HttpComms.addFormData(szName, null, true, null, false); 
+                            mainObject.m_HttpComms.addValuePair(szName, ""); 
                     }
                    
                     mainObject.m_HttpComms.setContentType(1);
@@ -622,6 +610,8 @@ nsYahooSMTP.prototype =
                     
                     var szAction = szForm.match(patternYahooAction)[1];
                     mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Action " + szAction);
+                    if (szAction.search(/^http/i)==-1)
+                        szAction = mainObject.m_szLocationURI + szAction;
                    
                     var aszInput = szForm.match(patternYahooInput);
                     mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Input " + aszInput);
@@ -639,8 +629,7 @@ nsYahooSMTP.prototype =
                         szValue = szValue.replace(/'/mg,"");              
                         mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - value " + szValue);
                         
-                        mainObject.m_HttpComms.addValuePair(szName,
-                                                        (szValue.length>0)? szValue : "");
+                        mainObject.m_HttpComms.addValuePair(szName,(szValue.length>0)? szValue : "");
                     }
                    
                     mainObject.m_HttpComms.setContentType(0);
