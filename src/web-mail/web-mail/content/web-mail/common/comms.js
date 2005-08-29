@@ -28,7 +28,9 @@ function Comms(parent , log)
         this.m_szContentType = "application/x-www-form-urlencoded";
         this.m_iContentType = 0;
         this.m_parent = parent;
-        
+        this.m_szStartBoundary = null
+        this.m_szEndBoundary = null;
+        this.m_szBoundary = null;
         
         this.m_Log.Write("comms.js - constructor - END");  
     }
@@ -96,7 +98,8 @@ Comms.prototype =
             this.m_Log.DebugDump("comms.js: setURI : Exception : " 
                                                   + err.name 
                                                   + ".\nError message: " 
-                                                  + err.message);
+                                                  + err.message + "\n"
+                                                  + err.lineNumber);
             return false;
         }
     },
@@ -127,7 +130,8 @@ Comms.prototype =
             this.m_Log.DebugDump("comms.js: addRequestHeader : Exception : " 
                                                   + err.name 
                                                   + ".\nError message: " 
-                                                  + err.message);
+                                                  + err.message + "\n"
+                                                  + err.lineNumber);
             return false;
         }
     },
@@ -153,7 +157,8 @@ Comms.prototype =
             this.m_Log.DebugDump("comms.js: requestMethod : Exception : " 
                                                   + err.name 
                                                   + ".\nError message: " 
-                                                  + err.message);
+                                                  + err.message + "\n"
+                                                  + err.lineNumber);
             return false;
         }
     },
@@ -167,15 +172,19 @@ Comms.prototype =
         {
             this.m_Log.Write("comms.js - setContentType - START");
             this.m_Log.Write("comms.js - setContentType - " + iType);
-            
-            if (iType>0) return false;
-             
+                       
             this.m_iContentType = iType;
-            if (iType==-1) this.m_szContentType= null;
-            if (iType==0) this.m_szContentType= "application/x-www-form-urlencoded";
-            if (iType==1) this.m_szContentType= "multipart/form-data";
             
-           
+            if (iType==0) 
+                this.m_szContentType= "application/x-www-form-urlencoded";
+            else if (iType==1) 
+                this.m_szContentType= "multipart/form-data";
+            else
+                this.m_szContentType= null;
+            
+            this.m_Log.Write("comms.js - setContentType - " + this.m_iContentType);
+            this.m_Log.Write("comms.js - setContentType - " + this.m_szContentType);
+            
             this.m_Log.Write("comms.js - setContentType - END");
             return true;
         }
@@ -184,7 +193,8 @@ Comms.prototype =
             this.m_Log.DebugDump("comms.js: setContentType : Exception : " 
                                                   + err.name 
                                                   + ".\nError message: " 
-                                                  + err.message);
+                                                  + err.message + "\n"
+                                                  + err.lineNumber);
             return false;
         }
     },
@@ -212,21 +222,21 @@ Comms.prototype =
             this.m_Log.DebugDump("comms.js: addValuePair : Exception : " 
                                                   + err.name 
                                                   + ".\nError message: " 
-                                                  + err.message);
+                                                  + err.message + "\n"
+                                                  + err.lineNumber);
             return false;
         } 
     },
     
     
     
-    addFormData : function (szName, szValue, bFile, szFileName, bBinary)
+    addFile : function (szName, szFileName ,bBinary , szValue)
     {
        try
         {
             this.m_Log.Write("comms.js - addFormData - START");
             this.m_Log.Write("comms.js - addFormData - " + szName + " " 
-                                                         + szFileName + " " 
-                                                         + bFile + " " 
+                                                         + szFileName + " "
                                                          + bBinary + " "
                                                          + szValue);
             if (!szName ) return false;
@@ -236,7 +246,7 @@ Comms.prototype =
             oData.szValue = szValue;
             oData.szFileName = szFileName;
             oData.bBinary = bBinary;
-            oData.bFile = bFile;
+            oData.bFile = true;
             
             this.m_aFormData.push(oData);
                     
@@ -245,10 +255,11 @@ Comms.prototype =
         }
         catch(err)
         {
-            this.m_Log.DebugDump("comms.js: addFormData : Exception : " 
+            this.m_Log.DebugDump("comms.js: addFile : Exception : " 
                                                   + err.name 
                                                   + ".\nError message: " 
-                                                  + err.message);
+                                                  + err.message + "\n"
+                                                  + err.lineNumber);
             return false;
         } 
     },
@@ -259,8 +270,7 @@ Comms.prototype =
         try
         {
             this.m_Log.Write("comms.js - addData - START");
-            this.m_Log.Write("comms.js - addData - " + szContentType + "\n" 
-                                                     + szData);
+            this.m_Log.Write("comms.js - addData - " + szContentType + "\n" + szData);
                        
             var oData = new commsData();
             oData.szName = null;
@@ -273,6 +283,12 @@ Comms.prototype =
         }
         catch(err)
         {
+            this.m_Log.DebugDump("comms.js: addData : Exception : " 
+                                                  + err.name 
+                                                  + ".\nError message: " 
+                                                  + err.message + "\n"
+                                                  + err.lineNumber);
+            return false;
         }
     },
     
@@ -289,6 +305,7 @@ Comms.prototype =
             var HttpRequest = channel.QueryInterface(Components.interfaces.nsIHttpChannel);                                     
             HttpRequest.redirectionLimit = 0; //stops automatic redirect handling
             
+             this.m_Log.Write("comms.js - send - contenttype "+ this.m_iContentType);
             //set headers          
             
             //add cookies
@@ -315,7 +332,11 @@ Comms.prototype =
             {
                 MultiStream = Components.classes["@mozilla.org/io/multiplex-input-stream;1"];
                 MultiStream = MultiStream.createInstance(Components.interfaces.nsIMultiplexInputStream);
-                            
+                
+                //create boundarys
+                if (this.m_iContentType==1) this.createBoundary();
+                
+                                   
                 for (j=0; j<this.m_aFormData.length; j++)
                 {
                     var oTemp = this.m_aFormData[j];
@@ -325,17 +346,12 @@ Comms.prototype =
                                                                        oTemp.szValue);
                                                                        
                    
-                    if (this.m_iContentType == 1) //formdata
-                    {    
-                        var szBoundary = this.createBoundary();
-                        this.m_Log.Write("comms.js - send - boundary " + szBoundary);   
-                        var startBoundary = "\r\n--"+szBoundary+"\r\n" ;              
-                        var endBoundary = "\r\n--"+szBoundary+"--\r\n" ;
-                        
+                    if (this.m_iContentType==1) //formdata
+                    {                           
                         this.m_Log.Write("comms.js - addFormData - adding start boundary");            
                         var startStream = Components.classes["@mozilla.org/io/string-input-stream;1"];
                         startStream = startStream.createInstance(Components.interfaces.nsIStringInputStream);
-                        startStream.setData(startBoundary,-1);
+                        startStream.setData(this.m_szStartBoundary,-1);
                         MultiStream.appendStream(startStream);
                         startStream.close();
                          
@@ -343,19 +359,8 @@ Comms.prototype =
                         mimeStream = mimeStream.createInstance(Components.interfaces.nsIMIMEInputStream );
                         mimeStream.addContentLength = false;             
                         
-                        if (!oTemp.bFile) 
+                        if (oTemp.bFile) 
                         {   
-                            this.m_Log.Write("comms.js - send - adding form data");  
-                            var szContDisp = "form-data; name=\""+ oTemp.szName + "\"";
-                            mimeStream.addHeader("Content-Disposition",szContDisp);
-                            var valueStream = Components.classes["@mozilla.org/io/string-input-stream;1"];
-                            valueStream = valueStream.createInstance( Components.interfaces.nsIStringInputStream );
-                            valueStream.setData(oTemp.szValue? oTemp.szValue:"",-1);
-                            mimeStream.setData(valueStream);
-                            valueStream.close();
-                        }    
-                        else
-                        {
                             this.m_Log.Write("comms.js - send - adding file");  
                             var szContDisp = "form-data; name=\"" + oTemp.szName + "\"; ";
                             szContDisp +="filename=\"" + (oTemp.szFileName ? oTemp.szFileName : "") + "\"";       
@@ -384,6 +389,17 @@ Comms.prototype =
                                 mimeStream.setData(fileStream);
                                 fileStream.close();
                             }
+                        }    
+                        else
+                        {
+                            this.m_Log.Write("comms.js - send - adding form data");  
+                            var szContDisp = "form-data; name=\""+ oTemp.szName + "\"";
+                            mimeStream.addHeader("Content-Disposition",szContDisp);
+                            var valueStream = Components.classes["@mozilla.org/io/string-input-stream;1"];
+                            valueStream = valueStream.createInstance( Components.interfaces.nsIStringInputStream );
+                            valueStream.setData(oTemp.szValue? oTemp.szValue:"",-1);
+                            mimeStream.setData(valueStream);
+                            valueStream.close();
                         } 
                     
                         MultiStream.appendStream(mimeStream);
@@ -394,7 +410,7 @@ Comms.prototype =
                             this.m_Log.Write("comms.js - send - adding end boundary"); 
                             var endStream = Components.classes["@mozilla.org/io/string-input-stream;1"];
                             endStream = endStream.createInstance( Components.interfaces.nsIStringInputStream );
-                            endStream.setData(endBoundary,-1);                   
+                            endStream.setData(this.m_szEndBoundary,-1);                   
                             MultiStream.appendStream(endStream);
                             endStream.close();
                         }
@@ -431,7 +447,7 @@ Comms.prototype =
                 var szContentType=null;
                 if (this.m_iContentType == 1) //"application/x-www-form-urlencoded"
                 {   
-                    szContentType = this.m_szContentType +"; boundary=" +szBoundary;
+                    szContentType = this.m_szContentType +"; boundary=" +this.m_szBoundary;
                 }
                 else
                 {
@@ -458,7 +474,8 @@ Comms.prototype =
             this.m_Log.DebugDump("comms.js: send : Exception : " 
                                                   + err.name 
                                                   + ".\nError message: " 
-                                                  + err.message);
+                                                  + err.message + "\n"
+                                                  + err.lineNumber);
             return false;
         }
     },
@@ -493,7 +510,8 @@ Comms.prototype =
             this.m_Log.DebugDump("comms.js: writeBinaryFile : Exception : " 
                                                   + err.name 
                                                   + ".\nError message: " 
-                                                  + err.message);
+                                                  + err.message + "\n"
+                                                  + err.lineNumber);
             return null;
         }
     },
@@ -534,7 +552,8 @@ Comms.prototype =
             this.m_Log.DebugDump("comms.js: readBinaryFile : Exception : " 
                                                   + err.name 
                                                   + ".\nError message: " 
-                                                  + err.message);
+                                                  + err.message + "\n"
+                                                  + err.lineNumber);
             return null;
         }
     },
@@ -543,16 +562,18 @@ Comms.prototype =
     createBoundary : function ()
     {
         this.m_Log.Write("comms.js - createBondary - START");
-            
-        var szBoundary = "-------------" + 
-                        parseInt(Math.floor(Math.random()*100001))+
-                        parseInt(Math.floor(Math.random()*100001))+
-                        parseInt(Math.floor(Math.random()*100001));
         
-        this.m_Log.Write("comms.js - createBondary - boundary " + szBoundary );  
+        this.m_szBoundary = "-------------" + 
+                            parseInt(Math.floor(Math.random()*100001))+
+                            parseInt(Math.floor(Math.random()*100001))+
+                            parseInt(Math.floor(Math.random()*100001));
+        
+        this.m_Log.Write("comms.js - createBondary - boundary " + this.m_szBoundary );  
+        this.m_szStartBoundary = "\r\n--"+this.m_szBoundary+"\r\n" ;              
+        this.m_szEndBoundary = "\r\n--"+this.m_szBoundary+"--\r\n" ;
         
         this.m_Log.Write("comms.js - createBondary - END");
-        return szBoundary;
+        return this.m_szBoundary;
     },
     
     
@@ -633,7 +654,8 @@ Comms.prototype =
             mainObject.m_Log.DebugDump("comms.js: callback : Exception : " 
                                                   + err.name 
                                                   + ".\nError message: " 
-                                                  + err.message);
+                                                  + err.message + "\n"
+                                                  + err.lineNumber);
             return false;
         }
     },
