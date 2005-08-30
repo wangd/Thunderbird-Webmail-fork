@@ -241,8 +241,7 @@ HotmailSMTPScreenRipper.prototype =
         {
             this.m_Log.Write("Hotmail-SR-SMTP.js - rawMSG - START"); 
             
-            
-            if (!this.m_Email.parse(szEmail))
+            if (!this.m_Email.parse(szEmail.match(/^([\s\S]*)\r?\n\./g)))
                 throw new Error ("Parse Failed")
              
             this.aszTo = aszTo;
@@ -324,22 +323,22 @@ HotmailSMTPScreenRipper.prototype =
                             szValue = "";
                         }
                                                                               
-                        if (szName.search(/^to$/i)!=-1) 
+                        if (szName.search(/^to$/i)!=-1|| szName.search(/^encodedto$/i)!=-1) 
                         {
                             var szTo = mainObject.m_Email.headers.getTo();
-                            szValue = szTo? szTo:"";
+                            szValue = szTo? encodeURIComponent(szTo):"";
                         }
-                        else if (szName.search(/^cc$/i)!=-1) 
+                        else if (szName.search(/^cc$/i)!=-1|| szName.search(/^encodedcc$/i)!=-1) 
                         {
                             var szCc = mainObject.m_Email.headers.getCc();
-                            szValue = szCc? szCc:"";
+                            szValue = szCc? encodeURIComponent(szCc):"";
                         }
-                        else if (szName.search(/^bcc$/i)!=-1) 
+                        else if (szName.search(/^bcc$/i)!=-1 || szName.search(/^encodedbcc$/i)!=-1) 
                         {
                             var szTo = mainObject.m_Email.headers.getTo();
                             var szCc = mainObject.m_Email.headers.getCc();
                             var szBcc = mainObject.getBcc(szTo, szCc);
-                            szValue = szBcc? szBcc:"";
+                            szValue = szBcc? encodeURIComponent(szBcc):"";
                         }
                         else if (szName.search(/subject/i)!=-1)
                         {   

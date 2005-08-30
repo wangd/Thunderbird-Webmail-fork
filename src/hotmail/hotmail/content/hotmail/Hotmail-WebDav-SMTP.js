@@ -212,15 +212,15 @@ HotmailSMTPWebDav.prototype =
             this.m_Log.Write("HotmailWD-SMTP.js - rawMSG - START");   
                 
             this.m_iStage = 0;
-            szEmail = szEmail.replace(/^\.$/m, ""); //removes SMTP termiator
-            //get composer page
+            
             var szMsg = "MAIL FROM:<"+szFrom+">\r\n";
+            
             for (i=0; i< aszTo.length; i++)
             {
                 szMsg +="RCPT TO:<"+aszTo[i]+">\r\n";
             }
             szMsg +="\r\n";
-            szMsg += szEmail;
+            szMsg += szEmail.match(/^([\s\S]*)\r?\n\./g);//removes SMTP termiator
             szMsg +="\r\n\r\n";
             
             this.m_HttpComms.clean();
