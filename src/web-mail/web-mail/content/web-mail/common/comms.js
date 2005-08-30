@@ -444,15 +444,9 @@ Comms.prototype =
                     }
                 }
                 
-                var szContentType=null;
+                var szContentType = this.m_szContentType;
                 if (this.m_iContentType == 1) //"application/x-www-form-urlencoded"
-                {   
-                    szContentType = this.m_szContentType +"; boundary=" +this.m_szBoundary;
-                }
-                else
-                {
-                    szContentType =  this.m_szContentType;
-                }
+                    szContentType +="; boundary=" +this.m_szBoundary;
                 this.m_Log.Write("comms.js - send - contentType "+szContentType);
                 
                 var uploadChannel = channel.QueryInterface(Components.interfaces.nsIUploadChannel);

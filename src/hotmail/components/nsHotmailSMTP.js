@@ -26,6 +26,7 @@ const patternHotmailSMTPJavaRefresh = /top.location.replace\("(.*?)"\);/i
 const patternHotmailSMTP_UM = /_UM="(.*?)"/;
 const patternHotmailSMTPComposer = /onclick="G\('(.*?compose\?.*?)'\);"/i;
 const patternHotmailSMTPCompForm = /<form\s+name="composeform".*?>[\S\s]*?<\/form>/igm;
+const patternHotmailSMTPAttForm = /<form\s+name="doattach".*?>[\S\s]*?<\/form>/igm
 const patternHotmailAD = /<form.*?name="addtoAB".*?>/igm;
 
 /******************************  Hotmail ***************************************/
