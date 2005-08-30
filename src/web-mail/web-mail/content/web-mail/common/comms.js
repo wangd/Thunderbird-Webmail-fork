@@ -451,8 +451,6 @@ Comms.prototype =
                 
                 var uploadChannel = channel.QueryInterface(Components.interfaces.nsIUploadChannel);
                 uploadChannel.setUploadStream(MultiStream , szContentType , -1);   
-                
-                HttpRequest.setRequestHeader("Content-Length", MultiStream.available() , true);        
             }
             
             HttpRequest.requestMethod = this.m_szMethod;

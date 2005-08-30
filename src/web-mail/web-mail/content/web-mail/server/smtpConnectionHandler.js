@@ -87,10 +87,7 @@ SMTPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
             }
             else // there's more
             {
-                if (this.m_szEmail)
-                    this.m_szEmail+= szStream; 
-                else
-                    this.m_szEmail= szStream;     
+                (this.m_szEmail)? this.m_szEmail+= szStream : this.m_szEmail= szStream;    
             }    
             this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - Data MSG Cont - END "+ this.iID); 
         }
