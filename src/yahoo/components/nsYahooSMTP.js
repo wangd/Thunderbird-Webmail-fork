@@ -414,24 +414,24 @@ nsYahooSMTP.prototype =
                             {
                                 mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - bSendHtml szHtmlBody");
                                 mainObject.m_HttpComms.addValuePair("Format","html");
-                                mainObject.m_HttpComms.addValuePair("Body",encodeURIComponent(szHtmlBody));
+                                mainObject.m_HttpComms.addValuePair("Body",mainObject.escapeStr(szHtmlBody));
                             }
                             else if (!mainObject.m_bSendHtml && szTxtBody)
                             {
                                 mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - !bSendHtml szTxtBody");
-                                mainObject.m_HttpComms.addValuePair("Body",encodeURIComponent(szTxtBody));
+                                mainObject.m_HttpComms.addValuePair("Body",mainObject.escapeStr(szTxtBody));
                             }
                             else if (szHtmlBody)
                             {
                                 mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - szHtmlBody");
                                 mainObject.m_HttpComms.addValuePair("Format","html");
-                                mainObject.m_HttpComms.addValuePair("Body",encodeURIComponent(szHtmlBody));
+                                mainObject.m_HttpComms.addValuePair("Body",mainObject.escapeStr(szHtmlBody));
                             }
                             else if (szTxtBody)
                             {
                                 mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - szTxtBody");
                                 mainObject.m_HttpComms.addValuePair("Format","plain");
-                                mainObject.m_HttpComms.addValuePair("Body",encodeURIComponent(szTxtBody));
+                                mainObject.m_HttpComms.addValuePair("Body",mainObject.escapeStr(szTxtBody));
                             }  
                         }
                     }
