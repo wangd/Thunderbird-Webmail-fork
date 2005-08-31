@@ -8,7 +8,6 @@ const patternHotmailSMTPSRuri =/[^\.\/]+\.[^\.\/]+$/;
 
 
 /************************Webdav constants *************************************/
-const patternHotmailPOPWDuri = /.*?\.(.*?)$/;
 const HotmailSMTPSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:h=\"http://schemas.microsoft.com/hotmail/\" xmlns:hm=\"urn:schemas:httpmail:\">\r\n<D:prop>\r\n<h:adbar/>\r\n<hm:contacts/>\r\n<hm:inbox/>\r\n<hm:outbox/>\r\n<hm:sendmsg/>\r\n<hm:sentitems/>\r\n<hm:deleteditems/>\r\n<hm:drafts/>\r\n<hm:msgfolderroot/>\r\n<h:maxpoll/>\r\n<h:sig/>\r\n</D:prop>\r\n</D:propfind>";
 const HotmailSMTPFolderSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:hm=\"urn:schemas:httpmail:\">\r\n<D:prop>\r\n<D:isfolder/>\r\n<D:displayname/>\r\n<hm:special/>\r\n<D:hassubs/>\r\n<D:nosubs/>\r\n<hm:unreadcount/>\r\n<D:visiblecount/>\r\n<hm:special/>\r\n</D:prop>\r\n</D:propfind>";
 const HotmailSMTPMailSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:hm=\"urn:schemas:httpmail:\" xmlns:m=\"urn:schemas:mailheader:\">\r\n<D:prop>\r\n<D:isfolder/>\r\n<hm:read/>\r\n<m:hasattachment/>\r\n<m:to/>\r\n<m:from/>\r\n<m:subject/>\r\n<m:date/>\r\n<D:getcontentlength/>\r\n</D:prop>\r\n</D:propfind>";
@@ -53,7 +52,7 @@ function nsHotmailSMTP()
         this.m_szUserName = null;   
         this.m_szPassWord = null; 
         this.m_oResponseStream = null;  
-        this.m_aszTo = new Array;
+        this.m_aszTo = new Array();
         this.m_szFrom = null;
         this.m_CommMethod = null;
               
@@ -177,6 +176,8 @@ nsHotmailSMTP.prototype =
         try
         {
             this.m_Log.Write("nsHotmailSMTP.js - rawMSG - START");   
+            this.m_Log.Write("nsHotmailSMTP.js - rawMSG from " +this.m_szFrom );
+            this.m_Log.Write("nsHotmailSMTP.js - rawMSG to " +this.m_aszTo );
             this.m_Log.Write("nsHotmailSMTP.js - rawMSG " + szEmail);
     
             var bResult = this.m_CommMethod.rawMSG(this.m_szFrom, 
