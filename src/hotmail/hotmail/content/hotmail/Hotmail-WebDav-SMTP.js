@@ -220,7 +220,7 @@ HotmailSMTPWebDav.prototype =
                 szMsg +="RCPT TO:<"+aszTo[i]+">\r\n";
             }
             szMsg +="\r\n";
-            szMsg += szEmail.match(/^([\s\S]*)\r?\n\./g);//removes SMTP termiator
+            szMsg += szEmail.match(/(^[\s\S]*)\r?\n\./)[1];//removes SMTP termiator
             szMsg +="\r\n\r\n";
             
             this.m_HttpComms.clean();
@@ -228,8 +228,13 @@ HotmailSMTPWebDav.prototype =
             this.m_HttpComms.setURI(this.m_szSendUri);
             this.m_HttpComms.setRequestMethod("POST");
             this.m_HttpComms.addRequestHeader("SAVEINSENT", this.m_bSaveCopy?"t":"f", false); 
-            this.m_HttpComms.addData(szMsg,"message/rfc821");     
-            this.m_HttpComms.addRequestHeader("Authorization", this.m_szAuthString , false);  
+            this.m_HttpComms.addData(szMsg,"message/rfc821");
+            
+            var szURL = this.m_IOS.newURI(this.m_szSendUri,null,null).prePath;
+            var aszRealm = szURL.match(patternHotmailSMTPSRuri); 
+            var szAuthString = this.m_AuthToken.findToken(aszRealm);
+                          
+            this.m_HttpComms.addRequestHeader("Authorization", szAuthString , false);  
             var bResult = this.m_HttpComms.send(this.composerOnloadHandler);  
             if (!bResult) throw new Error("httpConnection returned false");
             

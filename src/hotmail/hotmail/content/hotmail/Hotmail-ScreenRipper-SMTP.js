@@ -9,6 +9,8 @@ function HotmailSMTPScreenRipper(oResponseStream, oLog, bSaveCopy)
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Email.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/base64.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Quoted-Printable.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
+        scriptLoader.loadSubScript("chrome://global/content/strres.js");
                
         this.m_Log = oLog; 
                 
@@ -241,11 +243,20 @@ HotmailSMTPScreenRipper.prototype =
         {
             this.m_Log.Write("Hotmail-SR-SMTP.js - rawMSG - START"); 
             
-            if (!this.m_Email.parse(szEmail.match(/^([\s\S]*)\r?\n\./g)))
+            if (!this.m_Email.parse(szEmail))
                 throw new Error ("Parse Failed")
-             
-            this.aszTo = aszTo;
-            this.szFrom = szFrom;
+            
+            if (!this.m_Email.body.getBody(0)) 
+            {
+                var stringBundle =srGetStrBundle("chrome://hotmail/locale/Hotmail-SMTP.properties");
+                var szError = stringBundle.GetStringFromName("HtmlError");
+
+                this.serverComms("502 "+ szError + "\r\n");
+                return false;
+            }
+                
+            this.m_aszTo = aszTo;
+            this.m_szFrom = szFrom;
             this.m_iAttCount = this.m_Email.attachments.length;
             this.m_iAttUploaded = 0;
         
@@ -290,7 +301,7 @@ HotmailSMTPScreenRipper.prototype =
                 mainObject.serverComms("502 Error Sending Email\r\n");  
              
             mainObject.m_HttpComms.clean();
-            
+                        
             if (mainObject.m_Email.attachments.length>0 && !mainObject.m_bAttHandled)
                 mainObject.m_iStage = 2;
                 
@@ -308,6 +319,9 @@ HotmailSMTPScreenRipper.prototype =
                                       
                     var aInput = szForm.match(patternHotmailSMTPInput);
                     mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - INPUT " + aInput);
+                    
+                    var szTxtBody = mainObject.m_Email.body.getBody(0);
+                    var szHtmlBody = mainObject.m_Email.body.getBody(1);
                     
                     for (i=0; i<aInput.length; i++)
                     {   
@@ -350,12 +364,13 @@ HotmailSMTPScreenRipper.prototype =
                             szValue = mainObject.m_bSaveCopy? "on":"off";
                         }
                         else if (szName.search(/_HMaction/i)!=-1) 
+                        {
                             szValue = "Send";
-                        
+                        }
+                       
                         mainObject.m_HttpComms.addValuePair(szName,szValue);
                     }
                     
-                    var szTxtBody = mainObject.m_Email.body.getBody(0);
                     mainObject.m_HttpComms.addValuePair("body",encodeURIComponent(szTxtBody));
                     mainObject.m_HttpComms.setRequestMethod("POST");
                     var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);      
@@ -406,7 +421,7 @@ HotmailSMTPScreenRipper.prototype =
 
                         mainObject.m_HttpComms.addValuePair(szName,szValue);
                     }
-                                       
+                                        
                     mainObject.m_HttpComms.addValuePair("body","");
                     
                     var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);      
@@ -537,12 +552,12 @@ HotmailSMTPScreenRipper.prototype =
                 szBcc = this.m_aszTo;
             else
             {     
-                for (i=0; i<this.m_aszTo.length; i++)
+                for (j=0; j<this.m_aszTo.length; j++)
                 {
-                    var regExp = new RegExp(this.m_aszTo[i]);
+                    var regExp = new RegExp(this.m_aszTo[j]);
                     if (szAddress.search(regExp)==-1)
                     {    
-                        szBcc? (szBcc += this.m_aszTo[i]) : (szBcc = this.m_aszTo[i]);
+                        szBcc? (szBcc += this.m_aszTo[j]) : (szBcc = this.m_aszTo[j]);
                         szBcc +=",";
                     }
                 }
@@ -563,8 +578,8 @@ HotmailSMTPScreenRipper.prototype =
             return null;
         }
     },
+      
     
-     
     serverComms : function (szMsg)
     {
         try

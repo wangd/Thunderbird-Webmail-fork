@@ -508,7 +508,7 @@ HotmailWebDav.prototype =
             this.m_HttpComms.setContentType(-1);
             this.m_HttpComms.setURI(szMsgID);
             this.m_HttpComms.setRequestMethod("GET");
-            this.m_HttpComms.addRequestHeader("Authorization", this.m_szAuthString , false);
+            this.m_HttpComms.addRequestHeader("Authorization", szAuthString , false);
             var bResult = this.m_HttpComms.send(this.emailOnloadHandler);                             
             if (!bResult) throw new Error("httpConnection returned false");
                                
