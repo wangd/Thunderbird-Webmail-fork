@@ -1,3 +1,4 @@
 <!ENTITY Options.szTitle "Hotmail-module opties">
 <!ENTITY WebDav.Panel.szTitle "WebDav">
 <!ENTITY POP.Panel.szTitle "POP">
+<!ENTITY SMTP.Panel.szTitle "SMTP">

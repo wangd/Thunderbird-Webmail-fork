@@ -1,3 +1,4 @@
 <!ENTITY Options.szTitle "Hotmail Einstellungen">
 <!ENTITY WebDav.Panel.szTitle "WebDAV">
 <!ENTITY POP.Panel.szTitle "POP">
+<!ENTITY SMTP.Panel.szTitle "SMTP">

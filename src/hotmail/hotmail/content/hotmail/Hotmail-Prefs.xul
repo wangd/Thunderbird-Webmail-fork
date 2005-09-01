@@ -27,5 +27,10 @@
     <prefpane id="panePOP" 
               label="&POP.Panel.szTitle;"
               src="chrome://hotmail/content/Hotmail-Prefs-POP.xul"/>
+              
+    <!-- SMTP --> 
+    <prefpane id="paneSMTP" 
+              label="&SMTP.Panel.szTitle;"
+              src="chrome://hotmail/content/Hotmail-Prefs-SMTP.xul"/>  
                   
 </prefwindow>
