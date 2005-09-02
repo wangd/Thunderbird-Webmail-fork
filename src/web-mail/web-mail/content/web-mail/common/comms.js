@@ -83,14 +83,12 @@ Comms.prototype =
     {
         try
         {
-            this.m_Log.Write("comms.js - setURI - START");
             this.m_Log.Write("comms.js - setURI - " + szURI);
             
             if (!szURI) return false;
             
             this.m_URI = this.m_IOService.newURI(szURI, null, null);
             
-            this.m_Log.Write("comms.js - setURI - END");
             return true;
         }
         catch(err)
@@ -109,7 +107,6 @@ Comms.prototype =
     {
         try
         {
-            this.m_Log.Write("comms.js - addRequestHeader - START");
             this.m_Log.Write("comms.js - addRequestHeader - " + szName + " " 
                                                               + szValue + " " 
                                                               + bOverRide);
@@ -122,7 +119,6 @@ Comms.prototype =
             oData.bOverRide = bOverRide;
             this.m_aHeaders.push(oData);
              
-            this.m_Log.Write("comms.js - addRequestHeader - END");
             return true;
         }
         catch(err)
@@ -142,14 +138,11 @@ Comms.prototype =
     {
         try
         {
-            this.m_Log.Write("comms.js - requestMethod - START");
             this.m_Log.Write("comms.js - requestMethod - " + szMethod);
-            
             if (!szMethod) return false;
             
             this.m_szMethod = szMethod;
              
-            this.m_Log.Write("comms.js - requestMethod - END");
             return true;
         }
         catch(err)
@@ -204,7 +197,6 @@ Comms.prototype =
     {
        try
         {
-            this.m_Log.Write("comms.js - addValuePair - START");
             this.m_Log.Write("comms.js - addValuePair - " + szName + " " + szValue);
              
             if (!szName) return false;
@@ -214,7 +206,6 @@ Comms.prototype =
             oData.szValue = szValue;
             this.m_aFormData.push(oData);
         
-            this.m_Log.Write("comms.js - addValuePair - END");
             return true;
         }
         catch(err)

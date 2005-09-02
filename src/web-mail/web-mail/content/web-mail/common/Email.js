@@ -34,10 +34,13 @@ email.prototype.parse = function (szRawEmail)
     {
         this.m_Log.Write("email.js - parse - START"); 
         
-        var iHeadersEnd = this.findHeaders(szRawEmail);
-        var szHeaders = this.getHeaders(szRawEmail,iHeadersEnd);
+        //remove pop terminator
+        var szEmail = szRawEmail.match(/(^[\s\S]*)\r?\n\./)[1];
+        
+        var iHeadersEnd = this.findHeaders(szEmail);
+        var szHeaders = this.getHeaders(szEmail,iHeadersEnd);
         this.headers = new headers(this.m_Log , szHeaders);
-        var szBody = this.getBody(szRawEmail,iHeadersEnd);
+        var szBody = this.getBody(szEmail,iHeadersEnd);
         this.body = new body();
          
         var szType = this.headers.getContentType(1);
@@ -139,7 +142,6 @@ email.prototype.getBody = function (szRawEmail, iHeaderLength)
 {
     this.m_Log.Write("email.js - getbody START"); 
     var szBody = szRawEmail.substr(iHeaderLength);
-    szBody = szBody.replace(/^\.$/gm,"");  //remove pop terminator
     szBody = szBody.replace(/^\.\./gm,"."); //remove pop padding
     this.m_Log.Write("email.js - getbody\n" + szBody + "\n"); 
     this.m_Log.Write("email.js - getbody END"); 
