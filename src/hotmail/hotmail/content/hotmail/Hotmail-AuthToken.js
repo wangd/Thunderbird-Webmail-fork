@@ -3,13 +3,10 @@ function Token(errorLog)
     try
     {
         var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-                                      .getService(Components.interfaces.mozIJSSubScriptLoader);
-        if (scriptLoader)
-        {
-            scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-            scriptLoader.loadSubScript("chrome://web-mail/content/common/md5.js");
-        }
-           
+        scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/hash.js");
+                   
         this.m_Log = errorLog; 
         
         this.m_Log.Write("Hotmail-AuthToken.js - constructor - START");
@@ -24,7 +21,8 @@ function Token(errorLog)
         this.m_Log.Write("Hotmail-AuthToken.js: constructor : Exception : " 
                                           + e.name 
                                           + ".\nError message: " 
-                                          + e.message);
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
     }
 }
 
@@ -80,13 +78,15 @@ Token.prototype =
             this.m_szAuth +="nonce=\"" + szNonce + "\", "; 
             
             //hash
-            var szHA1=hex_md5(szUserName+":"+szDomain+":"+szPassword);
+            var oHash = new hash();
+            
+            var szHA1=oHash.md5Hash(szUserName+":"+szDomain+":"+szPassword);
             this.m_Log.Write("Hotmail-AuthToken.js - newToken - HA1 " + szHA1);
             
-            var szHA2 = hex_md5("PROPFIND:"+tempURI);
+            var szHA2 = oHash.md5Hash("PROPFIND:"+tempURI);
             this.m_Log.Write("Hotmail-AuthToken.js - newToken - HA2 " + szHA2);
             
-            var szResponce = hex_md5(szHA1+":"+szNonce+":"+szNC+":"+szConce+":"+szQop+":"+szHA2);
+            var szResponce = oHash.md5Hash(szHA1+":"+szNonce+":"+szNC+":"+szConce+":"+szQop+":"+szHA2);
             this.m_Log.Write("Hotmail-AuthToken.js - newToken - response " + szResponce);
            
             this.m_szAuth +="response=\"" + szResponce + "\""; 
@@ -98,7 +98,8 @@ Token.prototype =
             this.m_Log.Write("Hotmail-AuthToken.js: newToken : Exception : " 
                                           + e.name 
                                           + ".\nError message: " 
-                                          + e.message);
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
         }
     },
     
@@ -128,7 +129,8 @@ Token.prototype =
             this.m_Log.Write("Hotmail-AuthToken.js: getTokenString : Exception : " 
                                           + e.name 
                                           + ".\nError message: " 
-                                          + e.message);
+                                          + e.message + "\n"
+                                          + e.lineNumber);
         }
     },
 }

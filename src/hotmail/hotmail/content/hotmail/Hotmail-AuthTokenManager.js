@@ -3,12 +3,9 @@ function AuthTokenHandler(errorLog)
     try
     {
         var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-                                  .getService(Components.interfaces.mozIJSSubScriptLoader);
-        if (scriptLoader)
-        {
-            scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-            scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-AuthToken.js");
-        }
+        scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
+        scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-AuthToken.js");
         
         this.m_Log = errorLog;
         
@@ -19,7 +16,8 @@ function AuthTokenHandler(errorLog)
          DebugDump("AuthTokenHandler.js: Constructor : Exception : " 
                                       + e.name 
                                       + ".\nError message: " 
-                                      + e.message);
+                                      + e.message + "\n"
+                                      + e.lineNumber);
     }
 }
 
@@ -86,7 +84,8 @@ AuthTokenHandler.prototype =
              this.m_Log.Write("AuthTokenHandler.js: addToken : Exception : " 
                                           + e.name 
                                           + ".\nError message: " 
-                                          + e.message);
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
         }   
     },
     
@@ -101,28 +100,16 @@ AuthTokenHandler.prototype =
             if (!szDomain) return null;
             if (this.m_aTokens.length == 0) return null;   
             
-            var iMax = this.m_aTokens.length;
-            for (var i = 0 ; i<iMax ; i++)
+            for (var i = 0 ; i<this.m_aTokens.length ; i++)
             {
-                this.m_Log.Write("AuthTokenHandler.js - findToken " + this.m_aTokens[0]);
-                
-                if (this.m_aTokens[0] != undefined)
-                {  
-                    var temp = this.m_aTokens.shift();  //get first item
-                    this.m_Log.Write("AuthTokenHandler.js - findToken " + i + " "+ temp.getDomain());
-                   
-                    if (szDomain == temp.getDomain())
-                    { 
-                        this.m_Log.Write("AuthTokenHandler.js - findToken - found domain"); 
-                        this.m_aTokens.push(temp);
-                        return temp.getTokenString();
-                    }
-                    else
-                    {
-                        this.m_aTokens.push(temp);
-                        this.m_Log.Write("AuthTokenHandler.js - findToken - not found domain"); 
-                    }
-                }
+                var temp = this.m_aTokens[i];
+                this.m_Log.Write("AuthTokenHandler.js - findToken " + i + " "+ temp.getDomain());
+               
+                if (szDomain == temp.getDomain())
+                { 
+                    this.m_Log.Write("AuthTokenHandler.js - findToken - found domain"); 
+                    return temp.getTokenString();
+                }  
             }
             
             return null;
@@ -133,7 +120,8 @@ AuthTokenHandler.prototype =
             this.m_Log.Write("AuthTokenHandler.js: findToken : Exception : " 
                                           + e.name 
                                           + ".\nError message: " 
-                                          + e.message);
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
                                           
             return null;
         }
