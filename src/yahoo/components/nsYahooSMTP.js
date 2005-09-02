@@ -389,53 +389,22 @@ nsYahooSMTP.prototype =
                     var szSubject = mainObject.m_Email.headers.getSubject(); 
                     mainObject.m_HttpComms.addValuePair("Subj",
                                             (szSubject? encodeURIComponent(szSubject) : "%20"));
-                   
-                    var szContentType = mainObject.m_Email.headers.getContentType(2);
-                    if (szContentType)
-                    {
-                        var szTxtBody = mainObject.m_Email.body.getBody(0);
-                        var szHtmlBody = mainObject.m_Email.body.getBody(1);
-                       
-                        if (szContentType.search(/plain/)!=-1)
-                        {
-                            mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - plain");
-                            mainObject.m_HttpComms.addValuePair("Body",mainObject.escapeStr(szTxtBody));
-                        }
-                        else if (szContentType.search(/html/)!=-1)
-                        {
-                            mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - html");
-                            mainObject.m_HttpComms.addValuePair("Format","html");
-                            mainObject.m_HttpComms.addValuePair("Body",mainObject.escapeStr(szHtmlBody));
-                        }
-                        else if (szContentType.search(/alternative/i)!=-1 ||
-                                           szContentType.search(/mixed/i)!=-1)
-                        {  
-                            if (mainObject.m_bSendHtml && szHtmlBody)
-                            {
-                                mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - bSendHtml szHtmlBody");
-                                mainObject.m_HttpComms.addValuePair("Format","html");
-                                mainObject.m_HttpComms.addValuePair("Body",mainObject.escapeStr(szHtmlBody));
-                            }
-                            else if (!mainObject.m_bSendHtml && szTxtBody)
-                            {
-                                mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - !bSendHtml szTxtBody");
-                                mainObject.m_HttpComms.addValuePair("Body",mainObject.escapeStr(szTxtBody));
-                            }
-                            else if (szHtmlBody)
-                            {
-                                mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - szHtmlBody");
-                                mainObject.m_HttpComms.addValuePair("Format","html");
-                                mainObject.m_HttpComms.addValuePair("Body",mainObject.escapeStr(szHtmlBody));
-                            }
-                            else if (szTxtBody)
-                            {
-                                mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - szTxtBody");
-                                mainObject.m_HttpComms.addValuePair("Format","plain");
-                                mainObject.m_HttpComms.addValuePair("Body",mainObject.escapeStr(szTxtBody));
-                            }  
-                        }
-                    }
                     
+                    var szTxtBody = mainObject.m_Email.body.getBody(0);
+                    var szHtmlBody = mainObject.m_Email.body.getBody(1);
+                    
+                    if (szTxtBody && !mainObject.m_bSendHtml || !szHtmlBody)
+                    {
+                        mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - plain");
+                        mainObject.m_HttpComms.addValuePair("Body",mainObject.escapeStr(szTxtBody));
+                    }
+                    else if (szHtmlBody && mainObject.m_bSendHtml || !szTxtBody)
+                    {   
+                        mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - html");
+                        mainObject.m_HttpComms.addValuePair("Format","html");
+                        mainObject.m_HttpComms.addValuePair("Body",mainObject.escapeStr(szHtmlBody));
+                    }
+                                        
                     mainObject.m_iStage++;
                     mainObject.m_HttpComms.setContentType(0);
                     mainObject.m_HttpComms.setURI(szActionURI);
