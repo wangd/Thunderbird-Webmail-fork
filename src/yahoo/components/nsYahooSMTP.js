@@ -81,8 +81,8 @@ function nsYahooSMTP()
         DebugDump("nsYahooSMTP.js: Constructor : Exception : " 
                                       + e.name 
                                       + ".\nError message: " 
-                                      + e.message +"\n" +
-                                      e.lineNumber);
+                                      + e.message +"\n"
+                                      + e.lineNumber);
     }
 }
 
