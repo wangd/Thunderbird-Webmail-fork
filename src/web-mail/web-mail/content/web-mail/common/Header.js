@@ -1,11 +1,10 @@
-function headers(Log, szHeaders)
+function headers(szHeaders)
 {
-    var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-                                  .getService(Components.interfaces.mozIJSSubScriptLoader);
+    var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
+    scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
     scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
     
-    this.m_Log = Log;
-    this.szHeaders = szHeaders;
+    this.m_szHeaders = szHeaders;
 }
 
 
@@ -15,28 +14,24 @@ headers.prototype =
     {
         try
         {
-            this.m_Log.Write("headers.js - getTo - START");
-            
-            if (!this.szHeaders) return null;
+           if (!this.m_szHeaders) return null;
             
             var szTo = null;
             try
             {
-                szTo = this.szHeaders.match(/To:(.*?)$/im)[1];
+                szTo = this.m_szHeaders.match(/To:(.*?)$/im)[1];
                 szTo = this.addressClean(szTo);  
             }
             catch(e){}
-            this.m_Log.Write("headers.js - getTo - szTo " + szTo);
             
-            this.m_Log.Write("headers.js - getTo - End");
             return szTo;
         }
         catch(err)
         {
-            this.m_Log.DebugDump("headers.js: getTo : Exception : " 
-                                                  + err.name 
+            DebugDump("headers.js: getTo : Exception : " + err.name 
                                                   + ".\nError message: " 
-                                                  + err.message);
+                                                  + err.message + "\n"
+                                                  + err.lineNumber);
                                                   
             return null;          
         }
@@ -47,27 +42,24 @@ headers.prototype =
     {
         try
         {
-            this.m_Log.Write("headers.js - getCc - START");
-            if (!this.szHeaders) return null;
+            if (!this.m_szHeaders) return null;
             
             var szCc = null;   
             try
             {
-                szCc = this.szHeaders.match(/CC:(.*?)$/im)[1];
+                szCc = this.m_szHeaders.match(/CC:(.*?)$/im)[1];
                 szCc = this.addressClean(szCc);
             }
             catch(e){}
-            this.m_Log.Write("headers.js - getCc - szCc - "+szCc);
-            
-            this.m_Log.Write("headers.js - getCc - END");
+
             return szCc;  
         }
         catch(err)
         {
-            this.m_Log.DebugDump("headers.js: getCc : Exception : " 
-                                                  + err.name 
+            DebugDump("headers.js: getCc : Exception : "  + err.name 
                                                   + ".\nError message: " 
-                                                  + err.message);
+                                                  + err.message + "\n"
+                                                  + err.lineNumber);
             return null;
         }
     },
@@ -77,27 +69,23 @@ headers.prototype =
     {
         try
         {
-            this.m_Log.Write("headers.js - getSubject - START");
-            if (!this.szHeaders) return null;
+            if (!this.m_szHeaders) return null;
         
             var szSubject = null;
             try
             {
-                szSubject = this.szHeaders.match(/Subject:\s(.*?)$/im)[1];
+                szSubject = this.m_szHeaders.match(/Subject:\s(.*?)$/im)[1];
             }
             catch(e){}
-            
-            this.m_Log.Write("headers.js - szSubject - " + szSubject);
-           
-            this.m_Log.Write("headers.js - getSubject - START");
+
             return szSubject;  
         }
         catch(err)
         {
-            this.m_Log.DebugDump("headers.js: getSubject : Exception : " 
-                                                  + err.name 
+            DebugDump("headers.js: getSubject : Exception : " + err.name 
                                                   + ".\nError message: " 
-                                                  + err.message);
+                                                  + err.message +"\n"
+                                                  + err.lineNumber);
             return null;
         }
     },
@@ -110,10 +98,9 @@ headers.prototype =
     {
         try
         {
-            this.m_Log.Write("headers.js - getContentType - START " + iField);
-            if (!this.szHeaders) return null; 
+            if (!this.m_szHeaders) return null; 
            
-            var szContentType = this.szHeaders.match(/Content-Type:(.*?)$/im)[1];
+            var szContentType = this.m_szHeaders.match(/Content-Type:(.*?)$/im)[1];
             var szContent= null;
             
             switch(iField)
@@ -124,26 +111,24 @@ headers.prototype =
                 
                 case 1: // type
                     szContent= szContentType.match(/(.*?)\/.*?;/)[1];
-                    szContent = szContent.replace(" ","");
+                    szContent = szContent.replace(/\s/,"");
                 break;
                 
                 case 2://subtype
                     szContent= szContentType.match(/.*?\/(.*?);/)[1];
-                    szContent = szContent.replace(" ","");
+                    szContent = szContent.replace(/\s/,"");
                 break;
                 
                 case 3://boundary
                     szContent= szContentType.match(/ boundary="(.*?)"/)[1];
-                    szContent = szContent.replace(" ","");
+                    szContent = szContent.replace(/\s/,"");
                 break;
                 
                 case 4://name
                     szContent= szContentType.match(/name="(.*?)"/i)[1];
                 break;
             };
-            this.m_Log.Write("headers.js - getContentType - szContent "+ szContent);
-            
-            this.m_Log.Write("headers.js - getContentType - End");
+
             return szContent;  
         }
         catch(err)
@@ -161,10 +146,9 @@ headers.prototype =
     {
         try
         {
-            this.m_Log.Write("headers.js - getContentDisposition - START " + iField);
-            if (!this.szHeaders) return null; 
+            if (!this.m_szHeaders) return null; 
            
-            var szContentDispo = this.szHeaders.match(/Content-Disposition:(.*?)$/im)[1];
+            var szContentDispo = this.m_szHeaders.match(/Content-Disposition:(.*?)$/im)[1];
             var szContent= null;
             
             switch(iField)
@@ -177,9 +161,6 @@ headers.prototype =
                     szContent= szContentDispo.match(/filename="(.*?)"/)[1];
                 break;
             };
-            this.m_Log.Write("headers.js - getContentDisposition - szContent "+ szContent);
-            
-            this.m_Log.Write("headers.js - getContentDisposition - End");
             return szContent;  
         }
         catch(err)
@@ -193,18 +174,14 @@ headers.prototype =
     {
         try
         {
-            this.m_Log.Write("headers.js - getEncoderType - START");
-            if (!this.szHeaders) return null;  
+            if (!this.m_szHeaders) return null;  
             
-            var szContentType = this.szHeaders.match(/Content-Transfer-Encoding:(.*?)$/im)[1];
-            szContentType = szContentType.replace(" ","");
-            this.m_Log.Write("headers.js - getEncoderType - "+ szContentType);
-            this.m_Log.Write("headers.js - getEncoderType - END");
+            var szContentType = this.m_szHeaders.match(/Content-Transfer-Encoding:(.*?)$/im)[1];
+            szContentType = szContentType.replace(/\s/,"");
             return szContentType;
         }
         catch(err)
         {
-             this.m_Log.Write("headers.js - getEncoderType - Not found");
             return null;
         }
     },
@@ -214,20 +191,14 @@ headers.prototype =
     {
         try
         {
-            this.m_Log.Write("headers.js - getHeaders - START");
-            if (!this.szHeaders) return null;
-            
-            this.m_Log.Write("headers.js - getHeaders - "+ this.szHeaders);
-            
-            this.m_Log.Write("headers.js - getHeaders - END");
-            return this.szHeaders;
+            return this.m_szHeaders ?this.m_szHeaders : null;
         }
         catch(err)
         {
-            this.m_Log.DebugDump("headers.js: getHeaders : Exception : " 
-                                                  + err.name 
+            DebugDump("headers.js: getHeaders : Exception : " + err.name 
                                                   + ".\nError message: " 
-                                                  + err.message);
+                                                  + err.message + "\n"
+                                                  + err.lineNumber);
             return null;
         }
     },

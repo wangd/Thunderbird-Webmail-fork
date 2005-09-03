@@ -1,35 +1,15 @@
-function body()
+function body(szBody)
 {
-    this.szHtmlBody = null; 
-    this.szTxtBody = null;   
+    this.m_szBody = szBody; 
+}
+
+body.prototype.setBody = function (szBody)
+{
+    this.m_szBody = szBody;
 }
 
 
-body.prototype.setHtmlBody = function (szHtmlBody)
+body.prototype.getBody = function ()
 {
-    this.szHtmlBody = szHtmlBody;
+    return (!this.m_szBody) ? null : this.m_szBody;
 }
-
-
-body.prototype.setTxtBody = function (szTxtBody)
-{
-    this.szTxtBody = szTxtBody;
-}
-
-
-
-//0 = plain txt
-//1 = html
-body.prototype.getBody = function (iType)
-{
-    try
-    {
-        if (iType == 0) return (!this.szTxtBody) ? null : this.szTxtBody;  
-        if (iType == 1) return (!this.szHtmlBody)? null : this.szHtmlBody;      
-    }
-    catch(err)
-    {
-        return null;
-    }
-}
-
