@@ -114,7 +114,7 @@ email.prototype.decode = function (szEncoding, szBody)
         {
             this.m_Log.Write("email.js - decode - encoded B64"); 
             var oBase64 = new base64();
-            szDecoded = oBase64.decode(szBody.replace(/\r\n/gm,""));
+            szDecoded = oBase64.decode(szBody.replace(/\r?\n/gm,""));
         } 
         else if (szEncoding.search(/quoted-printable/i)!=-1)
         {
