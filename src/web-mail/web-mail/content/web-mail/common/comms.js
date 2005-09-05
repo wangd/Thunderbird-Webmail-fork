@@ -199,8 +199,6 @@ Comms.prototype =
         {
             this.m_Log.Write("comms.js - addValuePair - " + szName + " " + szValue);
              
-            if (!szName) return false;
-            
             var oData = new commsData();
             oData.szName = szName;
             oData.szValue = szValue;
@@ -221,22 +219,20 @@ Comms.prototype =
     
     
     
-    addFile : function (szName, szFileName ,bBinary , szValue)
+    addFile : function (szName, szFileName , szValue)
     {
        try
         {
             this.m_Log.Write("comms.js - addFormData - START");
             this.m_Log.Write("comms.js - addFormData - " + szName + " " 
                                                          + szFileName + " "
-                                                         + bBinary + " "
                                                          + szValue);
-            if (!szName ) return false;
-            
+                       
             var oData = new commsData();
             oData.szName = szName;
             oData.szValue = szValue;
             oData.szFileName = szFileName;
-            oData.bBinary = bBinary;
+            oData.bBinary = true;
             oData.bFile = true;
             
             this.m_aFormData.push(oData);
@@ -331,12 +327,8 @@ Comms.prototype =
                 for (j=0; j<this.m_aFormData.length; j++)
                 {
                     var oTemp = this.m_aFormData[j];
-                    this.m_Log.Write("comms.js - send - adding data "+ oTemp.szName +" "+
-                                                                       oTemp.szFileName + " "+
-                                                                       oTemp.bBinary + " " +
-                                                                       oTemp.szValue);
-                                                                       
-                   
+                    this.m_Log.Write("comms.js - send - adding data "+oTemp.szName+" "+oTemp.szValue);
+                    
                     if (this.m_iContentType==1) //formdata
                     {                           
                         this.m_Log.Write("comms.js - addFormData - adding start boundary");            
@@ -349,17 +341,17 @@ Comms.prototype =
                         var mimeStream = Components.classes["@mozilla.org/network/mime-input-stream;1"];
                         mimeStream = mimeStream.createInstance(Components.interfaces.nsIMIMEInputStream );
                         mimeStream.addContentLength = false;             
-                        
+                         
+                        var szContDisp = "form-data; name=\"" + oTemp.szName + "\"; ";
                         if (oTemp.bFile) 
                         {   
-                            this.m_Log.Write("comms.js - send - adding file");  
-                            var szContDisp = "form-data; name=\"" + oTemp.szName + "\"; ";
+                            this.m_Log.Write("comms.js - send - adding file" + oTemp.szFileName);
+                            var szContDisp = "form-data; name=\"" + oTemp.szName + "\"; ";  
                             szContDisp +="filename=\"" + (oTemp.szFileName ? oTemp.szFileName : "") + "\"";       
-                            
                             mimeStream.addHeader("Content-Disposition",szContDisp);
                             mimeStream.addHeader("Content-Type","application/octet-stream");
                             
-                            if (oTemp.bBinary)
+                            if(oTemp.szValue)
                             {
                                 this.m_Log.Write("comms.js - send - adding binary data");  
                                 var nsIFile = this.writeBinaryFile(oTemp.szValue);
@@ -369,22 +361,21 @@ Comms.prototype =
                                
                                 this.m_Log.Write("comms.js - addFormData - buffer size " + bufferStream.available());
                                 mimeStream.setData(bufferStream);
-                               // bufferStream.close();
+                                // bufferStream.close();
                             }
                             else
-                            { 
-                                this.m_Log.Write("comms.js - send - adding text data"); 
-                                var fileStream = Components.classes["@mozilla.org/io/string-input-stream;1"];
-                                fileStream = fileStream.createInstance( Components.interfaces.nsIStringInputStream );
-                                fileStream.setData(oTemp.szValue? oTemp.szValue:"",-1);
-                                mimeStream.setData(fileStream);
-                                fileStream.close();
-                            }
+                            {
+                                var valueStream = Components.classes["@mozilla.org/io/string-input-stream;1"];
+                                valueStream = valueStream.createInstance( Components.interfaces.nsIStringInputStream );
+                                valueStream.setData("",-1);
+                                mimeStream.setData(valueStream);
+                                valueStream.close();
+                            }            
                         }    
                         else
                         {
-                            this.m_Log.Write("comms.js - send - adding form data");  
-                            var szContDisp = "form-data; name=\""+ oTemp.szName + "\"";
+                            this.m_Log.Write("comms.js - send - adding form data"); 
+                            var szContDisp = "form-data; name=\"" + oTemp.szName + "\""; 
                             mimeStream.addHeader("Content-Disposition",szContDisp);
                             var valueStream = Components.classes["@mozilla.org/io/string-input-stream;1"];
                             valueStream = valueStream.createInstance( Components.interfaces.nsIStringInputStream );
