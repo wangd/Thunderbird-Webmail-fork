@@ -14,8 +14,7 @@ const patternYahooRedirect = /<a href=['|"]*(.*?)['|"]*>/;
 const patternYahooCompose = /location="*(http:\/\/.*?Compose\?YY=.*?)"*/i;
 const patternYahooComposeForm = /<form.*?name="*Compose"*.*?>[\S\s]*?<\/form>/igm;
 const patternYahooAttachmentForm = /<form.*?name="*Attachments"*.*?>[\S\s]*?<\/form>/igm;
-const patternYahooAttachCheck = /javascript\:VirusScanResults\(0\)/igm
-
+const patternYahooAttachCheck = /javascript\:VirusScanResults\(0\)/igm;
 
 /******************************  Yahoo ***************************************/
 function nsYahooSMTP()
@@ -28,8 +27,6 @@ function nsYahooSMTP()
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Email.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/base64.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/Quoted-Printable.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/comms.js");
         
         
@@ -46,14 +43,14 @@ function nsYahooSMTP()
         this.m_szPassWord = null; 
         this.m_oResponseStream = null;  
         this.m_HttpComms = new Comms(this , this.m_Log);
-        this.m_iStage = 0;
         this.m_aszTo = new Array;
         this.m_szFrom = null;
-        
+        this.m_iStage = 0;
         this.m_szComposeURI = null;
         this.m_szLocationURI = null; 
-        this.m_Email = new email(this.m_Log);
         this.m_bAttHandled = false;
+        this.m_Email = new email(this.m_Log);
+        this.m_Email.decodeBody(true);
         
         //do i save copy
         var oPref = new Object();
@@ -146,7 +143,7 @@ nsYahooSMTP.prototype =
                                               + e.message+ "\n"
                                               + e.lineNumber);
                                               
-            this.serverComms("502 negative vibes\r\n");
+            this.serverComms("502 negative vibes from "+this.m_szUserName+"\r\n");
             
             return false;
         }
@@ -280,7 +277,7 @@ nsYahooSMTP.prototype =
                                           + err.message+ "\n"
                                           + err.lineNumber);
                                             
-            mainObject.serverComms("502 negative vibes\r\n");
+            mainObject.serverComms("502 negative vibes from "+mainObject.m_szUserName+"\r\n");
         }
     },
     
@@ -335,6 +332,9 @@ nsYahooSMTP.prototype =
             
             mainObject.m_HttpComms.clean();
             
+            var szReferer = httpChannel.URI.spec;
+            mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Referer :" +szReferer);
+             
             if (mainObject.m_Email.attachments.length>0 && !mainObject.m_bAttHandled)
                 mainObject.m_iStage = 2;
         
@@ -390,8 +390,12 @@ nsYahooSMTP.prototype =
                     mainObject.m_HttpComms.addValuePair("Subj",
                                             (szSubject? encodeURIComponent(szSubject) : "%20"));
                     
-                    var szTxtBody = mainObject.m_Email.body.getBody(0);
-                    var szHtmlBody = mainObject.m_Email.body.getBody(1);
+                    var szTxtBody = null;
+                    var szHtmlBody = null;
+                    if (mainObject.m_Email.txtBody)
+                        szTxtBody = mainObject.m_Email.txtBody.body.getBody();
+                    if (mainObject.m_Email.htmlBody)
+                        szHtmlBody = mainObject.m_Email.htmlBody.body.getBody();
                     
                     if (szTxtBody && !mainObject.m_bSendHtml || !szHtmlBody)
                     {
@@ -506,7 +510,6 @@ nsYahooSMTP.prototype =
                         }
                         else
                         { 
-                           
                             var szValue = aszInput[i].match(patternYahooAltValue)[1]
                             szValue = szValue.replace(/"/mg,""); 
                             szValue = szValue.replace(/'/mg,"");              
@@ -528,36 +531,17 @@ nsYahooSMTP.prototype =
                             var szFileName = oAttach.headers.getContentType(4);
                             if (!szFileName) szFileName = "";
                             mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Filename " + szFileName); 
-                            var szEncoding = oAttach.headers.getEncoderType();
-                                                      
+                          
                             //body
-                            var szBody = oAttach.body.getBody(0);
-                            if (szEncoding.search(/base64/i)!=-1)
-                            {
-                                mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - encoded B64"); 
-                                var oBase64 = new base64();
-                                szBody = oBase64.decode(szBody.replace(/\r\n/gm,""));
-                                mainObject.m_HttpComms.addFile(szName, szFileName, true, szBody); 
-                            } 
-                            else if (szEncoding.search(/quoted-printable/i)!=-1)
-                            {
-                                mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - encoded QP");  
-                                var oQP = new QuotedPrintable();
-                                szBody = oQP.decode(szBody);
-                                mainObject.m_HttpComms.addFormData(szName, szFileName, false,szBody);    
-                            }
-                            else
-                            {
-                                mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - no encoding"); 
-                                mainObject.m_HttpComms.addFile(szName, szFileName, false, szBody); 
-                            }
+                            var szBody = oAttach.body.getBody();
+                            mainObject.m_HttpComms.addFile(szName, szFileName, szBody); 
                         }
                         else
-                            mainObject.m_HttpComms.addValuePair(szName, ""); 
+                            mainObject.m_HttpComms.addFile(szName, "", ""); 
                     }
                    
                     mainObject.m_HttpComms.setContentType(1);
-                    mainObject.m_HttpComms.setURI(szAction);
+                    mainObject.m_HttpComms.setURI(szAction);                  
                     mainObject.m_HttpComms.setRequestMethod("POST");
                     var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);  
                     if (!bResult) throw new Error("httpConnection returned false");
@@ -620,7 +604,7 @@ nsYahooSMTP.prototype =
                                           + err.message + "\n"
                                           + err.lineNumber);
                                             
-            mainObject.serverComms("502 negative vibes\r\n");
+            mainObject.serverComms("502 negative vibes from "+mainObject.m_szUserName+"\r\n");
         }
     },
     
