@@ -7,8 +7,6 @@ function HotmailSMTPScreenRipper(oResponseStream, oLog, bSaveCopy)
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/comms.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Email.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/base64.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/Quoted-Printable.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://global/content/strres.js");
                
@@ -27,10 +25,11 @@ function HotmailSMTPScreenRipper(oResponseStream, oLog, bSaveCopy)
         this.aszTo = null;
         this.szFrom = null;
         this.m_Email = new email(this.m_Log);
+        this.m_Email.decodeBody(true);
         this.m_iStage = 0;  
         this.m_bAttHandled = false;
         this.m_iAttCount = 0;
-        this.m_iAttUploaded = 0;
+        this.m_iAttUploaded = 1;
                                                      
         this.m_Log.Write("Hotmail-SR-SMTP.js - Constructor - END");  
     }
@@ -246,7 +245,7 @@ HotmailSMTPScreenRipper.prototype =
             if (!this.m_Email.parse(szEmail))
                 throw new Error ("Parse Failed")
             
-            if (!this.m_Email.body.getBody(0)) 
+            if (!this.m_Email.txtBody) 
             {
                 var stringBundle =srGetStrBundle("chrome://hotmail/locale/Hotmail-SMTP.properties");
                 var szError = stringBundle.GetStringFromName("HtmlError");
@@ -257,7 +256,7 @@ HotmailSMTPScreenRipper.prototype =
                 
             this.m_aszTo = aszTo;
             this.m_szFrom = szFrom;
-            this.m_iAttCount = this.m_Email.attachments.length;
+            this.m_iAttCount = this.m_Email.attachments.length-1;
             this.m_iAttUploaded = 0;
         
             this.m_iStage=0;
@@ -320,8 +319,7 @@ HotmailSMTPScreenRipper.prototype =
                     var aInput = szForm.match(patternHotmailSMTPInput);
                     mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - INPUT " + aInput);
                     
-                    var szTxtBody = mainObject.m_Email.body.getBody(0);
-                    var szHtmlBody = mainObject.m_Email.body.getBody(1);
+                    var szTxtBody = mainObject.m_Email.txtBody.body.getBody();
                     
                     for (i=0; i<aInput.length; i++)
                     {   
@@ -438,11 +436,11 @@ HotmailSMTPScreenRipper.prototype =
                     var szForm = szForm = szResponse.match(patternHotmailSMTPAttForm)[0];
                     mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - Form " + szForm);
                     
-                    if (mainObject.m_iAttUploaded!= mainObject.m_iAttCount-1)
-                        mainObject.m_iStage = 3;
-                    else
+                    if (mainObject.m_iAttUploaded == mainObject.m_iAttCount)
                         mainObject.m_iStage = 0;
-                                      
+                    else
+                        mainObject.m_iStage = 3;  
+                                 
                     var szAction = szForm.match(patternHotmailSMTPAction)[1];
                     mainObject.m_HttpComms.setURI(szAction);
                     mainObject.m_HttpComms.setRequestMethod("POST");
@@ -450,24 +448,21 @@ HotmailSMTPScreenRipper.prototype =
                     var aInput = szForm.match(patternHotmailSMTPInput);
                     mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - INPUT " + aInput);
                     
+                                             
                     for (i=0; i<aInput.length ; i++)
                     {
                         var szName = aInput[i].match(patternHotmailSMTPName)[1]; 
-                        var szValue = null;
+                        var szValue = "";
                         try
                         {
                             szValue = aInput[i].match(patternHotmailSMTPValue)[1]; 
                         }
-                        catch(err)
-                        {
-                            szValue = "";
-                        }
-                       
-                        if (i==0 && mainObject.m_iStage == 3) 
-                            mainObject.m_HttpComms.addValuePair("","");
-                        if (i==0 && mainObject.m_iStage == 0) 
-                            mainObject.m_HttpComms.addValuePair("Attach.x","");
-                        
+                        catch(err){}
+                
+                        if (i==0 && mainObject.m_iStage == 0) szName = "Attach.x";
+                       // if (i==0 && mainObject.m_iStage == 3) 
+                       //     mainObject.m_HttpComms.addValuePair("","");  
+                                                            
                         if (szName.search(/^attfile$/i)!=-1)
                         { 
                             //headers
@@ -475,29 +470,10 @@ HotmailSMTPScreenRipper.prototype =
                             var szFileName = oAttach.headers.getContentType(4);
                             if (!szFileName) szFileName = "";
                             mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - Filename " + szFileName); 
-                            var szEncoding = oAttach.headers.getEncoderType();
                                                       
                             //body
-                            var szBody = oAttach.body.getBody(0);
-                            if (szEncoding.search(/base64/i)!=-1)
-                            {
-                                mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - encoded B64"); 
-                                var oBase64 = new base64();
-                                szBody = oBase64.decode(szBody.replace(/\r\n/gm,""));
-                                mainObject.m_HttpComms.addFile(szName, szFileName, true, szBody);
-                            } 
-                            else if (szEncoding.search(/quoted-printable/i)!=-1)
-                            {
-                                mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - encoded QP");  
-                                var oQP = new QuotedPrintable();
-                                szBody = oQP.decode(szBody);
-                                mainObject.m_HttpComms.addFormData(szName, szFileName, false,szBody)   
-                            }
-                            else
-                            {
-                                mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - no encoding"); 
-                                mainObject.m_HttpComms.addFile(szName, szFileName, false, szBody);
-                            }
+                            var szBody = oAttach.body.getBody();
+                            mainObject.m_HttpComms.addFile(szName, szFileName, szBody);
                         }
                         else if (szName.search(/_HMaction/i)!=-1)
                         {
