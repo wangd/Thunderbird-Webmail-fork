@@ -2,3 +2,4 @@ nsIDomainManager.bat
 nsIPOPConnectionManager.bat
 nsISMTPConnectionManager.bat
 nsIDataBaseManager.bat
+nsIIMAPConnectionManager.bat
