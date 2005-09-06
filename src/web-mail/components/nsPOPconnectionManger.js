@@ -9,59 +9,30 @@ const szERR ="-ERR negative vibes\r\n";
 /***********************  POPconnectionManager ********************************/
 function nsPOPConnectionManager()
 {
-    try
-    {
-        this.m_serverSocket = Components.classes["@mozilla.org/network/server-socket;1"]
-                              .createInstance(Components.interfaces.nsIServerSocket);
-        
-       
-        var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
-        scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/server/popConnectionHandler.js")
-                  
-        this.m_POPLog = new DebugLog("webmail.logging.comms", 
-                                     "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
-                                     "popServerlog"); 
-        
-        this.m_POPLog.Write("nsPOPConnectionManager.js - Constructor - START");   
-                    
-        //-1 error , 0 = stopped ,1 = waiting, 2= ruuning                       
-        this.iStatus = 0;               //error
-        this.aPOPConnections = new Array();
-        
-        this.GarbageTimer = Components.classes["@mozilla.org/timer;1"];
-        this.GarbageTimer = this.GarbageTimer.createInstance(Components.interfaces.nsITimer);  
-        this.bGarbage = false;
-      
-        this.m_POPLog.Write("nsPOPConnectionManager.js - Constructor - END");   
-    }
-    catch(e)
-    {
-         DebugDump("nsPOPConnectionManager.js: Constructor : Exception : " 
-                              + e.name  
-                              + ".\nError message: " 
-                              + e.message);
-    }
+    this.m_serverSocket = null;   
+    this.m_scriptLoader = null;         
+    this.m_GarbageTimer= null;
+    this.m_Log = null;   
+    this.m_iStatus = 0;   //-1 error , 0 = stopped ,1 = waiting, 2= ruuning  
+    this.m_aPOPConnections = new Array();
+    this.m_bGarbage = false;
 }
+
 
 nsPOPConnectionManager.prototype.Start = function()
 {
    try
    {
-        this.m_POPLog.Write("nsPOPConnectionManager.js - Start - START");
-        
-        //g_POPLog.UpdateLog(); //update log with any new prefs settings
-        
-        if(this.iStatus != 2 && this.iStatus != 1)  //enter here if server is not running
+        this.m_Log.Write("nsPOPConnectionManager - Start - START");
+               
+        if(this.m_iStatus != 2 && this.m_iStatus != 1)  //enter here if server is not running
         {
-            if (!this.bGarbage)
+            if (!this.m_bGarbage)
             {//start garbage collection
-                this.GarbageTimer.initWithCallback(this, 
+                this.m_GarbageTimer.initWithCallback(this, 
                                                    20000,  //20 seconds 
                                                    Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
-                this.bGarbage = true;
+                this.m_bGarbage = true;
             }
             
             //get pref settings
@@ -70,10 +41,10 @@ nsPOPConnectionManager.prototype.Start = function()
             oPref.Value = null;
             if (! WebMailPrefAccess.Get("int", "webmail.server.port.pop", oPref)) 
             {
-                this.m_POPLog.Write("nsPOPConnectionManager.js - Start - webmail.server.port.pop failed. Set to default 110");
+                this.m_Log.Write("nsPOPConnectionManager - Start - webmail.server.port.pop failed. Set to default 110");
                 oPref.Value = 110;
             }
-            this.m_POPLog.Write("nsPOPConnectionManager.js - Start - POP port value "+ oPref.Value);
+            this.m_Log.Write("nsPOPConnectionManager - Start - POP port value "+ oPref.Value);
             this.iPopPort = oPref.Value;
             delete WebMailPrefAccess
             
@@ -82,20 +53,21 @@ nsPOPConnectionManager.prototype.Start = function()
             this.m_serverSocket.init(this.iPopPort, true, 10); 
             this.m_serverSocket.asyncListen(this); 
               
-            this.iStatus = 2;  //started
+            this.m_iStatus = 2;  //started
         }
-        this.m_POPLog.Write("nsPOPConnectionManager.js - Start - END");
+        this.m_Log.Write("nsPOPConnectionManager - Start - END");
         
         return true;
     }
     catch(e)
     {
-        this.m_POPLog.DebugDump("nsPOPConnectionManager.js: Start : Exception : " 
+        this.m_Log.DebugDump("nsPOPConnectionManager: Start : Exception : " 
                                           + e.name 
                                           + ".\nError message: " 
-                                          + e.message);
+                                          + e.message +"\n" 
+                                          + e.lineNumber);
         
-        this.iStatus = -1;  //error
+        this.m_iStatus = -1;  //error
         return false;
     } 
 }
@@ -105,25 +77,26 @@ nsPOPConnectionManager.prototype.Stop = function()
 {
     try
     {
-        this.m_POPLog.Write("nsPOPConnectionManager.js - Stop - START");
+        this.m_Log.Write("nsPOPConnectionManager - Stop - START");
         
-        if (this.iStatus != 0 && this.iStatus != -1) //only enter if server has not stopped
+        if (this.m_iStatus != 0 && this.m_iStatus != -1) //only enter if server has not stopped
         {
-            this.m_POPLog.Write("nsPOPConnectionManager.js - Stop - stopping");
+            this.m_Log.Write("nsPOPConnectionManager - Stop - stopping");
             this.m_serverSocket.close();  //stop new conections
-            this.iStatus = 1;  //set status to waiting = 1
+            this.m_iStatus = 1;  //set status to waiting = 1
         }
         
-        this.m_POPLog.Write("nsPOPConnectionManager.js - Stop - END");
+        this.m_Log.Write("nsPOPConnectionManager - Stop - END");
         return true;
     }
     catch(e)
     {
-        this.m_POPLog.DebugDump("nsPOPConnectionManager.js: Stop : Exception : " 
+        this.m_Log.DebugDump("nsPOPConnectionManager: Stop : Exception : " 
                                       + e.name 
                                       + ".\nError message: " 
-                                      + e.message);
-        this.iStatus = -1;  //error
+                                      + e.message+"\n" 
+                                      + e.lineNumber);
+        this.m_iStatus = -1;  //error
                               
         return false;
     }
@@ -135,40 +108,41 @@ nsPOPConnectionManager.prototype.GetStatus = function ()
 {
     try
     {
-        this.m_POPLog.Write("nsPOPConnectionManager.js - GetStatus - START");
+        this.m_Log.Write("nsPOPConnectionManager - GetStatus - START");
         
-        if ( this.iStatus == 1)  //waiting to stop
+        if ( this.m_iStatus == 1)  //waiting to stop
         {
-            this.g_POPLog.Write("nsPOPConnectionManager.js - GetStatus - connections " 
-                                                        + this.aPOPConnections.length);
+            this.g_POPLog.Write("nsPOPConnectionManager - GetStatus - connections " 
+                                                        + this.m_aPOPConnections.length);
             var iCount = 0;
-            if (this.aPOPConnections.length>0)
+            if (this.m_aPOPConnections.length>0)
             {
-                for (var i =1 ; i<=this.aPOPConnections.length; i++)
+                for (var i =1 ; i<=this.m_aPOPConnections.length; i++)
                 {
-                    if (this.aPOPConnections[i] != undefined)
+                    if (this.m_aPOPConnections[i] != undefined)
                     {
                         iCount++;
-                        this.g_POPLog.Write("nsPOPConnectionManager.js - GetStatus - connections " + iCount);
+                        this.g_POPLog.Write("nsPOPConnectionManager - GetStatus - connections " + iCount);
                     }
                 }
             } 
             
-            if (iCount==0 ) this.iStatus = 0 //stopped
+            if (iCount==0 ) this.m_iStatus = 0 //stopped
         }
-        this.m_POPLog.Write("nsPOPConnectionManager.js - status = " + this.iStatus);    
-        this.m_POPLog.Write("nsPOPConnectionManager.js - GetStatus -  END");
-        return this.iStatus; 
+        this.m_Log.Write("nsPOPConnectionManager - status = " + this.m_iStatus);    
+        this.m_Log.Write("nsPOPConnectionManager - GetStatus -  END");
+        return this.m_iStatus; 
     }
     catch(e)
     {
-        this.m_POPLog.DebugDump("nsPOPConnectionManager.js: GetStatus : Exception : " 
+        this.m_Log.DebugDump("nsPOPConnectionManager: GetStatus : Exception : " 
                                       + e.name 
                                       + ".\nError message: " 
-                                      + e.message);
+                                      + e.message +"\n" 
+                                      + e.lineNumber);
                                       
-        this.iStatus = -1;  //error
-        return this.iStatus; 
+        this.m_iStatus = -1;  //error
+        return this.m_iStatus; 
     }
 }
 
@@ -178,26 +152,27 @@ nsPOPConnectionManager.prototype.onSocketAccepted = function(serverSocket, trans
 {
     try
     {
-        this.m_POPLog.Write("nsPOPConnectionManager.js - onSocketAccepted - START");
+        this.m_Log.Write("nsPOPConnectionManager - onSocketAccepted - START");
         
-        this.aPOPConnections.push ( new POPconnectionHandler(transport));
+        this.m_aPOPConnections.push ( new POPconnectionHandler(transport));
            
-        this.m_POPLog.Write("nsPOPConnectionManager.js - onSocketAccepted - END");   
+        this.m_Log.Write("nsPOPConnectionManager - onSocketAccepted - END");   
     }
     catch(e)
     {
-        this.m_POPLog.DebugDump("nsPOPConnectionManager.js: onSocketAccepted : Exception : " 
+        this.m_Log.DebugDump("nsPOPConnectionManager: onSocketAccepted : Exception : " 
                                       + e.name 
                                       + ".\nError message: " 
-                                      + e.message);
+                                      + e.message+"\n" 
+                                      + e.lineNumber);
     }
 }
 
 
 nsPOPConnectionManager.prototype.onStopListening = function(serverSocket, status)
 {
-   this.m_POPLog.Write("nsPOPConnectionManager.js - onStopListening - START");
-   this.m_POPLog.Write("nsPOPConnectionManager.js - onStopListening - END"); 
+   this.m_Log.Write("nsPOPConnectionManager - onStopListening - START");
+   this.m_Log.Write("nsPOPConnectionManager - onStopListening - END"); 
 }
 
 
@@ -206,45 +181,127 @@ nsPOPConnectionManager.prototype.notify = function()
 {
     try
     {
-       // this.m_POPLog.Write("nsPOPConnectionManager.js - notify - START");  //spamming log file
+       // this.m_Log.Write("nsPOPConnectionManager - notify - START");  //spamming log file
        
-      //  this.m_POPLog.Write("nsPOPConnectionManager.js - notify - connections " +this.aPOPConnections.length);
-        if (this.aPOPConnections.length>0)
+      //  this.m_Log.Write("nsPOPConnectionManager - notify - connections " +this.m_aPOPConnections.length);
+        if (this.m_aPOPConnections.length>0)
         {
-            var iMax = this.aPOPConnections.length;
+            var iMax = this.m_aPOPConnections.length;
             for (var i = 0 ; i<iMax ; i++)
             {
-                this.m_POPLog.Write("nsPOPConnectionManager.js - connection " + 0 + " "+ this.aPOPConnections[0]);
+                this.m_Log.Write("nsPOPConnectionManager - connection " + 0 + " "+ this.m_aPOPConnections[0]);
                 
-                if (this.aPOPConnections[0] != undefined)
+                if (this.m_aPOPConnections[0] != undefined)
                 {  
-                    var temp = this.aPOPConnections.shift();  //get first item
-                    this.m_POPLog.Write("nsPOPConnectionManager.js - connection " + i + " "+ temp.bRunning + " " +temp.iID);
+                    var temp = this.m_aPOPConnections.shift();  //get first item
+                    this.m_Log.Write("nsPOPConnectionManager - connection " + i + " "+ temp.bRunning + " " +temp.iID);
                    
                     if (temp.bRunning == false)
                     { 
                         delete temp; 
-                        this.m_POPLog.Write("nsPOPConnectionManager.js - notify - dead connection deleted " + temp.iID); 
+                        this.m_Log.Write("nsPOPConnectionManager - notify - dead connection deleted " + temp.iID); 
                     }
                     else
                     {
-                        this.aPOPConnections.push(temp);
-                        this.m_POPLog.Write("nsPOPConnectionManager.js - notify - restored live connection " + temp.iID); 
+                        this.m_aPOPConnections.push(temp);
+                        this.m_Log.Write("nsPOPConnectionManager - notify - restored live connection " + temp.iID); 
                     }
                 }
             }
         } 
         
-       // this.m_POPLog.Write("nsPOPConnectionManager.js - notify - END"); 
+       // this.m_Log.Write("nsPOPConnectionManager - notify - END"); 
     }
     catch(e)
     {
-        this.m_POPLog.DebugDump("nsPOPConnectionManager.js: notify : Exception : " 
+        this.m_Log.DebugDump("nsPOPConnectionManager: notify : Exception : " 
                                       + e.name 
                                       + ".\nError message: " 
-                                      + e.message);
+                                      + e.message +"\n" 
+                                      + e.lineNumber);
     }   
 }
+
+
+nsPOPConnectionManager.prototype.observe = function(aSubject, aTopic, aData) 
+{
+    switch(aTopic) 
+    {
+        case "xpcom-startup":
+            // this is run very early, right after XPCOM is initialized, but before
+            // user profile information is applied. 
+            var obsSvc = Components.classes["@mozilla.org/observer-service;1"].
+                            getService(Components.interfaces.nsIObserverService);
+            obsSvc.addObserver(this, "profile-after-change", false);
+            obsSvc.addObserver(this, "quit-application", false);
+            
+            this.m_scriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                                    .getService(Components.interfaces.mozIJSSubScriptLoader);
+                                    
+            this.m_GarbageTimer = Components.classes["@mozilla.org/timer;1"]
+                                    .createInstance(Components.interfaces.nsITimer);  
+                                    
+            this.m_serverSocket = Components.classes["@mozilla.org/network/server-socket;1"]
+                                    .createInstance(Components.interfaces.nsIServerSocket);
+        break;
+        
+        case "profile-after-change":
+            // This happens after profile has been loaded and user preferences have been read.
+            // startup code here
+            this.m_scriptLoader .loadSubScript("chrome://web-mail/content/common/DebugLog.js");
+            this.m_scriptLoader .loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
+            this.m_scriptLoader .loadSubScript("chrome://web-mail/content/server/popConnectionHandler.js");
+            this.m_Log = new DebugLog("webmail.logging.comms", 
+                                      "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
+                                      "popServerlog"); 
+            this.intial();
+        break;
+        
+        case "quit-application": // shutdown code here
+            this.Stop();
+        break;
+        
+        case "app-startup":
+        break;
+        
+        default:
+            throw Components.Exception("Unknown topic: " + aTopic);
+    }
+}
+
+
+nsPOPConnectionManager.prototype.intial = function ()
+{
+    try
+    {
+        this.m_Log.Write("nsPOPConnectionManager : intial - START");
+        
+        var oPref = new Object();
+        oPref.Value = null;
+        
+        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+        WebMailPrefAccess.Get("bool","webmail.bUsePOPServer",oPref); 
+        if (oPref.Value) 
+        {
+            this.m_Log.Write("nsPOPConnectionManager : intial - POP server wanted");
+            if (this.Start())
+                this.m_Log.Write("nsPOPConnectionManager : intial - pop server started");
+            else
+                this.m_Log.Write("nsPOPConnectionManager : intial - pop server not started"); 
+        } 
+        
+        this.m_Log.Write("nsPOPConnectionManager : intial - END"); 
+    }
+    catch(e)
+    {
+        this.m_Log.Write("nsPOPConnectionManager :  Exception in intial " 
+                                        + e.name + 
+                                        ".\nError message: " 
+                                        + e.message + "\n"
+                                        + e.lineNumber);
+    }
+}
+
 
 
 /******************************************************************************/
@@ -253,7 +310,8 @@ nsPOPConnectionManager.prototype.notify = function()
 nsPOPConnectionManager.prototype.QueryInterface = function (iid)
 {
     if (!iid.equals(Components.interfaces.nsIPOPConnectionManager) 
-		                      	&& !iid.equals(Components.interfaces.nsISupports))
+		    && !iid.equals(Components.interfaces.nsISupports)
+                && !iid.equals(Components.interfaces.nsIObserver))
         throw Components.results.NS_ERROR_NO_INTERFACE;
         
     return this;
@@ -284,6 +342,27 @@ var nsPOPConnectionManagerModule = new Object();
 
 nsPOPConnectionManagerModule.registerSelf = function(compMgr, fileSpec, location, type)
 {
+    var catman = Components.classes["@mozilla.org/categorymanager;1"].
+                        getService(Components.interfaces.nsICategoryManager);
+        
+    catman.addCategoryEntry("xpcom-startup", 
+                            "POP Connection Manager", 
+                            nsPOPConnectionManagerProgID, 
+                            true, 
+                            true); 
+                                  
+    catman.addCategoryEntry("xpcom-shutdown",
+                            "POP Connection Manager", 
+                            nsPOPConnectionManagerProgID, 
+                            true, 
+                            true);                       
+                            
+    catman.addCategoryEntry("app-startup", 
+                            "POP Connection Manager", 
+                            "service," + nsPOPConnectionManagerProgID, 
+                            true, 
+                            true);
+    
     compMgr = compMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
     compMgr.registerFactoryLocation(nsPOPConnectionManagerCID,
                                     "POP Connection Manager",
@@ -295,6 +374,13 @@ nsPOPConnectionManagerModule.registerSelf = function(compMgr, fileSpec, location
 
 nsPOPConnectionManagerModule.unregisterSelf = function(aCompMgr, aFileSpec, aLocation)
 {
+    var catman = Components.classes["@mozilla.org/categorymanager;1"].
+                            getService(Components.interfaces.nsICategoryManager);
+                            
+    catman.deleteCategoryEntry("xpcom-startup", "POP Connection Manager", true);
+    catman.deleteCategoryEntry("xpcom-shutdown", "POP Connection Manager", true);
+    catman.deleteCategoryEntry("app-startup", "POP Connection Manager", true);
+    
     aCompMgr = aCompMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
     aCompMgr.unregisterFactoryLocation(nsPOPConnectionManagerProgID, aFileSpec);
 }

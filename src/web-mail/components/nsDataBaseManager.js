@@ -7,40 +7,10 @@ const cCurrentDBVersion = 1;
 /***********************  DomainManager ********************************/
 function nsDataBaseManager()
 {
-    try
-    {
-        var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
-        scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-    
-        this.m_Log = new DebugLog("webmail.logging.comms", 
-                                  "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
-                                  "DBManager"); 
-            
-        this.m_Log.Write("nsDataBaseManager.js - Constructor - START");
-        
-        this.m_dbService = Components.classes["@mozilla.org/storage/service;1"];
-        this.m_dbService = this.m_dbService.getService(Components.interfaces.mozIStorageService);
-       
-        this.m_dbConn = null;
-        
-        this.loadDB();
-        var iVersion = this.getDBVersion();
-        if (iVersion == -1) 
-            this.createDB();
-        else if (iVersion != cCurrentDBVersion)
-            this.updateDB(iVersion);
-            
-        this.m_Log.Write("nsDataBaseManager.js - Constructor - END");
-    }
-    catch(e)
-    {
-        this.m_Log.DebugDump("nsDataBaseManager.js: Constructor : Exception : " 
-                                      + e.name + 
-                                      "\nError message: " 
-                                      + e.message +"\n"
-                                      + e.lineNumber);
-    }
+    this.m_scriptLoader =  null;
+    this.m_Log = null;
+    this.m_dbService = null;
+    this.m_dbConn = null;
 }
 
 nsDataBaseManager.prototype =
@@ -204,6 +174,81 @@ nsDataBaseManager.prototype =
     },
     
     
+     observe : function(aSubject, aTopic, aData) 
+    {
+        switch(aTopic) 
+        {
+            case "xpcom-startup":
+                // this is run very early, right after XPCOM is initialized, but before
+                // user profile information is applied. Register ourselves as an observer
+                // for 'profile-after-change' and 'quit-application'.
+                var obsSvc = Components.classes["@mozilla.org/observer-service;1"].
+                                getService(Components.interfaces.nsIObserverService);
+                obsSvc.addObserver(this, "profile-after-change", false);
+                
+                this.m_scriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                                        .getService(Components.interfaces.mozIJSSubScriptLoader); 
+                                        
+            break;
+            
+            case "profile-after-change":
+                // This happens after profile has been loaded and user preferences have been read.
+                // startup code here
+                this.m_scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
+                this.m_Log = new DebugLog("webmail.logging.comms", 
+                                          "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
+                                          "DBManager");
+                   
+                this.intial();        
+            break;
+
+            case "quit-application": // shutdown code here
+            break;
+        
+            case "app-startup":
+            break;
+            
+            default:
+                throw Components.Exception("Unknown topic: " + aTopic);
+        }
+    },
+    
+    intial : function ()
+    {
+        try
+        {
+            this.m_Log.Write("nsDataBaseManager : intial - START");
+            
+            try
+            {
+                this.m_dbService = Components.classes["@mozilla.org/storage/service;1"]
+                                     .getService(Components.interfaces.mozIStorageService);
+            }
+            catch(err)
+            {
+                this.m_Log.Write("Webmail.js : startUp - SQL components NOT installed");
+                return;
+            }
+                                 
+            this.loadDB();
+            var iVersion = this.getDBVersion();
+            if (iVersion == -1) 
+                this.createDB();
+            else if (iVersion != cCurrentDBVersion)
+                this.updateDB(iVersion);
+            
+            this.m_Log.Write("nsDataBaseManager : intial - END"); 
+        }
+        catch(e)
+        {
+            this.m_Log.Write("nsDataBaseManager :  Exception in intial " 
+                                            + e.name + 
+                                            ".\nError message: " 
+                                            + e.message + "\n"
+                                            + e.lineNumber);
+        }
+    },
+    
     
 /******************************************************************************/
 /***************** XPCOM  stuff ***********************************************/
@@ -211,7 +256,8 @@ nsDataBaseManager.prototype =
     QueryInterface : function (iid)
     {
         if (!iid.equals(Components.interfaces.nsIDataBaseManager) 
-        	                && !iid.equals(Components.interfaces.nsISupports))
+        	    && !iid.equals(Components.interfaces.nsISupports)
+                    && !iid.equals(Components.interfaces.nsIObserver))
             throw Components.results.NS_ERROR_NO_INTERFACE;
             
         return this;
@@ -242,6 +288,27 @@ var nsDataBaseManagerModule = new Object();
 
 nsDataBaseManagerModule.registerSelf = function(compMgr, fileSpec, location, type)
 {
+    var catman = Components.classes["@mozilla.org/categorymanager;1"].
+                        getService(Components.interfaces.nsICategoryManager);
+        
+    catman.addCategoryEntry("xpcom-startup", 
+                            "DataBase Manager", 
+                            nsDataBaseManagerContactID, 
+                            true, 
+                            true);                     
+                            
+    catman.addCategoryEntry("app-startup", 
+                            "DataBase Manager", 
+                            "service," + nsDataBaseManagerContactID, 
+                            true, 
+                            true);
+                            
+    catman.addCategoryEntry("xpcom-shutdown",
+                            "POP Connection Manager", 
+                            nsDataBaseManagerContactID, 
+                            true, 
+                            true);  
+                            
     compMgr = compMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
     compMgr.registerFactoryLocation(nsDataBaseManagerClassID,
                                     "DataBase Manager",
@@ -254,6 +321,13 @@ nsDataBaseManagerModule.registerSelf = function(compMgr, fileSpec, location, typ
 
 nsDataBaseManagerModule.unregisterSelf = function(aCompMgr, aFileSpec, aLocation)
 {
+    var catman = Components.classes["@mozilla.org/categorymanager;1"].
+                            getService(Components.interfaces.nsICategoryManager);
+                            
+    catman.deleteCategoryEntry("xpcom-startup", "DataBase Manager", true);
+    catman.deleteCategoryEntry("app-startup", "DataBase Manager", true);
+    catman.deleteCategoryEntry("xpcom-shutdown", "DataBase Manager", true);
+    
     aCompMgr = aCompMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
     aCompMgr.unregisterFactoryLocation(nsDataBaseManagerClassID, aFileSpec);
 }
