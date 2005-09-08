@@ -1,6 +1,6 @@
 <!ENTITY HotmailAbout.Title "Hotmail - À propos">
 <!ENTITY HotmailAbout.ExtName "Hotmail">
-<!ENTITY HotmailAbout.ExtVersion "version 0.6.0">
+<!ENTITY HotmailAbout.ExtVersion "version 0.7.0">
 <!ENTITY HotmailAbout.ExtDescription "Module Hotmail pour l'extension Webmail.">
 <!ENTITY HotmailAbout.ExtCreaterTitle "Créée par :">
 <!ENTITY HotmailAbout.ExtCreator "ComodoDragon">

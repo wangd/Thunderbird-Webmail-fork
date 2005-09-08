@@ -6,5 +6,5 @@
 <!ENTITY WebmailAbout.ExtHome "Página web">
 <!ENTITY WebmailAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY WebmailAbout.ExtName "Web Mail">
-<!ENTITY WebmailAbout.ExtVersion "Versión 0.5.2">
+<!ENTITY WebmailAbout.ExtVersion "Versión 0.6.0">
 <!ENTITY WebmailAbout.Title "Webmail - Acerca de">
