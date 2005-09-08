@@ -7,7 +7,7 @@
 
 		<em:id>{3c8e8390-2cf6-11d9-9669-0800200c9a66}</em:id>
 		<em:type>2</em:type>
-		<em:version>0.5.2</em:version>
+		<em:version>0.6.0</em:version>
 		
 		<em:name>WebMail</em:name>
 		<em:description>Lets Thunderbird access web mail</em:description>
@@ -18,13 +18,13 @@
 		<em:aboutURL>chrome://web-mail/content/Webmail-About.xul</em:aboutURL>
 		<em:optionsURL>chrome://web-mail/content/prefs/Webmail-Prefs.xul</em:optionsURL>
 		
-        <em:updateURL>http://webmail.mozdev.org/webmailUpdate.rdf</em:updateURL>
+        <em:updateURL>http://webmail.mozdev.org/update/webmailUpdate.rdf</em:updateURL>
 
         <em:targetApplication>
 			<Description>
 				<!-- Mozilla Thunderbird -->
 				<em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
-				<em:minVersion>1.6a1</em:minVersion>
+				<em:minVersion>1.4</em:minVersion>
 				<em:maxVersion>1.6</em:maxVersion>
 			</Description>
 		</em:targetApplication>
