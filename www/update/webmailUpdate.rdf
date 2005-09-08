@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<RDF:RDF xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+ 
+     <RDF:Description about="urn:mozilla:extension:{3c8e8390-2cf6-11d9-9669-0800200c9a66}">
+        <em:updates>
+            <RDF:Seq>
+                <RDF:li resource="urn:mozilla:extension:{3c8e8390-2cf6-11d9-9669-0800200c9a66}:0.3.4"/>
+                <RDF:li resource="urn:mozilla:extension:{3c8e8390-2cf6-11d9-9669-0800200c9a66}:0.6.0"/>
+            </RDF:Seq>
+        </em:updates>    
+    </RDF:Description>
+ 
+     <RDF:Description about="urn:mozilla:extension:{3c8e8390-2cf6-11d9-9669-0800200c9a66}:0.3.4">
+        <em:version>0.3.4</em:version>
+    	<em:targetApplication>
+        	<Description>
+                <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id><!-- Thunderbird updates -->
+            	<em:minVersion>1.0</em:minVersion>
+            	<em:maxVersion>1.0</em:maxVersion>
+                <em:updateLink>http://download.mozdev.org/webmail/web-mail-0-3-4[inter2].xpi</em:updateLink>
+          </Description>
+        </em:targetApplication>
+    </RDF:Description> 
+    
+    <RDF:Description about="urn:mozilla:extension:{3c8e8390-2cf6-11d9-9669-0800200c9a66}:0.6.0">
+        <em:version>0.6.0</em:version> 
+    	<em:targetApplication>
+        	<Description>
+                <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id><!-- Thunderbird updates -->
+            	<em:minVersion>1.4</em:minVersion>
+            	<em:maxVersion>1.6</em:maxVersion>
+                <em:updateLink>http://download.mozdev.org/webmail/web-mail-0-6-0.xpi</em:updateLink>
+          </Description>
+        </em:targetApplication>
+    </RDF:Description>  
+
+</RDF:RDF>
