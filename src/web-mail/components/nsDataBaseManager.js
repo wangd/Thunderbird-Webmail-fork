@@ -174,7 +174,7 @@ nsDataBaseManager.prototype =
     },
     
     
-     observe : function(aSubject, aTopic, aData) 
+    observe : function(aSubject, aTopic, aData) 
     {
         switch(aTopic) 
         {
@@ -304,7 +304,7 @@ nsDataBaseManagerModule.registerSelf = function(compMgr, fileSpec, location, typ
                             true);
                             
     catman.addCategoryEntry("xpcom-shutdown",
-                            "POP Connection Manager", 
+                            "DataBase Manager", 
                             nsDataBaseManagerContactID, 
                             true, 
                             true);  
