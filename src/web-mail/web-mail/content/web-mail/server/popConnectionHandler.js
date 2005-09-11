@@ -226,13 +226,19 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                     
                     try
                     {
-                        if (!this.m_DomainHandler.getHeaders())
+                        this.m_POPLog.Write("POPconnectionHandler - onDataWritable - top -" + aCommand[1] );
+                        if (!this.m_DomainHandler.getMessageHeaders(aCommand[1]))
                             throw new Error("TOP NOT supported");
                     }
                     catch(e)
                     {
                         this.ServerResponse.write(szERR,szERR.length);
                         this.m_POPLog.Write("POPconnectionHandler - onDataWritable - top - Not Supported");
+                        this.m_POPLog.Write("popHandler.js: top : Exception : " 
+                                                  + e.name 
+                                                  + ".\nError message: " 
+                                                  + e.message + "\n"
+                                                  + e.lineNumber);
                     }
                    
                     this.m_POPLog.Write("POPconnectionHandler - onDataWritable - top - END   "+ this.iID);
