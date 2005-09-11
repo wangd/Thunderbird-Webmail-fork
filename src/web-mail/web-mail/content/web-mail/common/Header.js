@@ -19,10 +19,12 @@ headers.prototype =
             var szTo = null;
             try
             {
-                szTo = this.m_szHeaders.match(/To:(.*?)$/im)[1];
-                szTo = this.addressClean(szTo);  
+                szTo = this.m_szHeaders.match(/To:[\s\S]*<(.*?)>/i)[1];   
             }
-            catch(e){}
+            catch(e)
+            {
+                szTo = this.m_szHeaders.match(/To:\s(.*?)$/i)[1];
+            }
             
             return szTo;
         }
@@ -47,11 +49,13 @@ headers.prototype =
             var szCc = null;   
             try
             {
-                szCc = this.m_szHeaders.match(/CC:(.*?)$/im)[1];
-                szCc = this.addressClean(szCc);
+                szCc = this.m_szHeaders.match(/cc:[\s\S]*<(.*?)>/i)[1];   
             }
-            catch(e){}
-
+            catch(e)
+            {
+                szCc = this.m_szHeaders.match(/cc:\s(.*?)$/i)[1];
+            }
+            
             return szCc;  
         }
         catch(err)
