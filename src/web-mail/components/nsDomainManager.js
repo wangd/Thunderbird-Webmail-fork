@@ -6,11 +6,31 @@ const nsDomainManagerContactID = "@mozilla.org/DomainManager;1";
 /***********************  DomainManager ********************************/
 function nsDomainManager()
 {   
-    this.m_scriptLoader = null; 
-    this.m_Log = null; 
-    this.m_bReady = false;
-    this.m_DataSource = null;
-    this.m_rdfService = null;
+    try
+    {       
+        var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                                        .getService(Components.interfaces.mozIJSSubScriptLoader);
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
+
+        this.m_Log = new DebugLog("webmail.logging.comms", 
+                                        "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
+                                        "Domainlog"); 
+        
+        this.m_Log.Write("nsDomainManager.js - Constructor - START");   
+        this.m_bReady = false;
+        this.m_DataSource = null;
+        this.m_rdfService = null;
+        this.loadDataBase();
+                                
+        this.m_Log.Write("nsDomainManager.js - Constructor - END");  
+    }
+    catch(e)
+    {
+        this.m_Log.DebugDump("nsDomainManager.js: Constructor : Exception : " 
+                                      + e.name + 
+                                      ".\nError message: " 
+                                      + e.message);
+    }
 }
 
 nsDomainManager.prototype =
@@ -389,50 +409,13 @@ nsDomainManager.prototype =
     },
     
     
-    
-    
-    observe : function(aSubject, aTopic, aData) 
-    {
-        switch(aTopic) 
-        {
-            case "xpcom-startup":
-                // this is run very early, right after XPCOM is initialized, but before
-                // user profile information is applied. Register ourselves as an observer
-                // for 'profile-after-change' and 'quit-application'.
-                var obsSvc = Components.classes["@mozilla.org/observer-service;1"].
-                                getService(Components.interfaces.nsIObserverService);
-                obsSvc.addObserver(this, "profile-after-change", false);
-                
-                this.m_scriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-                                        .getService(Components.interfaces.mozIJSSubScriptLoader);
-            break;
-            
-            case "profile-after-change":
-                // This happens after profile has been loaded and user preferences have been read.
-                // startup code here
-                this.m_scriptLoader .loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-                this.m_Log = new DebugLog("webmail.logging.comms", 
-                                          "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
-                                          "Domainlog");
-                this.loadDataBase();
-            break;
-
-            case "app-startup":
-            break;
-            
-            default:
-                throw Components.Exception("Unknown topic: " + aTopic);
-        }
-    },
-
 /******************************************************************************/
 /***************** XPCOM  stuff ***********************************************/
 /******************************************************************************/
     QueryInterface : function (iid)
     {
         if (!iid.equals(Components.interfaces.nsIDomainManager) 
-        	    && !iid.equals(Components.interfaces.nsISupports)
-                    && !iid.equals(Components.interfaces.nsIObserver))
+        	    && !iid.equals(Components.interfaces.nsISupports))
             throw Components.results.NS_ERROR_NO_INTERFACE;
             
         return this;
@@ -463,21 +446,6 @@ var nsDomainManagerModule = new Object();
 
 nsDomainManagerModule.registerSelf = function(compMgr, fileSpec, location, type)
 {
-    var catman = Components.classes["@mozilla.org/categorymanager;1"].
-                        getService(Components.interfaces.nsICategoryManager);
-        
-    catman.addCategoryEntry("xpcom-startup", 
-                            "Domain Manager", 
-                            nsDomainManagerContactID, 
-                            true, 
-                            true);                     
-                            
-    catman.addCategoryEntry("app-startup", 
-                            "Domain Manager", 
-                            "service," + nsDomainManagerContactID, 
-                            true, 
-                            true);
-                            
     compMgr = compMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
     compMgr.registerFactoryLocation(nsDomainManagerClassID,
                                     "Domain Manager",
@@ -490,12 +458,6 @@ nsDomainManagerModule.registerSelf = function(compMgr, fileSpec, location, type)
 
 nsDomainManagerModule.unregisterSelf = function(aCompMgr, aFileSpec, aLocation)
 {
-    var catman = Components.classes["@mozilla.org/categorymanager;1"].
-                            getService(Components.interfaces.nsICategoryManager);
-                            
-    catman.deleteCategoryEntry("xpcom-startup", "Domain Manager", true);
-    catman.deleteCategoryEntry("app-startup", "Domain Manager", true);
-    
     aCompMgr = aCompMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
     aCompMgr.unregisterFactoryLocation(nsDomainManagerClassID, aFileSpec);
 }

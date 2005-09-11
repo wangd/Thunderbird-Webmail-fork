@@ -7,13 +7,41 @@ const nsSMTPConnectionManagerProgID = "@mozilla.org/SMTPConnectionManager;1";
 
 function nsSMTPConnectionManager()
 {
-    this.m_serverSocket = null;
-    this.m_scriptLoader =  null;  
-    this.m_Log = null; 
-    this.m_iStatus = 0;  //-1 error , 0 = stopped ,1 = waiting, 2= ruuning   
-    this.m_aSMTPConnections = new Array();
-    this.m_GarbageTimer = null;
-    this.m_bGarbage = false;
+    try
+    {
+        this.m_serverSocket = Components.classes["@mozilla.org/network/server-socket;1"].
+                                createInstance(Components.interfaces.nsIServerSocket);
+      
+        var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"].
+                                getService(Components.interfaces.mozIJSSubScriptLoader);
+       
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/server/smtpConnectionHandler.js");
+        
+        this.m_Log = new DebugLog("webmail.logging.comms", 
+                                      "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
+                                      "SMTPServerlog"); 
+        
+        this.m_Log.Write("nsSMTPConnectionManager.js - Constructor - START");   
+           
+        //-1 error , 0 = stopped ,1 = waiting, 2= ruuning                    
+        this.m_iStatus = 0;          
+        this.m_aSMTPConnections = new Array();
+        
+        this.m_GarbageTimer = Components.classes["@mozilla.org/timer;1"].
+                                        createInstance(Components.interfaces.nsITimer);  
+        this.m_bGarbage = false;
+      
+        this.m_Log.Write("nsSMTPConnectionManager.js - Constructor - END");   
+    }
+    catch(e)
+    {
+         DebugDump("nsSMTPConnectionManager.js: Constructor : Exception : " 
+                              + e.name  
+                              + ".\nError message: " 
+                              + e.message);
+    }
 }
 
 nsSMTPConnectionManager.prototype.Start = function()
@@ -21,9 +49,7 @@ nsSMTPConnectionManager.prototype.Start = function()
    try
    {
         this.m_Log.Write("nsSMTPConnectionManager.js - Start - START");
-      
-        //g_SMTPLog.UpdateLog(); //update log with any new prefs settings
-        
+             
         if(this.m_iStatus != 2 && this.m_iStatus != 1)  //enter here if server is not running
         { 
             if (!this.m_bGarbage)
@@ -218,95 +244,13 @@ nsSMTPConnectionManager.prototype.notify = function()
 
 
 
-nsSMTPConnectionManager.prototype.observe = function(aSubject, aTopic, aData) 
-{
-    switch(aTopic) 
-    {
-        case "xpcom-startup":
-            // this is run very early, right after XPCOM is initialized, but before
-            // user profile information is applied. 
-            var obsSvc = Components.classes["@mozilla.org/observer-service;1"].
-                            getService(Components.interfaces.nsIObserverService);
-            obsSvc.addObserver(this, "profile-after-change", false);
-            obsSvc.addObserver(this, "quit-application", false);
-            
-            this.m_scriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-                                    .getService(Components.interfaces.mozIJSSubScriptLoader);
-                                    
-            this.m_GarbageTimer = Components.classes["@mozilla.org/timer;1"]
-                                    .createInstance(Components.interfaces.nsITimer);  
-                                    
-            this.m_serverSocket = Components.classes["@mozilla.org/network/server-socket;1"]
-                                    .createInstance(Components.interfaces.nsIServerSocket);
-        break;
-        
-        case "profile-after-change":
-            // This happens after profile has been loaded and user preferences have been read.
-            // startup code here
-            this.m_scriptLoader .loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-            this.m_scriptLoader .loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
-            this.m_scriptLoader .loadSubScript("chrome://web-mail/content/server/smtpConnectionHandler.js");
-            this.m_Log = new DebugLog("webmail.logging.comms", 
-                                      "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
-                                      "SMTPServerlog"); 
-            this.intial();
-        break;
-        
-        case "quit-application": // shutdown code here
-            this.Stop();
-        break;
-        
-        case "app-startup":
-        break;
-        
-        default:
-            throw Components.Exception("Unknown topic: " + aTopic);
-    }
-}
-
-
-nsSMTPConnectionManager.prototype.intial = function ()
-{
-    try
-    {
-        this.m_Log.Write("nsSMTPConnectionManager : intial - START");
-        
-        var oPref = new Object();
-        oPref.Value = null;
-        
-        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-        WebMailPrefAccess.Get("bool","webmail.bUseSMTPServer",oPref); 
-        if (oPref.Value) 
-        {
-            this.m_Log.Write("nsPOPConnectionManager : intial - SMTP server wanted");
-            if (this.Start())
-                this.m_Log.Write("nsPOPConnectionManager : intial - SMTP server started");
-            else
-                this.m_Log.Write("nsPOPConnectionManager : intial - SMTP server not started"); 
-        } 
-        
-        this.m_Log.Write("nsSMTPConnectionManager : intial - END"); 
-    }
-    catch(e)
-    {
-        this.m_Log.Write("nsSMTPConnectionManager :  Exception in intial " 
-                                        + e.name + 
-                                        ".\nError message: " 
-                                        + e.message + "\n"
-                                        + e.lineNumber);
-    }
-}
-
-
-
 /******************************************************************************/
 /***************** XPCOM  stuff ***********************************************/
 /******************************************************************************/
 nsSMTPConnectionManager.prototype.QueryInterface = function (iid)
 {
     if (!iid.equals(Components.interfaces.nsISMTPConnectionManager) 
-		    && !iid.equals(Components.interfaces.nsISupports)
-                && !iid.equals(Components.interfaces.nsIObserver))
+		    && !iid.equals(Components.interfaces.nsISupports))
         throw Components.results.NS_ERROR_NO_INTERFACE;
         
     return this;
@@ -336,28 +280,7 @@ nsSMTPConnectionManagerFactory.createInstance = function (outer, iid)
 var nsSMTPConnectionManagerModule = new Object();
 
 nsSMTPConnectionManagerModule.registerSelf = function(compMgr, fileSpec, location, type)
-{
-    var catman = Components.classes["@mozilla.org/categorymanager;1"].
-                        getService(Components.interfaces.nsICategoryManager);
-        
-    catman.addCategoryEntry("xpcom-startup", 
-                            "SMTP Connection Manager", 
-                            nsSMTPConnectionManagerProgID, 
-                            true, 
-                            true); 
-                                  
-    catman.addCategoryEntry("xpcom-shutdown",
-                            "SMTP Connection Manager", 
-                            nsSMTPConnectionManagerProgID, 
-                            true, 
-                            true);                       
-                            
-    catman.addCategoryEntry("app-startup", 
-                            "SMTP Connection Manager", 
-                            "service," + nsSMTPConnectionManagerProgID, 
-                            true, 
-                            true);
-                            
+{                           
     compMgr = compMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
     compMgr.registerFactoryLocation(nsSMTPConnectionManagerCID,
                                     "SMTP Connection Manager",
@@ -369,13 +292,6 @@ nsSMTPConnectionManagerModule.registerSelf = function(compMgr, fileSpec, locatio
 
 nsSMTPConnectionManagerModule.unregisterSelf = function(aCompMgr, aFileSpec, aLocation)
 {
-    var catman = Components.classes["@mozilla.org/categorymanager;1"].
-                            getService(Components.interfaces.nsICategoryManager);
-                            
-    catman.deleteCategoryEntry("xpcom-startup", "SMTP Connection Manager", true);
-    catman.deleteCategoryEntry("xpcom-shutdown", "SMTP Connection Manager", true);
-    catman.deleteCategoryEntry("app-startup", "SMTP Connection Manager", true);
-    
     aCompMgr = aCompMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
     aCompMgr.unregisterFactoryLocation(nsSMTPConnectionManagerProgID, aFileSpec);
 }

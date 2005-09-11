@@ -9,13 +9,41 @@ const szERR ="-ERR negative vibes\r\n";
 /***********************  POPconnectionManager ********************************/
 function nsPOPConnectionManager()
 {
-    this.m_serverSocket = null;   
-    this.m_scriptLoader = null;         
-    this.m_GarbageTimer= null;
-    this.m_Log = null;   
-    this.m_iStatus = 0;   //-1 error , 0 = stopped ,1 = waiting, 2= ruuning  
-    this.m_aPOPConnections = new Array();
-    this.m_bGarbage = false;
+    try
+    {
+        this.m_serverSocket = Components.classes["@mozilla.org/network/server-socket;1"]
+                              .createInstance(Components.interfaces.nsIServerSocket);
+        
+       
+        var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
+        scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/server/popConnectionHandler.js")
+                  
+        this.m_Log = new DebugLog("webmail.logging.comms", 
+                                     "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
+                                     "popServerlog"); 
+        
+        this.m_Log.Write("nsPOPConnectionManager.js - Constructor - START");   
+                    
+        //-1 error , 0 = stopped ,1 = waiting, 2= ruuning                       
+        this.m_iStatus = 0;               //error
+        this.m_aPOPConnections = new Array();
+        
+        this.m_GarbageTimer = Components.classes["@mozilla.org/timer;1"].
+                                createInstance(Components.interfaces.nsITimer);  
+        this.m_bGarbage = false;
+      
+        this.m_Log.Write("nsPOPConnectionManager.js - Constructor - END");   
+    }
+    catch(e)
+    {
+         DebugDump("nsPOPConnectionManager.js: Constructor : Exception : " 
+                              + e.name  
+                              + ".\nError message: " 
+                              + e.message);
+    }
 }
 
 
@@ -223,95 +251,13 @@ nsPOPConnectionManager.prototype.notify = function()
 }
 
 
-nsPOPConnectionManager.prototype.observe = function(aSubject, aTopic, aData) 
-{
-    switch(aTopic) 
-    {
-        case "xpcom-startup":
-            // this is run very early, right after XPCOM is initialized, but before
-            // user profile information is applied. 
-            var obsSvc = Components.classes["@mozilla.org/observer-service;1"].
-                            getService(Components.interfaces.nsIObserverService);
-            obsSvc.addObserver(this, "profile-after-change", false);
-            obsSvc.addObserver(this, "quit-application", false);
-            
-            this.m_scriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-                                    .getService(Components.interfaces.mozIJSSubScriptLoader);
-                                    
-            this.m_GarbageTimer = Components.classes["@mozilla.org/timer;1"]
-                                    .createInstance(Components.interfaces.nsITimer);  
-                                    
-            this.m_serverSocket = Components.classes["@mozilla.org/network/server-socket;1"]
-                                    .createInstance(Components.interfaces.nsIServerSocket);
-        break;
-        
-        case "profile-after-change":
-            // This happens after profile has been loaded and user preferences have been read.
-            // startup code here
-            this.m_scriptLoader .loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-            this.m_scriptLoader .loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
-            this.m_scriptLoader .loadSubScript("chrome://web-mail/content/server/popConnectionHandler.js");
-            this.m_Log = new DebugLog("webmail.logging.comms", 
-                                      "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
-                                      "popServerlog"); 
-            this.intial();
-        break;
-        
-        case "quit-application": // shutdown code here
-            this.Stop();
-        break;
-        
-        case "app-startup":
-        break;
-        
-        default:
-            throw Components.Exception("Unknown topic: " + aTopic);
-    }
-}
-
-
-nsPOPConnectionManager.prototype.intial = function ()
-{
-    try
-    {
-        this.m_Log.Write("nsPOPConnectionManager : intial - START");
-        
-        var oPref = new Object();
-        oPref.Value = null;
-        
-        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-        WebMailPrefAccess.Get("bool","webmail.bUsePOPServer",oPref); 
-        if (oPref.Value) 
-        {
-            this.m_Log.Write("nsPOPConnectionManager : intial - POP server wanted");
-            if (this.Start())
-                this.m_Log.Write("nsPOPConnectionManager : intial - pop server started");
-            else
-                this.m_Log.Write("nsPOPConnectionManager : intial - pop server not started"); 
-        } 
-        
-        this.m_Log.Write("nsPOPConnectionManager : intial - END"); 
-    }
-    catch(e)
-    {
-        this.m_Log.Write("nsPOPConnectionManager :  Exception in intial " 
-                                        + e.name + 
-                                        ".\nError message: " 
-                                        + e.message + "\n"
-                                        + e.lineNumber);
-    }
-}
-
-
-
 /******************************************************************************/
 /***************** XPCOM  stuff ***********************************************/
 /******************************************************************************/
 nsPOPConnectionManager.prototype.QueryInterface = function (iid)
 {
     if (!iid.equals(Components.interfaces.nsIPOPConnectionManager) 
-		    && !iid.equals(Components.interfaces.nsISupports)
-                && !iid.equals(Components.interfaces.nsIObserver))
+		    && !iid.equals(Components.interfaces.nsISupports))
         throw Components.results.NS_ERROR_NO_INTERFACE;
         
     return this;
@@ -341,28 +287,7 @@ nsPOPConnectionManagerFactory.createInstance = function (outer, iid)
 var nsPOPConnectionManagerModule = new Object();
 
 nsPOPConnectionManagerModule.registerSelf = function(compMgr, fileSpec, location, type)
-{
-    var catman = Components.classes["@mozilla.org/categorymanager;1"].
-                        getService(Components.interfaces.nsICategoryManager);
-        
-    catman.addCategoryEntry("xpcom-startup", 
-                            "POP Connection Manager", 
-                            nsPOPConnectionManagerProgID, 
-                            true, 
-                            true); 
-                                  
-    catman.addCategoryEntry("xpcom-shutdown",
-                            "POP Connection Manager", 
-                            nsPOPConnectionManagerProgID, 
-                            true, 
-                            true);                       
-                            
-    catman.addCategoryEntry("app-startup", 
-                            "POP Connection Manager", 
-                            "service," + nsPOPConnectionManagerProgID, 
-                            true, 
-                            true);
-    
+{   
     compMgr = compMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
     compMgr.registerFactoryLocation(nsPOPConnectionManagerCID,
                                     "POP Connection Manager",
@@ -374,13 +299,6 @@ nsPOPConnectionManagerModule.registerSelf = function(compMgr, fileSpec, location
 
 nsPOPConnectionManagerModule.unregisterSelf = function(aCompMgr, aFileSpec, aLocation)
 {
-    var catman = Components.classes["@mozilla.org/categorymanager;1"].
-                            getService(Components.interfaces.nsICategoryManager);
-                            
-    catman.deleteCategoryEntry("xpcom-startup", "POP Connection Manager", true);
-    catman.deleteCategoryEntry("xpcom-shutdown", "POP Connection Manager", true);
-    catman.deleteCategoryEntry("app-startup", "POP Connection Manager", true);
-    
     aCompMgr = aCompMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
     aCompMgr.unregisterFactoryLocation(nsPOPConnectionManagerProgID, aFileSpec);
 }
