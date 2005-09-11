@@ -635,12 +635,12 @@ nsYahooSMTP.prototype =
                 szBcc = this.m_aszTo;
             else
             {     
-                for (i=0; i<this.m_aszTo.length; i++)
+                for (j=0; j<this.m_aszTo.length; j++)
                 {
-                    var regExp = new RegExp(this.m_aszTo[i]);
+                    var regExp = new RegExp(this.m_aszTo[j]);
                     if (szAddress.search(regExp)==-1)
                     {    
-                        szBcc? (szBcc += this.m_aszTo[i]) : (szBcc = this.m_aszTo[i]);
+                        szBcc? (szBcc += this.m_aszTo[j]) : (szBcc = this.m_aszTo[j]);
                         szBcc +=",";
                     }
                 }
