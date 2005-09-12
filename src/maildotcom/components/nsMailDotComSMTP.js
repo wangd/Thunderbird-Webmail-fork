@@ -14,6 +14,8 @@ const patternMailDotComFrame = /<frame.*?src="(.*?)".*?name="mailcomframe".*?SCR
 const patternMailDotComCompose = /document.location.href='(.*?compose.*?)'/i;
 const patternMailDotComComposeForm = /<form.*?composeForm.*?>[\s\S]*<\/form>/igm;
 const patternMailDotComAddURI = /document.location.href="(.*?)"/;
+const patternMailDotComAttachForm = /<form.*?attachmentForm.*?>[\s\S]*<\/form>/igm;
+
 
 /******************************  MailDotCom ***************************************/
 function nsMailDotComSMTP()
@@ -51,6 +53,8 @@ function nsMailDotComSMTP()
         this.m_bAttHandled = false;
         this.m_Email = new email(this.m_Log);
         this.m_Email.decodeBody(true);
+        this.m_iAttCount = 0;
+        this.m_iAttUploaded = 1;
         
         //do i save copy
         var oPref = new Object();
@@ -303,7 +307,10 @@ nsMailDotComSMTP.prototype =
 
             if (!this.m_Email.parse(szEmail))
                 throw new Error ("Parse Failed")
-            
+           
+            this.m_iAttCount = this.m_Email.attachments.length-1;
+            this.m_iAttUploaded = 0;
+             
             //get composer page
             this.m_HttpComms.clean();
             this.m_HttpComms.setURI(this.m_szComposeURI);
@@ -353,6 +360,8 @@ nsMailDotComSMTP.prototype =
             var szReferer = httpChannel.URI.spec;
             mainObject.m_Log.Write("nsMailDotComSMTP.js - composerOnloadHandler - Referer :" +szReferer);
              
+            if (mainObject.m_Email.attachments.length>0 && !mainObject.m_bAttHandled)
+                mainObject.m_iStage = 2; 
             
             switch(mainObject.m_iStage)
             {
@@ -411,10 +420,8 @@ nsMailDotComSMTP.prototype =
                             {
                                 szValue = aszInput[i].match(patternMailDotComValue)[1];
                             }
-                            catch(err)
-                            {
-                                szValue = "";
-                            }
+                            catch(err){}
+                            
                             mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - input szValue " + szValue);
                             
                             if (szName.search(/^Send$/i)!=-1)
@@ -455,15 +462,13 @@ nsMailDotComSMTP.prototype =
                                  mainObject.m_HttpComms.addValuePair(szName,szValue);
                         }
                     }  
-                      
-                   
                     
                     mainObject.m_HttpComms.setURI(szURI);
                     mainObject.m_HttpComms.setRequestMethod("POST");
                     mainObject.m_HttpComms.setContentType(0);
                     var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);
                     if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
+                    mainObject.m_iStage=1;
                 break;
                                 
                 case 1:  //message ok
@@ -474,7 +479,182 @@ nsMailDotComSMTP.prototype =
                         mainObject.serverComms("502 Error Sending Email\r\n");   
                 break;
                 
+                
                 case 2: //attachments
+                    mainObject.m_Log.Write("nsMailDotCom.js - composerOnloadHandler -  get attachemnt page");
+
+                    var szForm= szResponse.match(patternMailDotComComposeForm)[0];
+                    if (!szForm) 
+                        throw new Error("error parsing mail.com login web page");
+                    mainObject.m_Log.Write("nsMailDotCom.js - composerOnloadHandler - form " + szForm );
+                    
+                     //get login URI
+                    var szURI= szForm.match(patternMailDotComLoginURI)[1];
+                    mainObject.m_Log.Write("nsMailDotCom.js - composerOnloadHandler - login uri " + szURI);
+                    
+                    //get login input form
+                    var aszInput= szForm.match(patternMailDotComLoginInput);
+                    mainObject.m_Log.Write("nsMailDotCom.js - composerOnloadHandler - login input " + aszInput);
+                    
+                                        
+                    //composer data 
+                    for (i=0; i<aszInput.length; i++)
+                    {
+                        mainObject.m_Log.Write("nsMailDotCom.js - composerOnloadHandler - input " + aszInput[i]);
+                        var szType = aszInput[i].match(patternMailDotComType)[1];
+                        if (szType.search(/button/)==-1 && szType.search(/checkbox/)==-1 )
+                        {
+                            var szName=aszInput[i].match(patternMailDotComName)[1];
+                            mainObject.m_Log.Write("nsMailDotCom.js - composerOnloadHandler - input szName " + szName);
+                            
+                            var szValue = "";
+                            try
+                            {
+                                szValue = aszInput[i].match(patternMailDotComValue)[1];
+                            }
+                            catch(err){}
+                            
+                            mainObject.m_Log.Write("nsMailDotCom.js - composerOnloadHandler - input szValue " + szValue);
+                            
+                            if (szName.search(/^att$/i)!=-1)
+                                mainObject.m_HttpComms.addValuePair(szName,"show"); 
+                            else
+                                 mainObject.m_HttpComms.addValuePair(szName,szValue);
+                        }
+                    }  
+                    
+                    mainObject.m_bAttHandled =true;
+                    mainObject.m_HttpComms.setURI(szURI);
+                    mainObject.m_HttpComms.setRequestMethod("POST");
+                    mainObject.m_HttpComms.setContentType(0);
+                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);
+                    if (!bResult) throw new Error("httpConnection returned false");
+                    mainObject.m_iStage =3;
+                break;
+                
+                case 3: //upload attachment
+                    mainObject.m_Log.Write("nsMailDotCom.js - composerOnloadHandler - upload attachment");
+                    
+                    var szForm= szResponse.match(patternMailDotComAttachForm)[0];
+                    if (!szForm) 
+                        throw new Error("error parsing mail.com login web page");
+                    mainObject.m_Log.Write("nsMailDotCom.js - composerOnloadHandler - form " + szForm );
+                    
+                     //get login URI
+                    var szURI= szForm.match(patternMailDotComLoginURI)[1];
+                    mainObject.m_Log.Write("nsMailDotCom.js - composerOnloadHandler - login uri " + szURI);
+                    
+                    //get login input form
+                    var aszInput= szForm.match(patternMailDotComLoginInput);
+                    mainObject.m_Log.Write("nsMailDotCom.js - composerOnloadHandler - login input " + aszInput);
+                    
+                    var oAttach = mainObject.m_Email.attachments[mainObject.m_iAttUploaded];
+                    
+                    if (mainObject.m_iAttUploaded == mainObject.m_iAttCount)
+                        mainObject.m_iStage = 4;
+                    else
+                        mainObject.m_iStage = 3;  
+                        
+                    //composer data 
+                    for (i=0; i<aszInput.length; i++)
+                    {
+                        mainObject.m_Log.Write("nsMailDotCom.js - composerOnloadHandler - input " + aszInput[i]);
+                        var szType = aszInput[i].match(patternMailDotComType)[1];
+                        if (szType.search(/button/)==-1 && szType.search(/checkbox/)==-1 )
+                        {
+                            var szName=aszInput[i].match(patternMailDotComName)[1];
+                            mainObject.m_Log.Write("nsMailDotCom.js - composerOnloadHandler - input szName " + szName);
+                            
+                            var szValue = "";
+                            try
+                            {
+                                szValue = aszInput[i].match(patternMailDotComValue)[1];
+                            }
+                            catch(err)
+                            {
+                                szValue = "";
+                            }
+                            mainObject.m_Log.Write("nsMailDotCom.js - composerOnloadHandler - input szValue " + szValue);
+                            
+                            if (szName.search(/^att$/i)!=-1)
+                                mainObject.m_HttpComms.addValuePair(szName,"upload"); 
+                            else if (szName.search(/^filename$/i)!=-1)
+                            {
+                                var szFileName = oAttach.headers.getContentType(4);
+                                if (!szFileName) szFileName = "";
+                                mainObject.m_HttpComms.addValuePair(szName,szFileName); 
+                            }
+                            else if (szName.search(/^attachment$/i)!=-1)
+                            {
+                                //headers
+                                var szFileName = oAttach.headers.getContentType(4);
+                                if (!szFileName) szFileName = "";
+                                                          
+                                //body
+                                var szBody = oAttach.body.getBody();
+                                mainObject.m_HttpComms.addFile(szName, szFileName, szBody);
+                            }
+                            else
+                                 mainObject.m_HttpComms.addValuePair(szName,szValue);
+                        }
+                    }  
+                    
+                    mainObject.m_iAttUploaded ++;
+                    mainObject.m_HttpComms.setContentType(1);
+                    mainObject.m_HttpComms.setURI(szURI);                  
+                    mainObject.m_HttpComms.setRequestMethod("POST");
+                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);  
+                    if (!bResult) throw new Error("httpConnection returned false");
+                break;
+                
+                case 4:
+                    mainObject.m_Log.Write("nsMailDotCom.js - composerOnloadHandler - attachment done");
+                    
+                    var szForm= szResponse.match(patternMailDotComAttachForm)[0];
+                    if (!szForm) 
+                        throw new Error("error parsing mail.com login web page");
+                    mainObject.m_Log.Write("nsMailDotCom.js - composerOnloadHandler - form " + szForm );
+                    
+                     //get login URI
+                    var szURI= szForm.match(patternMailDotComLoginURI)[1];
+                    mainObject.m_Log.Write("nsMailDotCom.js - composerOnloadHandler - login uri " + szURI);
+                    
+                    //get login input form
+                    var aszInput= szForm.match(patternMailDotComLoginInput);
+                    mainObject.m_Log.Write("nsMailDotCom.js - composerOnloadHandler - login input " + aszInput);
+                    
+                    //composer data 
+                    for (i=0; i<aszInput.length; i++)
+                    {
+                        mainObject.m_Log.Write("nsMailDotCom.js - composerOnloadHandler - input " + aszInput[i]);
+                        var szType = aszInput[i].match(patternMailDotComType)[1];
+                        if (szType.search(/button/)==-1 && szType.search(/checkbox/)==-1 )
+                        {
+                            var szName=aszInput[i].match(patternMailDotComName)[1];
+                            mainObject.m_Log.Write("nsMailDotCom.js - composerOnloadHandler - input szName " + szName);
+                            
+                            var szValue = "";
+                            try
+                            {
+                                szValue = aszInput[i].match(patternMailDotComValue)[1];
+                            }
+                            catch(err){}
+                            
+                            mainObject.m_Log.Write("nsMailDotCom.js - composerOnloadHandler - input szValue " + szValue);
+                            
+                            if (szName.search(/^att$/i)!=-1)
+                                mainObject.m_HttpComms.addValuePair(szName,"done");
+                            else
+                                 mainObject.m_HttpComms.addValuePair(szName,szValue);
+                        }
+                    }  
+                    
+                    mainObject.m_HttpComms.setContentType(1);
+                    mainObject.m_HttpComms.setURI(szURI);                  
+                    mainObject.m_HttpComms.setRequestMethod("POST");
+                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);  
+                    if (!bResult) throw new Error("httpConnection returned false");
+                    mainObject.m_iStage = 0;
                 break;
             } 
                             
