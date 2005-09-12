@@ -1,3 +1,6 @@
 <!ENTITY JunkMail.AccessKey "B">
 <!ENTITY JunkMail.Label "Descargar Correo Basura">
 <!ENTITY MailServers.Label "POP">
+<!ENTITY EmptyTrash.Label "Vaciar papelera">
+<!ENTITY EmptyTrash.AccessKey "V">
+

@@ -1,4 +1,6 @@
 <!ENTITY MailServers.Label "POP">
 <!ENTITY JunkMail.Label "Scarica posta indesiderata">
 <!ENTITY JunkMail.AccessKey "I">
+<!ENTITY EmptyTrash.Label "Svuota il cestino">
+<!ENTITY EmptyTrash.AccessKey "S">
 

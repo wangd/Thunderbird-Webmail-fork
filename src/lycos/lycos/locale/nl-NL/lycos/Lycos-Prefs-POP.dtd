@@ -1,4 +1,5 @@
 <!ENTITY MailServers.Label "POP">
 <!ENTITY JunkMail.Label "Download Ongewenste berichten">
 <!ENTITY JunkMail.AccessKey "D">
-
+<!ENTITY EmptyTrash.Label "Prullenbak leegmaken">
+<!ENTITY EmptyTrash.AccessKey "l">
