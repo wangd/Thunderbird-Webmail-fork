@@ -305,7 +305,7 @@ HotmailWebDav.prototype =
                     
                     
                 case 1: //get inbox and junkmail 
-                    mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - inbox mail uri- start");
+                    mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - inbox/Junk mail uri- start");
                     
                     var aszResponses = szResponse.match(patternHotmailPOPResponse);
                     mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - inbox - \n" + aszResponses);
@@ -318,7 +318,7 @@ HotmailWebDav.prototype =
                             var szHref = aszResponses[i].match(patternHotmailPOPHref)[1];
                             mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - href - "+ szHref);
                             oMSG.szMSGUri = szHref;
-                                                       
+                            oMSG.bJunkFolder = mainObject.m_bJunkMail;                          
                             //size 
                             var iSize = parseInt(aszResponses[i].match(patternHotmailPOPSize)[1]);
                             mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - size - "+ iSize);
@@ -329,7 +329,7 @@ HotmailWebDav.prototype =
                         }
                     }
                     
-                    if (mainObject.m_bUseJunkMail)
+                    if (mainObject.m_bUseJunkMail && !mainObject.m_bJunkMail)
                     {
                         //load junkmail
                         
@@ -347,49 +347,16 @@ HotmailWebDav.prototype =
                         mainObject.m_HttpComms.addRequestHeader("Authorization", szAuthString , false);
                         var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler);                             
                         if (!bResult) throw new Error("httpConnection returned false");
+                        mainObject.m_bJunkMail = true;
                     }
                     else
                     {
                         //server response
-                        mainObject.serverComms("+OK "+ mainObject.m_aiMsgSize.length + " " + mainObject.m_iTotalSize + "\r\n");
+                        mainObject.serverComms("+OK "+ mainObject.m_aMsgDataStore.length + " " + mainObject.m_iTotalSize + "\r\n");
                     }
-                    mainObject.m_iStage++; 
+                    
                     mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - inbox mail uri - end");
-                break; 
-                
-                case 2:
-                    mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - junkmail uri- start");
-                    
-                    var aszResponses = szResponse.match(patternHotmailPOPResponse);
-                    mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - junkmail - \n" + aszResponses);
-                    
-                    if (aszResponses)
-                    {
-                        for (i=0; i<aszResponses.length; i++)
-                        {   
-                            //mail url   
-                            var oMSG = new HotmailMSG();
-                            var szHref = aszResponses[i].match(patternHotmailPOPHref)[1];
-                            mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - href - "+ szHref);
-                            oMSG.szMSGUri = szHref;
-                                                       
-                            //size 
-                            var iSize = parseInt(aszResponses[i].match(patternHotmailPOPSize)[1]);
-                            mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - size - "+ iSize);
-                            mainObject.m_iTotalSize += iSize;
-                            oMSG.iSize = iSize;
-                            
-                            oMSG.bJunkFolder = true;
-                            
-                            mainObject.m_aMsgDataStore.push(oMSG);
-                        }
-                    }
-                    
-                    //server response
-                    mainObject.serverComms("+OK "+ mainObject.m_aMsgDataStore.length + " " + mainObject.m_iTotalSize + "\r\n");
-
-                    mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - junkmail uri - end");
-                break;                    
+                break;
             }                
              
             mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - END"); 
