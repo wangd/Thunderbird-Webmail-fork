@@ -46,7 +46,7 @@ function nsMailDotCom()
      
      
         var date = new Date();
-        var  szLogFileName = "nsMailDotCom Log - " + date.getHours()+ "-" 
+        var  szLogFileName = "MailDotCom Log - " + date.getHours()+ "-" 
                                     + date.getMinutes() + "-"+ date.getUTCMilliseconds() +" -";
         this.m_Log = new DebugLog("webmail.logging.comms", ExtMailDotComGuid, szLogFileName); 
         
