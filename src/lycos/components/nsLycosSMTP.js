@@ -134,7 +134,7 @@ nsLycosSMTP.prototype =
                                               + e.message +"\n" 
                                               + e.lineNumber);
                                               
-            this.serverComms("502 negative vibes\r\n");
+            this.serverComms("502 negative vibes from " +this.m_szUserName +"\r\n");
             
             return false;
         }
@@ -224,8 +224,7 @@ nsLycosSMTP.prototype =
                                           + ".\nError message: " 
                                           + err.message +"\n" +
                                             err.lineNumber);
-                                            
-            mainObject.serverComms("502 negative vibes\r\n");
+            mainObject.serverComms("502 negative vibes from " +mainObject.m_szUserName +"\r\n");
         }
     },
     
@@ -269,7 +268,7 @@ nsLycosSMTP.prototype =
                                               + err.message +"\n" +
                                                 err.lineNumber);
                                                 
-            this.serverComms("502 negative vibes\r\n");
+            this.serverComms("502 negative vibes from " +this.m_szUserName +"\r\n");
             
             return false;
         }
@@ -301,7 +300,7 @@ nsLycosSMTP.prototype =
                                           + err.message +"\n" +
                                             err.lineNumber);
                                             
-            mainObject.serverComms("502 negative vibes\r\n");
+            mainObject.serverComms("502 negative vibes from " +mainObject.m_szUserName +"\r\n");
         }
     },
     

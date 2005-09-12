@@ -316,7 +316,7 @@ nsYahoo.prototype =
                                           + err.message + "\n"
                                           + err.lineNumber);
                                               
-            mainObject.serverComms("-ERR negative vibes\r\n");
+            mainObject.serverComms("-ERR negative vibes from "+ mainObject.m_szUserName +"\r\n");
         }
     },
     
@@ -552,7 +552,7 @@ nsYahoo.prototype =
                                               + err.message+ "\n"
                                               + err.lineNumber);
             
-             mainObject.serverComms("-ERR negative vibes\r\n");
+            mainObject.serverComms("-ERR negative vibes from "+ mainObject.m_szUserName +"\r\n");
         }   
     },
  
@@ -762,7 +762,7 @@ nsYahoo.prototype =
                                           + err.message+ "\n"
                                           + err.lineNumber);
             
-            mainObject.serverComms("-ERR negative vibes\r\n");
+            mainObject.serverComms("-ERR negative vibes from "+ mainObject.m_szUserName +"\r\n");
         }
     },
     
@@ -857,7 +857,7 @@ nsYahoo.prototype =
                                               + ".\nError message: " 
                                               + e.message+ "\n"
                                               + e.lineNumber);
-            mainObject.serverComms("-ERR negative vibes\r\n");
+            mainObject.serverComms("-ERR negative vibes from "+ mainObject.m_szUserName +"\r\n");
         }
     },
     
