@@ -7,16 +7,16 @@ const LycosMSGIDPattern = /[^\/]+$/;
 const LycosSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:h=\"http://schemas.microsoft.com/hotmail/\" xmlns:hm=\"urn:schemas:httpmail:\">\r\n<D:prop>\r\n<h:adbar/>\r\n<hm:contacts/>\r\n<hm:inbox/>\r\n<hm:outbox/>\r\n<hm:sendmsg/>\r\n<hm:sentitems/>\r\n<hm:deleteditems/>\r\n<hm:drafts/>\r\n<hm:msgfolderroot/>\r\n<h:maxpoll/>\r\n<h:sig/>\r\n</D:prop>\r\n</D:propfind>\r\n";
 const LycosFolderSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:hm=\"urn:schemas:httpmail:\">\r\n<D:prop>\r\n<D:isfolder/>\r\n<D:displayname/>\r\n<hm:special/>\r\n<D:hassubs/>\r\n<D:nosubs/>\r\n<hm:unreadcount/>\r\n<D:visiblecount/>\r\n<hm:special/>\r\n</D:prop>\r\n</D:propfind>\r\n";
 const LycosMailSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:hm=\"urn:schemas:httpmail:\" xmlns:m=\"urn:schemas:mailheader:\">\r\n<D:prop>\r\n<D:isfolder/>\r\n<hm:read/>\r\n<m:hasattachment/>\r\n<m:to/>\r\n<m:from/>\r\n<m:subject/>\r\n<m:date/>\r\n<D:getcontentlength/>\r\n</D:prop>\r\n</D:propfind>\r\n";
-                        
-const LycosResponse = /<D:response>[\S\d\s\r\n]*?<\/D:response>/gm;
+const LycosReadSchema = "<?xml version=\"1.0\"?>\r\n<D:propertyupdate xmlns:D=\"DAV:\" xmlns:hm=\"urn:schemas:httpmail:\">\r\n<D:set>\r\n<D:prop>\r\n<hm:read>1</hm:read>\r\n</D:prop>\r\n</D:set>\r\n</D:propertyupdate>";                   
 
+const LycosResponse = /<D:response>[\S\d\s\r\n]*?<\/D:response>/gm;
 const LycosHref = /<D:href>(.*?)<\/D:href>/i;
 const LycosSize = /<D:getcontentlength>(.*?)<\/D:getcontentlength>/i;
-
 const LycosJunkPattern  = /<D:href>(.*?Courrier%20ind%26eacute;sirable.*?)<\/D:href>/;
 const LycosInBoxPattern = /<D:href>(.*?inbox.*?)<\/D:href>/;
 const LycosFolderPattern = /<hm:msgfolderroot>(.*?)<\/hm:msgfolderroot>/;
 const LycosTrashPattern = /<hm:deleteditems>(.*?)<\/hm:deleteditems>/;
+const LycosPOPRead = /<hm:read>(.*?)<\/hm:read>/i;
 /***********************  Lycos ********************************/
 
 
@@ -46,18 +46,19 @@ function nsLycos()
         this.m_szPassWord = null; 
         this.m_oResponseStream = null;  
         this.m_HttpComms = new Comms(this,this.m_Log);     
-        this.m_bAuthorised = false;   
-        this.m_szAuthRealm = null;
+        this.m_bAuthorised = false; 
+        this.m_szAuthString = null;
         this.m_iAuth = 0;
         this.m_iStage=0; 
         this.m_szInBoxURI= null;
         this.m_szJunkMailURI = null;
         this.m_szFolderURI = null;
         this.m_szTrashURI=null;
-        
+        this.m_szMSG = null;
         this.m_aMsgDataStore = new Array();
         this.m_iTotalSize = 0;     
         this.m_bJunkMail = false;
+
         
         //do i download junkmail
         var oPref = new Object();
@@ -233,7 +234,7 @@ nsLycos.prototype =
                                           + ".\nError message: " 
                                           + err.message);
                                               
-            mainObject.serverComms("-ERR Comms Error\r\n");
+            mainObject.serverComms("-ERR Comms Error from "+ this.m_szUserNameDomain+"\r\n");
         }
     },
     
@@ -313,7 +314,7 @@ nsLycos.prototype =
                 break;
                     
                     
-                case 1: //get inbox and junkmail uri
+                case 1: //get inbox folder
                     mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - inbox mail uri- start");
                     
                     var aszResponses = szResponse.match(LycosResponse);
@@ -326,12 +327,12 @@ nsLycos.prototype =
                             data.szMSGUri = aszResponses[i].match(LycosHref)[1]; //uri
                             data.iSize = parseInt(aszResponses[i].match(LycosSize)[1]);//size 
                             mainObject.m_iTotalSize += data.iSize;
-                            data.bJunkFolder = false;
+                            data.bJunkFolder = mainObject.m_bJunkMail;
                             mainObject.m_aMsgDataStore.push(data);
                         }
                     }
                     
-                    if (mainObject.m_bUseJunkMail)
+                    if (mainObject.m_bUseJunkMail && !mainObject.m_bJunkMail)
                     {
                         //load junkmail
                         mainObject.m_HttpComms.setContentType(-1);
@@ -341,40 +342,15 @@ nsLycos.prototype =
                         mainObject.m_HttpComms.addRequestHeader("Authorization", mainObject.m_szAuthString , false);
                         var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler);                             
                         if (!bResult) throw new Error("httpConnection returned false");
+                        mainObject.m_bJunkMail= true;
                     }
                     else
                     {
                         //server response
                         mainObject.serverComms("+OK "+ mainObject.m_aMsgDataStore.length + " " + mainObject.m_iTotalSize + "\r\n");
                     }
-                    mainObject.m_iStage++; 
                     mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - inbox mail uri - end");
-                break; 
-                
-                case 2:
-                    mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - junkmail uri- start");
-                    
-                    var aszResponses = szResponse.match(LycosResponse);
-                    mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - junkmail - \n" + aszResponses);
-                    
-                    if (aszResponses)
-                    {
-                        for (i=0; i<aszResponses.length; i++)
-                        {      
-                            var data = new LycosPOPMSG();
-                            data.szMSGUri = aszResponses[i].match(LycosHref)[1]; //uri
-                            data.iSize = parseInt(aszResponses[i].match(LycosSize)[1]);//size 
-                            mainObject.m_iTotalSize += data.iSize;
-                            data.bJunkFolder = true;
-                            mainObject.m_aMsgDataStore.push(data);
-                        }
-                    }
-                    
-                    //server response
-                    mainObject.serverComms("+OK "+ mainObject.m_aMsgDataStore.length + " " + mainObject.m_iTotalSize + "\r\n");
-
-                    mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - junkmail uri - end");
-                break;                    
+                break;          
             }       
         }
         catch(err)
@@ -384,7 +360,7 @@ nsLycos.prototype =
                                               + ".\nError message: " 
                                               + err.message);
             
-             mainObject.serverComms("-ERR Comms Error\r\n");
+            mainObject.serverComms("-ERR Comms Error from "+ this.m_szUserNameDomain+"\r\n");
         }
     },
     
@@ -500,7 +476,7 @@ nsLycos.prototype =
             this.m_Log.Write("nsLycos.js - getMessage - msg id" + szMsgID); 
            
             this.m_bJunkMail = oMSG.bJunkFolder;
-             
+            this.m_iStage =0;
             //get msg from lycos
             this.m_HttpComms.clean();
             this.m_HttpComms.setContentType(-1);
@@ -538,18 +514,33 @@ nsLycos.prototype =
             if (httpChannel.responseStatus != 200) 
                 throw new Error("return status " + httpChannel.responseStatus);
             
-            //server response
-            var szMsg =  "X-WebMail: true\r\n";
-            szMsg += "X-JunkFolder: " +(mainObject.m_bJunkMail? "true":"false")+"\r\n";
-            szMsg += szResponse;
-            
-            szMsg = szMsg.replace(/^\./mg,"..");    //bit padding 
-            if (szMsg.lastIndexOf("\r\n") == -1) szMsg += "\r\n";
-            szMsg += ".\r\n";  //msg end 
-                                                                                                              
-            var szPOPResponse = "+OK " + szMsg.length + "\r\n";                     
-            szPOPResponse += szMsg;
-            mainObject.serverComms(szPOPResponse);           
+             switch(mainObject.m_iStage)
+            {   
+                case 0:  //email
+                    mainObject.m_szMSG = "X-WebMail: true\r\n";
+                    mainObject.m_szMSG += "X-JunkFolder: " +(mainObject.m_bJunkMail? "true":"false")+ "\r\n";
+                    mainObject.m_szMSG +=szResponse;
+                    mainObject.m_szMSG = mainObject.m_szMSG.replace(/^\./mg,"..");    //bit padding 
+                    mainObject.m_szMSG += "\r\n.\r\n";//msg end 
+                    
+                    //mark email as read        
+                    mainObject.m_HttpComms.clean();
+                    mainObject.m_HttpComms.setContentType(-1);
+                    var szUri = httpChannel.URI.spec;
+                    mainObject.m_HttpComms.setURI(szUri);
+                    mainObject.m_HttpComms.setRequestMethod("PROPPATCH");
+                    mainObject.m_HttpComms.addData(LycosReadSchema,"text/xml");
+                    mainObject.m_HttpComms.addRequestHeader("Authorization", mainObject.m_szAuthString , false);
+                    var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler);          
+                    mainObject.m_iStage++;          
+                break;
+                
+                case 1: //mark as read
+                    var szPOPResponse = "+OK " +mainObject.m_szMSG.length + "\r\n";                     
+                    szPOPResponse += mainObject.m_szMSG;
+                    mainObject.serverComms(szPOPResponse);
+                break;
+            }
             mainObject.m_Log.Write("nsLycos.js - emailOnloadHandler - end"); 
         }
         catch(err)
@@ -559,7 +550,7 @@ nsLycos.prototype =
                                               + ".\nError message: " 
                                               + err.message);
             
-            mainObject.serverComms("-ERR Comms Error\r\n");
+            mainObject.serverComms("-ERR Comms Error from "+ this.m_szUserNameDomain+"\r\n");
         }    
     },
                                     
@@ -611,12 +602,12 @@ nsLycos.prototype =
         try
         {
             mainObject.m_Log.Write("nsLycos.js - deleteMessageOnloadHandler - START");
-            mainObject.m_Log.Write("nsLycos.js - emailOnloadHandler : " + mainObject.m_iStage);  
+            mainObject.m_Log.Write("nsLycos.js - deleteMessageOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             
             //if this fails we've gone somewhere new
-            mainObject.m_Log.Write("nsLycos - emailOnloadHandler - status :" +httpChannel.responseStatus );
+            mainObject.m_Log.Write("nsLycos - deleteMessageOnloadHandler - status :" +httpChannel.responseStatus );
             if (httpChannel.responseStatus != 201) 
                 throw new Error("return status " + httpChannel.responseStatus);
             
@@ -631,7 +622,7 @@ nsLycos.prototype =
                                               + ".\nError message: " 
                                               + err.message);
             
-            mainObject.serverComms("-ERR Comms Error\r\n");
+            mainObject.serverComms("-ERR Comms Error from "+ this.m_szUserNameDomain+"\r\n");
         }
     },
     
@@ -643,9 +634,27 @@ nsLycos.prototype =
         {
             this.m_Log.Write("nsLycos.js - logOUT - START"); 
             
-            this.m_bAuthorised = false;
-            this.serverComms("+OK your out\r\n");                 
-            
+            var oPref = new Object();
+            oPref.Value = null;
+            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+            WebMailPrefAccess.Get("bool","lycos.bEmptyTrash",oPref);
+        
+            if (!oPref.Value)
+            {
+                this.m_bAuthorised = false;
+                this.serverComms("+OK Your Out\r\n");
+                return true;
+            }
+           
+            //get trash 
+            this.m_HttpComms.setContentType(-1);
+            this.m_HttpComms.setURI(this.m_szTrashURI);
+            this.m_HttpComms.setRequestMethod("PROPFIND");
+            this.m_HttpComms.addData(LycosMailSchema,"text/xml");
+            this.m_HttpComms.addRequestHeader("Authorization", this.m_szAuthString , false);
+            var bResult = this.m_HttpComms.send(this.logoutOnloadHandler);                             
+            if (!bResult) throw new Error("httpConnection returned false");           
+            this.m_iStage=0;
             this.m_Log.Write("nsLycos.js - logOUT - END");  
             return true;
         }
@@ -660,6 +669,76 @@ nsLycos.prototype =
     },  
     
     
+    
+    logoutOnloadHandler : function (szResponse ,event , mainObject)
+    {
+        try
+        {
+            mainObject.m_Log.Write("nsLycos.js - logoutOnloadHandler - START");
+            mainObject.m_Log.Write("nsLycos.js - logoutOnloadHandler : " + mainObject.m_iStage);  
+            
+            var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
+            
+            //if this fails we've gone somewhere new
+            mainObject.m_Log.Write("nsLycos - logoutOnloadHandler - status :" +httpChannel.responseStatus );
+            if (httpChannel.responseStatus <200 || httpChannel.responseStatus >300 ) 
+                throw new Error("return status " + httpChannel.responseStatus);
+            
+            switch(mainObject.m_iStage)
+            {
+              
+                case 0:
+                    var aszResponses = szResponse.match(LycosResponse);
+                    mainObject.m_Log.Write("nsLycos.js - logoutOnloadHandler - trash - \n" + aszResponses);
+                    if (aszResponses)
+                    {
+                        var szStart = "<?xml version=\"1.0\"?>\r\n<D:delete xmlns:D=\"DAV:\">\r\n<D:target>\r\n";                
+                        var szEnd = "</D:target>\r\n</D:delete>";
+                        
+                        var szDeleteMsg= szStart;
+                        for (i=0; i<aszResponses.length; i++)
+                        {
+                            var szMSGUri = aszResponses[i].match(LycosHref)[1]; //uri
+                            var szMsgID =  szMSGUri.match(LycosMSGIDPattern); //id
+                            var temp ="<D:href>"+szMsgID+"</D:href>\r\n"
+                            szDeleteMsg+=temp;
+                        }
+                        szDeleteMsg+= szEnd;
+                        
+                        mainObject.m_HttpComms.setContentType(-1);
+                        mainObject.m_HttpComms.setURI(this.m_szTrashURI);
+                        mainObject.m_HttpComms.setRequestMethod("BDELETE");
+                        mainObject.m_HttpComms.addData(szDeleteMsg,"text/xml");
+                        mainObject.m_HttpComms.addRequestHeader("Authorization", mainObject.m_szAuthString , false);
+                        var bResult = mainObject.m_HttpComms.send(mainObject.logoutOnloadHandler);                             
+                        if (!bResult) throw new Error("httpConnection returned false");           
+                        mainObject.m_iStage=1;
+                    } 
+                    else //no messages
+                    {
+                        mainObject.m_bAuthorised = false;
+                        mainObject.serverComms("+OK Your Out\r\n");
+                    }   
+                break;
+                
+                case 1:
+                    mainObject.m_bAuthorised = false;
+                    mainObject.serverComms("+OK Your Out\r\n");
+                break;  
+            }
+             
+            mainObject.m_Log.Write("nsLycos.js - logoutOnloadHandler - END");
+        }
+        catch(err)
+        {
+            mainObject.m_Log.DebugDump("nsLycos.js: deleteMessageOnloadHandler : Exception : " 
+                                              + err.name 
+                                              + ".\nError message: " 
+                                              + err.message);
+            
+            mainObject.serverComms("-ERR Comms Error from "+ this.m_szUserNameDomain+"\r\n");
+        }
+    },
     
     
     
