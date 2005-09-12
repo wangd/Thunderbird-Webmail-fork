@@ -1,4 +1,5 @@
 const cszMailDotComContentID = "@mozilla.org/MailDotCom;1";
+const cszMailDotComSMTPContentID = "@mozilla.org/MailDotComSMTP;1";
 
 window.addEventListener("load", function() {gMailDotComStartUp.init();} , false);
 
@@ -64,6 +65,12 @@ var gMailDotComStartUp =
             this.idCheck("journalism.com","POP", cszMailDotComContentID);
             this.idCheck("iname.com","POP", cszMailDotComContentID);
             this.idCheck("scientist.com","POP", cszMailDotComContentID);
+            
+            this.idCheck("mail.com","SMTP", cszMailDotComSMTPContentID);
+            this.idCheck("email.com","SMTP", cszMailDotComSMTPContentID);
+            this.idCheck("journalism.com","SMTP", cszMailDotComSMTPContentID);
+            this.idCheck("iname.com","SMTP", cszMailDotComSMTPContentID);
+            this.idCheck("scientist.com","SMTP", cszMailDotComSMTPContentID);
                                           
             this.m_Log.Write("MailDotCom.js : notify - END");
         }
