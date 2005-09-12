@@ -1,2 +1,5 @@
 <!ENTITY Options.szTitle "Opcions de MailDotCom">
 <!ENTITY POP.Panel.szTitle "POP">
+<!ENTITY SMTP.Panel.szTitle "SMTP">
+<!ENTITY IMAP.Panel.szTitle "IMAP">
+
