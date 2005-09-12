@@ -11,6 +11,7 @@
         
         <preferences>
             <preference id="useJunkMail" name="lycos.bUseJunkMail" type="bool"/>
+            <preference id="emptyTrash" name="lycos.bEmptyTrash" type="bool"/>
         </preferences>
         
         <vbox>
@@ -20,6 +21,12 @@
                       accesskey="&JunkMail.AccessKey;"
                       preference = "useJunkMail"
                       id="chkJunkMail"/>
+                      
+             <!--empty trash-->
+             <checkbox label="&EmptyTrash.Label;" 
+                       accesskey="&EmptyTrash.AccessKey;"
+                       preference = "emptyTrash"
+                       id="chkEmptyTrash"/>
         </vbox>   
         
     </prefpane>
