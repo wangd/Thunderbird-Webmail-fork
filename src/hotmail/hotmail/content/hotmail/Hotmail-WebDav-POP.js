@@ -27,6 +27,7 @@ function HotmailWebDav(oResponseStream, oLog, bUseJunkMail)
         this.m_szMsgID = null;
         this.m_aMsgDataStore = new Array();
         this.m_iTotalSize = 0;
+        this.m_szMSG = null;
       
         this.m_IOS = Components.classes["@mozilla.org/network/io-service;1"];
         this.m_IOS = this.m_IOS.getService(Components.interfaces.nsIIOService);
@@ -206,7 +207,7 @@ HotmailWebDav.prototype =
                                           + err.message+ "\n"
                                           + err.lineNumber);
             
-            mainObject.serverComms("-ERR webdav error\r\n");
+            mainObject.serverComms("-ERR negative vibes from " +mainObject.m_szUserName+ "\r\n");
         }
     },
     
@@ -402,7 +403,7 @@ HotmailWebDav.prototype =
                                               + e.message+ "\n"
                                               + e.lineNumber);
                                               
-            mainObject.serverComms("-ERR webdav error\r\n");
+            mainObject.serverComms("-ERR negative vibes from " +mainObject.m_szUserName+ "\r\n");
             return false;
         }
     },
@@ -524,7 +525,7 @@ HotmailWebDav.prototype =
             var szURL = this.m_IOS.newURI(szMsgID,null,null).prePath;
             var aszRealm = szURL.match(patternHotmailPOPSRuri); 
             var szAuthString = this.m_AuthToken.findToken(aszRealm);
-            this.m_Log.Write("HotmailWebDav.js - getNumMessages - Auth " + szAuthString);                   
+            this.m_Log.Write("HotmailWebDav.js - getMessages - Auth " + szAuthString);                   
             
             this.m_bJunkMail = oMSG.bJunkFolder;
             
@@ -536,7 +537,8 @@ HotmailWebDav.prototype =
             this.m_HttpComms.addRequestHeader("Authorization", szAuthString , false);
             var bResult = this.m_HttpComms.send(this.emailOnloadHandler);                             
             if (!bResult) throw new Error("httpConnection returned false");
-                               
+            this.m_iStage=0; 
+                                         
             this.m_Log.Write("HotmailWebDav.js - getMessage - END"); 
             return true;
         }
@@ -556,24 +558,48 @@ HotmailWebDav.prototype =
         try
         {
             mainObject.m_Log.Write("HotmailWebDav.js - emailOnloadHandler - START"); 
-        
+            mainObject.m_Log.Write("HotmailWebDav.js - emailOnloadHandler : " + mainObject.m_iStage);  
+                        
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             mainObject.m_Log.Write("HotmailWebDav - emailOnloadHandler - status :" +httpChannel.responseStatus );
             
             if (httpChannel.responseStatus != 200) 
                 throw new Error("return status " + httpChannel.responseStatus);
-                         
-            //server response
-            var szMsg = "X-WebMail: true\r\n";
-            szMsg += "X-JunkFolder: " +(mainObject.m_bJunkMail? "true":"false")+ "\r\n";
-            szMsg +=szResponse;
-            szMsg = szMsg.replace(/^\./mg,"..");    //bit padding 
-            szMsg += "\r\n.\r\n";//msg end 
             
-                                                                                                              
-            var szPOPResponse = "+OK " + szMsg.length + "\r\n";                     
-            szPOPResponse += szMsg;
-            mainObject.serverComms(szPOPResponse);           
+            switch(mainObject.m_iStage)
+            {   
+                case 0:  //send msg to TB
+                    //email
+                    mainObject.m_szMSG = "X-WebMail: true\r\n";
+                    mainObject.m_szMSG += "X-JunkFolder: " +(mainObject.m_bJunkMail? "true":"false")+ "\r\n";
+                    mainObject.m_szMSG +=szResponse;
+                    mainObject.m_szMSG = mainObject.m_szMSG.replace(/^\./mg,"..");    //bit padding 
+                    mainObject.m_szMSG += "\r\n.\r\n";//msg end 
+                    
+                    //mark email as read        
+                    mainObject.m_HttpComms.clean();
+                    mainObject.m_HttpComms.setContentType(-1);
+                    var szUri = httpChannel.URI.spec;
+                    mainObject.m_HttpComms.setURI(szUri);
+                    mainObject.m_HttpComms.setRequestMethod("PROPPATCH");
+                    mainObject.m_HttpComms.addData(HotmailPOPReadSchema,"text/xml");
+                    
+                    var aszRealm = szUri.match(patternHotmailPOPSRuri); 
+                    var szAuthString = mainObject.m_AuthToken.findToken(aszRealm);
+                    mainObject.m_Log.Write("HotmailWebDav.js - getMessages - Auth " + szAuthString); 
+                    mainObject.m_HttpComms.addRequestHeader("Authorization", szAuthString , false);
+                    
+                    var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler);          
+                    mainObject.m_iStage++;          
+                break;
+                
+                case 1:// mark msg as read                                                                                                   
+                    mainObject.m_Log.Write("HotmailWebDav.js - emailOnloadHandler -email mark as read");     
+                    var szPOPResponse = "+OK " +mainObject.m_szMSG.length + "\r\n";                     
+                    szPOPResponse += mainObject.m_szMSG;
+                    mainObject.serverComms(szPOPResponse);
+                break;
+            }
             mainObject.m_Log.Write("HotmailWebDav.js - emailOnloadHandler - end");  
         }
         catch(err)
@@ -584,7 +610,7 @@ HotmailWebDav.prototype =
                                           + err.message+ "\n"
                                           + err.lineNumber);
             
-            mainObject.serverComms("-ERR webdav error\r\n");
+            mainObject.serverComms("-ERR negative vibes from " +mainObject.m_szUserName+ "\r\n");
         }
     },
     
@@ -643,10 +669,10 @@ HotmailWebDav.prototype =
         try
         {
             mainObject.m_Log.Write("HotmailWebDav.js - deleteMessageOnload - START");    
-            mainObject.m_Log.Write("HotmailWebDav.js - emailOnloadHandler : " + mainObject.m_iStage);  
+            mainObject.m_Log.Write("HotmailWebDav.js - deleteMessageOnload : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
-            mainObject.m_Log.Write("HotmailWebDav - emailOnloadHandler - status :" +httpChannel.responseStatus );
+            mainObject.m_Log.Write("HotmailWebDav - deleteMessageOnload - status :" +httpChannel.responseStatus );
             
             //if this fails we've gone somewhere new
             if (httpChannel.responseStatus != 201) 
@@ -663,7 +689,7 @@ HotmailWebDav.prototype =
                                                       + ".\nError message: " 
                                                       + e.message+ "\n"
                                                       + e.lineNumber);
-            mainObject.serverComms("-ERR webdav error\r\n");
+            mainObject.serverComms("-ERR negative vibes from " +mainObject.m_szUserName+ "\r\n");
         }
     },
     
