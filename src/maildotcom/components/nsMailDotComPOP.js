@@ -4,12 +4,12 @@ const nsMailDotComContactID = "@mozilla.org/MailDotCom;1";
 const ExtMailDotComGuid = "{1ad5b3b0-b908-11d9-9669-0800200c9a66}";
 
 const patternMailRefresh = /<head>[\s]<meta http-equiv="Refresh" content="0;URL=(.*?)">[\s\S]*<\/head>/i;
-const patternMailDotComLoginForm =/<form.*?>[\S\d\s\r\n]*?<\/form>/igm;
+const patternMailDotComLoginForm =/<form.*?>[\S\s]*?<\/form>/igm;
 const patternMailDotComLoginURI = /action="(.*?)"/;
 const patternMailDotComLoginInput = /<input type=(?!"submit").*?>/igm;
 const patternMailDotComType = /type="(.*?)"/i;
-const patternMailDotComValue = /value=['|"]*(\S*)['|"]*.*?>/i;
-const patternMailDotComName = /name=['|"]*([\S]*)['|"]*/i;
+const patternMailDotComValue = /value=\s?['??|"??](\S*)['??|"??]/i;
+const patternMailDotComName = /name=\s?["??|'??](\S*)["??|'??]/i;
 const patternMailDotComFrame = /<frame.*?src="(.*?)".*?name="mailcomframe".*?SCROLLING="AUTO">/;
 const patternMailDotComFolders = /href="(.*?folders.mail.*?)".*?class="nltxt"/;
 const patternMailDotComFolderList = /href=".*?".*?class="fb"/gm;
@@ -320,8 +320,8 @@ nsMailDotCom.prototype =
                                           + err.name 
                                           + ".\nError message: " 
                                           + err.message);
-                                              
-            mainObject.serverComms("-ERR negative vibes\r\n");
+            
+            mainObject.serverComms("-ERR negative vibes from "+mainObject.m_szUserName+"\r\n");                                  
         }
     },
     
@@ -455,7 +455,7 @@ nsMailDotCom.prototype =
                                               + ".\nError message: " 
                                               + err.message);
             
-             mainObject.serverComms("-ERR negative vibes\r\n");
+            mainObject.serverComms("-ERR negative vibes from "+mainObject.m_szUserName+"\r\n");                                  
         }   
     },
  
@@ -718,7 +718,7 @@ nsMailDotCom.prototype =
                                           + ".\nError message: " 
                                           + err.message);
             
-            mainObject.serverComms("-ERR negative vibes\r\n");
+            mainObject.serverComms("-ERR negative vibes from "+mainObject.m_szUserName+"\r\n");                                  
         }
     },
     
@@ -802,7 +802,7 @@ nsMailDotCom.prototype =
                                               + e.name 
                                               + ".\nError message: " 
                                               + e.message);
-            mainObject.serverComms("-ERR negative vibes\r\n");
+            mainObject.serverComms("-ERR negative vibes from "+mainObject.m_szUserName+"\r\n");                                  
         }
     },
     
@@ -886,7 +886,7 @@ nsMailDotCom.prototype =
                                               + e.name 
                                               + ".\nError message: " 
                                               + e.message);
-            mainObject.serverComms("-ERR negative vibes\r\n");
+            mainObject.serverComms("-ERR negative vibes from "+mainObject.m_szUserName+"\r\n");                                  
         }
     },
     
@@ -946,7 +946,7 @@ nsMailDotCom.prototype =
                                               + err.name 
                                               + ".\nError message: " 
                                               + err.message);
-            mainObject.serverComms("-ERR negative vibes\r\n");
+            mainObject.serverComms("-ERR negative vibes from "+mainObject.m_szUserName+"\r\n");                                  
         }
     },
     
