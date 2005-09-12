@@ -231,7 +231,7 @@ HotmailSMTPScreenRipper.prototype =
                                           + err.message+ "\n"
                                           + err.lineNumber);
             
-             mainObject.serverComms("502 negative vibes\r\n");
+             mainObject.serverComms("502 negative vibes from " + mainObject.m_szUserName + "\r\n");
         }
     },
     
@@ -278,7 +278,7 @@ HotmailSMTPScreenRipper.prototype =
                                           + err.message+ "\n"
                                           + err.lineNumber);
             
-            this.serverComms("502 negative vibes\r\n");
+            mainObject.serverComms("502 negative vibes from " + mainObject.m_szUserName + "\r\n");
             return false;
         } 
     },
@@ -504,7 +504,7 @@ HotmailSMTPScreenRipper.prototype =
                                           + err.message +"\n" +
                                             err.lineNumber);
                                             
-            mainObject.serverComms("502 negative vibes\r\n");
+            mainObject.serverComms("502 negative vibes from " + mainObject.m_szUserName + "\r\n");
         }
     },
     
