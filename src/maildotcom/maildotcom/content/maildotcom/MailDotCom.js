@@ -1,4 +1,4 @@
-const cszMailDotComContentID = "@mozilla.org/MailDotCom;1";
+const cszMailDotComContentID = "@mozilla.org/MailDotComPOP;1";
 const cszMailDotComSMTPContentID = "@mozilla.org/MailDotComSMTP;1";
 
 window.addEventListener("load", function() {gMailDotComStartUp.init();} , false);
