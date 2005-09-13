@@ -1,4 +1,4 @@
-const cszLycosPOPContentID = "@mozilla.org/Lycos;1";
+const cszLycosPOPContentID = "@mozilla.org/LycosPOP;1";
 const cszLycosIMAPContentID = "@mozilla.org/LycosIMAP;1";
 const cszLycosSMTPContentID = "@mozilla.org/LycosSMTP;1";
 
