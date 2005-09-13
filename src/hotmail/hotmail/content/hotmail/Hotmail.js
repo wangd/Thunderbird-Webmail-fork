@@ -1,4 +1,4 @@
-const cszHotmailContentID = "@mozilla.org/Hotmail;1";
+const cszHotmailContentID = "@mozilla.org/HotmailPOP;1";
 const cszHotmailSMTPContentID = "@mozilla.org/HotmailSMTP;1";
 
 window.addEventListener("load", function() {gHotmailStartUp.init();} , false);
