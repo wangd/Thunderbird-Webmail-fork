@@ -3,4 +3,8 @@
 <!ENTITY JunkMail.AccessKey "I">
 <!ENTITY EmptyTrash.Label "Svuota il cestino">
 <!ENTITY EmptyTrash.AccessKey "S">
+<!ENTITY DownloadUnread.Label "Download unread emails only">
+<!ENTITY DownloadUnread.AccessKey "u">
+<!ENTITY DownloadUnread.Note "Email will not be deleted if the option leave on server is used.">
+
 
