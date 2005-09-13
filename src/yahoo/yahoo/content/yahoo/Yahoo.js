@@ -1,4 +1,4 @@
-const cszYahooContentID = "@mozilla.org/Yahoo;1";
+const cszYahooContentID = "@mozilla.org/YahooPOP;1";
 const cszYahooSMTPContentID = "@mozilla.org/YahooSMTP;1";
 
 window.addEventListener("load", function() {gYahooStartUp.init();} , false);

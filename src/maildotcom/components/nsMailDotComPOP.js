@@ -1,6 +1,6 @@
 /*****************************  Globals   *************************************/                 
 const nsMailDotComClassID = Components.ID("{304bef20-b908-11d9-9669-0800200c9a66}");
-const nsMailDotComContactID = "@mozilla.org/MailDotCom;1";
+const nsMailDotComContactID = "@mozilla.org/MailDotComPOP;1";
 const ExtMailDotComGuid = "{1ad5b3b0-b908-11d9-9669-0800200c9a66}";
 
 const patternMailRefresh = /<head>[\s]<meta http-equiv="Refresh" content="0;URL=(.*?)">[\s\S]*<\/head>/i;

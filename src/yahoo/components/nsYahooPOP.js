@@ -1,6 +1,6 @@
 /*****************************  Globals   *************************************/                 
 const nsYahooClassID = Components.ID("{bfacf8a0-6447-11d9-9669-0800200c9a66}");
-const nsYahooContactID = "@mozilla.org/Yahoo;1";
+const nsYahooContactID = "@mozilla.org/YahooPOP;1";
 const ExtYahooGuid = "{d7103710-6112-11d9-9669-0800200c9a66}";
 
 const patternYahooSecure = /<a href="(.*?https.*?login.*?)".*?>/;

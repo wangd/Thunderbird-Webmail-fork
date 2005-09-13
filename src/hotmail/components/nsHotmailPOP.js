@@ -1,6 +1,6 @@
 /*****************************  Globals component ******************************/                 
 const nsHotmailClassID = Components.ID("{3f3822e0-6374-11d9-9669-0800200c9a66}"); 
-const nsHotmailContactID = "@mozilla.org/Hotmail;1";
+const nsHotmailContactID = "@mozilla.org/HotmailPOP;1";
 const ExtHotmailGuid = "{3c8e8390-2cf6-11d9-9669-0800200c9a66}";
 
 /************************Screen Rippper constants******************************/
