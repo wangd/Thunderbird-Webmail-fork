@@ -1,6 +1,6 @@
 /*****************************  Globals   *************************************/                 
 const nsLycosClassID = Components.ID("{222b6e70-8a87-11d9-9669-0800200c9a66}"); 
-const nsLycosContactID = "@mozilla.org/Lycos;1";
+const nsLycosContactID = "@mozilla.org/LycosPOP;1";
 
 const LycosMSGIDPattern = /[^\/]+$/;
 
@@ -17,6 +17,10 @@ const LycosInBoxPattern = /<D:href>(.*?inbox.*?)<\/D:href>/;
 const LycosFolderPattern = /<hm:msgfolderroot>(.*?)<\/hm:msgfolderroot>/;
 const LycosTrashPattern = /<hm:deleteditems>(.*?)<\/hm:deleteditems>/;
 const LycosPOPRead = /<hm:read>(.*?)<\/hm:read>/i;
+const LycosPOPTo = /<m:to>(.*?)<\/m:to>/i;
+const LycosPOPFrom = /<m:from>(.*?)<\/m:from>/i;
+const LycosPOPSubject = /<m:subject>\s(.*?)<\/m:subject>/i;
+const LycosPOPDate = /<m:date>(.*?)T(.*?)<\/m:date>/i;
 /***********************  Lycos ********************************/
 
 
@@ -31,6 +35,7 @@ function nsLycos()
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/base64.js");
         scriptLoader.loadSubScript("chrome://lycos/content/Lycos-POPMSG.js");
+        scriptLoader.loadSubScript("chrome://global/content/strres.js");
         
         
         var date = new Date();
@@ -58,6 +63,9 @@ function nsLycos()
         this.m_aMsgDataStore = new Array();
         this.m_iTotalSize = 0;     
         this.m_bJunkMail = false;
+        
+        var stringBundle =srGetStrBundle("chrome://lycos/locale/Lycos-POP.properties");
+        this.m_szHeaderMSG = stringBundle.GetStringFromName("MSG");
 
         
         //do i download junkmail
@@ -68,6 +76,15 @@ function nsLycos()
             this.m_bUseJunkMail=oPref.Value;
         else
             this.m_bUseJunkMail=false;
+         
+        //do i download unread only
+        var oPref = new Object();
+        oPref.Value = null;
+        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+        if (WebMailPrefAccess.Get("bool","lycos.bDownloadUnread",oPref))
+            this.m_bDownloadUnread=oPref.Value;
+        else
+            this.m_bDownloadUnread=false;
                    
         this.m_Log.Write("nsLycos.js - Constructor - END");  
     }
@@ -76,7 +93,8 @@ function nsLycos()
         DebugDump("nsLycos.js: Constructor : Exception : " 
                                       + e.name 
                                       + ".\nError message: " 
-                                      + e.message);
+                                      + e.message+ "\n"
+                                      + e.lineNumber);
     }
 }
 
@@ -143,7 +161,8 @@ nsLycos.prototype =
             this.m_Log.DebugDump("nsLycos.js: logIN : Exception : " 
                                               + e.name + 
                                               ".\nError message: " 
-                                              + e.message);
+                                              + e.message+ "\n"
+                                              + e.lineNumber);
             return false;
         }
     },
@@ -232,7 +251,8 @@ nsLycos.prototype =
             mainObject.m_Log.DebugDump("nsLycos.js: loginHandler : Exception : " 
                                           + err.name 
                                           + ".\nError message: " 
-                                          + err.message);
+                                          + err.message+ "\n"
+                                          + err.lineNumber);
                                               
             mainObject.serverComms("-ERR Comms Error from "+ this.m_szUserNameDomain+"\r\n");
         }
@@ -268,7 +288,8 @@ nsLycos.prototype =
             this.m_Log.DebugDump("nsLycos.js: getNumMessages : Exception : " 
                                           + e.name 
                                           + ".\nError message: " 
-                                          + e.message);
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
             return false;
         }
     },
@@ -323,12 +344,60 @@ nsLycos.prototype =
                     {
                         for (i=0; i<aszResponses.length; i++)
                         {
-                            var data = new LycosPOPMSG();
-                            data.szMSGUri = aszResponses[i].match(LycosHref)[1]; //uri
-                            data.iSize = parseInt(aszResponses[i].match(LycosSize)[1]);//size 
-                            mainObject.m_iTotalSize += data.iSize;
-                            data.bJunkFolder = mainObject.m_bJunkMail;
-                            mainObject.m_aMsgDataStore.push(data);
+                            var bRead = true;
+                            if (mainObject.m_bDownloadUnread)
+                            {
+                                bRead = parseInt(aszResponses[i].match(LycosPOPRead)[1]) ? false : true;
+                                mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - bRead -" + bRead);
+                            }
+                            
+                            if (bRead)
+                            {
+                                var data = new LycosPOPMSG();
+                                data.szMSGUri = aszResponses[i].match(LycosHref)[1]; //uri
+                                data.iSize = parseInt(aszResponses[i].match(LycosSize)[1]);//size 
+                                mainObject.m_iTotalSize += data.iSize;
+                                data.bJunkFolder = mainObject.m_bJunkMail;
+                                
+                                try
+                                {                   
+                                    var szTO = aszResponses[i].match(LycosPOPTo)[1].match(/[\S\d]*@[\S\d]*/);
+                                    data.szTo = szTO;
+                                }
+                                catch(err){}
+                                
+                                try
+                                {
+                                    var szFrom = aszResponses[i].match(LycosPOPFrom)[1].match(/[\S\d]*@[\S\d]*/);
+                                    data.szFrom = szFrom;
+                                }
+                                catch(err){}
+                            
+                                try
+                                {
+                                    var szSubject= aszResponses[i].match(LycosPOPSubject)[1];
+                                    data.szSubject = szSubject;
+                                }
+                                catch(err){}
+
+                                try
+                                {
+                                    var aszDateTime = aszResponses[i].match(LycosPOPDate);
+                                    var aszDate = aszDateTime[1].split("-");
+                                    var aszTime = aszDateTime[2].split(":");
+    
+                                    var date = new Date(parseInt(aszDate[0]),  //year
+                                                     parseInt(aszDate[1])-1,  //month
+                                                     parseInt(aszDate[2]),  //day
+                                                     parseInt(aszTime[0]),  //hour
+                                                     parseInt(aszTime[1]),  //minute
+                                                     parseInt(aszTime[2]));  //second
+                                    data.szDate = date.toGMTString();
+                                }
+                                catch(err){}
+                                
+                                mainObject.m_aMsgDataStore.push(data);
+                            }
                         }
                     }
                     
@@ -358,7 +427,8 @@ nsLycos.prototype =
              mainObject.m_Log.DebugDump("nsLycos.js: MailboxOnload : Exception : " 
                                               + err.name 
                                               + ".\nError message: " 
-                                              + err.message);
+                                              + err.message + "\n"
+                                              + err.lineNumber);
             
             mainObject.serverComms("-ERR Comms Error from "+ this.m_szUserNameDomain+"\r\n");
         }
@@ -391,7 +461,8 @@ nsLycos.prototype =
             this.m_Log.DebugDump("nsLycos.js: getMessageSizes : Exception : " 
                                           + e.name 
                                           + ".\nError message: " 
-                                          + e.message);
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
             return false;
         }
     },
@@ -427,7 +498,8 @@ nsLycos.prototype =
             this.m_Log.DebugDump("nsLycos.js: getMessageIDs : Exception : " 
                                           + e.name 
                                           + ".\nError message: " 
-                                          + e.message);
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
             return false;
         }
     },
@@ -443,7 +515,21 @@ nsLycos.prototype =
             this.m_Log.Write("nsLycos.js - getHeaders - START");  
             this.m_Log.Write("nsLycos.js - getHeaders - id " + lID ); 
             
-            this.serverComms("-ERR negative vibes\r\n");
+            var oMSG = this.m_aMsgDataStore[lID-1];
+            
+            var szHeaders = "X-WebMail: true\r\n";
+            szHeaders += "X-JunkFolder: " +(oMSG.bJunkFolder? "true":"false")+ "\r\n";
+            szHeaders += "To: "+ oMSG.szTo +"\r\n";
+            szHeaders += "From: "+ oMSG.szFrom +"\r\n";
+            szHeaders += "Subject: "+ oMSG.szSubject +"\r\n";
+            szHeaders += "Date: " + oMSG.szDate +"\r\n\r\n";
+            szHeaders += this.m_szHeaderMSG;
+            szHeaders = szHeaders.replace(/^\./mg,"..");    //bit padding 
+            szHeaders += "\r\n.\r\n";//msg end 
+             
+            var  szResponse = "+OK " +szHeaders.length + "\r\n"; 
+            szResponse += szHeaders
+            this.serverComms(szResponse);
             
             this.m_Log.Write("nsLycos.js - getHeaders - END");
             return true; 
@@ -471,7 +557,7 @@ nsLycos.prototype =
             this.m_iStage=0;
                                   
             //get msg id
-            var oMSG = this.m_aMsgDataStore[lID-1]
+            var oMSG = this.m_aMsgDataStore[lID-1];
             var szMsgID = oMSG.szMSGUri;
             this.m_Log.Write("nsLycos.js - getMessage - msg id" + szMsgID); 
            
@@ -494,7 +580,8 @@ nsLycos.prototype =
              this.m_Log.DebugDump("nsLycos.js: getMessage : Exception : " 
                                           + e.name + 
                                           ".\nError message: " 
-                                          + e.message);
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
             return false;
         }
     },    
@@ -548,7 +635,8 @@ nsLycos.prototype =
             mainObject.m_Log.DebugDump("nsLycos.js: emailOnloadHandler : Exception : " 
                                               + err.name 
                                               + ".\nError message: " 
-                                              + err.message);
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
             
             mainObject.serverComms("-ERR Comms Error from "+ this.m_szUserNameDomain+"\r\n");
         }    
@@ -590,7 +678,8 @@ nsLycos.prototype =
             this.m_Log.DebugDump("nsLycos.js: deleteMessage : Exception : " 
                                           + e.name + 
                                           ".\nError message: " 
-                                          + e.message);
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
             return false;
         } 
     },
@@ -620,7 +709,8 @@ nsLycos.prototype =
             mainObject.m_Log.DebugDump("nsLycos.js: deleteMessageOnloadHandler : Exception : " 
                                               + err.name 
                                               + ".\nError message: " 
-                                              + err.message);
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
             
             mainObject.serverComms("-ERR Comms Error from "+ this.m_szUserNameDomain+"\r\n");
         }
@@ -663,7 +753,8 @@ nsLycos.prototype =
             this.m_Log.DebugDump("nsLycos.js: logOUT : Exception : " 
                                       + e.name 
                                       + ".\nError message: " 
-                                      + e.message);
+                                      + e.message+ "\n"
+                                      + e.lineNumber);
             return false;
         }
     },  
@@ -734,7 +825,8 @@ nsLycos.prototype =
             mainObject.m_Log.DebugDump("nsLycos.js: deleteMessageOnloadHandler : Exception : " 
                                               + err.name 
                                               + ".\nError message: " 
-                                              + err.message);
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
             
             mainObject.serverComms("-ERR Comms Error from "+ this.m_szUserNameDomain+"\r\n");
         }
@@ -758,7 +850,8 @@ nsLycos.prototype =
             this.m_Log.DebugDump("nsLycos.js: serverComms : Exception : " 
                                               + e.name 
                                               + ".\nError message: " 
-                                              + e.message);
+                                              + e.message+ "\n"
+                                              + e.lineNumber);
         }
     },
     
