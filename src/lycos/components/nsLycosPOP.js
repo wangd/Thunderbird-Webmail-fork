@@ -737,6 +737,7 @@ nsLycos.prototype =
             }
            
             //get trash 
+            this.m_HttpComms.clean();
             this.m_HttpComms.setContentType(-1);
             this.m_HttpComms.setURI(this.m_szTrashURI);
             this.m_HttpComms.setRequestMethod("PROPFIND");
@@ -796,6 +797,7 @@ nsLycos.prototype =
                         }
                         szDeleteMsg+= szEnd;
                         
+                        mainObject.m_HttpComms.clean();
                         mainObject.m_HttpComms.setContentType(-1);
                         mainObject.m_HttpComms.setURI(this.m_szTrashURI);
                         mainObject.m_HttpComms.setRequestMethod("BDELETE");
