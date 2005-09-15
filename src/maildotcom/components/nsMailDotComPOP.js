@@ -27,6 +27,7 @@ const patternMailDotComMsgId = /msg_uid=(.*?)&/;
 const patternMailDotComMSG =/<body bgcolor="#ffffff">([\s\S]*)<div id="pbl">/;
 const patternMailDotComHeaders = /<p>([\s\S]*?)<\/p>/;
 const patternMailDotComOtherHeaderData = /<B>(.*?)<\/B>([\s\S]*?)$/i;
+const patternMailDotComUnRead = /ib_unread/;
 
 /******************************  MailDotCom ***************************************/
 
@@ -43,8 +44,11 @@ function nsMailDotCom()
         scriptLoader.loadSubScript("chrome://web-mail/content/common/comms.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://maildotcom/content/MailDotCom-MSG.js");
+        scriptLoader.loadSubScript("chrome://global/content/strres.js");
      
-     
+        var stringBundle =srGetStrBundle("chrome://maildotcom/locale/MailDotCom-POP.properties");
+        this.m_szHeaderMSG = stringBundle.GetStringFromName("MSG");
+        
         var date = new Date();
         var  szLogFileName = "MailDotCom Log - " + date.getHours()+ "-" 
                                     + date.getMinutes() + "-"+ date.getUTCMilliseconds() +" -";
@@ -71,7 +75,16 @@ function nsMailDotCom()
         this.m_aMsgDataStore = new Array();
         this.m_bJunkMail= false;
         this.m_szHeaders = null;
-                   
+        
+        //do i download unread only
+        var oPref = new Object();
+        oPref.Value = null;
+        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+        if (WebMailPrefAccess.Get("bool","maildotcom.bDownloadUnread",oPref))
+            this.m_bDownloadUnread=oPref.Value;
+        else
+            this.m_bDownloadUnread=false;
+                       
         this.m_Log.Write("nsMailDotCom.js - Constructor - END");  
     }
     catch(e)
@@ -79,7 +92,8 @@ function nsMailDotCom()
         DebugDump("nsMailDotCom.js: Constructor : Exception : " 
                                       + e.name 
                                       + ".\nError message: " 
-                                      + e.message);
+                                      + e.message +"\n"
+                                      + e.lineNumber);
     }
 }
 
@@ -129,7 +143,8 @@ nsMailDotCom.prototype =
             this.m_Log.DebugDump("nsMailDotCom.js: logIN : Exception : " 
                                               + e.name + 
                                               ".\nError message: " 
-                                              + e.message);
+                                              + e.message +"\n"
+                                              + e.lineNumber);
             return false;
         }
     },
@@ -319,7 +334,8 @@ nsMailDotCom.prototype =
             mainObject.m_Log.DebugDump("nsMailDotCom.js: loginHandler : Exception : " 
                                           + err.name 
                                           + ".\nError message: " 
-                                          + err.message);
+                                          + err.message +"\n"
+                                          + err.lineNumber);
             
             mainObject.serverComms("-ERR negative vibes from "+mainObject.m_szUserName+"\r\n");                                  
         }
@@ -354,7 +370,8 @@ nsMailDotCom.prototype =
             this.m_Log.DebugDump("nsMailDotCom.js: getNumMessages : Exception : " 
                                           + e.name 
                                           + ".\nError message: " 
-                                          + e.message);
+                                          + e.message +"\n"
+                                          + e.lineNumber);
             return false;
         }
     },
@@ -399,21 +416,31 @@ nsMailDotCom.prototype =
                     {
                         var aszData = aszMSGs[i].match(patternMailDotComMsgData);
                         mainObject.m_Log.Write("nsMailDotCom.js - mailBoxOnloadHandler - MSG Data" + aszData );
+                                
+                        var bRead = true;
+                        if (mainObject.m_bDownloadUnread)
+                        {
+                            bRead = (aszMSGs[i].search(patternMailDotComUnRead)!=-1) ? true : false;
+                            mainObject.m_Log.Write("nsYahoo.js - mailBoxOnloadHandler - bRead -" + bRead);
+                        }
                         
-                        var data = new MailDotComMSG();
-                        var szHref = mainObject.m_szLocation + aszData[1].match(patternMailDotComHref)[1];
-                        mainObject.m_Log.Write("nsMailDotCom.js - mailBoxOnloadHandler - href " + szHref );
-                        data.szMSGUri = szHref;
-                        
-                        var szSize = aszData[3].match(patternMailDotComSize)[1];
-                        mainObject.m_Log.Write("nsMailDotCom.js - mailBoxOnloadHandler - size " + szSize );
-                        var iSize = parseInt(szSize);
-                        if (szSize.indexOf('k')!= -1) iSize*=1000;
-                        mainObject.m_Log.Write("nsMailDotCom.js - mailBoxOnloadHandler - msg size :" + i + " " +iSize);
-                        data.iSize = iSize;
-                        
-                        mainObject.m_iTotalSize += iSize;
-                        mainObject.m_aMsgDataStore.push(data); 
+                        if (bRead)
+                        {
+                            var data = new MailDotComMSG();
+                            var szHref = mainObject.m_szLocation + aszData[1].match(patternMailDotComHref)[1];
+                            mainObject.m_Log.Write("nsMailDotCom.js - mailBoxOnloadHandler - href " + szHref );
+                            data.szMSGUri = szHref;
+                            
+                            var szSize = aszData[3].match(patternMailDotComSize)[1];
+                            mainObject.m_Log.Write("nsMailDotCom.js - mailBoxOnloadHandler - size " + szSize );
+                            var iSize = parseInt(szSize);
+                            if (szSize.indexOf('k')!= -1) iSize*=1000;
+                            mainObject.m_Log.Write("nsMailDotCom.js - mailBoxOnloadHandler - msg size :" + i + " " +iSize);
+                            data.iSize = iSize;
+                            
+                            mainObject.m_iTotalSize += iSize;
+                            mainObject.m_aMsgDataStore.push(data); 
+                        }
                     }
                 }
             }
@@ -453,7 +480,8 @@ nsMailDotCom.prototype =
              mainObject.m_Log.DebugDump("nsMailDotCom.js: MailboxOnload : Exception : " 
                                               + err.name 
                                               + ".\nError message: " 
-                                              + err.message);
+                                              + err.message +"\n"
+                                              + err.lineNumber);
             
             mainObject.serverComms("-ERR negative vibes from "+mainObject.m_szUserName+"\r\n");                                  
         }   
@@ -493,7 +521,8 @@ nsMailDotCom.prototype =
             this.m_Log.DebugDump("nsMailDotCom.js: getMessageSizes : Exception : " 
                                           + e.name 
                                           + ".\nError message: " 
-                                          + e.message);
+                                          + e.message +"\n"
+                                          + e.lineNumber);
             return false;
         }
     },
@@ -527,7 +556,8 @@ nsMailDotCom.prototype =
             this.m_Log.DebugDump("nsMailDotCom.js: getMessageIDs : Exception : " 
                                           + e.name 
                                           + ".\nError message: " 
-                                          + e.message);
+                                          + e.message +"\n"
+                                          + e.lineNumber);
             return false;
         }
     },
@@ -542,7 +572,24 @@ nsMailDotCom.prototype =
             this.m_Log.Write("nsMailDotCom.js - getHeaders - START");  
             this.m_Log.Write("nsMailDotCom.js - getHeaders - id " + lID ); 
             
-            this.serverComms("-ERR negative vibes\r\n");
+            //get msg id
+            var oMSG = this.m_aMsgDataStore[lID-1]
+            var szHref = oMSG.szMSGUri;
+            this.m_Log.Write("nsMailDotCom.js - getHeaders - msg id" + szHref); 
+            this.m_szMSGID = szHref.match(patternMailDotComMsgId)[1];
+            var szMsgURI = this.m_szLocation;
+            szMsgURI += "/scripts/mail/mesg.mail";
+            szMsgURI += "?folder=INBOX&msg_uid=" + this.m_szMSGID+"&mhead=f&print=1";
+            
+            this.m_bJunkMail = oMSG.bJunkFolder;
+            
+            this.m_iStage = 0;   
+            //get msg from MailDotCom
+            this.m_HttpComms.clean();
+            this.m_HttpComms.setURI(szMsgURI);
+            this.m_HttpComms.setRequestMethod("GET");
+            var bResult = this.m_HttpComms.send(this.headersOnloadHandler); 
+            if (!bResult) throw new Error("httpConnection returned false"); 
             
             this.m_Log.Write("nsMailDotCom.js - getHeaders - END");
             return true; 
@@ -558,6 +605,91 @@ nsMailDotCom.prototype =
         }
     },
 
+
+
+    headersOnloadHandler : function (szResponse ,event , mainObject)
+    {
+        try
+        {
+            mainObject.m_Log.Write("nsMailDotCom.js - headersOnloadHandler - START");
+            
+            var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
+            mainObject.m_Log.Write("nsMailDotCom.js - headersOnloadHandler - msg code :" + httpChannel.responseStatus);
+                      
+            //check status should be 200. 
+            if (httpChannel.responseStatus != 200) 
+                throw new Error("error status " + httpChannel.responseStatus);   
+                      
+            //ads handler
+            if (httpChannel.URI.spec.search(/intr.main/)!=-1)
+            { 
+                var bAd = mainObject.ads(szResponse, mainObject.emailOnloadHandler);
+                if (!bAd)throw new Error("Ad Handler failed");
+                return;
+            }
+
+        
+            var szHeaders = "X-WebMail: true\r\n";
+            szHeaders += "X-JunkFolder: " +(mainObject.m_bJunkMail? "true":"false")+ "\r\n";
+             
+            //get message block
+            var aszMSG = szResponse.match(patternMailDotComMSG);
+            mainObject.m_Log.Write("nsMailDotCom.js - headersOnloadHandler - MSG block :" +aszMSG);
+           
+            //get header block
+            var szHeaderBlock = aszMSG[0].match(patternMailDotComHeaders);
+            mainObject.m_Log.Write("nsMailDotCom.js - headersOnloadHandler - Header block :" +szHeaderBlock);
+            
+            //get headers   
+            var aszRawHeaders = szHeaderBlock[1].split(/<BR>/i);         
+            mainObject.m_Log.Write("nsMailDotCom.js - headersOnloadHandler -RawHeaders :" +aszRawHeaders);
+                   
+            //process headers
+            if (aszRawHeaders)
+            {
+                for (i=0; i<aszRawHeaders.length; i++)
+                {
+                    try
+                    {
+                        var aszHeaders = aszRawHeaders[i].match(patternMailDotComOtherHeaderData);
+                        mainObject.m_Log.Write("nsMailDotCom.js - headersOnloadHandler - header :" +aszHeaders);
+                        aszHeaders[2] = aszHeaders[2].replace(/\r/," ");
+                        aszHeaders[2] = aszHeaders[2].replace(/\n/," ");                        
+                        szHeaders += aszHeaders[1] + aszHeaders[2] + "\r\n";  
+                    }
+                    catch(err)
+                    {
+                    }
+                }
+            }
+                    
+            szHeaders = szHeaders.replace(/<B>/g,"");
+            szHeaders = szHeaders.replace(/<\/B>/g,"");
+            szHeaders = szHeaders.replace(/<BR>/g,"");
+            szHeaders = szHeaders.replace(/&#34;/g,"\"");
+            szHeaders = szHeaders.replace(/&lt;/g,"<");
+            szHeaders = szHeaders.replace(/&gt;/g,">");
+            szHeaders = szHeaders.replace(/^\./mg,"..");    //bit padding 
+            szHeaders += "\r\n.\r\n";//msg end 
+             
+            var  szServerResponse = "+OK " +szHeaders.length + "\r\n"; 
+            szServerResponse += szHeaders
+            mainObject.serverComms(szServerResponse);
+            mainObject.m_Log.Write("nsMailDotCom.js - headersOnloadHandler - END");
+        }
+        catch(err)
+        {
+            mainObject.m_Log.DebugDump("nsMailDotCom.js: headersOnloadHandler : Exception : " 
+                                          + err.name 
+                                          + ".\nError message: " 
+                                          + err.message +"\n"
+                                          + err.lineNumber);
+            
+            mainObject.serverComms("-ERR negative vibes from "+mainObject.m_szUserName+"\r\n"); 
+        }
+    },
+          
+                
 
     //retr
     getMessage : function( lID)
@@ -594,7 +726,8 @@ nsMailDotCom.prototype =
              this.m_Log.DebugDump("nsMailDotCom.js: getMessage : Exception : " 
                                           + e.name + 
                                           ".\nError message: " 
-                                          + e.message);
+                                          + e.message +"\n"
+                                          + e.lineNumber);
             return false;
         }
     },    
@@ -716,7 +849,8 @@ nsMailDotCom.prototype =
             mainObject.m_Log.DebugDump("nsMailDotCom.js: emailOnloadHandler : Exception : " 
                                           + err.name 
                                           + ".\nError message: " 
-                                          + err.message);
+                                          + err.message +"\n"
+                                          + err.lineNumber);
             
             mainObject.serverComms("-ERR negative vibes from "+mainObject.m_szUserName+"\r\n");                                  
         }
@@ -771,7 +905,8 @@ nsMailDotCom.prototype =
             this.m_Log.DebugDump("nsMailDotCom.js: deleteMessage : Exception : " 
                                           + e.name + 
                                           ".\nError message: " 
-                                          + e.message);
+                                          + e.message +"\n"
+                                          + e.lineNumber);
             return false;
         } 
     },
@@ -801,7 +936,8 @@ nsMailDotCom.prototype =
             mainObject.m_Log.DebugDump("nsMailDotCom.js: deleteMessageOnload : Exception : " 
                                               + e.name 
                                               + ".\nError message: " 
-                                              + e.message);
+                                              + e.message +"\n"
+                                              + e.lineNumber);
             mainObject.serverComms("-ERR negative vibes from "+mainObject.m_szUserName+"\r\n");                                  
         }
     },
@@ -848,7 +984,8 @@ nsMailDotCom.prototype =
             this.m_Log.DebugDump("nsMailDotCom.js: logOUT : Exception : " 
                                       + e.name 
                                       + ".\nError message: " 
-                                      + e.message);
+                                      + e.message +"\n"
+                                      + e.lineNumber);
             return false;
         }
     },  
@@ -885,7 +1022,8 @@ nsMailDotCom.prototype =
             mainObject.m_Log.DebugDump("nsMailDotCom.js: logOutOnloadHandler : Exception : " 
                                               + e.name 
                                               + ".\nError message: " 
-                                              + e.message);
+                                              + e.message +"\n"
+                                              + e.lineNumber);
             mainObject.serverComms("-ERR negative vibes from "+mainObject.m_szUserName+"\r\n");                                  
         }
     },
@@ -916,7 +1054,8 @@ nsMailDotCom.prototype =
             this.m_Log.DebugDump("nsMailDotCom.js: ads : Exception : " 
                                               + err.name 
                                               + ".\nError message: " 
-                                              + err.message);
+                                              + err.message +"\n"
+                                              + err.lineNumber);
             return false;
         }
     },
@@ -945,7 +1084,8 @@ nsMailDotCom.prototype =
             mainObject.m_Log.DebugDump("nsMailDotCom.js: adsHandler : Exception : " 
                                               + err.name 
                                               + ".\nError message: " 
-                                              + err.message);
+                                              + err.message +"\n"
+                                              + err.lineNumber);
             mainObject.serverComms("-ERR negative vibes from "+mainObject.m_szUserName+"\r\n");                                  
         }
     },
@@ -969,7 +1109,8 @@ nsMailDotCom.prototype =
             this.m_Log.DebugDump("nsMailDotCom.js: serverComms : Exception : " 
                                               + e.name 
                                               + ".\nError message: " 
-                                              + e.message);
+                                              + e.message +"\n"
+                                              + e.lineNumber);
         }
     },
        
