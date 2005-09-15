@@ -5,6 +5,3 @@
 <!ENTITY EmptyTrash.AccessKey "V">
 <!ENTITY DownloadUnread.Label "Download unread emails only">
 <!ENTITY DownloadUnread.AccessKey "u">
-<!ENTITY DownloadUnread.Note "Email will not be deleted if the option leave on server is used.">
-
-
