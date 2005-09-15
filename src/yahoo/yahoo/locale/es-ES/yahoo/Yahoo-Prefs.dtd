@@ -2,3 +2,4 @@
 <!ENTITY Options.szTitle "Yahoo - Opciones">
 <!ENTITY POP.Panel.szTitle "POP">
 <!ENTITY SMTP.Panel.szTitle "SMTP">
+<!ENTITY Window.size "width: 27em; height: 20em">

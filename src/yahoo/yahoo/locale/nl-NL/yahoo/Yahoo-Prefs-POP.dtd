@@ -1,3 +1,5 @@
 <!ENTITY JunkMail.Label "Ongewenste berichten downloaden">
 <!ENTITY JunkMail.AccessKey "d">
+<!ENTITY DownloadUnread.Label "Download unread emails only">
+<!ENTITY DownloadUnread.AccessKey "u">
 
