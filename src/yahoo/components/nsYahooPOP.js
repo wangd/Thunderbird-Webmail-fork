@@ -27,6 +27,7 @@ const PatternYahooDeleteURL = /action="(.*?)"/;
 const PatternYahooDeleteInput = /<input.*?hidden.*?>/gm;
 const PatternYahooBox =/(box=.*?)#/;
 const PatternYahooBoxAlt =/(box=.*?)$/;
+const PatternYahooUnRead = /msgnew/;
 /******************************  Yahoo ***************************************/
 
 
@@ -69,6 +70,7 @@ function nsYahoo()
         this.m_szBox = null;
         this.m_bJunkFolder = false;
         
+
         //do i download junkmail
         var oPref = new Object();
         oPref.Value = null;
@@ -76,7 +78,17 @@ function nsYahoo()
         if (WebMailPrefAccess.Get("bool","yahoo.bUseJunkMail",oPref))
             this.m_bUseJunkMail=oPref.Value;
         else
-            this.m_bUseJunkMail=false;                                                    
+            this.m_bUseJunkMail=false;       
+            
+        //do i download unread only
+        var oPref = new Object();
+        oPref.Value = null;
+        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+        if (WebMailPrefAccess.Get("bool","yahoo.bDownloadUnread",oPref))
+            this.m_bDownloadUnread=oPref.Value;
+        else
+            this.m_bDownloadUnread=false;
+                                                         
         this.m_Log.Write("nsYahoo.js - Constructor - END");  
     }
     catch(e)
@@ -432,11 +444,9 @@ nsYahoo.prototype =
                 }
             }
             
-            
-            //get messgae table
+            //process message table
             var aMsgTable = szResponse.match(patternYahooMSGIdTable);
             mainObject.m_Log.Write("nsYahoo.js - mailBoxOnloadHandler - msgtable :" + aMsgTable);
-            
             if (aMsgTable)
             {
                 var aMsgRows = aMsgTable[0].match(patternYahooMsgRow);
@@ -446,77 +456,64 @@ nsYahoo.prototype =
                 var iNum = aMsgRows.length -1; // first row is headers
                 mainObject.m_Log.Write("nsYahoo.js - mailBoxOnloadHandler - msgRows Num :" + iNum);
                 
-                //process page
+                //process data
                 if (iNum > 0)
                 {
                     for (i= 1 ; i< iNum+1 ; i++)
                     {  
-                        var data = new YahooMSG();
+                        var bRead = true;
+                        if (mainObject.m_bDownloadUnread)
+                        {
+                            bRead = (aMsgRows[i].search(PatternYahooUnRead)!=-1) ? true : false;
+                            mainObject.m_Log.Write("nsYahoo.js - mailBoxOnloadHandler - bRead -" + bRead);
+                        }
                         
-                        //get msg info
-                        var szMsgID =  aMsgRows[i].match(patternYahooMsgID)[1];
-                        mainObject.m_Log.Write("nsYahoo.js - mailBoxOnloadHandler - msg id :" + i + " " +szMsgID);
-                        data.szMSGUri = szMsgID;
-                        data.szDeleteUri = mainObject.m_szDeleteURL;
-                        data.aData = mainObject.m_aDeleteData;
-                        data.bJunkFolder = mainObject.m_bJunkChecked;
-                        
-                        //get msg size
-                        var aMsgSize = aMsgRows[i].match(patternYahooMsgSize);
-                        var szMsgSize = aMsgSize[aMsgSize.length-1]; //size is last element
-                        var szSize = szMsgSize.match(/<td.*?>(.*?)<\/td/)[1];
-                        var iSize = parseInt(szSize);
-                        if (szSize.indexOf('k')!= -1) iSize*=1000;
-                        mainObject.m_Log.Write("nsYahoo.js - mailBoxOnloadHandler - msg size :" + i + " " +iSize);
-                        data.iSize = iSize;
-                        
-                        mainObject.m_iTotalSize += iSize;
-                        mainObject.m_aMsgDataStore.push(data);   
+                        if (bRead)
+                        {
+                            var data = new YahooMSG();
+                            
+                            //get msg info
+                            var szMsgID =  aMsgRows[i].match(patternYahooMsgID)[1];
+                            mainObject.m_Log.Write("nsYahoo.js - mailBoxOnloadHandler - msg id :" + i + " " +szMsgID);
+                            data.szMSGUri = szMsgID;
+                            data.szDeleteUri = mainObject.m_szDeleteURL;
+                            data.aData = mainObject.m_aDeleteData;
+                            data.bJunkFolder = mainObject.m_bJunkChecked;
+                            
+                            //get msg size
+                            var aMsgSize = aMsgRows[i].match(patternYahooMsgSize);
+                            var szMsgSize = aMsgSize[aMsgSize.length-1]; //size is last element
+                            var szSize = szMsgSize.match(/<td.*?>(.*?)<\/td/)[1];
+                            var iSize = parseInt(szSize);
+                            if (szSize.indexOf('k')!= -1) iSize*=1000;
+                            mainObject.m_Log.Write("nsYahoo.js - mailBoxOnloadHandler - msg size :" + i + " " +iSize);
+                            data.iSize = iSize;
+                            
+                            mainObject.m_iTotalSize += iSize;
+                            mainObject.m_aMsgDataStore.push(data);  
+                        }
                     }
                 }
-                
-                //check for more pages
-                var aszNextPage = szResponse.match(patternYahooNextPage);
-                mainObject.m_Log.Write("nsYahoo.js - mailBoxOnloadHandler - msg next page :" +aszNextPage);
-                if (aszNextPage)
-                { 
-                    var szNewPage = aszNextPage[0].split("|");
-                    mainObject.m_Log.Write("nsYahoo.js - mailBoxOnloadHandler - msg next page :" +szNewPage + " " + szNewPage.length);
-        
-                    var szMailboxURI = mainObject.m_szLocationURI + 
-                                        szNewPage[szNewPage.length-1].match(patternYahooNextURI)[1];
-                    mainObject.m_Log.Write("nsYahoo.js - getNumMessages - mail box url " + szMailboxURI); 
-                      
-                    mainObject.m_HttpComms.setURI(szMailboxURI);
-                    mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler); 
-                    if (!bResult) throw new Error("httpConnection returned false");
-                }
-                else if ( mainObject.m_bUseJunkMail && mainObject.m_szBulkFolderURI && !mainObject.m_bJunkChecked)
-                {
-                    mainObject.m_Log.Write("nsYahoo.js - MailBoxOnload - load junkmail");
-                    
-                    var szMailboxURI = mainObject.m_szLocationURI + mainObject.m_szBulkFolderURI; 
-                    mainObject.m_Log.Write("nsYahoo.js - getNumMessages - mail box url " + szMailboxURI); 
-                    
-                    mainObject.m_HttpComms.setURI(szMailboxURI);
-                    mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler); 
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    
-                    delete mainObject.m_aDeleteData;
-                    mainObject.m_aDeleteData = new Array();
-                    mainObject.m_bJunkChecked = true;
-                }
-                else
-                {
-                    //no more pages report back to mozilla
-                    mainObject.serverComms("+OK "+ mainObject.m_aMsgDataStore.length 
-                                            + " " + mainObject.m_iTotalSize + "\r\n");
-                    delete mainObject.m_aDeleteData;
-                    mainObject.m_aDeleteData = new Array();
-                }
             }
+                
+            //check for more pages
+            var aszNextPage = szResponse.match(patternYahooNextPage);
+            mainObject.m_Log.Write("nsYahoo.js - mailBoxOnloadHandler - msg next page :" +aszNextPage);
+            if (aszNextPage)
+            { 
+                var szNewPage = aszNextPage[0].split("|");
+                mainObject.m_Log.Write("nsYahoo.js - mailBoxOnloadHandler - msg next page :" +szNewPage + " " + szNewPage.length);
+    
+                var szMailboxURI = mainObject.m_szLocationURI + 
+                                    szNewPage[szNewPage.length-1].match(patternYahooNextURI)[1];
+                mainObject.m_Log.Write("nsYahoo.js - getNumMessages - mail box url " + szMailboxURI); 
+                  
+                mainObject.m_HttpComms.setURI(szMailboxURI);
+                mainObject.m_HttpComms.setRequestMethod("GET");
+                var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler); 
+                if (!bResult) throw new Error("httpConnection returned false");
+            }
+            //ckeck junk mail
             else if ( mainObject.m_bUseJunkMail && mainObject.m_szBulkFolderURI && !mainObject.m_bJunkChecked)
             {
                 mainObject.m_Log.Write("nsYahoo.js - MailBoxOnload - load junkmail");
@@ -533,15 +530,15 @@ nsYahoo.prototype =
                 mainObject.m_aDeleteData = new Array();
                 mainObject.m_bJunkChecked = true;
             }
+            //no more pages report back to mozilla
             else
-            {   //no emails
-                mainObject.serverComms("+OK "+ mainObject.m_aMsgDataStore.length + " " 
-                                        + mainObject.m_iTotalSize + "\r\n");
-                
+            {    
+                mainObject.serverComms("+OK "+ mainObject.m_aMsgDataStore.length 
+                                        + " " + mainObject.m_iTotalSize + "\r\n");
                 delete mainObject.m_aDeleteData;
                 mainObject.m_aDeleteData = new Array();
             }
-      
+            
             mainObject.m_Log.Write("nsYahoo.js - MailBoxOnload - END"); 
         }
         catch(err)
@@ -638,6 +635,98 @@ nsYahoo.prototype =
     },
       
 
+    //top
+    getMessageHeaders : function(lID)
+    {
+        try
+        {
+            this.m_Log.Write("nsYahoo.js - getHeaders - START");  
+            this.m_Log.Write("nsYahoo.js - getHeaders - id " + lID ); 
+           
+            //get msg id
+            var oMSGData = this.m_aMsgDataStore[lID-1]
+            this.m_szMsgID = oMSGData.szMSGUri;
+            this.m_Log.Write("nsYahoo.js - getHeaders - msg id" + this.m_szMsgID); 
+            
+            try
+            {
+                this.m_szBox= this.m_szMsgID.match(PatternYahooBox)[1];
+            }
+            catch(err)
+            {
+                this.m_szBox= this.m_szMsgID.match(PatternYahooBoxAlt)[1];
+            }
+            this.m_Log.Write("nsYahoo.js - getHeaders - msg box" + this.m_szBox); 
+             
+            //get headers
+            var szDest = this.m_szLocationURI + this.m_szMsgID.match(/.*?&/) + this.m_szBox +"&bodyPart=HEADER";
+            this.m_Log.Write("nsYahoo.js - getHeaders - url - "+ szDest);                       
+            this.m_bJunkFolder = oMSGData.bJunkFolder;
+            this.m_iStage = 0;   
+            
+            //get msg from yahoo
+            this.m_HttpComms.clean();
+            this.m_HttpComms.setURI(szDest);
+            this.m_HttpComms.setRequestMethod("GET");
+            var bResult = this.m_HttpComms.send(this.headerOnloadHandler); 
+            if (!bResult) throw new Error("httpConnection returned false");
+            
+            this.m_Log.Write("nsYahoo.js - getHeaders - END");
+            return true; 
+        }
+        catch(err)
+        {
+            
+            this.m_Log.DebugDump("nsYahoo.js: getHeaders : Exception : " 
+                                          + e.name + 
+                                          ".\nError message: " 
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
+            return false;
+        }
+    },
+
+
+
+    headerOnloadHandler : function (szResponse ,event , mainObject)
+    {
+        try
+        {
+            mainObject.m_Log.Write("m_YahooLog.js - headerOnloadHandler - START");
+            
+            mainObject.m_Log.Write("m_YahooLog.js - headerOnloadHandler - msg :\n" + szResponse); 
+           
+            var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
+                      
+            //check status should be 200.
+            mainObject.m_Log.Write("m_YahooLog.js - headerOnloadHandler - msg :" + httpChannel.responseStatus);
+            if (httpChannel.responseStatus != 200) 
+                throw new Error("error status " + httpChannel.responseStatus);   
+         
+            var szHeaders = "X-WebMail: true\r\n";
+            szHeaders += "X-JunkFolder: " +(mainObject.m_bJunkFolder? "true":"false")+ "\r\n";
+            szHeaders += szResponse; 
+            szHeaders = szHeaders.replace(/^\./mg,"..");    //bit padding 
+            szHeaders += ".\r\n";//msg end 
+             
+            var  szServerResponse = "+OK " +szHeaders.length + "\r\n"; 
+            szServerResponse += szHeaders
+            mainObject.serverComms(szServerResponse);
+          
+            mainObject.m_Log.Write("m_YahooLog.js - emailOnloadHandler - END");      
+        }
+        catch(err)
+        {
+            mainObject.m_Log.DebugDump("m_YahooLog.js: emailOnloadHandler : Exception : " 
+                                          + err.name 
+                                          + ".\nError message: " 
+                                          + err.message+ "\n"
+                                          + err.lineNumber);
+            
+            mainObject.serverComms("-ERR negative vibes from "+ mainObject.m_szUserName +"\r\n");
+        }
+    },
+    
 
 
 
@@ -664,12 +753,9 @@ nsYahoo.prototype =
             }
             this.m_Log.Write("nsYahoo.js - getMessage - msg box" + this.m_szBox); 
              
-            var ios=Components.classes["@mozilla.org/network/io-service;1"];
-            ios = ios.getService(Components.interfaces.nsIIOService);
-           
             //get headers
             var szDest = this.m_szLocationURI + this.m_szMsgID.match(/.*?&/) + this.m_szBox +"&bodyPart=HEADER";
-            this.m_Log.Write("nsYahoo.js - getNumMessages - url - "+ szDest);                       
+            this.m_Log.Write("nsYahoo.js - getMessage - url - "+ szDest);                       
             this.m_bJunkFolder = oMSGData.bJunkFolder;
             this.m_iStage = 0;   
             
@@ -766,29 +852,7 @@ nsYahoo.prototype =
         }
     },
     
-    //top
-    getMessageHeaders : function(lID)
-    {
-        try
-        {
-            this.m_Log.Write("nsYahoo.js - getHeaders - START");  
-            this.m_Log.Write("nsYahoo.js - getHeaders - id " + lID ); 
-            this.serverComms("-ERR negative vibes\r\n");
-            this.m_Log.Write("nsYahoo.js - getHeaders - END");
-            return true; 
-        }
-        catch(err)
-        {
-            
-            this.m_Log.DebugDump("nsYahoo.js: getHeaders : Exception : " 
-                                          + e.name + 
-                                          ".\nError message: " 
-                                          + e.message+ "\n"
-                                          + e.lineNumber);
-            return false;
-        }
-    },
-
+    
              
     //dele
     deleteMessage : function(lID)
