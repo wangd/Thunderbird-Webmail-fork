@@ -35,7 +35,6 @@ function nsLycos()
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/base64.js");
         scriptLoader.loadSubScript("chrome://lycos/content/Lycos-POPMSG.js");
-        scriptLoader.loadSubScript("chrome://global/content/strres.js");
         
         
         var date = new Date();
@@ -63,10 +62,6 @@ function nsLycos()
         this.m_aMsgDataStore = new Array();
         this.m_iTotalSize = 0;     
         this.m_bJunkMail = false;
-        
-        var stringBundle =srGetStrBundle("chrome://lycos/locale/Lycos-POP.properties");
-        this.m_szHeaderMSG = stringBundle.GetStringFromName("MSG");
-
         
         //do i download junkmail
         var oPref = new Object();
@@ -522,8 +517,7 @@ nsLycos.prototype =
             szHeaders += "To: "+ oMSG.szTo +"\r\n";
             szHeaders += "From: "+ oMSG.szFrom +"\r\n";
             szHeaders += "Subject: "+ oMSG.szSubject +"\r\n";
-            szHeaders += "Date: " + oMSG.szDate +"\r\n\r\n";
-            szHeaders += this.m_szHeaderMSG;
+            szHeaders += "Date: " + oMSG.szDate +"\r\n"; // \r\n";
             szHeaders = szHeaders.replace(/^\./mg,"..");    //bit padding 
             szHeaders += "\r\n.\r\n";//msg end 
              
