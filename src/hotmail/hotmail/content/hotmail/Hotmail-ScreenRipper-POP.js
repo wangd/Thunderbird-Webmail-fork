@@ -265,7 +265,7 @@ HotmailScreenRipper.prototype =
             this.m_Log.Write("Hotmail-SR - getNumMessages - START"); 
             
             if (this.m_szMailboxURI == null) return false;
-            var szMailboxURI = this.m_szLocationURI + this.m_szMailboxURI; 
+            var szMailboxURI = this.m_szLocationURI + this.m_szMailboxURI + "&sort=Date"; 
             this.m_Log.Write("Hotmail-SR - getNumMessages - mail box url " + szMailboxURI); 
             
             this.m_iStage = 0;  
@@ -450,9 +450,15 @@ HotmailScreenRipper.prototype =
                             var today = new Date();
                             var szDate = aRawDate[0] +" ,"+aRawDate[1] +" " + today.getFullYear();
                             mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - "+szDate);
+                            var today = new Date();
                             var oldDate = Date.parse(szDate);
                             var newDate= new Date(oldDate);
-                            oMSG.szDate = newDate.toString();
+                            
+                            newDate.setHours(today.getHours(),
+                                             today.getMinutes(),
+                                             today.getSeconds(),
+                                             today.getMilliseconds());
+                            oMSG.szDate = newDate.toUTCString();
                             mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - " + oMSG.szDate);
                         }
                         catch(err){}
