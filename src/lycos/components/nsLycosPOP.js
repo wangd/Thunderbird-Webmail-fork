@@ -354,39 +354,48 @@ nsLycos.prototype =
                                 mainObject.m_iTotalSize += data.iSize;
                                 data.bJunkFolder = mainObject.m_bJunkMail;
                                 
+                                var szTO="";
                                 try
                                 {                   
-                                    var szTO = aszResponses[i].match(LycosPOPTo)[1].match(/[\S\d]*@[\S\d]*/);
-                                    data.szTo = szTO;
+                                    szTO = aszResponses[i].match(LycosPOPTo)[1].match(/[\S\d]*@[\S\d]*/);  
                                 }
-                                catch(err){}
+                                catch(err)
+                                {
+                                    szTO = aszResponses[i].match(LycosPOPTo)[1];
+                                }
+                                data.szTo = szTO;
                                 
+                                var szFrom = "";
                                 try
                                 {
-                                    var szFrom = aszResponses[i].match(LycosPOPFrom)[1].match(/[\S\d]*@[\S\d]*/);
-                                    data.szFrom = szFrom;
+                                    szFrom = aszResponses[i].match(LycosPOPFrom)[1].match(/[\S\d]*@[\S\d]*/);
                                 }
-                                catch(err){}
-                            
+                                catch(err)
+                                {
+                                    szFrom = aszResponses[i].match(LycosPOPFrom)[1];    
+                                }
+                                data.szFrom = szFrom;
+                                
+                                var szSubject= "";
                                 try
                                 {
-                                    var szSubject= aszResponses[i].match(LycosPOPSubject)[1];
-                                    data.szSubject = szSubject;
+                                    szSubject= aszResponses[i].match(LycosPOPSubject)[1];
                                 }
                                 catch(err){}
-
+                                data.szSubject = szSubject;
+                                
                                 try
                                 {
                                     var aszDateTime = aszResponses[i].match(LycosPOPDate);
                                     var aszDate = aszDateTime[1].split("-");
                                     var aszTime = aszDateTime[2].split(":");
     
-                                    var date = new Date(parseInt(aszDate[0]),  //year
-                                                     parseInt(aszDate[1])-1,  //month
-                                                     parseInt(aszDate[2]),  //day
-                                                     parseInt(aszTime[0]),  //hour
-                                                     parseInt(aszTime[1]),  //minute
-                                                     parseInt(aszTime[2]));  //second
+                                    var date = new Date(parseInt(aszDate[0],10),  //year
+                                                     parseInt(aszDate[1],10)-1,  //month
+                                                     parseInt(aszDate[2],10),  //day
+                                                     parseInt(aszTime[0],10),  //hour
+                                                     parseInt(aszTime[1],10),  //minute
+                                                     parseInt(aszTime[2],10));  //second
                                     data.szDate = date.toGMTString();
                                 }
                                 catch(err){}
