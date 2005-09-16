@@ -1,4 +1,4 @@
-function HotmailWebDav(oResponseStream, oLog, bUseJunkMail)
+function HotmailWebDav(oResponseStream, oLog)
 {
     try
     {       
@@ -8,6 +8,7 @@ function HotmailWebDav(oResponseStream, oLog, bUseJunkMail)
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-AuthTokenManager.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/comms.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-MSG.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
               
         this.m_Log = oLog; 
         this.m_Log.Write("HotmailWebDav.js - Constructor - START");   
@@ -15,7 +16,6 @@ function HotmailWebDav(oResponseStream, oLog, bUseJunkMail)
         this.m_szUserName = null;   
         this.m_szPassWord = null; 
         this.m_oResponseStream = oResponseStream;       
-        this.m_bUseJunkMail = bUseJunkMail;
         this.m_HttpComms = new Comms(this,this.m_Log); 
         this.m_HttpComms.setHandleBounce(false);
         this.m_AuthToken = new AuthTokenHandler(this.m_Log);
@@ -34,6 +34,24 @@ function HotmailWebDav(oResponseStream, oLog, bUseJunkMail)
         
         this.m_bJunkMail = false;
         
+         //do i download junkmail
+        var oPref = new Object();
+        oPref.Value = null;
+        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+        if (WebMailPrefAccess.Get("bool","hotmail.bUseJunkMail",oPref))
+            this.m_bUseJunkMail=oPref.Value;
+        else
+            this.m_bUseJunkMail=false;
+                                          
+        //do i download unread only
+        var oPref = new Object();
+        oPref.Value = null;
+        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+        if (WebMailPrefAccess.Get("bool","hotmail.bDownloadUnread",oPref))
+            this.m_bDownloadUnread=oPref.Value;
+        else
+            this.m_bDownloadUnread=false; 
+             
         this.m_Log.Write("HotmailWebDav.js - Constructor - END");  
     }
     catch(e)
@@ -313,19 +331,79 @@ HotmailWebDav.prototype =
                     {
                         for (i=0; i<aszResponses.length; i++)
                         {
-                            //mail url   
-                            var oMSG = new HotmailMSG();
-                            var szHref = aszResponses[i].match(patternHotmailPOPHref)[1];
-                            mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - href - "+ szHref);
-                            oMSG.szMSGUri = szHref;
-                            oMSG.bJunkFolder = mainObject.m_bJunkMail;                          
-                            //size 
-                            var iSize = parseInt(aszResponses[i].match(patternHotmailPOPSize)[1]);
-                            mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - size - "+ iSize);
-                            mainObject.m_iTotalSize += iSize;
-                            oMSG.iSize = iSize;
-                           
-                            mainObject.m_aMsgDataStore.push(oMSG); 
+                            var bRead = true;
+                            if (mainObject.m_bDownloadUnread)
+                            {
+                                bRead = parseInt(aszResponses[i].match(patternHotmailPOPRead)[1]) ? false : true;
+                                mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - bRead -" + bRead);
+                            }
+                            
+                            if (bRead)
+                            {
+                                //mail url   
+                                var oMSG = new HotmailMSG();
+                                var szHref = aszResponses[i].match(patternHotmailPOPHref)[1];
+                                mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - href - "+ szHref);
+                                oMSG.szMSGUri = szHref;
+                                oMSG.bJunkFolder = mainObject.m_bJunkMail;                          
+                                //size 
+                                var iSize = parseInt(aszResponses[i].match(patternHotmailPOPSize)[1]);
+                                mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - size - "+ iSize);
+                                mainObject.m_iTotalSize += iSize;
+                                oMSG.iSize = iSize;
+                               
+                                var szTO="";
+                                try
+                                {                   
+                                    szTO = aszResponses[i].match(patternHotmailPOPTo)[1].match(/[\S\d]*@[\S\d]*/);  
+                                }
+                                catch(err)
+                                {
+                                    szTO = mainObject.m_szUserName;
+                                }
+                                oMSG.szTo = szTO;
+                                
+                                
+                                var szFrom = "";
+                                try
+                                {
+                                    szFrom = aszResponses[i].match(patternHotmailPOPFrom)[1].match(/[\S]*@[\S]*/);
+                                    if (!szFrom) throw new Error("no email");
+                                }
+                                catch(err)
+                                {
+                                    szFrom = aszResponses[i].match(patternHotmailPOPFrom)[1];    
+                                }
+                                oMSG.szFrom = szFrom;
+                                
+                                
+                                var szSubject= "";
+                                try
+                                {
+                                    szSubject= aszResponses[i].match(patternHotmailPOPSubject)[1];
+                                }
+                                catch(err){}
+                                oMSG.szSubject = szSubject;
+                                
+                                try
+                                {
+                                    var aszDateTime = aszResponses[i].match(patternHotmailPOPDate);
+                                    var aszDate = aszDateTime[1].split("-");
+                                    var aszTime = aszDateTime[2].split(":");
+                                    mainObject.m_Log.Write("HotmailWebDav.js - getNumMessages - "+aszDate+" "+aszTime);
+                                    var date = new Date(parseInt(aszDate[0],10),  //year
+                                                        parseInt(aszDate[1],10)-1,  //month
+                                                        parseInt(aszDate[2],10),  //day
+                                                        parseInt(aszTime[0],10)+1,  //hour
+                                                        parseInt(aszTime[1],10),  //minute
+                                                        parseInt(aszTime[2],10));  //second
+                                    oMSG.szDate = date.toGMTString();
+                                    mainObject.m_Log.Write("HotmailWebDav.js - getNumMessages - " + oMSG.szDate);
+                                }
+                                catch(err){}
+                                
+                                mainObject.m_aMsgDataStore.push(oMSG); 
+                            }
                         }
                     }
                     
@@ -458,7 +536,20 @@ HotmailWebDav.prototype =
             this.m_Log.Write("HotmailWebDav.js - getHeaders - START");  
             this.m_Log.Write("HotmailWebDav.js - getHeaders - id " + lID ); 
             
-            this.serverComms("-ERR negative vibes\r\n"); 
+            var oMSG = this.m_aMsgDataStore[lID-1];
+            
+            var szHeaders = "X-WebMail: true\r\n";
+            szHeaders += "X-JunkFolder: " +(oMSG.bJunkFolder? "true":"false")+ "\r\n";
+            szHeaders += "To: "+ oMSG.szTo +"\r\n";
+            szHeaders += "From: "+ oMSG.szFrom +"\r\n";
+            szHeaders += "Subject: "+ oMSG.szSubject +"\r\n";
+            szHeaders += "Date: " + oMSG.szDate +"\r\n"; // \r\n";
+            szHeaders = szHeaders.replace(/^\./mg,"..");    //bit padding 
+            szHeaders += "\r\n.\r\n";//msg end 
+             
+            var  szResponse = "+OK " +szHeaders.length + "\r\n"; 
+            szResponse += szHeaders
+            this.serverComms(szResponse);
             
             this.m_Log.Write("HotmailWebDav.js - getHeaders - END");
             return true; 
