@@ -28,6 +28,9 @@ const patternHotmailPOPEmailLength = /.*?&len=(.*?)&/;
 const patternHotmailPOPEmailID = /.*?msg=(.*?)&/;
 const patternHotmailPOPUM = /_UM="(.*?)"/;
 const patterHotmailPOPFolderID = /curmbox=(.*?)&/;
+const patternHotmailPOPSRRead = /msgread=1/gi;
+const patternHotmailPOPSRFrom =/<tr[\S\s]*name="(.*?)"><td>/i;
+
 /*******************************************************************************/
 
 
@@ -47,6 +50,11 @@ const patternHotmailPOPID = /<D:id>(.*?)<\/D:id>/;
 const patternHotmailPOPHref = /<D:href>(.*?)<\/D:href>/;
 const patternHotmailPOPSize = /<D:getcontentlength>(.*?)<\/D:getcontentlength>/;
 const patternHotmailPOPRead = /<hm:read>(.*?)<\/hm:read>/i;
+const patternHotmailPOPTo = /<m:to>(.*?)<\/m:to>/i;
+const patternHotmailPOPToAlt = /<m:to\/>(.*?)$/im;
+const patternHotmailPOPFrom = /<m:from>(.*?)<\/m:from>/i;
+const patternHotmailPOPSubject = /<m:subject>(.*?)<\/m:subject>/i;
+const patternHotmailPOPDate = /<m:date>(.*?)T(.*?)<\/m:date>/i;
 /*******************************************************************************/
 
 
@@ -61,10 +69,9 @@ function nsHotmail()
         scriptLoader= scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CookieManager.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-WebDav-POP.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-ScreenRipper-POP.js");
-       
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         
         var date = new Date();
         
@@ -80,16 +87,7 @@ function nsHotmail()
         this.m_oResponseStream = null;       
         this.m_bAuthorised = false;
         this.m_CommMethod = null;
-        
-        //do i download junkmail
-        var oPref = new Object();
-        oPref.Value = null;
-        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-        if (WebMailPrefAccess.Get("bool","hotmail.bUseJunkMail",oPref))
-            this.m_bUseJunkMail=oPref.Value;
-        else
-            this.m_bUseJunkMail=false;
-                                                   
+                      
         this.m_HotmailLog.Write("nsHotmail.js - Constructor - END");  
     }
     catch(e)
@@ -155,16 +153,14 @@ nsHotmail.prototype =
                     {
                         this.m_HotmailLog.Write("nsHotmail.js - logIN - username found");  
                         this.m_CommMethod = new HotmailWebDav(this.m_oResponseStream, 
-                                                              this.m_HotmailLog, 
-                                                              this.m_bUseJunkMail);    
+                                                              this.m_HotmailLog);    
                     } 
                 }
             }
            
             if (!this.m_CommMethod)
                 this.m_CommMethod = new HotmailScreenRipper(this.m_oResponseStream, 
-                                                            this.m_HotmailLog, 
-                                                            this.m_bUseJunkMail);
+                                                            this.m_HotmailLog);
              
             var bResult = this.m_CommMethod.logIn(this.m_szUserName,   
                                                   this.m_szPassWord);
