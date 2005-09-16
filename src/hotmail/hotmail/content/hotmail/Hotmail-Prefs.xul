@@ -13,7 +13,7 @@
             id="WebMail-Prefs"
             title="&Options.szTitle;"
             xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-            style="width: 36em; height: 26em"
+            style="&Window.size;"
             lastSelected = "paneWebDav"
             buttons="accept, cancel">
   

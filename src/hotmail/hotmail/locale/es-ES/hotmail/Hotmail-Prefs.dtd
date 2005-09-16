@@ -2,3 +2,4 @@
 <!ENTITY POP.Panel.szTitle "POP">
 <!ENTITY WebDav.Panel.szTitle "WebDav">
 <!ENTITY SMTP.Panel.szTitle "SMTP">
+<!ENTITY Window.size "width: 35em; height: 22em">

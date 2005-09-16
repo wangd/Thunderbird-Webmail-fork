@@ -1,3 +1,5 @@
 <!ENTITY JunkMail.AccessKey "B">
 <!ENTITY JunkMail.Label "Descargar Correo Basura">
 <!ENTITY MailServers.Label "POP">
+<!ENTITY DownloadUnread.Label "Download unread emails only">
+<!ENTITY DownloadUnread.AccessKey "u">
