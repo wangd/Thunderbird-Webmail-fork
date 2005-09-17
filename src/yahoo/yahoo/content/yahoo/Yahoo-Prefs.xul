@@ -13,7 +13,7 @@
             id="Yahoo-Prefs"
             title="&Options.szTitle;"
             xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-            style="width: 26em; height: 20em"
+            style="&Window.size;"
             lastSelected = "panePOP"
             buttons="accept, cancel">
   
