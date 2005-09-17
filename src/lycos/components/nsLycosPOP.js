@@ -802,7 +802,7 @@ nsLycos.prototype =
                         
                         mainObject.m_HttpComms.clean();
                         mainObject.m_HttpComms.setContentType(-1);
-                        mainObject.m_HttpComms.setURI(this.m_szTrashURI);
+                        mainObject.m_HttpComms.setURI(mainObject.m_szTrashURI);
                         mainObject.m_HttpComms.setRequestMethod("BDELETE");
                         mainObject.m_HttpComms.addData(szDeleteMsg,"text/xml");
                         mainObject.m_HttpComms.addRequestHeader("Authorization", mainObject.m_szAuthString , false);
