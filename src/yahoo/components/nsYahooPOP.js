@@ -69,7 +69,7 @@ function nsYahoo()
         this.m_szMsgID = null;  
         this.m_szBox = null;
         this.m_bJunkFolder = false;
-        
+        this.m_iID =0;
 
         //do i download junkmail
         var oPref = new Object();
@@ -214,14 +214,12 @@ nsYahoo.prototype =
                     for (i=0; i<aLoginData.length; i++)
                     {
                         var szName=aLoginData[i].match(patternYahooNameAlt)[1];
-                        szName = szName.replace(/"/gm,"");
-                        szName = szName.replace(/'/gm,"");
+                        szName = szName.replace(/["|']/gm,"");
                         szName = szName.replace(/^\s*|\s*$/gm,"");
                         mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - loginData name " + szName);
                         
                         var szValue = aLoginData[i].match(patternYahooAltValue)[1];
-                        szValue = szValue.replace(/"/gm,"");
-                        szValue = szValue.replace(/'/gm,"");   
+                        szValue = szValue.replace(/["|']/gm,"");
                         szValue = szValue.replace(/^\s*|\s*$/gm,"");
                         mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - loginData value " + szValue);
                         
@@ -421,13 +419,11 @@ nsYahoo.prototype =
                      if (aszInput)
                      { 
                         var szName = aszInput[0].match(patternYahooNameAlt)[1];
-                        szName = szName.replace(/"/gm,"");
-                        szName = szName.replace(/'/gm,"");
+                        szName = szName.replace(/["|']/gm,"");
                         mainObject.m_Log.Write("nsYahoo.js - mailBoxOnloadHandler - delete name " + szName);
                         
                         var szValue = aszInput[0].match(patternYahooAltValue)[1];
-                        szValue = szValue.replace(/"/gm,"");
-                        szValue = szValue.replace(/'/gm,"");
+                        szValue = szValue.replace(/["|']/gm,"");
                         mainObject.m_Log.Write("nsYahoo.js - mailBoxOnloadHandler - delete value " + szValue);
                          
                         var oYahooData = new YahooData();
@@ -644,6 +640,7 @@ nsYahoo.prototype =
             this.m_Log.Write("nsYahoo.js - getHeaders - id " + lID ); 
            
             //get msg id
+            this.m_iID = lID-1;
             var oMSGData = this.m_aMsgDataStore[lID-1]
             this.m_szMsgID = oMSGData.szMSGUri;
             this.m_Log.Write("nsYahoo.js - getHeaders - msg id" + this.m_szMsgID); 
@@ -703,21 +700,58 @@ nsYahoo.prototype =
             if (httpChannel.responseStatus != 200) 
                 throw new Error("error status " + httpChannel.responseStatus);   
          
-            var szHeaders = "X-WebMail: true\r\n";
-            szHeaders += "X-JunkFolder: " +(mainObject.m_bJunkFolder? "true":"false")+ "\r\n";
-            szHeaders += szResponse; 
-            szHeaders = szHeaders.replace(/^\./mg,"..");    //bit padding 
-            szHeaders += ".\r\n";//msg end 
+            var szUri = httpChannel.URI.spec;
+            mainObject.m_Log.Write("m_YahooLog.js - headerOnloadHandler - uri : " + szUri); 
+            
+            switch(mainObject.m_iStage)
+            {
+                case 0://process header
+                    mainObject.m_szHeader  = "X-WebMail: true\r\n";
+                    mainObject.m_szHeader += "X-JunkFolder: " +(mainObject.m_bJunkFolder? "true":"false")+ "\r\n";
+                    mainObject.m_szHeader += szResponse; 
+                    mainObject.m_szHeader = mainObject.m_szHeader.replace(/^\./mg,"..");    //bit padding 
+                    mainObject.m_szHeader += ".\r\n";//msg end 
+                    
+                    var oMSGData = mainObject.m_aMsgDataStore[ mainObject.m_iID];
+                    mainObject.m_szMsgID = oMSGData.szMSGUri;
+                    var szPath = mainObject.m_szLocationURI + oMSGData.szDeleteUri;
+                    mainObject.m_Log.Write("nsYahoo.js - headerOnloadHandler - url - "+ szPath);                       
              
-            var  szServerResponse = "+OK " +szHeaders.length + "\r\n"; 
-            szServerResponse += szHeaders
-            mainObject.serverComms(szServerResponse);
-          
-            mainObject.m_Log.Write("m_YahooLog.js - emailOnloadHandler - END");      
+                    mainObject.m_HttpComms.clean();  
+           
+                    for(i=0; i<oMSGData.aData.length; i++ )
+                    {
+                        var oData = oMSGData.aData[i];
+                        if (oData.szName.search(/^DEL$/i)!=-1)
+                            oData.szValue = ""; 
+                        else if (oData.szName.search(/FLG/i)!=-1)
+                            oData.szValue = 1;
+                        else if (oData.szName.search(/flags/i)!=-1)
+                            oData.szValue ="unread";
+
+                        mainObject.m_HttpComms.addValuePair(oData.szName, oData.szValue);
+                    }
+                    mainObject.m_HttpComms.addValuePair("Mid", oMSGData.szMSGUri.match(PatternYahooID)[1]);
+               
+                    //send request
+                    mainObject.m_HttpComms.setURI(szPath);
+                    mainObject.m_HttpComms.setRequestMethod("POST");
+                    var bResult = mainObject.m_HttpComms.send(mainObject.headerOnloadHandler); 
+                    mainObject.m_iStage ++;
+                    if (!bResult) throw new Error("httpConnection returned false");       
+                break;
+               
+                case 1: //marked as unread
+                    var  szServerResponse = "+OK " +mainObject.m_szHeader.length + "\r\n"; 
+                    szServerResponse += mainObject.m_szHeader
+                    mainObject.serverComms(szServerResponse);
+                break;
+            }
+            mainObject.m_Log.Write("m_YahooLog.js - headerOnloadHandler - END");      
         }
         catch(err)
         {
-            mainObject.m_Log.DebugDump("m_YahooLog.js: emailOnloadHandler : Exception : " 
+            mainObject.m_Log.DebugDump("m_YahooLog.js: headerOnloadHandler : Exception : " 
                                           + err.name 
                                           + ".\nError message: " 
                                           + err.message+ "\n"
