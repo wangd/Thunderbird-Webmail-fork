@@ -22,12 +22,12 @@
                        preference = "emptyTrash"
                        id="chkEmptyTrash"/>
                        
-             <!--download unread emails only
+             <!--download unread emails only  -->
             <checkbox label="&DownloadUnread.Label;" 
                       accesskey="&DownloadUnread.AccessKey;"
                       preference = "DownloadUnread"
                       id="chkDownloadUnread"/> 
-            -->
+          
             <spacer flex="2"/>
             
         </vbox>   
