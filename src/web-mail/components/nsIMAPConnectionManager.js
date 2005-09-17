@@ -6,44 +6,12 @@ const nsIMAPConnectionManagerProgID = "@mozilla.org/IMAPConnectionManager;1";
 /***********************  imap connectionManager ********************************/
 function nsIMAPConnectionManager()
 {
-    try
-    {
-        this.m_serverSocket = Components.classes["@mozilla.org/network/server-socket;1"].
-                                createInstance(Components.interfaces.nsIServerSocket);
-        
-       
-        var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
-        scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/server/imapConnectionHandler.js")
-        
-          
-        this.m_Log = new DebugLog("webmail.logging.comms", 
-                                      "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
-                                      "imapServerlog"); 
-        
-        this.m_Log.Write("nsIMAPConnectionManager.js - Constructor - START");   
-                    
-        //-1 error , 0 = stopped ,1 = waiting, 2= ruuning                       
-        this.m_iStatus = 0;               //error
-        this.m_aIMAPConnections = new Array();
-        
-        this.m_GarbageTimer = Components.classes["@mozilla.org/timer;1"].
-                                    createInstance(Components.interfaces.nsITimer);  
-        this.m_bGarbage = false;
-      
-        this.m_Log.Write("nsIMAPConnectionManager.js - Constructor - END");   
-    }
-    catch(e)
-    {
-         DebugDump("nsIMAPConnectionManager.js: Constructor : Exception : " 
-                              + e.name  
-                              + " line " 
-                              + e.linenumber
-                              + ".\nError message: " 
-                              + e.message);
-    }
+    this.m_serverSocket = null;
+    this.m_Log = null;   
+    this.m_GarbageTimer = null;
+    this.m_iStatus = 0;  //-1 error , 0 = stopped ,1 = waiting, 2= ruuning
+    this.m_aIMAPConnections = new Array();
+    this.m_bGarbage = false;
 }
 
 nsIMAPConnectionManager.prototype.Start = function()
@@ -251,6 +219,84 @@ nsIMAPConnectionManager.prototype.notify = function()
 
 
 
+nsIMAPConnectionManager.prototype.observe = function(aSubject, aTopic, aData) 
+{
+    switch(aTopic) 
+    {
+        case "xpcom-startup":
+            // this is run very early, right after XPCOM is initialized, but before
+            // user profile information is applied.
+            var obsSvc = Components.classes["@mozilla.org/observer-service;1"].
+                            getService(Components.interfaces.nsIObserverService);
+            obsSvc.addObserver(this, "profile-after-change", false);
+            obsSvc.addObserver(this, "quit-application", false);
+            
+            this.m_scriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                                    .getService(Components.interfaces.mozIJSSubScriptLoader);
+                                    
+            this.m_GarbageTimer = Components.classes["@mozilla.org/timer;1"]
+                                    .createInstance(Components.interfaces.nsITimer);  
+                                    
+            this.m_serverSocket = Components.classes["@mozilla.org/network/server-socket;1"]
+                                    .createInstance(Components.interfaces.nsIServerSocket);
+        break;
+        
+        case "profile-after-change":
+            // This happens after profile has been loaded and user preferences have been read.
+            // startup code here
+            this.m_scriptLoader .loadSubScript("chrome://web-mail/content/common/DebugLog.js");
+            this.m_scriptLoader .loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
+            this.m_scriptLoader .loadSubScript("chrome://web-mail/content/server/imapConnectionHandler.js");
+            this.m_Log = new DebugLog("webmail.logging.comms", 
+                                      "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
+                                      "imapServerlog"); 
+            this.intial();
+        break;
+        
+        case "quit-application": // shutdown code here
+            this.Stop();
+        break;
+        
+        case "app-startup":
+        break;
+        
+        default:
+            throw Components.Exception("Unknown topic: " + aTopic);
+    }
+}
+
+
+nsIMAPConnectionManager.prototype.intial = function ()
+{
+    try
+    {
+        this.m_Log.Write("nsIMAPConnectionManager : intial - START");
+        
+        var oPref = new Object();
+        oPref.Value = null;
+        
+        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+        WebMailPrefAccess.Get("bool","webmail.bUseIMAPServer",oPref); 
+        if (oPref.Value) 
+        {
+            this.m_Log.Write("nsIMAPConnectionManager : intial - IMAP server wanted");
+            if (this.Start())
+                this.m_Log.Write("nsIMAPConnectionManager : intial - IMAP server started");
+            else
+                this.m_Log.Write("nsIMAPConnectionManager : intial - IMAP server not started"); 
+        } 
+        
+        this.m_Log.Write("nsIMAPConnectionManager : intial - END"); 
+    }
+    catch(e)
+    {
+        this.m_Log.Write("nsIMAPConnectionManager :  Exception in intial " 
+                                        + e.name + 
+                                        ".\nError message: " 
+                                        + e.message + "\n"
+                                        + e.lineNumber);
+    }
+}
 
 
 /******************************************************************************/
@@ -259,7 +305,8 @@ nsIMAPConnectionManager.prototype.notify = function()
 nsIMAPConnectionManager.prototype.QueryInterface = function (iid)
 {
     if (!iid.equals(Components.interfaces.nsIIMAPConnectionManager) 
-		    && !iid.equals(Components.interfaces.nsISupports))
+		    && !iid.equals(Components.interfaces.nsISupports)
+                && !iid.equals(Components.interfaces.nsIObserver))
         throw Components.results.NS_ERROR_NO_INTERFACE;
         
     return this;
@@ -290,6 +337,27 @@ var nsIMAPConnectionManagerModule = new Object();
 
 nsIMAPConnectionManagerModule.registerSelf = function(compMgr, fileSpec, location, type)
 {
+    var catman = Components.classes["@mozilla.org/categorymanager;1"].
+                        getService(Components.interfaces.nsICategoryManager);
+        
+    catman.addCategoryEntry("xpcom-startup", 
+                            "IMAP Connection Manager", 
+                            nsIMAPConnectionManagerProgID, 
+                            true, 
+                            true); 
+                                  
+    catman.addCategoryEntry("xpcom-shutdown",
+                            "IMAP Connection Manager", 
+                            nsIMAPConnectionManagerProgID, 
+                            true, 
+                            true);                       
+                            
+    catman.addCategoryEntry("app-startup", 
+                            "IMAP Connection Manager", 
+                            "service," + nsIMAPConnectionManagerProgID, 
+                            true, 
+                            true);
+                            
     compMgr = compMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
     compMgr.registerFactoryLocation(nsIMAPConnectionManagerCID,
                                     "IMAP Connection Manager",
@@ -302,6 +370,13 @@ nsIMAPConnectionManagerModule.registerSelf = function(compMgr, fileSpec, locatio
 
 nsIMAPConnectionManagerModule.unregisterSelf = function(aCompMgr, aFileSpec, aLocation)
 {
+    var catman = Components.classes["@mozilla.org/categorymanager;1"].
+                            getService(Components.interfaces.nsICategoryManager);
+                            
+    catman.deleteCategoryEntry("xpcom-startup", "IMAP Connection Manager", true);
+    catman.deleteCategoryEntry("xpcom-shutdown", "IMAP Connection Manager", true);
+    catman.deleteCategoryEntry("app-startup", "IMAP Connection Manager", true);
+    
     aCompMgr = aCompMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
     aCompMgr.unregisterFactoryLocation(nsIMAPConnectionManagerProgID, aFileSpec);
 }
