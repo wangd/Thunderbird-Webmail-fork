@@ -300,7 +300,8 @@ nsSMTPConnectionManager.prototype.intial = function ()
 nsSMTPConnectionManager.prototype.QueryInterface = function (iid)
 {
     if (!iid.equals(Components.interfaces.nsISMTPConnectionManager) 
-		    && !iid.equals(Components.interfaces.nsISupports))
+		    && !iid.equals(Components.interfaces.nsISupports)
+                && !iid.equals(Components.interfaces.nsIObserver))
         throw Components.results.NS_ERROR_NO_INTERFACE;
         
     return this;
