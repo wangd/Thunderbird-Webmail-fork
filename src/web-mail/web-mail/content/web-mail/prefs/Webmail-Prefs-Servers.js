@@ -66,7 +66,7 @@ var gServersPane =
             }
     
             document.getElementById("imgPopStatus").setAttribute("value",iPOPvalue); //set pop status colour
-            document.getElementById("txtPopStatus").setAttribute("value",this.StatusText(iPOPvalue)); //set status text 
+            document.getElementById("txtPopStatus").value =this.StatusText(iPOPvalue); //set status text 
             
             
             //SMTP
@@ -83,7 +83,7 @@ var gServersPane =
             }
     
             document.getElementById("imgSMTPStatus").setAttribute("value",iSMTPvalue); //set SMTP status colour
-            document.getElementById("txtSMTPStatus").setAttribute("value",this.StatusText(iSMTPvalue)); //set status text 
+            document.getElementById("txtSMTPStatus").value = this.StatusText(iSMTPvalue); //set status text 
             
             
             //IMAP
@@ -100,7 +100,7 @@ var gServersPane =
             }
     
             document.getElementById("imgIMAPStatus").setAttribute("value",iIMAPvalue); //set pop status colour
-            document.getElementById("txtIMAPStatus").setAttribute("value",this.StatusText(iIMAPvalue)); //set status text 
+            document.getElementById("txtIMAPStatus").value = this.StatusText(iIMAPvalue); //set status text 
            
             
             this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - END");
@@ -133,5 +133,5 @@ var gServersPane =
         
         this.m_DebugLog.Write("Webmail-Prefs-Servers : StatusText - " + szString + " END");
         return szString;
-    }, 
+    },
 };

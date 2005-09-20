@@ -27,7 +27,7 @@
         <vbox>
             <tabbox flex="1">
                 <tabs>
-                    <tab label="&Status.Label;" accesskey="&Status.AccessKey;"/>
+                    <tab label="&Status.Label;" accesskey="&Status.AccessKey;" selected="true"/>
                     <tab label="&Enable.Label;" accesskey="&Enable.AccessKey;"/>
                     <tab label="&Ports.Label;"  accesskey="&Ports.AccessKey;"/>
                 </tabs>
@@ -59,7 +59,7 @@
                                          id="txtPopStatus" 
                                          class = "txtStatus" 
                                          size = "6" 
-                                         readonly = "true" 
+                                         readonly = "true"
                                          disabled = "true" 
                                          value="ERROR"/>
                             </groupbox>
