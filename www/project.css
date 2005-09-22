@@ -144,4 +144,6 @@ h1#mozdev-logo a
 	background-color: rgb(255, 255, 255);
 }
 
+.hiddenPic { display: none;
+    }
 
