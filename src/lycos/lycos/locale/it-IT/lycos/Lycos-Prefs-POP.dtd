@@ -3,5 +3,6 @@
 <!ENTITY JunkMail.AccessKey "I">
 <!ENTITY EmptyTrash.Label "Svuota il cestino">
 <!ENTITY EmptyTrash.AccessKey "S">
-<!ENTITY DownloadUnread.Label "Download unread emails only">
-<!ENTITY DownloadUnread.AccessKey "u">
+<!ENTITY DownloadUnread.Label "Scarica solo messaggi non letti">
+<!ENTITY DownloadUnread.AccessKey "n">
+

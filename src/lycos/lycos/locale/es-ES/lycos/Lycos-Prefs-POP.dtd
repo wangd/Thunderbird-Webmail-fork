@@ -1,7 +1,7 @@
+<!ENTITY DownloadUnread.AccessKey "m">
+<!ENTITY DownloadUnread.Label "Descargar sólo los mensajes no leídos">
+<!ENTITY EmptyTrash.AccessKey "V">
+<!ENTITY EmptyTrash.Label "Vaciar papelera">
 <!ENTITY JunkMail.AccessKey "B">
 <!ENTITY JunkMail.Label "Descargar Correo Basura">
 <!ENTITY MailServers.Label "POP">
-<!ENTITY EmptyTrash.Label "Vaciar papelera">
-<!ENTITY EmptyTrash.AccessKey "V">
-<!ENTITY DownloadUnread.Label "Download unread emails only">
-<!ENTITY DownloadUnread.AccessKey "u">

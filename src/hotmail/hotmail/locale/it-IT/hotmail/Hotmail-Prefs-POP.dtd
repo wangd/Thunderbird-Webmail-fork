@@ -1,6 +1,7 @@
 <!ENTITY MailServers.Label "POP">
 <!ENTITY JunkMail.Label "Scarica posta indesiderata">
 <!ENTITY JunkMail.AccessKey "I">
-<!ENTITY DownloadUnread.Label "Download unread emails only">
-<!ENTITY DownloadUnread.AccessKey "u">
+<!ENTITY DownloadUnread.Label "Scarica solo messaggi non letti">
+<!ENTITY DownloadUnread.AccessKey "n">
+
 
