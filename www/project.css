@@ -115,7 +115,7 @@
 h1#mozdev-logo 
 {
 	background-position: center;
-	background-image: url(http://webmail.mozdev.org/WebMailTitle.png) ! important;
+	background-image: url(http://webmail.mozdev.org/images/misc/WebMailTitle.png) ! important;
 	background-color: rgb(255, 255, 255) ! important;
 }
 
@@ -139,7 +139,7 @@ h1#mozdev-logo a
 
 .infoTab .infoHeader 
 {
-	background-image: url(http://webmail.mozdev.org/myTab.png)! important;;
+	background-image: url(http://webmail.mozdev.org/images/misc/myTab.png)! important;;
 	background-position: left top;
 	background-color: rgb(255, 255, 255);
 }
