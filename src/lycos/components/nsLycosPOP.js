@@ -136,7 +136,9 @@ nsLycos.prototype =
             else if (szDomain.search(/lycos.at/i)!=-1)    
                 szLocation= "http://webdav.lycos.at/httpmail.asp";  
             else if (szDomain.search(/lycos.nl/i)!=-1)    
-                szLocation= "http://webdav.lycos.nl/httpmail.asp";    
+                szLocation= "http://webdav.lycos.nl/httpmail.asp"; 
+            else if (szDomain.search(/lycos.fr/i)!=-1)
+                szLocation= "http://webdav.caramail.lycos.fr/httpmail.asp";   
             else
                 throw new Error("Unknown domain");
             
