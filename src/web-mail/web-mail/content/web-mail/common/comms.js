@@ -19,7 +19,10 @@ function Comms(parent , log)
         
         this.m_bHandleCookie = true;
         this.m_bHandleBounce = true;
-                
+        this.m_bHandleHttpAuth = false;
+        
+        this.m_szUserName = null;
+        this.m_szPassword = null;        
         this.m_URI = null;
         this.m_aHeaders = new Array();
         this.m_aFormData = new Array();
@@ -61,11 +64,7 @@ Comms.prototype =
         delete this.m_aFormData;
         this.m_aFormData = new Array();
     },
-  
-    setUser : function (szUser)
-    {
-        //for future use
-    },
+    
     
     setHandleCookies : function (bState)
     {
@@ -76,6 +75,24 @@ Comms.prototype =
     setHandleBounce : function (bState)
     {
         this.m_bHandleBounce = bState;
+    },
+    
+    
+    setHandleHttpAuth : function (bState)
+    {
+        this.m_bHandleHttpAuth = bState;
+    },
+    
+    
+    setUserName : function (szUserName)
+    {
+        this.m_szUserName = szUserName;
+    },
+    
+    
+    setPassword : function (szPassword)
+    {
+        this.m_szPassword = szPassword;
     },
     
     
@@ -313,6 +330,12 @@ Comms.prototype =
                                                                       oTemp.bOverRide);
                 HttpRequest.setRequestHeader(oTemp.szName, oTemp.szValue, oTemp.bOverRide);
             }     
+             
+            //add HTTP Auth
+            if (this.m_bHandleHttpAuth)
+            {
+            }
+            
                  
             //set data
             if (this.m_aFormData.length>0)
@@ -562,61 +585,64 @@ Comms.prototype =
             mainObject.m_Log.Write("comms.js - callback : \n" + szResponse);  
             
             //handle repsonse
-            var httpChannel = null;
-            if (mainObject.m_bHandleCookie || mainObject.m_bHandleBounce )
+            var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
+            mainObject.m_Log.Write("commd.js - callback - status :" +httpChannel.responseStatus );
+             
+            //handle cookies
+            if (mainObject.m_bHandleCookie)
             {
-                httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
-                mainObject.m_Log.Write("commd.js - callback - status :" +httpChannel.responseStatus );
-                 
-                //handle cookies
-                if (mainObject.m_bHandleCookie)
+                mainObject.m_Log.Write("comms.js - callback - Handling cookies");
+                
+                var szURL = httpChannel.URI.host;
+                mainObject.m_Log.Write("comms.js - callback - url - " + szURL);  
+                var aszTempDomain = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
+                mainObject.m_Log.Write("comms.js - callback - domain - " + aszTempDomain[0]); 
+                
+                //get cookies
+                try
                 {
-                    mainObject.m_Log.Write("comms.js - callback - Handling cookies");
-                    
-                    var szURL = httpChannel.URI.host;
-                    mainObject.m_Log.Write("comms.js - callback - url - " + szURL);  
-                    var aszTempDomain = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
-                    mainObject.m_Log.Write("comms.js - callback - domain - " + aszTempDomain[0]); 
-                    
-                    //get cookies
+                    var szCookies =  httpChannel.getResponseHeader("Set-Cookie");
+                    mainObject.m_Log.Write("comms.js - callback - received cookies \n" + szCookies);  
+                    mainObject.m_oCookies.addCookie( aszTempDomain[0], szCookies); 
+                }
+                catch(e)
+                {
+                    mainObject.m_Log.Write("comms.js - callback - no cookies found"); 
+                }     
+            }
+                
+               
+            //HTTP Auth
+            if (mainObject.m_bHandleHttpAuth)
+            {
+            }
+            
+                
+            //bounce handler
+            if (mainObject.m_bHandleBounce)
+            {
+                if ( httpChannel.responseStatus > 300 && httpChannel.responseStatus < 400)
+                {   var szLocation = null;
                     try
                     {
-                        var szCookies =  httpChannel.getResponseHeader("Set-Cookie");
-                        mainObject.m_Log.Write("comms.js - callback - received cookies \n" + szCookies);  
-                        mainObject.m_oCookies.addCookie( aszTempDomain[0], szCookies); 
+                        szLocation =  httpChannel.getResponseHeader("Location");
+                        mainObject.m_Log.Write("comms.js - callback - location \n" + szLocation);  
                     }
                     catch(e)
                     {
-                        mainObject.m_Log.Write("comms.js - callback - no cookies found"); 
-                    }     
-                }
-                
-                
-                //bounce handler
-                if (mainObject.m_bHandleBounce)
-                {
-                    if ( httpChannel.responseStatus > 300 && httpChannel.responseStatus < 400)
-                    {   var szLocation = null;
-                        try
-                        {
-                            szLocation =  httpChannel.getResponseHeader("Location");
-                            mainObject.m_Log.Write("comms.js - callback - location \n" + szLocation);  
-                        }
-                        catch(e)
-                        {
-                            throw new Error("Location header not found")
-                        } 
-                        var oCallback = mainObject.m_CallBack;        
-                        mainObject.clean();
-                        mainObject.setURI(szLocation);
-                        mainObject.setRequestMethod("GET");
-                        var bResult = mainObject.send(oCallback);                             
-                        if (!bResult) throw new Error("httpConnection returned false");
-                        return;
-                    }
+                        throw new Error("Location header not found")
+                    } 
+                    var oCallback = mainObject.m_CallBack;        
+                    mainObject.clean();
+                    mainObject.setURI(szLocation);
+                    mainObject.setRequestMethod("GET");
+                    var bResult = mainObject.send(oCallback);                             
+                    if (!bResult) throw new Error("httpConnection returned false");
+                    return;
                 }
             }
-            
+    
+    
             //let component handle response
             mainObject.m_CallBack (szResponse, event, mainObject.m_parent);
             
