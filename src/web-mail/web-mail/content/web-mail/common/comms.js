@@ -19,10 +19,8 @@ function Comms(parent , log)
         
         this.m_bHandleCookie = true;
         this.m_bHandleBounce = true;
-        this.m_bHandleHttpAuth = false;
-        
+       
         this.m_szUserName = null;
-        this.m_szPassword = null;        
         this.m_URI = null;
         this.m_aHeaders = new Array();
         this.m_aFormData = new Array();
@@ -78,21 +76,9 @@ Comms.prototype =
     },
     
     
-    setHandleHttpAuth : function (bState)
-    {
-        this.m_bHandleHttpAuth = bState;
-    },
-    
-    
     setUserName : function (szUserName)
     {
         this.m_szUserName = szUserName;
-    },
-    
-    
-    setPassword : function (szPassword)
-    {
-        this.m_szPassword = szPassword;
     },
     
     
@@ -331,10 +317,6 @@ Comms.prototype =
                 HttpRequest.setRequestHeader(oTemp.szName, oTemp.szValue, oTemp.bOverRide);
             }     
              
-            //add HTTP Auth
-            if (this.m_bHandleHttpAuth)
-            {
-            }
             
                  
             //set data
@@ -612,17 +594,13 @@ Comms.prototype =
             }
                 
                
-            //HTTP Auth
-            if (mainObject.m_bHandleHttpAuth)
-            {
-            }
-            
                 
             //bounce handler
             if (mainObject.m_bHandleBounce)
             {
                 if ( httpChannel.responseStatus > 300 && httpChannel.responseStatus < 400)
-                {   var szLocation = null;
+                {   
+                    var szLocation = null;
                     try
                     {
                         szLocation =  httpChannel.getResponseHeader("Location");
