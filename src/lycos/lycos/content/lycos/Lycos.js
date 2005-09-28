@@ -66,7 +66,7 @@ var gLycosStartUp =
             this.idCheck("lycos.at", "pop" ,cszLycosPOPContentID);
             this.idCheck("lycos.de", "pop" ,cszLycosPOPContentID);
             this.idCheck("lycos.es", "pop" ,cszLycosPOPContentID);  
-            this.idCheck("lycos.fr", "pop" ,cszLycosPOPContentID);
+            this.idCheck("caramail.com", "pop" ,cszLycosPOPContentID);
             this.idCheck("lycos.nl", "pop" ,cszLycosPOPContentID);
            
            /*
@@ -84,7 +84,7 @@ var gLycosStartUp =
             this.idCheck("lycos.at", "smtp" ,cszLycosSMTPContentID);
             this.idCheck("lycos.de", "smtp" ,cszLycosSMTPContentID);
             this.idCheck("lycos.es", "smtp" ,cszLycosSMTPContentID);  
-            this.idCheck("lycos.fr", "smtp" ,cszLycosSMTPContentID); 
+            this.idCheck("caramail.com", "smtp" ,cszLycosSMTPContentID); 
             this.idCheck("lycos.nl", "smtp" ,cszLycosSMTPContentID);
                                
             this.m_Log.Write("Lycos.js : notify - END");
