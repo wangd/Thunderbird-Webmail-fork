@@ -115,18 +115,6 @@
 }
 
 
-
-#mozdevLogo
-{
-	color: rgb(255, 255, 255) ! important;
-	opacity: 0.495 ! important;
-	background-image: url(http://www.mozdev.org/sharedimages/mozdev-noir.png) ! important;
-	float: right ! important;
-	height: 12px;
-	background-position: right center;
-}
-
-
 #main-content-no-nav 
 {
 	margin-top: 0em;
