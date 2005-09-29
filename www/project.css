@@ -115,15 +115,8 @@
 }
 
 
-h1#mozdev-logo 
-{
-	background-position: center;
-	background-image: url(http://webmail.mozdev.org/images/misc/WebMailTitle.png) ! important;
-	background-color: rgb(255, 255, 255) ! important;
-}
 
-
-h1#mozdev-logo a 
+#mozdev-logo
 {
 	color: rgb(255, 255, 255) ! important;
 	opacity: 0.495 ! important;
