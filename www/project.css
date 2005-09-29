@@ -105,6 +105,16 @@
 	padding: 10px;
 }
 
+#header 
+{ 
+    background-repeat: no-repeat;
+    background-position: center;
+	background-image: url(http://webmail.mozdev.org/images/misc/WebMailTitle.png) 
+    background-color: transparent;
+    min-height: 75px;
+    margin-left: 70px;
+}
+
 
 #mozdev-date 
 {
@@ -185,16 +195,4 @@ h1#mozdev-logo a
 .whatsupNote 
 { 
     margin-left: 8em;
-}
-
-
-#header 
-{ 
-    background-repeat: no-repeat;
-    background-position: left top;
-    background-image: url(graphics/misc/webmail.png);
-    width: 300px;
-    background-color: transparent;
-    min-height: 75px;
-    margin-left: 70px;
 }
