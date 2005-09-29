@@ -110,7 +110,7 @@
     background-repeat: no-repeat;
     background-position: center;
 	background-image: url(http://webmail.mozdev.org/images/misc/WebMailTitle.png) 
-    background-color: transparent;
+    background-color: rgb(255, 255, 255) ! important;
     min-height: 75px;
     margin-left: 70px;
 }
@@ -140,6 +140,10 @@ h1#mozdev-logo a
 	margin-top: 0em;
 }
 
+body 
+{ 
+    background-color: rgb(255, 255, 255);
+}
 
 #footer 
 { 
