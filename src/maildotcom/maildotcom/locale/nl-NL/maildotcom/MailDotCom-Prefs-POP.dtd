@@ -1,6 +1,6 @@
 <!ENTITY MailServers.Label "POP">
 <!ENTITY EmptyTrash.Label "Prullenbak leegmaken">
 <!ENTITY EmptyTrash.AccessKey "l">
-<!ENTITY DownloadUnread.Label "Download unread emails only">
-<!ENTITY DownloadUnread.AccessKey "u">
+<!ENTITY DownloadUnread.Label "Download alleen ongelezen berichten">
+<!ENTITY DownloadUnread.AccessKey "o">
 
