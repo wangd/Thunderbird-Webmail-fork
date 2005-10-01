@@ -1,6 +1,5 @@
 <!ENTITY MailServers.Label "POP">
 <!ENTITY JunkMail.Label "Baixa el correu brossa">
 <!ENTITY JunkMail.AccessKey "b">
-<!ENTITY DownloadUnread.Label "Download unread emails only">
-<!ENTITY DownloadUnread.AccessKey "u">
-
+<!ENTITY DownloadUnread.Label "Baixa només els missatges per llegir">
+<!ENTITY DownloadUnread.AccessKey "p">
