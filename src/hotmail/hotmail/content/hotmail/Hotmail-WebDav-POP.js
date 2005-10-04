@@ -5,7 +5,6 @@ function HotmailWebDav(oResponseStream, oLog)
         var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-        scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-AuthTokenManager.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/comms.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-MSG.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
@@ -17,8 +16,7 @@ function HotmailWebDav(oResponseStream, oLog)
         this.m_szPassWord = null; 
         this.m_oResponseStream = oResponseStream;       
         this.m_HttpComms = new Comms(this,this.m_Log); 
-        this.m_HttpComms.setHandleBounce(false);
-        this.m_AuthToken = new AuthTokenHandler(this.m_Log);
+        this.m_HttpComms.setHandleHttpAuth(true);
         this.m_iStage=0; 
         this.m_szInBoxURI= null;
         this.m_szJunkMailURI = null;
@@ -80,13 +78,14 @@ HotmailWebDav.prototype =
             
             this.m_szUserName = szUserName;
             this.m_szPassWord = szPassWord;
+            this.m_HttpComms.clean();
             
             if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
-            
+            this.m_HttpComms.setUserName(this.m_szUserName);
+            this.m_HttpComms.setPassword(this.m_szPassWord);
             this.m_iStage= 0;
-            this.m_HttpComms.clean();
             this.m_HttpComms.setContentType(-1);
-            this.m_HttpComms.setURI("http://services.msn.com/svcs/hotmail/httpmail.asp");
+            this.m_HttpComms.setURI("http://oe.hotmail.com/svcs/hotmail/httpmail.asp");
             this.m_HttpComms.setRequestMethod("PROPFIND");
             this.m_HttpComms.addData(HotmailPOPSchema,"text/xml");
             var bResult = this.m_HttpComms.send(this.loginOnloadHandler);                             
@@ -119,102 +118,20 @@ HotmailWebDav.prototype =
             //if this fails we've gone somewhere new
             mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - status :" +httpChannel.responseStatus );
            
-            if (httpChannel.responseStatus != 200 && 
-                    httpChannel.responseStatus != 207 &&
-                        httpChannel.responseStatus != 302  &&
-                            httpChannel.responseStatus != 401) 
+            if (httpChannel.responseStatus != 200 && httpChannel.responseStatus != 207) 
                 throw new Error("return status " + httpChannel.responseStatus);
             
             mainObject.m_HttpComms.clean();
             
-            //bounce handler
-            if ( httpChannel.responseStatus == 302)
-            {
-                var szLocation = null;
-                try
-                {
-                    szLocation =  httpChannel.getResponseHeader("Location");
-                    mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - location \n" + szLocation);  
-                }
-                catch(e)
-                {
-                    throw new Error("Location header not found")
-                } 
+            mainObject.m_szFolderURI = szResponse.match(patternHotmailPOPFolder)[1];
+            mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - get folder url - " + mainObject.m_szFolderURI);
+            mainObject.m_szTrashURI = szResponse.match(patternHotmailPOPTrash)[1];
+            mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - get trash url - " + mainObject.m_szTrashURI);
             
-                mainObject.m_HttpComms.setContentType(-1);
-                mainObject.m_HttpComms.setURI(szLocation);
-                mainObject.m_HttpComms.setRequestMethod("PROPFIND");
-                mainObject.m_HttpComms.addData(HotmailPOPSchema,"text/xml");
-                var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);                             
-                if (!bResult) throw new Error("httpConnection returned false");
-            }
-            //Authenticate
-            else if  (httpChannel.responseStatus == 401)
-            {
-                mainObject.m_iStage++;
-                var szURL = mainObject.m_IOS.newURI(httpChannel.URI.spec,null,null).prePath;
-                var aszHost = szURL.match(patternHotmailPOPSRuri); 
-                
-                try
-                {
-                    var szAuthenticate =  httpChannel.getResponseHeader("www-Authenticate");
-                    mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - www-Authenticate " + szAuthenticate);                      
-                }
-                catch(err)
-                {
-                     mainObject.m_Log.DebugDump("HotmailWebDav.js: loginHandler  Authenitcation: Exception : " 
-                                                      + err.name 
-                                                      + ".\nError message: " 
-                                                      + err.message+ "\n"
-                                                      + err.lineNumber);
-                                                      
-                    throw new Error("szAuthenticate header not found")
-                }     
-                    
-                //basic or digest
-                if (szAuthenticate.search(/basic/i)!= -1)
-                {//authentication on the cheap
-                    throw new Error("unspported authentication method");
-                }
-                else if (szAuthenticate.search(/digest/i)!= -1)
-                {   
-                    //get realm
-                    var szRealm = szAuthenticate.match(/realm="(.*?)"/)[1];
-                    mainObject.m_AuthToken.addToken(szRealm, 
-                                                    szAuthenticate , 
-                                                    httpChannel.URI.path ,
-                                                    mainObject.m_szUserName, 
-                                                    mainObject.m_szPassWord);
-                                                    
-                    var szAuthString = mainObject.m_AuthToken.findToken(szRealm);
-                    
-                    mainObject.m_HttpComms.setContentType(-1);
-                    mainObject.m_HttpComms.setURI(httpChannel.URI.spec);
-                    mainObject.m_HttpComms.addRequestHeader("Authorization", szAuthString , false);
-                    mainObject.m_HttpComms.setRequestMethod("PROPFIND");
-                    mainObject.m_HttpComms.addData(HotmailPOPSchema,"text/xml");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);                             
-                    if (!bResult) throw new Error("httpConnection returned false");
-               }
-                else
-                    throw new Error("unknown authentication method");
-            } 
-            else //everything else
-            {
-                mainObject.m_iStage++;
-                mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - get url - start");
-                mainObject.m_iAuth=0; //reset login counter
-                mainObject.m_szFolderURI = szResponse.match(patternHotmailPOPFolder)[1];
-                mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - get folder url - " + mainObject.m_szFolderURI);
-                mainObject.m_szTrashURI = szResponse.match(patternHotmailPOPTrash)[1];
-                mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - get trash url - " + mainObject.m_szTrashURI);
-                
-                //server response
-                mainObject.serverComms("+OK Your in\r\n");
-                mainObject.m_bAuthorised = true;
-                        
-                mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - get url - end"); 
-            }
+            //server response
+            mainObject.serverComms("+OK Your in\r\n");
+            mainObject.m_bAuthorised = true;
+
             mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - END");
         }
         catch(err)
@@ -244,19 +161,12 @@ HotmailWebDav.prototype =
              
             if (this.m_szFolderURI == null) return false;
             this.m_Log.Write("HotmailWebDav.js - getNumMessages - mail box url " + this.m_szFolderURI); 
-                       
-            //Auth  
-            var szURL = this.m_IOS.newURI(this.m_szFolderURI,null,null).prePath;
-            var aszRealm = szURL.match(patternHotmailPOPSRuri); 
-            var szAuthString = this.m_AuthToken.findToken(aszRealm);
-            this.m_Log.Write("HotmailWebDav.js - getNumMessages - Auth " + szAuthString);                   
-            
+                                   
             this.m_HttpComms.clean();
             this.m_HttpComms.setContentType(-1);
             this.m_HttpComms.setURI(this.m_szFolderURI);
             this.m_HttpComms.setRequestMethod("PROPFIND");
             this.m_HttpComms.addData(HotmailPOPFolderSchema,"text/xml");
-            this.m_HttpComms.addRequestHeader("Authorization", szAuthString , false);
             var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler);                             
             if (!bResult) throw new Error("httpConnection returned false");
            
@@ -300,20 +210,13 @@ HotmailWebDav.prototype =
                     mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - inBox - " + mainObject.m_szInBoxURI);
                     mainObject.m_szJunkMailURI = szResponse.match(patternHotmailPOPTrashFolder)[1];
                     mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - junkmail - " + mainObject.m_szJunkMailURI);
-                     
-                    //Auth 
-                    var szURL = mainObject.m_IOS.newURI(mainObject.m_szInBoxURI,null,null).prePath;
-                    var aszRealm = szURL.match(patternHotmailPOPSRuri); 
-                    mainObject.m_Log.Write("HotmailWebDav.js - getNumMessages - realm " + aszRealm); 
-                    var szAuthString = mainObject.m_AuthToken.findToken(aszRealm);
-                    mainObject.m_Log.Write("HotmailWebDav.js - getNumMessages - Auth " + szAuthString);                   
                    
+                     
                     //load mail box               
                     mainObject.m_HttpComms.setContentType(-1);
                     mainObject.m_HttpComms.setURI(mainObject.m_szInBoxURI);
                     mainObject.m_HttpComms.setRequestMethod("PROPFIND");
                     mainObject.m_HttpComms.addData(HotmailPOPMailSchema,"text/xml");
-                    mainObject.m_HttpComms.addRequestHeader("Authorization", szAuthString , false);
                     var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler);                             
                     if (!bResult) throw new Error("httpConnection returned false");          
                   
@@ -410,19 +313,10 @@ HotmailWebDav.prototype =
                     if (mainObject.m_bUseJunkMail && !mainObject.m_bJunkMail)
                     {
                         //load junkmail
-                        
-                        //Auth 
-                        var szURL = mainObject.m_IOS.newURI(mainObject.m_szJunkMailURI,null,null).prePath;
-                        var aszRealm = szURL.match(patternHotmailPOPSRuri); 
-                        mainObject.m_Log.Write("HotmailWebDav.js - getNumMessages - realm " + aszRealm); 
-                        var szAuthString = mainObject.m_AuthToken.findToken(aszRealm);
-                        mainObject.m_Log.Write("HotmailWebDav.js - getNumMessages - Auth " + szAuthString);                   
-                        
                         mainObject.m_HttpComms.setContentType(-1);
                         mainObject.m_HttpComms.setURI(mainObject.m_szJunkMailURI);
                         mainObject.m_HttpComms.setRequestMethod("PROPFIND");
                         mainObject.m_HttpComms.addData(HotmailPOPMailSchema,"text/xml");
-                        mainObject.m_HttpComms.addRequestHeader("Authorization", szAuthString , false);
                         var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler);                             
                         if (!bResult) throw new Error("httpConnection returned false");
                         mainObject.m_bJunkMail = true;
@@ -578,13 +472,7 @@ HotmailWebDav.prototype =
             var oMSG = this.m_aMsgDataStore[lID-1];
             var szMsgID = oMSG.szMSGUri;
             this.m_Log.Write("HotmailWebDav.js - getMessage - msg id" + szMsgID); 
-                      
-            //Auth 
-            var szURL = this.m_IOS.newURI(szMsgID,null,null).prePath;
-            var aszRealm = szURL.match(patternHotmailPOPSRuri); 
-            var szAuthString = this.m_AuthToken.findToken(aszRealm);
-            this.m_Log.Write("HotmailWebDav.js - getMessages - Auth " + szAuthString);                   
-            
+        
             this.m_bJunkMail = oMSG.bJunkFolder;
             
             //get email
@@ -592,7 +480,6 @@ HotmailWebDav.prototype =
             this.m_HttpComms.setContentType(-1);
             this.m_HttpComms.setURI(szMsgID);
             this.m_HttpComms.setRequestMethod("GET");
-            this.m_HttpComms.addRequestHeader("Authorization", szAuthString , false);
             var bResult = this.m_HttpComms.send(this.emailOnloadHandler);                             
             if (!bResult) throw new Error("httpConnection returned false");
             this.m_iStage=0; 
@@ -641,12 +528,6 @@ HotmailWebDav.prototype =
                     mainObject.m_HttpComms.setURI(szUri);
                     mainObject.m_HttpComms.setRequestMethod("PROPPATCH");
                     mainObject.m_HttpComms.addData(HotmailPOPReadSchema,"text/xml");
-                    
-                    var aszRealm = szUri.match(patternHotmailPOPSRuri); 
-                    var szAuthString = mainObject.m_AuthToken.findToken(aszRealm);
-                    mainObject.m_Log.Write("HotmailWebDav.js - getMessages - Auth " + szAuthString); 
-                    mainObject.m_HttpComms.addRequestHeader("Authorization", szAuthString , false);
-                    
                     var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler);          
                     mainObject.m_iStage++;          
                 break;
@@ -686,14 +567,7 @@ HotmailWebDav.prototype =
             //create URL
             var szPath = this.m_aMsgDataStore[lID-1].szMSGUri;
             this.m_Log.Write("HotmailWebDav.js - deleteMessage - id " + szPath );
-                       
-            var szURL = this.m_IOS.newURI(szPath,null,null).prePath;
-                                     
-            //Auth 
-            var aszRealm = szURL.match(patternHotmailPOPSRuri); 
-            var szAuthString = this.m_AuthToken.findToken(aszRealm);
-            this.m_Log.Write("HotmailWebDav.js - getNumMessages - Auth " + szAuthString);                   
-            
+                                                         
             this.m_iStage=0;      
             this.m_HttpComms.clean();
             this.m_HttpComms.setURI(szPath);

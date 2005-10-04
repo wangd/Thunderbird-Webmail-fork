@@ -5,7 +5,6 @@ function HotmailSMTPWebDav(oResponseStream, oLog, bSaveCopy)
         var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-        scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-AuthTokenManager.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/comms.js");
                     
         this.m_Log = oLog; 
@@ -16,8 +15,7 @@ function HotmailSMTPWebDav(oResponseStream, oLog, bSaveCopy)
         this.m_szPassWord = null;
         this.m_oResponseStream = oResponseStream;       
         this.m_HttpComms = new Comms(this,this.m_Log); 
-        this.m_HttpComms.setHandleBounce(false);
-        this.m_AuthToken = new AuthTokenHandler(this.m_Log);
+        this.m_HttpComms.setHandleHttpAuth(true);
         this.m_bSaveCopy =  bSaveCopy;
         
         this.m_iStage=0; 
@@ -60,6 +58,8 @@ HotmailSMTPWebDav.prototype =
             
             this.m_iStage= 0;
             this.m_HttpComms.clean();
+            this.m_HttpComms.setUserName(this.m_szUserName);
+            this.m_HttpComms.setPassword(this.m_szPassWord);
             this.m_HttpComms.setContentType(-1);
             this.m_HttpComms.setURI("http://services.msn.com/svcs/hotmail/httpmail.asp");
             this.m_HttpComms.setRequestMethod("PROPFIND");
@@ -94,101 +94,22 @@ HotmailSMTPWebDav.prototype =
             //if this fails we've gone somewhere new
             mainObject.m_Log.Write("HotmailWD-SMTP.js - loginOnloadHandler - status :" +httpChannel.responseStatus );
            
-            if (httpChannel.responseStatus != 200 && 
-                    httpChannel.responseStatus != 207 &&
-                        httpChannel.responseStatus != 302  &&
-                            httpChannel.responseStatus != 401) 
+            if (httpChannel.responseStatus != 200 && httpChannel.responseStatus != 207 ) 
                 throw new Error("return status " + httpChannel.responseStatus);
             
             mainObject.m_HttpComms.clean();
             
-            //bounce handler
-            if ( httpChannel.responseStatus == 302)
-            {
-                var szLocation = null;
-                try
-                {
-                    szLocation =  httpChannel.getResponseHeader("Location");
-                    mainObject.m_Log.Write("HotmailWD-SMTP.js - loginOnloadHandler - location \n" + szLocation);  
-                }
-                catch(e)
-                {
-                    throw new Error("Location header not found")
-                } 
+            mainObject.m_iStage++;
+            mainObject.m_Log.Write("HotmailWD-SMTP.js - loginOnloadHandler - get url - start");
+            mainObject.m_iAuth=0; //reset login counter
+           
+            mainObject.m_szSendUri = szResponse.match(HotmailSendMsgPattern)[1];
+            mainObject.m_Log.Write("HotmailWD-SMTP.js - loginOnloadHandler - Send URi - " +mainObject.m_szSendUri);
             
-                mainObject.m_HttpComms.setContentType(-1);
-                mainObject.m_HttpComms.setURI(szLocation);
-                mainObject.m_HttpComms.setRequestMethod("PROPFIND");
-                mainObject.m_HttpComms.addData(HotmailSMTPSchema,"text/xml");
-                var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);                             
-                if (!bResult) throw new Error("httpConnection returned false");
-            }
-            //Authenticate
-            else if  (httpChannel.responseStatus == 401)
-            {
-                mainObject.m_iStage++;
-                var szURL = mainObject.m_IOS.newURI(httpChannel.URI.spec,null,null).prePath;
-                var aszHost = szURL.match(patternHotmailSMTPSRuri); 
-                
-                try
-                {
-                    var szAuthenticate =  httpChannel.getResponseHeader("www-Authenticate");
-                    mainObject.m_Log.Write("HotmailWD-SMTP.js - loginOnloadHandler - www-Authenticate " + szAuthenticate);                      
-                }
-                catch(err)
-                {
-                     mainObject.m_Log.DebugDump("HotmailWD-SMTP.js: loginHandler  Authenitcation: Exception : " 
-                                                      + err.name 
-                                                      + ".\nError message: " 
-                                                      + err.message+ "\n"
-                                                      + err.lineNumber);
-                                                      
-                    throw new Error("szAuthenticate header not found")
-                }     
-                    
-                //basic or digest
-                if (szAuthenticate.search(/basic/i)!= -1)
-                {//authentication on the cheap
-                    throw new Error("unspported authentication method");
-                }
-                else if (szAuthenticate.search(/digest/i)!= -1)
-                {   
-                    //get realm
-                    var szRealm = szAuthenticate.match(/realm="(.*?)"/)[1];
-                    mainObject.m_AuthToken.addToken(szRealm, 
-                                                    szAuthenticate , 
-                                                    httpChannel.URI.path ,
-                                                    mainObject.m_szUserName, 
-                                                    mainObject.m_szPassWord);
-                                                    
-                    var szAuthString = mainObject.m_AuthToken.findToken(szRealm);
-                    
-                    mainObject.m_HttpComms.setContentType(-1);
-                    mainObject.m_HttpComms.setURI(httpChannel.URI.spec);
-                    mainObject.m_HttpComms.addRequestHeader("Authorization", szAuthString , false);
-                    mainObject.m_HttpComms.setRequestMethod("PROPFIND");
-                    mainObject.m_HttpComms.addData(HotmailSMTPSchema,"text/xml");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);                             
-                    if (!bResult) throw new Error("httpConnection returned false");
-               }
-                else
-                    throw new Error("unknown authentication method");
-            } 
-            else //everything else
-            {
-                mainObject.m_iStage++;
-                mainObject.m_Log.Write("HotmailWD-SMTP.js - loginOnloadHandler - get url - start");
-                mainObject.m_iAuth=0; //reset login counter
-               
-                mainObject.m_szSendUri = szResponse.match(HotmailSendMsgPattern)[1];
-                mainObject.m_Log.Write("HotmailWD-SMTP.js - loginOnloadHandler - Send URi - " +mainObject.m_szSendUri);
-                
-                //server response
-                mainObject.serverComms("235 Your In\r\n");
-                mainObject.m_bAuthorised = true;
-                        
-                mainObject.m_Log.Write("HotmailWD-SMTP.js - loginOnloadHandler - get url - end"); 
-            }
+            //server response
+            mainObject.serverComms("235 Your In\r\n");
+            mainObject.m_bAuthorised = true;
+            
             mainObject.m_Log.Write("HotmailWD-SMTP.js - loginOnloadHandler - END");
         }
         catch(err)
@@ -229,12 +150,6 @@ HotmailSMTPWebDav.prototype =
             this.m_HttpComms.setRequestMethod("POST");
             this.m_HttpComms.addRequestHeader("SAVEINSENT", this.m_bSaveCopy?"t":"f", false); 
             this.m_HttpComms.addData(szMsg,"message/rfc821");
-            
-            var szURL = this.m_IOS.newURI(this.m_szSendUri,null,null).prePath;
-            var aszRealm = szURL.match(patternHotmailSMTPSRuri); 
-            var szAuthString = this.m_AuthToken.findToken(aszRealm);
-                          
-            this.m_HttpComms.addRequestHeader("Authorization", szAuthString , false);  
             var bResult = this.m_HttpComms.send(this.composerOnloadHandler);  
             if (!bResult) throw new Error("httpConnection returned false");
             
