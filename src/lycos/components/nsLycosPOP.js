@@ -33,7 +33,6 @@ function nsLycos()
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/comms.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/base64.js");
         scriptLoader.loadSubScript("chrome://lycos/content/Lycos-POPMSG.js");
         
         
@@ -46,13 +45,12 @@ function nsLycos()
         
         this.m_Log.Write("nsLycos.js - Constructor - START");   
        
-        this.m_szUserNameDomain = null;   
+        this.m_szUserName = null;   
         this.m_szPassWord = null; 
         this.m_oResponseStream = null;  
-        this.m_HttpComms = new Comms(this,this.m_Log);     
+        this.m_HttpComms = new Comms(this,this.m_Log); 
+        this.m_HttpComms.setHandleHttpAuth(true);    
         this.m_bAuthorised = false; 
-        this.m_szAuthString = null;
-        this.m_iAuth = 0;
         this.m_iStage=0; 
         this.m_szInBoxURI= null;
         this.m_szJunkMailURI = null;
@@ -97,8 +95,8 @@ function nsLycos()
 
 nsLycos.prototype =
 {
-    get userName() {return this.m_szUserNameDomain;},
-    set userName(userName) {return this.m_szUserNameDomain = userName;},
+    get userName() {return this.m_szUserName;},
+    set userName(userName) {return this.m_szUserName = userName;},
     
     get passWord() {return this.m_szPassWord;},
     set passWord(passWord) {return this.m_szPassWord = passWord;},
@@ -114,13 +112,13 @@ nsLycos.prototype =
         try
         {
             this.m_Log.Write("nsLycos.js - logIN - START");   
-            this.m_Log.Write("nsLycos.js - logIN - Username: " + this.m_szUserNameDomain 
+            this.m_Log.Write("nsLycos.js - logIN - Username: " + this.m_szUserName 
                                                    + " Password: "  + this.m_szPassWord 
                                                    + " stream: "    + this.m_oResponseStream);
             
-            if (!this.m_szUserNameDomain || !this.m_oResponseStream || !this.m_szPassWord) return false;
+            if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
             
-            var szTempUserName = this.m_szUserNameDomain.split("@");
+            var szTempUserName = this.m_szUserName.split("@");
             this.m_Log.Write("nsLycos.js - logIN - doamain " + szTempUserName); 
             var szDomain = szTempUserName[1];
             
@@ -143,6 +141,8 @@ nsLycos.prototype =
                 throw new Error("Unknown domain");
             
             this.m_HttpComms.clean();
+            this.m_HttpComms.setUserName(this.m_szUserName);
+            this.m_HttpComms.setPassword(this.m_szPassWord);
             this.m_HttpComms.setContentType(-1);
             this.m_HttpComms.setURI(szLocation);
             this.m_HttpComms.setRequestMethod("PROPFIND");
@@ -177,70 +177,18 @@ nsLycos.prototype =
             
             //if this fails we've gone somewhere new
             mainObject.m_Log.Write("nsLycos - loginOnloadHandler - status :" +httpChannel.responseStatus );
-            if (httpChannel.responseStatus != 200 
-                    && httpChannel.responseStatus != 207 
-                        && httpChannel.responseStatus != 401) 
+            if (httpChannel.responseStatus != 200 && httpChannel.responseStatus != 207) 
                 throw new Error("return status " + httpChannel.responseStatus);
             
-                    
-            //Authenticate
-            if  (httpChannel.responseStatus == 401)
-            {
-                if ( mainObject.m_iAuth==2) throw new Error("login error");
-                
-                try
-                {                
-                    var szAuthenticate =  httpChannel.getResponseHeader("www-Authenticate");
-                    mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - www-Authenticate " + szAuthenticate);
-                    mainObject.m_iAuth++;
-                }
-                catch(err)
-                {                   
-                    throw new Error("szAuthenticate header not found")
-                }     
-                    
-                //basic or digest
-                if (szAuthenticate.search(/basic/i)!= -1)
-                {//authentication on the cheap
-                    mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - basic Authenticate");
-                   
-                    if (!mainObject.m_szAuthString) 
-                    {
-                        var oBase64 = new base64();
-                        mainObject.m_szAuthString ="Basic ";
-                        mainObject.m_szAuthString += oBase64.encode(mainObject.m_szUserNameDomain+":"+mainObject.m_szPassWord);
-                    }
-                    mainObject.m_HttpComms.setContentType(-1);
-                    mainObject.m_HttpComms.setURI(httpChannel.URI.spec);
-                    mainObject.m_HttpComms.setRequestMethod("PROPFIND");
-                    mainObject.m_HttpComms.addData(LycosSchema,"text/xml");
-                    mainObject.m_HttpComms.addRequestHeader("Authorization", mainObject.m_szAuthString , false);
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);                             
-                    if (!bResult) throw new Error("httpConnection returned false");
-                }
-                else if (szAuthenticate.search(/digest/i)!= -1)
-                {
-                    throw new Error("unspported authentication method");
-                }
-                else
-                    throw new Error("unknown authentication method");
-            } 
-            else  //everything else
-            {
-                mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - get url - start");
-                mainObject.m_iAuth=0; //reset login counter
-                mainObject.m_szFolderURI = szResponse.match(LycosFolderPattern)[1];
-                mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - get folder url - " + mainObject.m_szFolderURI);
-                mainObject.m_szTrashURI = szResponse.match(LycosTrashPattern)[1];
-                mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - get trash url - " + mainObject.m_szTrashURI);
-                
-                //server response
-                mainObject.serverComms("+OK Your in\r\n");
-                mainObject.m_bAuthorised = true;
-                        
-                mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - get url - end"); 
-            }
-           
+            mainObject.m_szFolderURI = szResponse.match(LycosFolderPattern)[1];
+            mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - get folder url - " + mainObject.m_szFolderURI);
+            mainObject.m_szTrashURI = szResponse.match(LycosTrashPattern)[1];
+            mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - get trash url - " + mainObject.m_szTrashURI);
+            
+            //server response
+            mainObject.serverComms("+OK Your in\r\n");
+            mainObject.m_bAuthorised = true;
+                             
             mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - END");
         }
         catch(err)
@@ -251,7 +199,7 @@ nsLycos.prototype =
                                           + err.message+ "\n"
                                           + err.lineNumber);
                                               
-            mainObject.serverComms("-ERR Comms Error from "+ this.m_szUserNameDomain+"\r\n");
+            mainObject.serverComms("-ERR Comms Error from "+ mainObject.m_szUserName+"\r\n");
         }
     },
     
@@ -273,7 +221,6 @@ nsLycos.prototype =
             this.m_HttpComms.setURI(this.m_szFolderURI);
             this.m_HttpComms.setRequestMethod("PROPFIND");
             this.m_HttpComms.addData(LycosFolderSchema,"text/xml");
-            this.m_HttpComms.addRequestHeader("Authorization", this.m_szAuthString , false);
             var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler);                             
             if (!bResult) throw new Error("httpConnection returned false");
                            
@@ -323,7 +270,6 @@ nsLycos.prototype =
                     mainObject.m_HttpComms.setURI(mainObject.m_szInBoxURI);
                     mainObject.m_HttpComms.setRequestMethod("PROPFIND");
                     mainObject.m_HttpComms.addData(LycosMailSchema,"text/xml");
-                    mainObject.m_HttpComms.addRequestHeader("Authorization", mainObject.m_szAuthString , false);
                     var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler);                             
                     if (!bResult) throw new Error("httpConnection returned false");
                                         
@@ -414,7 +360,6 @@ nsLycos.prototype =
                         mainObject.m_HttpComms.setURI(mainObject.m_szJunkMailURI);
                         mainObject.m_HttpComms.setRequestMethod("PROPFIND");
                         mainObject.m_HttpComms.addData(LycosMailSchema,"text/xml");
-                        mainObject.m_HttpComms.addRequestHeader("Authorization", mainObject.m_szAuthString , false);
                         var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler);                             
                         if (!bResult) throw new Error("httpConnection returned false");
                         mainObject.m_bJunkMail= true;
@@ -436,7 +381,7 @@ nsLycos.prototype =
                                               + err.message + "\n"
                                               + err.lineNumber);
             
-            mainObject.serverComms("-ERR Comms Error from "+ this.m_szUserNameDomain+"\r\n");
+            mainObject.serverComms("-ERR Comms Error from "+ mainObject.m_szUserName+"\r\n");
         }
     },
     
@@ -573,7 +518,6 @@ nsLycos.prototype =
             this.m_HttpComms.setContentType(-1);
             this.m_HttpComms.setURI(szMsgID);
             this.m_HttpComms.setRequestMethod("GET");
-            this.m_HttpComms.addRequestHeader("Authorization", this.m_szAuthString , false);
             var bResult = this.m_HttpComms.send(this.emailOnloadHandler);                             
             if (!bResult) throw new Error("httpConnection returned false");
                   
@@ -622,7 +566,6 @@ nsLycos.prototype =
                     mainObject.m_HttpComms.setURI(szUri);
                     mainObject.m_HttpComms.setRequestMethod("PROPPATCH");
                     mainObject.m_HttpComms.addData(LycosReadSchema,"text/xml");
-                    mainObject.m_HttpComms.addRequestHeader("Authorization", mainObject.m_szAuthString , false);
                     var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler);          
                     mainObject.m_iStage++;          
                 break;
@@ -643,7 +586,7 @@ nsLycos.prototype =
                                               + err.message+ "\n"
                                               + err.lineNumber);
             
-            mainObject.serverComms("-ERR Comms Error from "+ this.m_szUserNameDomain+"\r\n");
+            mainObject.serverComms("-ERR Comms Error from "+ mainObject.m_szUserName+"\r\n");
         }    
     },
                                     
@@ -671,7 +614,6 @@ nsLycos.prototype =
             var szDestination= this.m_szTrashURI + szMsgID;
             this.m_Log.Write("nsLycos.js - deleteMessage - Destination " + szDestination );
             this.m_HttpComms.addRequestHeader("Destination", szDestination , false);
-            this.m_HttpComms.addRequestHeader("Authorization", this.m_szAuthString , false);
             var bResult = this.m_HttpComms.send(this.deleteMessageOnloadHandler);                             
             if (!bResult) throw new Error("httpConnection returned false");
                   
@@ -717,7 +659,7 @@ nsLycos.prototype =
                                               + err.message+ "\n"
                                               + err.lineNumber);
             
-            mainObject.serverComms("-ERR Comms Error from "+ this.m_szUserNameDomain+"\r\n");
+            mainObject.serverComms("-ERR Comms Error from "+ mainObject.m_szUserName+"\r\n");
         }
     },
     
@@ -747,7 +689,6 @@ nsLycos.prototype =
             this.m_HttpComms.setURI(this.m_szTrashURI);
             this.m_HttpComms.setRequestMethod("PROPFIND");
             this.m_HttpComms.addData(LycosMailSchema,"text/xml");
-            this.m_HttpComms.addRequestHeader("Authorization", this.m_szAuthString , false);
             var bResult = this.m_HttpComms.send(this.logoutOnloadHandler);                             
             if (!bResult) throw new Error("httpConnection returned false");           
             this.m_iStage=0;
@@ -807,7 +748,6 @@ nsLycos.prototype =
                         mainObject.m_HttpComms.setURI(mainObject.m_szTrashURI);
                         mainObject.m_HttpComms.setRequestMethod("BDELETE");
                         mainObject.m_HttpComms.addData(szDeleteMsg,"text/xml");
-                        mainObject.m_HttpComms.addRequestHeader("Authorization", mainObject.m_szAuthString , false);
                         var bResult = mainObject.m_HttpComms.send(mainObject.logoutOnloadHandler);                             
                         if (!bResult) throw new Error("httpConnection returned false");           
                         mainObject.m_iStage=1;
@@ -835,7 +775,7 @@ nsLycos.prototype =
                                               + err.message+ "\n"
                                               + err.lineNumber);
             
-            mainObject.serverComms("-ERR Comms Error from "+ this.m_szUserNameDomain+"\r\n");
+            mainObject.serverComms("-ERR Comms Error from "+ mainObject.m_szUserName+"\r\n");
         }
     },
     

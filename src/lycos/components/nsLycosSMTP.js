@@ -31,9 +31,7 @@ function nsLycosSMTP()
         this.m_szPassWord = null; 
         this.m_oResponseStream = null;  
         this.m_HttpComms = new Comms(this , this.m_Log);
-        this.m_szAuthRealm = null;
-        this.m_iAuth = 0;
-        this.m_bAuthorised = false; 
+        this.m_HttpComms.setHandleHttpAuth(true);
         this.m_aszTo = new Array;
         this.m_szFrom = null;
         this.m_iStage = 0;
@@ -116,6 +114,8 @@ nsLycosSMTP.prototype =
             
             this.m_iStage = 0;
             this.m_HttpComms.clean();
+            this.m_HttpComms.setUserName(this.m_szUserName);
+            this.m_HttpComms.setPassword(this.m_szPassWord);
             this.m_HttpComms.setContentType(-1);
             this.m_HttpComms.setURI(szLocation);
             this.m_HttpComms.setRequestMethod("PROPFIND");
@@ -152,69 +152,15 @@ nsLycosSMTP.prototype =
             
             //if this fails we've gone somewhere new
             mainObject.m_Log.Write("nsLycosSMTP.js - loginOnloadHandler - status :" +httpChannel.responseStatus );
-            if (httpChannel.responseStatus != 200 
-                    && httpChannel.responseStatus != 207 
-                        && httpChannel.responseStatus != 401) 
+            if (httpChannel.responseStatus != 200 && httpChannel.responseStatus != 207) 
                 throw new Error("return status " + httpChannel.responseStatus);
             
-            //Authenticate
-            if  (httpChannel.responseStatus == 401)
-            {
-                if ( mainObject.m_iAuth==2) throw new Error("login error");
-                
-                try
-                {                
-                    var szAuthenticate =  httpChannel.getResponseHeader("www-Authenticate");
-                    mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - www-Authenticate " + szAuthenticate);
-                    mainObject.m_iAuth++;
-                }
-                catch(err)
-                {                   
-                    throw new Error("szAuthenticate header not found")
-                }     
-                    
-                //basic or digest
-                if (szAuthenticate.search(/basic/i)!= -1)
-                {//authentication on the cheap
-                    mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - basic Authenticate");
-                   
-                    if (!mainObject.m_szAuthString) 
-                    {
-                        var oBase64 = new base64();
-                        mainObject.m_szAuthString ="Basic ";
-                        mainObject.m_szAuthString += oBase64.encode(mainObject.m_szUserName+":"+mainObject.m_szPassWord);
-                    }
-                    
-                    mainObject.m_HttpComms.clean();
-                    mainObject.m_HttpComms.setContentType(-1);
-                    mainObject.m_HttpComms.setURI(httpChannel.URI.spec);
-                    mainObject.m_HttpComms.setRequestMethod("PROPFIND");
-                    mainObject.m_HttpComms.addData(LycosSchema,"text/xml");
-                    mainObject.m_HttpComms.addRequestHeader("Authorization", mainObject.m_szAuthString , false);
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);                             
-                    if (!bResult) throw new Error("httpConnection returned false");
-                }
-                else if (szAuthenticate.search(/digest/i)!= -1)
-                {
-                    throw new Error("unspported authentication method");
-                }
-                else
-                    throw new Error("unknown authentication method");
-            } 
-            else  //everything else
-            {
-                mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - get url - start");
-                mainObject.m_iAuth=0; //reset login counter
-               
-                mainObject.m_szSendUri = szResponse.match(LycosSendMsgPattern)[1];
-                mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - Send URi - " +mainObject.m_szSendUri);
-                //server response
-                mainObject.serverComms("235 Your In\r\n");
-                mainObject.m_bAuthorised = true;
+            mainObject.m_szSendUri = szResponse.match(LycosSendMsgPattern)[1];
+            mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - Send URi - " +mainObject.m_szSendUri);
+            //server response
+            mainObject.serverComms("235 Your In\r\n");
+            mainObject.m_bAuthorised = true;
                         
-                mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - get url - end"); 
-            }
-            
             mainObject.m_Log.Write("nsLycosSMTP.js - loginOnloadHandler - END");
         }
         catch(err)
@@ -253,7 +199,6 @@ nsLycosSMTP.prototype =
             this.m_HttpComms.setRequestMethod("POST");
             this.m_HttpComms.addRequestHeader("SAVEINSENT", this.m_bSaveCopy?"t":"f", false); 
             this.m_HttpComms.addData(szMsg,"message/rfc821");     
-            this.m_HttpComms.addRequestHeader("Authorization", this.m_szAuthString , false);  
             var bResult = this.m_HttpComms.send(this.composerOnloadHandler);  
             if (!bResult) throw new Error("httpConnection returned false");
             
