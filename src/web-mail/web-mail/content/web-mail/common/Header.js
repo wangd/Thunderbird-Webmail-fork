@@ -5,6 +5,9 @@ function headers(szHeaders)
     scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
     
     this.m_szHeaders = szHeaders;
+    
+    //remove folding
+    this.m_szHeaders= this.m_szHeaders.replace(/\r?\n\s/gm," ");
 }
 
 
@@ -14,19 +17,9 @@ headers.prototype =
     {
         try
         {
-           if (!this.m_szHeaders) return null;
-            
-            var szTo = null;
-            try
-            {
-                szTo = this.m_szHeaders.match(/To:[\s\S]*<(.*?)>/i)[1];   
-            }
-            catch(e)
-            {
-                szTo = this.m_szHeaders.match(/To:\s(.*?)$/i)[1];
-            }
-            
-            return szTo;
+            if (!this.m_szHeaders) return null;
+            var szTo = this.m_szHeaders.match(/^To:(.*?)$/im)[1];
+            return this.emailAddress(szTo);    
         }
         catch(err)
         {
@@ -45,18 +38,47 @@ headers.prototype =
         try
         {
             if (!this.m_szHeaders) return null;
+            var szCc = this.m_szHeaders.match(/^cc:(.*?)$/im)[1];   
+            return this.emailAddress(szCc);  
+        }
+        catch(err)
+        {
+            DebugDump("headers.js: getCc : Exception : "  + err.name 
+                                                  + ".\nError message: " 
+                                                  + err.message + "\n"
+                                                  + err.lineNumber);
+            return null;
+        }
+    },
+    
+    
+    emailAddress :function (szAddress)
+    {
+         try
+        {
+            if (!szAddress) return null;
             
-            var szCc = null;   
-            try
-            {
-                szCc = this.m_szHeaders.match(/cc:[\s\S]*<(.*?)>/i)[1];   
-            }
-            catch(e)
-            {
-                szCc = this.m_szHeaders.match(/cc:\s(.*?)$/i)[1];
-            }
+            var aszAddress = szAddress.split(",");
             
-            return szCc;  
+            var szList =null;
+            for (iListCount=0; iListCount<aszAddress.length; iListCount++)
+            {
+                var szTemp = "";
+                try
+                {  
+                    szTemp = aszAddress[iListCount].match(/<(.*?@.*?)>/)[1];   
+                }
+                catch(e)
+                {
+                    szTemp = aszAddress[iListCount].match(/(.*?@.*?)$/)[1];  
+                }
+                
+                if (iListCount!=aszAddress.length-1) szTemp+=", ";
+                
+                szList? szList+=szTemp: szList=szTemp;
+            }  
+            
+            return szList;  
         }
         catch(err)
         {
