@@ -24,27 +24,34 @@ function CookieHandler(errorLog)
 CookieHandler.prototype =
 {
    
-    addCookie : function (szDomain , szCookie)
+    addCookie : function (szCookie)
     {
         try
         {
             this.m_Log.Write("CookieManager.js - addCookie - START");
-            this.m_Log.Write("CookieManager.js - addCookie - \ndomain " 
-                                                        + szDomain +"\n"
-                                                        + "cookie " + szCookie);
-            if (!szDomain || !szCookie) return false; 
-           
+            this.m_Log.Write("CookieManager.js - addCookie - cookie " + szCookie);
+            if (!szCookie) return false; 
+            
+            //remove newlines and ,
+            szCookie = szCookie.replace(/\n|,/g,";")+";";
+            
+            //get domain
+            var szDomain = szCookie.match(/domain=(.*?);/i)[1];
+            this.m_Log.Write("CookieManager.js - addCookie - cookie domain " + szDomain);
+            
+            
             //search cookies for domain
             var iMax = this.m_aCookies.length;
             if (iMax != 0)   
-            {           
-                
+            {
                 for (var i = 0 ; i<iMax ; i++)
                 {
                     var temp = this.m_aCookies[i];  //get first item
                     this.m_Log.Write("CookieManger.js - findCookie " + i + " "+ temp.getDomain());
                    
-                    if (szDomain == temp.getDomain())
+                    var regexp =  new RegExp(temp.getDomain(), "i");
+                    this.m_Log.Write("CookieManger.js - addCookie - regexp " +regexp );  
+                    if (szDomain.search(regexp)!=-1)
                     { 
                         temp.setCookieValue(szCookie);
                         this.m_Log.Write("CookieManger.js - findCookie - found domain END");
@@ -53,7 +60,7 @@ CookieHandler.prototype =
                 } 
             }
               
-            this.m_Log.Write("CookieManger.js - findCookies - not found domain"); 
+            this.m_Log.Write("CookieManger.js - findCookies - domain not found"); 
             
             var oCookie = new Cookie( this.m_Log);
             oCookie.newCookie(szDomain, szCookie); 
@@ -84,13 +91,15 @@ CookieHandler.prototype =
             
             var iMax = this.m_aCookies.length;
             if (iMax == 0) return null;   
-                       
+            
             for (var i = 0 ; i<iMax ; i++)
             {
                 var temp = this.m_aCookies[i]
                 this.m_Log.Write("CookieManger.js - findCookie " + i + " "+ temp.getDomain());
                
-                if (szDomain == temp.getDomain())
+                var regexp =  new RegExp(temp.getDomain(), "i");
+                this.m_Log.Write("CookieManger.js - findCookie - regexp " +regexp );  
+                if (szDomain.search(regexp)!=-1)
                 { 
                     this.m_Log.Write("CookieManger.js - findCookie - found domain END"); 
                     return temp.getCookieString();

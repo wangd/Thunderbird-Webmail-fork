@@ -21,7 +21,8 @@ function Cookie(errorLog)
         this.m_Log.Write("cookie.js: constructor : Exception : " 
                                           + e.name 
                                           + ".\nError message: " 
-                                          + e.message);
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
     }
 }
 
@@ -41,7 +42,7 @@ Cookie.prototype =
         {
             this.m_Log.Write("cookie.js - setCookieValue - START");
             
-            var aCookie = szValues.replace(/\n/g,";").split(";");
+            var aCookie = szValues.split(";");
             this.m_Log.Write("cookie.js - setCookieValue - value " + aCookie);
             
             var iMax = aCookie.length;
@@ -62,7 +63,8 @@ Cookie.prototype =
             this.m_Log.Write("cookie.js: setCookieValue : Exception : " 
                                           + e.name 
                                           + ".\nError message: " 
-                                          + e.message);
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
         }
     },
 
@@ -76,7 +78,7 @@ Cookie.prototype =
 
             this.m_szDomain = szDomain;
             
-            var aCookie = szValues.replace(/\n/g,";").split(";");
+            var aCookie = szValues.split(";");
             this.m_Log.Write("cookie.js - newCookie - values " + aCookie);
             
             var iMax = aCookie.length;
@@ -97,7 +99,8 @@ Cookie.prototype =
             this.m_Log.Write("cookie.js: newCookie : Exception : " 
                                           + e.name 
                                           + ".\nError message: " 
-                                          + e.message);
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
         }
     },
     
@@ -128,7 +131,8 @@ Cookie.prototype =
             this.m_Log.Write("cookie.js: getCookieString : Exception : " 
                                           + e.name 
                                           + ".\nError message: " 
-                                          + e.message);
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
         }
     },
     
@@ -143,8 +147,12 @@ Cookie.prototype =
             var iNameSplitValue = szValue.indexOf("=");
             var szCookieName = szValue.substr(0,iNameSplitValue);
             var szCookieValue = szValue.substr(iNameSplitValue+1);
-            this.m_Log.Write("cookie.js - CookieValue - cookie name : " + szCookieName 
-                                                                 + " value " +szCookieValue);
+            this.m_Log.Write("cookie.js - CookieValue - cookie name : " + szCookieName + " ; value : " +szCookieValue);
+            if (!szCookieName || !szCookieValue) 
+            {
+                this.m_Log.Write("cookie.js - CookieValue - cookie error");
+                return false;
+            }
             
             var iNumCookies = this.m_aszCookieName.length;
             this.m_Log.Write("cookie.js - CookieValue - cookie num : " + iNumCookies );
@@ -202,7 +210,7 @@ Cookie.prototype =
                     }
                     
                     //cookie not found 
-                    if (szCookieValue.length>0 && !bDone)
+                    if (szCookieValue && !bDone)
                     {
                         this.m_aszCookieName.push(szCookieName);
                         this.m_aszCookieValue.push(szCookieValue);
@@ -220,6 +228,10 @@ Cookie.prototype =
                     }
                 }
             }
+            else
+            {
+                this.m_Log.Write("cookie.js - CookieValue - skip");
+            }
                     
             this.m_Log.Write("cookie.js - CookieValue - END");
         }
@@ -228,7 +240,8 @@ Cookie.prototype =
             this.m_Log.Write("cookie.js: CookieValue : Exception : " 
                                           + e.name 
                                           + ".\nError message: " 
-                                          + e.message);
+                                          + e.message + "\n"
+                                          + e.lineNumber);
         }
     },
 }
