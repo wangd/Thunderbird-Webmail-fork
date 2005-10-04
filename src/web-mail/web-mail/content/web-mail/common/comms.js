@@ -5,10 +5,10 @@ function Comms(parent , log)
         var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/CookieManager.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/commsData.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CookieManager.js");
-        
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpAuthManager.js");
+                
         this.m_Log = log;
         this.m_Log.Write("comms.js - constructor - START");
           
@@ -19,8 +19,11 @@ function Comms(parent , log)
         
         this.m_bHandleCookie = true;
         this.m_bHandleBounce = true;
-       
+        this.m_bHandleHttpAuth = false;
+        this.m_iHttpAuth = 0;
+        this.m_szPassword = null;
         this.m_szUserName = null;
+        this.m_AuthToken = new HttpAuthManager(this.m_Log);
         this.m_URI = null;
         this.m_aHeaders = new Array();
         this.m_aFormData = new Array();
@@ -55,6 +58,7 @@ Comms.prototype =
         this.m_CallBack = null;
         this.m_szContentType = "application/x-www-form-urlencoded";
         this.m_iContentType = 0;
+        this.m_iHttpAuth = 0;
                 
         delete this.m_aHeaders;
         this.m_aHeaders = new Array();
@@ -76,9 +80,21 @@ Comms.prototype =
     },
     
     
+    setHandleHttpAuth : function (bState)
+    {
+        this.m_bHandleHttpAuth = bState;
+    },
+    
+    
     setUserName : function (szUserName)
     {
         this.m_szUserName = szUserName;
+    },
+    
+    
+    setPassword : function (szPassword)
+    {
+        this.m_szPassword = szPassword;
     },
     
     
@@ -147,6 +163,26 @@ Comms.prototype =
             this.m_szMethod = szMethod;
              
             return true;
+        }
+        catch(err)
+        {
+            this.m_Log.DebugDump("comms.js: requestMethod : Exception : " 
+                                                  + err.name 
+                                                  + ".\nError message: " 
+                                                  + err.message + "\n"
+                                                  + err.lineNumber);
+            return false;
+        }
+    },
+    
+    
+    getRequestMethod : function ()
+    {
+        try
+        {
+            this.m_Log.Write("comms.js - get requestMethod - "+this.m_szMethod);
+            if (!this.m_szMethod) return null;           
+            return this.m_szMethod;
         }
         catch(err)
         {
@@ -298,14 +334,15 @@ Comms.prototype =
              this.m_Log.Write("comms.js - send - contenttype "+ this.m_iContentType);
             //set headers          
             
+            var szDomain = this.m_URI.prePath.match(/\/\/(.*?)$/)[1];  
             //add cookies
             if (this.m_bHandleCookie)
-            {
-                var aszHost = this.m_URI.prePath.match(/[^\.\/]+\.[^\.\/]+$/);  
-                var aszCookie = this.m_oCookies.findCookie(aszHost);
+            {   
+                var aszCookie = this.m_oCookies.findCookie(szDomain);
                 if (aszCookie)
                     HttpRequest.setRequestHeader("Cookie", aszCookie, false);
             }
+            
             
             //other headers
             for (i=0; i<this.m_aHeaders.length; i++)
@@ -317,8 +354,16 @@ Comms.prototype =
                 HttpRequest.setRequestHeader(oTemp.szName, oTemp.szValue, oTemp.bOverRide);
             }     
              
+             
+            //add Http Auth 
+            if (this.m_bHandleHttpAuth)
+            {
+                var szAuthString = this.m_AuthToken.findToken(szDomain); 
+                if (szAuthString)
+                    HttpRequest.setRequestHeader("Authorization", szAuthString , false);
+            }
             
-                 
+            
             //set data
             if (this.m_aFormData.length>0)
             {
@@ -569,30 +614,58 @@ Comms.prototype =
             //handle repsonse
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             mainObject.m_Log.Write("commd.js - callback - status :" +httpChannel.responseStatus );
-             
+                         
             //handle cookies
             if (mainObject.m_bHandleCookie)
             {
                 mainObject.m_Log.Write("comms.js - callback - Handling cookies");
                 
-                var szURL = httpChannel.URI.host;
-                mainObject.m_Log.Write("comms.js - callback - url - " + szURL);  
-                var aszTempDomain = szURL.match(/[^\.\/]+\.[^\.\/]+$/);  
-                mainObject.m_Log.Write("comms.js - callback - domain - " + aszTempDomain[0]); 
-                
                 //get cookies
                 try
                 {
                     var szCookies =  httpChannel.getResponseHeader("Set-Cookie");
-                    mainObject.m_Log.Write("comms.js - callback - received cookies \n" + szCookies);  
-                    mainObject.m_oCookies.addCookie( aszTempDomain[0], szCookies); 
+                    mainObject.m_Log.Write("comms.js - callback - received cookies \n" + szCookies);
+                    mainObject.m_oCookies.addCookie(szCookies); 
                 }
                 catch(e)
                 {
                     mainObject.m_Log.Write("comms.js - callback - no cookies found"); 
                 }     
             }
+               
                 
+            //handel Http auth
+            if (mainObject.m_bHandleHttpAuth)
+            {
+                mainObject.m_Log.Write("comms.js - callback - Handling Http Auth");
+                
+                if (httpChannel.responseStatus == 401 && mainObject.m_szUserName && mainObject.m_szPassword)
+                {
+                    mainObject.m_iHttpAuth++;
+                    if (mainObject.m_iHttpAuth >10) throw new Error ("Too login re-trys");
+                    
+                    try
+                    { 
+                        var szDomain = httpChannel.URI.host.match(/\.(.*?)$/)[1];
+                        mainObject.m_Log.Write("comms.js - callback - domain " +szDomain);
+                        var szAuthenticate =  httpChannel.getResponseHeader("www-Authenticate");
+                        mainObject.m_Log.Write("comms.js - callback - www-Authenticate " + szAuthenticate); 
+                        mainObject.m_AuthToken.addToken(szDomain,
+                                                        szAuthenticate , 
+                                                        httpChannel.URI.path ,
+                                                        mainObject.m_szUserName, 
+                                                        mainObject.m_szPassword);
+                        
+                        var bResult = mainObject.send(mainObject.m_CallBack);
+                        if (!bResult) throw new Error("httpConnection returned false"); 
+                        return;                    
+                    }
+                    catch(err)
+                    {                                                    
+                        mainObject.m_Log.Write("comms.js - callback - Authentication failed"); 
+                    }  
+                }
+            }   
                
                 
             //bounce handler
@@ -611,9 +684,14 @@ Comms.prototype =
                         throw new Error("Location header not found")
                     } 
                     var oCallback = mainObject.m_CallBack;        
-                    mainObject.clean();
                     mainObject.setURI(szLocation);
-                    mainObject.setRequestMethod("GET");
+                    
+                    if (mainObject.getRequestMethod().search(/post/i)!=-1)
+                        mainObject.setRequestMethod("GET");
+                    
+                    delete mainObject.m_aFormData;
+                    mainObject.m_aFormData = new Array();
+                    
                     var bResult = mainObject.send(oCallback);                             
                     if (!bResult) throw new Error("httpConnection returned false");
                     return;
@@ -634,6 +712,9 @@ Comms.prototype =
                                                   + ".\nError message: " 
                                                   + err.message + "\n"
                                                   + err.lineNumber);
+           
+            //there's a problem let component handle the response
+            mainObject.m_CallBack (szResponse, event, mainObject.m_parent);
             return false;
         }
     },
