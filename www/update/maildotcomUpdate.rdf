@@ -32,7 +32,7 @@
             	<em:minVersion>1.4</em:minVersion>
             	<em:maxVersion>1.6</em:maxVersion>
                 <em:updateLink>http://download.mozdev.org/webmail/maildotcom-0-4-1.xpi</em:updateLink>
-                <em:updateHash>MD5:6bf34ea9c32c66cf6065db6e58c7f328</em:updateHash>
+                <em:updateHash>md5:6bf34ea9c32c66cf6065db6e58c7f328</em:updateHash>
           </Description>
         </em:targetApplication>
     </RDF:Description>  
