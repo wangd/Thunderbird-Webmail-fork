@@ -57,14 +57,40 @@ body
 }
 
 
-#title 
-{ 
-    border-bottom: 1px solid rgb(153, 153, 153);
-    font-size: 1.5em;
-    font-style: italic;
-    height: 1em;
+
+#title
+{
+	font-family: Times New Roman, Times, serif;
+	font-style: italic;
+	font-weight: normal;
+	line-height: 8pt;
+	font-size: 15pt;
+	margin-top :10pt;
 }
 
+
+#WebMailContent 
+{
+	margin-left: 30pt;
+	margin-right: 30pt;
+	font-size: 12pt;
+	text-align: justify;
+	line-height: 17pt;
+	font-family: Times New Roman, Times, serif ! important;
+}
+
+
+#WebMailIndex
+{
+    margin-left: 20pt;
+    margin-right: 140pt;
+	font-size: 12pt;
+	text-align: justify;
+	line-height: 17pt;
+	font-family: Times New Roman, Times, serif ! important;
+}
+  
+  
 
 #navbar 
 {
