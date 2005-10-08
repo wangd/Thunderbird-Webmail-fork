@@ -27,7 +27,69 @@
     margin-left: 160px;
     }
 
+ #footer { border: 1px dashed rgb(204, 204, 204);
+    padding-left: 4px;
+    padding-top: 5px;
+    margin-right: auto;
+    margin-left: auto;
+    position: relative;
+    width: 435px;
+    margin-top: 100px;
+    }
 
+    #footer-text { margin-left: 180px;
+    margin-top: 50px;
+    }
+
+
+
+#navbar { text-align: center;
+    font-family: Times New Roman,Times,serif;
+    font-size: 15px;
+    background-color: rgb(255, 255, 255);
+    }
+
+  #navbar ul { list-style-type: none;
+    }
+
+  #navbar ul li { border: 1px solid rgb(51, 51, 51);
+    margin-top: -1px;
+    }
+
+  #navbar ul li ul { width: 110px;
+    position: absolute;
+    display: none;
+    padding-left: 0px;
+    margin-left: 110px;
+    margin-top: -26px;
+    z-index: 500;
+    }
+
+  #navbar ul li a { padding: 4px 3px;
+    display: block;
+    text-decoration: none;
+    font-family: Times New Roman,Times,serif;
+    color: rgb(51, 51, 51);
+    }
+
+  #navbar li:hover > ul { display: block;
+    position: absolute;
+    }
+
+  #navbar li:hover { background-color: rgb(226, 234, 255);
+    }
+
+  #navbar li { width: 110px;
+    text-decoration: none ! important;
+    background-color: rgb(246, 246, 246);
+    }
+
+  .arrow { float: right;
+    position: relative;
+    width: 11px;
+    height: 8px;
+    margin-top: -15px;
+    }
 
   #mailLogo { margin-top: 50px;
     position: relative;
@@ -41,15 +103,7 @@
     margin-right: 70px;
     }
 
-  #footer { border: 1px dashed rgb(204, 204, 204);
-    padding-left: 4px;
-    padding-top: 5px;
-    margin-right: auto;
-    margin-left: auto;
-    position: relative;
-    width: 435px;
-    margin-top: 100px;
-    }
+
 
   #language { overflow: visible;
     position: relative;
@@ -141,53 +195,7 @@
     font-weight: inherit;
     }
 
-  #navbar { text-align: center;
-    font-family: Times New Roman,Times,serif;
-    font-size: 15px;
-    background-color: rgb(255, 255, 255);
-    }
-
-  #navbar ul { list-style-type: none;
-    }
-
-  #navbar ul li { border: 1px solid rgb(51, 51, 51);
-    margin-top: -1px;
-    }
-
-  #navbar ul li ul { width: 110px;
-    position: absolute;
-    display: none;
-    padding-left: 0px;
-    margin-left: 110px;
-    margin-top: -26px;
-    z-index: 500;
-    }
-
-  #navbar ul li a { padding: 4px 3px;
-    display: block;
-    text-decoration: none;
-    font-family: Times New Roman,Times,serif;
-    color: rgb(51, 51, 51);
-    }
-
-  #navbar li:hover > ul { display: block;
-    position: absolute;
-    }
-
-  #navbar li:hover { background-color: rgb(226, 234, 255);
-    }
-
-  #navbar li { width: 110px;
-    text-decoration: none ! important;
-    background-color: rgb(246, 246, 246);
-    }
-
-  .arrow { float: right;
-    position: relative;
-    width: 11px;
-    height: 8px;
-    margin-top: -15px;
-    }
+  
 
   .domainVersion { color: rgb(102, 102, 102);
     font-size: 14px;
@@ -241,8 +249,3 @@
     font-weight: normal;
     font-size: 17px ! important;
     }
-
-  #footer-text { margin-left: 170px;
-    margin-top: 50px;
-    }
-
