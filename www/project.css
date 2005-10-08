@@ -1,3 +1,15 @@
+#header 
+{ 
+    background-repeat: no-repeat;
+    background-position: left top;
+    background-image: url(images/misc/webmail.png);! important; 
+    width: 300px;
+    background-color: transparent;
+    min-height: 75px;
+    margin-left: 70px;
+}
+
+
 #title
 {
 	font-family: Times New Roman, Times, serif;
@@ -35,7 +47,7 @@
 	font-family: Times New Roman, Times, serif ! important;
 	font-size: 13pt ! important;
 	color: rgb(0, 0, 0) ! important;
-	margin-left: 110pt;
+	margin-left: 90pt;
 }
 
 #navbar ul 
@@ -75,15 +87,6 @@
 #extensiontable td 
 {
 	padding: 10px;
-}
-
-#header 
-{ 
-    background-repeat: no-repeat;
-    background-position: center;
-	background-image: url(http://webmail.mozdev.org/images/misc/WebMailTitle.png) ! important; 
-    min-height: 75px;
-    margin-left: 70px;
 }
 
 
