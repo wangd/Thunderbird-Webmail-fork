@@ -1,26 +1,39 @@
     <!-- MAIN CONTENT -->
+    <script type="text/javascript">
+        function openWindow(szImage, iWidth, iHeight)
+        {
+            window.open(szImage ,
+                        "",
+                        "innerWidth="+ iWidth +" ,innerHeight= "+ iHeight+" ,menubar=no,location=no,resizable=yes,scrollbars=no,status=no");
+        }
+    </script>
+    
     <div id="title">Screenshots</div>
     
-    <div style="text-align: center; margin-top:20pt;">    
-        <img src="http://webmail.mozdev.org/images/screenshots/WebMailServersPrefs.png"  
-             border="0" width="500" height="429"
-             alt="WebMail Server"
-             title ="WebMail Server">
-    </div>
+    <div class="subTitle">WebMail</div>
+        <div>
+            <div class="pic">
+                <img style="width: 96px; height: 82px; cursor:pointer" onclick='openWindow("images/screenshots/WebMailServerPref.png",500,429)' alt="WebMail Server"  title ="WebMail Server" src="images/screenshots/TBWebMailServerPref.png">
+            </div>
+            <div class="pic">
+                <img style="width: 96px; height: 82px; cursor:pointer" onclick='openWindow("images/screenshots/WebMailDomainsPref.png",500,429)' alt="WebMail Domains"  title ="WebMail Domains" src="images/screenshots/TBWebMailDomainsPref.png">
+            </div>
+            
+             <div class="pic">
+                <img style="width: 96px; height: 82px; cursor:pointer" onclick='openWindow("images/screenshots/WebMailLoggingPref.png",500,429)' alt="WebMail Logging"  title ="WebMail Logging" src="images/screenshots/TBWebMailLoggingPref.png">
+            </div>
+        </div>
+      
+      <div class="subTitle">Components</div>
+      <div>
+            <div class="pic">
+                <img style="width: 96px; height: 82px; cursor:pointer" onclick='openWindow("images/screenshots/HotmailOptionsWebDav.png",410,300)' alt="Hotmail WebDav" title="Hotmail WebDav" src="graphics/screenshots/TBHotmailOptionsWebDav.png">
+            </div>
+            <div class="pic">
+                <img style="width: 96px; height: 82px; cursor:pointer" onclick='openWindow("images/screenshots/HotmailOptionsPOP.png",410,300)' alt="POP" title="POP" src="graphics/screenshots/TBHotmailOptionsPOP.png">
+            </div>
+        </div>
     
-    <div style="text-align: center;margin-top:20pt;">  
-        <img src="http://webmail.mozdev.org/images/screenshots/WebMailDomainsPrefs.png"  
-             border="0" width="500" height="429"
-             alt="WebMail Domains"
-             title ="WebMail Domains">
-    </div>
-  
-    <div style="text-align: center; margin-top:20pt;">  
-        <img src="http://webmail.mozdev.org/images/screenshots/WebMailLoggingPrefs.png"  
-             border="0" width="500" height="429"
-             alt="WebMail Logging"
-             title ="WebMail Logging">
-    </div>
     
     <?php include("footer.html"); ?>
     
