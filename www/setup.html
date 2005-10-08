@@ -1,121 +1,136 @@
 <!-- MAIN CONTENT -->
+    <script type="text/javascript">
+        function openWindow(szImage, iWidth, iHeight)
+        {
+            window.open(szImage ,
+                        "",
+                        "innerWidth="+ iWidth +" ,innerHeight= "+ iHeight+" ,menubar=no,location=no,resizable=yes,scrollbars=no,status=no");
+        }
+    </script>
+    
     <div id="title">Setup</div>
-    <div id="WebMailContent">
-        <p>
-            I&rsquo;ll assume you have installed the Web-Mail extension 
-            and at least one of the domain handlers (hotmail.xpi, yahoo.xpi), 
-            if you haven't please do so. 
-        </p>
-        
-        <ol class="setuplist" style="list-style-type: upper-roman; margin-right: 50px; margin-left: 20px;">
-           
-            <li style="margin-top: 15px;">
-                <p>
-                    The first step is to check the Web-Mail
-                    extension is running. Go to the Web-Mail options panel,&nbsp;
-                    on the first page the Server Status should be green. If the Web-Mail
-                    extension fails to start&nbsp; this could be due to the operating
-                    system blocking the default port (110), try setting the port
-                    higher than 1024 and restart Thunderbird. 
-                </p>
-                
-                <div style="text-align: center; margin-top: 5px;">
-                    <img style="width: 300px; height: 257px;"  
-                             alt="Web-mail Server Pref" 
-                             src="http://webmail.mozdev.org/images/screenshots/SmallWebMailServers.png">
+ 
+    <p>
+        I&rsquo;ll assume you have installed the Web-Mail extension 
+        and at least one of the domain handlers (hotmail.xpi, yahoo.xpi), 
+        if you haven't please do so. 
+    </p>
+    
+    <ol class="setuplist" style="list-style-type: upper-roman; margin-right: 50px; margin-left: 20px;">
+       
+        <li style="margin-top: 15px;">
+            <p>
+                The first step is to check the Web-Mail
+                extension is running. Go to the Web-Mail options panel,&nbsp;
+                on the first page the Server Status should be green. If the Web-Mail
+                extension fails to start&nbsp; this could be due to the operating
+                system blocking the default port (110), try setting the port
+                higher than 1024 and restart Thunderbird. 
+            </p>
+            
+            <div class="webmailPic" style="width: 96px;">
+                <div class="pic">
+                    <img style="width: 96px; height: 82px; cursor:pointer" onclick='openWindow("images/screenshots/WebmailServerPref.png",530,500)' alt="WebMail Server"  title ="WebMail Server" src="images/screenshots/TBWebmailServerPref.png">
                 </div>
-            </li>
-           
-            <li style="margin-top: 15px;">
-                <p>
-                    Check you have installed the necessary domain 
-                    handlers. Go to Web-Mail options panel, on the second
-                    page is a list supported domains. 
-                </p>
+            </div>
                 
-                <div style="text-align: center; margin-top: 5px;">
-                    <img  style="width: 300px; height: 257px;"
-                            alt="Small Domains Pref"  
-                            src="http://webmail.mozdev.org/images/screenshots/SmallWebMailDomains.png"> 
-                </div>      
-            </li> 
-        </ol>
+            <div style="text-align: center; margin-top: 5px;">
+                <img style="width: 300px; height: 257px;"  
+                         alt="Web-mail Server Pref" 
+                         src="http://webmail.mozdev.org/images/screenshots/SmallWebMailServers.png">
+            </div>
+        </li>
+       
+        <li style="margin-top: 15px;">
+            <p>
+                Check you have installed the necessary domain 
+                handlers. Go to Web-Mail options panel, on the second
+                page is a list supported domains. 
+            </p>
+            
+            <div style="text-align: center; margin-top: 5px;">
+                <img  style="width: 300px; height: 257px;"
+                        alt="Small Domains Pref"  
+                        src="http://webmail.mozdev.org/images/screenshots/SmallWebMailDomains.png"> 
+            </div>      
+        </li> 
+    </ol>
+         
+    <BR>
+    <p>You are now ready too set-up a Hotmail or Yahoo account in 
+       Thunderbird. In the following example I'll be using a 
+       fictitious Hotmail account (BillGates@hotmail.com).
+    </p>
+    <BR>
+    
+    <ol start="3" style="list-style-type: upper-roman; margin-right: 50px; margin-left: 20px;">
+        
+        <li style="margin-top: 15px;">
+            <p>From the main window menu bar select File-&gt;New-&gt;Account..</p>
+        </li>
+        
+        <li style="margin-top: 15px;">
+            <p>In the Account wizard select &ldquo;Email Account&rdquo;</p>
+        </li>
+        
+        
+        <li style="margin-top: 15px;">
+            <p>On the Identity page set your name and email address.</p>
+            <div>Ex</div>
+            <div style="margin-left: 10px; text-align: left; ">
+                Your Name : Bill Gates<BR>
+                Email Address : BillGates@hotmail.com 
+            </div>
+            
+            <div style="text-align: center; margin-top: 5px;">
+                <img  style="border: 1px solid ; width: 300px; height: 188px;" 
+                      alt="id"  
+                      src="http://webmail.mozdev.org/images/screenshots/AccountWizardID.png">
+            </div>
+        </li>  
+        
              
-        <BR>
-        <p>You are now ready too set-up a Hotmail or Yahoo account in 
-           Thunderbird. In the following example I'll be using a 
-           fictitious Hotmail account (BillGates@hotmail.com).
-        </p>
-        <BR>
+        <li style="margin-top: 15px;">
+            <p>For the server information use the following settings</p>
+            <p style="margin-left: 10px; text-align: left;">
+               Server Type : POP <BR>
+               Incoming Server : localhost
+            </p>
+            <div style="text-align: center; margin-top: 5px;">
+                <img  style="border: 1px solid ; width: 300px; height: 136px;" 
+                      alt="server"  
+                      src="http://webmail.mozdev.org/images/screenshots/AccountWizardServerInfo.png" >
+            </div>
+        </li>
         
-        <ol start="3" style="list-style-type: upper-roman; margin-right: 50px; margin-left: 20px;">
-            
-            <li style="margin-top: 15px;">
-                <p>From the main window menu bar select File-&gt;New-&gt;Account..</p>
-            </li>
-            
-            <li style="margin-top: 15px;">
-                <p>In the Account wizard select &ldquo;Email Account&rdquo;</p>
-            </li>
-            
-            
-            <li style="margin-top: 15px;">
-                <p>On the Identity page set your name and email address.</p>
-                <div>Ex</div>
-                <div style="margin-left: 10px; text-align: left; ">
-                    Your Name : Bill Gates<BR>
-                    Email Address : BillGates@hotmail.com 
-                </div>
-                
-                <div style="text-align: center; margin-top: 5px;">
-                    <img  style="border: 1px solid ; width: 300px; height: 188px;" 
-                          alt="id"  
-                          src="http://webmail.mozdev.org/images/screenshots/AccountWizardID.png">
-                </div>
-            </li>  
-            
-                 
-            <li style="margin-top: 15px;">
-                <p>For the server information use the following settings</p>
-                <p style="margin-left: 10px; text-align: left;">
-                   Server Type : POP <BR>
-                   Incoming Server : localhost
-                </p>
-                <div style="text-align: center; margin-top: 5px;">
-                    <img  style="border: 1px solid ; width: 300px; height: 136px;" 
-                          alt="server"  
-                          src="http://webmail.mozdev.org/images/screenshots/AccountWizardServerInfo.png" >
-                </div>
-            </li>
-            
-            
-            <li style="margin-top: 15px;">
-                <p>The user name must include the domain</p>
-                <div>Ex</div>
-                <div style="margin-left: 10px; text-align: left;">
-                   Incoming UserName : BillGates@Hotmail.com<BR>
-                   Outgoing UserName : BillGates@Hotmail.com
-                </div>
-                <div style="text-align: center; margin-top: 5px;">
-                    <img  style="border: 1px solid ; width: 300px; height: 153px;" 
-                          alt="user"  
-                          src="http://webmail.mozdev.org/images/screenshots/AccountWizardUsername.png" >
-                </div> 
-            </li>         
-                       
-                 
-            <li style="margin-top: 15px;">Follow the new account wizard to the end</li>
-            
-            <li style="margin-top: 15px;">
-                <p>If you changed the port number in stage 1 you must change the port 
-                number for this account in the Account Settings dialog box.</p>
-                <div>Ex</div>
-                <div style="margin-left: 10px; text-align: left;">
-                    Tools->Account Settings->Bill Gates->Server Settings
-                </div>
-            </li>
-        </ol>      
-    </div>
+        
+        <li style="margin-top: 15px;">
+            <p>The user name must include the domain</p>
+            <div>Ex</div>
+            <div style="margin-left: 10px; text-align: left;">
+               Incoming UserName : BillGates@Hotmail.com<BR>
+               Outgoing UserName : BillGates@Hotmail.com
+            </div>
+            <div style="text-align: center; margin-top: 5px;">
+                <img  style="border: 1px solid ; width: 300px; height: 153px;" 
+                      alt="user"  
+                      src="http://webmail.mozdev.org/images/screenshots/AccountWizardUsername.png" >
+            </div> 
+        </li>         
+                   
+             
+        <li style="margin-top: 15px;">Follow the new account wizard to the end</li>
+        
+        <li style="margin-top: 15px;">
+            <p>If you changed the port number in stage 1 you must change the port 
+            number for this account in the Account Settings dialog box.</p>
+            <div>Ex</div>
+            <div style="margin-left: 10px; text-align: left;">
+                Tools->Account Settings->Bill Gates->Server Settings
+            </div>
+        </li>
+    </ol>      
+
     <BR>
     <BR>
     <?php include("footer.html"); ?>
