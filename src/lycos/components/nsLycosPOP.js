@@ -12,7 +12,8 @@ const LycosReadSchema = "<?xml version=\"1.0\"?>\r\n<D:propertyupdate xmlns:D=\"
 const LycosResponse = /<D:response>[\S\d\s\r\n]*?<\/D:response>/gm;
 const LycosHref = /<D:href>(.*?)<\/D:href>/i;
 const LycosSize = /<D:getcontentlength>(.*?)<\/D:getcontentlength>/i;
-const LycosJunkPattern  = /<D:href>(.*?Courrier%20ind%26eacute;sirable.*?)<\/D:href>/;
+const LycosJunkPattern  = /<D:href>(.*?Courrier%20ind%26eacute;sirable.*?)<\/D:href>/i;
+const LycosJunkPatternAlt = /<D:href>(.*?junk.*?)<\/D:href>/i;
 const LycosInBoxPattern = /<D:href>(.*?inbox.*?)<\/D:href>/;
 const LycosFolderPattern = /<hm:msgfolderroot>(.*?)<\/hm:msgfolderroot>/;
 const LycosTrashPattern = /<hm:deleteditems>(.*?)<\/hm:deleteditems>/;
@@ -261,8 +262,15 @@ nsLycos.prototype =
                     
                     mainObject.m_szInBoxURI = szResponse.match(LycosInBoxPattern)[1]; 
                     mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - inBox - " + mainObject.m_szInBoxURI); 
-                       
-                    mainObject.m_szJunkMailURI = szResponse.match(LycosJunkPattern)[1];
+                      
+                    try
+                    {   
+                        mainObject.m_szJunkMailURI = szResponse.match(LycosJunkPattern)[1];
+                    }
+                    catch(err)
+                    {
+                        mainObject.m_szJunkMailURI = szResponse.match(LycosJunkPatternAlt)[1];   
+                    }
                     mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - junkmail - " + mainObject.m_szJunkMailURI);
                   
                     //load mailbox
