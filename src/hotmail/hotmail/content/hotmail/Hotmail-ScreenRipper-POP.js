@@ -203,14 +203,38 @@ HotmailScreenRipper.prototype =
                 
                
                 case 2: //refresh
-                    var aRefresh = szResponse.match(patternHotmailPOPRefresh);
-                    if (!aRefresh)
-                        aRefresh = szResponse.match(patternHotmailPOPJavaRefresh);
-                    mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler "+ aRefresh); 
-                    if (aRefresh == null) throw new Error("error parsing login page");
-                    
-                    mainObject.m_HttpComms.setURI(aRefresh[1]);
-                    mainObject.m_HttpComms.setRequestMethod("GET");
+                    var aRefresh = szResponse.match(patternHotmailPOPForm);
+                    mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler - refresh "+ aRefresh); 
+                   
+                    if (aRefresh)
+                    {   
+                        //action
+                        var szAction = aRefresh[0].match(patternHotmailPOPAction)[1];
+                        mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler "+ szAction);
+                        mainObject.m_HttpComms.setURI(szAction);
+                        
+                        //form data  
+                        var aInput =  aRefresh[0].match(patternHotmailPOPInput);
+                        mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler "+ aInput); 
+                        var szName =  aInput[0].match(patternHotmailPOPName)[1];
+                        var szValue =  aInput[0].match(patternHotmailPOPValue)[1];
+                        mainObject.m_HttpComms.addValuePair(szName,szValue);
+                        mainObject.m_HttpComms.setRequestMethod("POST");  
+                    }
+                    else
+                    {
+                        aRefresh = szResponse.match(patternHotmailPOPRefresh);
+                        
+                        if (!aRefresh)
+                            aRefresh = szResponse.match(patternHotmailPOPJavaRefresh);
+                            
+                        mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler refresh "+ aRefresh); 
+                        if (aRefresh == null) throw new Error("error parsing login page");    
+                        
+                        mainObject.m_HttpComms.setURI(aRefresh[1]);
+                        mainObject.m_HttpComms.setRequestMethod("GET");
+                    } 
+           
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);   
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
