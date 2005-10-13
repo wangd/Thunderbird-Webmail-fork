@@ -1,0 +1,4 @@
+<!ENTITY JunkMail.Label "下载垃圾邮件">
+<!ENTITY JunkMail.AccessKey "J">
+<!ENTITY DownloadUnread.Label "只下载新邮件">
+<!ENTITY DownloadUnread.AccessKey "u">
