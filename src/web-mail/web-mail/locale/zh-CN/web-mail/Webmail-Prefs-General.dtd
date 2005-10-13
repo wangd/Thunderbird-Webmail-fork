@@ -1,0 +1,4 @@
+<!ENTITY AccountWizard.Label "在账户向导中添加“Web 邮件”选项">
+<!ENTITY AccountWizard.AccessKey "A">
+<!ENTITY AccountWizardWarning.Label "需要对应用程序文件夹拥有写入权限。">
+<!ENTITY Restart.Label "所有更改将在重新启动 Thunderbird 后生效。">
