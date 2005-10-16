@@ -1,6 +1,6 @@
 <!ENTITY SaveSentItems.Label "在“已发送消息”中保存备份">
 <!ENTITY SaveSentItems.AccessKey "s">
-<!ENTITY AlternativeGroup.Label "可选择\多部分电子邮件">
+<!ENTITY AlternativeGroup.Label "“Alternative\Multipart”邮件">
 <!ENTITY SendPlain.Label "发送纯文本邮件">
 <!ENTITY SendPlain.AccessKey "p">
 <!ENTITY SendHtml.Label "发送 HTML 邮件">

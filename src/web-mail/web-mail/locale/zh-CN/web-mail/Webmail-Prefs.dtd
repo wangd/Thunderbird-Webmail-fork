@@ -1,5 +1,5 @@
 <!ENTITY Options.szTitle "WebMail 选项">
 <!ENTITY Servers.Panel.szTitle "服务器">
-<!ENTITY Domains.Panel.szTitle "网域">
+<!ENTITY Domains.Panel.szTitle "域名">
 <!ENTITY Logging.Panel.szTitle "日志">
 <!ENTITY General.Panel.szTitle "常规">
