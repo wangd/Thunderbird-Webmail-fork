@@ -780,8 +780,7 @@ nsMailDotCom.prototype =
                     szEmail += "\r\n\r\n"; //end of message
                    
                     szEmail = szEmail.replace(/^\./mg,"..");    //bit padding 
-                    if (szEmail.lastIndexOf("\r\n") == -1) szEmail += "\r\n";
-                    szEmail += ".\r\n";  //msg end 
+                    szEmail += "\r\n.\r\n";  //msg end 
                                                                                                                       
                     var szPOPResponse = "+OK " + szEmail.length + "\r\n";                     
                     szPOPResponse += szEmail;
