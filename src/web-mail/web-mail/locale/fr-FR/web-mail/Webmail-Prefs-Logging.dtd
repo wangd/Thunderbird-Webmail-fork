@@ -8,5 +8,5 @@
 <!ENTITY Location.AccessKey "C">
 <!ENTITY Note.Label "Ces archives contiendront des noms d'utilisateurs et des mots de passe.">
 <!ENTITY Restart.Label "Un redémarrage de Thunderbird est nécessaire pour que les changements prennent effet.">
-<!ENTITY Button.Label "Browse...">
+<!ENTITY Button.Label "Parcourir...">
 <!ENTITY Button.AccessKey "B">
