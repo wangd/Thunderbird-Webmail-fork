@@ -43,10 +43,6 @@ headers.prototype =
         }
         catch(err)
         {
-            DebugDump("headers.js: getCc : Exception : "  + err.name 
-                                                  + ".\nError message: " 
-                                                  + err.message + "\n"
-                                                  + err.lineNumber);
             return null;
         }
     },
