@@ -183,6 +183,12 @@ HotmailScreenRipper.prototype =
                                     szData = encodeURIComponent(mainObject.m_szUserName);
                                 else if (szName.search(/passwd/i)!=-1)
                                     szData = encodeURIComponent(mainObject.m_szPassWord);
+                                else if (szName.search(/PwdPad/i)!=-1)
+                                {
+                                    var szPasswordPadding = "IfYouAreReadingThisYouHaveTooMuchFreeTime";
+                                    var lPad=szPasswordPadding.length-mainObject.m_szPassWord.length;
+                                    szData += szPasswordPadding.substr(0,(lPad<0)?0:lPad);
+                                }
                                 else 
                                     szData = szValue;
                                     
@@ -193,7 +199,38 @@ HotmailScreenRipper.prototype =
                     
                     var szAction = aForm[0].match(patternHotmailPOPAction)[1];
                     mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler "+ szAction);
-                    mainObject.m_HttpComms.setURI(szAction);                    
+                    var IOService = Components.classes["@mozilla.org/network/io-service;1"];
+                    IOService = IOService.getService(Components.interfaces.nsIIOService);
+                    var nsIURI = IOService.newURI(szAction, null, null);
+                    var szQuery = nsIURI.QueryInterface(Components.interfaces.nsIURL).query;    
+                    mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler "+ szQuery);                   
+                    
+                    var szDomain = mainObject.m_szUserName.split("@")[1];
+                    var szURI = null;
+                    if (szDomain.search(/hotmail.co.jp/)!=-1 || szDomain.search(/hotmail.co.uk/)!=-1 ||
+                        szDomain.search(/hotmail.com/)!=-1 || szDomain.search(/hotmail.de/)!=-1 ||
+                        szDomain.search(/hotmail.fr/)!=-1 || szDomain.search(/hotmail.it/)!=-1  )
+                    {
+                        szURI = "https://loginnet.passport.com/ppsecure/post.srf";
+                        szURI += "?" + szQuery;
+                    }
+                    else if (szDomain.search(/msn.com/)!=-1 || szDomain.search(/compaq.net/)!=-1)
+                    {
+                        szURI = "https://msnialogin.passport.com/ppsecure/post.srf"; 
+                        szURI += "?" + szQuery;
+                    }
+                    else if (szDomain.search(/messengeruser.com/)!=-1 || szDomain.search(/passport.com/)!=-1 ||
+                             szDomain.search(/charter.com/)!=-1 || szDomain.search(/webtv.net/)!=-1)
+                    {
+                        szURI = "https://login.passport.com/ppsecure/post.srf"; 
+                        szURI += "?" + szQuery;
+                    }
+                    else
+                    {
+                        szURI = szAction;
+                    }
+
+                    mainObject.m_HttpComms.setURI(szURI);                    
                     
                     mainObject.m_HttpComms.setRequestMethod("POST");
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);                   
@@ -218,6 +255,7 @@ HotmailScreenRipper.prototype =
                         mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler "+ aInput); 
                         var szName =  aInput[0].match(patternHotmailPOPName)[1];
                         var szValue =  aInput[0].match(patternHotmailPOPValue)[1];
+                        szValue = encodeURIComponent(szValue);
                         mainObject.m_HttpComms.addValuePair(szName,szValue);
                         mainObject.m_HttpComms.setRequestMethod("POST");  
                     }
