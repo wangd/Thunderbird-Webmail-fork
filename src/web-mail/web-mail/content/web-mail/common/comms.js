@@ -6,24 +6,22 @@ function Comms(parent , log)
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/commsData.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/CookieManager.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpAuthManager.js");
-                
+               
         this.m_Log = log;
         this.m_Log.Write("comms.js - constructor - START");
           
         this.m_IOService = Components.classes["@mozilla.org/network/io-service;1"];
         this.m_IOService = this.m_IOService.getService(Components.interfaces.nsIIOService);
         
-        this.m_oCookies = new CookieHandler(this.m_Log);
-        
+        this.m_oCookies = null;
+        this.m_AuthToken =  null;
+       
         this.m_bHandleCookie = true;
         this.m_bHandleBounce = true;
         this.m_bHandleHttpAuth = false;
         this.m_iHttpAuth = 0;
         this.m_szPassword = null;
         this.m_szUserName = null;
-        this.m_AuthToken = new HttpAuthManager(this.m_Log);
         this.m_URI = null;
         this.m_aHeaders = new Array();
         this.m_aFormData = new Array();
@@ -78,6 +76,37 @@ Comms.prototype =
     {
         this.m_bHandleBounce = bState;
     },
+    
+    
+    setCookieManager : function (oCookieManager)
+    {
+        if (!oCookieManager) return false;
+        if (this.m_oCookies)  delete this.m_oCookies;
+        this.m_oCookies = oCookieManager;
+        return true;
+    },
+    
+    
+    getCookieManager: function ()
+    {
+        return this.m_oCookies;
+    },
+    
+    
+    setHttpAuthManager : function (oHttpAuthManager)
+    {
+        if (!oHttpAuthManager) return false;
+        if (this.m_AuthToken)  delete this.m_AuthToken;
+        this.m_AuthToken = oHttpAuthManager;
+        return true;
+    },
+    
+    
+    getHttpAuthManager: function ()
+    {
+        return this.m_AuthToken;
+    },
+    
     
     
     setHandleHttpAuth : function (bState)
@@ -336,9 +365,10 @@ Comms.prototype =
             
             var szDomain = this.m_URI.prePath.match(/\/\/(.*?)$/)[1];  
             //add cookies
-            if (this.m_bHandleCookie)
+            if (this.m_bHandleCookie && this.m_oCookies)
             {   
                 var aszCookie = this.m_oCookies.findCookie(szDomain);
+                this.m_Log.Write("comms.js - send - adding cookies "+ aszCookie);
                 if (aszCookie)
                     HttpRequest.setRequestHeader("Cookie", aszCookie, false);
             }
@@ -356,9 +386,10 @@ Comms.prototype =
              
              
             //add Http Auth 
-            if (this.m_bHandleHttpAuth)
-            {
-                var szAuthString = this.m_AuthToken.findToken(szDomain); 
+            if (this.m_bHandleHttpAuth && this.m_AuthToken )
+            {              
+                var szAuthString = this.m_AuthToken.findToken(szDomain);
+                this.m_Log.Write("comms.js - send - adding HttpAuth "+ szAuthString); 
                 if (szAuthString)
                     HttpRequest.setRequestHeader("Authorization", szAuthString , false);
             }
@@ -624,7 +655,12 @@ Comms.prototype =
                 try
                 {
                     var szCookies =  httpChannel.getResponseHeader("Set-Cookie");
-                    mainObject.m_Log.Write("comms.js - callback - received cookies \n" + szCookies);
+                    mainObject.m_Log.Write("comms.js - callback - received cookies \n" + szCookies);  
+                    if (!mainObject.m_oCookies)
+                    {
+                        mainObject.m_oCookies = Components.classes["@mozilla.org/CookieManager;1"].createInstance();
+                        mainObject.m_oCookies.QueryInterface(Components.interfaces.nsICookieManager);
+                    }
                     mainObject.m_oCookies.addCookie(szCookies); 
                 }
                 catch(e)
@@ -650,6 +686,13 @@ Comms.prototype =
                         mainObject.m_Log.Write("comms.js - callback - domain " +szDomain);
                         var szAuthenticate =  httpChannel.getResponseHeader("www-Authenticate");
                         mainObject.m_Log.Write("comms.js - callback - www-Authenticate " + szAuthenticate); 
+                        
+                        if (!mainObject.m_AuthToken)
+                        {
+                            mainObject.m_AuthToken = Components.classes["@mozilla.org/HttpAuthManager;1"].createInstance();
+                            mainObject.m_AuthToken.QueryInterface(Components.interfaces.nsIHttpAuthManager);
+                        }
+                        
                         mainObject.m_AuthToken.addToken(szDomain,
                                                         szAuthenticate , 
                                                         httpChannel.URI.path ,
