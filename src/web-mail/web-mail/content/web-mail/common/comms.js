@@ -80,6 +80,7 @@ Comms.prototype =
     
     setCookieManager : function (oCookieManager)
     {
+        this.m_Log.Write("comms.js - setCookieManager - " + oCookieManager);
         if (!oCookieManager) return false;
         if (this.m_oCookies)  delete this.m_oCookies;
         this.m_oCookies = oCookieManager;
@@ -95,6 +96,7 @@ Comms.prototype =
     
     setHttpAuthManager : function (oHttpAuthManager)
     {
+        this.m_Log.Write("comms.js - setHttpAuthManager - " + oHttpAuthManager);
         if (!oHttpAuthManager) return false;
         if (this.m_AuthToken)  delete this.m_AuthToken;
         this.m_AuthToken = oHttpAuthManager;
