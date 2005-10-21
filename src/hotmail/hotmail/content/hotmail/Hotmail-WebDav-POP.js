@@ -32,6 +32,20 @@ function HotmailWebDav(oResponseStream, oLog)
         
         this.m_bJunkMail = false;
         
+        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"];
+        this.m_SessionManager = this.m_SessionManager.getService();
+        this.m_SessionManager.QueryInterface(Components.interfaces.nsISessionManager); 
+        this.m_SessionData = null;
+        
+        //do i reuse the session
+        var oPref = new Object();
+        oPref.Value = null;
+        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+        if (WebMailPrefAccess.Get("bool","hotmail.bReUseSession",oPref))
+            this.m_bReUseSession=oPref.Value;
+        else
+            this.m_bReUseSession=true; 
+        
          //do i download junkmail
         var oPref = new Object();
         oPref.Value = null;
@@ -75,15 +89,27 @@ HotmailWebDav.prototype =
             this.m_Log.Write("HotmailWebDav.js - logIN - Username: " + szUserName 
                                                    + " Password: " + szPassWord 
                                                    + " stream: " + this.m_oResponseStream);
-            
+                        
             this.m_szUserName = szUserName;
             this.m_szPassWord = szPassWord;
-            this.m_HttpComms.clean();
             
             if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
+            
+            this.m_HttpComms.clean();
+            
+            this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
+            if (this.m_SessionData && this.m_bReUseSession)
+            {
+                this.m_Log.Write("HotmailWebDav.js - logIN - Session Data found");
+                if (!this.m_SessionData.oComponentData)
+                {
+                    this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
+                    this.m_HttpComms.setHttpAuthManager(this.m_SessionData.oHttpAuthManager); 
+                }
+            }
+
             this.m_HttpComms.setUserName(this.m_szUserName);
             this.m_HttpComms.setPassword(this.m_szPassWord);
-            this.m_iStage= 0;
             this.m_HttpComms.setContentType(-1);
             this.m_HttpComms.setURI("http://oe.hotmail.com/svcs/hotmail/httpmail.asp");
             this.m_HttpComms.setRequestMethod("PROPFIND");
@@ -631,6 +657,19 @@ HotmailWebDav.prototype =
         try
         {
             this.m_Log.Write("HotmailWebDav.js - logOUT - START"); 
+            
+            if (!this.m_SessionData)
+            {
+                this.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
+                this.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
+                this.m_SessionData.szUserName = this.m_szUserName;    
+            }
+            this.m_SessionData.oComponentData = null;
+            this.m_SessionData.oCookieManager = this.m_HttpComms.getCookieManager();
+            this.m_SessionData.oHttpAuthManager = this.m_HttpComms.getHttpAuthManager();
+            var date = new Date();
+            this.m_SessionData.iExpiryTime = date.getTime() + (20*(1000*60));//20 mins
+            this.m_SessionManager.setSessionData(this.m_SessionData);
             
             this.m_bAuthorised = false;
             this.serverComms("+OK Your Out\r\n");             
