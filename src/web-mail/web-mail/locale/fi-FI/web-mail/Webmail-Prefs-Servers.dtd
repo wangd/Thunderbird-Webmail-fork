@@ -1,0 +1,24 @@
+<!ENTITY ServerStatus.Label "Palvelimen tila">
+<!ENTITY Ports.Label "Portit">
+<!ENTITY Ports.AccessKey "r">
+<!ENTITY Pop.Label "POP">
+<!ENTITY Pop.AccessKey "O">
+<!ENTITY POP.Default.Label "oletus 110">
+<!ENTITY Note.Label "Käyttöjärjestelmä saattaa estää portit pienempiä kuin 1024">
+<!ENTITY Restart.Label "Vaatii Thunderbirdin uudelleenkäynnistyksen, jotta muutokset tulevat voimaan.">
+<!ENTITY SMTP.Label "SMTP">
+<!ENTITY SMTP.AccessKey "S">
+<!ENTITY SMTP.Default.Label "oletus 25">
+<!ENTITY IMAP.Label "IMAP">
+<!ENTITY IMAP.AccessKey "I">
+<!ENTITY IMAP.Default.Label "oletus 143">
+<!ENTITY Enable.POP.Label "Ota POP-palvelin käyttöön.">
+<!ENTITY Enable.POP.AccessKey "P">
+<!ENTITY Enable.SMTP.Label "Ota SMTP-palvelin käyttöön.">
+<!ENTITY Enable.SMTP.AccessKey "T">
+<!ENTITY Enable.IMAP.Label "Ota IMAP-palvelin käyttöön.">
+<!ENTITY Enable.IMAP.AccessKey "M">
+<!ENTITY Enable.Label "Käyttöönotto">
+<!ENTITY Enable.AccessKey "K">
+<!ENTITY Status.Label "Tila">
+<!ENTITY Status.AccessKey "T">

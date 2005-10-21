@@ -1,0 +1,12 @@
+<!ENTITY GeneralLogging.Label "Ota kirjaaminen käyttöön">
+<!ENTITY GeneralLogging.AccessKey "O">
+<!ENTITY JavaScriptConsole.Label "Käytä JavaScript-konsolia">
+<!ENTITY JavaScriptConsole.AccessKey "J">
+<!ENTITY LogFile.Label "Käytä lokitiedostoa">
+<!ENTITY LogFile.AccessKey "l">
+<!ENTITY Location.Label "Sijainti">
+<!ENTITY Location.AccessKey "S">
+<!ENTITY Note.Label "Nämä lokitiedostot sisältävät käyttäjänimiä ja salasanoja.">
+<!ENTITY Restart.Label "Vaatii Thunderbirdin uudelleenkäynnistyksen, jotta muutokset tulevat voimaan.">
+<!ENTITY Button.Label "Selaa...">
+<!ENTITY Button.AccessKey "e">

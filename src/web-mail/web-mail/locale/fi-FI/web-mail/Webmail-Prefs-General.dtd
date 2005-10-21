@@ -1,0 +1,4 @@
+<!ENTITY AccountWizard.Label "Lisää WebMail tilinluojaan">
+<!ENTITY AccountWizard.AccessKey "L">
+<!ENTITY AccountWizardWarning.Label "Vaatii kirjoitusoikeudet asennuskansioon.">
+<!ENTITY Restart.Label "Vaatii Thunderbirdin uudelleenkäynnistyksen, jotta muutokset tulevat voimaan.">
