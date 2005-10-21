@@ -122,6 +122,12 @@
 }
 
 
+.flag[value="14"]/*finland*/
+{
+     -moz-image-region: rect(0px, 512px, 32px, 480px)
+}
+
+
 #HotmailHomePage
 {
     text-align: right;
