@@ -1,6 +1,6 @@
 <!ENTITY HotmailAbout.Title "Hotmail - Tietoja">
 <!ENTITY HotmailAbout.ExtName "Hotmail">
-<!ENTITY HotmailAbout.ExtVersion "versio 0.8.0">
+<!ENTITY HotmailAbout.ExtVersion "versio 0.9.0">
 <!ENTITY HotmailAbout.ExtDescription "Hotmail-komponentti Web-Mail laajennukselle.">
 <!ENTITY HotmailAbout.ExtCreaterTitle "Tekijä:">
 <!ENTITY HotmailAbout.ExtCreator "ComodoDragon">
