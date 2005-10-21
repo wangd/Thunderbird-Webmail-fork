@@ -3,3 +3,8 @@ nsIPOPConnectionManager.bat
 nsISMTPConnectionManager.bat
 nsIDataBaseManager.bat
 nsIIMAPConnectionManager.bat
+nsIComponentData.bat
+nsICookieManager.bat
+nsIHttpAuthManager.bat
+nsISessionData.bat
+nsISessionManager.bat

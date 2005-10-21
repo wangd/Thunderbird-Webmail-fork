@@ -1,0 +1,9 @@
+#include "nsISupports.idl"
+
+[scriptable, uuid(76fef350-3850-11da-8cd6-0800200c9a66)]
+interface nsICookieManager : nsISupports
+{
+    boolean addCookie( in string szCookie);
+    
+    string findCookie( in string szDomain);
+};

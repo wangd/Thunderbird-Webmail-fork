@@ -1,0 +1,13 @@
+#include "nsISupports.idl"
+
+[scriptable, uuid(af7301e0-3850-11da-8cd6-0800200c9a66)]
+interface nsIHttpAuthManager : nsISupports
+{
+    boolean addToken(in string szDomain,
+                     in string szHeader,
+                     in string szUri,
+                     in string szUserName,
+                     in string szPassword);
+                     
+    string findToken(in string szDomain);
+};
