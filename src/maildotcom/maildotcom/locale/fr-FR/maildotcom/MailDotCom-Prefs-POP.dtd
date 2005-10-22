@@ -1,0 +1,5 @@
+<!ENTITY MailServers.Label "POP">
+<!ENTITY EmptyTrash.Label "Vider la corbeille">
+<!ENTITY EmptyTrash.AccessKey "E">
+<!ENTITY DownloadUnread.Label "Ne relever que le courrier non lu">
+<!ENTITY DownloadUnread.AccessKey "u">

@@ -1,0 +1,5 @@
+<!ENTITY Options.szTitle "Options de MailDotCom">
+<!ENTITY POP.Panel.szTitle "POP">
+<!ENTITY SMTP.Panel.szTitle "SMTP">
+<!ENTITY IMAP.Panel.szTitle "IMAP">
+<!ENTITY Window.size "largeur: 27em; hauteur: 20em">
