@@ -61,6 +61,20 @@ function nsLycos()
         this.m_aMsgDataStore = new Array();
         this.m_iTotalSize = 0;     
         this.m_bJunkMail = false;
+             
+        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"];
+        this.m_SessionManager = this.m_SessionManager.getService();
+        this.m_SessionManager.QueryInterface(Components.interfaces.nsISessionManager); 
+        this.m_SessionData = null;
+        
+        //do i reuse the session
+        var oPref = new Object();
+        oPref.Value = null;
+        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+        if (WebMailPrefAccess.Get("bool","lycos.bReUseSession",oPref))
+            this.m_bReUseSession=oPref.Value;
+        else
+            this.m_bReUseSession=true; 
         
         //do i download junkmail
         var oPref = new Object();
@@ -142,6 +156,15 @@ nsLycos.prototype =
                 throw new Error("Unknown domain");
             
             this.m_HttpComms.clean();
+            
+            this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
+            if (this.m_SessionData && this.m_bReUseSession)
+            {
+                this.m_Log.Write("nsLycos.js - logIN - Session Data found");
+                this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
+                this.m_HttpComms.setHttpAuthManager(this.m_SessionData.oHttpAuthManager); 
+            }
+            
             this.m_HttpComms.setUserName(this.m_szUserName);
             this.m_HttpComms.setPassword(this.m_szPassWord);
             this.m_HttpComms.setContentType(-1);
@@ -684,6 +707,22 @@ nsLycos.prototype =
             var  WebMailPrefAccess = new WebMailCommonPrefAccess();
             WebMailPrefAccess.Get("bool","lycos.bEmptyTrash",oPref);
         
+            if (!this.m_SessionData)
+            {
+                this.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
+                this.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
+                this.m_SessionData.szUserName = this.m_szUserName;
+                
+                var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
+                componentData.QueryInterface(Components.interfaces.nsIComponentData);
+                this.m_SessionData.oComponentData = componentData;
+            }
+            this.m_SessionData.oCookieManager = this.m_HttpComms.getCookieManager();
+            this.m_SessionData.oHttpAuthManager = this.m_HttpComms.getHttpAuthManager();
+            var date = new Date();
+            this.m_SessionData.iExpiryTime = date.getTime() + (20*(1000*60));//20 mins
+            this.m_SessionManager.setSessionData(this.m_SessionData);
+            
             if (!oPref.Value)
             {
                 this.m_bAuthorised = false;

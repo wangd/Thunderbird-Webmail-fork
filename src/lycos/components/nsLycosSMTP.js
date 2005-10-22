@@ -36,7 +36,21 @@ function nsLycosSMTP()
         this.m_szFrom = null;
         this.m_iStage = 0;
         this.m_szSendUri = null;
-              
+           
+        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"];
+        this.m_SessionManager = this.m_SessionManager.getService();
+        this.m_SessionManager.QueryInterface(Components.interfaces.nsISessionManager); 
+        this.m_SessionData = null;   
+        
+        //do i reuse the session
+        var oPref = new Object();
+        oPref.Value = null;
+        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+        if (WebMailPrefAccess.Get("bool","lycos.bReUseSession",oPref))
+            this.m_bReUseSession=oPref.Value;
+        else
+            this.m_bReUseSession=true; 
+                  
         //do i save copy
         var oPref = new Object();
         oPref.Value = null;
@@ -114,6 +128,15 @@ nsLycosSMTP.prototype =
             
             this.m_iStage = 0;
             this.m_HttpComms.clean();
+            
+            this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
+            if (this.m_SessionData && this.m_bReUseSession)
+            {
+                this.m_Log.Write("nsLycos.js - logIN - Session Data found");
+                this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
+                this.m_HttpComms.setHttpAuthManager(this.m_SessionData.oHttpAuthManager); 
+            }
+            
             this.m_HttpComms.setUserName(this.m_szUserName);
             this.m_HttpComms.setPassword(this.m_szPassWord);
             this.m_HttpComms.setContentType(-1);
@@ -232,9 +255,30 @@ nsLycosSMTP.prototype =
             //if this fails we've gone somewhere new
             mainObject.m_Log.Write("nsLycosSMTP.js - composerOnloadHandler - status :" +httpChannel.responseStatus );
             if (httpChannel.responseStatus != 200) 
+            {
                 mainObject.serverComms("502 Error Sending Email\r\n");  
-             
-            mainObject.serverComms("250 OK\r\n");       
+                return;
+            }
+            else
+            { 
+                if (!mainObject.m_SessionData)
+                {
+                    mainObject.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
+                    mainObject.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
+                    mainObject.m_SessionData.szUserName = mainObject.m_szUserName;
+                    
+                    var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
+                    componentData.QueryInterface(Components.interfaces.nsIComponentData);
+                    mainObject.m_SessionData.oComponentData = componentData;
+                }
+                mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
+                mainObject.m_SessionData.oHttpAuthManager = mainObject.m_HttpComms.getHttpAuthManager();
+                var date = new Date();
+                mainObject.m_SessionData.iExpiryTime = date.getTime() + (20*(1000*60));//20 mins
+                mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);
+                
+                mainObject.serverComms("250 OK\r\n");       
+            }
             mainObject.m_Log.Write("nsLycosSMTP.js - composerOnloadHandler - END");
         }
         catch(err)
