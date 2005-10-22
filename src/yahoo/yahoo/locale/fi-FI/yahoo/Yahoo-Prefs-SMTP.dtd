@@ -1,0 +1,8 @@
+<!ENTITY SaveSentItems.Label "Tallenna kopio lähetettyihin.">
+<!ENTITY SaveSentItems.AccessKey "l">
+<!ENTITY AlternativeGroup.Label "Vaihtoehtoiset\moniosaiset viestit">
+<!ENTITY SendPlain.Label "Lähetä pelkkä teksti-muodossa">
+<!ENTITY SendPlain.AccessKey "p">
+<!ENTITY SendHtml.Label "Lähetä html-muodossa">
+<!ENTITY SendHtml.AccessKey "h">
+
