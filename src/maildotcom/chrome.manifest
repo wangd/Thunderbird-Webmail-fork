@@ -11,3 +11,5 @@ locale  maildotcom    de-DE   jar:chrome/maildotcom.jar!/locale/de-DE/maildotcom
 locale  maildotcom    ca-AD   jar:chrome/maildotcom.jar!/locale/ca-AD/maildotcom/
 locale  maildotcom    nl-NL   jar:chrome/maildotcom.jar!/locale/nl-NL/maildotcom/
 locale  maildotcom    zh-CN   jar:chrome/maildotcom.jar!/locale/zh-CN/maildotcom/
+locale  maildotcom    fr-FR   jar:chrome/maildotcom.jar!/locale/fr-FR/maildotcom/
+locale  maildotcom    fi-FI   jar:chrome/maildotcom.jar!/locale/fi-FI/maildotcom/
