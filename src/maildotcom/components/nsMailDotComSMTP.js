@@ -56,6 +56,22 @@ function nsMailDotComSMTP()
         this.m_iAttCount = 0;
         this.m_iAttUploaded = 1;
         
+        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"];
+        this.m_SessionManager = this.m_SessionManager.getService();
+        this.m_SessionManager.QueryInterface(Components.interfaces.nsISessionManager); 
+        this.m_SessionData = null;
+        
+        this.m_bReEntry = false;
+        
+        //do i reuse the session
+        var oPref = new Object();
+        oPref.Value = null;
+        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+        if (WebMailPrefAccess.Get("bool","maildotcom.bReUseSession",oPref))
+            this.bReUseSession=oPref.Value;
+        else
+            this.bReUseSession=true; 
+            
         //do i save copy
         var oPref = new Object();
         oPref.Value = null;
@@ -119,16 +135,36 @@ nsMailDotComSMTP.prototype =
                                                    + " stream: " + this.m_oResponseStream);
             
             if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
-        
-            this.m_iStage =0;
-            
+                 
             //get mail.com webpage
             this.m_HttpComms.clean();
-            this.m_HttpComms.setURI("http://www.mail.com");
-            this.m_HttpComms.setRequestMethod("GET");
-            var bResult = this.m_HttpComms.send(this.loginOnloadHandler);                             
-            if (!bResult) throw new Error("httpConnection returned false");
-         
+            this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
+            if (this.m_SessionData && this.m_bReUseSession)
+            {
+                this.m_Log.Write("nsMailDotCom.js - logIN - Session Data found");
+                this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
+                this.m_szLocation = this.m_SessionData.oComponentData.findElement("szLocation");
+                this.m_Log.Write("nsMailDotCom.js - logIN - szLocation - " +this.m_szLocation);    
+                this.m_szFolderList = this.m_SessionData.oComponentData.findElement("szFolderList");
+                this.m_Log.Write("nsMailDotCom.js - logIN - szFolderList - " +this.m_szFolderList);    
+                
+                //get folder list
+                this.m_iStage =4;
+                this.m_bReEntry = true;
+                this.m_HttpComms.setURI(this.m_szFolderList);
+                this.m_HttpComms.setRequestMethod("GET");
+                var bResult = this.m_HttpComms.send(this.loginOnloadHandler);                             
+                if (!bResult) throw new Error("httpConnection returned false");
+            }
+            else
+            {   //get mail.com webpage 
+                this.m_iStage =0;
+                this.m_HttpComms.setURI("http://www.mail.com");
+                this.m_HttpComms.setRequestMethod("GET");
+                var bResult = this.m_HttpComms.send(this.loginOnloadHandler);                             
+                if (!bResult) throw new Error("httpConnection returned false");
+            }
+            
             this.m_Log.Write("nsMailDotCom.js - logIN - END");    
             return true;
         }
@@ -267,7 +303,20 @@ nsMailDotComSMTP.prototype =
                     var szLocation = httpChannel.URI.spec;
                     mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - location "+ szLocation);
                     if (szLocation.search(/frontpage.main/)==-1)
-                        throw new Error("error logging in");
+                    {
+                        if (mainObject.m_bReEntry)
+                        {
+                            mainObject.m_bReEntry = false;
+                            mainObject.m_iStage =0;
+                            mainObject.m_HttpComms.setURI("http://www.mail.com");
+                            mainObject.m_HttpComms.setRequestMethod("GET");
+                            var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);                             
+                            if (!bResult) throw new Error("httpConnection returned false");
+                            return;
+                        }
+                        else
+                            throw new Error("error logging in");
+                    }
                     
                     mainObject.m_szLocation = httpChannel.URI.prePath 
                     mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - location "+ mainObject.m_szLocation);
@@ -474,7 +523,25 @@ nsMailDotComSMTP.prototype =
                 case 1:  //message ok
                     mainObject.m_Log.Write("nsMailDotCom.js - composerOnloadHandler - message ok");
                     if (szResponse.search(/aftersent/igm)!=-1)
+                    {
+                        if (!mainObject.m_SessionData)
+                        {
+                            mainObject.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
+                            mainObject.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
+                            mainObject.m_SessionData.szUserName = mainObject.m_szUserName;
+                            
+                            var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
+                            componentData.QueryInterface(Components.interfaces.nsIComponentData);
+                            mainObject.m_SessionData.oComponentData = componentData;
+                        }
+                        mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
+                        var date = new Date();
+                        mainObject.m_SessionData.iExpiryTime = date.getTime() + (20*(1000*60));//20 mins
+                        mainObject.m_SessionData.oComponentData.addElement("szHomeURI",mainObject.m_szHomeURI);
+                        mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);
+                        
                         mainObject.serverComms("250 OK\r\n");
+                    }
                     else
                         mainObject.serverComms("502 Error Sending Email\r\n");   
                 break;
