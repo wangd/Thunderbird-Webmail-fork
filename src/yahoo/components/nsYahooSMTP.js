@@ -48,10 +48,29 @@ function nsYahooSMTP()
         this.m_iStage = 0;
         this.m_szComposeURI = null;
         this.m_szLocationURI = null; 
+        this.m_szYahooMail = null;
+        this.m_szHomeURI = null;
+        this.m_bReEntry = false;
         this.m_bAttHandled = false;
         this.m_Email = new email(this.m_Log);
         this.m_Email.decodeBody(true);
+
+        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"];
+        this.m_SessionManager = this.m_SessionManager.getService();
+        this.m_SessionManager.QueryInterface(Components.interfaces.nsISessionManager); 
+        this.m_SessionData = null;
         
+        this.m_bReEntry = false;
+        
+        //do i reuse the session
+        var oPref = new Object();
+        oPref.Value = null;
+        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+        if (WebMailPrefAccess.Get("bool","yahoo.bReUseSession",oPref))
+            this.m_bReUseSession=oPref.Value;
+        else
+            this.m_bReUseSession=true; 
+            
         //do i save copy
         var oPref = new Object();
         oPref.Value = null;
@@ -116,21 +135,40 @@ nsYahooSMTP.prototype =
            
             if (!this.m_szUserName || !this.m_oResponseStream  || !this.m_szPassWord) return false;
                      
-            //get YahooLog.com webpage
-            var szPath = "http://mail.yahoo.com";
-            
+           this.m_szYahooMail = "http://mail.yahoo.com";
+                    
             if (this.m_szUserName.search(/@talk21.com$/)!=-1 ||  
                 this.m_szUserName.search(/@btinternet.com$/)!=-1  ||
                 this.m_szUserName.search(/@btopenworld.com$/)!=-1 )
             {
-                szPath = "http://bt.yahoo.com/";
+                this.m_szYahooMail = "http://bt.yahoo.com/";
             }    
             
             this.m_HttpComms.clean();
-            this.m_HttpComms.setURI(szPath);
-            this.m_HttpComms.setRequestMethod("GET");
-            var bResult = this.m_HttpComms.send(this.loginOnloadHandler);                             
-            if (!bResult) throw new Error("httpConnection returned false");
+            
+            this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
+            if (this.m_SessionData && this.m_bReUseSession)
+            {
+                this.m_Log.Write("nsYahoo.js - logIN - Session Data found");
+                this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
+                this.m_szHomeURI = this.m_SessionData.oComponentData.findElement("szHomeURI");
+                this.m_Log.Write("nsYahoo" +this.m_szHomeURI);    
+            
+                //get home page
+                this.m_iStage =3;
+                this.m_bReEntry = true;
+                this.m_HttpComms.setURI(this.m_szHomeURI);
+                this.m_HttpComms.setRequestMethod("GET");
+                var bResult = this.m_HttpComms.send(this.loginOnloadHandler);                             
+                if (!bResult) throw new Error("httpConnection returned false");
+            }
+            else
+            {   //get YahooLog.com webpage
+                this.m_HttpComms.setURI(this.m_szYahooMail);
+                this.m_HttpComms.setRequestMethod("GET");
+                var bResult = this.m_HttpComms.send(this.loginOnloadHandler);                             
+                if (!bResult) throw new Error("httpConnection returned false");        
+            }
             
             this.m_Log.Write("nsYahooSMTP.js - logIN - END");    
             return true;
@@ -250,9 +288,23 @@ nsYahooSMTP.prototype =
                 case 3: //mail box
                     var szLocation = httpChannel.URI.spec;
                     var iIndex = szLocation.indexOf("uilogin.srt");
-                    mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - page check : " + szLocation 
-                                                        + " index = " +  iIndex );
-                    if (iIndex != -1) throw new Error("error logging in ");
+                    mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - page check : " + szLocation);
+                    if (szLocation.indexOf("uilogin.srt")!= -1)
+                    {
+                        if (mainObject.m_bReEntry)
+                        {
+                            mainObject.m_bReEntry = false;
+                            mainObject.m_iStage =0;
+                            mainObject.m_HttpComms.setURI(mainObject.m_szYahooMail);
+                            mainObject.m_HttpComms.setRequestMethod("GET");
+                            var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);                             
+                            if (!bResult) throw new Error("httpConnection returned false");
+                            return;
+                        }
+                        else
+                            throw new Error("error logging in");
+                    } 
+                    mainObject.m_szHomeURI = szLocation;
                     
                     //get urls for later use
                     mainObject.m_szLocationURI = httpChannel.URI.prePath ;
@@ -420,7 +472,25 @@ nsYahooSMTP.prototype =
                 case 1: //MSG OK handler
                     //check for add address to addressbook
                     if (szResponse.search(/AddAddresses/i)!=-1)
+                    {
+                        if (!mainObject.m_SessionData)
+                        {
+                            mainObject.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
+                            mainObject.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
+                            mainObject.m_SessionData.szUserName = mainObject.m_szUserName;
+                            
+                            var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
+                            componentData.QueryInterface(Components.interfaces.nsIComponentData);
+                            mainObject.m_SessionData.oComponentData = componentData;
+                        }
+                        mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
+                        var date = new Date();
+                        mainObject.m_SessionData.iExpiryTime = date.getTime() + (20*(1000*60));//20 mins
+                        mainObject.m_SessionData.oComponentData.addElement("szHomeURI",mainObject.m_szHomeURI);
+                        mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);
+                        
                         mainObject.serverComms("250 OK\r\n");
+                    }
                     else
                         mainObject.serverComms("502 Error Sending Email\r\n");   
                 break;
