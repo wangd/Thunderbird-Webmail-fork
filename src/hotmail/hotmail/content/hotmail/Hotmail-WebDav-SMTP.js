@@ -224,8 +224,6 @@ HotmailSMTPWebDav.prototype =
                 mainObject.m_SessionData.oComponentData = null;
                 mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
                 mainObject.m_SessionData.oHttpAuthManager = mainObject.m_HttpComms.getHttpAuthManager();
-                var date = new Date();
-                mainObject.m_SessionData.iExpiryTime = date.getTime() + (20*(1000*60));//20 mins
                 mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);
                 
                 mainObject.serverComms("250 OK\r\n");       

@@ -475,8 +475,6 @@ HotmailSMTPScreenRipper.prototype =
                             mainObject.m_SessionData.oComponentData = componentData;
                         }
                         mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
-                        var date = new Date();
-                        mainObject.m_SessionData.iExpiryTime = date.getTime() + (20*(1000*60));//20 mins
                         mainObject.m_SessionData.oComponentData.addElement("szHomeURI",mainObject.m_szHomeURI);
                         mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);
                         

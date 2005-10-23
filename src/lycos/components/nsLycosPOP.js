@@ -719,8 +719,6 @@ nsLycos.prototype =
             }
             this.m_SessionData.oCookieManager = this.m_HttpComms.getCookieManager();
             this.m_SessionData.oHttpAuthManager = this.m_HttpComms.getHttpAuthManager();
-            var date = new Date();
-            this.m_SessionData.iExpiryTime = date.getTime() + (20*(1000*60));//20 mins
             this.m_SessionManager.setSessionData(this.m_SessionData);
             
             if (!oPref.Value)
