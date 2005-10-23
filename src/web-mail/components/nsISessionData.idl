@@ -12,7 +12,7 @@ interface nsISessionData : nsISupports
     
     attribute nsIHttpAuthManager oHttpAuthManager;
     
-    attribute long iExpiryTime;
+    attribute PRint64 iExpiryTime;
     
     attribute nsIComponentData oComponentData;
     

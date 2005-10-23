@@ -1,7 +1,6 @@
 /*****************************  Globals   *************************************/                 
 const nsSessionManagerClassID = Components.ID("{1bf23e40-385f-11da-8cd6-0800200c9a66}");
 const nsSessionManagerContactID = "@mozilla.org/SessionManager;1";
-const cExpiryTime = 30 *(1000*60); //min
 
 
 /***********************  SessionManager ********************************/
@@ -10,7 +9,6 @@ function nsSessionManager()
     this.m_scriptLoader =  null;
     this.m_Log = null;
     this.m_aSessionData = new Array();
-    this.m_Timer = null;    
 }
 
 nsSessionManager.prototype =
@@ -121,7 +119,11 @@ nsSessionManager.prototype =
         {
             this.m_Log.Write("nsSessionManager.js - findSessionData - START"); 
             this.m_Log.Write("nsSessionManager.js - findSessionData - " + szUserName);
-                      
+            
+            var date = new Date();
+            var timeNow = date.getTime();
+            this.m_Log.Write("nsSessionManager.js - findSessionData - now " + timeNow);
+                          
             //find and delete
             for (i=0; i<this.m_aSessionData.length; i++)
             {
@@ -129,8 +131,14 @@ nsSessionManager.prototype =
                 this.m_Log.Write("nsSessionManager.js - findSessionData - search " + regUserName);
                 
                 if (szUserName.search(regUserName)!=-1)
-                {
-                    var temp = this.m_aSessionData[i];  //get first item
+                { 
+                    var temp = this.m_aSessionData[i];  //item
+                    
+                    this.m_Log.Write("nsSessionManager.js - findSessionData - expiry time " +  temp.iExpiryTime);
+                    if (temp.iExpiryTime!=-1)
+                    {
+                        if (temp.iExpiryTime < timeNow ) return null;
+                    }
                     this.m_Log.Write("nsSessionManager - findSessionData Found");
                     temp.bBlocked =true;
                     return temp;
@@ -153,50 +161,6 @@ nsSessionManager.prototype =
     
     
     
-    notify : function(timer)
-    {
-        try
-        {
-            this.m_Log.Write("nsSessionManager.js - Timer - START"); 
-    
-            var date = new Date();
-            var timeNow = date.getTime();
-            this.m_Log.Write("nsSessionManager.js - Timer - now " + timeNow);
-            
-            //find and delete
-            for (i=0; i<this.m_aSessionData.length; i++)
-            {
-                var temp = this.m_aSessionData.shift();  //get first item
-                this.m_Log.Write("nsSessionManager.js - Timer - user name " + temp.szUserName);
-                this.m_Log.Write("nsSessionManager.js - Timer - status " + temp.bBlocked);
-                this.m_Log.Write("nsSessionManager.js - Timer - expiry time " + temp.iExpiryTime );
-                
-                if (!temp.bBlocked)
-                {
-                    if (temp.iExpiryTime > timeNow )
-                    {
-                        this.m_Log.Write("nsSessionManager.js - Timer - deleting");
-                        delete temp;
-                    }
-                    else
-                    {
-                        this.m_Log.Write("nsSessionManager.js - Timer - pushed back");
-                        this.m_aSessionData.push(temp);
-                    }
-                }
-            }
-                
-            this.m_Log.Write("nsSessionManager.js - Timer - END"); 
-        }
-        catch(err)
-        {
-            this.m_Log.DebugDump("nsSessionManager.js: Timer : Exception : " 
-                                      + err.name + 
-                                      ".\nError message: " 
-                                      + err.message+ "\n"
-                                      + err.lineNumber);
-        }
-    },
     
     
     
@@ -226,14 +190,7 @@ nsSessionManager.prototype =
                                           "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
                                           "SessionManager");
                    
-                this.m_Log.Write("nsSessionManager : STARTED");     
-                
-                //expiry timer
-                this.m_Timer = Components.classes["@mozilla.org/timer;1"];
-                this.m_Timer = this.m_Timer.createInstance(Components.interfaces.nsITimer); 
-                this.m_Timer.initWithCallback(this, 
-                                              cExpiryTime, 
-                                              Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
+                this.m_Log.Write("nsSessionManager : STARTED");
             break;
 
             case "quit-application": // shutdown code here

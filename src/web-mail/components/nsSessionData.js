@@ -10,7 +10,7 @@ function nsSessionData()
     this.m_oCookieManager = null;
     this.m_oHttpAuthManager = null;
     this.m_oComponentData = null;
-    this.m_iExpiryTime =0;
+    this.m_iExpiryTime =-1;
     this.m_iBlocked = false;
 }
 
