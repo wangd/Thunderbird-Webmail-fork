@@ -5,33 +5,20 @@
      <RDF:Description about="urn:mozilla:extension:{a6a33690-2c6a-11d9-9669-0800200c9a66}">
         <em:updates>
             <RDF:Seq>
-                <RDF:li resource="urn:mozilla:extension:{a6a33690-2c6a-11d9-9669-0800200c9a66}:0.4.3"/>
-                <RDF:li resource="urn:mozilla:extension:{a6a33690-2c6a-11d9-9669-0800200c9a66}:0.8.0"/>
+                <RDF:li resource="urn:mozilla:extension:{a6a33690-2c6a-11d9-9669-0800200c9a66}:0.9.0"/>
             </RDF:Seq>
         </em:updates>
     </RDF:Description>
 
-    <RDF:Description about="urn:mozilla:extension:{a6a33690-2c6a-11d9-9669-0800200c9a66}:0.4.3">
-        <em:version>0.4.3</em:version>
-    	<em:targetApplication>
-        	<Description>
-                <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id><!-- Thunderbird updates -->
-            	<em:minVersion>1.0</em:minVersion>
-            	<em:maxVersion>1.0</em:maxVersion>
-                <em:updateLink>http://download.mozdev.org/webmail/hotmail-0-4-3.xpi</em:updateLink>
-          </Description>
-        </em:targetApplication>
-    </RDF:Description>  
-
-    <RDF:Description about="urn:mozilla:extension:{a6a33690-2c6a-11d9-9669-0800200c9a66}:0.8.0">
-        <em:version>0.8.0</em:version>
+    <RDF:Description about="urn:mozilla:extension:{a6a33690-2c6a-11d9-9669-0800200c9a66}:0.9.0">
+        <em:version>0.9.0</em:version>
     	<em:targetApplication>
         	<Description>
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id> <!-- Thunderbird updates -->
             	<em:minVersion>1.4</em:minVersion>
             	<em:maxVersion>1.6</em:maxVersion>
-                <em:updateLink>http://download.mozdev.org/webmail/hotmail-0-8-0.xpi</em:updateLink>
-                <em:updateHash>sha256:2b010c95a2265667fdac4bbf76cfce5c893867f63a820d6f69c6d601a3727d3e</em:updateHash>
+                <em:updateLink>http://download.mozdev.org/webmail/hotmail-0-9-0.xpi</em:updateLink>
+                <em:updateHash>sha256:6b8718456b298fb20c1c395aade93028f4c13c5420ce10b8ffcb6d393ca02177</em:updateHash>
           </Description>
         </em:targetApplication>
     </RDF:Description>  
