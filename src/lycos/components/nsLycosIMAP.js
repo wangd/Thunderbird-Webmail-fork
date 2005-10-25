@@ -36,7 +36,9 @@ function nsLycosIMAP()
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/comms.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/base64.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/IMAPFolder.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/IMAPMSG.js");
+
        
         var date = new Date();
         var  szLogFileName = "LycosIMAP Log - " + date.getHours()+ "-" + date.getMinutes() + "-"+ date.getUTCMilliseconds() +" -";
@@ -46,15 +48,13 @@ function nsLycosIMAP()
         
         this.m_Log.Write("nsLycosIMAP.js - Constructor - START");
        
-        this.m_szUserNameDomain = null;   
+        this.m_szUserName = null;   
         this.m_szPassWord = null; 
         this.m_oResponseStream = null; 
         this.m_iTag = 0; 
-        this.m_HttpComms = new Comms(this,this.m_Log); 
-        this.m_oFolder = new FolderManager(this.m_Log);    
+        this.m_oFolder = new IMAPFolder(this.m_Log);    
+        this.m_oMSG = new IMAPMSG(this.m_Log);    
         this.m_bAuthorised = false;   
-        this.m_szAuthRealm = null;
-        this.m_iAuth = 0;
         this.m_iStage=0; 
         this.m_szFolderURI = null;
         this.m_szFolderReference = null;
@@ -64,6 +64,20 @@ function nsLycosIMAP()
         this.m_bStoreStatus = false;
         this.m_szFolderName = null;
         this.m_szFolderNewName = null;
+         
+        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"];
+        this.m_SessionManager = this.m_SessionManager.getService();
+        this.m_SessionManager.QueryInterface(Components.interfaces.nsISessionManager); 
+        this.m_SessionData = null;
+        
+        //do i reuse the session
+        var oPref = new Object();
+        oPref.Value = null;
+        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+        if (WebMailPrefAccess.Get("bool","lycos.bReUseSession",oPref))
+            this.m_bReUseSession=oPref.Value;
+        else
+            this.m_bReUseSession=true; 
                                           
         this.m_Log.Write("nsLycosIMAP.js - Constructor - END");
     }
@@ -72,7 +86,8 @@ function nsLycosIMAP()
         DebugDump("nsLycosIMAP.js: Constructor : Exception : "
                                       + e.name 
                                       + ".\nError message: " 
-                                      + e.message);
+                                      + e.message+ "\n"
+                                      + e.lineNumber);
     }
 }
 
@@ -80,16 +95,15 @@ function nsLycosIMAP()
 
 nsLycosIMAP.prototype =
 {
-    get userName() {return this.m_szUserNameDomain;},
-    set userName(userName) {return this.m_szUserNameDomain = userName;},
+    get userName() {return this.m_szUserName;},
+    set userName(userName) {return this.m_szUserName = userName;},
     
     get passWord() {return this.m_szPassWord;},
     set passWord(passWord) {return this.m_szPassWord = passWord;},
     
     get tag() {return this.m_iTag;},
     set tag(iTag) {return this.m_iTag = iTag;},
-   
-   
+     
     get bAuthorised() {return this.m_bAuthorised;},
   
     get ResponseStream() {return this.m_oResponseStream;},
@@ -101,15 +115,14 @@ nsLycosIMAP.prototype =
         try
         {
             this.m_Log.Write("nsLycosIMAP.js - logIN - START");
-            this.m_Log.Write("nsLycosIMAP.js - logIN - Username: " + this.m_szUserNameDomain
+            this.m_Log.Write("nsLycosIMAP.js - logIN - Username: " + this.m_szUserName
                                                    + " Password: "  + this.m_szPassWord 
                                                    + " stream: "    + this.m_oResponseStream);
             
-            if (!this.m_szUserNameDomain || !this.m_oResponseStream || !this.m_szPassWord) return false;
+            if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
             
-            var szTempUserName = this.m_szUserNameDomain.split("@");
-            this.m_Log.Write("nsLycosIMAP.js - logIN - doamain " + szTempUserName);
-            var szDomain = szTempUserName[1];
+            var szDomain = this.m_szUserName.split("@")[1];
+            this.m_Log.Write("nsLycosIMAP.js - logIN - doamain " + szDomain);
             
             var szLocation= null;
             if (szDomain.search(/lycos.co.uk/i)!=-1) 
@@ -124,16 +137,28 @@ nsLycosIMAP.prototype =
                 szLocation= "http://webdav.lycos.at/httpmail.asp";  
             else if (szDomain.search(/lycos.nl/i)!=-1)    
                 szLocation= "http://webdav.lycos.nl/httpmail.asp";    
+            else if (szDomain.search(/lycos.fr/i)!=-1)
+                szLocation= "http://webdav.caramail.lycos.fr/httpmail.asp";   
             else
                 throw new Error("Unknown domain");
             
             this.m_HttpComms.clean();
+            
+            this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
+            if (this.m_SessionData && this.m_bReUseSession)
+            {
+                this.m_Log.Write("nsLycos.js - logIN - Session Data found");
+                this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
+                this.m_HttpComms.setHttpAuthManager(this.m_SessionData.oHttpAuthManager); 
+            }
+             
+            this.m_HttpComms.setUserName(this.m_szUserName);
+            this.m_HttpComms.setPassword(this.m_szPassWord);
             this.m_HttpComms.setContentType(-1);
             this.m_HttpComms.setURI(szLocation);
             this.m_HttpComms.setRequestMethod("PROPFIND");
-            this.m_HttpComms.addData(LycosIMAPSchema,"text/xml");
-            var bResult = this.m_HttpComms.send(this.loginOnloadHandler);                             
-            if (!bResult) throw new Error("httpConnection returned false");
+            this.m_HttpComms.addData(LycosSchema,"text/xml");
+            var bResult = this.m_HttpComms.send(this.loginOnloadHandler);       
             
             this.m_Log.Write("nsLycosIMAP.js - logIN - END " + bResult);
             return true;
@@ -143,7 +168,8 @@ nsLycosIMAP.prototype =
             this.m_Log.DebugDump("nsLycosIMAP.js: logIN : Exception : "
                                               + e.name + 
                                               ".\nError message: " 
-                                              + e.message);
+                                              + e.message+ "\n"
+                                              + e.lineNumber);
             return false;
         }
     },
@@ -160,70 +186,21 @@ nsLycosIMAP.prototype =
             
             //if this fails we've gone somewhere new
             mainObject.m_Log.Write("nsLycos - loginOnloadHandler - status :" +httpChannel.responseStatus );
-            if (httpChannel.responseStatus != 200 
-                    && httpChannel.responseStatus != 207 
-                        && httpChannel.responseStatus != 401) 
+            if (httpChannel.responseStatus != 200 && httpChannel.responseStatus != 207) 
                 throw new Error("return status " + httpChannel.responseStatus);
-            
-              
-            //Authenticate
-            if  (httpChannel.responseStatus == 401)
-            {
-                if ( mainObject.m_iAuth==2) throw new Error("login error");
-                
-                try
-                { 
-                    var szAuthenticate =  httpChannel.getResponseHeader("www-Authenticate");
-                    mainObject.m_Log.Write("nsLycosIMAP.js - loginOnloadHandler - www-Authenticate " + szAuthenticate);
-                    mainObject.m_iAuth++;
-                }
-                catch(err)
-                {
-                    throw new Error("szAuthenticate header not found")
-                }     
+        
+            mainObject.m_Log.Write("nsLycosIMAP.js - loginOnloadHandler - get url - start");
+            mainObject.m_iAuth=0; //reset login counter
+            mainObject.m_szFolderURI = szResponse.match(LycosIMAPFolderPattern)[1];
+            mainObject.m_Log.Write("nsLycosIMAP.js - loginOnloadHandler - get folder url - " + mainObject.m_szFolderURI);
+          
+            //server response
+            mainObject.serverComms(mainObject.m_iTag +" OK Login Complete\r\n");
+            mainObject.m_bAuthorised = true;
+            mainObject.updateSession();
                     
-                //basic or digest
-                if (szAuthenticate.search(/basic/i)!= -1)
-                {//authentication on the cheap
-                    mainObject.m_Log.Write("nsLycosIMAP.js - loginOnloadHandler - basic Authenticate");
-                   
-                    if (!mainObject.m_szAuthString) 
-                    {
-                        var oBase64 = new base64();
-                        mainObject.m_szAuthString ="Basic ";
-                        mainObject.m_szAuthString += oBase64.encode(mainObject.m_szUserNameDomain+":"+mainObject.m_szPassWord);
-                    }
-                   
-                    mainObject.m_HttpComms.clean();
-                    mainObject.m_HttpComms.setContentType(-1);
-                    mainObject.m_HttpComms.setURI(httpChannel.URI.spec);
-                    mainObject.m_HttpComms.setRequestMethod("PROPFIND");
-                    mainObject.m_HttpComms.addData(LycosIMAPSchema,"text/xml");
-                    mainObject.m_HttpComms.addRequestHeader("Authorization", mainObject.m_szAuthString , false);
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);                             
-                    if (!bResult) throw new Error("httpConnection returned false");
-                }
-                else if (szAuthenticate.search(/digest/i)!= -1)
-                {
-                    throw new Error("unspported authentication method");
-                }
-                else
-                    throw new Error("unknown authentication method");
-           } 
-            //everything else
-            else 
-            {
-                mainObject.m_Log.Write("nsLycosIMAP.js - loginOnloadHandler - get url - start");
-                mainObject.m_iAuth=0; //reset login counter
-                mainObject.m_szFolderURI = szResponse.match(LycosIMAPFolderPattern)[1];
-                mainObject.m_Log.Write("nsLycosIMAP.js - loginOnloadHandler - get folder url - " + mainObject.m_szFolderURI);
-              
-                //server response
-                mainObject.serverComms(mainObject.m_iTag +" OK Login Complete\r\n");
-                mainObject.m_bAuthorised = true;
-                        
-                mainObject.m_Log.Write("nsLycosIMAP.js - loginOnloadHandler - get url - end");
-            }
+            mainObject.m_Log.Write("nsLycosIMAP.js - loginOnloadHandler - get url - end");
+
            
             mainObject.m_Log.Write("nsLycosIMAP.js - loginOnloadHandler - END");
         }
@@ -232,7 +209,8 @@ nsLycosIMAP.prototype =
             mainObject.m_Log.DebugDump("nsLycosIMAP.js: loginHandler : Exception : "
                                           + err.name 
                                           + ".\nError message: " 
-                                          + err.message);
+                                          + err.message+ "\n"
+                                          + err.lineNumber);
                                               
             mainObject.serverComms(mainObject.m_iTag + " NO Comms Error\r\n");
         }
@@ -254,7 +232,7 @@ nsLycosIMAP.prototype =
             
             var szSubList = "";
             var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-            if (WebMailPrefAccess.Get("char","lycos.imap.subscribed."+this.m_szUserNameDomain,oPref))
+            if (WebMailPrefAccess.Get("char","lycos.imap.subscribed."+this.m_szUserName,oPref))
                 szSubList = oPref.Value;
             this.m_Log.Write("nsLycosIMAP.js - Subscribe - old list: " + szSubList);
             
@@ -273,7 +251,7 @@ nsLycosIMAP.prototype =
             if (!bFound) szSubList +=  szFolder + "\r\n";
             
             this.m_Log.Write("nsLycosIMAP.js - Subscribe - new list: " + szSubList);
-            WebMailPrefAccess.Set("char","lycos.imap.subscribed."+this.m_szUserNameDomain,szSubList);
+            WebMailPrefAccess.Set("char","lycos.imap.subscribed."+this.m_szUserName,szSubList);
             
             var szResponse = this.m_iTag + " OK SUBSCRIBE Completed\r\n";
             this.serverComms(szResponse);  
@@ -285,7 +263,8 @@ nsLycosIMAP.prototype =
              this.m_Log.DebugDump("nsLycosIMAP.js: subscribe : Exception : "
                                           + err.name 
                                           + ".\nError message: " 
-                                          + err.message);
+                                          + err.message+ "\n"
+                                          + err.lineNumber);
                                               
             this.serverComms(this.m_iTag + " NO Comms Error\r\n");
         }
@@ -332,7 +311,7 @@ nsLycosIMAP.prototype =
                     }
                 } 
                 this.m_Log.Write("nsLycosIMAP.js - unSubscribe -list - " + szSubscribed );
-                WebMailPrefAccess.Set("char","lycos.imap.subscribed."+this.m_szUserNameDomain,szSubscribed);
+                WebMailPrefAccess.Set("char","lycos.imap.subscribed."+this.m_szUserName,szSubscribed);
             }
             
             var szResponse;
@@ -348,9 +327,10 @@ nsLycosIMAP.prototype =
         catch(err)
         {
             this.m_Log.DebugDump("nsLycosIMAP.js: unSubscribe : Exception : "
-                                      + err.name 
-                                      + ".\nError message: " 
-                                      + err.message);
+                                                          + err.name 
+                                                          + ".\nError message: " 
+                                                          + err.message+ "\n"
+                                                          + err.lineNumber);
             this.serverComms(this.m_iTag +" BAD error\r\n");  
             return false;
         }
@@ -1498,7 +1478,8 @@ nsLycosIMAP.prototype =
             this.m_Log.DebugDump("nsLycosIMAP.js: expunge : Exception : "
                                               + err.name 
                                               + ".\nError message: " 
-                                              + err.message);
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
             
             this.serverComms(this.m_iTag +" BAD error\r\n");
             return false;
@@ -1520,7 +1501,8 @@ nsLycosIMAP.prototype =
             this.m_Log.DebugDump("nsLycosIMAP.js: examine : Exception : "
                                               + err.name 
                                               + ".\nError message: " 
-                                              + err.message);
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
             
             this.serverComms(this.m_iTag +" BAD error\r\n");
             return false;
@@ -1578,7 +1560,8 @@ nsLycosIMAP.prototype =
             this.m_Log.DebugDump("nsLycosIMAP.js: createFolder : Exception : "
                                               + err.name 
                                               + ".\nError message: " 
-                                              + err.message);
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
             
             this.serverComms(this.m_iTag +" BAD error\r\n");
             return false;
@@ -1622,7 +1605,8 @@ nsLycosIMAP.prototype =
             mainObject.m_Log.DebugDump("nsLycosIMAP.js: createOnloadHandler : Exception : "
                                               + err.name 
                                               + ".\nError message: " 
-                                              + err.message);
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
             
             mainObject.serverComms(mainObject.m_iTag +" BAD error\r\n");
             return false;
@@ -1656,7 +1640,8 @@ nsLycosIMAP.prototype =
             this.m_Log.DebugDump("nsLycosIMAP.js: deleteFolder : Exception : "
                                               + err.name 
                                               + ".\nError message: " 
-                                              + err.message);
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
             
             this.serverComms(this.m_iTag +" BAD error\r\n");
             return false;
@@ -1697,7 +1682,8 @@ nsLycosIMAP.prototype =
             mainObject.m_Log.DebugDump("nsLycosIMAP.js: createOnloadHandler : Exception : "
                                               + err.name 
                                               + ".\nError message: " 
-                                              + err.message);
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
             
             mainObject.serverComms(mainObject.m_iTag +" BAD error\r\n");
             return false;
@@ -1746,7 +1732,8 @@ nsLycosIMAP.prototype =
             this.m_Log.DebugDump("nsLycosIMAP.js: renameFolder : Exception : "
                                               + err.name 
                                               + ".\nError message: " 
-                                              + err.message);
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
             
             this.serverComms(this.m_iTag +" BAD error\r\n");
             return false;
@@ -1789,7 +1776,8 @@ nsLycosIMAP.prototype =
             mainObject.m_Log.DebugDump("nsLycosIMAP.js: renameOnloadHandler : Exception : "
                                               + err.name 
                                               + ".\nError message: " 
-                                              + err.message);
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
             
             mainObject.serverComms(mainObject.m_iTag +" BAD error\r\n");
             return false;
@@ -1804,6 +1792,7 @@ nsLycosIMAP.prototype =
         {
             this.m_Log.Write("nsLycosIMAP.js - logOUT - START");
             
+            this.updateSession();
             this.m_bAuthorised = false;
             var szResponse = "* BYE IMAP4rev1 Server logout\r\n";
             szResponse += this.m_iTag +" OK Logout Completed\r\n"
@@ -1817,7 +1806,43 @@ nsLycosIMAP.prototype =
             this.m_Log.DebugDump("nsLycosIMAP.js: logOUT : Exception : "
                                       + e.name 
                                       + ".\nError message: " 
-                                      + e.message);
+                                      + e.message+ "\n"
+                                      + e.lineNumber);
+            return false;
+        }
+    },
+    
+    
+    updateSession : function ()
+    {
+        try
+        {
+            this.m_Log.Write("nsLycosIMAP.js - updateSession - START");  
+            
+            if (!this.m_SessionData)
+            {
+                this.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
+                this.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
+                this.m_SessionData.szUserName = this.m_szUserName;
+                
+                var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
+                componentData.QueryInterface(Components.interfaces.nsIComponentData);
+                this.m_SessionData.oComponentData = componentData;
+            }
+            this.m_SessionData.oCookieManager = this.m_HttpComms.getCookieManager();
+            this.m_SessionData.oHttpAuthManager = this.m_HttpComms.getHttpAuthManager();
+            this.m_SessionManager.setSessionData(this.m_SessionData);
+              
+            this.m_Log.Write("nsLycosIMAP.js - updateSession - END");
+            return true;
+        }
+        catch(e)
+        {
+            this.m_Log.DebugDump("nsLycos.js: updateSession : Exception : " 
+                                      + e.name 
+                                      + ".\nError message: " 
+                                      + e.message+ "\n"
+                                      + e.lineNumber);
             return false;
         }
     },
@@ -1837,10 +1862,11 @@ nsLycosIMAP.prototype =
         }
         catch(e)
         {
-            this.m_Log.DebugDump("nsLycosIMAP.js: serverComms : Exception : "
-                                              + e.name 
-                                              + ".\nError message: " 
-                                              + e.message);
+            this.m_Log.DebugDump("nsLycos.js: serverComms : Exception : " 
+                                      + e.name 
+                                      + ".\nError message: " 
+                                      + e.message+ "\n"
+                                      + e.lineNumber);
         }
     },
       
