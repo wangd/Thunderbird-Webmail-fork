@@ -159,7 +159,6 @@ HotmailScreenRipper.prototype =
   
             mainObject.m_HttpComms.clean();
             mainObject.m_HttpComms.setContentType(0);
-            mainObject.m_HttpComms.addRequestHeader("Accept-Charset", "EUC-KR", false); 
              
             //page code                                
             switch (mainObject.m_iStage)
