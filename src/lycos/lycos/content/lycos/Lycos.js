@@ -99,27 +99,27 @@ var gLycosStartUp =
     },
     
     
-    idCheck : function(szDomain, szProtocol, szYahooContentID)
+    idCheck : function(szDomain, szProtocol, szContentID)
     {
         this.m_Log.Write("Lycos.js : idCheck - START");
         this.m_Log.Write("Lycos.js : idCheck - " +szDomain + " "
                                                 + szProtocol+ " "
-                                                + szYahooContentID);
+                                                + szContentID);
          
         var szContentID = new Object;
         if (this.m_DomainManager.getDomainForProtocol(szDomain,szProtocol, szContentID))
         {
             this.m_Log.Write("Lycos.js : idCheck - found");
-            if (szContentID.value != szYahooContentID)
+            if (szContentID.value != szContentID)
             {
                 this.m_Log.Write("Lycos.js : idCheck - wrong id");
-                this.m_DomainManager.newDomainForProtocol(szDomain, szProtocol, szYahooContentID);
+                this.m_DomainManager.newDomainForProtocol(szDomain, szProtocol, szContentID);
             }
         }
         else
         {
             this.m_Log.Write("Lycos.js : idCheck - not found");
-            this.m_DomainManager.newDomainForProtocol(szDomain, szProtocol, szYahooContentID);    
+            this.m_DomainManager.newDomainForProtocol(szDomain, szProtocol, szContentID);    
         }
         
         this.m_Log.Write("Lycos.js : idCheck - END");
