@@ -17,7 +17,7 @@ const patternYahooWelcomeFrame = /gWelcomePage = "http:\/\/.*?(\/.*?)";/;
 const patternYahooBulkFrame = /<li id="bulk".*?><a href="(.*?)"/;
 const patternYahooMSGIdTable = /<table id="datatable".*?>[\S\s]*?<\/table>/m;
 const patternYahooMsgRow = /<tr.*?>[\S\s]*?<\/tr>/gm;
-const patternYahooMsgID = /<a href="(.*?MsgId.*?)">/;
+const patternYahooMsgID = /href="(.*?MsgId.*?)"/;
 const patternYahooMsgSize = /<td.*?>.*?<\/td>/gm;
 const patternYahooNextPage = /<a href=".*?next=1.*?">/m;
 const patternYahooNextURI = /<a href=["|']*(.*?)["|']*>/
