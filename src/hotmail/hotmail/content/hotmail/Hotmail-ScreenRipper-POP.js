@@ -30,6 +30,8 @@ function HotmailScreenRipper(oResponseStream, oLog)
         this.m_szUM = null;
         this.m_iStage = 0;  
         this.m_bJunkMail = false;
+        this.m_szMSG = null;
+        this.m_szMSGUri = null;
         
         this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"];
         this.m_SessionManager = this.m_SessionManager.getService();
@@ -524,7 +526,7 @@ HotmailScreenRipper.prototype =
                     if (bRead)
                     {       
                         var oMSG = new HotmailMSG();
-                        var szPath = mainObject.m_szLocationURI+aEmailURL[1]+"&"+mainObject.m_szUM+"&raw=1";
+                        var szPath = mainObject.m_szLocationURI+aEmailURL[1]+"&"+mainObject.m_szUM;
                         mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - Email URL : " +szPath);
                         oMSG.szMSGUri = szPath;
                                             
@@ -777,10 +779,12 @@ HotmailScreenRipper.prototype =
             
             //get msg id
             var oMSG = this.m_aMsgDataStore[lID-1];
-            var szMsgURI = oMSG.szMSGUri;
+            this.m_szMSGUri = oMSG.szMSGUri;
+            var szMsgURI = this.m_szMSGUri + "&raw=1";
             this.m_Log.Write("Hotmail-SR - getMessage - msg uri" + szMsgURI); 
            
             this.m_bJunkMail = oMSG.bJunkFolder;
+            this.m_iStage = 0;
             
             //get msg from hotmail
             this.m_HttpComms.clean();
@@ -817,29 +821,43 @@ HotmailScreenRipper.prototype =
             if (httpChannel.responseStatus != 200) 
                 throw new Error("error status " + httpChannel.responseStatus);   
            
-            var szMsg = "X-WebMail: true\r\n";
-            szMsg += "X-JunkFolder: " + (mainObject.m_bJunkMail? "true":"false")+ "\r\n";
-                                                                                 
-            //get msg
-            var aTemp = szResponse.split(/<pre>\s+/); 
-            if (aTemp.length == 0)
-                throw new Error("Message START  not found");     
-            var szEmail = aTemp[1].split(/<\/pre>/)[0];
-             if (szEmail.length == 0)
-                throw new Error("Message END  not found"); 
+            switch (mainObject.m_iStage)
+            {
+                case 0: //construct msg
+                    mainObject.m_szMSG = "X-WebMail: true\r\n";
+                    mainObject.m_szMSG += "X-JunkFolder: " + (mainObject.m_bJunkMail? "true":"false")+ "\r\n";
+                                                                                         
+                    //get msg
+                    var aTemp = szResponse.split(/<pre>\s+/); 
+                    if (aTemp.length == 0)
+                        throw new Error("Message START  not found");     
+                    var szEmail = aTemp[1].split(/<\/pre>/)[0];
+                    if (szEmail.length == 0)
+                        throw new Error("Message END  not found"); 
+                    
+                    mainObject.m_szMSG += szEmail;
+                    
+                    //clean up msg
+                    mainObject.m_szMSG = mainObject.removeHTML(mainObject.m_szMSG);
+                    mainObject.m_szMSG =  mainObject.m_szMSG.replace(/^\./mg,"..");    //bit padding   
+                    mainObject.m_szMSG += "\r\n.\r\n";
+                    
+                    mainObject.m_iStage =1;
+                    mainObject.m_HttpComms.clean();
+                    mainObject.m_HttpComms.setURI(mainObject.m_szMSGUri);
+                    mainObject.m_HttpComms.setRequestMethod("GET");
+                    var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler); 
+                    if (!bResult) throw new Error("httpConnection returned false");                                        
+                break;
             
-            szMsg += szEmail;
+                case 1:  //marked as read
+                    var szPOPResponse = "+OK " +  mainObject.m_szMSG.length + "\r\n";                  
+                    szPOPResponse +=  mainObject.m_szMSG;
+        
+                    mainObject.serverComms(szPOPResponse);
+                break;
+            }
             
-            //clean up msg
-            szMsg = mainObject.removeHTML(szMsg);
-            szMsg = szMsg.replace(/^\./mg,"..");    //bit padding   
-            szMsg += "\r\n.\r\n";
-                                                    //.toString(8)
-            var szPOPResponse = "+OK " + szMsg.length + "\r\n";                  
-            szPOPResponse += szMsg;
-
-            mainObject.serverComms(szPOPResponse);           
-           
             mainObject.m_Log.Write("Hotmail-SR - emailOnloadHandler - END");      
         }
         catch(err)
@@ -1018,7 +1036,7 @@ HotmailScreenRipper.prototype =
         szMsg = szMsg.replace(/&quot;/g, "\"");
         szMsg = szMsg.replace(/&amp;/g, "&");
         szMsg = szMsg.replace(/&nbsp;/g, " ");   
-        this.m_Log.Write("Hotmail-SR - removeHTML - START")  
+        this.m_Log.Write("Hotmail-SR - removeHTML - ENd")  
         return szMsg;
     },
 }
