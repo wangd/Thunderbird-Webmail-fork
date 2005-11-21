@@ -974,24 +974,16 @@ HotmailScreenRipper.prototype =
         try
         {
             this.m_Log.Write("Hotmail-SR - logOUT - START"); 
-            
-            if (!this.m_SessionData)
-            {
-                this.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
-                this.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
-                this.m_SessionData.szUserName = this.m_szUserName;
-                
-                var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
-                componentData.QueryInterface(Components.interfaces.nsIComponentData);
-                this.m_SessionData.oComponentData = componentData;
-            }
-            this.m_SessionData.oCookieManager = this.m_HttpComms.getCookieManager();
-            this.m_SessionData.oComponentData.addElement("szHomeURI",this.m_szHomeURI);
-            this.m_SessionManager.setSessionData(this.m_SessionData);
-            
-            this.m_bAuthorised = false;
-            this.serverComms("+OK Your Out\r\n");             
-                                           
+        
+            //reset sort 
+            var szMailboxURI = this.m_szLocationURI + this.m_szMailboxURI + "&sort=rDate"; 
+           
+            this.m_HttpComms.clean();
+            this.m_HttpComms.setURI(szMailboxURI);
+            this.m_HttpComms.setRequestMethod("GET");
+            var bResult = this.m_HttpComms.send(this.logoutOnloadHandler); 
+            if (!bResult) throw new Error("httpConnection returned false");
+                                  
             this.m_Log.Write("Hotmail-SR - logOUT - END");  
             return true;
         }
@@ -1007,7 +999,54 @@ HotmailScreenRipper.prototype =
     },  
     
      
-   serverComms : function (szMsg)
+    
+    logoutOnloadHandler : function (szResponse ,event , mainObject)
+    {
+        try
+        {
+            mainObject.m_Log.Write("Hotmail-SR - logoutOnloadHandler - START");    
+                    
+            var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
+            
+            //check status should be 200.
+            mainObject.m_Log.Write("Hotmail-SR - logoutOnloadHandler :" + httpChannel.responseStatus);
+            if (httpChannel.responseStatus != 200 ) 
+                throw new Error("error status " + httpChannel.responseStatus);   
+                 
+            if (!mainObject.m_SessionData)
+            {
+                mainObject.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
+                mainObject.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
+                mainObject.m_SessionData.szUserName = mainObject.m_szUserName;
+                
+                var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
+                componentData.QueryInterface(Components.interfaces.nsIComponentData);
+                mainObject.m_SessionData.oComponentData = componentData;
+            }
+            mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
+            mainObject.m_SessionData.oComponentData.addElement("szHomeURI",mainObject.m_szHomeURI);
+            mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);
+              
+            mainObject.m_bAuthorised = false;
+            mainObject.serverComms("+OK Your Out\r\n");  
+                       
+            mainObject.m_Log.Write("Hotmail-SR - logoutOnloadHandler - END");      
+        }
+        catch(e)
+        {
+            mainObject.m_Log.DebugDump("Hotmail-SR: logoutOnloadHandler : Exception : " 
+                                              + e.name 
+                                              + ".\nError message: " 
+                                              + e.message+ "\n"
+                                              + e.lineNumber);
+            mainObject.serverComms("-ERR negative vibes from " +mainObject.m_szUserName+ "\r\n");
+        }
+    },
+    
+    
+     
+     
+    serverComms : function (szMsg)
     {
         try
         { 
