@@ -53,7 +53,7 @@ headers.prototype =
          try
         {
             if (!szAddress) return null;
-            
+            szAddress = szAddress.replace(/".*?"/, ""); //remove name
             var aszAddress = szAddress.split(",");
             
             var szList =null;
