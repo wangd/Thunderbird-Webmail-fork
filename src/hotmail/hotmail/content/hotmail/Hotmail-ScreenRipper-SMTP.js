@@ -231,31 +231,31 @@ HotmailSMTPScreenRipper.prototype =
                 break;
                
                 case 2: //refresh
-                   var aRefresh = szResponse.match(patternHotmailPOPForm);
+                   var aRefresh = szResponse.match(patternHotmailSMTPForm);
                     mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler - refresh "+ aRefresh); 
                    
                     if (aRefresh)
                     {   
                         //action
-                        var szAction = aRefresh[0].match(patternHotmailPOPAction)[1];
+                        var szAction = aRefresh[0].match(patternHotmailSMTPAction)[1];
                         mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler "+ szAction);
                         mainObject.m_HttpComms.setURI(szAction);
                         
                         //form data  
-                        var aInput =  aRefresh[0].match(patternHotmailPOPInput);
+                        var aInput =  aRefresh[0].match(patternHotmailSMTPInput);
                         mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler "+ aInput); 
-                        var szName =  aInput[0].match(patternHotmailPOPName)[1];
-                        var szValue =  aInput[0].match(patternHotmailPOPValue)[1];
+                        var szName =  aInput[0].match(patternHotmailSMTPName)[1];
+                        var szValue =  aInput[0].match(patternHotmailSMTPValue)[1];
                         szValue = encodeURIComponent(szValue);
                         mainObject.m_HttpComms.addValuePair(szName,szValue);
                         mainObject.m_HttpComms.setRequestMethod("POST");  
                     }
                     else
                     {
-                        aRefresh = szResponse.match(patternHotmailPOPRefresh);
+                        aRefresh = szResponse.match(patternHotmailSMTPRefresh);
                         
                         if (!aRefresh)
-                            aRefresh = szResponse.match(patternHotmailPOPJavaRefresh);
+                            aRefresh = szResponse.match(patternHotmailSMTPJavaRefresh);
                             
                         mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler refresh "+ aRefresh); 
                         if (aRefresh == null) throw new Error("error parsing login page");    
