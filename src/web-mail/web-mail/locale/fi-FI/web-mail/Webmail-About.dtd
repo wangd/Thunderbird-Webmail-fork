@@ -1,6 +1,6 @@
 <!ENTITY WebmailAbout.Title "Webmail - Tietoja">
 <!ENTITY WebmailAbout.ExtName "Web Mail">
-<!ENTITY WebmailAbout.ExtVersion "versio 0.8.0">
+<!ENTITY WebmailAbout.ExtVersion "versio 0.8.1">
 <!ENTITY WebmailAbout.ExtDescription "Pääse web mail-tileille käyttämällä Thunderbirdia.">
 <!ENTITY WebmailAbout.ExtCreaterTitle "Tekijä:">
 <!ENTITY WebmailAbout.ExtCreator "ComodoDragon">
