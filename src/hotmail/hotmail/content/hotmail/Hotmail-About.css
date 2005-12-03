@@ -127,6 +127,11 @@
      -moz-image-region: rect(0px, 512px, 32px, 480px)
 }
 
+.flag[value="15"]/*trukish*/
+{
+     -moz-image-region: rect(0px, 544px, 32px, 512px)
+}
+
 
 #HotmailHomePage
 {
