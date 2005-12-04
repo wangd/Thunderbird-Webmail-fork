@@ -1,0 +1,4 @@
+<!ENTITY AccountWizard.Label "WebMail'i Hesap Sihirbazı'na Ekle">
+<!ENTITY AccountWizard.AccessKey "A">
+<!ENTITY AccountWizardWarning.Label "Uygulama klasörüne yazabilme izni gerekli">
+<!ENTITY Restart.Label "Değişikliklerin etkin olabilmesi için Thunderbird'ü yeniden başlatmalısınız.">

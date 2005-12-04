@@ -1,0 +1,5 @@
+<!ENTITY Options.szTitle "WebMail Seçenekleri">
+<!ENTITY Servers.Panel.szTitle "Sunucular">
+<!ENTITY Domains.Panel.szTitle "Alan İsimleri">
+<!ENTITY Logging.Panel.szTitle "Giriş">
+<!ENTITY General.Panel.szTitle "Genel">
