@@ -1,0 +1,5 @@
+<!ENTITY Options.szTitle "Možnosti WebMail">
+<!ENTITY Servers.Panel.szTitle "Strežniki">
+<!ENTITY Domains.Panel.szTitle "Domene">
+<!ENTITY Logging.Panel.szTitle "Beleženje v dnevnik">
+<!ENTITY General.Panel.szTitle "Splošno">

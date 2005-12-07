@@ -1,0 +1,10 @@
+<!ENTITY WebmailAbout.Title "Webmail - O razširitvi">
+<!ENTITY WebmailAbout.ExtName "Spletna pošta">
+<!ENTITY WebmailAbout.ExtVersion "različice 0.8.1">
+<!ENTITY WebmailAbout.ExtDescription "Dostopajte do spletnih poštnih računov s Thunderbirdom.">
+<!ENTITY WebmailAbout.ExtCreaterTitle "Avtor:">
+<!ENTITY WebmailAbout.ExtCreator "ComodoDragon">
+<!ENTITY WebmailAbout.ExtHome "Domača stran">
+<!ENTITY WebmailAbout.ExtHomeURL "http://webmail.mozdev.org/">
+<!ENTITY WebmailAbout.ExtButton "Zapri">
+<!ENTITY WebmailAbout.ExtContributorTitle "Avtorji prispevkov:">

@@ -1,0 +1,24 @@
+<!ENTITY ServerStatus.Label "Stanje strežnika">
+<!ENTITY Ports.Label "Vrata">
+<!ENTITY Ports.AccessKey "r">
+<!ENTITY Pop.Label "POP">
+<!ENTITY Pop.AccessKey "O">
+<!ENTITY POP.Default.Label "privzeto 110">
+<!ENTITY Note.Label "Vrata pod 1024 so lahko zaprta s strani OS">
+<!ENTITY Restart.Label "Za uveljavitev sprememb je potreben ponoven zagon Thunderbirda.">
+<!ENTITY SMTP.Label "SMTP">
+<!ENTITY SMTP.AccessKey "S">
+<!ENTITY SMTP.Default.Label "privzeto 25">
+<!ENTITY IMAP.Label "IMAP">
+<!ENTITY IMAP.AccessKey "I">
+<!ENTITY IMAP.Default.Label "privzeto 143">
+<!ENTITY Enable.POP.Label "Omogoči strežnik POP.">
+<!ENTITY Enable.POP.AccessKey "P">
+<!ENTITY Enable.SMTP.Label "Omogoči strežnik SMTP.">
+<!ENTITY Enable.SMTP.AccessKey "T">
+<!ENTITY Enable.IMAP.Label "Omogoči strežnik IMAP.">
+<!ENTITY Enable.IMAP.AccessKey "M">
+<!ENTITY Enable.Label "Omogoči">
+<!ENTITY Enable.AccessKey "O">
+<!ENTITY Status.Label "Stanje">
+<!ENTITY Status.AccessKey "t">

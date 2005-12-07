@@ -1,0 +1,12 @@
+<!ENTITY GeneralLogging.Label "Omogoči beleženje v dnevnik">
+<!ENTITY GeneralLogging.AccessKey "O">
+<!ENTITY JavaScriptConsole.Label "Uporabi konzolo JavaScript">
+<!ENTITY JavaScriptConsole.AccessKey "J">
+<!ENTITY LogFile.Label "Uporabi dnevniško datoteko">
+<!ENTITY LogFile.AccessKey "d">
+<!ENTITY Location.Label "Kraj">
+<!ENTITY Location.AccessKey "r">
+<!ENTITY Note.Label "Ti dnevniki bodo vsebovali uporabniška imena in gesla.">
+<!ENTITY Restart.Label "Za uveljavitev sprememb je potreben ponoven zagon Thunderbirda.">
+<!ENTITY Button.Label "Prebrskaj ...">
+<!ENTITY Button.AccessKey "P">
