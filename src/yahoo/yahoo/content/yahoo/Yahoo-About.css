@@ -145,6 +145,12 @@
 }
 
 
+.flag[value="17"]/*Slovenian*/
+{
+     -moz-image-region: rect(0px, 608px, 32px, 576px)
+}
+
+
 #YahooHomePage
 {
     text-align: right;

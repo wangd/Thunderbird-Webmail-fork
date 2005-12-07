@@ -144,6 +144,12 @@
      -moz-image-region: rect(0px, 576px, 32px, 544px)
 }
 
+
+.flag[value="17"]/*Slovenian*/
+{
+     -moz-image-region: rect(0px, 608px, 32px, 576px)
+}
+
 #MailDotComHomePage
 {
     text-align: right;
