@@ -1,0 +1,5 @@
+<!ENTITY MailServers.Label "POP">
+<!ENTITY JunkMail.Label "Prenesi neželeno pošto">
+<!ENTITY JunkMail.AccessKey "p">
+<!ENTITY DownloadUnread.Label "Prenesi le neprebrana sporočila">
+<!ENTITY DownloadUnread.AccessKey "n">
