@@ -151,7 +151,9 @@ nsLycosIMAP.prototype =
                 this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
                 this.m_HttpComms.setHttpAuthManager(this.m_SessionData.oHttpAuthManager); 
             }
-             
+            
+            var iUserID = this.m_oFolder.setUserName(this.m_szUserName);    
+            this.m_oMSG.setUserId(iUserID);  
             this.m_HttpComms.setUserName(this.m_szUserName);
             this.m_HttpComms.setPassword(this.m_szPassWord);
             this.m_HttpComms.setContentType(-1);
@@ -217,43 +219,52 @@ nsLycosIMAP.prototype =
     },
     
     
+    
+    listSubscribe : function()
+    {
+        try
+        {
+            this.m_Log.Write("nsLycosIMAP.js - listSubscribe - START");
+            
+            var aszFolder = this.m_oFolder.listSubscribed();
+            this.m_Log.Write("nsLycosIMAP.js - listSubscribe - list: " + aszFolder);
+            
+            var szResponse = "";
+            for (i=0; i<aszFolder.length-1; i++)
+            {
+                szResponse += "* lsub (\\Noinferiors \\HasNoChildren) " + "\".\" \"" + aszFolder[i] + "\"\r\n";  
+            } 
+            szResponse += this.m_iTag + " OK LSUB Completed\r\n";
+            this.serverComms(szResponse);  
+        
+            this.m_Log.Write("nsLycosIMAP.js - listSubscribe - END");
+            return true;
+        }
+        catch(err)
+        {
+            this.m_Log.DebugDump("nsLycosIMAP.js: listSubscribe : Exception : "
+                                      + err.name 
+                                      + ".\nError message: " 
+                                      + err.message);
+            this.serverComms(this.m_iTag +" BAD error\r\n");  
+            return false;
+        }
+    },   
+    
+    
+    
     subscribe : function (szFolder)
     {
         try
         {
             this.m_Log.Write("nsLycosIMAP.js - subscribe - START");
-            this.m_Log.Write("nsLycosIMAP.js - subscribe - Username: " + this.m_szUserNameDomain +
-                                                                    " szFolder " + szFolder);
-                                                                    
-            if (!this.m_szUserNameDomain && !szFolder) return false;
-            
-            var oPref = new Object();
-            oPref.Value = null;
-            
-            var szSubList = "";
-            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-            if (WebMailPrefAccess.Get("char","lycos.imap.subscribed."+this.m_szUserName,oPref))
-                szSubList = oPref.Value;
-            this.m_Log.Write("nsLycosIMAP.js - Subscribe - old list: " + szSubList);
-            
-            //check for new folder
-            var reg = new RegExp (szFolder,"i");
-            var bFound = false;
-            if (szSubList.length>0)
-            {
-                var aszFolder = szSubList.split("\r\n");
-                for (i=0; i<aszFolder.length; i++)
-                {
-                    if (aszFolder[i].search(reg)!=-1) bFound = true;
-                }
-            }
-             
-            if (!bFound) szSubList +=  szFolder + "\r\n";
-            
-            this.m_Log.Write("nsLycosIMAP.js - Subscribe - new list: " + szSubList);
-            WebMailPrefAccess.Set("char","lycos.imap.subscribed."+this.m_szUserName,szSubList);
-            
-            var szResponse = this.m_iTag + " OK SUBSCRIBE Completed\r\n";
+            this.m_Log.Write("nsLycosIMAP.js - subscribe - szFolder " +szFolder);                                                                   
+            if (!szFolder) return false;
+
+            var bDone = this.m_oFolder.subscribeFolder(szFolder); 
+            var szResponse = this.m_iTag;
+            szResponse += bDone? " OK " : " NO ";
+            szResponse += "SUBCRIBE Completed\r\n";           
             this.serverComms(szResponse);  
             
             this.m_Log.Write("nsLycosIMAP.js - subscribe - END");
@@ -276,50 +287,13 @@ nsLycosIMAP.prototype =
         try
         {
             this.m_Log.Write("nsLycosIMAP.js - unSubscribe - START");
-            this.m_Log.Write("nsLycosIMAP.js - unSubscribe - Username: " + this.m_szUserNameDomain +
-                                                                " Folder " + szFolder );
-                
-            if (!this.m_szUserNameDomain && !szFolder) return false;
+            this.m_Log.Write("nsLycosIMAP.js - unSubscribe - Folder " + szFolder );
+            if (!szFolder) return false;
             
-            var oPref = new Object();
-            oPref.Value = null;
-            var bFound = false;  
-            var szSubscribed = ""; 
-            var reg = new RegExp (szFolder,"i");
-            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-            if (WebMailPrefAccess.Get("char","lycos.imap.subscribed."+this.m_szUserNameDomain,oPref))
-            {
-                var aszFolder = oPref.Value.split("\r\n");
-                this.m_Log.Write("nsLycosIMAP.js - unSubscribe - list: " + aszFolder);
-                
-                var iLenght = aszFolder.length-1;
-                for (i=0; i<iLenght; i++)
-                {
-                    var temp = aszFolder.shift();  //get first item
-                    this.m_Log.Write("nsLycosIMAP.js - unSubscribe " + i + " "+ temp);
-                       
-                    this.m_Log.Write("nsLycosIMAP.js - unSubscribe reg " + reg);
-                    if (temp.search(reg)!=-1)
-                    { 
-                        this.m_Log.Write("nsLycosIMAP.js - unSubscribe - found");
-                        bFound = true;  
-                    }
-                    else
-                    {
-                        this.m_Log.Write("nsLycosIMAP.js - unSubscribe - not found");
-                        szSubscribed += temp + "\r\n"; 
-                    }
-                } 
-                this.m_Log.Write("nsLycosIMAP.js - unSubscribe -list - " + szSubscribed );
-                WebMailPrefAccess.Set("char","lycos.imap.subscribed."+this.m_szUserName,szSubscribed);
-            }
-            
-            var szResponse;
-            if (!bFound) 
-                szResponse = this.m_iTag + " NO UNSUBCRIBE Completed\r\n";
-            else
-                szResponse = this.m_iTag + " OK UNSUBCRIBE Completed\r\n";
-                
+            var bDone = this.m_oFolder.unSubscribeFolder(szFolder); 
+            var szResponse = this.m_iTag;
+            szResponse += bDone? " OK " : " NO ";
+            szResponse += "UNSUBCRIBE Completed\r\n";            
             this.serverComms(szResponse);  
             
             this.m_Log.Write("nsLycosIMAP.js - unSubscribe - END");
@@ -337,48 +311,7 @@ nsLycosIMAP.prototype =
     },
     
     
-    listSubscribe : function()
-    {
-        try
-        {
-            this.m_Log.Write("nsLycosIMAP.js - listSubscribe - START");
-            this.m_Log.Write("nsLycosIMAP.js - listSubscribe - Username: " + this.m_szUserNameDomain);
-                
-            if (!this.m_szUserNameDomain) return false;
-            
-            var oPref = new Object();
-            oPref.Value = null;
-            
-            var szResponse = "";
-            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-            if (WebMailPrefAccess.Get("char","lycos.imap.subscribed."+this.m_szUserNameDomain,oPref))
-            {
-                var aszFolder = oPref.Value.split("\r\n");
-                this.m_Log.Write("nsLycosIMAP.js - listSubscribe - list: " + aszFolder);
-                
-                for (i=0; i<aszFolder.length-1; i++)
-                {
-                    szResponse += "* lsub (\\Noinferiors \\HasNoChildren) " + "\".\" \"" + aszFolder[i] + "\"\r\n";  
-                } 
-            }
-            
-            szResponse += this.m_iTag + " OK LSUB Completed\r\n";
-            this.serverComms(szResponse);  
-            
-            
-            this.m_Log.Write("nsLycosIMAP.js - listSubscribe - END");
-            return true;
-        }
-        catch(err)
-        {
-            this.m_Log.DebugDump("nsLycosIMAP.js: listSubscribe : Exception : "
-                                      + err.name 
-                                      + ".\nError message: " 
-                                      + err.message);
-            this.serverComms(this.m_iTag +" BAD error\r\n");  
-            return false;
-        }
-    },   
+   
     
     
     
@@ -458,11 +391,7 @@ nsLycosIMAP.prototype =
                 {
                     szDisplayName = aszResponses[i].match(LycosIMAPSpecial)[1];
                 }
-                
-                var iUnReadCount = parseInt(aszResponses[i].match(LycosIMAPUnreadCount)[1]);
-                var iMsgCount =  parseInt(aszResponses[i].match(LycosIMAPMsgCount)[1]);
-                var iUID = parseInt(Hex16(Crc16Str(szHref)));
-                
+                              
                 var szHiererchy = null;
                 if (szHref.search(/inbox/i)!=-1)
                 {
@@ -477,8 +406,7 @@ nsLycosIMAP.prototype =
                     szHiererchy = "INBOX." + szDisplayName;
                 } 
                
-                
-                mainObject.m_oFolder.addFolder(szHiererchy, iUID, szHref, szDisplayName, iMsgCount,iUnReadCount);
+                mainObject.m_oFolder.addFolder(szHiererchy, szHref, szDisplayName);
             }
             
             mainObject.listResponse();          

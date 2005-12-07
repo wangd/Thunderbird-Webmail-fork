@@ -142,3 +142,8 @@
 {
      -moz-image-region: rect(0px, 544px, 32px, 512px)
 }
+
+.flag[value="16"]/*portugal*/
+{
+     -moz-image-region: rect(0px, 576px, 32px, 544px)
+}
