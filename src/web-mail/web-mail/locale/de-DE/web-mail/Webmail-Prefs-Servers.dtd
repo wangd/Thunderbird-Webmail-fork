@@ -1,26 +1,24 @@
 <!ENTITY ServerStatus.Label "Server-Status">
 <!ENTITY Ports.Label "Port">
-<!ENTITY Ports.AccessKey "P">
+<!ENTITY Ports.AccessKey "r">
 <!ENTITY Pop.Label "POP">
 <!ENTITY Pop.AccessKey "o">
-<!ENTITY POP.Default.Label "default 110">
+<!ENTITY POP.Default.Label "Standard: 110">
 <!ENTITY Note.Label "Ports unter 1024 könnten vom Betriebssystem blockiert werden.">
 <!ENTITY Restart.Label "Ein Neustart von Thunderbird ist erforderlich bevor die geänderten Einstellungen wirksam werden.">
 <!ENTITY SMTP.Label "SMTP">
 <!ENTITY SMTP.AccessKey "S">
-<!ENTITY SMTP.Default.Label "default 25">
+<!ENTITY SMTP.Default.Label "Standard: 25">
 <!ENTITY IMAP.Label "IMAP">
 <!ENTITY IMAP.AccessKey "I">
-<!ENTITY IMAP.Default.Label "default 143">
-<!ENTITY Enable.POP.Label "Enable POP server.">
+<!ENTITY IMAP.Default.Label "Standard: 143">
+<!ENTITY Enable.POP.Label "POP-Server aktivieren.">
 <!ENTITY Enable.POP.AccessKey "P">
-<!ENTITY Enable.SMTP.Label "Enable SMTP server.">
+<!ENTITY Enable.SMTP.Label "SMTP-Server aktivieren.">
 <!ENTITY Enable.SMTP.AccessKey "T">
-<!ENTITY Enable.IMAP.Label "Enabel IMAP server.">
+<!ENTITY Enable.IMAP.Label "IMAP-Server aktivieren.">
 <!ENTITY Enable.IMAP.AccessKey "M">
-<!ENTITY Enable.Label "Enable">
-<!ENTITY Enable.AccessKey "E">
+<!ENTITY Enable.Label "Steuerung">
+<!ENTITY Enable.AccessKey "e">
 <!ENTITY Status.Label "Status">
 <!ENTITY Status.AccessKey "u">
-
-
