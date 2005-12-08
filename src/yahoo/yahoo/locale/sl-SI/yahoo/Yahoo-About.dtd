@@ -1,0 +1,10 @@
+<!ENTITY YahooAbout.Title "Yahoo - O razširitvi">
+<!ENTITY YahooAbout.ExtName "Yahoo">
+<!ENTITY YahooAbout.ExtVersion "različice 0.6.1">
+<!ENTITY YahooAbout.ExtDescription "Komponenta Yahoo za razširitev Web-Mail.">
+<!ENTITY YahooAbout.ExtCreaterTitle "Avtor:">
+<!ENTITY YahooAbout.ExtCreator "ComodoDragon">
+<!ENTITY YahooAbout.ExtHome "Domača stran">
+<!ENTITY YahooAbout.ExtHomeURL "http://webmail.mozdev.org/">
+<!ENTITY YahooAbout.ExtButton "Zapri">
+<!ENTITY YahooAbout.ExtContributorTitle "Avtorji prispevkov:">
