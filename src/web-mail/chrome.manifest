@@ -14,4 +14,4 @@ locale  web-mail    nl-NL   jar:chrome/web-mail.jar!/locale/nl-NL/web-mail/
 locale  web-mail    zh-CN   jar:chrome/web-mail.jar!/locale/zh-CN/web-mail/
 locale  web-mail    fi-FI   jar:chrome/web-mail.jar!/locale/fi-FI/web-mail/
 locale  web-mail    tr-TR   jar:chrome/web-mail.jar!/locale/tr-TR/web-mail/
-locale  web-mail    sl-SL   jar:chrome/web-mail.jar!/locale/sl-SL/web-mail/
+locale  web-mail    sl-SI   jar:chrome/web-mail.jar!/locale/sl-SI/web-mail/
