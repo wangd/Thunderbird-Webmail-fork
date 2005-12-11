@@ -68,9 +68,9 @@ function nsMailDotComSMTP()
         oPref.Value = null;
         var  WebMailPrefAccess = new WebMailCommonPrefAccess();
         if (WebMailPrefAccess.Get("bool","maildotcom.bReUseSession",oPref))
-            this.bReUseSession=oPref.Value;
+            this.m_bReUseSession=oPref.Value;
         else
-            this.bReUseSession=true; 
+            this.m_bReUseSession=true; 
             
         //do i save copy
         var oPref = new Object();
