@@ -11,10 +11,10 @@ const patternMailDotComType = /type="(.*?)"/i;
 const patternMailDotComValue = /value=\s?['??|"??](\S*)['??|"??]/i;
 const patternMailDotComName = /name=\s?["??|'??](\S*)["??|'??]/i;
 const patternMailDotComFrame = /<frame.*?src="(.*?)".*?name="mailcomframe".*?SCROLLING="AUTO">/;
-const patternMailDotComFolders = /href="(.*?folders.mail.*?)".*?class="nltxt"/;
+const patternMailDotComFolders = /href="(.*?folders.mail.*?)"/;
 const patternMailDotComFolderList = /href=".*?".*?class="fb"/gm;
 const patternMailDotComFolderURI= /href="(.*?)"/;
-const patternMailDotComFolderName=/&folder=(.*?)$/;
+const patternMailDotComFolderName=/.*?folder=(.*?)&.*?$/i;
 const patternMailDotComAddURI = /document.location.href="(.*?)"/;
 const patternMailDotComMsgTable = /<tbody>[\S\s]*<\/tbody>/igm;
 const patternMailDotComNext = /<a href="(.*?mailbox.mail.*?)" class="fl">Next<\/a>/;
@@ -84,9 +84,9 @@ function nsMailDotCom()
         oPref.Value = null;
         var  WebMailPrefAccess = new WebMailCommonPrefAccess();
         if (WebMailPrefAccess.Get("bool","maildotcom.bReUseSession",oPref))
-            this.bReUseSession=oPref.Value;
+            this.m_bReUseSession=oPref.Value;
         else
-            this.bReUseSession=true; 
+            this.m_bReUseSession=true; 
             
         //do i download unread only
         var oPref = new Object();
@@ -344,7 +344,10 @@ nsMailDotCom.prototype =
                     }                   
                     var aszFolderList = szResponse.match(patternMailDotComFolderList);
                     mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - folders list "+ aszFolderList);
-                        
+                      
+                    var szPath = szLocation.match(/(http:\/\/.*?)\//i)[1];  
+                    mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - path "+ szPath);
+                    
                     for(i=0; i<aszFolderList.length; i++)
                     {
                         var szHref = aszFolderList[i].match(patternMailDotComFolderURI)[1];
@@ -354,12 +357,12 @@ nsMailDotCom.prototype =
                     
                         if (szName.search(/inbox/i)!=-1) //get inbox
                         {
-                            mainObject.m_szInboxURI =  szHref +"&order=Oldest"; 
+                            mainObject.m_szInboxURI =  szPath + szHref +"&order=Oldest"; 
                             mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - Inbox "+ mainObject.m_szInboxURI);
                         }
                         else if (szName.search(/trash/i)!=-1)//get trash
                         {
-                            mainObject.m_szTrashURI =  szHref;
+                            mainObject.m_szTrashURI =  szPath + szHref;
                             mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - trash "+ mainObject.m_szTrashURI);
                         }  
                     }
