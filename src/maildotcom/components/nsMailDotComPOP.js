@@ -246,12 +246,12 @@ nsMailDotCom.prototype =
                 
                         if (szName.search(/^login$/i)!=-1)
                         {
-                            var szUserName =  encodeURIComponent(mainObject.m_szUserName);
+                            var szUserName =  encodeURI(mainObject.m_szUserName);
                             mainObject.m_HttpComms.addValuePair(szName, szUserName);
                         }
                         else if (szName.search(/password/i)!=-1)
                         {
-                            var szPassword =  encodeURIComponent(mainObject.m_szPassWord);
+                            var szPassword =  encodeURI(mainObject.m_szPassWord);
                             mainObject.m_HttpComms.addValuePair(szName, szPassword);
                         }
                         else if (szName.search(/siteselected/i)!=-1)
@@ -261,7 +261,7 @@ nsMailDotCom.prototype =
                                 var szValue=aszLoginInput[i].match(patternMailDotComValue)[1];
                                 szValue = szValue.replace(/"/gm,"");
                                 szValue = szValue.replace(/'/gm,"");  
-                                szValue = encodeURIComponent(szValue);
+                                szValue = encodeURI(szValue);
                                 mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - value " + szValue);
                                 mainObject.m_HttpComms.addValuePair(szName, szValue);
                             }
@@ -271,7 +271,7 @@ nsMailDotCom.prototype =
                             var szValue=aszLoginInput[i].match(patternMailDotComValue)[1];
                             szValue = szValue.replace(/"/gm,"");
                             szValue = szValue.replace(/'/gm,"");
-                            szValue = encodeURIComponent(szValue);  
+                            szValue = encodeURI(szValue);  
                             mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - value " + szValue);
                             mainObject.m_HttpComms.addValuePair(szName, szValue);
                         }
