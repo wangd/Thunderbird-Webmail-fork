@@ -5,13 +5,13 @@
     <RDF:Description about="urn:mozilla:extension:{860a7040-44a3-11da-8cd6-0800200c9a66}">
         <em:updates>
             <RDF:Seq>
-                <RDF:li resource="urn:mozilla:extension:{860a7040-44a3-11da-8cd6-0800200c9a66}:0.4.0"/>
+                <RDF:li resource="urn:mozilla:extension:{860a7040-44a3-11da-8cd6-0800200c9a66}:0.4.0a"/>
             </RDF:Seq>
         </em:updates>
     </RDF:Description>
     
-    <RDF:Description about="urn:mozilla:extension:{860a7040-44a3-11da-8cd6-0800200c9a66}:0.4.0">
-        <em:version>0.4.0</em:version>
+    <RDF:Description about="urn:mozilla:extension:{860a7040-44a3-11da-8cd6-0800200c9a66}:0.4.0a">
+        <em:version>0.4.0a</em:version>
         <!-- Thunderbird updates -->
     	<em:targetApplication>
         	<Description>
