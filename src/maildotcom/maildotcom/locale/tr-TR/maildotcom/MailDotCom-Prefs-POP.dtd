@@ -1,0 +1,5 @@
+<!ENTITY MailServers.Label "POP">
+<!ENTITY EmptyTrash.Label "Çöpü Temizle">
+<!ENTITY EmptyTrash.AccessKey "T">
+<!ENTITY DownloadUnread.Label "Sadece okunmayanları indir">
+<!ENTITY DownloadUnread.AccessKey "o">
