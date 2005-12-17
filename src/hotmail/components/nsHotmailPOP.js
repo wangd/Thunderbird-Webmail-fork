@@ -51,7 +51,6 @@ const patternHotmailPOPHref = /<D:href>(.*?)<\/D:href>/;
 const patternHotmailPOPSize = /<D:getcontentlength>(.*?)<\/D:getcontentlength>/;
 const patternHotmailPOPRead = /<hm:read>(.*?)<\/hm:read>/i;
 const patternHotmailPOPTo = /<m:to>(.*?)<\/m:to>/i;
-const patternHotmailPOPToAlt = /<m:to\/>(.*?)$/im;
 const patternHotmailPOPFrom = /<m:from>(.*?)<\/m:from>/i;
 const patternHotmailPOPSubject = /<m:subject>(.*?)<\/m:subject>/i;
 const patternHotmailPOPDate = /<m:date>(.*?)T(.*?)<\/m:date>/i;

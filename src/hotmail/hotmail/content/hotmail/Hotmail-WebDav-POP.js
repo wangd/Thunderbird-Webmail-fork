@@ -593,17 +593,24 @@ HotmailWebDav.prototype =
             //create URL
             var szPath = this.m_aMsgDataStore[lID-1].szMSGUri;
             this.m_Log.Write("HotmailWebDav.js - deleteMessage - id " + szPath );
+            
+            var szMsgID =  szPath.match(patternHotmailPOPMSGID);  
+            var szStart = "<?xml version=\"1.0\"?>\r\n<D:move xmlns:D=\"DAV:\">\r\n<D:target>\r\n";
+            var szEnd = "</D:target>\r\n</D:move>";
+            var szMsgID =  szPath.match(HttpMailMSGIDPattern); 
+            var sztemp ="<D:href>"+szMsgID+"</D:href>\r\n"
+            var szData = szStart + sztemp + szEnd;  
+              
                                                          
             this.m_iStage=0;      
             this.m_HttpComms.clean();
             this.m_HttpComms.setURI(szPath);
             this.m_HttpComms.setRequestMethod("MOVE");
             this.m_HttpComms.setContentType(-1);           
-            var szMsgID =  szPath.match(patternHotmailPOPMSGID); 
+            
             var szDestination= this.m_szTrashURI + szMsgID;
             this.m_Log.Write("HotmailWebDav.js - deleteMessage - Destination " + szDestination );
             this.m_HttpComms.addRequestHeader("Destination", szDestination , false);
-            this.m_HttpComms.addRequestHeader("Authorization", this.m_szAuthString , false);
             var bResult = this.m_HttpComms.send(this.deleteMessageOnloadHandler);                             
             if (!bResult) throw new Error("httpConnection returned false");
                             

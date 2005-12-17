@@ -86,10 +86,17 @@
 }
 
 
+#flagImage
+{
+    margin-left: 20px;
+    list-style-image: url("chrome://httpmail/skin/flags.png");
+}
+
 .flag/*world*/
 {
      -moz-image-region: rect(0px, 32px, 32px, 0px)
 }
+
 
 .flag[value="0"] /*italy*/
 {
@@ -111,15 +118,18 @@
      -moz-image-region: rect(0px, 160px, 32px, 128px)
 }
 
-.flag[value="4"]/*Catalan*/
+
+.flag[value="4"]/*catalan*/
 {
      -moz-image-region: rect(0px, 192px, 32px, 160px)
 }
+
 
 .flag[value="5"]/*Netherlands*/
 {
      -moz-image-region: rect(0px, 224px, 32px, 192px)
 }
+
 
 .flag[value="6"]/*czech*/
 {
@@ -133,6 +143,42 @@
 }
 
 
+.flag[value="8"]/*japan*/
+{
+     -moz-image-region: rect(0px, 320px, 32px, 288px)
+}
+
+
+.flag[value="9"]/*South K*/
+{
+     -moz-image-region: rect(0px, 352px, 32px, 320px)
+}
+
+
+.flag[value="10"]/*Sweden*/
+{
+     -moz-image-region: rect(0px, 384px, 32px, 352px)
+}
+
+
+.flag[value="11"]/*Croatia*/
+{
+     -moz-image-region: rect(0px, 416px, 32px, 384px)
+}
+
+
+.flag[value="12"]/*Russia*/
+{
+     -moz-image-region: rect(0px, 448px, 32px, 416px)
+}
+
+
+.flag[value="13"]/*Greece*/
+{
+     -moz-image-region: rect(0px, 480px, 32px, 448px)
+}
+
+
 .flag[value="14"]/*finland*/
 {
      -moz-image-region: rect(0px, 512px, 32px, 480px)
@@ -143,10 +189,12 @@
      -moz-image-region: rect(0px, 544px, 32px, 512px)
 }
 
+
 .flag[value="16"]/*portugal*/
 {
      -moz-image-region: rect(0px, 576px, 32px, 544px)
 }
+
 
 .flag[value="17"]/*Slovenian*/
 {
