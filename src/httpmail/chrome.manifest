@@ -1,0 +1,7 @@
+overlay chrome://messenger/content/messenger.xul    chrome://httpmail/content/HttpMail-Start.xul
+
+content httpmail    jar:chrome/httpmail.jar!/content/httpmail/
+
+skin	httpmail	classic/1.0     jar:chrome/httpmail.jar!/skin/classic/httpmail/
+
+locale	httpmail    en-US   jar:chrome/httpmail.jar!/locale/en-US/httpmail/
