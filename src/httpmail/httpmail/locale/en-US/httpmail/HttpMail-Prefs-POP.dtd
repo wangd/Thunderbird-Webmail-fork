@@ -1,0 +1,5 @@
+<!ENTITY MailServers.Label "POP">
+<!ENTITY EmptyTrash.Label "Empty Trash">
+<!ENTITY EmptyTrash.AccessKey "E">
+<!ENTITY DownloadUnread.Label "Download unread emails only">
+<!ENTITY DownloadUnread.AccessKey "u">

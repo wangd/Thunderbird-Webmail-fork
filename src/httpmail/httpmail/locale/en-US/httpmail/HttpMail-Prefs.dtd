@@ -1,0 +1,6 @@
+<!ENTITY Options.szTitle "WebDav Options">
+<!ENTITY Domains.Panel.szTitle "Domains">
+<!ENTITY POP.Panel.szTitle "POP">
+<!ENTITY SMTP.Panel.szTitle "SMTP">
+<!ENTITY IMAP.Panel.szTitle "IMAP">
+<!ENTITY Window.size "width: 30em; height: 31em">

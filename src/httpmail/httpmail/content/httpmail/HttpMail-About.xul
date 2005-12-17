@@ -1,0 +1,49 @@
+<?xml version="1.0"?> 
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?> 
+<?xml-stylesheet href="chrome://httpmail/content/HttpMail-About.css" type="text/css"?> 
+
+<!DOCTYPE dialog SYSTEM "chrome://httpmail/locale/HttpMail-About.dtd">
+
+<window class="dialog"
+        title= "&HttpMailAbout.Title;"
+        orient="vertical"
+        autostretch="always"
+        onload="gHttpMailAbout.init();sizeToContent()"
+        onunload ="gHttpMailAbout.stop()"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        id = "HttpMailAboutDialog">
+     
+    <stringbundleset>
+	   <stringbundle id="stringsHttpMailAbout" src="chrome://httpmail/locale/HttpMail-About.properties"/>
+	</stringbundleset>
+	
+    <script type="application/x-javascript" src="chrome://httpmail/content/HttpMail-About.js"/>
+        
+    <groupbox align="center" orient="horizontal">
+        <vbox>
+            <hbox>
+                <spacer flex="1"/>
+                <image id="HttpMailImage"/>
+                <spacer flex="1"/>
+            </hbox>
+            <!--<text value="&HttpMailAbout.ExtName;" id = "HttpMailName"/>-->
+            <text value="&HttpMailAbout.ExtVersion;" id = "HttpMailVersion"/>
+            <text value="&HttpMailAbout.ExtDescription;" id = "HttpMailDescription"/>
+            <text value="&HttpMailAbout.ExtCreaterTitle;" id = "HttpMailCreatorLabel"/>
+            <hbox>
+                <image id="LionImage"/>
+                <text value="&HttpMailAbout.ExtCreator;" class = "HttpMailCreatorText"/>
+            </hbox>
+            <text value="&HttpMailAbout.ExtContributorTitle;" id = "HttpMailContributorLabel"/>
+            <vbox flex="1" id="HttpMailContributorBox"/>
+            <text value="&HttpMailAbout.ExtHome;" 
+                  id = "HttpMailHomePage"
+                  onclick="window.opener.openURL('&HttpMailAbout.ExtHomeURL;');"/>
+        </vbox>
+    </groupbox>
+
+    <hbox>
+        <spacer flex="1"/>
+        <button label="&HttpMailAbout.ExtButton;" oncommand="window.close();"/>
+    </hbox>
+</window>
