@@ -1,0 +1,23 @@
+#include "nsISupports.idl"
+
+[scriptable, uuid(79949150-4be3-11da-8cd6-0800200c9a66)]
+interface nsIUriManager : nsISupports
+{  
+    boolean getAllUri(out PRUint32 count,
+                   [array, size_is(count)] out string Uri);
+    
+    boolean getDomains( in string szUri,
+                       out PRUint32 count,
+                      [array, size_is(count)] out string Domains);
+     
+    boolean getAllDomains( out PRUint32 count,
+                           [array, size_is(count)] out string Domains);
+    
+    string getUri(in string szDomain);
+    
+    boolean deleteDomain(in string szDomain);
+    
+    boolean deleteUri(in string szUri);
+    
+    boolean addDomain(in string szUri, in string szDomain);
+};
