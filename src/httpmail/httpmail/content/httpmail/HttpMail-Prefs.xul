@@ -1,0 +1,35 @@
+<?xml version="1.0"?> 
+
+<?xml-stylesheet href="chrome://global/skin/global.css"?>
+<?xml-stylesheet href="chrome://messenger/skin/preferences/preferences.css"?>
+<?xml-stylesheet href="chrome://mozapps/content/preferences/preferences.css"?>
+
+<?xml-stylesheet href="chrome://httpmail/content/HttpMail-Prefs.css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://httpmail/locale/HttpMail-Prefs.dtd">
+
+
+<prefwindow type="prefwindow"
+            id="WebDav-Prefs"
+            title="&Options.szTitle;"
+            xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+            style="&Window.size;"
+            lastSelected = "paneDomains"
+            buttons="accept, cancel">
+  
+      
+    <!-- domains --> 
+    <prefpane id="paneDomains" 
+              label="&Domains.Panel.szTitle;"
+              src="chrome://httpmail/content/HttpMail-Prefs-Domains.xul"/>  
+                       
+    <!-- POP --> 
+    <prefpane id="panePOP" 
+              label="&POP.Panel.szTitle;"
+              src="chrome://httpmail/content/HttpMail-Prefs-POP.xul"/>  
+             
+    <!-- SMTP --> 
+    <prefpane id="paneSMTP" 
+              label="&SMTP.Panel.szTitle;"
+              src="chrome://httpmail/content/HttpMail-Prefs-SMTP.xul"/>                    
+</prefwindow>

@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/global.css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://httpmail/locale/HttpMail-Prefs-POP.dtd">
+
+
+<overlay id="panePOPOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+           
+    <prefpane id = "panePOP" flex="1"> 
+        
+        <preferences>
+            <preference id="useJunkMail" name="httpmail.bUseJunkMail" type="bool"/>
+            <preference id="emptyTrash" name="httpmail.bEmptyTrash" type="bool"/>
+            <preference id="DownloadUnread" name="httpmail.bDownloadUnread" type="bool"/>
+        </preferences> 
+          
+             <!--empty trash-->
+             <checkbox label="&EmptyTrash.Label;" 
+                       accesskey="&EmptyTrash.AccessKey;"
+                       preference = "emptyTrash"
+                       id="chkEmptyTrash"/>
+                  
+            
+             <!--download unread emails only-->
+            <checkbox label="&DownloadUnread.Label;" 
+                      accesskey="&DownloadUnread.AccessKey;"
+                      preference = "DownloadUnread"
+                      id="chkDownloadUnread"/> 
+
+            
+            <spacer flex="2"/>          
+    </prefpane>
+    
+</overlay>
+
+

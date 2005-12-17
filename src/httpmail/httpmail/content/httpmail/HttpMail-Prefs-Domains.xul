@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/global.css"?>
+<?xml-stylesheet href="chrome://httpmail/content/HttpMail-Prefs-Domains.css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://httpmail/locale/HttpMail-Prefs-Domains.dtd">
+
+
+<overlay id="paneDomainsOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+           
+    <prefpane id = "paneDomains" onpaneload= "gHttpMailDomains.init();" flex="1"> 
+        <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
+        <script type="application/x-javascript" src="chrome://httpmail/content/HttpMail-Prefs-Domains.js"/>
+        
+        <stringbundle id="stringsHttpMailPrefs-Domains" src="chrome://httpmail/locale/HttpMail-Prefs-Domains.properties"/>        
+         
+        <popupset label="menu">
+            <popup id="contextmenu" onpopupshowing="gHttpMailDomains.contextMenu();">
+                <menuitem id="cmAdd" 
+                          label="&Add.label;" 
+                          accesskey="&Add.AccessKey;"
+                          oncommand="gHttpMailDomains.add();"/>
+                
+                <menuitem id="cmEdit" 
+                          label="&Edit.label;" 
+                          accesskey="&Edit.AccessKey;" 
+                          oncommand="gHttpMailDomains.edit();"/>
+                
+                <menuitem id="cmRemove" 
+                          label="&Remove.label;" 
+                          accesskey="&Remove.AccessKey;" 
+                          oncommand="gHttpMailDomains.remove();"/>
+            </popup>
+        </popupset>
+         
+         
+        <vbox class="listText">
+            <tree rows="10" 
+                  hidecolumnpicker="true" 
+                  hideheader="true" 
+                  seltype ="single"
+                  id="domainTree"
+                  context = "contextmenu"
+                  onselect = "gHttpMailDomains.onSelect();"
+                  ondblclick = "gHttpMailDomains.ondbclick();">   
+               
+                <treecols>
+                    <treecol id="domain" primary="true" flex="1"  label="&Domain.label;"/>
+                </treecols> 
+                      
+            </tree>
+            
+            <hbox pack="center">    
+                <button id="add" 
+                        label="&Add.label;" 
+                        oncommand ="gHttpMailDomains.add(false);"
+                        accesskey="&Add.AccessKey;"/>
+                <button id="edit" 
+                        label="&Edit.label;" 
+                        oncommand ="gHttpMailDomains.edit();"
+                        disabled="true"
+                        accesskey="&Edit.AccessKey;"/>
+                <button id="remove" 
+                        label="&Remove.label;" 
+                        disabled="true"
+                        accesskey="&Remove.AccessKey;"
+                        oncommand ="gHttpMailDomains.remove();"/>
+            </hbox>
+        </vbox>
+        
+        
+    </prefpane>
+    
+</overlay>

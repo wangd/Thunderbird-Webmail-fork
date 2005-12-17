@@ -1,0 +1,29 @@
+treechildren::-moz-tree-image(PersonImage)
+{
+    width: 17px;
+    margin-right: 2px;
+    list-style-image: url("chrome://httpmail/skin/person.png"); 
+}
+
+
+treechildren::-moz-tree-image(noDomainImage)
+{
+    width:16px; 
+    margin-left: 5px;
+    margin-right: 5px;
+    list-style-image: url("chrome://httpmail/skin/SmallCross.png"); 
+}
+
+
+treechildren::-moz-tree-image(DomainImage)
+{
+    width:16px; 
+    margin-left: 5px;
+    margin-right: 5px;
+    list-style-image: url("chrome://httpmail/skin/worldIcon.png"); 
+}
+
+treechildren::-moz-tree-indentation
+{
+     width:30px; 
+}
