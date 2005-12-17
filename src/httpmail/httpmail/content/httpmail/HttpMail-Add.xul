@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://httpmail/content/HttpMail-Add.css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://httpmail/locale/HttpMail-Add.dtd">
+
+<window id="Add" 
+        title="&TitleAdd;"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        style="&Window.size;"
+        onload="return gHttpMailAdd.init();">
+
+    <stringbundleset>
+	   <stringbundle id="stringsHttpMailAdd" src="chrome://httpmail/locale/HttpMail-Add.properties"/>
+	</stringbundleset>
+	
+    <script type="application/x-javascript" src="chrome://httpmail/content/HttpMail-Add.js"/>
+    <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
+    
+    <vbox flex="1">
+        <hbox>
+            <vbox>
+                <image id="domainImage" class="domain"/>
+                <spacer flex="1"/>
+            </vbox>
+            
+            <label id="modeID" value=""/>
+            <spacer flex="1"/>
+        </hbox>
+         
+        <spacer flex="1"/>   
+        
+        <hbox align="center">
+            <label id = "labelURL" 
+                   value="&Uri.label;" 
+                   accesskey="&Uri.accessKey;" 
+                   control="txtURL"
+                   style="&Uri.size;"/>  
+          
+            <textbox id="txtURL" 
+                     value="" 
+                     flex="1"
+                     hidden = "true"
+                     onchange = "gHttpMailAdd.urlChanged();"/>  
+                     
+            <menulist id = "menuURL" 
+                      editable="true"  
+                      flex="1"  
+                      hidden = "true"
+                      onchange = "gHttpMailAdd.urlChanged();">
+                <menupopup id="menupopup"></menupopup>
+            </menulist> 
+        </hbox>
+        
+        <hbox align="center">     
+            <label id="labelDomain"
+                   value="&Domain.label;" 
+                   accesskey="&Domain.accessKey;"
+                   control="txtDomain"/>           
+            
+            <textbox id="txtDomain" 
+                     value="" 
+                     flex="1" 
+                     onchange = "gHttpMailAdd.domainChanged();"/>
+        </hbox>
+
+        
+        <spacer flex="2" />
+
+        <hbox align="end" pack="center">
+            <button id="add" 
+                    label="&Ok.label;"
+                    oncommand ="gHttpMailAdd.doOk();"/>
+            <button id="cancel" 
+                    label="&Cancel.label;" 
+                    oncommand ="gHttpMailAdd.doCancel();"/>
+        </hbox>    
+    </vbox>
+</window>
