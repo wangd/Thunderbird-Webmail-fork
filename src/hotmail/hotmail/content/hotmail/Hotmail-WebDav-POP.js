@@ -597,7 +597,7 @@ HotmailWebDav.prototype =
             var szMsgID =  szPath.match(patternHotmailPOPMSGID);  
             var szStart = "<?xml version=\"1.0\"?>\r\n<D:move xmlns:D=\"DAV:\">\r\n<D:target>\r\n";
             var szEnd = "</D:target>\r\n</D:move>";
-            var szMsgID =  szPath.match(HttpMailMSGIDPattern); 
+            var szMsgID =  szPath.match(patternHotmailPOPMSGID); 
             var sztemp ="<D:href>"+szMsgID+"</D:href>\r\n"
             var szData = szStart + sztemp + szEnd;  
               
