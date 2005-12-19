@@ -90,27 +90,27 @@ var gHotmailStartUp =
     },
     
     
-    idCheck : function(szDomain, szProtocol, szYahooContentID)
+    idCheck : function(szDomain, szProtocol, szWantedContentID)
     {
         this.m_Log.Write("Hotmail.js : idCheck - START");
         this.m_Log.Write("Hotmail.js : idCheck - " +szDomain + " "
                                                 + szProtocol+ " "
-                                                + szYahooContentID);
+                                                + szWantedContentID);
          
         var szContentID = new Object;
         if (this.m_DomainManager.getDomainForProtocol(szDomain,szProtocol, szContentID))
         {
             this.m_Log.Write("Hotmail.js : idCheck - found");
-            if (szContentID.value != szYahooContentID)
+            if (szContentID.value != szWantedContentID)
             {
                 this.m_Log.Write("Hotmail.js : idCheck - wrong id");
-                this.m_DomainManager.newDomainForProtocol(szDomain, szProtocol, szYahooContentID);
+                this.m_DomainManager.newDomainForProtocol(szDomain, szProtocol, szWantedContentID);
             }
         }
         else
         {
             this.m_Log.Write("Hotmail.js : idCheck - not found");
-            this.m_DomainManager.newDomainForProtocol(szDomain, szProtocol, szYahooContentID);    
+            this.m_DomainManager.newDomainForProtocol(szDomain, szProtocol, szWantedContentID);    
         }
         
         this.m_Log.Write("Hotmail.js : idCheck - END");
