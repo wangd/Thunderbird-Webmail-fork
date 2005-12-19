@@ -71,7 +71,7 @@
 #flagImage
 {
     margin-left: 20px;
-    list-style-image: url("chrome://httpmail/skin/flags.png");
+    list-style-image: url("chrome://lycos/skin/flags.png");
 }
 
 .flag/*world*/
@@ -182,6 +182,7 @@
 {
      -moz-image-region: rect(0px, 608px, 32px, 576px)
 }
+
 
 #LycosHomePage
 {
