@@ -76,7 +76,7 @@
 #flagImage
 {
     margin-left: 20px;
-    list-style-image: url("chrome://httpmail/skin/flags.png");
+    list-style-image: url("chrome://maildotcom/skin/flags.png");
 }
 
 .flag/*world*/
