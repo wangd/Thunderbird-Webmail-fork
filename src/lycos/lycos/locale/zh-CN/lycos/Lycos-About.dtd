@@ -1,6 +1,6 @@
 <!ENTITY LycosAbout.Title "关于 Lycos">
 <!ENTITY LycosAbout.ExtName "Lycos">
-<!ENTITY LycosAbout.ExtVersion "版本: 0.7.0">
+<!ENTITY LycosAbout.ExtVersion "版本: 0.7.1">
 <!ENTITY LycosAbout.ExtDescription "Web-Mail 扩展的 Lycos 组件。">
 <!ENTITY LycosAbout.ExtCreaterTitle "创建者:">
 <!ENTITY LycosAbout.ExtCreator "ComodoDragon">

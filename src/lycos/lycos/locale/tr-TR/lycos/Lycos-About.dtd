@@ -1,6 +1,6 @@
 <!ENTITY LycosAbout.Title "Lycos - Hakkında">
 <!ENTITY LycosAbout.ExtName "Lycos">
-<!ENTITY LycosAbout.ExtVersion "sürüm 0.7.0">
+<!ENTITY LycosAbout.ExtVersion "sürüm 0.7.1">
 <!ENTITY LycosAbout.ExtDescription "Web-Mail eklentisi için Lycos bileşeni">
 <!ENTITY LycosAbout.ExtCreaterTitle "Hazırlayan:">
 <!ENTITY LycosAbout.ExtCreator "ComodoDragon">
