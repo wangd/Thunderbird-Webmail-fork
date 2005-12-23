@@ -124,19 +124,23 @@ nsUriManager.prototype =
             var bFound=false;
             var i=0;
             var szResult = null;
-            do
+            
+            if (this.m_aUriAndDomains.length>0)
             {
-                var tempData = this.m_aUriAndDomains[i];
-                this.m_Log.Write("nsUriManager.js - getUri domain "+ tempData.szDomain);
-                 
-                if (tempData.szDomain.search(szRegExp)!=-1)
+                do
                 {
-                    bFound = true;
-                    szResult =tempData.szUri;
-                    this.m_Log.Write("nsUriManager.js - getUri - Found " + szResult );
-                }  
-                i++;
-            } while (i<this.m_aUriAndDomains.length && !bFound );
+                    var tempData = this.m_aUriAndDomains[i];
+                    this.m_Log.Write("nsUriManager.js - getUri domain "+ tempData.szDomain);
+                     
+                    if (tempData.szDomain.search(szRegExp)!=-1)
+                    {
+                        bFound = true;
+                        szResult =tempData.szUri;
+                        this.m_Log.Write("nsUriManager.js - getUri - Found " + szResult );
+                    }  
+                    i++;
+                } while (i<this.m_aUriAndDomains.length && !bFound );
+            }
             
             this.m_Log.Write("nsUriManager.js - getUri - END");
             return szResult;
