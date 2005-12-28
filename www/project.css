@@ -81,7 +81,6 @@
    body { background-color: rgb(255, 255, 255);
     }
 
-  #leftcol {}
 
   #content { border-color: rgb(204, 204, 204);
     border-width: 1px;
@@ -92,24 +91,12 @@
     max-width: 45em;
     margin-left: 160px;
     }
-
- #footer { border: 1px dashed rgb(204, 204, 204);
-    padding-left: 4px;
-    padding-top: 5px;
-    margin-right: auto;
-    margin-left: auto;
-    position: relative;
-    width: 435px;
-    margin-top: 100px;
-    }
-
-    #footer-text { margin-left: 200px;
-    margin-top: 50px;
+    
+    
+#footer { margin-top: 140px;
     }
 
   
-  
-
   #mailLogo { margin-top: 50px;
     position: relative;
     margin-left: auto;
@@ -267,4 +254,7 @@
     font-family: Times New Roman,Times,serif ! important;
     font-weight: normal;
     font-size: 17px ! important;
+    }
+
+#counter { display: none;
     }
