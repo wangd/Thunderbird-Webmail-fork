@@ -68,6 +68,7 @@ var gMailDotComStartUp =
             this.idCheck("earthling.net","POP", cszMailDotComContentID);
             this.idCheck("techie.com","POP", cszMailDotComContentID);
             this.idCheck("usa.com","POP", cszMailDotComContentID);
+            this.idCheck("post.com","POP", cszMailDotComContentID);
 
             this.idCheck("mail.com","SMTP", cszMailDotComSMTPContentID);
             this.idCheck("email.com","SMTP", cszMailDotComSMTPContentID);
@@ -77,6 +78,7 @@ var gMailDotComStartUp =
             this.idCheck("earthling.net","SMTP", cszMailDotComSMTPContentID);
             this.idCheck("techie.com","SMTP", cszMailDotComSMTPContentID);
             this.idCheck("usa.com","SMTP", cszMailDotComSMTPContentID);
+            this.idCheck("post.com","SMTP", cszMailDotComSMTPContentID);
 
             this.m_Log.Write("MailDotCom.js : notify - END");
         }
