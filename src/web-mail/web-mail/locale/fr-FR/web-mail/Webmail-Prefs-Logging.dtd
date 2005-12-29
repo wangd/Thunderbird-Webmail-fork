@@ -2,7 +2,7 @@
 <!ENTITY GeneralLogging.AccessKey "A">
 <!ENTITY JavaScriptConsole.Label "Utiliser la console Javascript">
 <!ENTITY JavaScriptConsole.AccessKey "J">
-<!ENTITY LogFile.Label "Utiliser le fichier d'archive">
+<!ENTITY LogFile.Label "Utiliser le fichier d'archives">
 <!ENTITY LogFile.AccessKey "U">
 <!ENTITY Location.Label "Chemin">
 <!ENTITY Location.AccessKey "C">

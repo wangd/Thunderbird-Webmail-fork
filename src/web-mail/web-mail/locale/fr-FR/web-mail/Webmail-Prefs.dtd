@@ -1,5 +1,5 @@
-<!ENTITY Options.szTitle "Support Web Mail">
+<!ENTITY Options.szTitle "Options de Web Mail">
 <!ENTITY Servers.Panel.szTitle "Serveurs">
 <!ENTITY Domains.Panel.szTitle "Domaines">
 <!ENTITY Logging.Panel.szTitle "Archivage">
-<!ENTITY General.Panel.szTitle "Géneral">
+<!ENTITY General.Panel.szTitle "Général">

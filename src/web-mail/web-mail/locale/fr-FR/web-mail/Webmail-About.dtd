@@ -4,7 +4,7 @@
 <!ENTITY WebmailAbout.ExtDescription "Accéder aux comptes webmails depuis Thunderbird.">
 <!ENTITY WebmailAbout.ExtCreaterTitle "Créée par :">
 <!ENTITY WebmailAbout.ExtCreator "ComodoDragon">
-<!ENTITY WebmailAbout.ExtHome "Page web">
-<!ENTITY WebmailAbout.ExtHomeURL "Visiter la page Web">
+<!ENTITY WebmailAbout.ExtHome "Page d'acceuil">
+<!ENTITY WebmailAbout.ExtHomeURL "Visiter la page d'accueil">
 <!ENTITY WebmailAbout.ExtButton "Fermer">
 <!ENTITY WebmailAbout.ExtContributorTitle "Contributeurs :">
