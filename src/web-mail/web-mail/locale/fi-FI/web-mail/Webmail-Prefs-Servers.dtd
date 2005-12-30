@@ -4,7 +4,7 @@
 <!ENTITY Pop.Label "POP">
 <!ENTITY Pop.AccessKey "O">
 <!ENTITY POP.Default.Label "oletus 110">
-<!ENTITY Note.Label "Käyttöjärjestelmä saattaa estää portit pienempiä kuin 1024">
+<!ENTITY Note.Label "Käyttöjärjestelmä saattaa estää portit, jotka ovat pienempiä kuin 1024">
 <!ENTITY Restart.Label "Vaatii Thunderbirdin uudelleenkäynnistyksen, jotta muutokset tulevat voimaan.">
 <!ENTITY SMTP.Label "SMTP">
 <!ENTITY SMTP.AccessKey "S">
