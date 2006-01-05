@@ -11,7 +11,7 @@ const patternHotmailPOPInput = /<input.*?>/igm;
 const patternHotmailPOPType = /type="(.*?)"/i;
 const patternHotmailPOPName = /name="(.*?)"/i;
 const patternHotmailPOPValue = /value="(.*?)"/i;
-const patternHotmailPOPJavaRefresh = /top.location.replace\("(.*?)"\);/i
+const patternHotmailPOPJavaRefresh = /top.location.replace\("(.*?)"\)/i;
 const patternHotmailPOPRefresh =/<META.*?HTTP-EQUIV="REFRESH".*?URL=(.*?)".*?>/i;
 const patternHotmailPOPLogout = /<td><a.*?href="(.*?\/cgi-bin\/logout\?curmbox=.*?").*?>/m;
 const patternHotmailPOPMailbox = /<a href="(\/cgi-bin\/HoTMaiL.*?)".*?tabindex=121.*?class="E">/;
@@ -30,7 +30,22 @@ const patternHotmailPOPUM = /_UM="(.*?)"/;
 const patterHotmailPOPFolderID = /curmbox=(.*?)&/;
 const patternHotmailPOPSRRead = /msgread=1/gi;
 const patternHotmailPOPSRFrom =/<tr[\S\s]*name="(.*?)"><td>/i;
-
+/*********BETA*****************/
+const patternHotmailPOPJSRefresh = /<html><head><script.*?>top.location.replace.*?\("(.*?)"\).*?<\/script><\/head><\/html>/i;
+const patternHotmailPOPLogOut = /<a href="(.*?logout.aspx)">/i;
+const patternHotmailPOPInbox = /<a href="(.*?mail.aspx\?Control=Inbox)".*?>/i;
+const patternHotmailPOPJunkFolderID = /<a href=(.*?mail.aspx\?Control=Inbox&FolderID.*?5)>/i;
+const patternHotmailPOPNextPage = /\S<a href="(.*?mail.aspx\?Control=Inbox&PageAnchor=.*?FolderPage=next.*?)">/i;
+const patternHotmailPOPMailBoxTable = /<table.*?id="pInboxTable">[\s\S]*?<\/table>/ig;
+const patternHotmailPOPMailBoxTableRow = /<tr>[\s\S]*?<\/tr>/ig;
+const patternHotmailPOPEMailURL = /<td.*?pInboxTableTitleColumn.*>.*?<a href="(.*?)".*?>/i;
+const patternHotmailPOPEmailRead = /<td.*?pInboxTableTitleColumn><strong>.*?<\/strong><\/td>/i;
+const patternHotmailPOPEmailSender = /<td.*?pInboxTableFromColumn.*?>(.*?)<\/td>/i; 
+const patternHotmailPOPEmailSubject = /<td.*?pInboxTableTitleColumn.*?>.*?<a href=.*?>(.*?)<\/a>.*?<\/td>/i; 
+const patternHotmailPOPEmailDate = /<td.*?pInboxTableDateColumn.*?>(.*?)<\/td>/i;
+const patternHotmailPOPEMailID =/ReadMsgID=(.*?)&/i;
+const patternHotmailPOPViewState = /<input.*?id="__VIEWSTATE".*?value="(.*?)".*?\/>/i;
+const patternHotmailPOPFolderID = /FolderID=(.*?)&/i;
 /*******************************************************************************/
 
 
@@ -43,7 +58,7 @@ const HotmailPOPReadSchema = "<?xml version=\"1.0\"?>\r\n<D:propertyupdate xmlns
 const patternHotmailPOPFolder = /<hm:msgfolderroot>(.*?)<\/hm:msgfolderroot>/;
 const patternHotmailPOPTrash = /<hm:deleteditems>(.*?)<\/hm:deleteditems>/;
 const patternHotmailPOPMSGID = /[^\/]+$/;
-const patternHotmailPOPResponse = /<D:response>[\S\d\s\r\n]*?<\/D:response>/gm;
+const patternHotmailPOPResponse = /<D:response>[\S\s]*?<\/D:response>/gm;
 const patternHotmailPOPTrashFolder = /<D:href>(.*?HM_BuLkMail.*?)<\/D:href>/i;
 const patternHotmailPOPinboxFolder = /<D:href>(.*?\/folders\/active\/)<\/D:href>/i;
 const patternHotmailPOPID = /<D:id>(.*?)<\/D:id>/;
@@ -69,6 +84,7 @@ function nsHotmail()
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-WebDav-POP.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-ScreenRipper-POP.js");
+        scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-ScreenRipper-POP-BETA.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         
         var date = new Date();
@@ -132,8 +148,7 @@ nsHotmail.prototype =
             //load webdav address
             var iAccountNum=0;
             var WebMailPrefAccess = new WebMailCommonPrefAccess();
-            var oPref = new Object();
-            oPref.Value = null;
+            var oPref = {Value : null};
             
             if (WebMailPrefAccess.Get("int","hotmail.webdav.iAccountNum",oPref))
                 iAccountNum = oPref.Value;
@@ -150,18 +165,42 @@ nsHotmail.prototype =
                     if (this.m_szUserName.match(reg))
                     {
                         this.m_HotmailLog.Write("nsHotmail.js - logIN - username found");  
-                        this.m_CommMethod = new HotmailWebDav(this.m_oResponseStream, 
-                                                              this.m_HotmailLog);    
+                        this.m_CommMethod = new HotmailWebDav(this.m_oResponseStream, this.m_HotmailLog);    
                     } 
                 }
             }
            
             if (!this.m_CommMethod)
-                this.m_CommMethod = new HotmailScreenRipper(this.m_oResponseStream, 
-                                                            this.m_HotmailLog);
-             
-            var bResult = this.m_CommMethod.logIn(this.m_szUserName,   
-                                                  this.m_szPassWord);
+            {
+                //check for beta site
+                oPref.Value = null;
+                var iBetaAccountNum = 0;
+                if (WebMailPrefAccess.Get("int","hotmail.BETA.iAccountNum",oPref))
+                    iBetaAccountNum = oPref.Value;
+            
+                this.m_HotmailLog.Write("nsHotmail.js - logIN - iAccountNum " + iBetaAccountNum);
+                if (iBetaAccountNum>0)
+                {                   
+                    for (i=0 ; i<iBetaAccountNum ; i++)
+                    {
+                        this.m_HotmailLog.Write("nsHotmail.js - logIN - username search " + i);
+                        WebMailPrefAccess.Get("char","hotmail.BETA.Account."+i,oPref);
+                        var reg = new RegExp(oPref.Value,"i");
+                        this.m_HotmailLog.Write("nsHotmail.js - logIN - username search " + reg);
+                        if (this.m_szUserName.match(reg))
+                        {
+                            this.m_HotmailLog.Write("nsHotmail.js - logIN - username found");  
+                            this.m_CommMethod = new HotmailScreenRipperBETA(this.m_oResponseStream, this.m_HotmailLog);
+                        } 
+                        WebMailPrefAccess.Get("char","hotmail.BETA.Account."+i,oPref);
+                    }
+                }                
+            }
+            
+            if (!this.m_CommMethod) 
+                this.m_CommMethod = new HotmailScreenRipper(this.m_oResponseStream, this.m_HotmailLog);
+            
+            var bResult = this.m_CommMethod.logIn(this.m_szUserName, this.m_szPassWord);
                        
             this.m_HotmailLog.Write("nsHotmail.js - logIN - "+ bResult +"- END");    
             return bResult;

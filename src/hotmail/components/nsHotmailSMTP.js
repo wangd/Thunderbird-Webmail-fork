@@ -14,7 +14,7 @@ const HotmailSMTPMailSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"
 const HotmailSendMsgPattern = /<hm:sendmsg>(.*?)<\/hm:sendmsg>/;
 
 /*************************Screen Ripper Constants *****************************/
-const patternHotmailSMTPForm = /<form.*?>[\S\s]*?<\/form>/;
+const patternHotmailSMTPForm = /<form[\S\s]*?<\/form>/;
 const patternHotmailSMTPAction = /<form.*?action="(.*?)".*?>/;
 const patternHotmailSMTPInput = /<input.*?>/igm;
 const patternHotmailSMTPType = /type="(.*?)"/i;
@@ -27,6 +27,12 @@ const patternHotmailSMTPComposer = /onclick="G\('(.*?compose\?.*?)'\);"/i;
 const patternHotmailSMTPCompForm = /<form\s+name="composeform".*?>[\S\s]*?<\/form>/igm;
 const patternHotmailSMTPAttForm = /<form\s+name="doattach".*?>[\S\s]*?<\/form>/igm
 const patternHotmailAD = /<form.*?name="addtoAB".*?>/igm;
+/*********BETA**********/
+const patternHotmailSMTPJSRefresh = /<html><head><script.*?>top.location.replace.*?\("(.*?)"\).*?<\/script><\/head><\/html>/i;
+const patternHotmailSMTPLogOut = /<a href="(.*?logout.aspx)">/i;
+const patternHotmailSMTPViewState = /<input.*?id="__VIEWSTATE".*?value="(.*?)".*?\/>/i;
+const patternHotmailSMTPMailBoxTable = /<table.*?id="pInboxTable">[\s\S]*?<\/table>/ig;
+
 
 /******************************  Hotmail ***************************************/
 function nsHotmailSMTP()
@@ -39,6 +45,7 @@ function nsHotmailSMTP()
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-WebDav-SMTP.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-ScreenRipper-SMTP.js");
+        scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-ScreenRipper-SMTP-BETA.js");
               
         
         var date = new Date();
@@ -120,9 +127,8 @@ nsHotmailSMTP.prototype =
             //load webdav address
             var iAccountNum=0;
             var WebMailPrefAccess = new WebMailCommonPrefAccess();
-            var oPref = new Object();
-            oPref.Value = null;
-            
+            var oPref = {Value : null};
+                        
             if (WebMailPrefAccess.Get("int","hotmail.webdav.iAccountNum",oPref))
                 iAccountNum = oPref.Value;
             
@@ -143,6 +149,35 @@ nsHotmailSMTP.prototype =
                                                                   this.m_bSaveCopy);    
                     } 
                 }
+            }
+           
+            if (!this.m_CommMethod)
+            {
+                //check for beta site
+                oPref.Value = null;
+                var iBetaAccountNum = 0;
+                if (WebMailPrefAccess.Get("int","hotmail.BETA.iAccountNum",oPref))
+                    iBetaAccountNum = oPref.Value;
+            
+                this.m_Log.Write("nsHotmailSMTP.js - logIN - iAccountNum " + iBetaAccountNum);
+                if (iBetaAccountNum>0)
+                {                   
+                    for (i=0 ; i<iBetaAccountNum ; i++)
+                    {
+                        this.m_Log.Write("nsHotmailSMTP.js - logIN - username search " + i);
+                        WebMailPrefAccess.Get("char","hotmail.BETA.Account."+i,oPref);
+                        var reg = new RegExp(oPref.Value,"i");
+                        this.m_Log.Write("nsHotmailSMTP.js - logIN - username search " + reg);
+                        if (this.m_szUserName.match(reg))
+                        {
+                            this.m_Log.Write("nsHotmailSMTP.js - logIN - username found");  
+                            this.m_CommMethod = new HotmailSMTPScreenRipperBETA(this.m_oResponseStream, 
+                                                                                this.m_Log, 
+                                                                                this.m_bSaveCopy);
+                        } 
+                        WebMailPrefAccess.Get("char","hotmail.BETA.Account."+i,oPref);
+                    }
+                }                
             }
            
             if (!this.m_CommMethod)
@@ -180,9 +215,7 @@ nsHotmailSMTP.prototype =
             this.m_Log.Write("nsHotmailSMTP.js - rawMSG to " +this.m_aszTo );
             this.m_Log.Write("nsHotmailSMTP.js - rawMSG " + szEmail);
     
-            var bResult = this.m_CommMethod.rawMSG(this.m_szFrom, 
-                                                   this.m_aszTo,
-                                                   szEmail);
+            var bResult = this.m_CommMethod.rawMSG(this.m_szFrom, this.m_aszTo, szEmail);
             
             this.m_Log.Write("nsHotmailSMTP.js - rawMSG -" + bResult +" END");    
             return bResult;
@@ -201,7 +234,26 @@ nsHotmailSMTP.prototype =
     },
     
     
-   
+   serverComms : function (szMsg)
+    {
+        try
+        { 
+            this.m_Log.Write("nsHotmailSMTP - serverComms - START");
+            this.m_Log.Write("nsHotmailSMTP - serverComms msg " + szMsg);
+            var iCount = this.m_oResponseStream.write(szMsg,szMsg.length);
+            this.m_Log.Write("nsHotmailSMTP - serverComms sent count: " + iCount 
+                                                        +" msg length: " +szMsg.length);
+            this.m_Log.Write("nsHotmailSMTP - serverComms - END");  
+        }
+        catch(e)
+        {
+            this.m_Log.DebugDump("nsHotmailSMTP: serverComms : Exception : " 
+                                              + e.name 
+                                              + ".\nError message: " 
+                                              + e.message+ "\n"
+                                              + e.lineNumber);
+        }
+    },
      
 /******************************************************************************/
 /***************** XPCOM  stuff ***********************************************/
