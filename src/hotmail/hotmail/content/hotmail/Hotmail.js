@@ -29,8 +29,45 @@ var gHotmailStartUp =
             this.m_Timer.initWithCallback(this, 
                                           2000, 
                                           Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
-            this.m_Log.Write("Hotmail.js : init - DB not loaded");
-           
+            
+            //convert prefs
+            var WebMailPrefAccess = new WebMailCommonPrefAccess();
+            var oPref = {Value : null};
+            
+            if (WebMailPrefAccess.Get("int","hotmail.webdav.iAccountNum",oPref))
+            {
+                var iAccountNum = oPref.Value;
+                this.m_Log.Write("nsHotmail.js - init - convert " + iAccountNum);
+                
+                if(iAccountNum>0)
+                {
+                    var szData = null;
+                    
+                    for (i=0; i<iAccountNum; i++)
+                    {
+                        this.m_Log.Write("nsHotmail.js - init - converting " + i);
+                        WebMailPrefAccess.Get("char","hotmail.webdav.Account."+i,oPref);
+                        
+                        szData ? szData+="\r" : szData="";
+                        szData += oPref.Value;
+                        szData +="\n";
+                        szData += 1;
+                    }
+                    
+                    if (WebMailPrefAccess.Set("char","hotmail.mode",szData))
+                    {
+                        this.m_Log.Write("nsHotmail.js - init - deleting old keys");
+                        WebMailPrefAccess.DeleteBranch("hotmail.webdav");
+                    }
+                }
+                else
+                {
+                    this.m_Log.Write("nsHotmail.js - init - deleting old keys");
+                    WebMailPrefAccess.DeleteBranch("hotmail.webdav");
+                }    
+            }
+            delete WebMailPrefAccess;
+            
             window.removeEventListener("load", function() {gHotmailStartUp.init();} , false);
                     
         	this.m_Log.Write("Hotmail.js : init - END ");
