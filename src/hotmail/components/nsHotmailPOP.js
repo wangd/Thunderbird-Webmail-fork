@@ -144,59 +144,37 @@ nsHotmail.prototype =
             
             if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
             
-            
             //load webdav address
-            var iAccountNum=0;
             var WebMailPrefAccess = new WebMailCommonPrefAccess();
             var oPref = {Value : null};
-            
-            if (WebMailPrefAccess.Get("int","hotmail.webdav.iAccountNum",oPref))
-                iAccountNum = oPref.Value;
-            
-            if (iAccountNum>0)
+            if (WebMailPrefAccess.Get("char","hotmail.mode",oPref))
             {
-                this.m_HotmailLog.Write("nsHotmail.js - logIN - Accountnum " + iAccountNum);
-                for (i=0; i<iAccountNum; i++)
+                var szUserNames = oPref.Value;
+                this.m_HotmailLog.Write("nsHotmail.js - logIN - szUserNames " + szUserNames);
+                
+                var aRows = szUserNames.split("\r");
+                this.m_HotmailLog.Write("Hotmail-Prefs-WebDav.js : logIN - "+aRows);
+                if (aRows)
                 {
-                    this.m_HotmailLog.Write("nsHotmail.js - logIN - username search " + i);
-                    WebMailPrefAccess.Get("char","hotmail.webdav.Account."+i,oPref);
-                    var reg = new RegExp(oPref.Value,"i");
-                    this.m_HotmailLog.Write("nsHotmail.js - logIN - username search " + reg);
-                    if (this.m_szUserName.match(reg))
-                    {
-                        this.m_HotmailLog.Write("nsHotmail.js - logIN - username found");  
-                        this.m_CommMethod = new HotmailWebDav(this.m_oResponseStream, this.m_HotmailLog);    
-                    } 
-                }
-            }
-           
-            if (!this.m_CommMethod)
-            {
-                //check for beta site
-                oPref.Value = null;
-                var iBetaAccountNum = 0;
-                if (WebMailPrefAccess.Get("int","hotmail.BETA.iAccountNum",oPref))
-                    iBetaAccountNum = oPref.Value;
-            
-                this.m_HotmailLog.Write("nsHotmail.js - logIN - iAccountNum " + iBetaAccountNum);
-                if (iBetaAccountNum>0)
-                {                   
-                    for (i=0 ; i<iBetaAccountNum ; i++)
-                    {
-                        this.m_HotmailLog.Write("nsHotmail.js - logIN - username search " + i);
-                        WebMailPrefAccess.Get("char","hotmail.BETA.Account."+i,oPref);
-                        var reg = new RegExp(oPref.Value,"i");
+                    for(i=0; i<aRows.length; i++)
+                    {   
+                        var item = aRows[i].split("\n");
+                        this.m_HotmailLog.Write("Hotmail.js : logIN - "+item);
+                     
+                        var reg = new RegExp(item[0],"i");
                         this.m_HotmailLog.Write("nsHotmail.js - logIN - username search " + reg);
                         if (this.m_szUserName.match(reg))
                         {
                             this.m_HotmailLog.Write("nsHotmail.js - logIN - username found");  
-                            this.m_CommMethod = new HotmailScreenRipperBETA(this.m_oResponseStream, this.m_HotmailLog);
+                            if (item[1]==1)
+                                this.m_CommMethod = new HotmailWebDav(this.m_oResponseStream, this.m_HotmailLog);    
+                            else if (item[1]==2)
+                                this.m_CommMethod = new HotmailScreenRipperBETA(this.m_oResponseStream, this.m_HotmailLog);    
                         } 
-                        WebMailPrefAccess.Get("char","hotmail.BETA.Account."+i,oPref);
-                    }
-                }                
+                    } 
+                } 
             }
-            
+                     
             if (!this.m_CommMethod) 
                 this.m_CommMethod = new HotmailScreenRipper(this.m_oResponseStream, this.m_HotmailLog);
             

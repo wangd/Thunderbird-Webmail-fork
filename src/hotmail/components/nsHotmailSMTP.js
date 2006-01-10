@@ -125,68 +125,40 @@ nsHotmailSMTP.prototype =
             if (!this.m_szUserName || !this.m_oResponseStream  || !this.m_szPassWord) return false;
              
             //load webdav address
-            var iAccountNum=0;
+            //load webdav address
             var WebMailPrefAccess = new WebMailCommonPrefAccess();
             var oPref = {Value : null};
-                        
-            if (WebMailPrefAccess.Get("int","hotmail.webdav.iAccountNum",oPref))
-                iAccountNum = oPref.Value;
-            
-            if (iAccountNum>0)
+            if (WebMailPrefAccess.Get("char","hotmail.mode",oPref))
             {
-                this.m_Log.Write("nsHotmailSMTP.js - logIN - Accountnum " + iAccountNum);
-                for (i=0; i<iAccountNum; i++)
+                var szUserNames = oPref.Value;
+                this.m_Log.Write("nsHotmail.js - logIN - szUserNames " + szUserNames);
+                
+                var aRows = szUserNames.split("\r");
+                this.m_Log.Write("Hotmail-Prefs-WebDav.js : logIN - "+aRows);
+                if (aRows)
                 {
-                    this.m_Log.Write("nsHotmailSMTP.js - logIN - username search " + i);
-                    WebMailPrefAccess.Get("char","hotmail.webdav.Account."+i,oPref);
-                    var reg = new RegExp(oPref.Value,"i");
-                    this.m_Log.Write("nsHotmailSMTP.js - logIN - username search " + reg);
-                    if (this.m_szUserName.match(reg))
-                    {
-                        this.m_Log.Write("nsHotmailSMTP.js - logIN - username found");  
-                        this.m_CommMethod = new HotmailSMTPWebDav(this.m_oResponseStream, 
-                                                                  this.m_Log, 
-                                                                  this.m_bSaveCopy);    
-                    } 
-                }
-            }
-           
-            if (!this.m_CommMethod)
-            {
-                //check for beta site
-                oPref.Value = null;
-                var iBetaAccountNum = 0;
-                if (WebMailPrefAccess.Get("int","hotmail.BETA.iAccountNum",oPref))
-                    iBetaAccountNum = oPref.Value;
-            
-                this.m_Log.Write("nsHotmailSMTP.js - logIN - iAccountNum " + iBetaAccountNum);
-                if (iBetaAccountNum>0)
-                {                   
-                    for (i=0 ; i<iBetaAccountNum ; i++)
-                    {
-                        this.m_Log.Write("nsHotmailSMTP.js - logIN - username search " + i);
-                        WebMailPrefAccess.Get("char","hotmail.BETA.Account."+i,oPref);
-                        var reg = new RegExp(oPref.Value,"i");
-                        this.m_Log.Write("nsHotmailSMTP.js - logIN - username search " + reg);
+                    for(i=0; i<aRows.length; i++)
+                    {   
+                        var item = aRows[i].split("\n");
+                        this.m_Log.Write("Hotmail.js : logIN - "+item);
+                     
+                        var reg = new RegExp(item[0],"i");
+                        this.m_Log.Write("nsHotmail.js - logIN - username search " + reg);
                         if (this.m_szUserName.match(reg))
                         {
-                            this.m_Log.Write("nsHotmailSMTP.js - logIN - username found");  
-                            this.m_CommMethod = new HotmailSMTPScreenRipperBETA(this.m_oResponseStream, 
-                                                                                this.m_Log, 
-                                                                                this.m_bSaveCopy);
+                            this.m_Log.Write("nsHotmail.js - logIN - username found");  
+                            if (item[1]==1)
+                                this.m_CommMethod = new HotmailSMTPWebDav(this.m_oResponseStream, this.m_Log, this.m_bSaveCopy);    
+                            else if (item[1]==2)
+                                this.m_CommMethod = new HotmailSMTPScreenRipperBETA(this.m_oResponseStream, this.m_Log, this.m_bSaveCopy);    
                         } 
-                        WebMailPrefAccess.Get("char","hotmail.BETA.Account."+i,oPref);
-                    }
-                }                
+                    } 
+                } 
             }
-           
             if (!this.m_CommMethod)
-                this.m_CommMethod = new HotmailSMTPScreenRipper(this.m_oResponseStream, 
-                                                                this.m_Log, 
-                                                                this.m_bSaveCopy);
+                this.m_CommMethod = new HotmailSMTPScreenRipper(this.m_oResponseStream,this.m_Log, this.m_bSaveCopy);
              
-            var bResult = this.m_CommMethod.logIn(this.m_szUserName,   
-                                                  this.m_szPassWord);
+            var bResult = this.m_CommMethod.logIn(this.m_szUserName, this.m_szPassWord);
                        
             this.m_Log.Write("nsHotmailSMTP.js - logIN - "+ bResult +"- END");    
             return bResult;
