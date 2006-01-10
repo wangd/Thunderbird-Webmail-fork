@@ -2,3 +2,6 @@
 <!ENTITY UserName.Label "Uporabniško ime">
 <!ENTITY ScreenRipper.Label "Zajemanje zaslona">
 <!ENTITY WebDav.Label "Web Dav">
+<!ENTITY list.size "height: 20em !important;">
+<!ENTITY Edit.label "Change Mode">
+<!ENTITY Edit.accessKey "M">

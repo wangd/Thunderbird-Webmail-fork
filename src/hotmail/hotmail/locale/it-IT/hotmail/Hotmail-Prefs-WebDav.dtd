@@ -2,3 +2,6 @@
 <!ENTITY UserName.Label "Nome utente">
 <!ENTITY ScreenRipper.Label "Cattura dallo schermo">
 <!ENTITY WebDav.Label "WebDav">
+<!ENTITY list.size "height: 20em !important;">
+<!ENTITY Edit.label "Change Mode">
+<!ENTITY Edit.accessKey "M">

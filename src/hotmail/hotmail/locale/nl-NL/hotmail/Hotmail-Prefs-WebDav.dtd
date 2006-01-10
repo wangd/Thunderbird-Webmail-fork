@@ -2,3 +2,6 @@
 <!ENTITY UserName.Label "Gebuikersnaam">
 <!ENTITY ScreenRipper.Label "Van scherm kopiëren">
 <!ENTITY WebDav.Label "WebDav">
+<!ENTITY list.size "height: 20em !important;">
+<!ENTITY Edit.label "Change Mode">
+<!ENTITY Edit.accessKey "M">
