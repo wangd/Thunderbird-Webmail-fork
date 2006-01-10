@@ -728,8 +728,14 @@ Comms.prototype =
                     {
                         throw new Error("Location header not found")
                     } 
+                    
                     var oCallback = mainObject.m_CallBack;        
-                    mainObject.setURI(szLocation);
+                    if (!mainObject.setURI(szLocation))
+                    {
+                        mainObject.m_Log.Write("comms.js - callback - location invalid");
+                        szLocation = httpChannel.URI.prePath + szLocation;
+                        mainObject.setURI(szLocation);
+                    }
                     
                     if (mainObject.getRequestMethod().search(/post/i)!=-1)
                         mainObject.setRequestMethod("GET");
