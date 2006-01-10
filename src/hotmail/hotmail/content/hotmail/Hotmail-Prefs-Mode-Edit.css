@@ -1,0 +1,48 @@
+#imagePerson
+{
+    margin-left: 10px; 
+    margin-top: 10px;
+    list-style-image: url("chrome://hotmail/skin/person.png");
+}
+
+
+
+#labelAddress
+{
+    margin-left: 10px; 
+    margin-top: 20px;
+    margin-right:20px;
+    font-style: italic;
+	font-size: medium;
+}
+
+
+#radiogroupMode
+{
+    margin-left: 25px; 
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+
+.imageMode
+{
+    list-style-image: url("chrome://hotmail/skin/smallModes.png");
+    margin-left: 5px; 
+}
+
+.mode/*Screen scraper*/
+{
+     -moz-image-region: rect(0px, 16px, 16px, 0px)
+}
+
+
+.mode[value="1"] /*Webdav*/
+{
+    -moz-image-region: rect(0px, 32px, 16px, 16px)
+}
+
+.mode[value="2"]/*BETA*/
+{
+     -moz-image-region: rect(0px, 48px, 16px, 32px)
+}
