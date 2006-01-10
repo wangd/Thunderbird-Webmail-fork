@@ -1,5 +1,5 @@
 <!ENTITY Options.szTitle "Hotmail Options">
-<!ENTITY WebDav.Panel.szTitle "WebDav">
+<!ENTITY WebDav.Panel.szTitle "Mode">
 <!ENTITY POP.Panel.szTitle "POP">
 <!ENTITY SMTP.Panel.szTitle "SMTP">
-<!ENTITY Window.size "width: 35em; height: 22em">
+<!ENTITY Window.size "width: 40em; height: 32em">
