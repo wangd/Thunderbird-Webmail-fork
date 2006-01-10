@@ -1,0 +1,54 @@
+.listItem
+{
+    padding: 4px 8px 4px 4px;
+    min-height: 35px !important;
+    border-bottom: 1px dotted #C0C0C0;
+}
+
+
+.listItem[selected="true"] 
+{
+    -moz-user-focus: normal;
+    background-image: url("chrome://mozapps/skin/shared/itemSelected.png");
+}
+
+.details
+{
+    margin-left: 15px;    
+}
+
+
+.emailAddress
+{
+    font-style: italic;
+	font-size: medium;
+}
+
+
+#personImage
+{
+    list-style-image: url("chrome://hotmail/skin/person.png");
+}
+
+
+#imageMode
+{
+    list-style-image: url("chrome://hotmail/skin/largeModes.png");
+    margin-left: 5px; 
+}
+
+.mode/*Screen scraper*/
+{
+     -moz-image-region: rect(0px, 25px, 32px, 0px)
+}
+
+
+.mode[value="1"] /*Webdav*/
+{
+    -moz-image-region: rect(0px, 50px, 32px, 25px)
+}
+
+.mode[value="2"]/*BETA*/
+{
+     -moz-image-region: rect(0px, 75px, 32px, 50px)
+}

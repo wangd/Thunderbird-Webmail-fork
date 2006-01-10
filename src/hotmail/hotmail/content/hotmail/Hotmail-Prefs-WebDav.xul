@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/global.css"?>
 
-
+<?xml-stylesheet href="chrome://hotmail/content/Hotmail-Prefs-WebDav.css" type="text/css"?>
 <!DOCTYPE dialog SYSTEM "chrome://hotmail/locale/Hotmail-Prefs-WebDav.dtd">
 
 
@@ -12,21 +12,38 @@
         <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
         <script type="application/x-javascript" src="chrome://web-mail/content/common/CommonPrefs.js"/>
         <script type="application/x-javascript" src="chrome://hotmail/content/Hotmail-Prefs-WebDav.js"/>
+        <script type="application/x-javascript" src="chrome://hotmail/content/Hotmail-Prefs-Mode.js"/>
         
-        <vbox>
-            <listbox id="listView" class="listbox" rows="13">
-                <listhead>
-                    <listheader label="&UserName.Label;"/>
-                    <listheader label="&ScreenRipper.Label;"/>
-                    <listheader label="&WebDav.Label;"/>
-                </listhead>
-                
-                <listcols>
-                    <listcol flex="4"/>
-                    <listcol flex="1"/>
-                    <listcol flex="1"/>
-                </listcols>
-            </listbox>             
+       <stringbundleset>
+	       <stringbundle id="stringHotmailMode" src="chrome://hotmail/locale/Hotmail-Prefs-Mode.properties"/>
+	   </stringbundleset>
+        
+        <preferences>
+            <preference id="prefMode" name="hotmail.mode" type="string"/>
+        </preferences> 
+        
+       <vbox flex="1">
+            <richlistbox id="listView" 
+                         class="listbox" 
+                         flex="1" 
+                         style="&list.size;"
+                         ondblclick="gWebDavPane.onDClick();"
+                         onselect="gWebDavPane.onSelect();"
+                         preference-editable="true"
+                         preference="prefMode"
+                         onsyncfrompreference ="return gWebDavPane.readModePref();"
+                         onsynctopreference ="return gWebDavPane.writeModePref();">
+        
+            </richlistbox> 
+            
+             <hbox align="end" pack="end">    
+                <button id="edit" 
+                        label="&Edit.label;" 
+                        oncommand ="gWebDavPane.onDClick();"
+                        disabled="true"
+                        accesskey="&Edit.accessKey;"/>
+            </hbox>
+            
         </vbox>  
         
     </prefpane>

@@ -1,19 +1,22 @@
 var gWebDavPane =
 {
-    m_DebugLog : null,
+    m_DebugLog : new DebugLog("webmail.logging.comms", 
+                              "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
+                              "hotmailPrefs"),
     m_aWebDavUserList : null,
+    m_szIDLastFocused : null,
+    m_aUserList : null,
+    m_strBundle : null,
+    
      
     init : function ()
     {
-        this.m_DebugLog = new DebugLog("webmail.logging.comms", 
-                                       "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
-                                       "hotmailPrefs");
-                                       
         this.m_DebugLog.Write("Hotmail-Prefs-WebDav : Init - START");
         
-        this.m_aWebDavUserList = this.loadWebDavPrefs();
-        var aHotmailUserNames = this.getUserNameList();
-        this.addUserNamesListView(aHotmailUserNames);
+        this.m_strBundle = document.getElementById("stringHotmailMode");                  
+        
+        this.getUserNameList();
+        this.addUserNamesListView();
         
         this.m_DebugLog.Write("Hotmail-Prefs-WebDav : Init - END");        
     },
@@ -25,7 +28,7 @@ var gWebDavPane =
         {
             this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : getUserNameList - START");
             
-            var aHotmailUserNames = new Array(); 
+            this.m_aUserList =  new Array(); 
             var accountManager = Components.classes["@mozilla.org/messenger/account-manager;1"].
                                             getService(Components.interfaces.nsIMsgAccountManager);
         
@@ -45,90 +48,117 @@ var gWebDavPane =
                     this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : getUserNameList - userName " + szUserName);
                     if (szUserName.search(/msn/i)!=-1 || szUserName.search(/hotmail/i)!= -1)
                     {
-                         this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : getUserNameList - userName added");
-                         aHotmailUserNames.push(szUserName);   
+                        this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : getUserNameList - userName added");
+                        var data = new HotmailMode();      
+                        data.szAddress = szUserName;
+                        data.iMode=0;
+                        
+                        //check if this is a webdav account
+                        if (this.m_aWebDavUserList)
+                        {
+                            for (j=0; j<this.m_aWebDavUserList.length; j++)
+                            {
+                                var reg = new RegExp(szUserName,"i");
+                                if (this.m_aWebDavUserList[j].szAddress.match(reg))
+                                {
+                                    data.iMode= this.m_aWebDavUserList[j].iMode;
+                                    this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : getUserNameList - found " + data.iMode);
+                                }
+                            }
+                        }
+                                           
+                        this.m_aUserList.push(data);   
                     }
                 } 
             }
             
-            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : getUserNameList - list " + aHotmailUserNames);
             this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : getUserNameList - END");
-            return aHotmailUserNames;
+            return true;
         }
         catch(err)
         {
             this.m_DebugLog.DebugDump("Hotmail-Prefs-WebDav.js : Exception in getUserNameList : " 
-                                       + e.name + 
+                                       + err.name + 
                                        ".\nError message: " 
-                                       + e.message);
+                                       + err.message + "\n"
+                                       + err.lineNumber);
         }
     },
     
     
     
-    addUserNamesListView : function ( aHotmailUserNames )
+    addUserNamesListView : function ()
     {
         try
         {
             this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : AddUserNamesListView - START");
-            
-            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : AddUserNamesListView " + aHotmailUserNames);
-            
-            if (aHotmailUserNames.length > 0) 
+                        
+            if (this.m_aUserList.length > 0) 
             {   
                 var list = document.getElementById("listView");
                 
-                for(i =0 ; i< aHotmailUserNames.length; i++)
+                for(i =0 ; i< this.m_aUserList.length; i++)
                 {
-                    this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : AddUserNamesListView " + aHotmailUserNames[i]);
-                    var bFound = false;
-     
-                    if (this.m_aWebDavUserList)
-                    {   
-                        for (j=0; j<this.m_aWebDavUserList.length; j++)
-                        {
-                            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : AddUserNamesListView - list " + this.m_aWebDavUserList[j] );
-                            var reg = new RegExp(aHotmailUserNames[i],"i");
-                            if(this.m_aWebDavUserList[j].match(reg))
-                            {
-                                bFound = true;
-                                this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : AddUserNamesListView - found");
-                            }
-                        }
-                    }
+                    var szHotmailUserName = this.m_aUserList[i].szAddress;
+                    var iMode = this.m_aUserList[i].iMode;
+                    this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : AddUserNamesListView "+szHotmailUserName+" "+iMode);
+                        
+                    var newItem = document.createElement("richlistitem"); 
+                    newItem.setAttribute("id", szHotmailUserName);
+                    newItem.setAttribute("class", "listItem");
+                    newItem.setAttribute("tabIndex", i);
+                    newItem.setAttribute("allowEvents", "true");
+                    newItem.setAttribute("selected","false"); 
                     
-                    var newItem = document.createElement("listitem"); 
-                    newItem.setAttribute("allowevents", "true");
-                    newItem.setAttribute("id", aHotmailUserNames[i]);
-                                        
+                    //image
+                    var space = document.createElement("spacer")
+                    space.setAttribute("flex","1");
+                    var vBoxPerson = document.createElement("vbox");
+                    vBoxPerson.setAttribute("id", "boxPerson");
+                    vBoxPerson.appendChild(space);
+                    var image = document.createElement("image");  
+                    image.setAttribute("id","personImage");
+                    vBoxPerson.appendChild(image);
+                    var space1 = document.createElement("spacer")
+                    space1.setAttribute("flex","1");
+                    vBoxPerson.appendChild(space1);
+                    
                     //user name
-                    var UserNameCell =  document.createElement("listcell"); 
-                    UserNameCell.setAttribute("label", aHotmailUserNames[i]);
-                    UserNameCell.setAttribute("class", "listitem-iconic");
-                    UserNameCell.setAttribute("image", "chrome://hotmail/skin/Person.png");
-                    newItem.appendChild(UserNameCell);
-                  
-                    //screen ripper
-                    var ScreenRipperCell =  document.createElement("listcell"); 
-                    ScreenRipperCell.setAttribute("type", "checkbox");
-                    ScreenRipperCell.setAttribute("checked",!bFound);
-                    ScreenRipperCell.setAttribute("id",aHotmailUserNames[i]+"/SR" );
-                    ScreenRipperCell.setAttribute("commType","1" );
-                    ScreenRipperCell.setAttribute("userName",aHotmailUserNames[i]);
-                    ScreenRipperCell.setAttribute("onclick", "gWebDavPane.checkBox(event.target.id)");
-                    ScreenRipperCell.setAttribute("class" , "checkBox");
-                    newItem.appendChild(ScreenRipperCell);
+                    var label = document.createElement("label");
+                    label.setAttribute("value",szHotmailUserName); 
+                    label.setAttribute("class","emailAddress");
+                    var vBoxDetails = document.createElement("vbox");
+                    vBoxDetails.setAttribute("id", "boxDetails");
+                    vBoxDetails.setAttribute("class","details"); 
+                    vBoxDetails.appendChild(label);
+                   
+                    //mode 
+                    var imageMode = document.createElement("image");  
+                    imageMode.setAttribute("id","imageMode");
+                    imageMode.setAttribute("class", "mode");
+                    imageMode.setAttribute("value", iMode);
+                    var hBoxMode = document.createElement("hbox");
+                    hBoxMode.setAttribute("id", "boxMode");
+                    hBoxMode.setAttribute("align", "center");
+                    hBoxMode.appendChild(imageMode); 
+                                    
+                    var szMode = null;
+                    if (iMode ==0) 
+                        szMode = this.m_strBundle.getString("ScreenScraper");
+                    else if (iMode == 1) 
+                        szMode = this.m_strBundle.getString("WebDav");
+                    else if (iMode == 2) 
+                        szMode = this.m_strBundle.getString("Beta");
+
+                    var labelMode = document.createElement("label");
+                    labelMode.setAttribute("id","labelMode"); 
+                    labelMode.setAttribute("value",szMode); 
+                    hBoxMode.appendChild(labelMode); 
+                    vBoxDetails.appendChild(hBoxMode);
                     
-                    //webdav               
-                    var WebDavCell =  document.createElement("listcell"); 
-                    WebDavCell.setAttribute("type", "checkbox");
-                    WebDavCell.setAttribute("checked", bFound);
-                    WebDavCell.setAttribute("id",aHotmailUserNames[i]+"/WD" );
-                    WebDavCell.setAttribute("commType","2" );
-                    WebDavCell.setAttribute("userName",aHotmailUserNames[i]);
-                    WebDavCell.setAttribute("onclick", "gWebDavPane.checkBox(event.target.id)");
-                    newItem.appendChild(WebDavCell);
-                   	
+                    newItem.appendChild(vBoxPerson);
+                    newItem.appendChild(vBoxDetails);
+                   
                     list.appendChild(newItem);
                 }
             }
@@ -138,188 +168,203 @@ var gWebDavPane =
         catch(err)
         {
             this.m_DebugLog.DebugDump("Hotmail-Prefs-WebDav.js : Exception in AddUserNamesListView : " 
-                                       + e.name + 
+                                       + err.name + 
                                        ".\nError message: " 
-                                       + e.message);
-        }
-    },
-    
-    
-    loadWebDavPrefs : function ()
-    {
-        try
-        {
-            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : LoadPrefs - START");
-        
-            var aWebDavUserList = new Array();
-            var oPref = new Object();
-            oPref.Value = null;
-            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-            WebMailPrefAccess.Get("int","hotmail.webdav.iAccountNum",oPref);
-            var iCount = oPref.Value;
-            
-            if (iCount>0)
-            {
-                this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : LoadPrefs - count " + iCount);
-                for(i=0; i<iCount; i++)
-                {
-                    WebMailPrefAccess.Get("char","hotmail.webdav.Account."+i,oPref);
-                    this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : LoadPrefs - count " + oPref.Value);
-                    aWebDavUserList.push(oPref.Value);   
-                } 
-            } 
-            delete WebMailPrefAccess;     
-            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : LoadPrefs - list " +aWebDavUserList );
-            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : LoadPrefs - END");
-            return aWebDavUserList;
-        }
-        catch(e)
-        {
-             this.m_DebugLog.DebugDump("Hotmail-Prefs-WebDav.js : Exception in LoadPrefs : " 
-                                          + e.name + 
-                                          ".\nError message: " 
-                                          + e.message);
+                                       + err.message + "\n"
+                                       + err.lineNumber);
         }
     },
     
     
     
-    checkBox : function (ID)
+    
+    onDClick : function ()
     {
         try
         {
-            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : CheckBox - START");
-            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : CheckBox - "+ID );
+            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : onDClick - START");
             
-            var item1 = document.getElementById(ID);   //click item
-            
-            var iItem1CommType = item1.getAttribute("commType");
-            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : CheckBox item1 CommType "+iItem1CommType);
-            var szItem1UserName = item1.getAttribute("userName");
-            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : CheckBox item1 userName "+szItem1UserName);
-           
-            var item2 = null;
-            
-            if (iItem1CommType ==1)  //screen ripper 
-            {
-                item2 = document.getElementById(szItem1UserName+"/WD");
-            }
-            else //web dav
-            {
-                item2 = document.getElementById(szItem1UserName+"/SR");
-            }
-            
-            //get click item state
-            var bItem1 = item1.getAttribute("checked");
-            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : CheckBox item1 state " + bItem1);
+            //get selected item
+            var listView = document.getElementById("listView");   //click item
+            var iIndex = listView.selectedIndex
+            this.m_DebugLog.Write("Hotmail-Prefs-WebDav : onDClick - iIndex "+iIndex);
           
-           
-            if (bItem1 == "true")  //checked 
-            { 
-                item1.setAttribute("checked","false");
-                item2.setAttribute("checked","true");
-            }
-            else  //unchecked
+            var szAddress = this.m_aUserList[iIndex].szAddress;
+            var iMode = this.m_aUserList[iIndex].iMode;
+            
+            var oResult = {value : -1};
+            window.openDialog("chrome://hotmail/content/Hotmail-Prefs-Mode-Edit.xul",
+                              "Edit",
+                              "chrome, centerscreen, modal",
+                              szAddress,iMode,oResult);  
+                        
+            this.m_DebugLog.Write("Hotmail-Prefs-WebDav : onDClick - result "+ oResult.value);
+            if (oResult.value!=-1)
             {
-                item1.setAttribute("checked","true");
-                item2.setAttribute("checked","false");
-            }
-          
-            this.updatePref();
-            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : CheckBox - END");
-        }
-        catch(err)
-        {
-            this.m_DebugLog.DebugDump("Hotmail-Prefs-WebDav.js : Exception in CheckBox : " 
-                                   + e.name + 
-                                   ".\nError message: " 
-                                   + e.message);
-        }   
-    },
-    
-    
-    updatePref : function ()
-    {
-        try
-        {
-            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : updatePref - START");
-            
-            //get list
-            var aWebDavList = this.getWebDavList();
-            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : updatePref list - " + aWebDavList);
-            
-            //delete old list    
-            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-            WebMailPrefAccess.DeleteBranch("hotmail.webdav.Account");
-           
-            //write new list
-            if (aWebDavList.length>0)
-            {
-                this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : updatePref - count " + aWebDavList.length);
-                WebMailPrefAccess.Set("int","hotmail.webdav.iAccountNum",aWebDavList.length);
-               
-                for(i=0; i<aWebDavList.length; i++)
-                {
-                    WebMailPrefAccess.Set("char","hotmail.webdav.Account."+i,aWebDavList[i]);   
-                }  
-            }
-            else
-            {
-                WebMailPrefAccess.Set("int","hotmail.webdav.iAccountNum",0);
-            }
-            delete WebMailPrefAccess;   
-            
-            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : updatePref - END");
-        }
-        catch(e)
-        {
-            this.m_DebugLog.DebugDump("Hotmail-Prefs-WebDav.js : Exception in updatePref : " 
-                                   + e.name + 
-                                   ".\nError message: " 
-                                   + e.message);
-        }  
-    },
-   
-   
-    getWebDavList : function ()
-    {
-        try
-        {
-            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : GetWebDavList - START");
-            
-            var aDevList = new Array();
-            var list = document.getElementById("listView");
-            
-            var iCount = list.getRowCount();
-            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : GetWebDavList - row count " + iCount);
-            
-            for (i=0; i<iCount ; i++)
-            {
-                //get username
-                var Item = list.getItemAtIndex(i);
-                var szUserName = Item.getAttribute("id");
-                this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : GetWebDavList - username " + szUserName);  
+                this.m_DebugLog.Write("Hotmail-Prefs-WebDav : onDClick - update");
                 
-                //get check state of webdev
-                var Item2 = document.getElementById(szUserName+"/WD");
-                var bItem2 = Item2.getAttribute("checked");
-                this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : GetWebDavList state " + bItem2);
+                this.m_aUserList[iIndex].iMode = oResult.value;   
                 
-                if (bItem2 == "true")
+                var item  =  listView.selectedItem;
+                var aItemChildren = item.childNodes;
+                for (i=0; i<aItemChildren.length; i++)
                 {
-                    this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : GetWebDavList - added to list");
-                    aDevList.push(szUserName);
+                    var szID = aItemChildren[i].getAttribute("id");
+                    this.m_DebugLog.Write("Hotmail-Prefs-WebDav : level 1 szID "+ szID);
+                    if (szID.search(/boxDetails/i)!=-1)
+                    {
+                        var aBoxDetailsChildren = aItemChildren[i].childNodes;
+                        for (j=0; j<aBoxDetailsChildren.length; j++)
+                        {
+                            szID = aBoxDetailsChildren[j].getAttribute("id");
+                            this.m_DebugLog.Write("Hotmail-Prefs-WebDav : level 2 szID "+ szID); 
+                            if (szID.search(/boxMode/i)!=-1)
+                            {   
+                                var aBoxModeChildren = aBoxDetailsChildren[j].childNodes;
+                                for (k=0; k<aBoxModeChildren.length; k++)
+                                {
+                                    szID = aBoxModeChildren[k].getAttribute("id");
+                                    this.m_DebugLog.Write("Hotmail-Prefs-WebDav : level 3 szID "+ szID); 
+                                    
+                                    if (szID.search(/imageMode/i)!=-1)
+                                    {
+                                         aBoxModeChildren[k].setAttribute("value",oResult.value);
+                                    }
+                                    else if (szID.search(/labelMode/i)!=-1)
+                                    {
+                                        var szMode = null;
+                                        if (oResult.value ==0) 
+                                            szMode = this.m_strBundle.getString("ScreenScraper");
+                                        else if (oResult.value == 1) 
+                                            szMode = this.m_strBundle.getString("WebDav");
+                                        else if (oResult.value == 2) 
+                                            szMode = this.m_strBundle.getString("Beta");
+            
+                                        aBoxModeChildren[k].setAttribute("value",szMode);
+                                    }
+                                }   
+                            }
+                        }
+                    }
                 }
             }
-            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : GetWebDavList - END");
-            return aDevList;
+            
+            var event = document.createEvent("Events");
+            event.initEvent("change", false, true);
+            document.getElementById("listView").dispatchEvent(event);
+            
+            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : onDClick - END");
+            return true;
         }
-        catch(err)
+        catch(e)
         {
-             this.m_DebugLog.DebugDump("Hotmail-Prefs-WebDav.js : Exception in GetWebDavList : " 
+             this.m_DebugLog.DebugDump("Hotmail-Prefs-WebDav.js : Exception in onDClick : " 
                                           + e.name + 
                                           ".\nError message: " 
-                                          + e.message);
+                                          + e.message + "\n"
+                                          + e.lineNumber);
         }
+    },
+    
+    
+    
+    onSelect : function ()
+    {
+        try
+        {
+            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : onSelect - START");
+            
+            var buttonEdit = document.getElementById("edit");   
+            buttonEdit.setAttribute("disabled", "false");
+           
+            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : onSelect - END");
+            return true;
+        }
+        catch(e)
+        {
+             this.m_DebugLog.DebugDump("Hotmail-Prefs-WebDav.js : Exception in onSelect : " 
+                                          + e.name + 
+                                          ".\nError message: " 
+                                          + e.message + "\n"
+                                          + e.lineNumber);
+        }
+    },
+    
+    
+    
+        
+    readModePref : function ()
+    {
+        try
+        {
+            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : readModePref - START"); 
+            
+            this.m_aWebDavUserList = new Array();
+            var szMode = document.getElementById("prefMode").value;
+            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : readModePref - "+szMode);
+            
+            var aRows = szMode.split("\r");
+            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : readModePref - "+aRows);
+            if (aRows)
+            {
+                for(i=0; i<aRows.length; i++)
+                {   
+                    var item = aRows[i].split("\n");
+                    this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : readModePref - "+item);
+                    var data = new HotmailMode();
+                    data.szAddress = item[0];
+                    data.iMode=item[1];
+                    this.m_aWebDavUserList.push(data);   
+                } 
+            } 
+            
+            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : readModePref - END");
+            return undefined;
+        }
+        catch(e)
+        {
+            this.m_DebugLog.DebugDump("Hotmail-Prefs-WebDav.js : Exception in readModePref : " 
+                                   + e.name + 
+                                   ".\nError message: " 
+                                   + e.message + "\n"
+                                   + e.lineNumber);
+        }  
+    },
+    
+    
+    
+    writeModePref : function ()
+    {
+        try
+        {
+            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : writeModePref - START"); 
+            
+            var szData= null;
+          
+            for (i=0; i<this.m_aUserList.length; i++)
+            {   
+                var iMode = this.m_aUserList[i].iMode;
+                if (iMode!=0)
+                {
+                    szData ? szData+="\r" : szData="";
+                    szData += this.m_aUserList[i].szAddress;
+                    szData +="\n";
+                    szData += iMode;                    
+                } 
+            }
+           
+            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : writeModePref - " + szData);   
+                     
+            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : writeModePref - END");
+            return szData;
+        }
+        catch(e)
+        {
+            this.m_DebugLog.DebugDump("Hotmail-Prefs-WebDav.js : Exception in writeModePref : " 
+                                   + e.name + 
+                                   ".\nError message: " 
+                                   + e.message + "\n"
+                                   + e.lineNumber);
+        }  
     },
 };
