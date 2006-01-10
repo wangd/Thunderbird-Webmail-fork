@@ -5,7 +5,6 @@ var gWebMail =
 {
     m_Log : null,
     m_AccountWizard : null,
-    m_DomainManager : null,
    
     startUp : function ()
     {   
@@ -40,23 +39,6 @@ var gWebMail =
             this.m_AccountWizard = new WebmailAccountManager();  //create webmail.rdf file
             if (oPref.Value) this.m_AccountWizard.createISP();
    	   
-   	        //start  service
-            try
-        
-            {   //create service
-            
-                this.m_DomainManager = Components.classes["@mozilla.org/DomainManager;1"];
-                this.m_DomainManager = this.m_DomainManager.getService();
-                this.m_DomainManager.QueryInterface(Components.interfaces.nsIDomainManager); 
-            }
-            catch(e)
-            {
-                this.m_Log.Write("Webmail.js :  Exception in startUp servers " 
-                                        + e.name + 
-                                        ".\nError message: " 
-                                        + e.message);
-            }
-        
             window.removeEventListener("load",function() {gWebMail.startUp();}, false);
                       
     	    this.m_Log.Write("Webmail.js : startUp - END ");
