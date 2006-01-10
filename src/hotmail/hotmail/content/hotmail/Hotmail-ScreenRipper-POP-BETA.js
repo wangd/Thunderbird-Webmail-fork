@@ -502,28 +502,28 @@ HotmailScreenRipperBETA.prototype =
                             try
                             { 
                                 var szRawDate = szMsgRows[j].match(patternHotmailPOPEmailDate)[1];
-                                mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - raw date/time "+szRawDate);
+                                mainObject.m_Log.Write("Hotmail-SR-BETAR.js - mailBoxOnloadHandler - raw date/time "+szRawDate);
                                 var today = new Date();
                                 
                                 //check for time
                                 if (szRawDate.search(/:/)!=-1)
                                 {
                                     var aTime = szRawDate.split(/:/);                        
-                                    mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - time "+aTime);
+                                    mainObject.m_Log.Write("Hotmail-SR-BETAR.js - mailBoxOnloadHandler - time "+aTime);
                                     today.setHours(aTime[1]);
                                     today.setMinutes(aTime[2]);
                                 } 
                                 else   //date
                                 {
                                     var aDate = szRawDate.split(/\//);                            
-                                    mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - date "+aDate); 
+                                    mainObject.m_Log.Write("Hotmail-SR-BETAR.js - mailBoxOnloadHandler - date "+aDate); 
                                     today.setDate(aDate[0]);
                                     today.setMonth(aDate[1]);
                                     today.setFullYear(aDate[2]);
                                 }
                                               
                                 oMSG.szDate = today.toUTCString();
-                                mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - " + oMSG.szDate);
+                                mainObject.m_Log.Write("Hotmail-SR-BETAR.js - mailBoxOnloadHandler - " + oMSG.szDate);
                             }
                             catch(err){}
                             

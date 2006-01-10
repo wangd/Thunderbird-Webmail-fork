@@ -564,20 +564,18 @@ HotmailScreenRipper.prototype =
                             var szRawDate = data[7].match(/<td>(.*?)<\/td>/)[1];
                             szRawDate = mainObject.removeHTML(szRawDate);
                             var aRawDate = szRawDate.split(/\s/);
-                            mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - "+aRawDate);
+                            mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - "+aRawDate);
+                            
                             var today = new Date();
                             var szDate = aRawDate[0] +" ,"+aRawDate[1] +" " + today.getFullYear();
-                            mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - "+szDate);
-                            var today = new Date();
-                            var oldDate = Date.parse(szDate);
-                            var newDate= new Date(oldDate);
+                            mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - "+szDate);
+                           
+                            var newDate= new Date(Date.parse(szDate));
+                            newDate.setHours(today.getHours());
+                            newDate.setMinutes(today.getMinutes());
                             
-                            newDate.setHours(today.getHours(),
-                                             today.getMinutes(),
-                                             today.getSeconds(),
-                                             today.getMilliseconds());
                             oMSG.szDate = newDate.toUTCString();
-                            mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - " + oMSG.szDate);
+                            mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - " + oMSG.szDate);
                         }
                         catch(err){}
                         
