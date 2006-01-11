@@ -3,5 +3,5 @@
 <!ENTITY ScreenRipper.Label "Ekran Bölümleyici">
 <!ENTITY WebDav.Label "Web Dav">
 <!ENTITY list.size "height: 20em !important;">
-<!ENTITY Edit.label "Change Mode">
+<!ENTITY Edit.label "Mod değiştir">
 <!ENTITY Edit.accessKey "M">

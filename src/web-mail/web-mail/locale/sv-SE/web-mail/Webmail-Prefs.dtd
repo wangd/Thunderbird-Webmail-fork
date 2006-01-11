@@ -1,0 +1,5 @@
+<!ENTITY Options.szTitle "Inställningar för WebMail">
+<!ENTITY Servers.Panel.szTitle "Servrar">
+<!ENTITY Domains.Panel.szTitle "Domäner">
+<!ENTITY Logging.Panel.szTitle "Loggning">
+<!ENTITY General.Panel.szTitle "Allmänt">
