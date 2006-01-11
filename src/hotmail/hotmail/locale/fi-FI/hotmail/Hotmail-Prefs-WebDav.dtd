@@ -3,5 +3,5 @@
 <!ENTITY ScreenRipper.Label "Screen Ripper">
 <!ENTITY WebDav.Label "Web Dav">
 <!ENTITY list.size "height: 20em !important;">
-<!ENTITY Edit.label "Change Mode">
-<!ENTITY Edit.accessKey "M">
+<!ENTITY Edit.label "Vaihda menetelmää">
+<!ENTITY Edit.accessKey "V">
