@@ -1,6 +1,6 @@
-<!ENTITY ScreenScraper.label "Screen Scraper">
+<!ENTITY ScreenScraper.label "Racloir d'&eacute;cran">
 <!ENTITY WebDav.label "WebDav">
 <!ENTITY Beta.label "BETA">
-<!ENTITY Edit.label "Edit Mode">
-<!ENTITY Ok.label "Ok">
-<!ENTITY Cancel.label "Cancel">
+<!ENTITY Edit.label "Mode d'&eacute;dition">
+<!ENTITY Ok.label "Accepter">
+<!ENTITY Cancel.label "Annuler">
