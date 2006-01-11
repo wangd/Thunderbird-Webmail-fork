@@ -186,6 +186,13 @@
      -moz-image-region: rect(0px, 608px, 32px, 576px)
 }
 
+
+.flag[value="18"]/*swish*/
+{
+     -moz-image-region: rect(0px, 640px, 32px, 608px)
+}
+
+
 #YahooHomePage
 {
     text-align: right;

@@ -15,6 +15,8 @@ const patternYahooCompose = /location="*(http:\/\/.*?Compose\?YY=.*?)"*/i;
 const patternYahooComposeForm = /<form.*?name="*Compose"*.*?>[\S\s]*?<\/form>/igm;
 const patternYahooAttachmentForm = /<form.*?name="*Attachments"*.*?>[\S\s]*?<\/form>/igm;
 const patternYahooAttachCheck = /javascript\:VirusScanResults\(0\)/igm;
+const patternYahooImageVerifiaction = /<form.*?name=ImgVerification[\S\s]*?>[\s\S]*?<\/form>/igm;
+const patternYahooImage = /<img src="(.*?\/img\/.*?)".*?>/igm;
 
 /******************************  Yahoo ***************************************/
 function nsYahooSMTP()
@@ -54,7 +56,8 @@ function nsYahooSMTP()
         this.m_bAttHandled = false;
         this.m_Email = new email(this.m_Log);
         this.m_Email.decodeBody(true);
-
+        this.m_szImageVerForm = null;
+        
         this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"];
         this.m_SessionManager = this.m_SessionManager.getService();
         this.m_SessionManager.QueryInterface(Components.interfaces.nsISessionManager); 
@@ -489,8 +492,24 @@ nsYahooSMTP.prototype =
                         
                         mainObject.serverComms("250 OK\r\n");
                     }
+                    else if(szResponse.search(/<form.*?name=ImgVerification[\S\s]*?>/igm)!=-1)
+                    {
+                        mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - image verification");
+                        mainObject.m_szImageVerForm = szResponse.match(patternYahooImageVerifiaction);
+                        mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - form " + mainObject.m_szImageVerForm );
+                        var szImageUri = szResponse.match(patternYahooImage);
+                        mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - image " +szImageUri);
+                        mainObject.m_HttpComms.setContentType(0);
+                        mainObject.m_HttpComms.setURI(szImageUri);
+                        mainObject.m_HttpComms.setRequestMethod("GET");
+                        mainObject.m_iStage = 5;
+                        var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);  
+                        if (!bResult) throw new Error("httpConnection returned false");
+                    }
                     else
+                    {
                         mainObject.serverComms("502 Error Sending Email\r\n");   
+                    }
                 break;
                 
                 case 2: //Attchment request
@@ -659,6 +678,12 @@ nsYahooSMTP.prototype =
                     var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);  
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage = 0;
+                break;
+                
+                
+                case 5: //downloaded image verifiaction
+                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - image downloaed" +szImageUri);
+                    mainObject.serverComms("502 Error Sending Email\r\n");
                 break;
             };
                      
