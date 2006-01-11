@@ -1,0 +1,6 @@
+<!ENTITY Options.szTitle "WebDAV Einstellungen">
+<!ENTITY Domains.Panel.szTitle "Unterstützte Websites">
+<!ENTITY POP.Panel.szTitle "POP">
+<!ENTITY SMTP.Panel.szTitle "SMTP">
+<!ENTITY IMAP.Panel.szTitle "IMAP">
+<!ENTITY Window.size "width: 30em; height: 31em">

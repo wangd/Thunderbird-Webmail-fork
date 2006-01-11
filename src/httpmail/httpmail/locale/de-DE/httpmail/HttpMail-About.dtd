@@ -1,0 +1,10 @@
+<!ENTITY HttpMailAbout.Title "Über HttpMail">
+<!ENTITY HttpMailAbout.ExtName "HttpMail">
+<!ENTITY HttpMailAbout.ExtVersion "Version 0.1.0">
+<!ENTITY HttpMailAbout.ExtDescription "HttpMail-Komponente der WebMail-Erweiterung.">
+<!ENTITY HttpMailAbout.ExtCreaterTitle "Erstellt von:">
+<!ENTITY HttpMailAbout.ExtCreator "ComodoDragon">
+<!ENTITY HttpMailAbout.ExtHome "Homepage">
+<!ENTITY HttpMailAbout.ExtHomeURL "http://webmail.mozdev.org/">
+<!ENTITY HttpMailAbout.ExtButton "Schließen">
+<!ENTITY HttpMailAbout.ExtContributorTitle "Mitwirkende:">
