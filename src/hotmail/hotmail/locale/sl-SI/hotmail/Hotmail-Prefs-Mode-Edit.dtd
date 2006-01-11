@@ -1,6 +1,6 @@
-<!ENTITY ScreenScraper.label "Screen Scraper">
+<!ENTITY ScreenScraper.label "Zajemalnik zaslona">
 <!ENTITY WebDav.label "WebDav">
 <!ENTITY Beta.label "BETA">
-<!ENTITY Edit.label "Edit Mode">
-<!ENTITY Ok.label "Ok">
-<!ENTITY Cancel.label "Cancel">
+<!ENTITY Edit.label "Urejevalni način">
+<!ENTITY Ok.label "V redu">
+<!ENTITY Cancel.label "Prekliči">
