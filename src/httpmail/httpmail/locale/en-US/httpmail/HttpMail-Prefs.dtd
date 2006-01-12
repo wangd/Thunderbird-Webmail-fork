@@ -1,4 +1,4 @@
-<!ENTITY Options.szTitle "WebDav Options">
+<!ENTITY Options.szTitle "HttpMail Options">
 <!ENTITY Domains.Panel.szTitle "Domains">
 <!ENTITY POP.Panel.szTitle "POP">
 <!ENTITY SMTP.Panel.szTitle "SMTP">
