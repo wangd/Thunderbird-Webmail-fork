@@ -419,7 +419,7 @@ Comms.prototype =
                         startStream = startStream.createInstance(Components.interfaces.nsIStringInputStream);
                         startStream.setData(this.m_szStartBoundary,-1);
                         MultiStream.appendStream(startStream);
-                        startStream.close();
+                        //startStream.close();
                          
                         var mimeStream = Components.classes["@mozilla.org/network/mime-input-stream;1"];
                         mimeStream = mimeStream.createInstance(Components.interfaces.nsIMIMEInputStream );
@@ -452,7 +452,7 @@ Comms.prototype =
                                 valueStream = valueStream.createInstance( Components.interfaces.nsIStringInputStream );
                                 valueStream.setData("",-1);
                                 mimeStream.setData(valueStream);
-                                valueStream.close();
+                                //valueStream.close();
                             }            
                         }    
                         else
@@ -464,7 +464,7 @@ Comms.prototype =
                             valueStream = valueStream.createInstance( Components.interfaces.nsIStringInputStream );
                             valueStream.setData(oTemp.szValue? oTemp.szValue:"",-1);
                             mimeStream.setData(valueStream);
-                            valueStream.close();
+                            //valueStream.close();
                         } 
                     
                         MultiStream.appendStream(mimeStream);
@@ -477,7 +477,7 @@ Comms.prototype =
                             endStream = endStream.createInstance( Components.interfaces.nsIStringInputStream );
                             endStream.setData(this.m_szEndBoundary,-1);                   
                             MultiStream.appendStream(endStream);
-                            endStream.close();
+                            //endStream.close();
                         }
                     }
                     else if (this.m_iContentType==0)//urlencoded
@@ -496,7 +496,7 @@ Comms.prototype =
                         dataStream.setData(szData,-1); 
                         
                         MultiStream.appendStream(dataStream);
-                        dataStream.close();
+                       // dataStream.close();
                     }
                     else  //other
                     {
@@ -505,7 +505,7 @@ Comms.prototype =
                         var szData = oTemp.szValue;
                         dataStream.setData(szData,-1); 
                         MultiStream.appendStream(dataStream);
-                        dataStream.close();     
+                       // dataStream.close();     
                     }
                 }
                 
