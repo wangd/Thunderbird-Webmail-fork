@@ -27,8 +27,8 @@ function Comms(parent , log)
         this.m_aFormData = new Array();
         this.m_szMethod = null;
         this.m_CallBack = null;
-        this.m_szContentType = "application/x-www-form-urlencoded";
         this.m_iContentType = 0;
+        this.m_szContentType = "application/x-www-form-urlencoded";
         this.m_parent = parent;
         this.m_szStartBoundary = null
         this.m_szEndBoundary = null;
@@ -54,8 +54,8 @@ Comms.prototype =
         this.m_URI = null;
         this.m_szMethod = null;
         this.m_CallBack = null;
-        this.m_szContentType = "application/x-www-form-urlencoded";
         this.m_iContentType = 0;
+        this.m_szContentType = "application/x-www-form-urlencoded";
         this.m_iHttpAuth = 0;
                 
         delete this.m_aHeaders;
@@ -231,35 +231,17 @@ Comms.prototype =
     //1 = "multipart/form-data"
     setContentType : function (iType)
     {
-        try
-        {
-            this.m_Log.Write("comms.js - setContentType - START");
-            this.m_Log.Write("comms.js - setContentType - " + iType);
-                       
-            this.m_iContentType = iType;
+        this.m_Log.Write("comms.js - setContentType - " + iType);              
+        this.m_iContentType = iType;
+        
+        if (iType==0) 
+            this.m_szContentType= "application/x-www-form-urlencoded";
+        else if (iType==1) 
+            this.m_szContentType= "multipart/form-data";
+        else
+            this.m_szContentType= null;
             
-            if (iType==0) 
-                this.m_szContentType= "application/x-www-form-urlencoded";
-            else if (iType==1) 
-                this.m_szContentType= "multipart/form-data";
-            else
-                this.m_szContentType= null;
-            
-            this.m_Log.Write("comms.js - setContentType - " + this.m_iContentType);
-            this.m_Log.Write("comms.js - setContentType - " + this.m_szContentType);
-            
-            this.m_Log.Write("comms.js - setContentType - END");
-            return true;
-        }
-        catch(err)
-        {
-            this.m_Log.DebugDump("comms.js: setContentType : Exception : " 
-                                                  + err.name 
-                                                  + ".\nError message: " 
-                                                  + err.message + "\n"
-                                                  + err.lineNumber);
-            return false;
-        }
+        return true;
     },
     
    
@@ -414,12 +396,8 @@ Comms.prototype =
                     
                     if (this.m_iContentType==1) //formdata
                     {                           
-                        this.m_Log.Write("comms.js - addFormData - adding start boundary");            
-                        var startStream = Components.classes["@mozilla.org/io/string-input-stream;1"];
-                        startStream = startStream.createInstance(Components.interfaces.nsIStringInputStream);
-                        startStream.setData(this.m_szStartBoundary,-1);
-                        MultiStream.appendStream(startStream);
-                        //startStream.close();
+                        this.m_Log.Write("comms.js - addFormData - adding start boundary");   
+                        MultiStream.appendStream(this.inputStream(this.m_szStartBoundary));
                          
                         var mimeStream = Components.classes["@mozilla.org/network/mime-input-stream;1"];
                         mimeStream = mimeStream.createInstance(Components.interfaces.nsIMIMEInputStream );
@@ -436,77 +414,38 @@ Comms.prototype =
                             
                             if(oTemp.szValue)
                             {
-                                this.m_Log.Write("comms.js - send - adding binary data");  
-                                var nsIFile = this.writeBinaryFile(oTemp.szValue);
-                                if (!nsIFile) throw new Error("file write failed");
-                                var bufferStream = this.readBinaryFile(nsIFile);
-                                if (!bufferStream) throw new Error("file read failed");
-                               
-                                this.m_Log.Write("comms.js - addFormData - buffer size " + bufferStream.available());
-                                mimeStream.setData(bufferStream);
-                                // bufferStream.close();
+                                this.m_Log.Write("comms.js - send - adding binary data"); 
+                                var binaryStream = this.binaryStream(oTemp.szValue);
+                                mimeStream.setData(binaryStream);
                             }
                             else
-                            {
-                                var valueStream = Components.classes["@mozilla.org/io/string-input-stream;1"];
-                                valueStream = valueStream.createInstance( Components.interfaces.nsIStringInputStream );
-                                valueStream.setData("",-1);
-                                mimeStream.setData(valueStream);
-                                //valueStream.close();
-                            }            
+                                mimeStream.setData(this.inputStream(""));
                         }    
                         else
                         {
                             this.m_Log.Write("comms.js - send - adding form data"); 
                             var szContDisp = "form-data; name=\"" + oTemp.szName + "\""; 
                             mimeStream.addHeader("Content-Disposition",szContDisp);
-                            var valueStream = Components.classes["@mozilla.org/io/string-input-stream;1"];
-                            valueStream = valueStream.createInstance( Components.interfaces.nsIStringInputStream );
-                            valueStream.setData(oTemp.szValue? oTemp.szValue:"",-1);
+                            var valueStream = this.inputStream(oTemp.szValue? oTemp.szValue:"");
                             mimeStream.setData(valueStream);
-                            //valueStream.close();
                         } 
                     
                         MultiStream.appendStream(mimeStream);
-                       // mimeStream.close();
                         
                         if (j==this.m_aFormData.length-1)
                         {
-                            this.m_Log.Write("comms.js - send - adding end boundary"); 
-                            var endStream = Components.classes["@mozilla.org/io/string-input-stream;1"];
-                            endStream = endStream.createInstance( Components.interfaces.nsIStringInputStream );
-                            endStream.setData(this.m_szEndBoundary,-1);                   
-                            MultiStream.appendStream(endStream);
-                            //endStream.close();
+                            this.m_Log.Write("comms.js - send - adding end boundary");                  
+                            MultiStream.appendStream(this.inputStream(this.m_szEndBoundary));
                         }
                     }
                     else if (this.m_iContentType==0)//urlencoded
                     {
-                        if (j>0)
-                        { 
-                            var andStream = Components.classes["@mozilla.org/io/string-input-stream;1"];
-                            andStream = andStream.createInstance(Components.interfaces.nsIStringInputStream);
-                            andStream.setData("&",-1); 
-                            MultiStream.appendStream(andStream);
-                        }
-            
-                        var dataStream = Components.classes["@mozilla.org/io/string-input-stream;1"];
-                        dataStream = dataStream.createInstance(Components.interfaces.nsIStringInputStream);
+                        if (j>0) MultiStream.appendStream(this.inputStream("&"));
                         var szData = oTemp.szName + "=" + oTemp.szValue;
-                        dataStream.setData(szData,-1); 
-                        
-                        MultiStream.appendStream(dataStream);
-                       // dataStream.close();
+                        MultiStream.appendStream(this.inputStream(szData));
                     }
                     else  //other
-                    {
-                        var dataStream = Components.classes["@mozilla.org/io/string-input-stream;1"];
-                        dataStream = dataStream.createInstance(Components.interfaces.nsIStringInputStream);
-                        var szData = oTemp.szValue;
-                        dataStream.setData(szData,-1); 
-                        MultiStream.appendStream(dataStream);
-                       // dataStream.close();     
-                    }
+                        MultiStream.appendStream(this.inputStream(oTemp.szValue));
                 }
                 
                 var szContentType = this.m_szContentType;
@@ -538,17 +477,21 @@ Comms.prototype =
     },
     
        
-    writeBinaryFile : function (szData)
+    binaryStream : function (szData)
     {
         try
         {
-            this.m_Log.Write("comms.js - writeBinaryFile - START");
+            this.m_Log.Write("comms.js - binaryStream - START");
             var file = Components.classes["@mozilla.org/file/directory_service;1"];
             file = file.getService(Components.interfaces.nsIProperties);
             file = file.get("TmpD", Components.interfaces.nsIFile);
             file.append("suggestedName.tmp");
             file.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 420); 
            
+            var deletefile = Components.classes["@mozilla.org/uriloader/external-helper-app-service;1"];
+            deletefile = deletefile.getService(Components.interfaces.nsPIExternalAppLauncher);
+            deletefile.deleteTemporaryFileOnExit(file);    
+            
             var outputStream = Components.classes["@mozilla.org/network/file-output-stream;1"];
             outputStream = outputStream.createInstance( Components.interfaces.nsIFileOutputStream );
             outputStream.init( file, 0x04 | 0x08 | 0x10, 420, 0 );
@@ -559,39 +502,10 @@ Comms.prototype =
             binaryStream.writeBytes( szData, szData.length );
             outputStream.close();
             binaryStream.close();
-            this.m_Log.Write("comms.js - writeBinaryFile - END");
-            return file;
-        }
-        catch(err)
-        {
-            this.m_Log.DebugDump("comms.js: writeBinaryFile : Exception : " 
-                                                  + err.name 
-                                                  + ".\nError message: " 
-                                                  + err.message + "\n"
-                                                  + err.lineNumber);
-            return null;
-        }
-    },
-    
-    
-    readBinaryFile : function (nsIFile)
-    {
-        try
-        {
-            this.m_Log.Write("comms.js - readBinaryFile - START");
-            
-            var deletefile = Components.classes["@mozilla.org/uriloader/external-helper-app-service;1"];
-            deletefile = deletefile.getService(Components.interfaces.nsPIExternalAppLauncher);
-            deletefile.deleteTemporaryFileOnExit(nsIFile);       
-            
-            //read for file
-            var file = Components.classes["@mozilla.org/file/local;1"];
-        	file = file.createInstance(Components.interfaces.nsILocalFile);
-        	file.initWithFile(nsIFile);
-        	
+           	
             var inputStream = Components.classes["@mozilla.org/network/file-input-stream;1"];
         	inputStream = inputStream.createInstance(Components.interfaces.nsIFileInputStream);
-            inputStream.init(nsIFile, 0x01 , 0 , null);
+            inputStream.init(file, 0x01 , 0 , null);
               
             var binaryStream = Components.classes["@mozilla.org/binaryinputstream;1"];
             binaryStream = binaryStream.createInstance(Components.interfaces.nsIBinaryInputStream);
@@ -601,12 +515,12 @@ Comms.prototype =
             buffer = buffer.createInstance(Components.interfaces.nsIBufferedInputStream);
             buffer.init(binaryStream, 4096); 
            
-            this.m_Log.Write("comms.js - readBinaryFile - END");
+            this.m_Log.Write("comms.js - binaryStream - END");
             return buffer;
         }
-        catch (err)
+        catch(err)
         {
-            this.m_Log.DebugDump("comms.js: readBinaryFile : Exception : " 
+            this.m_Log.DebugDump("comms.js: binaryStream : Exception : " 
                                                   + err.name 
                                                   + ".\nError message: " 
                                                   + err.message + "\n"
@@ -634,7 +548,29 @@ Comms.prototype =
     },
     
     
-   
+    
+    
+    inputStream : function (szValue)   
+    {
+        try
+        {
+            this.m_Log.Write("comms.js - inputStream - " + szValue);
+            
+            var Stream = Components.classes["@mozilla.org/io/string-input-stream;1"];
+            Stream = Stream.createInstance(Components.interfaces.nsIStringInputStream);
+            Stream.setData(szValue,-1); 
+            return Stream;
+        }
+        catch(err)
+        {
+            this.m_Log.DebugDump("comms.js: inputStream : Exception : " 
+                                                  + err.name 
+                                                  + ".\nError message: " 
+                                                  + err.message + "\n"
+                                                  + err.lineNumber);
+            return null;
+        }
+    },
     
     
     callback : function(szResponse ,event , mainObject)
