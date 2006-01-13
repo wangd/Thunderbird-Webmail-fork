@@ -3,5 +3,5 @@
 <!ENTITY ScreenRipper.Label "Captura de pantalla">
 <!ENTITY WebDav.Label "WebDav">
 <!ENTITY list.size "height: 20em !important;">
-<!ENTITY Edit.label "Change Mode">
-<!ENTITY Edit.accessKey "M">
+<!ENTITY Edit.label "Canvia el mode">
+<!ENTITY Edit.accessKey "m">

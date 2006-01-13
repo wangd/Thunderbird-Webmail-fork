@@ -1,6 +1,6 @@
-<!ENTITY ScreenScraper.label "Screen Scraper">
+<!ENTITY ScreenScraper.label "Raspador de pantalla">
 <!ENTITY WebDav.label "WebDav">
 <!ENTITY Beta.label "BETA">
-<!ENTITY Edit.label "Edit Mode">
-<!ENTITY Ok.label "Ok">
-<!ENTITY Cancel.label "Cancel">
+<!ENTITY Edit.label "Mode d'edició">
+<!ENTITY Ok.label "D'acord">
+<!ENTITY Cancel.label "Cancel·la">
