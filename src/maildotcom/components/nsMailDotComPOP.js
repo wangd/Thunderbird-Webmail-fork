@@ -325,9 +325,10 @@ nsMailDotCom.prototype =
                 
                 
                 case 4: //get folder urls
-                    var szLocation = httpChannel.URI.spec;
-                    mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - location "+ szLocation);
-                    if (szLocation.search(/folders.mail/)==-1)
+                    var aszFolderList = szResponse.match(patternMailDotComFolderList);
+                    mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - folders list "+ aszFolderList);
+                    
+                    if (!aszFolderList)
                     {
                         if (mainObject.m_bReEntry)
                         {
@@ -342,9 +343,9 @@ nsMailDotCom.prototype =
                         else
                             throw new Error("error logging in");
                     }                   
-                    var aszFolderList = szResponse.match(patternMailDotComFolderList);
-                    mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - folders list "+ aszFolderList);
-                      
+                   
+                    var szLocation = httpChannel.URI.spec;
+                    mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - location "+ szLocation); 
                     var szPath = szLocation.match(/(http:\/\/.*?)\//i)[1];  
                     mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - path "+ szPath);
                     

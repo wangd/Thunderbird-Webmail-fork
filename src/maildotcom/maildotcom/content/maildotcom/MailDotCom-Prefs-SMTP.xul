@@ -7,7 +7,7 @@
 <overlay id="paneSMTPOverlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
            
-    <prefpane id = "paneSMTP" onpaneload= ""> 
+    <prefpane id = "paneSMTP" onpaneload= "" flex="1"> 
         
         <preferences>
             <preference id="saveSentItems" name="maildotcom.bSaveCopy" type="bool"/>

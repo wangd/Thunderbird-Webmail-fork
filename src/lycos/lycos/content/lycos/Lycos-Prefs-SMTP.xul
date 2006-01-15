@@ -7,7 +7,7 @@
 <overlay id="paneSMTPOverlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
            
-    <prefpane id = "paneSMTP" onpaneload= ""> 
+    <prefpane flex="1" id = "paneSMTP" onpaneload= ""> 
         
         <preferences>
             <preference id="saveSentItems" name="lycos.bSaveCopy" type="bool"/>
