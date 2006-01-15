@@ -46,7 +46,7 @@ function nsHttpMailSMTP()
         var oPref = new Object();
         oPref.Value = null;
         var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-        if (WebMailPrefAccess.Get("bool","HttpMail.bReUseSession",oPref))
+        if (WebMailPrefAccess.Get("bool","httpmail.bReUseSession",oPref))
             this.m_bReUseSession=oPref.Value;
         else
             this.m_bReUseSession=true; 
@@ -55,7 +55,7 @@ function nsHttpMailSMTP()
         var oPref = new Object();
         oPref.Value = null;
         var  PrefAccess = new WebMailCommonPrefAccess();
-        if (PrefAccess.Get("bool","HttpMail.bSaveCopy",oPref))
+        if (PrefAccess.Get("bool","httpmail.bSaveCopy",oPref))
             this.m_bSaveCopy=oPref.Value;
         else
             this.m_bSaveCopy=true;          

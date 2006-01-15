@@ -53,6 +53,7 @@ function nsHttpMail()
         this.m_szInBoxURI= null;
         this.m_szTrashURI=null;
         this.m_szMSG = null;
+        this.m_aRawData = new Array();
         this.m_aMsgDataStore = new Array();
         this.m_iTotalSize = 0;     
              
@@ -61,24 +62,41 @@ function nsHttpMail()
         this.m_SessionManager.QueryInterface(Components.interfaces.nsISessionManager); 
         this.m_SessionData = null;
         
+        this.m_Timer = Components.classes["@mozilla.org/timer;1"];
+        this.m_Timer = this.m_Timer.createInstance(Components.interfaces.nsITimer);
+        this.m_iTime = 10;
+        
         //do i reuse the session
-        var oPref = new Object();
-        oPref.Value = null;
+        var oPref = {Value : null};
         var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-        if (WebMailPrefAccess.Get("bool","HttpMail.bReUseSession",oPref))
+        if (WebMailPrefAccess.Get("bool","httpmail.bReUseSession",oPref))
             this.m_bReUseSession=oPref.Value;
         else
             this.m_bReUseSession=true; 
         
         //do i download unread only
-        var oPref = new Object();
         oPref.Value = null;
-        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-        if (WebMailPrefAccess.Get("bool","HttpMail.bDownloadUnread",oPref))
+        if (WebMailPrefAccess.Get("bool","httpmail.bDownloadUnread",oPref))
             this.m_bDownloadUnread=oPref.Value;
         else
             this.m_bDownloadUnread=false;
-                   
+         
+        //delay process trigger
+        oPref.Value = null;
+        if (WebMailPrefAccess.Get("bool","httpmail.iProcessTrigger",oPref))
+            this.m_iProcessTrigger = oPref.Value;
+        else
+            this.m_iProcessTrigger = 50; 
+        
+        //delay proccess amount
+        oPref.Value = null;
+        if (WebMailPrefAccess.Get("bool","httpmail.iProcessAmount",oPref))
+            this.m_iProcessAmount = oPref.Value;
+        else
+            this.m_iProcessAmount = 25; 
+        
+        delete WebMailPrefAccess;           
+        
         this.m_Log.Write("nsHttpMail.js - Constructor - END");  
     }
     catch(e)
@@ -252,77 +270,34 @@ nsHttpMail.prototype =
             
             if (aszResponses)
             {
-                for (i=0; i<aszResponses.length; i++)
-                {
-                    var bRead = true;
-                    if (mainObject.m_bDownloadUnread)
-                    {
-                        bRead = parseInt(aszResponses[i].match(HttpMailPOPRead)[1]) ? false : true;
-                        mainObject.m_Log.Write("nsHttpMail.js - mailBoxOnloadHandler - bRead -" + bRead);
-                    }
-                    
-                    if (bRead)
-                    {
-                        var data = new HttpMailPOPMSG();
-                        data.szMSGUri = aszResponses[i].match(HttpMailHref)[1]; //uri
-                        data.szMSGUri = data.szMSGUri.replace(/\/$/,"");
-                        data.iSize = parseInt(aszResponses[i].match(HttpMailSize)[1]);//size 
-                        mainObject.m_iTotalSize += data.iSize;
-                        
-                        var szTO="";
-                        try
-                        {                   
-                            szTO = aszResponses[i].match(HttpMailPOPTo)[1].match(/[\S\d]*@[\S\d]*/);  
-                        }
-                        catch(err)
-                        {
-                            szTO = mainObject.m_szUserName;
-                        }
-                        data.szTo = szTO;
-                        
-                        var szFrom = "";
-                        try
-                        {
-                            szFrom = aszResponses[i].match(HttpMailPOPFrom)[1].match(/[\S\d]*@[\S\d]*/);
-                        }
-                        catch(err)
-                        {
-                            szFrom = aszResponses[i].match(HttpMailPOPFrom)[1];    
-                        }
-                        data.szFrom = szFrom;
-                        
-                        var szSubject= "";
-                        try
-                        {
-                            szSubject= aszResponses[i].match(HttpMailPOPSubject)[1];
-                        }
-                        catch(err){}
-                        data.szSubject = szSubject;
-                        
-                        try
-                        {
-                            var aszDateTime = aszResponses[i].match(HttpMailPOPDate);
-                            var aszDate = aszDateTime[1].split("-");
-                            var aszTime = aszDateTime[2].split(":");
-
-                            var date = new Date(parseInt(aszDate[0],10),  //year
-                                             parseInt(aszDate[1],10)-1,  //month
-                                             parseInt(aszDate[2],10),  //day
-                                             parseInt(aszTime[0],10),  //hour
-                                             parseInt(aszTime[1],10),  //minute
-                                             parseInt(aszTime[2],10));  //second
-                            data.szDate = date.toGMTString();
-                        }
-                        catch(err){}
-                        
-                        mainObject.m_aMsgDataStore.push(data);
-                    }
-                }
+                var aTemp = mainObject.m_aRawData.concat(aszResponses);
+                delete mainObject.m_aRawData;
+                mainObject.m_aRawData = aTemp;   
             }
         
-            //server response
-            mainObject.serverComms("+OK "+ mainObject.m_aMsgDataStore.length + " " + mainObject.m_iTotalSize + "\r\n");
-        }   
+            if (mainObject.m_aRawData.length>mainObject.m_iProcessTrigger)
+            {
+                mainObject.m_Log.Write("nsHttpMail.js - mailBoxOnloadHandler - starting delay");
+                //start timer
+                mainObject.m_Timer.initWithCallback(mainObject, 
+                                                    mainObject.m_iTime, 
+                                      Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
+                return;
+            }
+            else
+            {   
+                mainObject.m_Log.Write("nsHttpMail.js - mailBoxOnloadHandler - starting to process");
+               
+                for (i=0; i< mainObject.m_aRawData.length; i++)
+                {
+                    mainObject.processItem( mainObject.m_aRawData[i]);        
+                }
+                
+                //server response
+                mainObject.serverComms("+OK "+ mainObject.m_aMsgDataStore.length + " " + mainObject.m_iTotalSize + "\r\n");
+                delete  mainObject.m_aRawData;
+            }
+         }   
         catch(err)
         {
              mainObject.m_Log.DebugDump("nsHttpMail.js: MailboxOnload : Exception : " 
@@ -335,7 +310,123 @@ nsHttpMail.prototype =
         }
     },
     
-                      
+     
+    notify : function(timer)
+    {
+        try
+        {
+            this.m_Log.Write("nsHttpMail.js - notify - START");
+
+            if (this.m_aRawData.length>0)
+            {   
+                var iCount=0;
+                do{
+                    var Item = this.m_aRawData.shift();
+                    this.processItem(Item);   
+                    iCount++;
+                    this.m_Log.Write("nsHttpMail.js - notify - rawData icount " + iCount + " " + this.m_aRawData.length);
+                }while(iCount != this.m_iProcessAmount && this.m_aRawData.length!=0)
+
+            }
+            else
+            {
+                this.m_Log.Write("nsHttpMail.js - notify - all data handled"); 
+                this.m_Timer.cancel();
+                
+                //server response
+                this.serverComms("+OK "+ this.m_aMsgDataStore.length + " " + this.m_iTotalSize + "\r\n");
+                delete  this.m_aRawData;
+            }
+            
+            this.m_Log.Write("nsHttpMail.js - notify - END"); 
+        }
+        catch(err)
+        {
+            this.m_Timer.cancel();
+            this.m_Log.DebugDump("nsHttpMail.js: notify : Exception : " 
+                                              + err.name 
+                                              + ".\nError message: " 
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
+                                              
+            this.serverComms("-ERR negative vibes from " +this.m_szUserName+ "\r\n");
+        }
+    }, 
+      
+      
+    processItem : function (rawData)
+    {
+        this.m_Log.Write("HttpmailPOP.js - processItem - START");
+        this.m_Log.Write("HttpmailPOP.js - processItem - rawData " +rawData);
+        
+        var bRead = true;
+        if (this.m_bDownloadUnread)
+        {
+            bRead = parseInt(rawData.match(HttpMailPOPRead)[1]) ? false : true;
+            this.m_Log.Write("HttpmailPOP.js - processItem - bRead -" + bRead);
+        }
+        
+        if (bRead)
+        {
+            var data = new HttpMailPOPMSG();
+            data.szMSGUri = rawData.match(HttpMailHref)[1]; //uri
+            data.szMSGUri = data.szMSGUri.replace(/\/$/,"");
+            data.iSize = parseInt(rawData.match(HttpMailSize)[1]);//size 
+            this.m_iTotalSize += data.iSize;
+            
+            var szTO="";
+            try
+            {                   
+                szTO = rawData.match(HttpMailPOPTo)[1].match(/[\S\d]*@[\S\d]*/);  
+            }
+            catch(err)
+            {
+                szTO = this.m_szUserName;
+            }
+            data.szTo = szTO;
+            
+            var szFrom = "";
+            try
+            {
+                szFrom = rawData.match(HttpMailPOPFrom)[1].match(/[\S\d]*@[\S\d]*/);
+            }
+            catch(err)
+            {
+                szFrom = rawData.match(HttpMailPOPFrom)[1];    
+            }
+            data.szFrom = szFrom;
+            
+            var szSubject= "";
+            try
+            {
+                szSubject= rawData.match(HttpMailPOPSubject)[1];
+            }
+            catch(err){}
+            data.szSubject = szSubject;
+            
+            try
+            {
+                var aszDateTime = rawData.match(HttpMailPOPDate);
+                var aszDate = aszDateTime[1].split("-");
+                var aszTime = aszDateTime[2].split(":");
+            
+                var date = new Date(parseInt(aszDate[0],10),  //year
+                                 parseInt(aszDate[1],10)-1,  //month
+                                 parseInt(aszDate[2],10),  //day
+                                 parseInt(aszTime[0],10),  //hour
+                                 parseInt(aszTime[1],10),  //minute
+                                 parseInt(aszTime[2],10));  //second
+                data.szDate = date.toGMTString();
+                this.m_Log.Write("HotmailWebDav.js - processItem - " + data.szDate);
+            }
+            catch(err){}
+            
+            this.m_aMsgDataStore.push(data);
+        }
+        
+        this.m_Log.Write("HttpmailPOP.js - processItem - END");
+    },  
+                     
     //list
     getMessageSizes : function() 
     {
