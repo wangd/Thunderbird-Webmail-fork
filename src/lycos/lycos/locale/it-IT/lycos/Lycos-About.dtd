@@ -1,6 +1,6 @@
 <!ENTITY LycosAbout.Title "Informazioni su Lycos">
 <!ENTITY LycosAbout.ExtName "Lycos">
-<!ENTITY LycosAbout.ExtVersion "versione 0.7.1">
+<!ENTITY LycosAbout.ExtVersion "versione 0.7.2">
 <!ENTITY LycosAbout.ExtDescription "Componente per l'estensione WebMail.">
 <!ENTITY LycosAbout.ExtCreaterTitle "Creato da:">
 <!ENTITY LycosAbout.ExtCreator "ComodoDragon">
