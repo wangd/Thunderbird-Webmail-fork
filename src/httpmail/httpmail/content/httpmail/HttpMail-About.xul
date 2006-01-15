@@ -8,7 +8,7 @@
         title= "&HttpMailAbout.Title;"
         orient="vertical"
         autostretch="always"
-        onload="gHttpMailAbout.init();sizeToContent()"
+        onload="gHttpMailAbout.init(); sizeToContent();"
         onunload ="gHttpMailAbout.stop()"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         id = "HttpMailAboutDialog">
@@ -17,8 +17,9 @@
 	   <stringbundle id="stringsHttpMailAbout" src="chrome://httpmail/locale/HttpMail-About.properties"/>
 	</stringbundleset>
 	
+    <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
     <script type="application/x-javascript" src="chrome://httpmail/content/HttpMail-About.js"/>
-        
+            
     <groupbox align="center" orient="horizontal">
         <vbox>
             <hbox>
