@@ -4,3 +4,6 @@ pref("httpmail.bEmptyTrash", false);
 pref("httpmail.bDownloadUnread", false);
 pref("httpmail.bReUseSession", true);
 pref("httpmail.iNumOfUrl", 0);
+pref("httpmail.iProcessTrigger", 50);
+pref("httpmail.iProcessAmount", 25);
+
