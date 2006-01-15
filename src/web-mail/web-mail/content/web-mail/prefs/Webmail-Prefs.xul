@@ -11,7 +11,7 @@
             id="WebMail-Prefs"
             title="&Options.szTitle;"
             xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-            style="width: 46em; height: 37em"
+            style="&Window.size;"
             lastSelected = "paneServers"
             buttons="accept, cancel">
   

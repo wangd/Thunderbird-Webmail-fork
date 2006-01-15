@@ -3,3 +3,4 @@
 <!ENTITY Logging.Panel.szTitle "Registro">
 <!ENTITY Options.szTitle "Opciones Web Mail">
 <!ENTITY Servers.Panel.szTitle "Servidor">
+<!ENTITY Window.size "width: 46em; height: 37em">

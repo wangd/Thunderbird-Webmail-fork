@@ -3,3 +3,4 @@
 <!ENTITY Domains.Panel.szTitle "Domäner">
 <!ENTITY Logging.Panel.szTitle "Loggning">
 <!ENTITY General.Panel.szTitle "Allmänt">
+<!ENTITY Window.size "width: 46em; height: 37em">

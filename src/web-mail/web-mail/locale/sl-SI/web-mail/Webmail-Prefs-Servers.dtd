@@ -22,3 +22,4 @@
 <!ENTITY Enable.AccessKey "O">
 <!ENTITY Status.Label "Stanje">
 <!ENTITY Status.AccessKey "t">
+<!ENTITY StatusBox.size "width: 6em;">

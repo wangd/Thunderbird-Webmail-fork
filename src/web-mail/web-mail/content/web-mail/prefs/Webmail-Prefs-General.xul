@@ -9,7 +9,7 @@
 <overlay id="paneGeneralOverlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
            
-    <prefpane id = "paneGeneral"> 
+    <prefpane id = "paneGeneral" flex="1"> 
         
         <preferences>
             <preference id="useAccountWizard" name="webmail.UseAccountWizard" type="bool"/>
@@ -36,24 +36,23 @@
                     </description> 
                 </hbox>
             </groupbox>
+        </vbox> 
             
-            
-            <spacer flex="5"/>
-            
-            <!-- restart information -->   
-            <vbox class = "information" style="margin-top: 16em">   
-                <hbox>
-                    <image id ="iconMessage"/> 
-                </hbox>
-                <hbox >
-                    <vbox flex="1" >
-                        <description style="margin-left: 25px"> 
-                            &Restart.Label;
-                        </description> 
-                    </vbox> 
-                </hbox>
-            </vbox> 
-        </vbox>
-
+        <spacer flex="1"/>
+        
+        <!-- restart information --> 
+        <vbox pack = "end" class = "information">   
+            <hbox>
+                <image id ="iconMessage"/> 
+            </hbox>
+            <hbox >
+                <vbox flex="1" >
+                    <description style="margin-left: 25px"> 
+                        &Restart.Label;
+                    </description> 
+                </vbox> 
+            </hbox>
+        </vbox> 
+       
     </prefpane>
 </overlay>

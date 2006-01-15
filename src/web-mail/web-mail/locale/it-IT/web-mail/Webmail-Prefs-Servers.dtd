@@ -22,5 +22,6 @@
 <!ENTITY Enable.AccessKey "A">
 <!ENTITY Status.Label "Stato">
 <!ENTITY Status.AccessKey "S">
+<!ENTITY StatusBox.size "width: 6em;">
 
 

@@ -3,3 +3,4 @@
 <!ENTITY Domains.Panel.szTitle "Verkkotunnukset">
 <!ENTITY Logging.Panel.szTitle "Kirjaaminen">
 <!ENTITY General.Panel.szTitle "Yleiset">
+<!ENTITY Window.size "width: 46em; height: 37em">

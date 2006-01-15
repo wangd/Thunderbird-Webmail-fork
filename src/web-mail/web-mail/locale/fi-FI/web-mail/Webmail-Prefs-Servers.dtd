@@ -22,3 +22,4 @@
 <!ENTITY Enable.AccessKey "K">
 <!ENTITY Status.Label "Tila">
 <!ENTITY Status.AccessKey "T">
+<!ENTITY StatusBox.size "width: 6em;">

@@ -4,7 +4,7 @@
 <!ENTITY Pop.Label "POP">
 <!ENTITY Pop.AccessKey "O">
 <!ENTITY POP.Default.Label "standaard 110">
-<!ENTITY Note.Label "Het besturingssysteem kan poorten < 1024 blokkeren">
+<!ENTITY Note.Label "Het besturingssysteem kan poorten &lt; 1024 blokkeren">
 <!ENTITY Restart.Label "Veranderingen worden doorgevoerd na een herstart van Thunderbird.">
 <!ENTITY SMTP.Label "SMTP">
 <!ENTITY SMTP.AccessKey "S">
@@ -22,3 +22,4 @@
 <!ENTITY Enable.AccessKey "k">
 <!ENTITY Status.Label "Status">
 <!ENTITY Status.AccessKey "u">
+<!ENTITY StatusBox.size "width: 6em;">

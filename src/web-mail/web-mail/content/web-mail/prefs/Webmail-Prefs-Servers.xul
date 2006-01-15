@@ -55,10 +55,9 @@
                                     <spacer flex="1"/>
                                 </hbox>
                                 <spacer flex="2"/>
-                                <textbox style="margin-top: 10px"
+                                <textbox style="margin-top: 10px; &StatusBox.size;"
                                          id="txtPopStatus" 
                                          class = "txtStatus" 
-                                         size = "6" 
                                          readonly = "true"
                                          disabled = "true" 
                                          value="ERROR"/>
@@ -80,10 +79,9 @@
                                            value="-1"/>
                                     <spacer flex="1"/>
                                 </hbox>
-                                <textbox style="margin-top: 10px"
+                                <textbox style="margin-top: 10px; &StatusBox.size;"
                                          id="txtSMTPStatus" 
                                          class = "txtStatus" 
-                                         size = "6" 
                                          readonly = "true" 
                                          disabled = "true" 
                                          value="ERROR"/>
@@ -107,9 +105,8 @@
                                 </hbox>
                                 
                                 <textbox id="txtIMAPStatus"
-                                         style="margin-top: 10px" 
+                                         style="margin-top: 10px; &StatusBox.size;"
                                          class = "txtStatus" 
-                                         size = "6" 
                                          readonly = "true" 
                                          disabled = "true" 
                                          value="ERROR"/>
@@ -124,7 +121,7 @@
                     
                     
                     <!-- enable --> 
-                    <tabpanel orient="vertical">  
+                    <tabpanel orient="vertical" >  
                         <!--POP-->
                         <checkbox label="&Enable.POP.Label;" 
                                   accesskey="&Enable.POP.AccessKey;"
@@ -145,9 +142,11 @@
                                   class = "text"
                                   preference = "enableIMAP"
                                   id="chkEnableIMAP"/>
-                                  
+                        
+                        <spacer flex="1"/>        
+                        
                         <!-- restart information -->   
-                        <vbox class = "information" style="margin-top: 12em">   
+                        <vbox pack = "end" class = "information">   
                             <hbox>
                                 <image id = "iconMessage" /> 
                             </hbox>
@@ -238,9 +237,10 @@
                             </rows>
                         </grid>
                        
+                        <spacer flex="1"/>        
                         
                         <!-- restart information -->   
-                        <vbox class = "information" style="margin-top: 4em">   
+                        <vbox  pack = "end" class = "information">   
                             <hbox>
                                 <image id = "iconMessage" /> 
                             </hbox>

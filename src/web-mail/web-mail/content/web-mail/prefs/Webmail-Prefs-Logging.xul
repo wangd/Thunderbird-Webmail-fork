@@ -7,7 +7,7 @@
 <overlay id="paneLoggingOverlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
            
-    <prefpane id = "paneLogging" onpaneload= "gLoggingPane.init();">
+    <prefpane id = "paneLogging" onpaneload= "gLoggingPane.init();" flex="1">
         <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>       
         <script type="application/x-javascript" src="chrome://web-mail/content/prefs/Webmail-Prefs-Logging.js"/>        
         

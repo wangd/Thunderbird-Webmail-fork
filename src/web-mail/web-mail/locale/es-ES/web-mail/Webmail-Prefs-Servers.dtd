@@ -22,3 +22,4 @@
 <!ENTITY ServerStatus.Label "Estado del servidor">
 <!ENTITY Status.AccessKey "t">
 <!ENTITY Status.Label "Estado">
+<!ENTITY StatusBox.size "width: 6em;">
