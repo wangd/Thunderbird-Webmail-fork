@@ -302,21 +302,23 @@ var gWebDavPane =
             this.m_aWebDavUserList = new Array();
             var szMode = document.getElementById("prefMode").value;
             this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : readModePref - "+szMode);
-            
-            var aRows = szMode.split("\r");
-            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : readModePref - "+aRows);
-            if (aRows)
+            if (szMode)
             {
-                for(i=0; i<aRows.length; i++)
-                {   
-                    var item = aRows[i].split("\n");
-                    this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : readModePref - "+item);
-                    var data = new HotmailMode();
-                    data.szAddress = item[0];
-                    data.iMode=item[1];
-                    this.m_aWebDavUserList.push(data);   
+                var aRows = szMode.split("\r");
+                this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : readModePref - "+aRows);
+                if (aRows)
+                {
+                    for(i=0; i<aRows.length; i++)
+                    {   
+                        var item = aRows[i].split("\n");
+                        this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : readModePref - "+item);
+                        var data = new HotmailMode();
+                        data.szAddress = item[0];
+                        data.iMode=item[1];
+                        this.m_aWebDavUserList.push(data);   
+                    } 
                 } 
-            } 
+            }
             
             this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : readModePref - END");
             return undefined;
