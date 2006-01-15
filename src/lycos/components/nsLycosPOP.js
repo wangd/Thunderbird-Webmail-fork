@@ -61,15 +61,19 @@ function nsLycos()
         this.m_aMsgDataStore = new Array();
         this.m_iTotalSize = 0;     
         this.m_bJunkMail = false;
+        this.m_aRawData = new Array();
              
         this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"];
         this.m_SessionManager = this.m_SessionManager.getService();
         this.m_SessionManager.QueryInterface(Components.interfaces.nsISessionManager); 
         this.m_SessionData = null;
         
+        this.m_Timer = Components.classes["@mozilla.org/timer;1"];
+        this.m_Timer = this.m_Timer.createInstance(Components.interfaces.nsITimer);
+        this.m_iTime = 10;
+        
         //do i reuse the session
-        var oPref = new Object();
-        oPref.Value = null;
+        var oPref = {Value:null};
         var  WebMailPrefAccess = new WebMailCommonPrefAccess();
         if (WebMailPrefAccess.Get("bool","lycos.bReUseSession",oPref))
             this.m_bReUseSession=oPref.Value;
@@ -77,22 +81,34 @@ function nsLycos()
             this.m_bReUseSession=true; 
         
         //do i download junkmail
-        var oPref = new Object();
         oPref.Value = null;
-        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
         if (WebMailPrefAccess.Get("bool","lycos.bUseJunkMail",oPref))
             this.m_bUseJunkMail=oPref.Value;
         else
             this.m_bUseJunkMail=false;
          
         //do i download unread only
-        var oPref = new Object();
         oPref.Value = null;
-        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
         if (WebMailPrefAccess.Get("bool","lycos.bDownloadUnread",oPref))
             this.m_bDownloadUnread=oPref.Value;
         else
             this.m_bDownloadUnread=false;
+        
+        //delay process trigger
+        oPref.Value = null;
+        if (WebMailPrefAccess.Get("bool","lycos.iProcessTrigger",oPref))
+            this.m_iProcessTrigger = oPref.Value;
+        else
+            this.m_iProcessTrigger = 50; 
+        
+        //delay proccess amount
+        oPref.Value = null;
+        if (WebMailPrefAccess.Get("bool","lycos.iProcessAmount",oPref))
+            this.m_iProcessAmount = oPref.Value;
+        else
+            this.m_iProcessAmount = 25;
+            
+        delete WebMailPrefAccess;
                    
         this.m_Log.Write("nsLycos.js - Constructor - END");  
     }
@@ -316,73 +332,11 @@ nsLycos.prototype =
                     mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - inbox - \n" + aszResponses);
                     if (aszResponses)
                     {
-                        for (i=0; i<aszResponses.length; i++)
-                        {
-                            var bRead = true;
-                            if (mainObject.m_bDownloadUnread)
-                            {
-                                bRead = parseInt(aszResponses[i].match(LycosPOPRead)[1]) ? false : true;
-                                mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - bRead -" + bRead);
-                            }
-                            
-                            if (bRead)
-                            {
-                                var data = new LycosPOPMSG();
-                                data.szMSGUri = aszResponses[i].match(LycosHref)[1]; //uri
-                                data.iSize = parseInt(aszResponses[i].match(LycosSize)[1]);//size 
-                                mainObject.m_iTotalSize += data.iSize;
-                                data.bJunkFolder = mainObject.m_bJunkMail;
-                                
-                                var szTO="";
-                                try
-                                {                   
-                                    szTO = aszResponses[i].match(LycosPOPTo)[1].match(/[\S\d]*@[\S\d]*/);  
-                                }
-                                catch(err)
-                                {
-                                    szTO = aszResponses[i].match(LycosPOPTo)[1];
-                                }
-                                data.szTo = szTO;
-                                
-                                var szFrom = "";
-                                try
-                                {
-                                    szFrom = aszResponses[i].match(LycosPOPFrom)[1].match(/[\S\d]*@[\S\d]*/);
-                                }
-                                catch(err)
-                                {
-                                    szFrom = aszResponses[i].match(LycosPOPFrom)[1];    
-                                }
-                                data.szFrom = szFrom;
-                                
-                                var szSubject= "";
-                                try
-                                {
-                                    szSubject= aszResponses[i].match(LycosPOPSubject)[1];
-                                }
-                                catch(err){}
-                                data.szSubject = szSubject;
-                                
-                                try
-                                {
-                                    var aszDateTime = aszResponses[i].match(LycosPOPDate);
-                                    var aszDate = aszDateTime[1].split("-");
-                                    var aszTime = aszDateTime[2].split(":");
-    
-                                    var date = new Date(parseInt(aszDate[0],10),  //year
-                                                     parseInt(aszDate[1],10)-1,  //month
-                                                     parseInt(aszDate[2],10),  //day
-                                                     parseInt(aszTime[0],10),  //hour
-                                                     parseInt(aszTime[1],10),  //minute
-                                                     parseInt(aszTime[2],10));  //second
-                                    data.szDate = date.toGMTString();
-                                }
-                                catch(err){}
-                                
-                                mainObject.m_aMsgDataStore.push(data);
-                            }
-                        }
+                        var aTemp = mainObject.m_aRawData.concat(aszResponses);
+                        delete mainObject.m_aRawData;
+                        mainObject.m_aRawData = aTemp;   
                     }
+                    
                     
                     if (mainObject.m_bUseJunkMail && !mainObject.m_bJunkMail)
                     {
@@ -396,9 +350,30 @@ nsLycos.prototype =
                         mainObject.m_bJunkMail= true;
                     }
                     else
-                    {
-                        //server response
-                        mainObject.serverComms("+OK "+ mainObject.m_aMsgDataStore.length + " " + mainObject.m_iTotalSize + "\r\n");
+                    {   
+                        mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - download complete");
+                        if (mainObject.m_aRawData.length>mainObject.m_iProcessTrigger)
+                        {
+                            mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - starting delay");
+                            //start timer
+                            mainObject.m_Timer.initWithCallback(mainObject, 
+                                                                mainObject.m_iTime, 
+                                                  Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
+                            return;
+                        }
+                        else
+                        {   
+                            mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - starting to process");
+                           
+                            for (i=0; i< mainObject.m_aRawData.length; i++)
+                            {
+                                mainObject.processItem( mainObject.m_aRawData[i]);        
+                            }
+                            
+                            //server response
+                            mainObject.serverComms("+OK "+ mainObject.m_aMsgDataStore.length + " " + mainObject.m_iTotalSize + "\r\n");
+                            delete  mainObject.m_aRawData;
+                        }
                     }
                     mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - inbox mail uri - end");
                 break;          
@@ -415,6 +390,125 @@ nsLycos.prototype =
             mainObject.serverComms("-ERR Comms Error from "+ mainObject.m_szUserName+"\r\n");
         }
     },
+    
+     
+     
+    notify : function(timer)
+    {
+        try
+        {
+            this.m_Log.Write("nsLycos.js - notify - START");
+
+            if (this.m_aRawData.length>0)
+            {   
+                var iCount=0;
+                do{
+                    var Item = this.m_aRawData.shift();
+                    this.processItem(Item);   
+                    iCount++;
+                    this.m_Log.Write("nsLycos.js - notify - rawData icount " + iCount + " " + this.m_aRawData.length);
+                }while(iCount != this.m_iProcessAmount && this.m_aRawData.length!=0)
+
+            }
+            else
+            {
+                this.m_Log.Write("nsLycos.js - notify - all data handled"); 
+                this.m_Timer.cancel();
+                
+                //server response
+                this.serverComms("+OK "+ this.m_aMsgDataStore.length + " " + this.m_iTotalSize + "\r\n");
+                delete  this.m_aRawData;
+            }
+            
+            this.m_Log.Write("nsLycos.js - notify - END"); 
+        }
+        catch(err)
+        {
+            this.m_Timer.cancel();
+            this.m_Log.DebugDump("nsLycos.js: notify : Exception : " 
+                                              + err.name 
+                                              + ".\nError message: " 
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
+                                              
+            this.serverComms("-ERR negative vibes from " +this.m_szUserName+ "\r\n");
+        }
+    }, 
+     
+    
+    
+    processItem : function (rawData)
+    {
+        this.m_Log.Write("nsLycos.js - processItem - START");
+        this.m_Log.Write("nsLycos.js - processItem - rawData " +rawData);
+            
+        var bRead = true;
+        if (this.m_bDownloadUnread)
+        {
+            bRead = parseInt(rawData.match(LycosPOPRead)[1]) ? false : true;
+            mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - bRead -" + bRead);
+        }
+        
+        if (bRead)
+        {
+            var data = new LycosPOPMSG();
+            data.szMSGUri = rawData.match(LycosHref)[1]; //uri
+            data.iSize = parseInt(rawData.match(LycosSize)[1]);//size 
+            this.m_iTotalSize += data.iSize;
+            data.bJunkFolder = this.m_bJunkMail;
+            
+            var szTO="";
+            try
+            {                   
+                szTO = rawData.match(LycosPOPTo)[1].match(/[\S\d]*@[\S\d]*/);  
+            }
+            catch(err)
+            {
+                szTO = rawData.match(LycosPOPTo)[1];
+            }
+            data.szTo = szTO;
+            
+            var szFrom = "";
+            try
+            {
+                szFrom = rawData.match(LycosPOPFrom)[1].match(/[\S\d]*@[\S\d]*/);
+            }
+            catch(err)
+            {
+                szFrom = rawData.match(LycosPOPFrom)[1];    
+            }
+            data.szFrom = szFrom;
+            
+            var szSubject= "";
+            try
+            {
+                szSubject= rawData.match(LycosPOPSubject)[1];
+            }
+            catch(err){}
+            data.szSubject = szSubject;
+            
+            try
+            {
+                var aszDateTime = rawData.match(LycosPOPDate);
+                var aszDate = aszDateTime[1].split("-");
+                var aszTime = aszDateTime[2].split(":");
+    
+                var date = new Date(parseInt(aszDate[0],10),  //year
+                                 parseInt(aszDate[1],10)-1,  //month
+                                 parseInt(aszDate[2],10),  //day
+                                 parseInt(aszTime[0],10),  //hour
+                                 parseInt(aszTime[1],10),  //minute
+                                 parseInt(aszTime[2],10));  //second
+                data.szDate = date.toGMTString();
+            }
+            catch(err){}
+            
+            this.m_aMsgDataStore.push(data);
+        }
+        
+        this.m_Log.Write("nsLycos.js - processItem - END");
+    },
+    
     
                       
     //list
@@ -449,6 +543,8 @@ nsLycos.prototype =
         }
     },
     
+    
+      
     
     
     //IUDL
