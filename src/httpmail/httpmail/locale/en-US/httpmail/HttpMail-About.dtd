@@ -1,6 +1,6 @@
 <!ENTITY HttpMailAbout.Title "HttpMail - About">
 <!ENTITY HttpMailAbout.ExtName "HttpMail">
-<!ENTITY HttpMailAbout.ExtVersion "version 0.1.0">
+<!ENTITY HttpMailAbout.ExtVersion "version 0.2.0">
 <!ENTITY HttpMailAbout.ExtDescription "HttpMail component for the Web-Mail extension.">
 <!ENTITY HttpMailAbout.ExtCreaterTitle "Created By:">
 <!ENTITY HttpMailAbout.ExtCreator "ComodoDragon">
