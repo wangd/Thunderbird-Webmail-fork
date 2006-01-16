@@ -6,3 +6,4 @@ skin	httpmail	classic/1.0     jar:chrome/httpmail.jar!/skin/classic/httpmail/
 
 locale	httpmail    en-US   jar:chrome/httpmail.jar!/locale/en-US/httpmail/
 locale	httpmail    de-DE   jar:chrome/httpmail.jar!/locale/de-DE/httpmail/
+locale	httpmail    it-IT   jar:chrome/httpmail.jar!/locale/it-IT/httpmail/
