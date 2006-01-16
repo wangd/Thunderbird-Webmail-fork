@@ -1,0 +1,5 @@
+<!ENTITY MailServers.Label "POP">
+<!ENTITY EmptyTrash.Label "Svuota il cestino">
+<!ENTITY EmptyTrash.AccessKey "e">
+<!ENTITY DownloadUnread.Label "Scarica solo messaggi non letti">
+<!ENTITY DownloadUnread.AccessKey "n">

@@ -1,0 +1,6 @@
+<!ENTITY Options.szTitle "Opzioni del componente HttpMail">
+<!ENTITY Domains.Panel.szTitle "Domini">
+<!ENTITY POP.Panel.szTitle "POP">
+<!ENTITY SMTP.Panel.szTitle "SMTP">
+<!ENTITY IMAP.Panel.szTitle "IMAP">
+<!ENTITY Window.size "width: 30em; height: 31em">
