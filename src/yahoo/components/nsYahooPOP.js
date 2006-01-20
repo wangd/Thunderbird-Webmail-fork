@@ -4,7 +4,7 @@ const nsYahooContactID = "@mozilla.org/YahooPOP;1";
 const ExtYahooGuid = "{d7103710-6112-11d9-9669-0800200c9a66}";
 
 const patternYahooSecure = /<a href="(.*?https.*?login.*?)".*?>/;
-const patternYahooForm = /<form.*?name="*login_form"*.*?>[\S\s]*?<\/form>/gm;
+const patternYahooForm = /<form.*?name="login_form".*?>[\S\s]*?<\/form>/gm;
 const patternYahooAction = /<form.*?action="(.*?)".*?>/;
 const patternYahooLogIn = /<input.*?type=['|"]*hidden['|"]*.*?name=.*?value=.*?>/gm;
 const patternYahooNameAlt = /name=['|"]*([\S]*)['|"]*/;
@@ -161,7 +161,11 @@ nsYahoo.prototype =
             }    
             
             this.m_HttpComms.clean();
-            
+            this.m_HttpComms.addRequestHeader("User-Agent", 
+                            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5",
+                            true);
+
+
             this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
             if (this.m_SessionData && this.m_bReUseSession)
             {
@@ -171,7 +175,7 @@ nsYahoo.prototype =
                 this.m_Log.Write("nsYahoo" +this.m_szHomeURI);    
             
                 //get home page
-                this.m_iStage =3;
+                this.m_iStage =2;
                 this.m_bReEntry = true;
                 this.m_HttpComms.setURI(this.m_szHomeURI);
                 this.m_HttpComms.setRequestMethod("GET");
@@ -180,6 +184,7 @@ nsYahoo.prototype =
             }
             else
             {   //get YahooLog.com webpage
+                this.m_iStage = 0;
                 this.m_HttpComms.setURI(this.m_szYahooMail);
                 this.m_HttpComms.setRequestMethod("GET");
                 var bResult = this.m_HttpComms.send(this.loginOnloadHandler);                             
@@ -217,28 +222,14 @@ nsYahoo.prototype =
     
             mainObject.m_HttpComms.clean();
             mainObject.m_HttpComms.setContentType(0);
-            
+            mainObject.m_HttpComms.addRequestHeader("User-Agent", 
+                            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5",
+                            true);
+                            
             //page code                                
             switch (mainObject.m_iStage)
             {
-                case 0: //secure web page
-                    var aSecureLoginURL = szResponse.match(patternYahooSecure);
-                    if (aSecureLoginURL == null)
-                         throw new Error("error parsing yahoo login web page");
-                    
-                    mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - Secure URL " + aSecureLoginURL);
-                    
-                    var szSecureURL = aSecureLoginURL[1];
-                                    
-                    mainObject.m_HttpComms.setURI(szSecureURL);
-                    mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);      
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
-                break;
-               
-                
-                case 1: // login page               
+                case 0: // login page               
                     var aLoginForm = szResponse.match(patternYahooForm);
                     if (aLoginForm == null)
                          throw new Error("error parsing yahoo login web page");
@@ -281,7 +272,7 @@ nsYahoo.prototype =
                     mainObject.m_iStage++;
                 break;
                                   
-                case 2: //redirect
+                case 1: //redirect
                     var aLoginRedirect = szResponse.match(patternYahooRedirect);
                     if (aLoginRedirect == null)
                          throw new Error("error parsing yahoo login web page");
@@ -296,7 +287,7 @@ nsYahoo.prototype =
                     mainObject.m_iStage++;
                 break;
             
-                case 3: //mail box
+                case 2: //mail box
                     var szLocation  = httpChannel.URI.spec;
                     mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - page check : " + szLocation );
                     if (szLocation.indexOf("uilogin.srt")!= -1)
@@ -346,7 +337,7 @@ nsYahoo.prototype =
                     }             
                 break;
                 
-                case 4:// welcome page                           
+                case 3:// welcome page                           
                     var szMailBox = szResponse.match(patternYahooInboxFrameAlt)[1];
                     mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - szMailBox: "+szMailBox);
                     mainObject.m_szMailboxURI = szMailBox;
@@ -398,6 +389,9 @@ nsYahoo.prototype =
             this.m_Log.Write("nsYahoo.js - getNumMessages - mail box url " + szMailboxURI); 
             
             this.m_HttpComms.clean();
+            this.m_HttpComms.addRequestHeader("User-Agent", 
+                            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5",
+                            true);
             this.m_HttpComms.setURI(szMailboxURI);
             this.m_HttpComms.setRequestMethod("GET");
             var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler); 
@@ -436,6 +430,9 @@ nsYahoo.prototype =
                 throw new Error("error status " + httpChannel.responseStatus);   
             
             mainObject.m_HttpComms.clean();
+            mainObject.m_HttpComms.addRequestHeader("User-Agent", 
+                            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5",
+                            true);
              
             if (!mainObject.m_szBulkFolderURI)
             {
@@ -715,6 +712,9 @@ nsYahoo.prototype =
             
             //get msg from yahoo
             this.m_HttpComms.clean();
+            this.m_HttpComms.addRequestHeader("User-Agent", 
+                            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5",
+                            true);
             this.m_HttpComms.setURI(szDest);
             this.m_HttpComms.setRequestMethod("GET");
             var bResult = this.m_HttpComms.send(this.headerOnloadHandler); 
@@ -754,7 +754,11 @@ nsYahoo.prototype =
          
             var szUri = httpChannel.URI.spec;
             mainObject.m_Log.Write("m_YahooLog.js - headerOnloadHandler - uri : " + szUri); 
-            
+            mainObject.m_HttpComms.clean();  
+            mainObject.m_HttpComms.addRequestHeader("User-Agent", 
+                            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5",
+                            true);
+                            
             switch(mainObject.m_iStage)
             {
                 case 0://process header
@@ -769,8 +773,6 @@ nsYahoo.prototype =
                     var szPath = mainObject.m_szLocationURI + oMSGData.szDeleteUri;
                     mainObject.m_Log.Write("nsYahoo.js - headerOnloadHandler - url - "+ szPath);                       
              
-                    mainObject.m_HttpComms.clean();  
-           
                     for(i=0; i<oMSGData.aData.length; i++ )
                     {
                         var oData = oMSGData.aData[i];
@@ -847,6 +849,9 @@ nsYahoo.prototype =
             
             //get msg from yahoo
             this.m_HttpComms.clean();
+            this.m_HttpComms.addRequestHeader("User-Agent", 
+                            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5",
+                            true);
             this.m_HttpComms.setURI(szDest);
             this.m_HttpComms.setRequestMethod("GET");
             var bResult = this.m_HttpComms.send(this.emailOnloadHandler); 
@@ -882,6 +887,10 @@ nsYahoo.prototype =
             if (httpChannel.responseStatus != 200) 
                 throw new Error("error status " + httpChannel.responseStatus);   
             
+            var szUri = httpChannel.URI.spec;
+            mainObject.m_Log.Write("m_YahooLog.js - emailOnloadHandler - uri : " + szUri); 
+        
+            
             switch(mainObject.m_iStage)
             {
                 case 0:  ///header
@@ -903,6 +912,9 @@ nsYahoo.prototype =
                    
                     //get msg from yahoo
                     mainObject.m_HttpComms.clean();
+                    mainObject.m_HttpComms.addRequestHeader("User-Agent", 
+                            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5",
+                            true);
                     mainObject.m_HttpComms.setURI(szDest);
                     mainObject.m_HttpComms.setRequestMethod("GET");
                     var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler); 

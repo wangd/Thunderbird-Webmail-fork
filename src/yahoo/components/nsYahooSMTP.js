@@ -4,7 +4,7 @@ const nsYahooSMTPContactID = "@mozilla.org/YahooSMTP;1";
 const ExtYahooGuid = "{d7103710-6112-11d9-9669-0800200c9a66}";
 
 const patternYahooSecure = /<a href="(.*?https.*?login.*?)".*?>/;
-const patternYahooLoginForm = /<form.*?name="*login_form"*.*?>[\S\s]*?<\/form>/gm;
+const patternYahooLoginForm = /<form.*?name="login_form".*?>[\S\s]*?<\/form>/gm;
 const patternYahooAction = /<form.*?action="(.*?)".*?>/;
 const patternYahooInput = /<input.*?type=['|"]*hidden['|"]*.*?name=.*?value=.*?>/gm;
 const patternYahooFile = /<input.*?type="*file"*.*?name=.*?>/igm;
@@ -148,7 +148,10 @@ nsYahooSMTP.prototype =
             }    
             
             this.m_HttpComms.clean();
-            
+            this.m_HttpComms.addRequestHeader("User-Agent", 
+                            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5",
+                            true);
+                            
             this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
             if (this.m_SessionData && this.m_bReUseSession)
             {
@@ -158,7 +161,7 @@ nsYahooSMTP.prototype =
                 this.m_Log.Write("nsYahoo" +this.m_szHomeURI);    
             
                 //get home page
-                this.m_iStage =3;
+                this.m_iStage =2;
                 this.m_bReEntry = true;
                 this.m_HttpComms.setURI(this.m_szHomeURI);
                 this.m_HttpComms.setRequestMethod("GET");
@@ -167,6 +170,7 @@ nsYahooSMTP.prototype =
             }
             else
             {   //get YahooLog.com webpage
+                this.m_iStage = 0;
                 this.m_HttpComms.setURI(this.m_szYahooMail);
                 this.m_HttpComms.setRequestMethod("GET");
                 var bResult = this.m_HttpComms.send(this.loginOnloadHandler);                             
@@ -206,28 +210,15 @@ nsYahooSMTP.prototype =
             if (httpChannel.responseStatus != 200) 
                 throw new Error("return status " + httpChannel.responseStatus);
             
-            
+            mainObject.m_HttpComms.clean();
+            mainObject.m_HttpComms.addRequestHeader("User-Agent", 
+                            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5",
+                            true); 
+                                      
             //page code                                
             switch (mainObject.m_iStage)
             {
-                case 0: //secure web page
-                    var aSecureLoginURL = szResponse.match(patternYahooSecure);
-                    if (aSecureLoginURL == null)
-                         throw new Error("error parsing yahoo login web page");
-                    
-                    mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - Secure URL " + aSecureLoginURL);
-                    var szSecureURL = aSecureLoginURL[1];
-    
-                    mainObject.m_HttpComms.clean();
-                    mainObject.m_HttpComms.setURI(szSecureURL);
-                    mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);                       
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
-                break;
-               
-                
-                case 1: // login page               
+                case 0: // login page               
                     var aLoginForm = szResponse.match(patternYahooLoginForm);
                     if (aLoginForm == null)
                          throw new Error("error parsing yahoo login web page");
@@ -239,8 +230,6 @@ nsYahooSMTP.prototype =
                     var aLoginData = aLoginForm[0].match(patternYahooInput);
                     mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - loginData " + aLoginData);
                    
-                    mainObject.m_HttpComms.clean();
-                    
                     for (i=0; i<aLoginData.length; i++)
                     {
                         var szName=aLoginData[i].match(patternYahooNameAlt)[1];
@@ -273,14 +262,13 @@ nsYahooSMTP.prototype =
                     mainObject.m_iStage++;
                 break;
                                   
-                case 2: //redirect
+                case 1: //redirect
                     var aLoginRedirect = szResponse.match(patternYahooRedirect);
                     if (aLoginRedirect == null)
                          throw new Error("error parsing yahoo login web page");
                     mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - login redirect " + aLoginRedirect);    
                     var szLocation = aLoginRedirect[1];
-                  
-                    mainObject.m_HttpComms.clean();
+
                     mainObject.m_HttpComms.setURI(szLocation);
                     mainObject.m_HttpComms.setRequestMethod("GET");
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);
@@ -288,7 +276,7 @@ nsYahooSMTP.prototype =
                     mainObject.m_iStage++;
                 break;
             
-                case 3: //mail box
+                case 2: //mail box
                     var szLocation = httpChannel.URI.spec;
                     var iIndex = szLocation.indexOf("uilogin.srt");
                     mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - page check : " + szLocation);
@@ -351,6 +339,9 @@ nsYahooSMTP.prototype =
             
             //get composer page
             this.m_HttpComms.clean();
+            this.m_HttpComms.addRequestHeader("User-Agent", 
+                            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5",
+                            true); 
             this.m_HttpComms.setURI(this.m_szComposeURI);
             this.m_HttpComms.setRequestMethod("GET");       
             var bResult = this.m_HttpComms.send(this.composerOnloadHandler);  
@@ -386,6 +377,9 @@ nsYahooSMTP.prototype =
                 throw new Error("return status " + httpChannel.responseStatus);
             
             mainObject.m_HttpComms.clean();
+            mainObject.m_HttpComms.addRequestHeader("User-Agent", 
+                            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5",
+                            true); 
             
             var szReferer = httpChannel.URI.spec;
             mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Referer :" +szReferer);
