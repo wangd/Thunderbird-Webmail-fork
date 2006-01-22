@@ -18,8 +18,8 @@
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
             	<em:minVersion>1.4</em:minVersion>
             	<em:maxVersion>1.6</em:maxVersion>
-                <em:updateLink>http://download.mozdev.org/webmail/libero-0-9-0a.xpi</em:updateLink>
-                <em:updateHash>sha256:6a861a1a15324ae9b6db16214ab350e04c7b3a92460b49c6dd8febdfb9603f12</em:updateHash>
+                <em:updateLink>http://download.mozdev.org/webmail/Libero-v0.9.0a.xpi</em:updateLink>
+                <em:updateHash>sha256:d5d382e5c0dbff40340cba6a7c3d08ab0d539803dbb67cdc68c011be96edec31</em:updateHash>
           </Description>
         </em:targetApplication>
     </RDF:Description>  
