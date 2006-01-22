@@ -62,6 +62,8 @@ var gYahooStartUp =
             //get store ids
             this.idCheck("yahoo.com","POP", cszYahooContentID );
             this.idCheck("yahoo.es","POP", cszYahooContentID);
+            this.idCheck("yahoo.se","POP", cszYahooContentID);
+            this.idCheck("yahoo.co.jp","POP", cszYahooContentID);
             this.idCheck("yahoo.co.uk","POP" ,cszYahooContentID);
             this.idCheck("yahoo.it","POP", cszYahooContentID);
             this.idCheck("yahoo.com.cn","POP", cszYahooContentID);  
@@ -77,6 +79,8 @@ var gYahooStartUp =
            
             this.idCheck("yahoo.com","SMTP",cszYahooSMTPContentID);                  
             this.idCheck("yahoo.es","SMTP", cszYahooSMTPContentID);
+            this.idCheck("yahoo.se","SMTP", cszYahooSMTPContentID);
+            this.idCheck("yahoo.co.jp","SMTP", cszYahooSMTPContentID);
             this.idCheck("yahoo.co.uk","SMTP" ,cszYahooSMTPContentID);
             this.idCheck("yahoo.it","SMTP", cszYahooSMTPContentID);
             this.idCheck("yahoo.com.cn","SMTP", cszYahooSMTPContentID);  
