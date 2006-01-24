@@ -358,7 +358,7 @@ var gWebDavPane =
             this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : writeModePref - " + szData);   
                      
             this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : writeModePref - END");
-            return szData;
+            return (szData)? szData : "";
         }
         catch(e)
         {
