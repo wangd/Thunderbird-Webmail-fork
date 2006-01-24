@@ -11,11 +11,13 @@ const patternMailDotComType = /type="(.*?)"/i;
 const patternMailDotComValue = /value=\s?['??|"??](\S*)['??|"??]/i;
 const patternMailDotComName = /name=\s?["??|'??](\S*)["??|'??]/i;
 const patternMailDotComFrame = /<frame.*?src="(.*?)".*?name="mailcomframe".*?SCROLLING="AUTO">/;
-const patternMailDotComCompose = /document.location.href='(.*?compose.*?)'/i;
+const patternMailDotComComposeButtonForm = /<form.*?>.*?<input type="button".*?compose.*?>.*?<\/form>/igm;
+const patternMailDotComSMTPInput = /<input.*?>/igm;
+const patternMailDotComComposerURI = /onclick="document.location.href='(.*?compose.*?)';"/i
 const patternMailDotComComposeForm = /<form.*?composeForm.*?>[\s\S]*<\/form>/igm;
 const patternMailDotComAddURI = /document.location.href="(.*?)"/;
 const patternMailDotComAttachForm = /<form.*?attachmentForm.*?>[\s\S]*<\/form>/igm;
-
+const patternMailDotComFolders = /href="(.*?folders.mail.*?)"/;
 
 /******************************  MailDotCom ***************************************/
 function nsMailDotComSMTP()
@@ -49,7 +51,7 @@ function nsMailDotComSMTP()
         this.m_BeforeAdsCallback = null;
         this.m_iStage = 0;
         this.m_szComposeURI = null;
-        this.m_szLocationURI = null;  
+        this.m_szLocation = null;  
         this.m_bAttHandled = false;
         this.m_Email = new email(this.m_Log);
         this.m_Email.decodeBody(true);
@@ -149,7 +151,7 @@ nsMailDotComSMTP.prototype =
                 this.m_Log.Write("nsMailDotCom.js - logIN - szFolderList - " +this.m_szFolderList);    
                 
                 //get folder list
-                this.m_iStage =4;
+                this.m_iStage =3;
                 this.m_bReEntry = true;
                 this.m_HttpComms.setURI(this.m_szFolderList);
                 this.m_HttpComms.setRequestMethod("GET");
@@ -320,10 +322,32 @@ nsMailDotComSMTP.prototype =
                     
                     mainObject.m_szLocation = httpChannel.URI.prePath 
                     mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - location "+ mainObject.m_szLocation);
-                    var szComposer = szResponse.match(patternMailDotComCompose)[1];
-                    mainObject.m_szComposeURI =  mainObject.m_szLocation + szComposer;
-                    mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - composer "+ mainObject.m_szComposeURI);
-                 
+                        
+                    
+                    //get composer uri
+                    var aszComposerForm = szResponse.match(patternMailDotComComposeButtonForm);
+                    mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - aszComposerForm "+ aszComposerForm);
+                    var aInputs = aszComposerForm[0].match(patternMailDotComSMTPInput);
+                    mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - aInputs "+ aInputs);
+                    var szComposer = null;
+                    for (i=0; i<aInputs.length; i++)
+                    {
+                        mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - Input "+ aInputs[i]); 
+                        if (aInputs[i].search(/compose/)!=-1)
+                        {
+                            szComposer = aInputs[i].match(patternMailDotComComposerURI)[1];
+                            mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - szComposer "+ szComposer);
+                            mainObject.m_szComposeURI =  mainObject.m_szLocation + szComposer;
+                            mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - composer "+ mainObject.m_szComposeURI);
+                        }
+                    }
+                    
+                    //get folder uri
+                    var szFolder = szResponse.match(patternMailDotComFolders)[1];
+                    mainObject.m_szFolderList =  mainObject.m_szLocation + szFolder;
+                    mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - folders "+ mainObject.m_szFolderList);
+                  
+                  
                     //server response
                     mainObject.serverComms("235 Your In\r\n");
                     mainObject.m_bAuthorised = true;
@@ -478,23 +502,23 @@ nsMailDotComSMTP.prototype =
                             else if (szName.search(/^to$/i)!=-1)
                             {
                                 var szTo = mainObject.m_Email.headers.getTo(); 
-                                mainObject.m_HttpComms.addValuePair(szName, (szTo? szTo : ""));
+                                mainObject.m_HttpComms.addValuePair(szName, (szTo? escape(szTo) : ""));
                              }
                             else if (szName.search(/^cc$/i)!=-1)
                             {
                                 var szCc = mainObject.m_Email.headers.getCc();
-                                mainObject.m_HttpComms.addValuePair(szName, (szCc? szCc : ""));
+                                mainObject.m_HttpComms.addValuePair(szName, (szCc? escape(szCc) : ""));
                             }
                             else if (szName.search(/^bcc$/i)!=-1)
                             {
                                 var szBCC = mainObject.getBcc(szTo, szCc);
-                                mainObject.m_HttpComms.addValuePair(szName, (szBCC? szBCC : ""));
+                                mainObject.m_HttpComms.addValuePair(szName, (szBCC? escape(szBCC) : ""));
                             }
                             else if (szName.search(/subject/i)!=-1)
                             {
                                 var szSubject = mainObject.m_Email.headers.getSubject(); 
                                 mainObject.m_HttpComms.addValuePair(szName,
-                                            (szSubject? encodeURIComponent(szSubject) : "%20"));     
+                                            (szSubject? escape(szSubject) : "%20"));     
                             }
                             else if (szName.search(/emailcomposer/i)!=-1 || 
                                      szName.search(/advancededitor/i)!=-1 ||
@@ -535,7 +559,8 @@ nsMailDotComSMTP.prototype =
                             mainObject.m_SessionData.oComponentData = componentData;
                         }
                         mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
-                        mainObject.m_SessionData.oComponentData.addElement("szHomeURI",mainObject.m_szHomeURI);
+                        mainObject.m_SessionData.oComponentData.addElement("szLocation",mainObject.m_szLocation);
+                        mainObject.m_SessionData.oComponentData.addElement("szFolderList", mainObject.m_szFolderList);
                         mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);
                         
                         mainObject.serverComms("250 OK\r\n");
@@ -848,7 +873,7 @@ nsMailDotComSMTP.prototype =
     
     escapeStr : function(szMSG)
     {
-        var szEncode = encodeURIComponent(szMSG);
+        var szEncode = escape(szMSG);
         szEncode = szEncode.replace(/%20/gm,"+"); //replace space
         return szEncode;
     },
