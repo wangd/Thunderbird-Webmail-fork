@@ -462,15 +462,15 @@ HotmailSMTPScreenRipperBETA.prototype =
                     mainObject.m_HttpComms.addValuePair("SendMessage","Send");
                     
                     var szTo = mainObject.m_Email.headers.getTo();
-                    var szValue = szTo? encodeURIComponent(szTo):"";
+                    var szValue = szTo? escape(szTo):"";
                     mainObject.m_HttpComms.addValuePair("fTo",szValue);
                     
                     var szSubject = mainObject.m_Email.headers.getSubject(); 
-                    szValue = szSubject? encodeURIComponent(szSubject) : "%20";
+                    szValue = szSubject? escape(szSubject) : "%20";
                     mainObject.m_HttpComms.addValuePair("fSubject",szValue); 
                     
                     var szTxtBody = mainObject.m_Email.txtBody.body.getBody();
-                    mainObject.m_HttpComms.addValuePair("fMessageBody",encodeURIComponent(szTxtBody));
+                    mainObject.m_HttpComms.addValuePair("fMessageBody",escape(szTxtBody));
                     
                     mainObject.m_HttpComms.setRequestMethod("POST");
                     var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);      

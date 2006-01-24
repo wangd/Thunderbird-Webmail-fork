@@ -422,24 +422,24 @@ HotmailSMTPScreenRipper.prototype =
                         if (szName.search(/^to$/i)!=-1|| szName.search(/^encodedto$/i)!=-1) 
                         {
                             var szTo = mainObject.m_Email.headers.getTo();
-                            szValue = szTo? encodeURIComponent(szTo):"";
+                            szValue = szTo? escape(szTo):"";
                         }
                         else if (szName.search(/^cc$/i)!=-1|| szName.search(/^encodedcc$/i)!=-1) 
                         {
                             var szCc = mainObject.m_Email.headers.getCc();
-                            szValue = szCc? encodeURIComponent(szCc):"";
+                            szValue = szCc? escape(szCc):"";
                         }
                         else if (szName.search(/^bcc$/i)!=-1 || szName.search(/^encodedbcc$/i)!=-1) 
                         {
                             var szTo = mainObject.m_Email.headers.getTo();
                             var szCc = mainObject.m_Email.headers.getCc();
                             var szBcc = mainObject.getBcc(szTo, szCc);
-                            szValue = szBcc? encodeURIComponent(szBcc):"";
+                            szValue = szBcc? escape(szBcc):"";
                         }
                         else if (szName.search(/subject/i)!=-1)
                         {   
                             var szSubject = mainObject.m_Email.headers.getSubject(); 
-                            szValue = szSubject? encodeURIComponent(szSubject) : "%20";
+                            szValue = szSubject? escape(szSubject) : "%20";
                         }
                         else if (szName.search(/outgoing/i)!=-1)
                         {
@@ -453,7 +453,7 @@ HotmailSMTPScreenRipper.prototype =
                         mainObject.m_HttpComms.addValuePair(szName,szValue);
                     }
                     
-                    mainObject.m_HttpComms.addValuePair("body",encodeURIComponent(szTxtBody));
+                    mainObject.m_HttpComms.addValuePair("body",escape(szTxtBody));
                     mainObject.m_HttpComms.setRequestMethod("POST");
                     var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);      
                     if (!bResult) throw new Error("httpConnection returned false");
