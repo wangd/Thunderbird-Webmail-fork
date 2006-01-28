@@ -1,0 +1,10 @@
+<?xml version = "1.0" ?>
+
+<overlay id = "AOL-Start"
+         xmlns = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    
+    <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
+    <script type="application/x-javascript" src="chrome://web-mail/content/common/CommonPrefs.js"/>
+    <script type="application/x-javascript" src="chrome://aol/content/AOL.js"/>
+       
+</overlay> 

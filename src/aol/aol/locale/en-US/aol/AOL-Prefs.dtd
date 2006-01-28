@@ -1,0 +1,4 @@
+<!ENTITY Options.szTitle "AOL / Netscape Options">
+<!ENTITY POP.Panel.szTitle "POP">
+<!ENTITY SMTP.Panel.szTitle "SMTP">
+<!ENTITY Window.size "width: 27em; height: 20em">

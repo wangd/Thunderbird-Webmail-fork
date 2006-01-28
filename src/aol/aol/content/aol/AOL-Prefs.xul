@@ -1,0 +1,30 @@
+<?xml version="1.0"?> 
+
+<?xml-stylesheet href="chrome://global/skin/global.css"?>
+<?xml-stylesheet href="chrome://messenger/skin/preferences/preferences.css"?>
+<?xml-stylesheet href="chrome://mozapps/content/preferences/preferences.css"?>
+
+<?xml-stylesheet href="chrome://aol/content/AOL-Prefs.css" type="text/css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://aol/locale/AOL-Prefs.dtd">
+
+
+<prefwindow type="prefwindow"
+            id="WebMail-Prefs"
+            title="&Options.szTitle;"
+            xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+            style="&Window.size;"
+            lastSelected = "paneWebDav"
+            buttons="accept, cancel">
+    
+    <!-- pop --> 
+    <prefpane id="panePOP" 
+              label="&POP.Panel.szTitle;"
+              src="chrome://aol/content/AOL-Prefs-POP.xul"/>
+              
+    <!-- SMTP --> 
+    <prefpane id="paneSMTP" 
+              label="&SMTP.Panel.szTitle;"
+              src="chrome://aol/content/AOL-Prefs-SMTP.xul"/>  
+                  
+</prefwindow>

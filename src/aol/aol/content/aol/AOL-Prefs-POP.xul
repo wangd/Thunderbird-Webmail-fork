@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/global.css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://aol/locale/AOL-Prefs-POP.dtd">
+
+
+<overlay id="panePOPOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+           
+    <prefpane id = "panePOP" onpaneload= "" flex="1"> 
+        
+        <preferences>
+            <preference id="useJunkMail" name="aol.bUseJunkMail" type="bool"/>
+            <preference id="DownloadUnread" name="aol.bDownloadUnread" type="bool"/>
+        </preferences>
+        
+        <vbox>
+                
+            <!--download junk mail-->
+            <checkbox label="&JunkMail.Label;" 
+                      accesskey="&JunkMail.AccessKey;"
+                      preference = "useJunkMail"
+                      id="chkJunkMail"/>
+                      
+            <!--download unread emails only-->
+            <checkbox label="&DownloadUnread.Label;" 
+                      accesskey="&DownloadUnread.AccessKey;"
+                      preference = "DownloadUnread"
+                      id="chkDownloadUnread"/> 
+
+            
+            <spacer flex="2"/>          
+        </vbox>   
+        
+    </prefpane>
+    
+</overlay>
+
+

@@ -1,0 +1,49 @@
+<?xml version="1.0"?> 
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?> 
+<?xml-stylesheet href="chrome://aol/content/AOL-About.css" type="text/css"?> 
+
+<!DOCTYPE dialog SYSTEM "chrome://AOL/locale/AOL-About.dtd">
+
+<window class="dialog"
+        title= "&AOLAbout.Title;"
+        orient="vertical"
+        autostretch="always"
+        onload="gAOLAbout.init();sizeToContent()"
+        onunload ="gAOLAbout.stop()"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        id = "AOLAboutDialog">
+     
+    <stringbundleset>
+	   <stringbundle id="stringsAOLAbout" src="chrome://AOL/locale/AOL-About.properties"/>
+	</stringbundleset>
+	
+    <script type="application/x-javascript" src="chrome://AOL/content/AOL-About.js"/>
+        
+    <groupbox align="center" orient="horizontal">
+        <vbox>
+            <hbox>
+                <spacer flex="1"/>
+                <image id="AOLImage"/>
+                <spacer flex="1"/>
+            </hbox>
+            <!--<text value="&AOLAbout.ExtName;" id = "AOLName"/>-->
+            <text value="&AOLAbout.ExtVersion;" id = "AOLVersion"/>
+            <text value="&AOLAbout.ExtDescription;" id = "AOLDescription"/>
+            <text value="&AOLAbout.ExtCreaterTitle;" id = "AOLCreatorLabel"/>
+            <hbox>
+                <image id="LionImage"/>
+                <text value="&AOLAbout.ExtCreator;" class = "AOLCreatorText"/>
+            </hbox>
+            <text value="&AOLAbout.ExtContributorTitle;" id = "AOLContributorLabel"/>
+            <vbox flex="1" id="AOLContributorBox"/>
+            <text value="&AOLAbout.ExtHome;" 
+                  id = "AOLHomePage"
+                  onclick="window.opener.openURL('&AOLAbout.ExtHomeURL;');"/>
+        </vbox>
+    </groupbox>
+
+    <hbox>
+        <spacer flex="1"/>
+        <button label="&AOLAbout.ExtButton;" oncommand="window.close();"/>
+    </hbox>
+</window>
