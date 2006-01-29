@@ -347,7 +347,7 @@ nsLycos.prototype =
                         mainObject.m_HttpComms.addData(LycosMailSchema,"text/xml");
                         var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler);                             
                         if (!bResult) throw new Error("httpConnection returned false");
-                        mainObject.m_bJunkMail= true;
+                        mainObject.m_bJunkMail = true;
                     }
                     else
                     {   
@@ -455,8 +455,14 @@ nsLycos.prototype =
             data.szMSGUri = rawData.match(LycosHref)[1]; //uri
             data.iSize = parseInt(rawData.match(LycosSize)[1]);//size 
             this.m_iTotalSize += data.iSize;
-            data.bJunkFolder = this.m_bJunkMail;
             
+            //set junk mail status
+            if (this.m_szJunkMailURI)
+            {
+                if(data.szMSGUri.search(this.m_szJunkMailURI)!=-1)
+                   data.bJunkFolder = true;
+            }
+                       
             var szTO="";
             try
             {                   

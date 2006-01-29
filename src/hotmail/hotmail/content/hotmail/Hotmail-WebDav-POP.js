@@ -401,7 +401,16 @@ HotmailWebDav.prototype =
             var szHref = rawData.match(patternHotmailPOPHref)[1];
             this.m_Log.Write("HotmailWebDav.js - processItem - href - "+ szHref);
             oMSG.szMSGUri = szHref;
-            oMSG.bJunkFolder = this.m_bJunkMail;                          
+            
+            //set junk mail status
+            if (this.m_szJunkMailURI)
+            {
+                if(szHref.search(this.m_szJunkMailURI)!=-1)
+                    oMSG.bJunkFolder = true;
+            }
+                
+            this.m_Log.Write("HotmailWebDav.js - processItem - oMSG.bJunkFolder - "+ oMSG.bJunkFolder);           
+           
             //size 
             var iSize = parseInt(rawData.match(patternHotmailPOPSize)[1]);
             this.m_Log.Write("HotmailWebDav.js - processItem - size - "+ iSize);
@@ -591,7 +600,8 @@ HotmailWebDav.prototype =
             this.m_Log.Write("HotmailWebDav.js - getMessage - msg id" + szMsgID); 
         
             this.m_bJunkMail = oMSG.bJunkFolder;
-            
+            this.m_Log.Write("HotmailWebDav.js - getMessage - m_bJunkMail" + this.m_bJunkMail); 
+              
             //get email
             this.m_HttpComms.clean();
             this.m_HttpComms.setContentType(-1);
