@@ -68,6 +68,7 @@ function nsYahoo()
         this.m_aDeleteData = new Array();
         this.m_iTotalSize = 0;
         this.m_szHeader = null;  
+        this.m_iMSGCount = 0;  
         this.m_szMsgID = null;  
         this.m_szBox = null;
         this.m_bJunkFolder = false;
@@ -889,7 +890,37 @@ nsYahoo.prototype =
             
             var szUri = httpChannel.URI.spec;
             mainObject.m_Log.Write("m_YahooLog.js - emailOnloadHandler - uri : " + szUri); 
-        
+            mainObject.m_HttpComms.clean();
+            mainObject.m_HttpComms.addRequestHeader("User-Agent", 
+                            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5",
+                            true);
+            
+            //Content-Type: text/html  == very bad
+            try
+            {
+                var szContetnType =  httpChannel.getResponseHeader("Content-Type");
+                mainObject.m_Log.Write("m_YahooLog.js - emailOnloadHandler - szContetnType "+szContetnType);   
+                if (szContetnType.search(/text\/html/i)!=-1)
+                {
+                    mainObject.m_Log.Write("m_YahooLog.js - emailOnloadHandler - error download msg");   
+                    if (mainObject.m_iMSGCount == 1) 
+                    {
+                        throw new Error("download failed"); 
+                    }
+                    else//try again
+                    {
+                        mainObject.m_iMSGCount = 1;        
+                        mainObject.m_HttpComms.setURI(szUri);
+                        mainObject.m_HttpComms.setRequestMethod("GET");
+                        var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler); 
+                        if (!bResult) throw new Error("httpConnection returned false");
+                        return;
+                    }
+                }
+                mainObject.m_iMSGCount = 0; 
+            }
+            carch(err)
+            
             
             switch(mainObject.m_iStage)
             {
