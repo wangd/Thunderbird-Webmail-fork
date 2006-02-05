@@ -351,7 +351,7 @@ Comms.prototype =
             //add cookies
             if (this.m_bHandleCookie && this.m_oCookies)
             {   
-                var aszCookie = this.m_oCookies.findCookie(szDomain);
+                var aszCookie = this.m_oCookies.findCookie(this.m_URI);
                 this.m_Log.Write("comms.js - send - adding cookies "+ aszCookie);
                 if (aszCookie)
                     HttpRequest.setRequestHeader("Cookie", aszCookie, false);
@@ -599,7 +599,7 @@ Comms.prototype =
                         mainObject.m_oCookies = Components.classes["@mozilla.org/CookieManager;1"].createInstance();
                         mainObject.m_oCookies.QueryInterface(Components.interfaces.nsICookieManager);
                     }
-                    mainObject.m_oCookies.addCookie(szCookies); 
+                    mainObject.m_oCookies.addCookie( httpChannel.URI, szCookies); 
                 }
                 catch(e)
                 {
