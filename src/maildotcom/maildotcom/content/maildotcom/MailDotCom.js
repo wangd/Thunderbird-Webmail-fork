@@ -137,4 +137,38 @@ var gMailDotComStartUp =
         
         this.m_Log.Write("MailDotCom.js : idCheck - END");
     },
+    
+    
+    windowCount : function()
+    {
+        try
+        {
+            this.m_Log.Write("MailDotCom.js : windowCount - START");
+            
+            var iWindowCount = 0;
+            var winman = Components.classes["@mozilla.org/appshell/window-mediator;1"];
+            winman = winman.getService(Components.interfaces.nsIWindowMediator);
+            var e = winman.getEnumerator(null);
+  
+            while (e.hasMoreElements()) 
+            {
+                var win = e.getNext();
+                win.QueryInterface(Components.interfaces.nsIDOMWindowInternal);
+                var szValue = win.document.documentElement.getAttribute("id");
+                this.m_Log.Write("Yahoo.js : windowCount - "+ szValue);
+                
+                if (szValue =="messengerWindow")iWindowCount++;   
+            }
+            
+            this.m_Log.Write("MailDotCom.js : windowCount - "+ iWindowCount +" END ");
+            return iWindowCount;
+        }
+        catch(e)
+        {
+            this.m_Log.DebugDump("MailDotCom.js : Exception in shutDown " 
+                                            + e.name 
+                                            + ".\nError message: " 
+                                            + e.message);
+        }
+    },
 };
