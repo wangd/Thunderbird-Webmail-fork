@@ -20,10 +20,26 @@ var gLycosStartUp =
                                       "lycos");
                                             
             this.m_Log.Write("Lycos.js : init - START");
-        
+                     
+            var iCount = this.windowCount();
+            if (iCount >1) 
+            {
+                this.m_Log.Write("Lycos.js : - another window - END");
+                return;
+            }
+              
                          
-            this.m_DomainManager = Components.classes["@mozilla.org/DomainManager;1"].
-                                     getService().QueryInterface(Components.interfaces.nsIDomainManager);
+            try
+            {
+                this.m_DomainManager = Components.classes["@mozilla.org/DomainManager;1"].
+                                       getService().
+                                       QueryInterface(Components.interfaces.nsIDomainManager);
+            }
+            catch(err)
+            {
+                window.removeEventListener("load", function() {gYahooStartUp.init();} , false);
+                throw new Error("Domain Manager Not Found");
+            }  
            
             this.m_Timer = Components.classes["@mozilla.org/timer;1"]
                                             .createInstance(Components.interfaces.nsITimer); 

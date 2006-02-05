@@ -20,10 +20,26 @@ var gYahooStartUp =
                                             
             this.m_Log.Write("Yahoo.js : YahooStartUp - START");
         
+            var iCount = this.windowCount();
+            if (iCount >1) 
+            {
+                this.m_Log.Write("Yahoo.js : - another window - END");
+                return;
+            }
+              
                          
-            this.m_DomainManager = Components.classes["@mozilla.org/DomainManager;1"].
-                                     getService().QueryInterface(Components.interfaces.nsIDomainManager);
-           
+            try
+            {
+                this.m_DomainManager = Components.classes["@mozilla.org/DomainManager;1"].
+                                       getService().
+                                       QueryInterface(Components.interfaces.nsIDomainManager);
+            }
+            catch(err)
+            {
+                window.removeEventListener("load", function() {gYahooStartUp.init();} , false);
+                throw new Error("Domain Manager Not Found");
+            }
+            
             this.m_Timer = Components.classes["@mozilla.org/timer;1"]
                                             .createInstance(Components.interfaces.nsITimer); 
             this.m_Timer.initWithCallback(this, 
@@ -75,8 +91,8 @@ var gYahooStartUp =
             this.idCheck("talk21.com", "POP", cszYahooContentID); 
             this.idCheck("btinternet.com", "POP" ,cszYahooContentID); 
             this.idCheck("btopenworld.com", "POP" ,cszYahooContentID);         
-           
-           
+            this.idCheck("yahoo.com.sg", "POP" ,cszYahooContentID);
+
             this.idCheck("yahoo.com","SMTP",cszYahooSMTPContentID);                  
             this.idCheck("yahoo.es","SMTP", cszYahooSMTPContentID);
             this.idCheck("yahoo.se","SMTP", cszYahooSMTPContentID);
@@ -92,7 +108,7 @@ var gYahooStartUp =
             this.idCheck("talk21.com", "SMTP", cszYahooSMTPContentID); 
             this.idCheck("btinternet.com", "SMTP" ,cszYahooSMTPContentID); 
             this.idCheck("btopenworld.com", "SMTP" ,cszYahooSMTPContentID);    
-            
+            this.idCheck("yahoo.com.sg", "SMTP" ,cszYahooSMTPContentID);
                         
             this.m_Log.Write("Yahoo.js : TimerCallback - END");
         }
@@ -130,5 +146,40 @@ var gYahooStartUp =
         }
         
         this.m_Log.Write("Yahoo.js : idCheck - END");
+    },
+    
+    
+    
+    windowCount : function()
+    {
+        try
+        {
+            this.m_Log.Write("Yahoo.js : windowCount - START");
+            
+            var iWindowCount = 0;
+            var winman = Components.classes["@mozilla.org/appshell/window-mediator;1"];
+            winman = winman.getService(Components.interfaces.nsIWindowMediator);
+            var e = winman.getEnumerator(null);
+  
+            while (e.hasMoreElements()) 
+            {
+                var win = e.getNext();
+                win.QueryInterface(Components.interfaces.nsIDOMWindowInternal);
+                var szValue = win.document.documentElement.getAttribute("id");
+                this.m_Log.Write("Yahoo.js : windowCount - "+ szValue);
+                
+                if (szValue =="messengerWindow")iWindowCount++;   
+            }
+            
+            this.m_Log.Write("Yahoo.js : windowCount - "+ iWindowCount +" END ");
+            return iWindowCount;
+        }
+        catch(e)
+        {
+            this.m_Log.DebugDump("Yahoo.js : Exception in shutDown " 
+                                            + e.name 
+                                            + ".\nError message: " 
+                                            + e.message);
+        }
     },
 };

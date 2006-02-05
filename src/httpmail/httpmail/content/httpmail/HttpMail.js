@@ -20,6 +20,14 @@ var gHttpMailStartUp =
                                       "httpmail");
                                             
             this.m_Log.Write("HttpMail.js : init - START");
+             
+            var iCount = this.windowCount();
+            if (iCount >1) 
+            {
+                this.m_Log.Write("MailDotCom.js : - another window - END");
+                return;
+            } 
+             
               
             try
             {             
@@ -28,7 +36,8 @@ var gHttpMailStartUp =
             }
             catch(err)
             {
-                return false;
+                window.removeEventListener("load", function() {gYahooStartUp.init();} , false);
+                throw new Error("Domain Manager Not Found");
             }
             
             this.m_Timer = Components.classes["@mozilla.org/timer;1"]

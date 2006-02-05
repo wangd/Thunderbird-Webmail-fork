@@ -21,8 +21,25 @@ var gHotmailStartUp =
             this.m_Log.Write("Hotmail.js : init - START");
         
                          
-            this.m_DomainManager = Components.classes["@mozilla.org/DomainManager;1"].
-                                     getService().QueryInterface(Components.interfaces.nsIDomainManager);
+            var iCount = this.windowCount();
+            if (iCount >1) 
+            {
+                this.m_Log.Write("Hotmail.js : - another window - END");
+                return;
+            }
+              
+                         
+            try
+            {
+                this.m_DomainManager = Components.classes["@mozilla.org/DomainManager;1"].
+                                       getService().
+                                       QueryInterface(Components.interfaces.nsIDomainManager);
+            }
+            catch(err)
+            {
+                window.removeEventListener("load", function() {gYahooStartUp.init();} , false);
+                throw new Error("Domain Manager Not Found");
+            }  
            
             this.m_Timer = Components.classes["@mozilla.org/timer;1"]
                                             .createInstance(Components.interfaces.nsITimer); 
