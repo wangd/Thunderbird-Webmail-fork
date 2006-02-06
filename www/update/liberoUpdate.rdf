@@ -5,20 +5,20 @@
     <RDF:Description about="urn:mozilla:extension:{c4a93b40-3528-11da-8cd6-0800200c9a66}">
         <em:updates>
             <RDF:Seq>
-                <RDF:li resource="urn:mozilla:extension:{c4a93b40-3528-11da-8cd6-0800200c9a66}:0.9.0"/>
+                <RDF:li resource="urn:mozilla:extension:{c4a93b40-3528-11da-8cd6-0800200c9a66}:0.9.0b"/>
             </RDF:Seq>
         </em:updates>
     </RDF:Description>
     
-    <RDF:Description about="urn:mozilla:extension:{c4a93b40-3528-11da-8cd6-0800200c9a66:0.9.0">
-        <em:version>0.9.0</em:version>
+    <RDF:Description about="urn:mozilla:extension:{c4a93b40-3528-11da-8cd6-0800200c9a66:0.9.0b">
+        <em:version>0.9.0b</em:version>
         <!-- Thunderbird updates -->
     	<em:targetApplication>
         	<Description>
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
             	<em:minVersion>1.4</em:minVersion>
             	<em:maxVersion>1.6</em:maxVersion>
-                <em:updateLink>http://download.mozdev.org/webmail/Libero-v0.9.0a.xpi</em:updateLink>
+                <em:updateLink>http://download.mozdev.org/webmail/Libero-v0.9.0b.xpi</em:updateLink>
                 <em:updateHash>sha256:d5d382e5c0dbff40340cba6a7c3d08ab0d539803dbb67cdc68c011be96edec31</em:updateHash>
           </Description>
         </em:targetApplication>
