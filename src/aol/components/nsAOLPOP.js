@@ -15,10 +15,13 @@ const patternAOLHost = /gPreferredHost.*?"(.*?)";/i;
 const patternAOLPath = /gSuccessPath.*?"(.*?)";/i;
 const patternAOLHostCheck = /gHostCheckPath.*?"(.*?)"/i;
 const patternAOLTarget = /gTargetHost.*?"(.*?)"/i;
-const patternAOLMSGList = /MessageList\.aspx/i;
+const patternAOLMSGList = /gMessageButtonVisibility/i;
 const patternAOLVersion =/var VERSION="(.*?)"/i;
 const patternAOLUserID =/uid:(.*?)&/i;
-
+const patternAOLPageNum = /info.pageCount\s=\s(.*?);/i;
+const patternAOLMSGSender = /^fa[\s\S].*$/gmi;
+const patternAOLMSGData = /MI.*?\)/igm;
+const patternAOLURLPageNum = /page=(.*?)&/i;
 
 /***********************  AOL ********************************/
 
@@ -56,8 +59,14 @@ function nsAOL()
         this.m_szHomeURI = null;
         this.m_szUserId = null;
         this.m_szVersion = null;
+        this.m_szLocation = null;
         this.m_bReEntry = false;
         this.m_szAOLMail = null;
+        this.m_iPageNum = -1;
+        this.m_iCurrentPage = 1;
+        this.m_bJunkMailDone = false;
+        this.m_aMsgDataStore = new Array();
+        this.m_iTotalSize = 0;
         
         this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"];
         this.m_SessionManager = this.m_SessionManager.getService();
@@ -196,9 +205,12 @@ nsAOL.prototype =
             
             //if this fails we've gone somewhere new
             mainObject.m_Log.Write("nsAOL.js - loginOnloadHandler - status :" +httpChannel.responseStatus );
-            if (httpChannel.responseStatus != 200) 
-                throw new Error("return status " + httpChannel.responseStatus);
-    
+            if (httpChannel.responseStatus != 200)
+            { 
+                if (mainObject.m_iStage!=5)
+                    throw new Error("return status " + httpChannel.responseStatus);
+            }
+            
             mainObject.m_HttpComms.clean();
             
              //page code                                
@@ -247,10 +259,10 @@ nsAOL.prototype =
                         if (aLoginData[i].search(/type="hidden"/i)!=-1)
                         {
                             var szName=aLoginData[i].match(patternAOLName)[1];
-                            mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - loginData name " + szName);
+                            mainObject.m_Log.Write("nsAOL.js - loginOnloadHandler - loginData name " + szName);
                             
                             var szValue = aLoginData[i].match(patternAOLValue)[1];
-                            mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - loginData value " + szValue);
+                            mainObject.m_Log.Write("nsAOL.js - loginOnloadHandler - loginData value " + szValue);
                         
                             mainObject.m_HttpComms.addValuePair(szName,(szValue? encodeURIComponent(szValue):""));
                          }
@@ -289,13 +301,13 @@ nsAOL.prototype =
                 break;
                 
                 case 4://get host
-                    var szHost = szResponse.match(patternAOLHost)[1];
-                    if (szHost == null)
+                    mainObject.m_szHostURL = szResponse.match(patternAOLHost)[1];
+                    if (mainObject.m_szHostURL == null)
                         throw new Error("error parsing AOL login web page");
                     mainObject.m_SuccessPath = szResponse.match(patternAOLPath)[1];
                     var szCheck = szResponse.match(patternAOLHostCheck)[1];
-                    var szURL = "http://" + szHost + szCheck;
-                    
+                    var szURL = "http://" + mainObject.m_szHostURL + szCheck;
+                               
                     mainObject.m_HttpComms.setURI(szURL);
                     mainObject.m_HttpComms.setRequestMethod("GET");
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);      
@@ -303,12 +315,12 @@ nsAOL.prototype =
                     mainObject.m_iStage++;
                 break;
                 
-                case 5://get mail box
+                case 5://get mail box                   
                     mainObject.m_szHostURL = szResponse.match(patternAOLTarget)[1];
                     mainObject.m_Log.Write("nsAOL.js - loginOnloadHandler - m_szHostURL " +mainObject.m_szHostURL);
                     if (mainObject.m_szHostURL == null)
                         throw new Error("error parsing AOL login web page");
-                        
+                   
                     var szURL = "http://" + mainObject.m_szHostURL + mainObject.m_SuccessPath;
                     mainObject.m_szHomeURI = szURL;
                     
@@ -339,13 +351,13 @@ nsAOL.prototype =
                         else
                             throw new Error("error logging in");
                     }
-                    
+                      
                     mainObject.m_szVersion = szResponse.match(patternAOLVersion)[1];
                     mainObject.m_Log.Write("nsAOL.js - loginOnloadHandler - szVersion " +mainObject.m_szVersion);
                     
                     var szDir = mainObject.m_SuccessPath.replace(/\/Mail\//i,"/rpc/");
-                    var szURL = "http://" + mainObject.m_szHostURL + szDir ;
-                    szURL += "GetMessageList.aspx?page=1";
+                    mainObject.m_szLocation = "http://" + mainObject.m_szHostURL + szDir ;
+                    var szURL = mainObject.m_szLocation + "GetMessageList.aspx?page=1";
                     var szData = "previousFolder=&stateToken=&newMailToken=&"
                     szData += "version="+ mainObject.m_szVersion +"&user="+ mainObject.m_szUserId;
                     
@@ -353,7 +365,7 @@ nsAOL.prototype =
                     mainObject.m_szInboxURL = szURL + "&folder=inbox&" + szData; ;
                     mainObject.m_Log.Write("nsAOL.js - loginOnloadHandler - m_szInboxURL " + mainObject.m_szInboxURL);
                     //spam   
-                    mainObject.m_szSpamURL = szURL + "&folder=spam&" + szData;      
+                    mainObject.m_szSpamURL = szURL + "&folder=Spam&" + szData;      
                     mainObject.m_Log.Write("nsAOL.js - loginOnloadHandler - m_szSpamURL " + mainObject.m_szSpamURL);
                     
                     //server response
@@ -387,6 +399,7 @@ nsAOL.prototype =
             if (this.m_szInboxURL== null) return false;
             this.m_Log.Write("nsAOL.js - getNumMessages - mail box url " + this.m_szInboxURL); 
             
+            this.m_iStage = 0;
             this.m_HttpComms.clean();
             this.m_HttpComms.setURI(this.m_szInboxURL);
             this.m_HttpComms.setRequestMethod("GET");
@@ -412,6 +425,97 @@ nsAOL.prototype =
         try
         {
             mainObject.m_Log.Write("nsAOL.js - mailBoxOnloadHandler - START"); 
+            
+            mainObject.m_Log.Write("nsAOL.js - mailBoxOnloadHandler : " + mainObject.m_iStage);  
+            
+            var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
+            
+            //if this fails we've gone somewhere new
+            mainObject.m_Log.Write("nsAOL.js - mailBoxOnloadHandler - status :" +httpChannel.responseStatus );
+            if (httpChannel.responseStatus != 200)
+                throw new Error("return status " + httpChannel.responseStatus);
+             
+            mainObject.m_HttpComms.clean();
+        
+                           
+            //process page
+            var aszMSGDetails = szResponse.match(patternAOLMSGData);
+            mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - aszMSGDetails : " + aszMSGDetails);
+            
+            var aszSenderAddress = szResponse.match(patternAOLMSGSender);
+            mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - aszSenderAddress : " + aszSenderAddress);
+            
+            if (aszMSGDetails)    
+            {
+                for (i=0; i<aszMSGDetails.length; i++)
+                {
+                    var MSGData = new AOLMSG();
+                    var aTempData = aszMSGDetails[i].match(/\((.*?)\)/)[1].split(/,/);
+                    mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - aTempData : " + aTempData);
+                    MSGData.iID = aTempData[0].match(/"(.*?)"/)[1]; //ID
+                    MSGData.szSubject = aTempData[2].match(/"(.*?)"/)[1]; //Subject
+                    MSGData.iDate = parseInt(aTempData[3]) //Subject
+                    MSGData.iSize = parseInt(aTempData[4]); //size
+    
+                    //sender
+                    var aTempData2= aszSenderAddress[i].match(/\((.*?)\)/)[1].split(/,/);
+                    mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - aTempData2 : " + aTempData2);
+                    MSGData.szFrom = aTempData2[0].match(/"(.*?)"/)[1];
+                    
+                    MSGData.szTo = mainObject.m_szUserName;//me
+                    MSGData.bJunkFolder = mainObject.m_bJunkMailDone; //junkmail
+                    
+                    mainObject.m_aMsgDataStore.push(MSGData);
+                    mainObject.m_iTotalSize += MSGData.iSize;
+                }
+            }
+
+            //next page
+            //get number of pages
+            if (mainObject.m_iPageNum == -1)
+            {
+                var szPageNum = szResponse.match(patternAOLPageNum)[1];
+                mainObject.m_Log.Write("nsAOL.js - mailBoxOnloadHandler - szPageNum " + szPageNum);
+                mainObject.m_iPageNum =  parseInt(szPageNum);
+            }   
+            
+            //get current page number
+            var szLocation = httpChannel.URI.spec;
+            mainObject.m_Log.Write("nsAOL - mailBoxOnloadHandler - url : " + szLocation);
+            var szCurrentPage = szLocation.match(patternAOLURLPageNum)[1];
+            mainObject.m_Log.Write("nsAOL - mailBoxOnloadHandler - szCurrentPage : " + szCurrentPage);
+            var iCurrentPage =  parseInt(szCurrentPage);
+            
+            if(iCurrentPage < mainObject.m_iPageNum)
+            {
+                var szNextPage = szLocation.replace(/page.*?&/,"page="+(iCurrentPage+1)+"&");
+                mainObject.m_HttpComms.setURI(szNextPage);
+                mainObject.m_HttpComms.setRequestMethod("GET");
+                var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler); 
+                if (!bResult) throw new Error("httpConnection returned false");
+            }
+            else
+            {
+                if (!mainObject.m_bJunkMailDone && mainObject.m_bUseJunkMail && mainObject.m_szSpamURL)
+                { //get junkmail
+                    mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - junkmail: " + mainObject.m_bUseJunkMail); 
+                    
+                    mainObject.m_bJunkMailDone = true;
+                    mainObject.m_iPageNum = -1; //reset page count
+                                       
+                    mainObject.m_HttpComms.setURI(mainObject.m_szSpamURL);
+                    mainObject.m_HttpComms.setRequestMethod("GET");
+                    var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler); 
+                    if (!bResult) throw new Error("httpConnection returned false");
+                }
+                else  //all uri's collected
+                {
+                   mainObject.serverComms("+OK "+ mainObject.m_aMsgDataStore.length + " " 
+                                                + mainObject.m_iTotalSize + "\r\n");
+                }
+            }
+
+
             mainObject.m_Log.Write("nsAOL.js - mailBoxOnloadHandler - END");
         }
         catch(err)
@@ -473,13 +577,10 @@ nsAOL.prototype =
             var szPOPResponse = "+OK " + this.m_aMsgDataStore.length + " Messages\r\n";
             for (i = 0; i <  this.m_aMsgDataStore.length; i++)
             {
-                var szEmailURL = this.m_aMsgDataStore[i].szMSGUri;
-                this.m_Log.Write("nsAOL.js - getMessageIDs - Email URL : " +szEmailURL);
-               
-                var szEmailID = szEmailURL.match(LycosMSGIDPattern);
-                                    
-                this.m_Log.Write("nsAOL.js - getMessageIDs - IDS : " +szEmailID);    
-                szPOPResponse+=(i+1) + " " + szEmailID + "\r\n"; 
+                var iEmailID = this.m_aMsgDataStore[i].iID;
+                this.m_Log.Write("nsAOL.js - getMessageIDs - Email URL : " +iEmailID);
+                                                  
+                szPOPResponse+=(i+1) + " " + iEmailID + "\r\n"; 
             }         
             szPOPResponse += ".\r\n";
             this.serverComms(szPOPResponse);           
@@ -516,7 +617,8 @@ nsAOL.prototype =
             szHeaders += "To: "+ oMSG.szTo +"\r\n";
             szHeaders += "From: "+ oMSG.szFrom +"\r\n";
             szHeaders += "Subject: "+ oMSG.szSubject +"\r\n";
-            szHeaders += "Date: " + oMSG.szDate +"\r\n"; // \r\n";
+            var date = new Date(oMSG.iDate);
+            szHeaders += "Date: " +  date +"\r\n"; // \r\n";
             szHeaders = szHeaders.replace(/^\./mg,"..");    //bit padding 
             szHeaders += "\r\n.\r\n";//msg end 
              
@@ -550,8 +652,17 @@ nsAOL.prototype =
                                  
             //get msg id
             var oMSG = this.m_aMsgDataStore[lID-1];
-            var szMsgID = oMSG.szMSGUri;
-            this.m_Log.Write("nsAOL.js - getMessage - msg id" + szMsgID); 
+            var szURL = mainObject.m_szLocation + "GetMessage.aspx?";
+            szURL +=  "folder=" + oMSG.bJunkFolder?"Spam":"Inbox" +"&";
+            szURL +=  "uid=" + oMSG.iID +"&";
+            szURL += "version="+ this.m_szVersion +"&";
+            szURL += "user="+ this.m_szUserId;
+            
+            this.m_HttpComms.clean();
+            this.m_HttpComms.setURI(szURL);
+            this.m_HttpComms.setRequestMethod("GET");
+            var bResult = this.m_HttpComms.send(this.emailOnloadHandler); 
+            if (!bResult) throw new Error("httpConnection returned false");
            
             this.m_Log.Write("nsAOL.js - getMessage - END"); 
             return true;
@@ -637,7 +748,7 @@ nsAOL.prototype =
         try
         {
             this.m_Log.Write("nsAOL.js - logOUT - START"); 
-            
+            /*
             if (!this.m_SessionData)
             {
                 this.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
@@ -653,7 +764,7 @@ nsAOL.prototype =
             this.m_SessionData.oComponentData.addElement("szUserId",this.m_szUserId);
             this.m_SessionData.oComponentData.addElement("szVersion",this.m_szVersion);
             this.m_SessionManager.setSessionData(this.m_SessionData);
-           
+           */
             this.m_bAuthorised = false;
             this.serverComms("+OK Your Out\r\n");        
             
