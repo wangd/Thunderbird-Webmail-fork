@@ -14,4 +14,6 @@ AOLMSG.prototype.szFrom = null;
 
 AOLMSG.prototype.szSubject = null;
 
-AOLMSG.prototype.szDate = null;
+AOLMSG.prototype.iDate = -1;
+
+AOLMSG.prototype.iID = -1;
