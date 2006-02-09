@@ -65,8 +65,11 @@ function nsAOL()
         this.m_iPageNum = -1;
         this.m_iCurrentPage = 1;
         this.m_bJunkMailDone = false;
+        this.m_bJunkMail = false;
         this.m_aMsgDataStore = new Array();
         this.m_iTotalSize = 0;
+        this.m_szMSG = null;
+        this.iID = -1;
         
         this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"];
         this.m_SessionManager = this.m_SessionManager.getService();
@@ -652,12 +655,14 @@ nsAOL.prototype =
                                  
             //get msg id
             var oMSG = this.m_aMsgDataStore[lID-1];
-            var szURL = mainObject.m_szLocation + "GetMessage.aspx?";
-            szURL +=  "folder=" + oMSG.bJunkFolder?"Spam":"Inbox" +"&";
-            szURL +=  "uid=" + oMSG.iID +"&";
-            szURL += "version="+ this.m_szVersion +"&";
+            this.m_bJunkMail = oMSG.bJunkFolder;
+            this.iID = oMSG.iID;
+            var szURL = this.m_szLocation.replace(/rpc/,"Mail") + "rfc822.aspx?";
+            szURL += "folder=" + (this.m_bJunkMail?"Spam":"Inbox") +"&";
+            szURL += "uid=" + oMSG.iID +"&";
             szURL += "user="+ this.m_szUserId;
             
+            this.m_iStage = 0;
             this.m_HttpComms.clean();
             this.m_HttpComms.setURI(szURL);
             this.m_HttpComms.setRequestMethod("GET");
@@ -683,7 +688,45 @@ nsAOL.prototype =
     {
         try
         {
-            mainObject.m_Log.Write("nsAOL.js - emailOnloadHandler - START");         
+            mainObject.m_Log.Write("nsAOL.js - emailOnloadHandler - START"); 
+            
+            var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
+            mainObject.m_Log.Write("nsAOL.js - emailOnloadHandler - msg :" + httpChannel.responseStatus);
+                       
+            //check status should be 200.
+            if (httpChannel.responseStatus != 200) 
+                throw new Error("error status " + httpChannel.responseStatus);           
+            
+            switch(mainObject.m_iStage)
+            {
+                case 0:
+                    mainObject.m_szMSG = "X-WebMail: true\r\n";
+                    mainObject.m_szMSG += "X-JunkFolder: " + (mainObject.m_bJunkMail? "true":"false")+ "\r\n";
+                    mainObject.m_szMSG += szResponse.replace(/^\./mg,"..");    //bit padding   
+                    mainObject.m_szMSG += "\r\n.\r\n";       
+                    
+                    var szURL = mainObject.m_szLocation + "MessageAction.aspx?";
+                    szURL += "folder=" + (mainObject.m_bJunkMail?"Spam":"Inbox") +"&";
+                    szURL += "uid=" + mainObject.iID +"&";
+                    szURL += "user="+ mainObject.m_szUserId +"&";
+                    szURL += "version="+ mainObject.m_szVersion +"&";
+                    szURL += "action=seen";
+                    
+                    mainObject.m_HttpComms.clean();
+                    mainObject.m_HttpComms.setURI(szURL);
+                    mainObject.m_HttpComms.setRequestMethod("GET");
+                    var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler); 
+                    if (!bResult) throw new Error("httpConnection returned false");
+                    mainObject.m_iStage++;
+                break;
+               
+                case 1:
+                    var szPOPResponse = "+OK " +  mainObject.m_szMSG.length + "\r\n";                  
+                    szPOPResponse += mainObject.m_szMSG;
+            
+                    mainObject.serverComms(szPOPResponse);
+                break;
+            }
             mainObject.m_Log.Write("nsAOL.js - emailOnloadHandler - end"); 
         }
         catch(err)
