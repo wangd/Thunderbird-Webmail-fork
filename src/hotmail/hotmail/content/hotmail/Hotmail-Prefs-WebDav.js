@@ -42,10 +42,17 @@ var gWebDavPane =
                 var szHostName = currentServer.hostName;
                 this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : getUserNameList - HostName " + szHostName);
                 
+                
                 if (szHostName.search(/localhost/i)!=-1 || szHostName.search(/127\.0\.0\.1/)!=-1 )
                 {
                     var szUserName = currentServer.username;
                     this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : getUserNameList - userName " + szUserName);
+                    if (szUserName.search(/@/)==-1) 
+                    {
+                        szUserName = currentServer.realUsername ;
+                        this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : getUserNameList - realuserName " + szUserName);
+                    }
+                    
                     if (szUserName.search(/msn/i)!=-1 || szUserName.search(/hotmail/i)!= -1)
                     {
                         this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : getUserNameList - userName added");
