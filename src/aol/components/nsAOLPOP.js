@@ -163,7 +163,13 @@ nsAOL.prototype =
                 this.m_szUserId = this.m_SessionData.oComponentData.findElement("szUserId");
                 this.m_Log.Write("nsAOL.js - logIN - m_szUserId " +this.m_szUserId);   
                 this.m_szVersion = this.m_SessionData.oComponentData.findElement("m_szVersion");
-                this.m_Log.Write("nsAOL.js - logIN - m_szVersion " +this.m_szVersion);   
+                this.m_Log.Write("nsAOL.js - logIN - m_szVersion " +this.m_szVersion);      
+                this.m_SuccessPath = this.m_SessionData.oComponentData.findElement("szSuccessPath");
+                this.m_Log.Write("nsAOL.js - logIN - .m_SuccessPath " +this.m_SuccessPath); 
+                this.m_szHostURL = this.m_SessionData.oComponentData.findElement("szHostURL");
+                this.m_Log.Write("nsAOL.js - logIN - .m_szHostURL" +this.m_szHostURL); 
+                this.m_szLocation = this.m_SessionData.oComponentData.findElement("szLocation");
+                this.m_Log.Write("nsAOL.js - logIN - .m_szLocation" +this.m_szLocation);
                 
                 //get home page
                 this.m_iStage =6;
@@ -452,24 +458,36 @@ nsAOL.prototype =
             {
                 for (i=0; i<aszMSGDetails.length; i++)
                 {
-                    var MSGData = new AOLMSG();
+                   
                     var aTempData = aszMSGDetails[i].match(/\((.*?)\)/)[1].split(/,/);
-                    mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - aTempData : " + aTempData);
-                    MSGData.iID = aTempData[0].match(/"(.*?)"/)[1]; //ID
-                    MSGData.szSubject = aTempData[2].match(/"(.*?)"/)[1]; //Subject
-                    MSGData.iDate = parseInt(aTempData[3]) //Subject
-                    MSGData.iSize = parseInt(aTempData[4]); //size
-    
-                    //sender
-                    var aTempData2= aszSenderAddress[i].match(/\((.*?)\)/)[1].split(/,/);
-                    mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - aTempData2 : " + aTempData2);
-                    MSGData.szFrom = aTempData2[0].match(/"(.*?)"/)[1];
+                    mainObject.m_Log.Write("AOL - mailBoxOnloadHandler - aTempData : " + aTempData);
                     
-                    MSGData.szTo = mainObject.m_szUserName;//me
-                    MSGData.bJunkFolder = mainObject.m_bJunkMailDone; //junkmail
+                    var bRead = false;
+                    if (mainObject.m_bDownloadUnread)
+                    {
+                        bRead = parseInt(aTempData[7]); //unread
+                        mainObject.m_Log.Write("AOL.js - mailBoxOnloadHandler - bRead -" + bRead);
+                    }
                     
-                    mainObject.m_aMsgDataStore.push(MSGData);
-                    mainObject.m_iTotalSize += MSGData.iSize;
+                    if (!bRead)
+                    {
+                        var MSGData = new AOLMSG();
+                        MSGData.iID = aTempData[0].match(/"(.*?)"/)[1]; //ID
+                        MSGData.szSubject = aTempData[2].match(/"(.*?)"/)[1]; //Subject
+                        MSGData.iDate = parseInt(aTempData[3]) //Subject
+                        MSGData.iSize = parseInt(aTempData[4]); //size
+        
+                        //sender
+                        var aTempData2= aszSenderAddress[i].match(/\((.*?)\)/)[1].split(/,/);
+                        mainObject.m_Log.Write("AOL - mailBoxOnloadHandler - aTempData2 : " + aTempData2);
+                        MSGData.szFrom = aTempData2[0].match(/"(.*?)"/)[1];
+                        
+                        MSGData.szTo = mainObject.m_szUserName;//me
+                        MSGData.bJunkFolder = mainObject.m_bJunkMailDone; //junkmail
+                        
+                        mainObject.m_aMsgDataStore.push(MSGData);
+                        mainObject.m_iTotalSize += MSGData.iSize;
+                    }
                 }
             }
 
@@ -707,11 +725,12 @@ nsAOL.prototype =
                     
                     var szURL = mainObject.m_szLocation + "MessageAction.aspx?";
                     szURL += "folder=" + (mainObject.m_bJunkMail?"Spam":"Inbox") +"&";
-                    szURL += "uid=" + mainObject.iID +"&";
-                    szURL += "user="+ mainObject.m_szUserId +"&";
+                    szURL += "action=seen&";
                     szURL += "version="+ mainObject.m_szVersion +"&";
-                    szURL += "action=seen";
-                    
+                    szURL += "uid=" + mainObject.iID +"&";
+                    szURL += "version="+ mainObject.m_szVersion +"&";
+                    szURL += "user="+ mainObject.m_szUserId;
+                                       
                     mainObject.m_HttpComms.clean();
                     mainObject.m_HttpComms.setURI(szURL);
                     mainObject.m_HttpComms.setRequestMethod("GET");
@@ -749,6 +768,25 @@ nsAOL.prototype =
         {
             this.m_Log.Write("nsAOL.js - deleteMessage - START");  
             this.m_Log.Write("nsAOL.js - deleteMessage - id " + lID );
+            
+            //get msg id
+            var oMSG = this.m_aMsgDataStore[lID-1];
+            this.m_bJunkMail = oMSG.bJunkFolder;
+            this.iID = oMSG.iID;
+            var szURL = this.m_szLocation + "MessageAction.aspx?";
+            szURL += "folder=" + (this.m_bJunkMail?"Spam":"Inbox") +"&";
+            szURL += "action=delete&";
+            szURL += "version="+ this.m_szVersion +"&";
+            szURL += "uid=" + oMSG.iID +"&";
+            szURL += "user="+ this.m_szUserId;
+            
+            this.m_iStage = 0;
+            this.m_HttpComms.clean();
+            this.m_HttpComms.setURI(szURL);
+            this.m_HttpComms.setRequestMethod("GET");
+            var bResult = this.m_HttpComms.send(this.emailOnloadHandler); 
+            if (!bResult) throw new Error("httpConnection returned false");
+
             this.m_Log.Write("nsAOL.js - deleteMessage - END");     
             return true;
         }
@@ -770,6 +808,13 @@ nsAOL.prototype =
         try
         {
             mainObject.m_Log.Write("nsAOL.js - deleteMessageOnloadHandler - START");
+            
+            //check status should be 200.
+            if (httpChannel.responseStatus != 200) 
+                throw new Error("error status " + httpChannel.responseStatus);  
+            
+            mainObject.serverComms("+OK its history\r\n"); 
+            
             mainObject.m_Log.Write("nsAOL.js - deleteMessageOnloadHandler - END");
         }
         catch(err)
@@ -791,7 +836,7 @@ nsAOL.prototype =
         try
         {
             this.m_Log.Write("nsAOL.js - logOUT - START"); 
-            /*
+            
             if (!this.m_SessionData)
             {
                 this.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
@@ -805,9 +850,12 @@ nsAOL.prototype =
             this.m_SessionData.oCookieManager = this.m_HttpComms.getCookieManager();
             this.m_SessionData.oComponentData.addElement("szHomeURI",this.m_szHomeURI);
             this.m_SessionData.oComponentData.addElement("szUserId",this.m_szUserId);
-            this.m_SessionData.oComponentData.addElement("szVersion",this.m_szVersion);
+            this.m_SessionData.oComponentData.addElement("szSuccessPath", this.m_SuccessPath);
+            this.m_SessionData.oComponentData.addElement("szHostURL",this.m_szHostURL);
+            this.m_SessionData.oComponentData.addElement("szLocation",this.m_szLocation);
+ 
             this.m_SessionManager.setSessionData(this.m_SessionData);
-           */
+           
             this.m_bAuthorised = false;
             this.serverComms("+OK Your Out\r\n");        
             
