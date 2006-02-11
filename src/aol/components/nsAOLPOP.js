@@ -162,7 +162,7 @@ nsAOL.prototype =
                 this.m_Log.Write("nsAOL.js - logIN - m_szHomeURI " +this.m_szHomeURI);
                 this.m_szUserId = this.m_SessionData.oComponentData.findElement("szUserId");
                 this.m_Log.Write("nsAOL.js - logIN - m_szUserId " +this.m_szUserId);   
-                this.m_szVersion = this.m_SessionData.oComponentData.findElement("m_szVersion");
+                this.m_szVersion = this.m_SessionData.oComponentData.findElement("szVersion");
                 this.m_Log.Write("nsAOL.js - logIN - m_szVersion " +this.m_szVersion);      
                 this.m_SuccessPath = this.m_SessionData.oComponentData.findElement("szSuccessPath");
                 this.m_Log.Write("nsAOL.js - logIN - .m_SuccessPath " +this.m_SuccessPath); 
@@ -850,6 +850,7 @@ nsAOL.prototype =
             this.m_SessionData.oCookieManager = this.m_HttpComms.getCookieManager();
             this.m_SessionData.oComponentData.addElement("szHomeURI",this.m_szHomeURI);
             this.m_SessionData.oComponentData.addElement("szUserId",this.m_szUserId);
+            this.m_SessionData.oComponentData.addElement("szVersion",this.m_szVersion);
             this.m_SessionData.oComponentData.addElement("szSuccessPath", this.m_SuccessPath);
             this.m_SessionData.oComponentData.addElement("szHostURL",this.m_szHostURL);
             this.m_SessionData.oComponentData.addElement("szLocation",this.m_szLocation);
