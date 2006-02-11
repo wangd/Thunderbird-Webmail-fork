@@ -1,0 +1,4 @@
+<!ENTITY AccountWizard.Label "Přidat WebMail do Průvodce vytvořením nového účtu">
+<!ENTITY AccountWizard.AccessKey "P">
+<!ENTITY AccountWizardWarning.Label "Vyžaduje povolení zápisu do instalační složky Thunderbirdu.">
+<!ENTITY Restart.Label "Je vyžadováno restartovat Thunderbird pro změnu nastavení.">

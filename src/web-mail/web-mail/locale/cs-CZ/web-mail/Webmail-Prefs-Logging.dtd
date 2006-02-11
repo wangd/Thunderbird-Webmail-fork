@@ -1,0 +1,12 @@
+<!ENTITY GeneralLogging.Label "Povolit logování">
+<!ENTITY GeneralLogging.AccessKey "P">
+<!ENTITY JavaScriptConsole.Label "Použít konzolu JavaScriptu">
+<!ENTITY JavaScriptConsole.AccessKey "J">
+<!ENTITY LogFile.Label "Použít logovací soubor">
+<!ENTITY LogFile.AccessKey "l">
+<!ENTITY Location.Label "Umístění">
+<!ENTITY Location.AccessKey "U">
+<!ENTITY Note.Label "Tyto logy obsahují údaje o přihlašovacích jménech a heslech.">
+<!ENTITY Restart.Label "Je vyžadováno restartovat Thunderbird pro změnu nastavení.">
+<!ENTITY Button.Label "Procházet...">
+<!ENTITY Button.AccessKey "r">

@@ -1,10 +1,10 @@
-<!ENTITY WebmailAbout.Title "Webmail - À propos">
+<!ENTITY WebmailAbout.Title "À propos de Webmail">
 <!ENTITY WebmailAbout.ExtName "Web Mail">
-<!ENTITY WebmailAbout.ExtVersion "version 0.9.1">
+<!ENTITY WebmailAbout.ExtVersion "version 0.9.2">
 <!ENTITY WebmailAbout.ExtDescription "Accéder aux comptes webmails depuis Thunderbird.">
 <!ENTITY WebmailAbout.ExtCreaterTitle "Créée par :">
 <!ENTITY WebmailAbout.ExtCreator "ComodoDragon">
-<!ENTITY WebmailAbout.ExtHome "Page d'acceuil">
+<!ENTITY WebmailAbout.ExtHome "Page d'accueil">
 <!ENTITY WebmailAbout.ExtHomeURL "Visiter la page d'accueil">
 <!ENTITY WebmailAbout.ExtButton "Fermer">
 <!ENTITY WebmailAbout.ExtContributorTitle "Contributeurs :">

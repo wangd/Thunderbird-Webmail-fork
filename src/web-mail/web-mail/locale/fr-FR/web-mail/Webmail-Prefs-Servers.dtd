@@ -15,11 +15,11 @@
 <!ENTITY Enable.POP.Label "Activer le serveur POP">
 <!ENTITY Enable.POP.AccessKey "P">
 <!ENTITY Enable.SMTP.Label "Activer le serveur SMTP">
-<!ENTITY Enable.SMTP.AccessKey "T">
+<!ENTITY Enable.SMTP.AccessKey "S">
 <!ENTITY Enable.IMAP.Label "Activer le serveur IMAP">
 <!ENTITY Enable.IMAP.AccessKey "M">
 <!ENTITY Enable.Label "Activer">
-<!ENTITY Enable.AccessKey "E">
+<!ENTITY Enable.AccessKey "A">
 <!ENTITY Status.Label "État">
-<!ENTITY Status.AccessKey "u">
+<!ENTITY Status.AccessKey "t">
 <!ENTITY StatusBox.size "width: 6em;">
