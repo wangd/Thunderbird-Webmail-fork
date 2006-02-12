@@ -1,5 +1,5 @@
 /*****************************  Globals   *************************************/                 
-const nsDataBaseManagerClassID = Components.ID("{75874110-09e5-11da-8cd6-0800200c9a66}");
+const nsDataBaseManagerClassID = Components.ID("{fe1d7e50-9c0b-11da-a746-0800200c9a66}");
 const nsDataBaseManagerContactID = "@mozilla.org/DataBaseManager;1";
 
 const cCurrentDBVersion = 1;
@@ -56,19 +56,23 @@ nsDataBaseManager.prototype =
             this.m_Log.Write("nsDataBaseManager.js - getDBVersion - START");
             
             var iVersion = -1;
-            var szVersion = "SELECT version FROM webmail_schema_version LIMIT 1";
-            var select = null;
             
             try 
             {
-                select = this.createDBQuery(szVersion);
-                if (select.step()) iVersion = select.row.version;
+                var szVersion = "SELECT version FROM webmail_schema_version LIMIT 1";
+                var statement = this.m_dbConn.createStatement(szVersion);
+            
+                var wStatement = Components.classes['@mozilla.org/storage/statement-wrapper;1];
+                wStatement = wStatement.createInstance(Components.interfaces.mozIStorageStatementWrapper);
+                wStatement.initialize(statement);
+           
+                if (wStatement.step()) iVersion = wStatement.row.version;
+                if (wStatement) wStatement.reset();
             } 
             catch (e) 
             { 
                 iVersion = -1;
             }
-            if (select) select.reset();
             
             this.m_Log.Write("nsDataBaseManager.js - getDBVersion - "+ iVersion);   
             this.m_Log.Write("nsDataBaseManager.js - getDBVersion - END"); 
@@ -92,25 +96,33 @@ nsDataBaseManager.prototype =
         {
             this.m_Log.Write("nsDataBaseManager.js - createDB - START");
              
+            //version table
             var szSQL = "CREATE TABLE webmail_schema_version (version INTEGER);";
             this.m_dbConn.executeSimpleSQL(szSQL);
             szSQL = "INSERT INTO webmail_schema_version VALUES(1);";
             this.m_dbConn.executeSimpleSQL(szSQL); 
             
+            //Users
+            szSQL = "CREATE TABLE webmail_user (user_id INTEGER PRIMARY KEY, user_name TEXT);";
+            this.m_dbConn.executeSimpleSQL(szSQL); 
+
+            //IMAP Folders
             szSQL ="CREATE TABLE webmail_folders (folder_hierarchy STRING, folder_id INTEGER PRIMARY KEY, folder_name STRING, user_id INTEGER);";
             this.m_dbConn.executeSimpleSQL(szSQL); 
             
+            //IMAP Messages
             szSQL = "CREATE TABLE webmail_message (attachment BOOLEAN, date TEXT, delete_msg BOOLEAN, folder_id INTEGER, sender STRING, href TEXT, msg_id INTEGER PRIMARY KEY, read BOOLEAN, size INTEGER, subject TEXT, time TEXT, recipient TEXT, user_id INTEGER);";
             this.m_dbConn.executeSimpleSQL(szSQL); 
             
+            //IMAP Subscribed folders
             szSQL = "CREATE TABLE webmail_subscribe_list (folder_name STRING, user_id INTEGER);";
             this.m_dbConn.executeSimpleSQL(szSQL); 
+                        
+            //Domains
+            //Cookies
+            //Authentication
+            //Session Data
             
-            szSQL = "CREATE TABLE webmail_user (user_id INTEGER PRIMARY KEY, user_name TEXT);";
-            this.m_dbConn.executeSimpleSQL(szSQL); 
-            
-           
-                                  
             this.m_Log.Write("nsDataBaseManager.js - createDB - END");
         }
         catch(err)
@@ -146,45 +158,21 @@ nsDataBaseManager.prototype =
         }
     },
     
-    
-    createDBQuery : function (query)
+    getDBConnection : function ()
     {
-        try
-        {
-            this.m_Log.Write("nsDataBaseManager.js - createDBQuery - START");
-                      
-            var statement = this.m_dbConn.createStatement(query);
-            
-            var wStatement = Components.classes["@mozilla.org/storage/statement-wrapper;1"];
-            wStatement = wStatement.createInstance(Components.interfaces.mozIStorageStatementWrapper);
-            wStatement.initialize(statement);
-                     
-            this.m_Log.Write("nsDataBaseManager.js - createDBQuery - END"); 
-            return wStatement;
-        }
-        catch(err)
-        {
-            this.m_Log.DebugDump("nsDataBaseManager.js: createDBQuery : Exception : " 
-                                          + err.name + 
-                                          "\nError message: " 
-                                          + err.message+"\n"
-                                          + err.lineNumber);
-            return null;
-        }
+        this.m_Log.Write("nsDataBaseManager.js - getDBConnection - " +this.m_dbConn );
+        return this.m_dbConn;   
     },
-    
     
     observe : function(aSubject, aTopic, aData) 
     {
         switch(aTopic) 
         {
             case "xpcom-startup":
-                // this is run very early, right after XPCOM is initialized, but before
-                // user profile information is applied. Register ourselves as an observer
-                // for 'profile-after-change' and 'quit-application'.
                 var obsSvc = Components.classes["@mozilla.org/observer-service;1"].
                                 getService(Components.interfaces.nsIObserverService);
                 obsSvc.addObserver(this, "profile-after-change", false);
+                obsSvc.addObserver(this, "quit-application", false);
                 
                 this.m_scriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                                         .getService(Components.interfaces.mozIJSSubScriptLoader); 
@@ -192,8 +180,6 @@ nsDataBaseManager.prototype =
             break;
             
             case "profile-after-change":
-                // This happens after profile has been loaded and user preferences have been read.
-                // startup code here
                 this.m_scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
                 this.m_Log = new DebugLog("webmail.logging.comms", 
                                           "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
@@ -203,6 +189,7 @@ nsDataBaseManager.prototype =
             break;
 
             case "quit-application": // shutdown code here
+                this.m_Log.Write("nsDataBaseManager : app quit");
             break;
         
             case "app-startup":
@@ -275,7 +262,7 @@ nsDataBaseManagerFactory.createInstance = function (outer, iid)
         throw Components.results.NS_ERROR_NO_AGGREGATION;
     
     if (!iid.equals(nsDataBaseManagerClassID) 
-                            && !iid.equals(Components.interfaces.nsISupports))
+            && !iid.equals(Components.interfaces.nsISupports))
         throw Components.results.NS_ERROR_INVALID_ARG;
     
     return new nsDataBaseManager();
@@ -292,26 +279,21 @@ nsDataBaseManagerModule.registerSelf = function(compMgr, fileSpec, location, typ
                         getService(Components.interfaces.nsICategoryManager);
         
     catman.addCategoryEntry("xpcom-startup", 
-                            "DataBase Manager", 
+                            "WebMail DataBase Manager", 
                             nsDataBaseManagerContactID, 
                             true, 
                             true);                     
                             
     catman.addCategoryEntry("app-startup", 
-                            "DataBase Manager", 
+                            "WebMail DataBase Manager", 
                             "service," + nsDataBaseManagerContactID, 
                             true, 
                             true);
-                            
-    catman.addCategoryEntry("xpcom-shutdown",
-                            "DataBase Manager", 
-                            nsDataBaseManagerContactID, 
-                            true, 
-                            true);  
-                            
+             
+                                                       
     compMgr = compMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
     compMgr.registerFactoryLocation(nsDataBaseManagerClassID,
-                                    "DataBase Manager",
+                                    "WebMail DataBase Manager", 
                                     nsDataBaseManagerContactID, 
                                     fileSpec,
                                     location, 
@@ -324,9 +306,8 @@ nsDataBaseManagerModule.unregisterSelf = function(aCompMgr, aFileSpec, aLocation
     var catman = Components.classes["@mozilla.org/categorymanager;1"].
                             getService(Components.interfaces.nsICategoryManager);
                             
-    catman.deleteCategoryEntry("xpcom-startup", "DataBase Manager", true);
-    catman.deleteCategoryEntry("app-startup", "DataBase Manager", true);
-    catman.deleteCategoryEntry("xpcom-shutdown", "DataBase Manager", true);
+    catman.deleteCategoryEntry("xpcom-startup", "WebMail DataBase Manager", , true);
+    catman.deleteCategoryEntry("app-startup", "WebMail DataBase Manager", true);
     
     aCompMgr = aCompMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
     aCompMgr.unregisterFactoryLocation(nsDataBaseManagerClassID, aFileSpec);

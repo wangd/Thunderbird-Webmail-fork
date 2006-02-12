@@ -1,8 +1,8 @@
 #include "nsISupports.idl"
-#include "mozIStorageStatementWrapper.idl"
+#include "mozIStorageConnection.idl"
 
-[scriptable, uuid(75874110-09e5-11da-8cd6-0800200c9a66)]
+[scriptable, uuid(fe1d7e50-9c0b-11da-a746-0800200c9a66)]
 interface nsIDataBaseManager : nsISupports
 {  
-    mozIStorageStatementWrapper createDBQuery (in string sqlCommand);
+    mozIStorageConnection dbConnection ();
 };

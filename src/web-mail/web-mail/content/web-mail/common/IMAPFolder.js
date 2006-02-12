@@ -1,20 +1,34 @@
-function IMAPFolder(errorLog)
+function IMAPFolder()
 {  
     try
     {
         var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                                   .getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-
-        this.m_Log = errorLog;
-        this.m_iID = -1;
+        
+        var date = new Date();
+        var  szLogFileName = "IMAPFolder Log - " + date.getHours()+ "-" + date.getMinutes() + "-"+ date.getUTCMilliseconds() +" -";
+        this.m_Log = new DebugLog("webmail.logging.comms", 
+                                  "{3c8e8390-2cf6-11d9-9669-0800200c9a66}" ,
+                                  szLogFileName); 
+         
+        this.m_Log.Write("IMAPFolder.js - Constructor - START");
+                        
+        this.m_DB = Components.classes["@mozilla.org/DataBaseManager;1"]
+                    .getService(Components.interfaces.nsIDataBaseManager);
+        this.m_DBCon = this.m_DB.dbBConnection();
+       
+        this.m_iUserID = -1;
+        
+        this.m_Log.Write("IMAPFolder.js - Constructor - END");
     }
     catch(e)
     {
-         DebugDump("FolderManager.js: Constructor : Exception : " 
+         this.m_Log.DebugDump("IMAPFolder.js: Constructor : Exception : " 
                                       + e.name 
                                       + ".\nError message: " 
-                                      + e.message);
+                                      + e.message + "\n" 
+                                      + e.lineNumber);
     }
 }
 
@@ -27,8 +41,32 @@ IMAPFolder.prototype =
         {
             this.m_Log.Write("IMAPFolder.js - setUserName - START");
             this.m_Log.Write("IMAPFolder.js - setUserName - "+szUserName);
+            
+            try
+            {                     
+                var szStatement = "SELECT user_id FROM webmail_user WHERE user_name=LOWER(?1) LIMIT 1"; 
+                var statement = this.m_DBCon.createStatement(szStatement);
+                statement.BindStringParameter(0, szUserName);
+            
+                var wrapState = Components.classes['@mozilla.org/storage/statement-wrapper;1'];
+                wrapState = wrapState.createInstance(Components.interfaces.mozIStorageStatementWrapper);
+                wrapState.initialize(statement);
+           
+                if (wrapState.step()) this.m_iUserID = wrapState.row.user_id;
+                if (wrapState) wrapState.reset();
+            }
+            catch(e)
+            {
+                this.m_Log.DebugDump("nsLycosIMAP.js: setUserName : Exception : "
+                                              + e.name + 
+                                              ".\nError message: " 
+                                              + e.message+ "\n"
+                                              + e.lineNumber);
+            }  
+                          
+            this.m_Log.Write("IMAPFolder.js - setUserName - " + this.m_iUserID);
             this.m_Log.Write("IMAPFolder.js - setUserName - END");
-            return this.m_iID ;     
+            return this.m_iUserID;     
         }
         catch(err)
         {
@@ -45,22 +83,11 @@ IMAPFolder.prototype =
     
     setUserId : function(iUserId)
     {
-        try
-        {
-            this.m_Log.Write("IMAPFolder.js - setUserId - START");
-            this.m_Log.Write("IMAPFolder.js - setUserId - "+iUserId);
-            this.m_Log.Write("IMAPFolder.js - setUserId - END");
-            return true;
-        }
-        catch(err)
-        {
-            this.m_Log.DebugDump("nsLycosIMAP.js: setUserId : Exception : "
-                                              + err.name + 
-                                              ".\nError message: " 
-                                              + err.message+ "\n"
-                                              + err.lineNumber);
-            return false;
-        }
+        this.m_Log.Write("IMAPFolder.js - setUserId - "+iUserId);
+        
+        this.m_iUserID = iUserId;
+        
+        return true
     },
     
     
