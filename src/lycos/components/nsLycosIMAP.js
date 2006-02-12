@@ -52,8 +52,9 @@ function nsLycosIMAP()
         this.m_szPassWord = null; 
         this.m_oResponseStream = null; 
         this.m_iTag = 0; 
-        this.m_oFolder = new IMAPFolder(this.m_Log);    
-        this.m_oMSG = new IMAPMSG(this.m_Log);    
+        this.m_oFolder = new IMAPFolder();    
+        this.m_oMSG = new IMAPMSG();
+        this.m_HttpComms = new Comms(this,this.m_Log);     
         this.m_bAuthorised = false;   
         this.m_iStage=0; 
         this.m_szFolderURI = null;
@@ -147,13 +148,12 @@ nsLycosIMAP.prototype =
             this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
             if (this.m_SessionData && this.m_bReUseSession)
             {
-                this.m_Log.Write("nsLycos.js - logIN - Session Data found");
+                this.m_Log.Write("nsLycosIMAP.js - logIN - Session Data found");
                 this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
                 this.m_HttpComms.setHttpAuthManager(this.m_SessionData.oHttpAuthManager); 
             }
             
-            var iUserID = this.m_oFolder.setUserName(this.m_szUserName);    
-            this.m_oMSG.setUserId(iUserID);  
+            this.m_oFolder.setUserName(this.m_szUserName);    
             this.m_HttpComms.setUserName(this.m_szUserName);
             this.m_HttpComms.setPassword(this.m_szPassWord);
             this.m_HttpComms.setContentType(-1);
