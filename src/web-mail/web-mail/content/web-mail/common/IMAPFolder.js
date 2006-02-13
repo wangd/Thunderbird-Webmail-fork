@@ -16,7 +16,7 @@ function IMAPFolder()
                         
         this.m_DB = Components.classes["@mozilla.org/DataBaseManager;1"]
                     .getService(Components.interfaces.nsIDataBaseManager);
-        this.m_DBCon = this.m_DB.dbBConnection();
+        this.m_DBCon = this.m_DB.dbConnection();
        
         this.m_iUserID = -1;
         
@@ -41,28 +41,25 @@ IMAPFolder.prototype =
         {
             this.m_Log.Write("IMAPFolder.js - setUserName - START");
             this.m_Log.Write("IMAPFolder.js - setUserName - "+szUserName);
-            
-            try
-            {                     
-                var szStatement = "SELECT user_id FROM webmail_user WHERE user_name=LOWER(?1) LIMIT 1"; 
-                var statement = this.m_DBCon.createStatement(szStatement);
-                statement.BindStringParameter(0, szUserName);
-            
-                var wrapState = Components.classes['@mozilla.org/storage/statement-wrapper;1'];
-                wrapState = wrapState.createInstance(Components.interfaces.mozIStorageStatementWrapper);
-                wrapState.initialize(statement);
-           
-                if (wrapState.step()) this.m_iUserID = wrapState.row.user_id;
-                if (wrapState) wrapState.reset();
-            }
-            catch(e)
+                            
+            var szStatement = "SELECT user_id FROM webmail_user WHERE user_name=LOWER(?1) LIMIT 1"; 
+            var statement = this.m_DBCon.createStatement(szStatement);
+            statement.bindStringParameter(0, szUserName);
+        
+            var wrapState = Components.classes['@mozilla.org/storage/statement-wrapper;1'];
+            wrapState = wrapState.createInstance(Components.interfaces.mozIStorageStatementWrapper);
+            wrapState.initialize(statement);
+       
+            if (wrapState.step()) 
             {
-                this.m_Log.DebugDump("nsLycosIMAP.js: setUserName : Exception : "
-                                              + e.name + 
-                                              ".\nError message: " 
-                                              + e.message+ "\n"
-                                              + e.lineNumber);
-            }  
+                this.m_iUserID = wrapState.row.user_id;
+            }
+            else
+            {
+                this.m_Log.Write("IMAPFolder.js - create new entry");
+            }
+            if (wrapState) wrapState.reset();
+            
                           
             this.m_Log.Write("IMAPFolder.js - setUserName - " + this.m_iUserID);
             this.m_Log.Write("IMAPFolder.js - setUserName - END");

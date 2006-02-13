@@ -1,5 +1,5 @@
 /*****************************  Globals   *************************************/                 
-const nsDataBaseManagerClassID = Components.ID("{fe1d7e50-9c0b-11da-a746-0800200c9a66}");
+const nsDataBaseManagerClassID = Components.ID("{345209e0-9c1c-11da-a746-0800200c9a66}");
 const nsDataBaseManagerContactID = "@mozilla.org/DataBaseManager;1";
 
 const cCurrentDBVersion = 1;
@@ -62,7 +62,7 @@ nsDataBaseManager.prototype =
                 var szVersion = "SELECT version FROM webmail_schema_version LIMIT 1";
                 var statement = this.m_dbConn.createStatement(szVersion);
             
-                var wStatement = Components.classes['@mozilla.org/storage/statement-wrapper;1];
+                var wStatement = Components.classes["@mozilla.org/storage/statement-wrapper;1"];
                 wStatement = wStatement.createInstance(Components.interfaces.mozIStorageStatementWrapper);
                 wStatement.initialize(statement);
            
@@ -158,7 +158,7 @@ nsDataBaseManager.prototype =
         }
     },
     
-    getDBConnection : function ()
+    dbConnection : function ()
     {
         this.m_Log.Write("nsDataBaseManager.js - getDBConnection - " +this.m_dbConn );
         return this.m_dbConn;   
@@ -306,7 +306,7 @@ nsDataBaseManagerModule.unregisterSelf = function(aCompMgr, aFileSpec, aLocation
     var catman = Components.classes["@mozilla.org/categorymanager;1"].
                             getService(Components.interfaces.nsICategoryManager);
                             
-    catman.deleteCategoryEntry("xpcom-startup", "WebMail DataBase Manager", , true);
+    catman.deleteCategoryEntry("xpcom-startup", "WebMail DataBase Manager",true);
     catman.deleteCategoryEntry("app-startup", "WebMail DataBase Manager", true);
     
     aCompMgr = aCompMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
