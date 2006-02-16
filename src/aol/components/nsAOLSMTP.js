@@ -19,7 +19,8 @@ const patternAOLTarget = /gTargetHost.*?"(.*?)"/i;
 const patternAOLMSGList = /gMessageButtonVisibility/i;
 const patternAOLVersion =/var VERSION="(.*?)"/i;
 const patternAOLUserID =/uid:(.*?)&/i;
-
+const patternAOLSend =/<form.*?name="SendForm".*?>[\s\S]*?<\/form>/igm;
+const patternAOLSendCheck = /parent.HandleSendSaveResponse/igm
 
 /******************************  AOL ***************************************/
 function nsAOLSMTP()
@@ -32,6 +33,7 @@ function nsAOLSMTP()
         scriptLoader.loadSubScript("chrome://web-mail/content/common/base64.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/comms.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/Email.js");
         
         var date = new Date();
         var  szLogFileName = "AOLSMTP Log - " + date.getHours()
@@ -59,7 +61,9 @@ function nsAOLSMTP()
         this.m_bReEntry = false;
         this.m_szAOLMail = null;
         this.m_szSendUri = null;  
-           
+        this.m_Email = new email(this.m_Log);
+        this.m_Email.decodeBody(true);
+         
         this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"];
         this.m_SessionManager = this.m_SessionManager.getService();
         this.m_SessionManager.QueryInterface(Components.interfaces.nsISessionManager); 
@@ -376,8 +380,26 @@ nsAOLSMTP.prototype =
             this.m_Log.Write("nsAOLSMTP.js - rawMSG - START");   
             this.m_Log.Write("nsAOLSMTP.js - rawMSG " + szEmail);
     
+            if (!this.m_Email.parse(szEmail))
+                throw new Error ("Parse Failed")
+                        
+            if (!this.m_Email.txtBody) 
+            {
+                var stringBundle =srGetStrBundle("chrome://aol/locale/AOL-SMTP.properties");
+                var szError = stringBundle.GetStringFromName("HtmlError");
+
+                this.serverComms("502 "+ szError + "\r\n");
+                return false;
+            }
+    
             this.m_iStage = 0;
-                       
+            var szComposer = this.m_szHomeURI + "compose-message.aspx"; 
+            this.m_Log.Write("nsAOLSMTP.js - rawMSG szComposer " + szComposer);
+            this.m_HttpComms.setURI(szComposer);
+            this.m_HttpComms.setRequestMethod("GET");
+            var bResult = this.m_HttpComms.send(this.composerOnloadHandler);                             
+            if (!bResult) throw new Error("httpConnection returned false");
+            
             this.m_Log.Write("nsAOLSMTP.js - rawMSG - END");    
             return true;
         }
@@ -410,6 +432,114 @@ nsAOLSMTP.prototype =
             if (httpChannel.responseStatus != 200) 
                 throw new Error("return status " + httpChannel.responseStatus);
            
+            mainObject.m_HttpComms.clean();
+        
+            switch(mainObject.m_iStage)
+            {
+                case 0: //MSG handler
+                    mainObject.m_Log.Write("nsAOLSMTP.js - composerOnloadHandler - Send MSG");
+                    
+                    var szForm = szResponse.match(patternAOLSend)[0];
+                    mainObject.m_Log.Write("nsAOLSMTP.js - composerOnloadHandler - Form " + szForm);
+                    
+                    var aszInput = szResponse.match(patternAOLInput);
+                    mainObject.m_Log.Write("nsAOLSMTP.js - composerOnloadHandler - aszInput " + aszInput);
+                    
+                    for (i=0; i< aszInput.length; i++)
+                    { 
+                        var szType = aszInput[i].match(patternAOLType)[1];
+                        mainObject.m_Log.Write("nsAOLSMTP.js - composerOnloadHandler - szType " + szType);
+                        
+                        if (szType.search(/button/i)==-1)
+                        {
+                            var szName = aszInput[i].match(patternAOLName)[1];
+                            mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Name " + szName); 
+                            
+                            var szValue = null; 
+                            if (szName.search(/upload/i)==-1)
+                            {
+                                if (szName.search(/user/i)!=-1) 
+                                    szValue = mainObject.m_szUserId;
+                                else if (szName.search(/From/i)!=-1) 
+                                    szValue = mainObject.m_szFrom;
+                                else if (szName.search(/PlainBody/i)!=-1) 
+                                    szValue = escape(mainObject.m_Email.txtBody.body.getBody());
+                                else if (szName.search(/^To/i)!=-1) 
+                                    szValue =  mainObject.m_Email.headers.getTo();
+                                else if (szName.search(/Cc/i)!=-1) 
+                                    szValue = mainObject.m_Email.headers.getCc();
+                                else if (szName.search(/bcc/i)!=-1)
+                                {
+                                    var szTo = mainObject.m_Email.headers.getTo();
+                                    var szCc = mainObject.m_Email.headers.getCc();
+                                    szValue = mainObject.getBcc(szTo, szCc);
+                                }
+                                else if (szName.search(/subject/i)!=-1)
+                                {
+                                    var szSub =  mainObject.m_Email.headers.getSubject();
+                                    szValue = szSub? escape(szSub) : "%20";
+                                } 
+                                else
+                                {
+                                    try
+                                    {
+                                        szValue = aszInput[i].match(patternAOLValue)[1];
+                                    }
+                                    catch(err)
+                                    {
+                                        szValue = "";
+                                    }
+                                }   
+                                
+                                mainObject.m_HttpComms.addValuePair(szName,szValue);  
+                            }
+                            else 
+                            {
+                                 mainObject.m_HttpComms.addFile(szName, "", ""); 
+                            }                     
+                        }
+                    }  
+                    
+                    mainObject.m_HttpComms.setContentType(1);
+                    var szAction = mainObject.m_szLocation + "SendMessage.aspx?version="+mainObject.m_szVersion;
+                    mainObject.m_HttpComms.setURI(szAction);
+                    mainObject.m_HttpComms.setRequestMethod("POST");
+                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);  
+                    if (!bResult) throw new Error("httpConnection returned false");
+                    mainObject.m_iStage = 1;
+                break;
+                
+                case 1: //MSG OK handler
+                    mainObject.m_Log.Write("nsAOLSMTP.js - composerOnloadHandler - MSG OK handler");
+                    
+                    if (szResponse.search(patternAOLSendCheck)==-1)
+                    {
+                        mainObject.m_Log.Write("nsAOLSMTP.js - composerOnloadHandler - check failed");
+                        mainObject.serverComms("502 Error Sending Email\r\n");    
+                        return; 
+                    }
+                    
+                    if (!mainObject.m_SessionData)
+                    {
+                        mainObject.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
+                        mainObject.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
+                        mainObject.m_SessionData.szUserName = mainObject.m_szUserName;
+                        
+                        var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
+                        componentData.QueryInterface(Components.interfaces.nsIComponentData);
+                        mainObject.m_SessionData.oComponentData = componentData;
+                    }
+                    mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
+                    mainObject.m_SessionData.oComponentData.addElement("szHomeURI",mainObject.m_szHomeURI);
+                    mainObject.m_SessionData.oComponentData.addElement("szUserId",mainObject.m_szUserId);
+                    mainObject.m_SessionData.oComponentData.addElement("szVersion",mainObject.m_szVersion);
+                    mainObject.m_SessionData.oComponentData.addElement("szSuccessPath", mainObject.m_SuccessPath);
+                    mainObject.m_SessionData.oComponentData.addElement("szHostURL",mainObject.m_szHostURL);
+                    mainObject.m_SessionData.oComponentData.addElement("szLocation",mainObject.m_szLocation);
+                        
+                    mainObject.serverComms("250 OK\r\n");
+                break;
+            };
             mainObject.m_Log.Write("nsAOLSMTP.js - composerOnloadHandler - END");
         }
         catch(err)
@@ -421,6 +551,54 @@ nsAOLSMTP.prototype =
                                             err.lineNumber);
                                             
             mainObject.serverComms("502 negative vibes from " +mainObject.m_szUserName +"\r\n");
+        }
+    },
+    
+    
+    
+    
+    getBcc : function (szTo,szCc)
+    {
+        try
+        {
+            this.m_Log.Write("nsAOLSMTP.js - getBcc - START");
+            if (this.m_aszTo.length==0) return null;
+            this.m_Log.Write("nsAOLSMTP.js - getBcc - szRcptList " + this.m_aszTo);  
+            
+            var szBcc = null;
+            var szAddress = null;
+            if (szTo) szAddress = szTo;
+            if (szCc) szAddress = (szTo ? (szAddress + ","+ szCc) : szCc);
+            this.m_Log.Write("nsAOLSMTP.js - getBcc - szAddress " + szAddress);
+           
+            if (!szAddress) 
+                szBcc = this.m_aszTo;
+            else
+            {     
+                for (j=0; j<this.m_aszTo.length; j++)
+                {
+                    var regExp = new RegExp(this.m_aszTo[j]);
+                    if (szAddress.search(regExp)==-1)
+                    {    
+                        szBcc? (szBcc += this.m_aszTo[j]) : (szBcc = this.m_aszTo[j]);
+                        szBcc +=",";
+                    }
+                }
+            }
+            this.m_Log.Write("nsAOLSMTP.js - getBcc szBcc- " + szBcc);
+            
+            this.m_Log.Write("nsAOLSMTP.js - getBcc - End");
+            return szBcc;  
+        }
+        catch(err)
+        {
+            this.m_Log.DebugDump("nsYahooSMTP.js: getBcc : Exception : " 
+                                                  + err.name 
+                                                  + ".\nError message: " 
+                                                  + err.message + "\n"
+                                                  + err.lineNumber);
+                                                  
+            return null;
         }
     },
     
