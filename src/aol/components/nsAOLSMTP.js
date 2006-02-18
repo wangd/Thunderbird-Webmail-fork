@@ -76,7 +76,8 @@ function nsAOLSMTP()
             this.m_bReUseSession=oPref.Value;
         else
             this.m_bReUseSession=true; 
-                          
+        
+        delete WebMailPrefAccess;                         
         this.m_Log.Write("nsAOLSMTP.js - Constructor - END");  
     }
     catch(e)
@@ -382,16 +383,7 @@ nsAOLSMTP.prototype =
     
             if (!this.m_Email.parse(szEmail))
                 throw new Error ("Parse Failed")
-                        
-            if (!this.m_Email.txtBody) 
-            {
-                var stringBundle =srGetStrBundle("chrome://aol/locale/AOL-SMTP.properties");
-                var szError = stringBundle.GetStringFromName("HtmlError");
-
-                this.serverComms("502 "+ szError + "\r\n");
-                return false;
-            }
-    
+                           
             this.m_iStage = 0;
             var szComposer = this.m_szHomeURI + "compose-message.aspx"; 
             this.m_Log.Write("nsAOLSMTP.js - rawMSG szComposer " + szComposer);
@@ -463,7 +455,26 @@ nsAOLSMTP.prototype =
                                 else if (szName.search(/From/i)!=-1) 
                                     szValue = mainObject.m_szFrom;
                                 else if (szName.search(/PlainBody/i)!=-1) 
-                                    szValue = escape(mainObject.m_Email.txtBody.body.getBody());
+                                {
+                                    if (mainObject.m_Email.txtBody)
+                                        szValue = mainObject.m_Email.txtBody.body.getBody();
+                                    else 
+                                        szValue ="";
+                                }
+                                else if (szName.search(/RichBody/i)!=-1)
+                                {
+                                    if (mainObject.m_Email.htmlBody)
+                                        szValue = mainObject.m_Email.htmlBody.body.getBody();
+                                    else
+                                        szValue ="";
+                                }
+                                else if (szName.search(/RichEdit/i)!=-1)
+                                {
+                                    if (mainObject.m_Email.htmlBody)
+                                        szValue = "1";
+                                    else 
+                                        szValue = "0";                                       
+                                }
                                 else if (szName.search(/^To/i)!=-1) 
                                     szValue =  mainObject.m_Email.headers.getTo();
                                 else if (szName.search(/Cc/i)!=-1) 
@@ -475,10 +486,7 @@ nsAOLSMTP.prototype =
                                     szValue = mainObject.getBcc(szTo, szCc);
                                 }
                                 else if (szName.search(/subject/i)!=-1)
-                                {
-                                    var szSub =  mainObject.m_Email.headers.getSubject();
-                                    szValue = szSub? escape(szSub) : "%20";
-                                } 
+                                    szValue = mainObject.m_Email.headers.getSubject();
                                 else
                                 {
                                     try
