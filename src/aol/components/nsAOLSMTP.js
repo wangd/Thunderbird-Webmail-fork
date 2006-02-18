@@ -63,6 +63,7 @@ function nsAOLSMTP()
         this.m_szSendUri = null;  
         this.m_Email = new email(this.m_Log);
         this.m_Email.decodeBody(true);
+        this.m_iAttCount = 0;
          
         this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"];
         this.m_SessionManager = this.m_SessionManager.getService();
@@ -503,7 +504,21 @@ nsAOLSMTP.prototype =
                             }
                             else 
                             {
-                                 mainObject.m_HttpComms.addFile(szName, "", ""); 
+                                if (mainObject.m_iAttCount < mainObject.m_Email.attachments.length)
+                                {
+                                     //headers
+                                    var oAttach = mainObject.m_Email.attachments[mainObject.m_iAttCount];
+                                    var szFileName = oAttach.headers.getContentType(4);
+                                    if (!szFileName) szFileName = "";
+                                  
+                                    //body
+                                    var szBody = oAttach.body.getBody();
+                                    mainObject.m_HttpComms.addFile(szName, szFileName, szBody);                                 
+                                    mainObject.m_iAttCount++;
+                                }
+                                else
+                                    mainObject.m_HttpComms.addFile(szName, "", ""); 
+                                    
                             }                     
                         }
                     }  
