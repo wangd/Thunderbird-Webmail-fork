@@ -478,7 +478,7 @@ nsAOLSMTP.prototype =
                                 }
                                 else if (szName.search(/^To/i)!=-1) 
                                     szValue =  mainObject.m_Email.headers.getTo();
-                                else if (szName.search(/Cc/i)!=-1) 
+                                else if (szName.search(/^Cc/i)!=-1) 
                                     szValue = mainObject.m_Email.headers.getCc();
                                 else if (szName.search(/bcc/i)!=-1)
                                 {
