@@ -13,14 +13,16 @@ var gAOLAbout =
         var aszNames = szContributors.split(";");
         var list = document.getElementById("AOLContributorBox");
         
-        this.m_Timer = Components.classes["@mozilla.org/timer;1"];
-        this.m_Timer = this.m_Timer.createInstance(Components.interfaces.nsITimer); 
-        
-        if (aszNames.length > this.m_iElementCount)
-            this.createDeck(list, aszNames);
-        else
-            this.createList(list, aszNames);  
-        
+        if (szContributors.length != 0)
+        {
+            this.m_Timer = Components.classes["@mozilla.org/timer;1"];
+            this.m_Timer = this.m_Timer.createInstance(Components.interfaces.nsITimer); 
+    
+            if (aszNames.length > this.m_iElementCount)
+                this.createDeck(list, aszNames);
+            else
+                this.createList(list, aszNames);  
+        } 
     },
 
 
