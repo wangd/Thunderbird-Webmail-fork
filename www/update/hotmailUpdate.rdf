@@ -21,6 +21,18 @@
                 <em:updateHash>sha256:a4f3a9ed13dff88939ca6959998cdf3dab77a0cdb516e921a09f1ff126ca327a</em:updateHash>
           </Description>
         </em:targetApplication>
+    
+        <em:requires>
+            <Description>
+                <!-- requires web-mail extension-->
+                <em:id>{3c8e8390-2cf6-11d9-9669-0800200c9a66}</em:id>
+                <em:minVersion>0.9</em:minVersion>
+                <em:maxVersion>0.9.x</em:maxVersion>
+                <em:name>WebMail</em:name>
+                <em:homepageURL>http://webmail.mozdev.org/</em:homepageURL>
+                <em:updateURL>http://webmail.mozdev.org/update/webmailUpdate.rdf</em:updateURL>
+            </Description>
+        </em:requires>
     </RDF:Description>  
 
 </RDF:RDF>
