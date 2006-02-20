@@ -57,6 +57,7 @@ function nsYahooSMTP()
         this.m_Email = new email(this.m_Log);
         this.m_Email.decodeBody(true);
         this.m_szImageVerForm = null;
+        this.m_szLoginUserName = null;
         
         this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"];
         this.m_SessionManager = this.m_SessionManager.getService();
@@ -140,12 +141,17 @@ nsYahooSMTP.prototype =
                      
            this.m_szYahooMail = "http://mail.yahoo.com";
                     
-            if (this.m_szUserName.search(/@talk21.com$/)!=-1 ||  
+             if (this.m_szUserName.search(/@talk21.com$/)!=-1 ||  
                 this.m_szUserName.search(/@btinternet.com$/)!=-1  ||
                 this.m_szUserName.search(/@btopenworld.com$/)!=-1 )
             {
                 this.m_szYahooMail = "http://bt.yahoo.com/";
+                this.m_szLoginUserName = this.m_szUserName;
             }    
+            else
+            {
+                this.m_szLoginUserName = this.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
+            }   
             
             this.m_HttpComms.clean();
             this.m_HttpComms.addRequestHeader("User-Agent", 
@@ -245,8 +251,7 @@ nsYahooSMTP.prototype =
                         mainObject.m_HttpComms.addValuePair(szName,(szValue? encodeURIComponent(szValue):""));
                     }
                     
-                    //var szLogin = mainObject.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
-                    var szLogin = encodeURIComponent(mainObject.m_szUserName);
+                    var szLogin = encodeURIComponent(mainObject.m_szLoginUserName);
                     mainObject.m_HttpComms.addValuePair("login", szLogin);
                     
                     var szPass = encodeURIComponent(mainObject.m_szPassWord);
@@ -411,11 +416,17 @@ nsYahooSMTP.prototype =
                         mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Name " + szName); 
                                     
                         if (szName.search(/^Send$/i)!=-1)
+                        {
                             mainObject.m_HttpComms.addValuePair(szName,"1"); 
+                        }
                         else if (szName.search(/SaveCopy/i)!=-1)
                         {
                             var szSave = mainObject.m_bSaveCopy ? "yes" : "no";
                             mainObject.m_HttpComms.addValuePair(szName,szSave);
+                        }
+                        else if (szName.search(/format/i)!=-1)
+                        {
+                            //do nothing
                         }
                         else
                         {
