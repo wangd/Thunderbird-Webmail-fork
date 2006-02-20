@@ -1,0 +1,10 @@
+<!ENTITY YahooAbout.Title "Yahoo - Sobre">
+<!ENTITY YahooAbout.ExtName "Yahoo">
+<!ENTITY YahooAbout.ExtVersion "versão 0.6.5">
+<!ENTITY YahooAbout.ExtDescription "Componente Yahoo para a extensão Web-Mail">
+<!ENTITY YahooAbout.ExtCreaterTitle "Criado por:">
+<!ENTITY YahooAbout.ExtCreator "ComodoDragon">
+<!ENTITY YahooAbout.ExtHome "Home Page">
+<!ENTITY YahooAbout.ExtHomeURL "http://webmail.mozdev.org/">
+<!ENTITY YahooAbout.ExtButton "Fechar">
+<!ENTITY YahooAbout.ExtContributorTitle "Colaboradores:">
