@@ -15,3 +15,4 @@ locale  yahoo    zh-CN   jar:chrome/yahoo.jar!/locale/zh-CN/yahoo/
 locale  yahoo    fi-FI   jar:chrome/yahoo.jar!/locale/fi-FI/yahoo/
 locale  yahoo    tr-TR   jar:chrome/yahoo.jar!/locale/tr-TR/yahoo/
 locale  yahoo    sl-SI   jar:chrome/yahoo.jar!/locale/sl-SI/yahoo/
+locale  yahoo    pt-BR   jar:chrome/yahoo.jar!/locale/pt-BR/yahoo/
