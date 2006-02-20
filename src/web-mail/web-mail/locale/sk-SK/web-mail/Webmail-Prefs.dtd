@@ -1,0 +1,6 @@
+<!ENTITY Options.szTitle "Možnosti WebMail">
+<!ENTITY Servers.Panel.szTitle "Servery">
+<!ENTITY Domains.Panel.szTitle "Domény">
+<!ENTITY Logging.Panel.szTitle "Prihlásenie">
+<!ENTITY General.Panel.szTitle "Všeobecné">
+<!ENTITY Window.size "šírka: 46em; výška: 37em">

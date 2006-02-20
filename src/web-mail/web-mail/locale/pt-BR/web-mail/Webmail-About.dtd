@@ -1,0 +1,10 @@
+<!ENTITY WebmailAbout.Title "Webmail - Sobre">
+<!ENTITY WebmailAbout.ExtName "Web Mail">
+<!ENTITY WebmailAbout.ExtVersion "versão 0.9.2">
+<!ENTITY WebmailAbout.ExtDescription "Acessa contas de web mail utilizando Thunderbird.">
+<!ENTITY WebmailAbout.ExtCreaterTitle "Criado por:">
+<!ENTITY WebmailAbout.ExtCreator "ComodoDragon">
+<!ENTITY WebmailAbout.ExtHome "Home Page">
+<!ENTITY WebmailAbout.ExtHomeURL "http://webmail.mozdev.org/">
+<!ENTITY WebmailAbout.ExtButton "Fechar">
+<!ENTITY WebmailAbout.ExtContributorTitle "Colaboradores:">

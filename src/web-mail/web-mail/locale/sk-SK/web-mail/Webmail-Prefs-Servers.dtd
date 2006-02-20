@@ -1,0 +1,25 @@
+<!ENTITY ServerStatus.Label "Stav servera">
+<!ENTITY Ports.Label "Porty">
+<!ENTITY Ports.AccessKey "p">
+<!ENTITY Pop.Label "POP">
+<!ENTITY Pop.AccessKey "O">
+<!ENTITY POP.Default.Label "základný 110">
+<!ENTITY Note.Label "Porty pod 1024 môžu byť blokované OS">
+<!ENTITY Restart.Label "Na prevedenie zmien je potrebné Thunderbird reštartovať.">
+<!ENTITY SMTP.Label "SMTP">
+<!ENTITY SMTP.AccessKey "S">
+<!ENTITY SMTP.Default.Label "základný 25">
+<!ENTITY IMAP.Label "IMAP">
+<!ENTITY IMAP.AccessKey "I">
+<!ENTITY IMAP.Default.Label "základný 143">
+<!ENTITY Enable.POP.Label "Zapnúť POP server.">
+<!ENTITY Enable.POP.AccessKey "P">
+<!ENTITY Enable.SMTP.Label "Zapnúť SMTP server.">
+<!ENTITY Enable.SMTP.AccessKey "T">
+<!ENTITY Enable.IMAP.Label "Zapnúť IMAP server.">
+<!ENTITY Enable.IMAP.AccessKey "M">
+<!ENTITY Enable.Label "Zapnúť">
+<!ENTITY Enable.AccessKey "Z">
+<!ENTITY Status.Label "Stav">
+<!ENTITY Status.AccessKey "s">
+<!ENTITY StatusBox.size "šírka: 6em;">

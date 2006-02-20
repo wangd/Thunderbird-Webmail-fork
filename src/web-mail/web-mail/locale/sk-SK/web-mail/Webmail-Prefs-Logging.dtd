@@ -1,0 +1,12 @@
+<!ENTITY GeneralLogging.Label "Zapnúť prihlásenie">
+<!ENTITY GeneralLogging.AccessKey "Z">
+<!ENTITY JavaScriptConsole.Label "Použiť konzolu JavaScriptu">
+<!ENTITY JavaScriptConsole.AccessKey "J">
+<!ENTITY LogFile.Label "Použiť log súbor">
+<!ENTITY LogFile.AccessKey "l">
+<!ENTITY Location.Label "Umiestnenie">
+<!ENTITY Location.AccessKey "u">
+<!ENTITY Note.Label "Tieto výpisy budú pozostávať z používateľského mena a hesla.">
+<!ENTITY Restart.Label "Na prevedenie zmien je potrebné Thunderbird reštartovať.">
+<!ENTITY Button.Label "Vyhľadávať...">
+<!ENTITY Button.AccessKey "V">
