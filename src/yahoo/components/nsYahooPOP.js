@@ -62,6 +62,7 @@ function nsYahoo()
         this.m_szDeleteURL = null; 
         this.m_szHomeURI = null;
         this.m_szYahooMail = null;
+        this.m_szLoginUserName = null;
         
         this.m_bJunkChecked = false;
         this.m_aMsgDataStore = new Array();
@@ -159,7 +160,12 @@ nsYahoo.prototype =
                 this.m_szUserName.search(/@btopenworld.com$/)!=-1 )
             {
                 this.m_szYahooMail = "http://bt.yahoo.com/";
+                this.m_szLoginUserName = this.m_szUserName;
             }    
+            else
+            {
+                this.m_szLoginUserName = this.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
+            }
             
             this.m_HttpComms.clean();
             this.m_HttpComms.addRequestHeader("User-Agent", 
@@ -257,8 +263,7 @@ nsYahoo.prototype =
                         mainObject.m_HttpComms.addValuePair(szName,(szValue? encodeURIComponent(szValue):""));
                     }
                     
-                    //var szLogin = mainObject.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
-                    var szLogin = encodeURIComponent(mainObject.m_szUserName);
+                    var szLogin = encodeURIComponent(mainObject.m_szLoginUserName);
                     mainObject.m_HttpComms.addValuePair("login", szLogin);
                     
                     var szPass = encodeURIComponent(mainObject.m_szPassWord);
@@ -919,7 +924,10 @@ nsYahoo.prototype =
                 }
                 mainObject.m_iMSGCount = 0; 
             }
-            carch(err)
+            catch(err)
+	        {
+                mainObject.m_Log.Write("m_YahooLog.js - emailOnloadHandler - szContetnType error");
+            }
             
             
             switch(mainObject.m_iStage)
