@@ -74,7 +74,7 @@
 #flagImage
 {
     margin-left: 20px;
-    list-style-image: url("chrome://httpmail/skin/flags.png");
+    list-style-image: url("chrome://yahoo/skin/flags.png");
 }
 
 .flag/*world*/
@@ -187,9 +187,14 @@
 }
 
 
-.flag[value="18"]/*Brazil*/
+.flag[value="19"]/**/
 {
      -moz-image-region: rect(0px, 640px, 32px, 608px)
+}
+
+.flag[value="18"]/*Brazil*/
+{
+     -moz-image-region: rect(0px, 672px, 32px, 640px)
 }
 
 
