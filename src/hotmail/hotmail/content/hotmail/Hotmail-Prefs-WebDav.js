@@ -40,10 +40,12 @@ var gWebDavPane =
                                         QueryInterface(Components.interfaces.nsIMsgIncomingServer);
                 
                 var szHostName = currentServer.hostName;
-                this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : getUserNameList - HostName " + szHostName);
+                this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : getUserNameList - szHostName " + szHostName);
+                var szRealHostName = currentServer.realHostName;
+                this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : getUserNameList - szRealHostName " + szRealHostName);
                 
-                
-                if (szHostName.search(/localhost/i)!=-1 || szHostName.search(/127\.0\.0\.1/)!=-1 )
+                if (szHostName.search(/localhost/i)!=-1 || szHostName.search(/127\.0\.0\.1/)!=-1 ||
+                        szRealHostName.search(/localhost/i)!=-1 || szRealHostName.search(/127\.0\.0\.1/)!=-1)
                 {
                     var szUserName = currentServer.username;
                     this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : getUserNameList - userName " + szUserName);
