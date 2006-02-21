@@ -5,23 +5,35 @@
     <RDF:Description about="urn:mozilla:extension:{d7103710-6112-11d9-9669-0800200c9a66}">
         <em:updates>
             <RDF:Seq>
-                <RDF:li resource="urn:mozilla:extension:{d7103710-6112-11d9-9669-0800200c9a66}:0.6.4"/>
+                <RDF:li resource="urn:mozilla:extension:{d7103710-6112-11d9-9669-0800200c9a66}:0.6.5"/>
             </RDF:Seq>
         </em:updates>
     </RDF:Description>
   
-    <RDF:Description about="urn:mozilla:extension:{d7103710-6112-11d9-9669-0800200c9a66}:0.6.4">
-        <em:version>0.6.4</em:version>
+    <RDF:Description about="urn:mozilla:extension:{d7103710-6112-11d9-9669-0800200c9a66}:0.6.5">
+        <em:version>0.6.5</em:version>
         <!-- Thunderbird updates -->
     	<em:targetApplication>
         	<Description>
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
             	<em:minVersion>1.4</em:minVersion>
             	<em:maxVersion>1.6</em:maxVersion>
-                <em:updateLink>http://download.mozdev.org/webmail/yahoo-0-6-4.xpi</em:updateLink>
-                <em:updateHash>sha256:9ae149d7e15b12753f5eb7ecac5acde91a6e56ddde9f4b83e07bc23843d1fbac</em:updateHash>
+                <em:updateLink>http://download.mozdev.org/webmail/yahoo-0-6-5.xpi</em:updateLink>
+                <em:updateHash>sha256:66c32b7a9a88ffd6947a04a9922257c299a3a7d1ad4935d60390674df456718c</em:updateHash>
           </Description>
         </em:targetApplication>
+        
+        <em:requires>
+            <Description>
+                <!-- requires web-mail extension-->
+                <em:id>{3c8e8390-2cf6-11d9-9669-0800200c9a66}</em:id>
+                <em:minVersion>0.9</em:minVersion>
+                <em:maxVersion>0.9.x</em:maxVersion>
+                <em:name>WebMail</em:name>
+                <em:homepageURL>http://webmail.mozdev.org/</em:homepageURL>
+                <em:updateURL>http://webmail.mozdev.org/update/webmailUpdate.rdf</em:updateURL>
+            </Description>
+        </em:requires>
     </RDF:Description>  
 
 </RDF:RDF>
