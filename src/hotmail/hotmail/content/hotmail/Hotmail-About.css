@@ -183,10 +183,16 @@
 }
 
 
-.flag[value="18"]/*swish*/
+.flag[value="19"]/**/
 {
      -moz-image-region: rect(0px, 640px, 32px, 608px)
 }
+
+.flag[value="18"]/*Brazil*/
+{
+     -moz-image-region: rect(0px, 672px, 32px, 640px)
+}
+
 
 #HotmailHomePage
 {

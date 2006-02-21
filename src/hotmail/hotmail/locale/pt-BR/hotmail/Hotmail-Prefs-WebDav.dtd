@@ -1,0 +1,7 @@
+<!ENTITY MailServers.Label "WebDav">
+<!ENTITY UserName.Label "Nome de Usuário">
+<!ENTITY ScreenRipper.Label "Screen Ripper">
+<!ENTITY WebDav.Label "Web Dav">
+<!ENTITY list.size "height: 20em !important;">
+<!ENTITY Edit.label "Alterar Modo">
+<!ENTITY Edit.accessKey "M">
