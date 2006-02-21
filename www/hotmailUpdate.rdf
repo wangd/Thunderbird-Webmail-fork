@@ -31,8 +31,8 @@
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id> <!-- Thunderbird updates -->
             	<em:minVersion>1.4</em:minVersion>
             	<em:maxVersion>1.6</em:maxVersion>
-                <em:updateLink>http://download.mozdev.org/webmail/hotmail-0-10-3.xpi</em:updateLink>
-                <em:updateHash>sha256:a4f3a9ed13dff88939ca6959998cdf3dab77a0cdb516e921a09f1ff126ca327a</em:updateHash>
+                <em:updateLink>http://download.mozdev.org/webmail/hotmail-0-10-3-i1.xpi</em:updateLink>
+                <em:updateHash>sha256:1bf6096eba5698dbc5a4ad27ff4a0e145a191149a47b825fb45625e3aa26dadf</em:updateHash>
           </Description>
         </em:targetApplication>
     </RDF:Description>  
