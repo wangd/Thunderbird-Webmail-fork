@@ -80,12 +80,12 @@ var gAOLStartUp =
             this.idCheck("aol.com", "pop" ,cszAOLContentID)
             this.idCheck("aim.com","pop" , cszAOLContentID);
             this.idCheck("netscape.com", "pop" ,cszAOLContentID);
-            
+            this.idCheck("netscape.net", "pop" ,cszAOLContentID);
             
             this.idCheck("aol.com", "smtp" ,cszAOLSMTPContentID)
             this.idCheck("aim.com","smtp" , cszAOLSMTPContentID);
             this.idCheck("netscape.com", "smtp" ,cszAOLSMTPContentID);
-                   
+            this.idCheck("netscape.net", "smtp" ,cszAOLSMTPContentID);
             
             this.m_Log.Write("AOL.js : notify - END");
         }
