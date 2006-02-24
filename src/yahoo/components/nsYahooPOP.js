@@ -883,9 +883,7 @@ nsYahoo.prototype =
         try
         {
             mainObject.m_Log.Write("m_YahooLog.js - emailOnloadHandler - START");
-            
-            mainObject.m_Log.Write("m_YahooLog.js - emailOnloadHandler - msg :\n" + szResponse); 
-           
+                      
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
                       
             //check status should be 200.
@@ -937,7 +935,25 @@ nsYahoo.prototype =
                     mainObject.m_szHeader += "X-JunkFolder: " +
                                             (mainObject.m_bJunkFolder? "true":"false")+
                                             "\r\n";
-                    mainObject.m_szHeader +=szResponse;
+                                      
+                    var aszHeaderRows = szResponse.split("\n");
+                    mainObject.m_Log.Write("nsYahoo.js - emailOnloadHandler - aszHeaderRows - "+ aszHeaderRows); 
+                    
+                    for (i=0; i<aszHeaderRows.length; i++)
+                    {
+                        mainObject.m_Log.Write("nsYahoo.js - emailOnloadHandler - Row - "+ aszHeaderRows[i]  + " " + aszHeaderRows[i].length);
+                        
+                        var bFrom = (aszHeaderRows[i].search(/^From/i)==-1)? false:true; //From not found
+                        var bAt = (aszHeaderRows[i].search(/@/i)==-1)? false:true; //At sign not found
+                        
+                        if ( (!bFrom || bAt) && aszHeaderRows[i].length>1)
+                        {
+                            mainObject.m_Log.Write("nsYahoo.js - emailOnloadHandler - added");
+                            mainObject.m_szHeader += aszHeaderRows[i] + "\r\n";
+                        }                            
+                    }
+                    mainObject.m_szHeader +="\r\n";
+                    
                     mainObject.m_iStage++;
                     
                     //get body
@@ -964,6 +980,9 @@ nsYahoo.prototype =
                     var szMsg =  mainObject.m_szHeader;
                     szMsg += szResponse;
                     szMsg = szMsg.replace(/^\./mg,"..");    //bit padding 
+                    
+                    var iMsgLength = szMsg.length-1;
+                    var iLastIndex = szMsg.lastIndexOf("\n")
                     szMsg += "\r\n.\r\n";  //msg end 
                                                                                                                       
                     var szPOPResponse = "+OK " + szMsg.length + "\r\n";                     
