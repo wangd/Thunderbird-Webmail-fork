@@ -11,7 +11,6 @@
         
         <preferences>
             <preference id="saveSentItems" name="yahoo.bSaveCopy" type="bool"/>
-            <preference id="sendHtml" name="yahoo.bSendHtml" type="bool"/>
         </preferences>
         
         <vbox>
@@ -19,27 +18,6 @@
               accesskey="&SaveSentItems.AccessKey;"
               preference = "saveSentItems"
               id="chkSentItems"/>
-             
-            <spacer flex="2"/>
-             
-            <groupbox id="gbAlternative">
-                <caption class = "text">
-                    <hbox align="center">
-                        <label value="&AlternativeGroup.Label;"/>
-                    </hbox>
-                </caption>
-                <radiogroup preference = "sendHtml">
-                    <radio label="&SendPlain.Label;" 
-                           accesskey="&SendPlain.AccessKey;"
-                           value = "false"
-                           id="rdSendPlain"/>
-                           
-                    <radio label="&SendHtml.Label;" 
-                           accesskey="&SendHtml.AccessKey;"
-                           value = "true"
-                           id="rdSendHtml"/>
-                </radiogroup>     
-            </groupbox>
         </vbox>   
         
     </prefpane>
