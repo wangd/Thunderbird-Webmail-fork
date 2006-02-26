@@ -1,7 +1,2 @@
 <!ENTITY SaveSentItems.Label "Gidenler klasöründe bir kopyasını sakla">
 <!ENTITY SaveSentItems.AccessKey "s">
-<!ENTITY AlternativeGroup.Label "Alternatif\çok bölümlü postalar">
-<!ENTITY SendPlain.Label "Düz metin gönder">
-<!ENTITY SendPlain.AccessKey "p">
-<!ENTITY SendHtml.Label "HTML metni gönder">
-<!ENTITY SendHtml.AccessKey "h">
