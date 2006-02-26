@@ -16,7 +16,7 @@ const patternYahooComposeForm = /<form.*?name="*Compose"*.*?>[\S\s]*?<\/form>/ig
 const patternYahooAttachmentForm = /<form.*?name="*Attachments"*.*?>[\S\s]*?<\/form>/igm;
 const patternYahooAttachCheck = /javascript\:VirusScanResults\(0\)/igm;
 const patternYahooImageVerifiaction = /<form.*?name=ImgVerification[\S\s]*?>[\s\S]*?<\/form>/igm;
-const patternYahooImage = /<img src="(.*?\/img\/.*?)".*?>/igm;
+const patternYahooImage = /<input type=hidden name="IMG" value="(.*?)">/igm;
 
 /******************************  Yahoo ***************************************/
 function nsYahooSMTP()
@@ -84,16 +84,7 @@ function nsYahooSMTP()
         else
             this.m_bSaveCopy=true;          
         delete oPref;
-        
-        //what do i do with alternative parts
-        oPref = new Object();
-        oPref.Value = null;
-        if (PrefAccess.Get("bool","yahoo.bSendHtml",oPref))
-            this.m_bSendHtml = oPref.Value;
-        else
-            this.m_bSendHtml = false;    
-        delete oPref;
-                      
+                             
         this.m_Log.Write("nsYahooSMTP.js - Constructor - END");  
     }
     catch(e)
@@ -428,6 +419,10 @@ nsYahooSMTP.prototype =
                         {
                             //do nothing
                         }
+                        else if (szName.search(/PlainMsg/i)!=-1)
+                        {
+                            //do nothing
+                        }
                         else
                         {
                             var szValue = aszInput[i].match(patternYahooAltValue)[1]
@@ -450,25 +445,27 @@ nsYahooSMTP.prototype =
                     mainObject.m_HttpComms.addValuePair("Subj",
                                             (szSubject? escape(szSubject) : "%20"));
                     
-                    var szTxtBody = null;
-                    var szHtmlBody = null;
-                    if (mainObject.m_Email.txtBody)
-                        szTxtBody = mainObject.m_Email.txtBody.body.getBody();
                     if (mainObject.m_Email.htmlBody)
-                        szHtmlBody = mainObject.m_Email.htmlBody.body.getBody();
-                    
-                    if (szTxtBody && !mainObject.m_bSendHtml || !szHtmlBody)
                     {
-                        mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - plain");
-                        mainObject.m_HttpComms.addValuePair("Body",mainObject.escapeStr(szTxtBody));
-                    }
-                    else if (szHtmlBody && mainObject.m_bSendHtml || !szTxtBody)
-                    {   
                         mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - html");
+                        var szHtmlBody = mainObject.m_Email.htmlBody.body.getBody();
                         mainObject.m_HttpComms.addValuePair("Format","html");
                         mainObject.m_HttpComms.addValuePair("Body",mainObject.escapeStr(szHtmlBody));
+                        
+                        if (mainObject.m_Email.txtBody)
+                        {
+                            mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - TEXT");
+                            var szTxtBody = mainObject.m_Email.txtBody.body.getBody();
+                            mainObject.m_HttpComms.addValuePair("PlainMsg",mainObject.escapeStr(szTxtBody));
+                        }
+                    } 
+                    else
+                    { 
+                        mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - plain"); 
+                        var szTxtBody = mainObject.m_Email.txtBody.body.getBody();
+                        mainObject.m_HttpComms.addValuePair("Body",mainObject.escapeStr(szTxtBody));
                     }
-                                        
+                                                           
                     mainObject.m_iStage++;
                     mainObject.m_HttpComms.setContentType(0);
                     mainObject.m_HttpComms.setURI(szActionURI);
@@ -502,7 +499,7 @@ nsYahooSMTP.prototype =
                         mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - image verification");
                         mainObject.m_szImageVerForm = szResponse.match(patternYahooImageVerifiaction);
                         mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - form " + mainObject.m_szImageVerForm );
-                        var szImageUri = szResponse.match(patternYahooImage);
+                        var szImageUri = szResponse.match(patternYahooImage)[1];
                         mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - image " +szImageUri);
                         mainObject.m_HttpComms.setContentType(0);
                         mainObject.m_HttpComms.setURI(szImageUri);
@@ -687,7 +684,10 @@ nsYahooSMTP.prototype =
                 
                 
                 case 5: //downloaded image verifiaction
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - image downloaed" +szImageUri);
+                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - image download");
+                    var fileImage = this.writeImageFile(szResponse)
+                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - imageFile" + fileImage);
+                   
                     mainObject.serverComms("502 Error Sending Email\r\n");
                 break;
             };
@@ -759,6 +759,50 @@ nsYahooSMTP.prototype =
             return null;
         }
     },
+    
+    
+    writeImageFile : function(szData)
+    {
+        try
+        {
+            this.m_Log.Write("nsYahooSMTP.js - writeImageFile - End");
+            
+            var file = Components.classes["@mozilla.org/file/directory_service;1"];
+            file = file.getService(Components.interfaces.nsIProperties);
+            file = file.get("TmpD", Components.interfaces.nsIFile);
+            file.append("suggestedName.jpg");
+            file.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 420); 
+           
+            var deletefile = Components.classes["@mozilla.org/uriloader/external-helper-app-service;1"];
+            deletefile = deletefile.getService(Components.interfaces.nsPIExternalAppLauncher);
+            deletefile.deleteTemporaryFileOnExit(file);    
+            
+            var outputStream = Components.classes["@mozilla.org/network/file-output-stream;1"];
+            outputStream = outputStream.createInstance( Components.interfaces.nsIFileOutputStream );
+            outputStream.init( file, 0x04 | 0x08 | 0x10, 420, 0 );
+            
+            var binaryStream = Components.classes["@mozilla.org/binaryoutputstream;1"];
+            binaryStream = binaryStream.createInstance(Components.interfaces.nsIBinaryOutputStream);
+            binaryStream.setOutputStream(outputStream)
+            binaryStream.writeBytes( szData, szData.length );
+            outputStream.close();
+            binaryStream.close();
+            
+            this.m_Log.Write("nsYahooSMTP.js - writeImageFile - End");
+            return file;
+        }
+        catch(err)
+        {
+            this.m_Log.DebugDump("nsYahooSMTP.js: writeImageFile : Exception : " 
+                                                  + err.name 
+                                                  + ".\nError message: " 
+                                                  + err.message + "\n"
+                                                  + err.lineNumber);
+                                                  
+            return null;
+        }
+    },
+    
     ////////////////////////////////////////////////////////////////////////////
     /////  Comms                  
     
