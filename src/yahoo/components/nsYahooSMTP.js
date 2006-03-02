@@ -6,7 +6,7 @@ const ExtYahooGuid = "{d7103710-6112-11d9-9669-0800200c9a66}";
 const patternYahooSecure = /<a href="(.*?https.*?login.*?)".*?>/;
 const patternYahooLoginForm = /<form.*?name="login_form".*?>[\S\s]*?<\/form>/gm;
 const patternYahooAction = /<form.*?action="(.*?)".*?>/;
-const patternYahooInput = /<input.*?type=['|"]*hidden['|"]*.*?name=.*?value=.*?>/gm;
+const patternYahooInput = /<input.*?type=['|"]*hidden['|"]*.*?name=.*?value=[\s\S]*?>/igm;
 const patternYahooFile = /<input.*?type="*file"*.*?name=.*?>/igm;
 const patternYahooNameAlt = /name=['|"]*([\S]*)['|"]*/;
 const patternYahooAltValue = /value=['|"]*([\S\s]*)['|"]*[\s]*>/;
@@ -16,7 +16,8 @@ const patternYahooComposeForm = /<form.*?name="*Compose"*.*?>[\S\s]*?<\/form>/ig
 const patternYahooAttachmentForm = /<form.*?name="*Attachments"*.*?>[\S\s]*?<\/form>/igm;
 const patternYahooAttachCheck = /javascript\:VirusScanResults\(0\)/igm;
 const patternYahooImageVerifiaction = /<form.*?name=ImgVerification[\S\s]*?>[\s\S]*?<\/form>/igm;
-const patternYahooImage = /<input type=hidden name="IMG" value="(.*?)">/igm;
+const patternYahooImage = /<input.*?name="IMG".*?value="(.*?)">/i;
+const patternYahooImageAction = /<form.*?name=ImgVerification.*?action="([\S\s]*?)">/i;
 
 /******************************  Yahoo ***************************************/
 function nsYahooSMTP()
@@ -30,6 +31,7 @@ function nsYahooSMTP()
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Email.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/comms.js");
+        scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-SpamImage.js");
         
         
         var date = new Date();
@@ -492,16 +494,17 @@ nsYahooSMTP.prototype =
                         mainObject.m_SessionData.oComponentData.addElement("szHomeURI",mainObject.m_szHomeURI);
                         mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);
                         
-                        mainObject.serverComms("250 OK\r\n");
+                        mainObject.serverComms("250 OK\r\n");                      
                     }
                     else if(szResponse.search(/<form.*?name=ImgVerification[\S\s]*?>/igm)!=-1)
-                    {
+                    { 
                         mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - image verification");
-                        mainObject.m_szImageVerForm = szResponse.match(patternYahooImageVerifiaction);
+                        mainObject.m_szImageVerForm = szResponse.match(patternYahooImageVerifiaction)[0];
                         mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - form " + mainObject.m_szImageVerForm );
                         var szImageUri = szResponse.match(patternYahooImage)[1];
-                        mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - image " +szImageUri);
-                        mainObject.m_HttpComms.setContentType(0);
+                        mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - image " + szImageUri);
+                     
+                        mainObject.m_HttpComms.setContentType(1);
                         mainObject.m_HttpComms.setURI(szImageUri);
                         mainObject.m_HttpComms.setRequestMethod("GET");
                         mainObject.m_iStage = 5;
@@ -685,10 +688,51 @@ nsYahooSMTP.prototype =
                 
                 case 5: //downloaded image verifiaction
                     mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - image download");
-                    var fileImage = this.writeImageFile(szResponse)
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - imageFile" + fileImage);
+                    var szPath = mainObject.writeImageFile(szResponse);
+                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - imageFile " + szPath);
+                    var szResult =  mainObject.openSpamWindow(szPath);
+                    
+                    if (!szResult)
+                    {
+                        mainObject.serverComms("502 Error Sending Email\r\n");
+                        return;
+                    }
+                    
+                    //construct form 
+                    var aszInput = mainObject.m_szImageVerForm.match(patternYahooInput);
+                    for (i=0; i< aszInput.length; i++)
+                    {
+                        var szName = aszInput[i].match(patternYahooNameAlt)[1];
+                        szName = szName.replace(/"/mg,"");
+                        szName = szName.replace(/'/mg,"");
+                        mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Name " + szName); 
+                       
+                        var szValue = aszInput[i].match(patternYahooAltValue)[1]
+                        szValue = szValue.replace(/"/mg,""); 
+                        szValue = szValue.replace(/'/mg,"");   
+                        szValue = mainObject.escapeStr(szValue);
+                        mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - value " + szValue);
+                        
+                        mainObject.m_HttpComms.addValuePair(szName,(szValue.length>0)? szValue : "");
+                    }
+                    
+                    szValue = mainObject.escapeStr(szResult);
+                    mainObject.m_HttpComms.addValuePair("Word",(szValue.length>0)? szValue : "");
+                    
+                    var szFormAction = mainObject.m_szImageVerForm.match(patternYahooImageAction)[1];
+                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - szFormAction " + szFormAction);
+                    var szActionUrl = szFormAction.replace(/\r/g,"").replace(/\n/g,"");
+                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - aszActionUrl " + szActionUrl);
+                    var szAction = szActionUrl;
+                    
+                    //send data
+                    mainObject.m_HttpComms.setContentType(1);
+                    mainObject.m_HttpComms.setURI(mainObject.m_szLocationURI + szAction);
+                    mainObject.m_HttpComms.setRequestMethod("POST");
+                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);  
+                    if (!bResult) throw new Error("httpConnection returned false");
+                    mainObject.m_iStage = 1;
                    
-                    mainObject.serverComms("502 Error Sending Email\r\n");
                 break;
             };
                      
@@ -787,9 +831,16 @@ nsYahooSMTP.prototype =
             binaryStream.writeBytes( szData, szData.length );
             outputStream.close();
             binaryStream.close();
+                       
+            var ios = Components.classes["@mozilla.org/network/io-service;1"]
+                                .getService(Components.interfaces.nsIIOService);
+            var fileHandler = ios.getProtocolHandler("file")
+                                 .QueryInterface(Components.interfaces.nsIFileProtocolHandler);
+            var URL = fileHandler.getURLSpecFromFile(file);
+            this.m_Log.Write("nsYahooSMTP.js - writeImageFile - path " + URL);
             
             this.m_Log.Write("nsYahooSMTP.js - writeImageFile - End");
-            return file;
+            return URL;
         }
         catch(err)
         {
@@ -802,6 +853,52 @@ nsYahooSMTP.prototype =
             return null;
         }
     },
+    
+    
+    
+    
+    openSpamWindow : function(szPath)
+    {
+        try
+        {
+            this.m_Log.Write("nsYahooSMTP : openWindow - START");
+            
+            var params = Components.classes["@mozilla.org/embedcomp/dialogparam;1"]
+                                   .createInstance(Components.interfaces.nsIDialogParamBlock);
+            params.SetNumberStrings(1);
+            params.SetString(0, szPath);           
+                      
+            var window = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
+                                  .getService(Components.interfaces.nsIWindowWatcher);
+            
+            window.openWindow(null, 
+                              "chrome://yahoo/content/Yahoo-SpamImage.xul",
+                              "_blank", 
+                              "chrome,alwaysRaised,dialog,modal,centerscreen",
+                              params);
+           
+            var iResult = params.GetInt(0);
+            this.m_Log.Write("nsYahooSMTP : openWindow - " + iResult);
+            var szResult =  null;
+            if (iResult) 
+            {
+                szResult = params.GetString(0);
+                this.m_Log.Write("nsYahooSMTP : openWindow - " + szResult);
+            }
+            
+            this.m_Log.Write("nsYahooSMTP : openWindow - END");
+            return szResult;
+        }
+        catch(err)
+        {
+            this.m_Log.DebugDump("nsYahooSMTP: Exception in openWindow : " 
+                                               + err.name 
+                                               + ".\nError message: " 
+                                               + err.message + "\n"
+                                               + err.lineNumber);
+        }
+    },
+    
     
     ////////////////////////////////////////////////////////////////////////////
     /////  Comms                  
