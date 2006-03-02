@@ -1,0 +1,6 @@
+<!ENTITY Window.size "width: 27em; height: 20em">
+<!ENTITY Window.title "Yahoo Anti Spam Image">
+<!ENTITY Button.OK.label "OK">
+<!ENTITY YahooSpam.title "Yahoo">
+<!ENTITY YahooSpam.decription "Anti Spam Verification">
+<!ENTITY YahooSpam.label "Type what you see in the image above.">
