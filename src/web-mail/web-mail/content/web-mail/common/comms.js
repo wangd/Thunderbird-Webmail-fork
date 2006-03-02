@@ -721,11 +721,10 @@ Comms.prototype =
             
             onDataAvailable : function (aRequest, aContext, aStream, aSourceOffset, aLength)
             {               
-                var scriptInputStream = Components.classes["@mozilla.org/scriptableinputstream;1"];
-                scriptInputStream = scriptInputStream.createInstance(Components.interfaces.nsIScriptableInputStream);
-                scriptInputStream.init(aStream);
-            
-                this.m_data += scriptInputStream.read(aLength);
+                var binaryInputStream = Components.classes["@mozilla.org/binaryinputstream;1"];
+                binaryInputStream = binaryInputStream.createInstance(Components.interfaces.nsIBinaryInputStream);
+                binaryInputStream.setInputStream (aStream);
+                this.m_data += binaryInputStream.readBytes(binaryInputStream.available());
             },
             
             
