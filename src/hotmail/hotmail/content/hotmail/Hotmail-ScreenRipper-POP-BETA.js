@@ -427,13 +427,10 @@ HotmailScreenRipperBETA.prototype =
             }
             
             //get view state
-            if (!mainObject.m_szViewState)
-            {
-                mainObject.m_szViewState = szResponse.match(patternHotmailPOPViewState)[1];
-                mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler - szViewState : " +mainObject.m_szViewState);
-            }
-            
-            
+            mainObject.m_szViewState = szResponse.match(patternHotmailPOPViewState)[1];
+            mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler - szViewState : " +mainObject.m_szViewState);
+           
+              
             //delete uri
             if (!mainObject.m_szDelete)
             {
@@ -808,7 +805,7 @@ HotmailScreenRipperBETA.prototype =
             this.m_Log.Write("Hotmail-SR-BETAR - deleteMessage - MSGid " + szID );    
                 
             this.m_HttpComms.clean();
-            this.m_HttpComms.setContentType(0);
+            this.m_HttpComms.setContentType(1);
             this.m_HttpComms.setRequestMethod("POST");
             
             var IOService = Components.classes["@mozilla.org/network/io-service;1"];
@@ -822,9 +819,10 @@ HotmailScreenRipperBETA.prototype =
             
             var szFolderID = oMSG.szMSGUri.match(patternHotmailPOPFolderID)[1];
             this.m_HttpComms.setURI(szURL+this.m_szDelete+"&FolderID="+szFolderID);
-            var szViewState = encodeURIComponent(this.m_szViewState);
+            var szViewState = this.m_szViewState;//encodeURIComponent(this.m_szViewState);
             this.m_HttpComms.addValuePair("__VIEWSTATE",szViewState);
             this.m_HttpComms.addValuePair("InboxDeleteMessages","Delete");
+            this.m_HttpComms.addValuePair("InboxMoveMessage","");
             this.m_HttpComms.addValuePair("messages",szID);
             this.m_HttpComms.addValuePair(szID,"on");
             
@@ -858,8 +856,12 @@ HotmailScreenRipperBETA.prototype =
             mainObject.m_Log.Write("Hotmail-SR-BETAR - deleteMessageOnload :" + httpChannel.responseStatus);
             if (httpChannel.responseStatus != 200 ) 
                 throw new Error("error status " + httpChannel.responseStatus);   
-                    
-            mainObject.serverComms("+OK its history\r\n");      
+            
+            if (szResponse.search(/<div id="error">/i)==-1)        
+                mainObject.serverComms("+OK its history\r\n");
+            else    
+               mainObject.serverComms("-ERR negative vibes from " +mainObject.m_szUserName+ "\r\n"); 
+               
             mainObject.m_Log.Write("Hotmail-SR-BETAR - deleteMessageOnload - END");      
         }
         catch(e)

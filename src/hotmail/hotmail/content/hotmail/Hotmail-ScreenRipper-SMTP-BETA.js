@@ -458,13 +458,18 @@ HotmailSMTPScreenRipperBETA.prototype =
                     var szDirectory = nsIURI.QueryInterface(Components.interfaces.nsIURL).directory;
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA - composerOnloadHandler - directory : " +szDirectory);
                     mainObject.m_HttpComms.setURI( mainObject.m_szLocationURI + szDirectory + szAction);
-                                                        
-                    mainObject.m_HttpComms.addValuePair("__VIEWSTATE",encodeURIComponent(mainObject.m_szViewState));
+                    
+                    mainObject.m_szViewState = szResponse.match(patternHotmailSMTPViewState)[1];                                   
+                    mainObject.m_HttpComms.addValuePair("__VIEWSTATE",mainObject.m_szViewState);
+                    
                     mainObject.m_HttpComms.addValuePair("SendMessage","Send");
                     
                     var szTo = mainObject.m_Email.headers.getTo();
                     var szValue = szTo? escape(szTo):"";
                     mainObject.m_HttpComms.addValuePair("fTo",szValue);
+                    
+                    mainObject.m_HttpComms.addValuePair("fCc","");
+                    mainObject.m_HttpComms.addValuePair("fBcc","");
                     
                     var szSubject = mainObject.m_Email.headers.getSubject(); 
                     szValue = szSubject? escape(szSubject) : "%20";
@@ -473,7 +478,11 @@ HotmailSMTPScreenRipperBETA.prototype =
                     var szTxtBody = mainObject.m_Email.txtBody.body.getBody();
                     mainObject.m_HttpComms.addValuePair("fMessageBody",escape(szTxtBody));
                     
+                    var szEvent = szResponse.match(patternHotmailSMTPEvent)[1];  
+                    mainObject.m_HttpComms.addValuePair("__EVENTVALIDATION",szEvent);
+                    
                     mainObject.m_HttpComms.setRequestMethod("POST");
+                    mainObject.m_HttpComms.setContentType(1);
                     var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);      
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage = 1;
