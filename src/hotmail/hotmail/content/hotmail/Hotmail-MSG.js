@@ -15,3 +15,5 @@ HotmailMSG.prototype.szFrom = null;
 HotmailMSG.prototype.szSubject = null;
 
 HotmailMSG.prototype.szDate = null;
+
+HotmailMSG.prototype.szStatView = null;
