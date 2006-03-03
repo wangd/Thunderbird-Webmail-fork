@@ -2,6 +2,6 @@
 <!ENTITY UserName.Label "Benutzername">
 <!ENTITY ScreenRipper.Label "Website-Parser">
 <!ENTITY WebDav.Label "WebDAV">
-<!ENTITY list.size "height: 20em !important;">
+<!ENTITY list.size "height: 17em !important;">
 <!ENTITY Edit.label "Modus ändern">
 <!ENTITY Edit.accessKey "M">

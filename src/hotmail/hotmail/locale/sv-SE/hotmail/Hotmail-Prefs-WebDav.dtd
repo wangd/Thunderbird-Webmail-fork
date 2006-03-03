@@ -2,6 +2,6 @@
 <!ENTITY UserName.Label "Användarnamn">
 <!ENTITY ScreenRipper.Label "Screen Ripper">
 <!ENTITY WebDav.Label "WebDav">
-<!ENTITY list.size "height: 20em !important;">
+<!ENTITY list.size "height: 17em !important;">
 <!ENTITY Edit.label "Change Mode">
 <!ENTITY Edit.accessKey "M">

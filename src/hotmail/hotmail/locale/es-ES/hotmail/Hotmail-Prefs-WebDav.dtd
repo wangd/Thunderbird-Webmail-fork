@@ -2,6 +2,6 @@
 <!ENTITY UserName.Label "Nombre de Usuario">
 <!ENTITY ScreenRipper.Label "Captura de página">
 <!ENTITY WebDav.Label "Web Dav">
-<!ENTITY list.size "height: 20em !important;">
+<!ENTITY list.size "height: 17em !important;">
 <!ENTITY Edit.label "Cambiar modo">
 <!ENTITY Edit.accessKey "M">
