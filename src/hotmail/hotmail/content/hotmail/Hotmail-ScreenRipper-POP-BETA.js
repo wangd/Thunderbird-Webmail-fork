@@ -27,7 +27,6 @@ function HotmailScreenRipperBETA(oResponseStream, oLog)
         this.m_iTotalSize = 0; 
         this.m_iStage = 0;  
         this.m_bJunkMail = false;
-        this.m_szViewState = null;
        
         this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"];
         this.m_SessionManager = this.m_SessionManager.getService();
@@ -398,21 +397,10 @@ HotmailScreenRipperBETA.prototype =
             // get trash folder uri      
             if (!mainObject.m_szJunkFolderURI && mainObject.m_bUseJunkMail)
             {
-                try
-                {
-                    var aszJunkFolder = szResponse.match(patternHotmailPOPJunkFolderID);
-                    mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler - folder links: " +aszJunkFolder);
-                    mainObject.m_szJunkFolderURI = mainObject.m_szLocationURI + aszJunkFolder[1];
-                    mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler - folder uri: " +mainObject.m_szJunkFolderURI);
-                }
-                catch(err)
-                {
-                    mainObject.m_Log.DebugDump("Hotmail-SR-BETAR: mailBoxOnloadHandler folder: Exception : " 
-                                                      + err.name 
-                                                      + ".\nError message: " 
-                                                      + err.message+ "\n"
-                                                      + err.lineNumber);
-                }   
+                var aszJunkFolder = szResponse.match(patternHotmailPOPJunkFolderID);
+                mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler - folder links: " +aszJunkFolder);
+                mainObject.m_szJunkFolderURI = mainObject.m_szLocationURI + aszJunkFolder[1];
+                mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler - folder uri: " +mainObject.m_szJunkFolderURI);
             }
                      
                       
@@ -427,8 +415,8 @@ HotmailScreenRipperBETA.prototype =
             }
             
             //get view state
-            mainObject.m_szViewState = szResponse.match(patternHotmailPOPViewState)[1];
-            mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler - szViewState : " +mainObject.m_szViewState);
+            var szStatView = szResponse.match(patternHotmailPOPViewState)[1];
+            mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler - szViewState : " +szStatView);
            
               
             //delete uri
@@ -438,6 +426,11 @@ HotmailScreenRipperBETA.prototype =
                 mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler - m_szDeleteURI : " +mainObject.m_szDelete);
             }
             
+                
+            //search for inbox content
+            
+            if (szResponse.match(patternHotmailPOPInboxCotent)==-1)
+                throw new Error("Error Parsing Web Page");
                 
             //get msg urls
             var aMsgTable = szResponse.match(patternHotmailPOPMailBoxTable);
@@ -524,6 +517,7 @@ HotmailScreenRipperBETA.prototype =
                             }
                             catch(err){}
                             
+                            oMSG.szStatView = szStatView;
                             mainObject.m_aMsgDataStore.push(oMSG);
                         }
                     } 
@@ -819,8 +813,7 @@ HotmailScreenRipperBETA.prototype =
             
             var szFolderID = oMSG.szMSGUri.match(patternHotmailPOPFolderID)[1];
             this.m_HttpComms.setURI(szURL+this.m_szDelete+"&FolderID="+szFolderID);
-            var szViewState = this.m_szViewState;//encodeURIComponent(this.m_szViewState);
-            this.m_HttpComms.addValuePair("__VIEWSTATE",szViewState);
+            this.m_HttpComms.addValuePair("__VIEWSTATE",oMSG.szStatView);
             this.m_HttpComms.addValuePair("InboxDeleteMessages","Delete");
             this.m_HttpComms.addValuePair("InboxMoveMessage","");
             this.m_HttpComms.addValuePair("messages",szID);
@@ -856,7 +849,7 @@ HotmailScreenRipperBETA.prototype =
             mainObject.m_Log.Write("Hotmail-SR-BETAR - deleteMessageOnload :" + httpChannel.responseStatus);
             if (httpChannel.responseStatus != 200 ) 
                 throw new Error("error status " + httpChannel.responseStatus);   
-            
+                      
             if (szResponse.search(/<div id="error">/i)==-1)        
                 mainObject.serverComms("+OK its history\r\n");
             else    
