@@ -34,18 +34,18 @@ const patternHotmailPOPSRFrom =/<tr[\S\s]*name="(.*?)"><td>/i;
 const patternHotmailPOPJSRefresh = /<html><head><script.*?>top.location.replace.*?\("(.*?)"\).*?<\/script><\/head><\/html>/i;
 const patternHotmailPOPLogOut = /<a href="(.*?logout.aspx)">/i;
 const patternHotmailPOPInbox = /<a href="(.*?mail.aspx\?Control=Inbox)".*?>/i;
-const patternHotmailPOPJunkFolderID = /<a href=(.*?mail.aspx\?Control=Inbox&FolderID.*?5)>/i;
+const patternHotmailPOPJunkFolderID = /<a href="(.*?mail.aspx\?Control=Inbox&FolderID.*?5)">/i;
 const patternHotmailPOPNextPage = /\S<a href="(.*?mail.aspx\?Control=Inbox&PageAnchor=.*?FolderPage=next.*?)">/i;
-const patternHotmailPOPMailBoxTable = /<table.*?id="pInboxTable">[\s\S]*?<\/table>/ig;
+const patternHotmailPOPMailBoxTable = /<table.*?class="dInboxContentTable".*?>[\s\S]*?<\/table>/ig;
 const patternHotmailPOPMailBoxTableRow = /<tr>[\s\S]*?<\/tr>/ig;
-const patternHotmailPOPEMailURL = /<td.*?pInboxTableTitleColumn.*>.*?<a href="(.*?)".*?>/i;
-const patternHotmailPOPEmailRead = /<td.*?pInboxTableTitleColumn><strong>.*?<\/strong><\/td>/i;
-const patternHotmailPOPEmailSender = /<td.*?pInboxTableFromColumn.*?>(.*?)<\/td>/i; 
-const patternHotmailPOPEmailSubject = /<td.*?pInboxTableTitleColumn.*?>.*?<a href=.*?>(.*?)<\/a>.*?<\/td>/i; 
-const patternHotmailPOPEmailDate = /<td.*?pInboxTableDateColumn.*?>(.*?)<\/td>/i;
-const patternHotmailPOPEMailID =/ReadMsgID=(.*?)&/i;
+const patternHotmailPOPEMailURL = /<td.*?dInboxContentTableTitleCol.*>.*?<a href="(.*?)".*?>/i;
+const patternHotmailPOPEmailRead = /<td.*?class="dInboxContentTableFromCol"><strong>.*?<\/strong><\/td>/i;
+const patternHotmailPOPEmailSender = /<td.*?dInboxContentTableFromCol.*?>(.*?)<\/td>/i; 
+const patternHotmailPOPEmailSubject = /<td.*?dInboxContentTableTitleCol.*?>.*?<a href=.*?>(.*?)<\/a>.*?<\/td>/i; 
+const patternHotmailPOPEmailDate = /<td.*?dInboxContentTableDateCol.*?>(.*?)<\/td>/i;
+const patternHotmailPOPEMailID =/ReadMessageID=(.*?)&/i;
 const patternHotmailPOPViewState = /<input.*?id="__VIEWSTATE".*?value="(.*?)".*?\/>/i;
-const patternHotmailPOPFolderID = /FolderID=(.*?)&/i;
+const patternHotmailPOPFolderID = /FolderID=(.*?)$/i;
 /*******************************************************************************/
 
 

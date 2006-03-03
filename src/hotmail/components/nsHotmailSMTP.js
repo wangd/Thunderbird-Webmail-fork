@@ -31,8 +31,8 @@ const patternHotmailAD = /<form.*?name="addtoAB".*?>/igm;
 const patternHotmailSMTPJSRefresh = /<html><head><script.*?>top.location.replace.*?\("(.*?)"\).*?<\/script><\/head><\/html>/i;
 const patternHotmailSMTPLogOut = /<a href="(.*?logout.aspx)">/i;
 const patternHotmailSMTPViewState = /<input.*?id="__VIEWSTATE".*?value="(.*?)".*?\/>/i;
-const patternHotmailSMTPMailBoxTable = /<table.*?id="pInboxTable">[\s\S]*?<\/table>/ig;
-
+const patternHotmailSMTPMailBoxTable = /<div class="dInboxContent">/ig;
+const patternHotmailSMTPEvent = /<input.*?id="__EVENTVALIDATION".*?value="(.*?)".*?\/>/i;
 
 /******************************  Hotmail ***************************************/
 function nsHotmailSMTP()
