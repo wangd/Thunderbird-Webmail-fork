@@ -31,6 +31,7 @@ function HotmailSMTPScreenRipperBETA(oResponseStream, oLog, bSaveCopy)
         this.m_iAttCount = 0;
         this.m_iAttUploaded = 1;
         this.m_szViewState = null;
+        this.m_iAttachPlaceNum = 5;
         
         this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"];
         this.m_SessionManager = this.m_SessionManager.getService();
@@ -80,6 +81,9 @@ HotmailSMTPScreenRipperBETA.prototype =
             
             this.m_iStage= 0;
             this.m_HttpComms.clean();
+            this.m_HttpComms.addRequestHeader("User-Agent", 
+                            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5",
+                            true);
             this.m_HttpComms.setContentType(-1);
              
             this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
@@ -141,7 +145,10 @@ HotmailSMTPScreenRipperBETA.prototype =
   
             mainObject.m_HttpComms.clean();
             mainObject.m_HttpComms.setContentType(0);
-             
+            mainObject.m_HttpComms.addRequestHeader("User-Agent", 
+                            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5",
+                            true);
+                             
             //check for java refresh
             var aRefresh = szResponse.match(patternHotmailSMTPJSRefresh);
             if (aRefresh)
@@ -304,20 +311,13 @@ HotmailSMTPScreenRipperBETA.prototype =
                     mainObject.m_szHomeURI = httpChannel.URI.spec;
                     mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler - m_szHomeURI : "+mainObject.m_szHomeURI );
              
-                    //get form
-                    var szAction = szResponse.match(patternHotmailSMTPAction)[1];
-                    mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA - loginOnloadHandler - szAction : "+szAction);
-                    
-                    var IOService = Components.classes["@mozilla.org/network/io-service;1"];
-                    IOService = IOService.getService(Components.interfaces.nsIIOService);
-                    var nsIURI = IOService.newURI(mainObject.m_szHomeURI, null, null);
-                    var szDirectory = nsIURI.QueryInterface(Components.interfaces.nsIURL).directory;
-                    mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA - loginOnloadHandler - directory : " +szDirectory);
-                    
                     mainObject.m_szViewState = szResponse.match(patternHotmailSMTPViewState)[1];
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA - loginOnloadHandler - szViewState : " +mainObject.m_szViewState);
 
-                    mainObject.m_szComposer =  mainObject.m_szLocationURI + szDirectory+ szAction;
+                    //get composer url
+                    var szURL = szResponse.match(patternHotmailSMTPCompose)[1];
+                    mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA - loginOnloadHandler - szURL : "+szURL);              
+                    mainObject.m_szComposer =  mainObject.m_szLocationURI + szURL;
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA - loginOnloadHandler - m_szComposer : "+mainObject.m_szComposer );
                     
                     //server response
@@ -352,10 +352,7 @@ HotmailSMTPScreenRipperBETA.prototype =
             
             this.m_aszTo = aszTo;
             this.m_szFrom = szFrom;
-            this.m_iAttCount = this.m_Email.attachments.length-1;
-            this.m_Log.Write("Hotmail-SR-SMTP-BETA.js - rawMSG - m_iAttCount "+this.m_iAttCount ); 
-            this.m_iAttUploaded = 0;
-            
+                        
             if (!this.m_Email.txtBody) 
             {
                 var stringBundle =srGetStrBundle("chrome://hotmail/locale/Hotmail-SMTP.properties");
@@ -364,45 +361,15 @@ HotmailSMTPScreenRipperBETA.prototype =
                 this.serverComms("502 "+ szError + "\r\n");
                 return false;
             }
-             
-             
-            if (this.m_iAttCount >= 0)
-            {
-                var stringBundle =srGetStrBundle("chrome://hotmail/locale/Hotmail-SMTP.properties");
-                var szError = stringBundle.GetStringFromName("AttachError");
-
-                this.serverComms("502 "+ szError + "\r\n");
-                return false;
-            }
-            
-            var szCc = this.m_Email.headers.getCc();
-            if (szCc) 
-            {
-                var stringBundle =srGetStrBundle("chrome://hotmail/locale/Hotmail-SMTP.properties");
-                var szError = stringBundle.GetStringFromName("CcError");
-
-                this.serverComms("502 "+ szError + "\r\n");
-                return false;
-            }
-            
-            var szTo = this.m_Email.headers.getTo();
-            var szBCC =  this.getBcc(szTo, szCc);
-            if (szBCC) 
-            {
-                var stringBundle =srGetStrBundle("chrome://hotmail/locale/Hotmail-SMTP.properties");
-                var szError = stringBundle.GetStringFromName("BccError");
-
-                this.serverComms("502 "+ szError + "\r\n");
-                return false;
-            }
-                
+                 
             this.m_iStage=0;
             this.m_HttpComms.clean();
+            this.m_HttpComms.addRequestHeader("User-Agent", 
+                            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5",
+                            true);
             this.m_HttpComms.setContentType(0);
             this.m_HttpComms.setURI(this.m_szComposer);
-            this.m_HttpComms.setRequestMethod("POST");
-            this.m_HttpComms.addValuePair("__VIEWSTATE",encodeURIComponent(this.m_szViewState));
-            this.m_HttpComms.addValuePair("NewMessage","New");
+            this.m_HttpComms.setRequestMethod("GET");
             var bResult = this.m_HttpComms.send(this.composerOnloadHandler);      
             if (!bResult) throw new Error("httpConnection returned false");
             
@@ -439,48 +406,62 @@ HotmailSMTPScreenRipperBETA.prototype =
                 mainObject.serverComms("502 Error Sending Email\r\n");  
              
             mainObject.m_HttpComms.clean();
-                        
+            mainObject.m_HttpComms.addRequestHeader("User-Agent", 
+                            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5",
+                            true);
+                                        
             if (mainObject.m_Email.attachments.length>0 && !mainObject.m_bAttHandled)
                 mainObject.m_iStage = 2;
+             
+            var szForm = szResponse.match(patternHotmailSMTPForm)[0];
+            mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler - Form " + szForm); 
+             
+            var aszInput = szForm.match(patternHotmailSMTPInput);
+            mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler - szInput " + aszInput);  
+               
+            var szAction = szResponse.match(patternHotmailSMTPAction)[1];
+            mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler - Action " + szAction);      
+            var IOService = Components.classes["@mozilla.org/network/io-service;1"];
+            IOService = IOService.getService(Components.interfaces.nsIIOService);
+            var nsIURI = IOService.newURI(httpChannel.URI.spec, null, null);
+            var szDirectory = nsIURI.QueryInterface(Components.interfaces.nsIURL).directory;
+            mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA - composerOnloadHandler - directory : " +szDirectory);
+            var szURL =  mainObject.m_szLocationURI + szDirectory + szAction;
+            mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA - composerOnloadHandler - szURL : " +szURL);
                 
             //page code                                
             switch (mainObject.m_iStage)
             {
                 case 0:  //MSG handler
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler - Send MSG"); 
-                    
-                    var szAction = szResponse.match(patternHotmailSMTPAction)[1];
-                    mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler - Action " + szAction);
-                    
-                    var IOService = Components.classes["@mozilla.org/network/io-service;1"];
-                    IOService = IOService.getService(Components.interfaces.nsIIOService);
-                    var nsIURI = IOService.newURI(httpChannel.URI.spec, null, null);
-                    var szDirectory = nsIURI.QueryInterface(Components.interfaces.nsIURL).directory;
-                    mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA - composerOnloadHandler - directory : " +szDirectory);
-                    mainObject.m_HttpComms.setURI( mainObject.m_szLocationURI + szDirectory + szAction);
-                    
+                                        
                     mainObject.m_szViewState = szResponse.match(patternHotmailSMTPViewState)[1];                                   
-                    mainObject.m_HttpComms.addValuePair("__VIEWSTATE",mainObject.m_szViewState);
+                    mainObject.m_HttpComms.addValuePair("__VIEWSTATE", mainObject.m_szViewState);
                     
                     mainObject.m_HttpComms.addValuePair("SendMessage","Send");
                     
                     var szTo = mainObject.m_Email.headers.getTo();
-                    var szValue = szTo? escape(szTo):"";
-                    mainObject.m_HttpComms.addValuePair("fTo",szValue);
+                    mainObject.m_HttpComms.addValuePair("fTo",szTo);
                     
-                    mainObject.m_HttpComms.addValuePair("fCc","");
-                    mainObject.m_HttpComms.addValuePair("fBcc","");
+                    var szCc = mainObject.m_Email.headers.getCc();
+                    szValue = szCc? szCc : "";
+                    mainObject.m_HttpComms.addValuePair("fCc",szValue);
+            
+                    var szBCC =  mainObject.getBcc(szTo, szCc);
+                    szValue = szBCC? szBCC : "";
+                    mainObject.m_HttpComms.addValuePair("fBcc",szValue);
                     
-                    var szSubject = mainObject.m_Email.headers.getSubject(); 
-                    szValue = szSubject? escape(szSubject) : "%20";
+                    var szSubject = mainObject.m_Email.headers.getSubject();
+                    szValue = szSubject? szSubject : ""; 
                     mainObject.m_HttpComms.addValuePair("fSubject",szValue); 
                     
                     var szTxtBody = mainObject.m_Email.txtBody.body.getBody();
-                    mainObject.m_HttpComms.addValuePair("fMessageBody",escape(szTxtBody));
+                    mainObject.m_HttpComms.addValuePair("fMessageBody", szTxtBody);
                     
                     var szEvent = szResponse.match(patternHotmailSMTPEvent)[1];  
                     mainObject.m_HttpComms.addValuePair("__EVENTVALIDATION",szEvent);
                     
+                    mainObject.m_HttpComms.setURI(szURL);
                     mainObject.m_HttpComms.setRequestMethod("POST");
                     mainObject.m_HttpComms.setContentType(1);
                     var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);      
@@ -514,11 +495,98 @@ HotmailSMTPScreenRipperBETA.prototype =
                 
                 case 2: //Add Attachment Request
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler - Attach Request");
-                   
+                    mainObject.m_bAttHandled = true;
+                                  
+                    mainObject.m_szViewState = szResponse.match(patternHotmailSMTPViewState)[1];                                   
+                    mainObject.m_HttpComms.addValuePair("__VIEWSTATE", mainObject.m_szViewState);
+                    mainObject.m_HttpComms.addValuePair("AddAttachment"," Attach files");
+                    mainObject.m_HttpComms.addValuePair("fTo","");
+                    mainObject.m_HttpComms.addValuePair("fCc","");
+                    mainObject.m_HttpComms.addValuePair("fBcc","");
+                    mainObject.m_HttpComms.addValuePair("fSubject",""); 
+                    mainObject.m_HttpComms.addValuePair("fMessageBody", "");
+                    
+                    var szEvent = szResponse.match(patternHotmailSMTPEvent)[1];  
+                    mainObject.m_HttpComms.addValuePair("__EVENTVALIDATION",szEvent);
+                    
+                    mainObject.m_HttpComms.setURI(szURL);
+                    mainObject.m_HttpComms.setRequestMethod("POST");
+                    mainObject.m_HttpComms.setContentType(1);
+                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);      
+                    if (!bResult) throw new Error("httpConnection returned false");
+                    mainObject.m_iStage = 3;                   
                 break;
                 
                 case 3: //Add Attach
-                    mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler - More Attachments"); 
+                    mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler - Add Files"); 
+                                            
+                    for (i=0; i<aszInput.length; i++)
+                    {
+                        mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler -aszInput[i] "  +aszInput[i]); 
+                       
+                        var szType ="";
+                        try
+                        {
+                            szType = aszInput[i].match(patternHotmailSMTPType)[1];
+                        }
+                        catch(err){}
+                        
+                        if (szType.search(/submit/i)==-1 && szType.search(/image/i)==-1)
+                        {
+                            var szName = aszInput[i].match(patternHotmailSMTPName)[1]; 
+                            var szValue = "";
+                            try
+                            {
+                                szValue = aszInput[i].match(patternHotmailSMTPValue)[1]; 
+                            }
+                            catch(err){}
+                           
+                            if (szName.search(/__VIEWSTATE/i)!=-1)
+                                mainObject.m_HttpComms.addValuePair(szName, szValue); 
+                            else
+                            {
+                                if ( mainObject.m_Email.attachments.length > mainObject.m_iAttachPlaceNum)
+                                    mainObject.m_HttpComms.addFile(szName, "", ""); 
+                                else
+                                {
+                                    if (mainObject.m_iAttCount < mainObject.m_Email.attachments.length)
+                                    {
+                                         //headers
+                                        var oAttach = mainObject.m_Email.attachments[mainObject.m_iAttCount];
+                                        var szFileName = oAttach.headers.getContentType(4);
+                                        if (!szFileName) szFileName = "";
+                                      
+                                        //body
+                                        var szBody = oAttach.body.getBody();
+                                        mainObject.m_HttpComms.addFile(szName, szFileName, szBody);                                 
+                                        mainObject.m_iAttCount++;
+                                    }
+                                    else
+                                        mainObject.m_HttpComms.addFile(szName, "", ""); 
+                                    
+                                } 
+                            }
+                        }  
+                    }  
+                    
+                    if (mainObject.m_Email.attachments.length > mainObject.m_iAttachPlaceNum)
+                    {
+                        mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler - More Files space needed");  
+                        mainObject.m_HttpComms.addValuePair("AttachMore", "Attach More Files"); 
+                        mainObject.m_iStage = 3; 
+                        mainObject.m_iAttachPlaceNum += 5;
+                    }
+                    else
+                    {
+                        mainObject.m_HttpComms.addValuePair("UploadAttachment", "Attach"); 
+                        mainObject.m_iStage = 0; 
+                    }
+              
+                    mainObject.m_HttpComms.setURI(szURL);
+                    mainObject.m_HttpComms.setRequestMethod("POST");
+                    mainObject.m_HttpComms.setContentType(1);
+                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);      
+                    if (!bResult) throw new Error("httpConnection returned false");
                 break;
             }; 
               
