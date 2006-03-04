@@ -35,7 +35,7 @@ const patternHotmailPOPJSRefresh = /<html><head><script.*?>top.location.replace.
 const patternHotmailPOPLogOut = /<a href="(.*?logout.aspx)">/i;
 const patternHotmailPOPInbox = /<a href="(.*?mail.aspx\?Control=Inbox)".*?>/i;
 const patternHotmailPOPJunkFolderID = /<a href="(.*?mail.aspx\?Control=Inbox&FolderID.*?5)">/i;
-const patternHotmailPOPNextPage = /\S<a href="(.*?mail.aspx\?Control=Inbox&PageAnchor=.*?FolderPage=next.*?)">/i;
+const patternHotmailPOPNextPage = /<a href="(.*?PageAnchor.*?next&Page.*?)">/i;
 const patternHotmailPOPMailBoxTable = /<table.*?class="dInboxContentTable".*?>[\s\S]*?<\/table>/ig;
 const patternHotmailPOPMailBoxTableRow = /<tr>[\s\S]*?<\/tr>/ig;
 const patternHotmailPOPEMailURL = /<td.*?dInboxContentTableTitleCol.*>.*?<a href="(.*?)".*?>/i;
@@ -46,6 +46,7 @@ const patternHotmailPOPEmailDate = /<td.*?dInboxContentTableDateCol.*?>(.*?)<\/t
 const patternHotmailPOPEMailID =/ReadMessageID=(.*?)&/i;
 const patternHotmailPOPViewState = /<input.*?id="__VIEWSTATE".*?value="(.*?)".*?\/>/i;
 const patternHotmailPOPFolderID = /FolderID=(.*?)$/i;
+const patternHotmailPOPInboxCotent = /<div class="dInboxContent">/ig
 /*******************************************************************************/
 
 
