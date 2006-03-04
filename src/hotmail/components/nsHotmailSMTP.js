@@ -16,7 +16,7 @@ const HotmailSendMsgPattern = /<hm:sendmsg>(.*?)<\/hm:sendmsg>/;
 /*************************Screen Ripper Constants *****************************/
 const patternHotmailSMTPForm = /<form[\S\s]*?<\/form>/;
 const patternHotmailSMTPAction = /<form.*?action="(.*?)".*?>/;
-const patternHotmailSMTPInput = /<input.*?>/igm;
+const patternHotmailSMTPInput = /<input[\s\S]*?>/igm;
 const patternHotmailSMTPType = /type="(.*?)"/i;
 const patternHotmailSMTPName = /name="(.*?)"/i;
 const patternHotmailSMTPValue = /value="(.*?)"/i;
@@ -27,12 +27,15 @@ const patternHotmailSMTPComposer = /onclick="G\('(.*?compose\?.*?)'\);"/i;
 const patternHotmailSMTPCompForm = /<form\s+name="composeform".*?>[\S\s]*?<\/form>/igm;
 const patternHotmailSMTPAttForm = /<form\s+name="doattach".*?>[\S\s]*?<\/form>/igm
 const patternHotmailAD = /<form.*?name="addtoAB".*?>/igm;
+
 /*********BETA**********/
 const patternHotmailSMTPJSRefresh = /<html><head><script.*?>top.location.replace.*?\("(.*?)"\).*?<\/script><\/head><\/html>/i;
 const patternHotmailSMTPLogOut = /<a href="(.*?logout.aspx)">/i;
 const patternHotmailSMTPViewState = /<input.*?id="__VIEWSTATE".*?value="(.*?)".*?\/>/i;
 const patternHotmailSMTPMailBoxTable = /<div class="dInboxContent">/ig;
 const patternHotmailSMTPEvent = /<input.*?id="__EVENTVALIDATION".*?value="(.*?)".*?\/>/i;
+const patternHotmailSMTPCompose =/NewMessageGo[\s\S]*?document.location.href="(.*?)"/i;
+
 
 /******************************  Hotmail ***************************************/
 function nsHotmailSMTP()
