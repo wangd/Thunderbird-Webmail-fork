@@ -1,4 +1,4 @@
-<!ENTITY DownloadUnread.AccessKey "m">
+<!ENTITY DownloadUnread.AccessKey "D">
 <!ENTITY DownloadUnread.Label "Descargar sólo los mensajes no leídos">
 <!ENTITY JunkMail.AccessKey "B">
 <!ENTITY JunkMail.Label "Descargar Correo Basura">
