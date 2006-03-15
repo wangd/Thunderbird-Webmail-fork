@@ -1,5 +1,5 @@
 <!ENTITY Options.szTitle "Options de Yahoo">
 <!ENTITY POP.Panel.szTitle "POP">
 <!ENTITY SMTP.Panel.szTitle "SMTP">
-<!ENTITY IMAP.Panel.szTitle "IMAP">
+<!ENTITY Folders.Panel.szTitle "Folders">
 <!ENTITY Window.size "width: 27em; height: 20em">
