@@ -20,7 +20,8 @@ const patternAOLVersion =/var VERSION="(.*?)"/i;
 const patternAOLUserID =/uid:(.*?)&/i;
 const patternAOLPageNum = /info.pageCount\s=\s(.*?);/i;
 const patternAOLMSGSender = /^fa[\s\S].*$/gmi;
-const patternAOLMSGData = /MI.*?\)/igm;
+const patternAOLMSGData = /MI\(.*?\);/igm;
+const patternAOLMSGDataProcess =/MI\("(.*?)",.*?,"([\s\S]*)",(.*?),.*?,.*?,.*?,(.*?),.*?\);/i;
 const patternAOLURLPageNum = /page=(.*?)&/i;
 
 /***********************  AOL ********************************/
@@ -459,24 +460,24 @@ nsAOL.prototype =
                 for (i=0; i<aszMSGDetails.length; i++)
                 {
                    
-                    var aTempData = aszMSGDetails[i].match(/\((.*?)\)/)[1].split(/,/);
+                    var aTempData = aszMSGDetails[i].match(patternAOLMSGDataProcess);
                     mainObject.m_Log.Write("AOL - mailBoxOnloadHandler - aTempData : " + aTempData);
                     
                     var bRead = false;
                     if (mainObject.m_bDownloadUnread)
                     {
-                        bRead = parseInt(aTempData[7]); //unread
+                        bRead = parseInt(aTempData[5]); //unread
                         mainObject.m_Log.Write("AOL.js - mailBoxOnloadHandler - bRead -" + bRead);
                     }
-                    
+                  
                     if (!bRead)
                     {
                         var MSGData = new AOLMSG();
-                        MSGData.iID = aTempData[0].match(/"(.*?)"/)[1]; //ID
-                        MSGData.szSubject = aTempData[2].match(/"(.*?)"/)[1]; //Subject
-                        MSGData.iDate = parseInt(aTempData[3]) //Subject
+                        MSGData.iID = aTempData[1]; //ID
+                        MSGData.szSubject = aTempData[2]; //Subject
+                        MSGData.iDate = parseInt(aTempData[3]); //Date
                         MSGData.iSize = parseInt(aTempData[4]); //size
-        
+
                         //sender
                         var aTempData2= aszSenderAddress[i].match(/\((.*?)\)/)[1].split(/,/);
                         mainObject.m_Log.Write("AOL - mailBoxOnloadHandler - aTempData2 : " + aTempData2);
