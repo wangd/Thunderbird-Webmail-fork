@@ -7,14 +7,14 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
 		<em:id>{268d7420-9032-11da-a72b-0800200c9a66}</em:id>
 		<em:type>2</em:type>
-		<em:version>0.1.0</em:version>
+		<em:version>0.2.0</em:version>
 		
 		<em:name>WebMail - AOL / Netscape </em:name>
 		<em:description>AOL / NetScape component for Web-Mail extension</em:description>
 		<em:creator>ComodoDragon</em:creator>
 		<em:homepageURL>http://webmail.mozdev.org</em:homepageURL>
 		
-        <em:iconURL>chrome://aol/skin/AOL-Icon.png</em:iconURL>
+    <em:iconURL>chrome://aol/skin/AOL-Icon.png</em:iconURL>
 		<em:aboutURL>chrome://aol/content/AOL-About.xul</em:aboutURL>
 		<em:optionsURL>chrome://aol/content/AOL-Prefs.xul</em:optionsURL>
 		<em:updateURL>http://webmail.mozdev.org/update/aolUpdate.rdf</em:updateURL>
@@ -32,8 +32,8 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
             <Description>
                 <!-- requires web-mail extension-->
                 <em:id>{3c8e8390-2cf6-11d9-9669-0800200c9a66}</em:id>
-                <em:minVersion>0.9.0</em:minVersion>
-                <em:maxVersion>0.9.0</em:maxVersion>
+                <em:minVersion>0.9</em:minVersion>
+                <em:maxVersion>0.9</em:maxVersion>
                 <em:name>WebMail</em:name>
                 <em:homepageURL>http://webmail.mozdev.org/</em:homepageURL>
                 <em:updateURL>http://webmail.mozdev.org/update/webmailUpdate.rdf</em:updateURL>
