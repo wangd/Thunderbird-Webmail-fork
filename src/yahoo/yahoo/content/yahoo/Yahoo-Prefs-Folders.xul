@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/global.css"?>
+<!DOCTYPE dialog SYSTEM "chrome://yahoo/locale/Yahoo-Prefs-Folders.dtd">
+
+<overlay id="paneFoldersOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+           
+    <prefpane id = "paneFolders" onpaneload= "gYahooFolder.init();"> 
+        <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
+        <script type="application/x-javascript" src="chrome://yahoo/content/Yahoo-Prefs-Folders.js"/>
+        <script type="application/x-javascript" src="chrome://yahoo/content/YahooFolders.js"/>
+        
+        <preferences>
+            <preference id="prefFolders" name="yahoo.szFolders" type="string"/>
+        </preferences> 
+      
+        <vbox flex="1">
+            <richlistbox id="listView" 
+                         class="listbox" 
+                         flex="1" 
+                         style="&list.size;"
+                         ondblclick="gYahooFolder.onDClick();"
+                         onselect="gYahooFolder.onSelect();"
+                         preference-editable="true"
+                         preference="prefFolders"
+                         onsyncfrompreference ="return gYahooFolder.readFolderPref();"
+                         onsynctopreference ="return gYahooFolder.writeFolderPref();">
+        
+            </richlistbox> 
+            
+             <hbox align="end" pack="end">    
+                <button id="edit" 
+                        label="&Edit.label;" 
+                        oncommand ="gYahooFolder.add();"
+                        disabled="false"
+                        accesskey="&Edit.accessKey;"/>
+            </hbox>
+            
+        </vbox>  
+    </prefpane>
+</overlay>
