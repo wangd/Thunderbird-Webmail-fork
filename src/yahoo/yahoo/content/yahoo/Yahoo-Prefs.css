@@ -8,7 +8,7 @@ radio[pane=panePOP]
     -moz-image-region: rect(0px, 32px, 32px, 0px)
 }
 
-radio[pane=paneIMAP]
+radio[pane=paneFolders]
 {
 	-moz-image-region: rect(0px, 64px, 32px, 32px)
 }
