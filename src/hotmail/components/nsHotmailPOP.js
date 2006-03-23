@@ -167,16 +167,16 @@ nsHotmail.prototype =
                         if (this.m_szUserName.match(reg))
                         {
                             this.m_HotmailLog.Write("nsHotmail.js - logIN - username found");  
-                            if (item[1]==1)
+                            if (item[1]==1) ///webdav
                                 this.m_CommMethod = new HotmailWebDav(this.m_oResponseStream, this.m_HotmailLog);    
-                            else if (item[1]==2)
+                            else if (item[1]==2) //beta
                                 this.m_CommMethod = new HotmailScreenRipperBETA(this.m_oResponseStream, this.m_HotmailLog);    
                         } 
                     } 
                 } 
             }
                      
-            if (!this.m_CommMethod) 
+            if (!this.m_CommMethod) //default screen ripper
                 this.m_CommMethod = new HotmailScreenRipper(this.m_oResponseStream, this.m_HotmailLog);
             
             var bResult = this.m_CommMethod.logIn(this.m_szUserName, this.m_szPassWord);
