@@ -1,6 +1,6 @@
 <!ENTITY WebmailAbout.Title "Webmail - Tietoja">
 <!ENTITY WebmailAbout.ExtName "Web Mail">
-<!ENTITY WebmailAbout.ExtVersion "versio 0.9.3">
+<!ENTITY WebmailAbout.ExtVersion "versio 1.0.0">
 <!ENTITY WebmailAbout.ExtDescription "Mahdollistaa Thunderbirdin pääsyn webmailiin">
 <!ENTITY WebmailAbout.ExtCreaterTitle "Tekijä:">
 <!ENTITY WebmailAbout.ExtCreator "ComodoDragon">
