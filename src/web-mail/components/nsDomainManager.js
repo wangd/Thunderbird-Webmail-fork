@@ -51,7 +51,7 @@ nsDomainManager.prototype =
                 return false;
             }
             
-            var regExp = new RegExp(szAddress, "i");
+            var regExp = new RegExp("^"+szAddress+"$", "i");
             var bFound = false;
             var i= 0;
             
@@ -177,7 +177,7 @@ nsDomainManager.prototype =
             }        
             
             var aData = this.getProtocolResource(szProtocol);  
-            var regExp = new RegExp(szAddress, "i");
+            var regExp = new RegExp("^"+szAddress+"$", "i");
             var i=0;
             var bFound=false;
             
