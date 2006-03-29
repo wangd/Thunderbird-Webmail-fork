@@ -132,12 +132,12 @@ headers.prototype =
                 break;
                 
                 case 1: // type
-                    szContent= szContentType.match(/(.*?)\/.*?;/)[1];
+                    szContent= szContentType.match(/(.*?)\/.*?;?$/)[1];
                     szContent = szContent.replace(/\s/,"");
                 break;
                 
                 case 2://subtype
-                    szContent= szContentType.match(/.*?\/(.*?);/)[1];
+                    szContent= szContentType.match(/.*?\/(.*?);?$/)[1];
                     szContent = szContent.replace(/\s/,"");
                 break;
                 
