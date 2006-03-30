@@ -81,6 +81,8 @@ function nsYahoo()
         this.m_SessionData = null;
         
         this.m_bReEntry = false;
+        this.m_bStat = false;
+        this.m_bStateMode = true;
 
 
         //do i reuse the session
@@ -168,10 +170,6 @@ nsYahoo.prototype =
             }
             
             this.m_HttpComms.clean();
-            this.m_HttpComms.addRequestHeader("User-Agent", 
-                            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5",
-                            true);
-
 
             this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
             if (this.m_SessionData && this.m_bReUseSession)
@@ -229,9 +227,6 @@ nsYahoo.prototype =
     
             mainObject.m_HttpComms.clean();
             mainObject.m_HttpComms.setContentType(0);
-            mainObject.m_HttpComms.addRequestHeader("User-Agent", 
-                            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5",
-                            true);
                             
             //page code                                
             switch (mainObject.m_iStage)
@@ -395,13 +390,11 @@ nsYahoo.prototype =
             this.m_Log.Write("nsYahoo.js - getNumMessages - mail box url " + szMailboxURI); 
             
             this.m_HttpComms.clean();
-            this.m_HttpComms.addRequestHeader("User-Agent", 
-                            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5",
-                            true);
             this.m_HttpComms.setURI(szMailboxURI);
             this.m_HttpComms.setRequestMethod("GET");
             var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler); 
             if (!bResult) throw new Error("httpConnection returned false");
+            this.m_bStat = true;
             
             this.m_Log.Write("nsYAhoo.js - getNumMessages - END"); 
             return true;
@@ -436,9 +429,6 @@ nsYahoo.prototype =
                 throw new Error("error status " + httpChannel.responseStatus);   
             
             mainObject.m_HttpComms.clean();
-            mainObject.m_HttpComms.addRequestHeader("User-Agent", 
-                            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5",
-                            true);
              
             if (!mainObject.m_szBulkFolderURI)
             {
@@ -584,8 +574,27 @@ nsYahoo.prototype =
             //no more pages report back to mozilla
             else
             {    
-                mainObject.serverComms("+OK "+ mainObject.m_aMsgDataStore.length 
-                                        + " " + mainObject.m_iTotalSize + "\r\n");
+                if (mainObject.m_bStateMode) //called by stat
+                {
+                    mainObject.serverComms("+OK "+ mainObject.m_aMsgDataStore.length 
+                                            + " " + mainObject.m_iTotalSize + "\r\n");
+                }
+                else //called by list
+                {
+                    var szPOPResponse = "+OK " + mainObject.m_aMsgDataStore.length + " Messages\r\n"; 
+                    this.m_Log.Write("nsYahoo.js - getMessagesSizes - : " + mainObject.m_aMsgDataStore.length);
+     
+                    for (i = 0; i <  mainObject.m_aMsgDataStore.length; i++)
+                    {
+                        var data = mainObject.m_aMsgDataStore[i];
+                        var iEmailSize = data.iSize;
+                        szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";       
+                    }         
+                   
+                    szPOPResponse += ".\r\n";
+                    mainObject.serverComms(szPOPResponse);
+                }
+                
                 delete mainObject.m_aDeleteData;
                 mainObject.m_aDeleteData = new Array();
             }
@@ -611,26 +620,48 @@ nsYahoo.prototype =
                      
     //list
     //i'm not downloading the mailbox again. 
-    //I hope stat been called first or there's going to be trouble
     getMessageSizes : function() 
     {
         try
         {
             this.m_Log.Write("nsYahoo.js - getMessageSizes - START"); 
             
-            var szPOPResponse = "+OK " + this.m_aMsgDataStore.length + " Messages\r\n"; 
-            this.m_Log.Write("nsYahoo.js - getMessagesSizes - : " + this.m_aMsgDataStore.length);
- 
-            for (i = 0; i <  this.m_aMsgDataStore.length; i++)
-            {
-                var data = this.m_aMsgDataStore[i];
-                var iEmailSize = data.iSize;
-                szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";       
-            }         
-    
-            szPOPResponse += ".\r\n";
+            if (this.m_bStat) 
+            {  //msg table has been donwloaded
             
-            this.serverComms(szPOPResponse);
+                this.m_Log.Write("nsYahoo.js - getMessageSizes - getting sizes"); 
+                var szPOPResponse = "+OK " + this.m_aMsgDataStore.length + " Messages\r\n"; 
+                this.m_Log.Write("nsYahoo.js - getMessagesSizes - : " + this.m_aMsgDataStore.length);
+     
+                for (i = 0; i <  this.m_aMsgDataStore.length; i++)
+                {
+                    var data = this.m_aMsgDataStore[i];
+                    var iEmailSize = data.iSize;
+                    szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";       
+                }         
+        
+                szPOPResponse += ".\r\n";
+                
+                this.serverComms(szPOPResponse);
+            }
+            else
+            { //download msg list
+            
+                this.m_Log.Write("nsYahoo.js - getMessageSizes - calling stat");
+               
+                if (this.m_szMailboxURI == null) return false;
+                var szMailboxURI = this.m_szLocationURI + this.m_szMailboxURI; 
+                this.m_Log.Write("nsYahoo.js - getMessageSizes - mail box url " + szMailboxURI); 
+                
+                this.m_HttpComms.clean();
+                this.m_HttpComms.setURI(szMailboxURI);
+                this.m_HttpComms.setRequestMethod("GET");
+                this.m_iStage =0;
+                var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler); 
+                if (!bResult) throw new Error("httpConnection returned false");
+                this.m_bStat = true;
+                this.m_bStateMode = false;
+            }
             this.m_Log.Write("nsYahoo.js - getMessageSizes - END"); 
             return true;
         }
@@ -718,9 +749,6 @@ nsYahoo.prototype =
             
             //get msg from yahoo
             this.m_HttpComms.clean();
-            this.m_HttpComms.addRequestHeader("User-Agent", 
-                            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5",
-                            true);
             this.m_HttpComms.setURI(szDest);
             this.m_HttpComms.setRequestMethod("GET");
             var bResult = this.m_HttpComms.send(this.headerOnloadHandler); 
@@ -761,9 +789,6 @@ nsYahoo.prototype =
             var szUri = httpChannel.URI.spec;
             mainObject.m_Log.Write("m_YahooLog.js - headerOnloadHandler - uri : " + szUri); 
             mainObject.m_HttpComms.clean();  
-            mainObject.m_HttpComms.addRequestHeader("User-Agent", 
-                            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5",
-                            true);
                             
             switch(mainObject.m_iStage)
             {
@@ -855,9 +880,6 @@ nsYahoo.prototype =
             
             //get msg from yahoo
             this.m_HttpComms.clean();
-            this.m_HttpComms.addRequestHeader("User-Agent", 
-                            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5",
-                            true);
             this.m_HttpComms.setURI(szDest);
             this.m_HttpComms.setRequestMethod("GET");
             var bResult = this.m_HttpComms.send(this.emailOnloadHandler); 
@@ -894,9 +916,6 @@ nsYahoo.prototype =
             var szUri = httpChannel.URI.spec;
             mainObject.m_Log.Write("m_YahooLog.js - emailOnloadHandler - uri : " + szUri); 
             mainObject.m_HttpComms.clean();
-            mainObject.m_HttpComms.addRequestHeader("User-Agent", 
-                            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5",
-                            true);
             
             //Content-Type: text/html  == very bad
             try
@@ -967,9 +986,6 @@ nsYahoo.prototype =
                    
                     //get msg from yahoo
                     mainObject.m_HttpComms.clean();
-                    mainObject.m_HttpComms.addRequestHeader("User-Agent", 
-                            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5",
-                            true);
                     mainObject.m_HttpComms.setURI(szDest);
                     mainObject.m_HttpComms.setRequestMethod("GET");
                     var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler); 
