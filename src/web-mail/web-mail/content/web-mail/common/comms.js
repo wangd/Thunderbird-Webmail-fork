@@ -596,8 +596,8 @@ Comms.prototype =
                     mainObject.m_Log.Write("comms.js - callback - received cookies \n" + szCookies);  
                     if (!mainObject.m_oCookies)
                     {
-                        mainObject.m_oCookies = Components.classes["@mozilla.org/CookieManager;1"].createInstance();
-                        mainObject.m_oCookies.QueryInterface(Components.interfaces.nsICookieManager);
+                        mainObject.m_oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager;1"].createInstance();
+                        mainObject.m_oCookies.QueryInterface(Components.interfaces.nsIWebMailCookieManager);
                     }
                     mainObject.m_oCookies.addCookie( httpChannel.URI, szCookies); 
                 }

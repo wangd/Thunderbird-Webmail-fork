@@ -8,7 +8,7 @@ interface nsISessionData : nsISupports
 {
     attribute string szUserName;
     
-    attribute nsICookieManager oCookieManager;
+    attribute nsIWebMailCookieManager oCookieManager;
     
     attribute nsIHttpAuthManager oHttpAuthManager;
     
