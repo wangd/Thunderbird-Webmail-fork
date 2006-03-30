@@ -24,11 +24,11 @@
               src="chrome://yahoo/content/Yahoo-Prefs-POP.xul"/>  
     
     <!--Folders-->    
-    
+    <!--
     <prefpane id="paneFolders" 
               label="&Folders.Panel.szTitle;"
               src="chrome://yahoo/content/Yahoo-Prefs-Folders.xul"/>    
-   
+     -->
     <!--SMTP-->
     <prefpane id="paneSMTP" 
               label="&SMTP.Panel.szTitle;"
