@@ -1,0 +1,10 @@
+#include "nsISupports.idl"
+#include "nsIURL.idl"
+
+[scriptable, uuid(76fef350-3850-11da-8cd6-0800200c9a66)]
+interface nsIWebMailCookieManager : nsISupports
+{
+    boolean addCookie(in nsIURL url, in string szCookie);
+    
+    string findCookie(in nsIURL url);
+};
