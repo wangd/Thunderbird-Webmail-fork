@@ -82,8 +82,6 @@ function nsYahoo()
         
         this.m_bReEntry = false;
         this.m_bStat = false;
-        this.m_bStateMode = true;
-
 
         //do i reuse the session
         var oPref = {Value:null};
@@ -571,7 +569,7 @@ nsYahoo.prototype =
             //no more pages report back to mozilla
             else
             {    
-                if (mainObject.m_bStateMode) //called by stat
+                if (mainObject.m_bStat) //called by stat
                 {
                     mainObject.serverComms("+OK "+ mainObject.m_aMsgDataStore.length 
                                             + " " + mainObject.m_iTotalSize + "\r\n");
@@ -583,8 +581,7 @@ nsYahoo.prototype =
      
                     for (i = 0; i <  mainObject.m_aMsgDataStore.length; i++)
                     {
-                        var data = mainObject.m_aMsgDataStore[i];
-                        var iEmailSize = data.iSize;
+                        var iEmailSize = mainObject.m_aMsgDataStore[i].iSize;
                         szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";       
                     }         
                    
@@ -632,8 +629,7 @@ nsYahoo.prototype =
      
                 for (i = 0; i <  this.m_aMsgDataStore.length; i++)
                 {
-                    var data = this.m_aMsgDataStore[i];
-                    var iEmailSize = data.iSize;
+                    var iEmailSize = this.m_aMsgDataStore[i].iSize;
                     szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";       
                 }         
         
@@ -656,8 +652,6 @@ nsYahoo.prototype =
                 this.m_iStage =0;
                 var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler); 
                 if (!bResult) throw new Error("httpConnection returned false");
-                this.m_bStat = true;
-                this.m_bStateMode = false;
             }
             this.m_Log.Write("nsYahoo.js - getMessageSizes - END"); 
             return true;
