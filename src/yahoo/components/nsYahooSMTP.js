@@ -69,8 +69,7 @@ function nsYahooSMTP()
         this.m_bReEntry = false;
         
         //do i reuse the session
-        var oPref = new Object();
-        oPref.Value = null;
+        var oPref = {Value:null};
         var  WebMailPrefAccess = new WebMailCommonPrefAccess();
         if (WebMailPrefAccess.Get("bool","yahoo.bReUseSession",oPref))
             this.m_bReUseSession=oPref.Value;
@@ -78,7 +77,6 @@ function nsYahooSMTP()
             this.m_bReUseSession=true; 
             
         //do i save copy
-        var oPref = new Object();
         oPref.Value = null;
         var  PrefAccess = new WebMailCommonPrefAccess();
         if (PrefAccess.Get("bool","yahoo.bSaveCopy",oPref))

@@ -86,8 +86,7 @@ function nsYahoo()
 
 
         //do i reuse the session
-        var oPref = new Object();
-        oPref.Value = null;
+        var oPref = {Value:null};
         var  WebMailPrefAccess = new WebMailCommonPrefAccess();
         if (WebMailPrefAccess.Get("bool","yahoo.bReUseSession",oPref))
             this.m_bReUseSession=oPref.Value;
@@ -95,7 +94,6 @@ function nsYahoo()
             this.m_bReUseSession=true; 
             
         //do i download junkmail
-        var oPref = new Object();
         oPref.Value = null;
         var  WebMailPrefAccess = new WebMailCommonPrefAccess();
         if (WebMailPrefAccess.Get("bool","yahoo.bUseJunkMail",oPref))
@@ -104,7 +102,6 @@ function nsYahoo()
             this.m_bUseJunkMail=false;       
             
         //do i download unread only
-        var oPref = new Object();
         oPref.Value = null;
         var  WebMailPrefAccess = new WebMailCommonPrefAccess();
         if (WebMailPrefAccess.Get("bool","yahoo.bDownloadUnread",oPref))
