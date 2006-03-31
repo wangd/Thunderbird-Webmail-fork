@@ -100,6 +100,8 @@ function nsAOL()
             this.m_bDownloadUnread=false;
                    
         delete WebMailPrefAccess;
+        
+        this.m_bStat = false;
                    
         this.m_Log.Write("nsAOL.js - Constructor - END");  
     }
@@ -415,6 +417,7 @@ nsAOL.prototype =
             this.m_HttpComms.setRequestMethod("GET");
             var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler); 
             if (!bResult) throw new Error("httpConnection returned false");
+            this.m_bStat = true;
             
             this.m_Log.Write("nsAOL.js - getNumMessages - END"); 
             return true;
@@ -520,7 +523,7 @@ nsAOL.prototype =
             {
                 if (!mainObject.m_bJunkMailDone && mainObject.m_bUseJunkMail && mainObject.m_szSpamURL)
                 { //get junkmail
-                    mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - junkmail: " + mainObject.m_bUseJunkMail); 
+                    mainObject.m_Log.Write("AOL - mailBoxOnloadHandler - junkmail: " + mainObject.m_bUseJunkMail); 
                     
                     mainObject.m_bJunkMailDone = true;
                     mainObject.m_iPageNum = -1; //reset page count
@@ -532,8 +535,25 @@ nsAOL.prototype =
                 }
                 else  //all uri's collected
                 {
-                   mainObject.serverComms("+OK "+ mainObject.m_aMsgDataStore.length + " " 
-                                                + mainObject.m_iTotalSize + "\r\n");
+                    if (mainObject.m_bStat) //called by stat
+                    {
+                        mainObject.serverComms("+OK "+ mainObject.m_aMsgDataStore.length 
+                                                + " " + mainObject.m_iTotalSize + "\r\n");
+                    }
+                    else //called by list
+                    {
+                        var szPOPResponse = "+OK " + mainObject.m_aMsgDataStore.length + " Messages\r\n"; 
+                        this.m_Log.Write("AOL.js - getMessagesSizes - : " + mainObject.m_aMsgDataStore.length);
+         
+                        for (i = 0; i <  mainObject.m_aMsgDataStore.length; i++)
+                        {
+                            var iEmailSize = mainObject.m_aMsgDataStore[i].iSize;
+                            szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";       
+                        }         
+                       
+                        szPOPResponse += ".\r\n";
+                        mainObject.serverComms(szPOPResponse);
+                    }
                 }
             }
 
@@ -560,17 +580,33 @@ nsAOL.prototype =
         {
             this.m_Log.Write("nsAOL.js - getMessageSizes - START"); 
             
-            var szPOPResponse = "+OK " +  this.m_aMsgDataStore.length + " Messages\r\n"; 
-            for (i = 0; i < this.m_aMsgDataStore.length; i++)
-            {
-                var iEmailSize = this.m_aMsgDataStore[i].iSize;
-                this.m_Log.Write("nsAOL.js - getMessageSizes - Email Size : " +iEmailSize);
-                szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";   
-            } 
-            szPOPResponse += ".\r\n";
-            
-            this.serverComms(szPOPResponse);
-                   
+            if (this.m_bStat) 
+            {  //msg table has been donwloaded
+                var szPOPResponse = "+OK " +  this.m_aMsgDataStore.length + " Messages\r\n"; 
+                for (i = 0; i < this.m_aMsgDataStore.length; i++)
+                {
+                    var iEmailSize = this.m_aMsgDataStore[i].iSize;
+                    this.m_Log.Write("nsAOL.js - getMessageSizes - Email Size : " +iEmailSize);
+                    szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";   
+                } 
+                szPOPResponse += ".\r\n";
+                
+                this.serverComms(szPOPResponse);
+            }
+            else
+            { //download msg list
+                this.m_Log.Write("AOL - getMessageSizes - calling stat");
+                if (this.m_szInboxURL== null) return false;
+                this.m_Log.Write("nsAOL.js - getNumMessages - mail box url " + this.m_szInboxURL); 
+                
+                this.m_iStage = 0;
+                this.m_HttpComms.clean();
+                this.m_HttpComms.setURI(this.m_szInboxURL);
+                this.m_HttpComms.setRequestMethod("GET");
+                var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler); 
+                if (!bResult) throw new Error("httpConnection returned false");
+            }
+                           
             this.m_Log.Write("nsAOL.js - getMessageSizes - END"); 
             return true;
         }

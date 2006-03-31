@@ -79,7 +79,9 @@ function HotmailWebDav(oResponseStream, oLog)
             this.m_iProcessAmount = 25;
             
         delete WebMailPrefAccess;
-             
+          
+        this.m_bStat = false;
+     
         this.m_Log.Write("HotmailWebDav.js - Constructor - END");  
     }
     catch(e)
@@ -211,7 +213,8 @@ HotmailWebDav.prototype =
             this.m_HttpComms.addData(HotmailPOPFolderSchema,"text/xml");
             var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler);                             
             if (!bResult) throw new Error("httpConnection returned false");
-           
+            this.m_bStat = true;
+            
             this.m_Log.Write("HotmailWebDav.js - getNumMessages - END"); 
             return true;
         }
@@ -311,8 +314,30 @@ HotmailWebDav.prototype =
                                 mainObject.processItem( mainObject.m_aRawData[i]);        
                             }
                             
-                            //server response
-                            mainObject.serverComms("+OK "+ mainObject.m_aMsgDataStore.length + " " + mainObject.m_iTotalSize + "\r\n");
+                            if (mainObject.m_bStat) //called by stat
+                            {
+                                //server response
+                                mainObject.serverComms("+OK "+ 
+                                                       mainObject.m_aMsgDataStore.length + 
+                                                       " " + 
+                                                       mainObject.m_iTotalSize + 
+                                                       "\r\n");
+                            }
+                            else //called by list
+                            {
+                                var szPOPResponse = "+OK " + mainObject.m_aMsgDataStore.length + " Messages\r\n"; 
+                                this.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - : " + mainObject.m_aMsgDataStore.length);
+                 
+                                for (i = 0; i <  mainObject.m_aMsgDataStore.length; i++)
+                                {
+                                    var iEmailSize = mainObject.m_aMsgDataStore[i].iSize;
+                                    szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";       
+                                }         
+                               
+                                szPOPResponse += ".\r\n";
+                                mainObject.serverComms(szPOPResponse);
+                            }
+                            
                             delete  mainObject.m_aRawData;
                         }
                     }
@@ -360,8 +385,30 @@ HotmailWebDav.prototype =
                 this.m_Log.Write("HotmailWebDav.js - notify - all data handled"); 
                 this.m_Timer.cancel();
                 
-                //server response
-                this.serverComms("+OK "+ this.m_aMsgDataStore.length + " " + this.m_iTotalSize + "\r\n");
+                if (this.m_bStat) //called by stat
+                {
+                    //server response
+                    this.serverComms("+OK "+ 
+                                       this.m_aMsgDataStore.length + 
+                                       " " + 
+                                       this.m_iTotalSize + 
+                                       "\r\n");
+                }
+                else //called by list
+                {
+                    var szPOPResponse = "+OK " + this.m_aMsgDataStore.length + " Messages\r\n"; 
+                    this.m_Log.Write("HotmailWebDav.js - notify - : " + this.m_aMsgDataStore.length);
+     
+                    for (i = 0; i <  this.m_aMsgDataStore.length; i++)
+                    {
+                        var iEmailSize = this.m_aMsgDataStore[i].iSize;
+                        szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";       
+                    }         
+                   
+                    szPOPResponse += ".\r\n";
+                    this.serverComms(szPOPResponse);
+                }
+                
                 delete  this.m_aRawData;
             }
             
@@ -482,19 +529,39 @@ HotmailWebDav.prototype =
         {
             this.m_Log.Write("HotmailWebDav.js - getMessageSizes - START"); 
            
-            var szPOPResponse = "+OK " + this.m_aMsgDataStore.length + " Messages\r\n"; 
-           
-            for (i = 0; i < this.m_aMsgDataStore.length; i++)
-            {
-                var iSize = this.m_aMsgDataStore[i].iSize;
-                this.m_Log.Write("HotmailWebDav.js - getMessageSizes - Email Size : " +iSize);
+            if (this.m_bStat) 
+            {  //msg table has been donwloaded            
+                this.m_Log.Write("HotmailWebDav.js - getMessageSizes - getting sizes"); 
+
+                var szPOPResponse = "+OK " + this.m_aMsgDataStore.length + " Messages\r\n"; 
+                this.m_Log.Write("nsYahoo.js - getMessagesSizes - : " + this.m_aMsgDataStore.length);
                 
-                szPOPResponse+=(i+1) + " " + iSize + "\r\n"; 
-            }         
-            szPOPResponse += ".\r\n";
+                for (i = 0; i < this.m_aMsgDataStore.length; i++)
+                {
+                    var iSize = this.m_aMsgDataStore[i].iSize;
+                    this.m_Log.Write("HotmailWebDav.js - getMessageSizes - Email Size : " +iSize);
+                    
+                    szPOPResponse+=(i+1) + " " + iSize + "\r\n"; 
+                }         
+                szPOPResponse += ".\r\n";
+                this.serverComms(szPOPResponse);
+            }
+            else
+            { //download msg list
+                this.m_Log.Write("HotmailWebDav.js - getMessageSizes - calling stat");
+               
+                if (this.m_szFolderURI == null) return false;
+                this.m_Log.Write("HotmailWebDav.js - getNumMessages - mail box url " + this.m_szFolderURI); 
+                                   
+                this.m_HttpComms.clean();
+                this.m_HttpComms.setContentType(-1);
+                this.m_HttpComms.setURI(this.m_szFolderURI);
+                this.m_HttpComms.setRequestMethod("PROPFIND");
+                this.m_HttpComms.addData(HotmailPOPFolderSchema,"text/xml");
+                var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler);                             
+                if (!bResult) throw new Error("httpConnection returned false");
+            }
             
-            this.serverComms(szPOPResponse);
-                         
             this.m_Log.Write("HotmailWebDav.js - getMessageSizes - END"); 
             return true;
         }

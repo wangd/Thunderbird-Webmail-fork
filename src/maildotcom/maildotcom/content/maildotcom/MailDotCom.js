@@ -103,9 +103,9 @@ var gMailDotComStartUp =
             this.idCheck("usa.com","SMTP", cszMailDotComSMTPContentID);
             this.idCheck("post.com","SMTP", cszMailDotComSMTPContentID);
             this.idCheck("witty.com","SMTP", cszMailDotComSMTPContentID);
-            this.idCheck("whoever.com","SMPT", cszMailDotComSMTPContentID);
-            this.idCheck("writeme.com","SMPT", cszMailDotComSMTPContentID);
-            this.idCheck("unforgettable.com","SMPT", cszMailDotComSMTPContentID);
+            this.idCheck("whoever.com","SMTP", cszMailDotComSMTPContentID);
+            this.idCheck("writeme.com","SMTP", cszMailDotComSMTPContentID);
+            this.idCheck("unforgettable.com","SMTP", cszMailDotComSMTPContentID);
             this.idCheck("teacher.com","SMTP", cszMailDotComSMTPContentID);
             
             this.m_Log.Write("MailDotCom.js : notify - END");

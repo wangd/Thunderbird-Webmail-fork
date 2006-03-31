@@ -58,6 +58,8 @@ function HotmailScreenRipperBETA(oResponseStream, oLog)
             this.m_bDownloadUnread=oPref.Value;
         else
             this.m_bDownloadUnread=false;   
+        
+        this.m_bStat = false;
                                          
         this.m_Log.Write("Hotmail-SR-BETAR.js - Constructor - END");  
     }
@@ -361,7 +363,7 @@ HotmailScreenRipperBETA.prototype =
             this.m_HttpComms.setRequestMethod("GET");
             var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler); 
             if (!bResult) throw new Error("httpConnection returned false");
-                        
+            this.m_bStat = true;            
             this.m_Log.Write("Hotmail-SR-BETAR - getNumMessages - END"); 
             return true;
         }
@@ -556,8 +558,29 @@ HotmailScreenRipperBETA.prototype =
                 }
                 else  //all uri's collected
                 {
-                   mainObject.serverComms("+OK "+ mainObject.m_aMsgDataStore.length + " " 
-                                                + mainObject.m_iTotalSize + "\r\n");
+                    if (mainObject.m_bStat) //called by stat
+                    {
+                        //server response
+                        mainObject.serverComms("+OK "+ 
+                                               mainObject.m_aMsgDataStore.length + 
+                                               " " + 
+                                               mainObject.m_iTotalSize + 
+                                               "\r\n");
+                    }
+                    else //called by list
+                    {
+                        var szPOPResponse = "+OK " + mainObject.m_aMsgDataStore.length + " Messages\r\n"; 
+                        this.m_Log.Write("Hotmail-SR-BETAR.js - mailBoxOnloadHandler - : " + mainObject.m_aMsgDataStore.length);
+         
+                        for (i = 0; i <  mainObject.m_aMsgDataStore.length; i++)
+                        {
+                            var iEmailSize = mainObject.m_aMsgDataStore[i].iSize;
+                            szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";       
+                        }         
+                       
+                        szPOPResponse += ".\r\n";
+                        mainObject.serverComms(szPOPResponse);
+                    }
                 }
             }
             mainObject.m_Log.Write("Hotmail-SR-BETAR - MailBoxOnload - END"); 
@@ -578,24 +601,38 @@ HotmailScreenRipperBETA.prototype =
     
                      
     //list
-    //i'm not downloading the mailbox again. 
-    //I hope stat been called first or there's going to be trouble
     getMessageSizes : function() 
     {
         try
         {
             this.m_Log.Write("Hotmail-SR-BETAR - getMessageSizes - START"); 
             
-            var szPOPResponse = "+OK " + this.m_aMsgDataStore.length + " Messages\r\n";
-            for (i = 0; i <  this.m_aMsgDataStore.length; i++)
-            {
-                var iSize = this.m_aMsgDataStore[i].iSize;
-                this.m_Log.Write("Hotmail-SR-BETAR - getMessageSizes - size : " +iSize);    
-                szPOPResponse+=(i+1) + " " + iSize + "\r\n";  
+            if (this.m_bStat) 
+            {  //msg table has been donwloaded    
+                var szPOPResponse = "+OK " + this.m_aMsgDataStore.length + " Messages\r\n";
+                for (i = 0; i <  this.m_aMsgDataStore.length; i++)
+                {
+                    var iSize = this.m_aMsgDataStore[i].iSize;
+                    this.m_Log.Write("Hotmail-SR-BETAR - getMessageSizes - size : " +iSize);    
+                    szPOPResponse+=(i+1) + " " + iSize + "\r\n";  
+                }
+                szPOPResponse += ".\r\n";
+                
+                this.serverComms(szPOPResponse);
             }
-            szPOPResponse += ".\r\n";
-            
-            this.serverComms(szPOPResponse);
+            else
+            {
+                if (this.m_szMailboxURI == null) return false;
+                var szMailboxURI = this.m_szLocationURI + this.m_szMailboxURI; 
+                this.m_Log.Write("Hotmail-SR-BETAR - getMessageSizes - mail box url " + szMailboxURI); 
+                
+                this.m_iStage = 0;  
+                this.m_HttpComms.clean();
+                this.m_HttpComms.setURI(szMailboxURI);
+                this.m_HttpComms.setRequestMethod("GET");
+                var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler); 
+                if (!bResult) throw new Error("httpConnection returned false");
+            }
             this.m_Log.Write("Hotmail-SR-BETAR - getMessageSizes - END"); 
             return true;
         }

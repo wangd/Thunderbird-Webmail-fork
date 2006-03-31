@@ -109,7 +109,7 @@ function nsLycos()
             this.m_iProcessAmount = 25;
             
         delete WebMailPrefAccess;
-                   
+        this.m_bStat = false;           
         this.m_Log.Write("nsLycos.js - Constructor - END");  
     }
     catch(e)
@@ -263,7 +263,7 @@ nsLycos.prototype =
             this.m_HttpComms.addData(LycosFolderSchema,"text/xml");
             var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler);                             
             if (!bResult) throw new Error("httpConnection returned false");
-                           
+            this.m_bStat = true;              
             this.m_Log.Write("nsLycos.js - getNumMessages - END"); 
             return true;
         }
@@ -370,8 +370,26 @@ nsLycos.prototype =
                                 mainObject.processItem( mainObject.m_aRawData[i]);        
                             }
                             
-                            //server response
-                            mainObject.serverComms("+OK "+ mainObject.m_aMsgDataStore.length + " " + mainObject.m_iTotalSize + "\r\n");
+                            if (mainObject.m_bStat) //called by stat
+                            {
+                                mainObject.serverComms("+OK "+ mainObject.m_aMsgDataStore.length 
+                                                        + " " + mainObject.m_iTotalSize + "\r\n");
+                            }
+                            else //called by list
+                            {
+                                var szPOPResponse = "+OK " + mainObject.m_aMsgDataStore.length + " Messages\r\n"; 
+                                this.m_Log.Write("Lycos.js - getMessagesSizes - : " + mainObject.m_aMsgDataStore.length);
+                 
+                                for (i = 0; i <  mainObject.m_aMsgDataStore.length; i++)
+                                {
+                                    var iEmailSize = mainObject.m_aMsgDataStore[i].iSize;
+                                    szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";       
+                                }         
+                               
+                                szPOPResponse += ".\r\n";
+                                mainObject.serverComms(szPOPResponse);
+                            }
+                            
                             delete  mainObject.m_aRawData;
                         }
                     }
@@ -415,8 +433,26 @@ nsLycos.prototype =
                 this.m_Log.Write("nsLycos.js - notify - all data handled"); 
                 this.m_Timer.cancel();
                 
-                //server response
-                this.serverComms("+OK "+ this.m_aMsgDataStore.length + " " + this.m_iTotalSize + "\r\n");
+                if (this.m_bStat) //called by stat
+                {
+                    this.serverComms("+OK "+ this.m_aMsgDataStore.length 
+                                        + " " + this.m_iTotalSize + "\r\n");
+                }
+                else //called by list
+                {
+                    var szPOPResponse = "+OK " + this.m_aMsgDataStore.length + " Messages\r\n"; 
+                    this.m_Log.Write("Lycos.js - getMessagesSizes - : " + this.m_aMsgDataStore.length);
+     
+                    for (i = 0; i <  this.m_aMsgDataStore.length; i++)
+                    {
+                        var iEmailSize = this.m_aMsgDataStore[i].iSize;
+                        szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";       
+                    }         
+                   
+                    szPOPResponse += ".\r\n";
+                    this.serverComms(szPOPResponse);
+                }
+
                 delete  this.m_aRawData;
             }
             
@@ -524,16 +560,33 @@ nsLycos.prototype =
         {
             this.m_Log.Write("nsLycos.js - getMessageSizes - START"); 
             
-            var szPOPResponse = "+OK " +  this.m_aMsgDataStore.length + " Messages\r\n"; 
-            for (i = 0; i < this.m_aMsgDataStore.length; i++)
-            {
-                var iEmailSize = this.m_aMsgDataStore[i].iSize;
-                this.m_Log.Write("nsLycos.js - getMessageSizes - Email Size : " +iEmailSize);
-                szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";   
-            } 
-            szPOPResponse += ".\r\n";
-            
-            this.serverComms(szPOPResponse);
+            if (this.m_bStat) 
+            {  //msg table has been donwloaded
+                var szPOPResponse = "+OK " +  this.m_aMsgDataStore.length + " Messages\r\n"; 
+                for (i = 0; i < this.m_aMsgDataStore.length; i++)
+                {
+                    var iEmailSize = this.m_aMsgDataStore[i].iSize;
+                    this.m_Log.Write("Lycos.js - getMessageSizes - Email Size : " +iEmailSize);
+                    szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";   
+                } 
+                szPOPResponse += ".\r\n";
+                
+                this.serverComms(szPOPResponse);
+            }
+            else
+            { //download msg list
+                this.m_iStage=0;
+                if (this.m_szFolderURI == null) return false;
+                this.m_Log.Write("nsLycos.js - getNumMessages - mail box url " + this.m_szFolderURI); 
+                
+                this.m_HttpComms.clean();
+                this.m_HttpComms.setContentType(-1);
+                this.m_HttpComms.setURI(this.m_szFolderURI);
+                this.m_HttpComms.setRequestMethod("PROPFIND");
+                this.m_HttpComms.addData(LycosFolderSchema,"text/xml");
+                var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler);                             
+                if (!bResult) throw new Error("httpConnection returned false");
+            }
                    
             this.m_Log.Write("nsLycos.js - getMessageSizes - END"); 
             return true;
