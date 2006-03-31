@@ -119,11 +119,11 @@ HotmailWebDav.prototype =
             if (this.m_SessionData && this.m_bReUseSession)
             {
                 this.m_Log.Write("HotmailWebDav.js - logIN - Session Data found");
-                if (!this.m_SessionData.oComponentData)
-                {
+                if (this.m_SessionData.oCookieManager)
                     this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
+                
+                if (this.m_SessionData.oHttpAuthManager)
                     this.m_HttpComms.setHttpAuthManager(this.m_SessionData.oHttpAuthManager); 
-                }
             }
 
             this.m_HttpComms.setUserName(this.m_szUserName);

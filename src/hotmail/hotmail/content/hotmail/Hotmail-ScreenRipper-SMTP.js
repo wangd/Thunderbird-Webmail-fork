@@ -86,7 +86,8 @@ HotmailSMTPScreenRipper.prototype =
             if (this.m_SessionData && this.m_bReUseSession)
             {
                 this.m_Log.Write("nsHotmail.js - logIN - Session Data found"); 
-                this.m_szHomeURI = this.m_SessionData.oComponentData.findElement("szHomeURI");
+                if (this.m_SessionData.oComponentData)
+                    this.m_szHomeURI = this.m_SessionData.oComponentData.findElement("szHomeURI");
             }
             
             if (this.m_szHomeURI)
