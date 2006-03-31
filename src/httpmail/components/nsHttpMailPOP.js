@@ -96,6 +96,8 @@ function nsHttpMail()
             this.m_iProcessAmount = 25; 
         
         delete WebMailPrefAccess;           
+
+        this.m_bStat = false;
         
         this.m_Log.Write("nsHttpMail.js - Constructor - END");  
     }
@@ -236,7 +238,7 @@ nsHttpMail.prototype =
             this.m_HttpComms.addData(HttpMailMailSchema,"text/xml");
             var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler);                             
             if (!bResult) throw new Error("httpConnection returned false");
-                           
+            this.m_bStat = true;               
             this.m_Log.Write("nsHttpMail.js - getNumMessages - END"); 
             return true;
         }
@@ -293,8 +295,31 @@ nsHttpMail.prototype =
                     mainObject.processItem( mainObject.m_aRawData[i]);        
                 }
                 
-                //server response
-                mainObject.serverComms("+OK "+ mainObject.m_aMsgDataStore.length + " " + mainObject.m_iTotalSize + "\r\n");
+                
+                if (mainObject.m_bStat) //called by stat
+                {
+                    //server response
+                    mainObject.serverComms("+OK "+ 
+                                           mainObject.m_aMsgDataStore.length + 
+                                           " " + 
+                                           mainObject.m_iTotalSize + 
+                                           "\r\n");
+                }
+                else //called by list
+                {
+                    var szPOPResponse = "+OK " + mainObject.m_aMsgDataStore.length + " Messages\r\n"; 
+                    this.m_Log.Write("Hotmail-SR.js - mailBoxOnloadHandler - : " + mainObject.m_aMsgDataStore.length);
+     
+                    for (i = 0; i <  mainObject.m_aMsgDataStore.length; i++)
+                    {
+                        var iEmailSize = mainObject.m_aMsgDataStore[i].iSize;
+                        szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";       
+                    }         
+                   
+                    szPOPResponse += ".\r\n";
+                    mainObject.serverComms(szPOPResponse);
+                }
+                
                 delete  mainObject.m_aRawData;
             }
          }   
@@ -334,7 +359,30 @@ nsHttpMail.prototype =
                 this.m_Timer.cancel();
                 
                 //server response
-                this.serverComms("+OK "+ this.m_aMsgDataStore.length + " " + this.m_iTotalSize + "\r\n");
+                if (this.m_bStat) //called by stat
+                {
+                    //server response
+                    this.serverComms("+OK "+ 
+                                           this.m_aMsgDataStore.length + 
+                                           " " + 
+                                           this.m_iTotalSize + 
+                                           "\r\n");
+                }
+                else //called by list
+                {
+                    var szPOPResponse = "+OK " + this.m_aMsgDataStore.length + " Messages\r\n"; 
+                    this.m_Log.Write("nsHttpMail-SR.js - mailBoxOnloadHandler - : " + this.m_aMsgDataStore.length);
+     
+                    for (i = 0; i <  this.m_aMsgDataStore.length; i++)
+                    {
+                        var iEmailSize = this.m_aMsgDataStore[i].iSize;
+                        szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";       
+                    }         
+                   
+                    szPOPResponse += ".\r\n";
+                    this.serverComms(szPOPResponse);
+                }
+                
                 delete  this.m_aRawData;
             }
             
@@ -434,16 +482,33 @@ nsHttpMail.prototype =
         {
             this.m_Log.Write("nsHttpMail.js - getMessageSizes - START"); 
             
-            var szPOPResponse = "+OK " +  this.m_aMsgDataStore.length + " Messages\r\n"; 
-            for (i = 0; i < this.m_aMsgDataStore.length; i++)
-            {
-                var iEmailSize = this.m_aMsgDataStore[i].iSize;
-                this.m_Log.Write("nsHttpMail.js - getMessageSizes - Email Size : " +iEmailSize);
-                szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";   
-            } 
-            szPOPResponse += ".\r\n";
-            
-            this.serverComms(szPOPResponse);
+            if (this.m_bStat) 
+            {  //msg table has been donwloaded    
+                var szPOPResponse = "+OK " + this.m_aMsgDataStore.length + " Messages\r\n";
+                for (i = 0; i <  this.m_aMsgDataStore.length; i++)
+                {
+                    var iSize = this.m_aMsgDataStore[i].iSize;
+                    this.m_Log.Write("nsHttpMail - getMessageSizes - size : " +iSize);    
+                    szPOPResponse+=(i+1) + " " + iSize + "\r\n";  
+                }
+                szPOPResponse += ".\r\n";
+                
+                this.serverComms(szPOPResponse);
+            }
+            else
+            {//download msg table
+                this.m_iStage=0;
+                if (this.m_szInboxURI == null) return false;
+                this.m_Log.Write("nsHttpMail.js - getMessageSizes - mail box url " + this.m_szInboxURI); 
+                
+                this.m_HttpComms.clean();
+                this.m_HttpComms.setContentType(-1);
+                this.m_HttpComms.setURI(this.m_szInboxURI);
+                this.m_HttpComms.setRequestMethod("PROPFIND");
+                this.m_HttpComms.addData(HttpMailMailSchema,"text/xml");
+                var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler);                             
+                if (!bResult) throw new Error("httpConnection returned false");
+            }
                    
             this.m_Log.Write("nsHttpMail.js - getMessageSizes - END"); 
             return true;
