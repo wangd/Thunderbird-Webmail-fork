@@ -7,7 +7,7 @@ var gWebDavPane =
     m_szIDLastFocused : null,
     m_aUserList : null,
     m_strBundle : null,
-    
+    m_cszHotmailContentID : "@mozilla.org/HotmailPOP;1",
      
     init : function ()
     {
@@ -29,6 +29,10 @@ var gWebDavPane =
             this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : getUserNameList - START");
             
             this.m_aUserList =  new Array(); 
+            
+            var domainManager = Components.classes["@mozilla.org/DomainManager;1"].getService().
+                                       QueryInterface(Components.interfaces.nsIDomainManager);
+                                       
             var accountManager = Components.classes["@mozilla.org/messenger/account-manager;1"].
                                             getService(Components.interfaces.nsIMsgAccountManager);
         
@@ -39,46 +43,54 @@ var gWebDavPane =
                 var currentServer = allServers.GetElementAt(i).
                                         QueryInterface(Components.interfaces.nsIMsgIncomingServer);
                 
-                var szHostName = currentServer.hostName;
-                this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : getUserNameList - szHostName " + szHostName);
-                var szRealHostName = currentServer.realHostName;
-                this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : getUserNameList - szRealHostName " + szRealHostName);
-                
-                if (szHostName.search(/localhost/i)!=-1 || szHostName.search(/127\.0\.0\.1/)!=-1 ||
-                        szRealHostName.search(/localhost/i)!=-1 || szRealHostName.search(/127\.0\.0\.1/)!=-1)
+                if (currentServer.type.search(/pop3/i)!=-1)  //found pop account
                 {
                     var szUserName = currentServer.username;
                     this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : getUserNameList - userName " + szUserName);
-                    if (szUserName.search(/@/)==-1) 
+                    if (szUserName)
                     {
-                        szUserName = currentServer.realUsername ;
-                        this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : getUserNameList - realuserName " + szUserName);
-                    }
-                    
-                    if (szUserName.search(/msn/i)!=-1 || szUserName.search(/hotmail/i)!= -1)
-                    {
-                        this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : getUserNameList - userName added");
-                        var data = new HotmailMode();      
-                        data.szAddress = szUserName;
-                        data.iMode=0;
-                        
-                        //check if this is a webdav account
-                        if (this.m_aWebDavUserList)
+                        if (szUserName.search(/@/)==-1) 
                         {
-                            for (j=0; j<this.m_aWebDavUserList.length; j++)
+                            szUserName = currentServer.realUsername ;
+                            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : getUserNameList - realuserName " + szUserName);
+                        }
+                        
+                        if (szUserName.search(/@/)!=-1)
+                        {
+                            var szDomain = szUserName.split("@")[1];
+                            this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : getUserNameList - szDomain " + szDomain);
+                           
+                            var szContentID ={value:null};
+                            if (domainManager.getDomainForProtocol(szDomain,"pop", szContentID))//domain found
                             {
-                                var reg = new RegExp(szUserName,"i");
-                                if (this.m_aWebDavUserList[j].szAddress.match(reg))
+                            
+                                if (szContentID.value == this.m_cszHotmailContentID) //hotmail account found
                                 {
-                                    data.iMode= this.m_aWebDavUserList[j].iMode;
-                                    this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : getUserNameList - found " + data.iMode);
-                                }
+                                    this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : getUserNameList - userName added");
+                                    var data = new HotmailMode();      
+                                    data.szAddress = szUserName;
+                                    data.iMode=0;
+                                    
+                                    //check if this is a webdav account
+                                    if (this.m_aWebDavUserList)
+                                    {
+                                        for (j=0; j<this.m_aWebDavUserList.length; j++)
+                                        {
+                                            var reg = new RegExp(szUserName,"i");
+                                            if (this.m_aWebDavUserList[j].szAddress.match(reg))
+                                            {
+                                                data.iMode= this.m_aWebDavUserList[j].iMode;
+                                                this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : getUserNameList - found " + data.iMode);
+                                            }
+                                        }
+                                    }
+                                                       
+                                    this.m_aUserList.push(data);   
+                                } 
                             }
                         }
-                                           
-                        this.m_aUserList.push(data);   
                     }
-                } 
+                }
             }
             
             this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : getUserNameList - END");
