@@ -56,132 +56,53 @@ nsWebMailCookieManager.prototype =
             var aTempCookies = new Array();
             for (i=0; i<aszCookie.length; i++)
             { 
-                var szDomain = szDefaultDomain; 
-                var szPath = null;
-                var iExpiry = -1;
-                var bSecure = false;
-                var szName = null;
-                var szValue = null;
-                
-                var aData = aszCookie[i].split(";");
-                this.m_Log.Write("CookieManager.js - addCookie - aData " + aData); 
-                
-                for (j=0; j<aData.length; j++)
+                var oNewCookie =this.createCookie(aszCookie[i]);                
+                if (!oNewCookie.getDomain()) oNewCookie.setDomain(szDefaultDomain);
+               
+                var bFound = false;
+                //update existing cookies 
+                if (this.m_aCookies.length>0)
                 {
-                    //split name and value
-                    var iNameSplit = aData[j].indexOf("=");
-                    var szTempName = aData[j].substr(0, iNameSplit);
-                    var szTempValue = aData[j].substr(iNameSplit+1);
-                    this.m_Log.Write("CookieManager.js - addCookie ITEM - name : " + szTempName + "  value : " +szTempValue);
-                     
-                    if (szTempName.search(/domain/i)!=-1) //get domain
-                    {
-                        szDomain = szTempValue;
-                        this.m_Log.Write("CookieManager.js - addCookie - szDomain " + szDomain);
-                    }
-                    else if(szTempName.search(/path/i)!=-1) //get path
-                    {
-                        szPath = szTempValue;
-                        this.m_Log.Write("CookieManager.js - addCookie - szPath " + szPath);
-                    }
-                    else if (szTempName.search(/expires/i)!=-1)//get expiry
-                    {
-                        iExpiry = Date.parse(szTempValue.replace(/-/g," "));
-                        this.m_Log.Write("CookieManager.js - addCookie - iExpiry " + iExpiry);
-                    }
-                    else if (szTempName.search(/secure/i)!=-1)//get secure
-                    {
-                        bSecure = true;
-                        this.m_Log.Write("CookieManager.js - addCookie - bSecure " + bSecure);
-                    }
-                    else if (szTempName.search(/httponly/i)!=-1)//get httponly
-                    {
-                    }
-                    else if (szTempName.search(/version/)!=-1) //get version
-                    {
-                        if (!szName)
-                        {
-                            szName = szTempName;
-                            szValue = szTempValue;
-                        }
-                        this.m_Log.Write("CookieManager.js - addCookie - Version " + szName);
-                    }
-                    else  //should be cookie 
-                    {
-                        if (szTempName.length>0)
-                        {
-                            szName = szTempName;
-                            szValue = szTempValue;
-                            this.m_Log.Write("CookieManager.js - addCookie data - szName " + szName + " szValue " + szValue);
-                        }
-                    }
-                }
-                var oCookie = new Cookie();
-                oCookie.setDomain(szDomain); 
-                oCookie.setPath(szPath); 
-                oCookie.setName(szName);
-                oCookie.setValue(szValue); 
-                oCookie.setSecure(bSecure);
-                oCookie.setExpiry(iExpiry);
-                aTempCookies.push(oCookie);
-            }
-            
-            //update existing cookies 
-            if (this.m_aCookies.length>0)
-            {   
-                this.m_Log.Write("CookieManger.js - addCookie - Update - Cookie m_aCookies.length " + this.m_aCookies.length);
-                var iTempCookies = aTempCookies.length;
-                for (var i=0; i<iTempCookies; i++ )
-                {    
-                    var oNewCookie = aTempCookies.shift();
                     var szNewCookieDomain = oNewCookie.getDomain();
                     var szNewCookieName = oNewCookie.getName();
-                    
+                        
                     var j=0;
-                    var bFound = false;
+                  
                     do 
-                    //for (j=0; j<this.m_aCookies.length; j++)
                     {
                         this.m_Log.Write("CookieManger.js - addCookie - Update - checking Cookie " + j);
-                        var temp = this.m_aCookies[j];
-                        var tempDomain = temp.getDomain();
+                        var tempCookie = this.m_aCookies[j];
+                        var tempDomain = tempCookie.getDomain();
                         if (this.domainCheck(tempDomain,szNewCookieDomain))
                         {
                             this.m_Log.Write("CookieManger.js - addCookie - Update - Domain found")
                             //found domain
-                            var tempName = temp.getName();
+                            var tempName = tempCookie.getName();
                             if (this.cookieCheck(tempName,szNewCookieName))
                             {
                                 this.m_Log.Write("CookieManger.js - addCookie - Update - Cookie found");
                                 //cookie found - update
-                                temp.setValue(oNewCookie.getValue());
-                                temp.setExpiry(oNewCookie.getExpiry());
+                                tempCookie.setValue(oNewCookie.getValue());
+                                tempCookie.setExpiry(oNewCookie.getExpiry());
                                 bFound = true;
                             }
                         }
                         j++;
                     }while(j!=this.m_aCookies.length && !bFound ) 
-                    //}
-                    
-                    if (bFound)
-                    {
-                        delete oNewCookie;
-                        this.m_Log.Write("CookieManger.js - addCookie - Update - deleted");
-                    }
-                    else
-                    {
-                        aTempCookies.push(oNewCookie);                        
-                        this.m_Log.Write("CookieManger.js - addCookie - Update - saved");
-                    }
+                }
+                        
+                if (bFound)
+                {
+                    delete oNewCookie;
+                    this.m_Log.Write("CookieManger.js - addCookie - Update - deleted");
+                }
+                else
+                {
+                    this.m_aCookies.push(oNewCookie);                        
+                    this.m_Log.Write("CookieManger.js - addCookie - Update - saved");
                 }
             }
-            
-            //add new cookies   
-            for (var i=0; i<aTempCookies.length; i++ )
-            {
-                this.m_aCookies.push(aTempCookies[i]);
-            }
-                      
+   
             this.m_Log.Write("CookieManager.js - addCookie - END"); 
             return true;   
         }
@@ -196,6 +117,89 @@ nsWebMailCookieManager.prototype =
     },
 
 
+    createCookie : function (szCookie)
+    {
+        try
+        {
+            this.m_Log.Write("CookieManager.js - createCookie - START"); 
+            
+            var aData = szCookie.split(";");
+            this.m_Log.Write("CookieManager.js - createCookie - aData " + aData); 
+               
+            var oCookie = new Cookie(); 
+            for (j=0; j<aData.length; j++)
+            {
+                //split name and value
+                var iNameSplit = aData[j].indexOf("=");
+                var szTempName = aData[j].substr(0, iNameSplit);
+                var szTempValue = aData[j].substr(iNameSplit+1);
+                this.m_Log.Write("CookieManager.js - createCookie ITEM - name : " + szTempName + "  value : " +szTempValue);
+                             
+                if (szTempName.search(/domain/i)!=-1) //get domain
+                {
+                    szDomain = szTempValue;
+                    this.m_Log.Write("CookieManager.js - createCookie - szDomain " + szDomain); 
+                    oCookie.setDomain(szDomain); 
+                }
+                else if(szTempName.search(/path/i)!=-1) //get path
+                {
+                    szPath = szTempValue;
+                    this.m_Log.Write("CookieManager.js - createCookie - szPath " + szPath);
+                    oCookie.setPath(szPath);
+                }
+                else if (szTempName.search(/expires/i)!=-1)//get expiry
+                {
+                    iExpiry = Date.parse(szTempValue.replace(/-/g," "));
+                    this.m_Log.Write("CookieManager.js - createCookie - iExpiry " + iExpiry);
+                    oCookie.setExpiry(iExpiry);
+                }
+                else if (szTempName.search(/secure/i)!=-1)//get secure
+                {
+                    bSecure = true;
+                    this.m_Log.Write("CookieManager.js - createCookie - bSecure " + bSecure);
+                    oCookie.setSecure(bSecure);
+                }
+                else if (szTempName.search(/httponly/i)!=-1)//get httponly
+                {
+                }
+                else if (szTempName.search(/version/)!=-1) //get version
+                {
+                    if (!szName)
+                    {
+                        szName = szTempName;
+                        szValue = szTempValue;
+                    }
+                    this.m_Log.Write("CookieManager.js - createCookie - Version " + szName);
+                    oCookie.setName(szName);
+                    oCookie.setValue(szValue);
+                }
+                else  //should be cookie 
+                {
+                    if (szTempName.length>0)
+                    {
+                        szName = szTempName;
+                        szValue = szTempValue;
+                        this.m_Log.Write("CookieManager.js - createCookie data - szName " + szName + " szValue " + szValue);
+                        oCookie.setName(szName);
+                        oCookie.setValue(szValue);
+                    }
+                }
+            }
+            
+            this.m_Log.Write("CookieManager.js - createCookie - END"); 
+            return oCookie;   
+        }
+        catch(e)
+        {
+             this.m_Log.Write("CookieManger.js: createCookie : Exception : " 
+                                          + e.name 
+                                          + ".\nError message: " 
+                                          + e.message + " \n"
+                                          + e.lineNumber);
+            return null;
+        }
+    },
+    
 
     findCookie :  function (url)
     {
