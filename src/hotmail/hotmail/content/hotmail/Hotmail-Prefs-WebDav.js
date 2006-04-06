@@ -295,8 +295,12 @@ var gWebDavPane =
         {
             this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : onSelect - START");
             
+            var listView = document.getElementById("listView");   //click item
+            var iIndex = listView.selectedIndex;
+            this.m_DebugLog.Write("Hotmail-Prefs-WebDav : onSelect - iIndex "+iIndex);
+            
             var buttonEdit = document.getElementById("edit");   
-            buttonEdit.setAttribute("disabled", "false");
+            buttonEdit.setAttribute("disabled", iIndex!=-1? "false" : true);
            
             this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : onSelect - END");
             return true;
