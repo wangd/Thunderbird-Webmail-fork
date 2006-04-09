@@ -8,6 +8,6 @@ YahooFolders.prototype.bInbox = false;
 
 YahooFolders.prototype.bSpam = false;
 
-YahooFoldes..prototype.aszCustom = new Array();
+YahooFolders.prototype.aszCustom = null;
 
 
