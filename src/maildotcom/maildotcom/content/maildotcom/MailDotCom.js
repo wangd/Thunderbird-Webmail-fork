@@ -92,7 +92,8 @@ var gMailDotComStartUp =
             this.idCheck("writeme.com","POP", cszMailDotComContentID);
             this.idCheck("unforgettable.com","POP", cszMailDotComContentID);
             this.idCheck("teacher.com","POP", cszMailDotComContentID);
-
+            this.idCheck("consultant.com","POP", cszMailDotComContentID);
+            
             this.idCheck("mail.com","SMTP", cszMailDotComSMTPContentID);
             this.idCheck("email.com","SMTP", cszMailDotComSMTPContentID);
             this.idCheck("journalism.com","SMTP", cszMailDotComSMTPContentID);
@@ -107,7 +108,8 @@ var gMailDotComStartUp =
             this.idCheck("writeme.com","SMTP", cszMailDotComSMTPContentID);
             this.idCheck("unforgettable.com","SMTP", cszMailDotComSMTPContentID);
             this.idCheck("teacher.com","SMTP", cszMailDotComSMTPContentID);
-            
+            this.idCheck("consultant.com","POP", cszMailDotComSMTPContentID);
+                        
             this.m_Log.Write("MailDotCom.js : notify - END");
         }
         catch(e)
