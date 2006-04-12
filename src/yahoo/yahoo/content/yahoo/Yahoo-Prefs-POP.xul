@@ -16,11 +16,11 @@
         
         <vbox>
                 
-            <!--download junk mail-->
+            <!--download junk mail
             <checkbox label="&JunkMail.Label;" 
                       accesskey="&JunkMail.AccessKey;"
                       preference = "useJunkMail"
-                      id="chkJunkMail"/>
+                      id="chkJunkMail"/>-->
                     
              <!--download unread emails only-->
             <checkbox label="&DownloadUnread.Label;" 

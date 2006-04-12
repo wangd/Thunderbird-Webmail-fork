@@ -1,0 +1,19 @@
+#folderImage
+{
+    margin-left: 10px; 
+    margin-top: 10px;
+    margin-bottom : 10px;
+    list-style-image: url("chrome://yahoo/skin/customBig.png");
+}
+
+
+#labelFolder
+{
+    margin-left: 10px; 
+    margin-top: 15px;
+}
+
+#labelFolderName
+{
+    margin-left: 10px; 
+}

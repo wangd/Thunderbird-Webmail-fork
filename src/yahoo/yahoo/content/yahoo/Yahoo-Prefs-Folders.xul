@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/global.css"?>
+<?xml-stylesheet href="chrome://yahoo/content/Yahoo-Prefs-Folders.css" type="text/css"?>
 <!DOCTYPE dialog SYSTEM "chrome://yahoo/locale/Yahoo-Prefs-Folders.dtd">
 
 <overlay id="paneFoldersOverlay"
@@ -7,9 +8,16 @@
            
     <prefpane id = "paneFolders" onpaneload= "gYahooFolder.init();"> 
         <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
+        <script type="application/x-javascript" src="chrome://web-mail/content/common/CommonPrefs.js"/>
         <script type="application/x-javascript" src="chrome://yahoo/content/Yahoo-Prefs-Folders.js"/>
         <script type="application/x-javascript" src="chrome://yahoo/content/YahooFolders.js"/>
+
+
+        <stringbundleset>
+	       <stringbundle id="stringYahooFolders" src="chrome://yahoo/locale/Yahoo-Prefs-Folders.properties"/>
+	    </stringbundleset>
         
+
         <preferences>
             <preference id="prefFolders" name="yahoo.szFolders" type="string"/>
         </preferences> 
@@ -32,7 +40,7 @@
                 <button id="edit" 
                         label="&Edit.label;" 
                         oncommand ="gYahooFolder.add();"
-                        disabled="false"
+                        disabled="true"
                         accesskey="&Edit.accessKey;"/>
             </hbox>
             

@@ -9,12 +9,7 @@ const patternYahooAction = /<form.*?action="(.*?)".*?>/;
 const patternYahooLogIn = /<input.*?type=['|"]*hidden['|"]*.*?name=.*?value=.*?>/gm;
 const patternYahooNameAlt = /name=['|"]*([\S]*)['|"]*/;
 const patternYahooAltValue = /value=['|"]*([\S\s]*)['|"]*[\s]*>/;
-const patternYahooRedirect = /<a href=['|"]*(.*?)['|"]*>/;
-const patternYahooInbox = /<li id="inbox".*?<a href="(.*?Inbox.*?)".*?>/; 
-const patternYahooInboxFrame = /gInboxPage = "http:\/\/.*?(\/.*?)";/;
-const patternYahooInboxFrameAlt = /<li id="inbox".*?><a href="(.*?)"/;
-const patternYahooWelcomeFrame = /gWelcomePage = "http:\/\/.*?(\/.*?)";/;
-const patternYahooBulkFrame = /<li id="bulk".*?><a href="(.*?)"/;
+const patternYahooRedirect = /<a href=['|"]*(.*?)['|"]*>/; 
 const patternYahooMSGIdTable = /<table id="datatable".*?>[\S\s]*?<\/table>/m;
 const patternYahooMsgRow = /<tr.*?>[\S\s]*?<\/tr>/gm;
 const patternYahooMsgID = /href="(.*?MsgId.*?)"/;
@@ -28,6 +23,11 @@ const PatternYahooDeleteInput = /<input.*?hidden.*?>/gm;
 const PatternYahooBox =/(box=.*?)#/;
 const PatternYahooBoxAlt =/(box=.*?)$/;
 const PatternYahooUnRead = /msgnew/;
+const PatternYahooFolders = /".*?ShowFolder\?box=.*?"/gim;
+const PatternYahooFoldersPart = /"(.*?ShowFolder\?box=.*?)"/gim;
+const PatternYahooFolderURL =/'(.*?Folders\?YY.*?)'"/i;
+const PatternYahooFolderBox = /box=(.*?)&/i;
+const PatternYahooFolderBoxAlt = /box=(.*?)$/i;
 /******************************  Yahoo ***************************************/
 
 
@@ -74,7 +74,10 @@ function nsYahoo()
         this.m_szBox = null;
         this.m_bJunkFolder = false;
         this.m_iID =0;
-
+        this.m_aszFolderList = new Array(); 
+        this.m_aszFolderURLList = new Array();
+        
+           
         this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"];
         this.m_SessionManager = this.m_SessionManager.getService();
         this.m_SessionManager.QueryInterface(Components.interfaces.nsISessionManager); 
@@ -90,15 +93,7 @@ function nsYahoo()
             this.m_bReUseSession=oPref.Value;
         else
             this.m_bReUseSession=true; 
-            
-        //do i download junkmail
-        oPref.Value = null;
-        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-        if (WebMailPrefAccess.Get("bool","yahoo.bUseJunkMail",oPref))
-            this.m_bUseJunkMail=oPref.Value;
-        else
-            this.m_bUseJunkMail=false;       
-            
+                   
         //do i download unread only
         oPref.Value = null;
         var  WebMailPrefAccess = new WebMailCommonPrefAccess();
@@ -148,6 +143,70 @@ nsYahoo.prototype =
                                                    + " stream: " + this.m_oResponseStream);
             
             if (!this.m_szUserName || !this.m_oResponseStream  || !this.m_szPassWord) return false;
+            
+            //get folder list
+            var oPref = {Value:null};
+            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+            WebMailPrefAccess.Get("char","yahoo.szFolders",oPref)
+
+            if (oPref.Value)
+            {
+                var aszUsers =oPref.Value.split("\n");
+                this.m_Log.Write("nsYahoo : login - Custom Folders  - aszUsers " + aszUsers);
+                
+                for (i=0;i<aszUsers.length-1 ; i++)
+                {
+                    this.m_Log.Write("Yahoo-Prefs-Folders :  login - Custom Folders  - aszUsers " + aszUsers[i]);
+                    var aszFolders = aszUsers[i].split("\r");
+                                    
+                    //user name
+                    if (aszFolders[0].search(this.m_szUserName)!=-1)
+                    {
+                        //inbox
+                        if (aszFolders[1].search(/true/i)!=-1)
+                        {
+                            this.m_Log.Write("Yahoo-Prefs-Folders :  login - Custom Folders  -aszFolders[i] inbox");
+                            this.m_aszFolderList.push("inbox");
+                        }
+                        
+                        //spam
+                        if (aszFolders[2].search(/true/i)!=-1)
+                        {
+                            this.m_Log.Write("Yahoo-Prefs-Folders :  login - Custom Folders  - aszFolders[i] bulk");
+                            this.m_aszFolderList.push("%40B%40Bulk");
+                        }
+                            
+                        //custom folders
+                        if (aszFolders.length>3)
+                        {
+                            for (j=3; j<aszFolders.length; j++)
+                            {
+                                this.m_Log.Write("Yahoo-Prefs-Folders :  login - Custom Folders  - aszFolders[j] " + aszFolders[j]);
+                                this.m_aszFolderList.push(aszFolders[j]);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                this.m_Log.Write("Yahoo-Prefs-Folders :  login - Default Folders");
+                
+                //inbox
+                this.m_Log.Write("Yahoo-Prefs-Folders : login - Default Folders - inbox");
+                this.m_aszFolderList.push("inbox");
+                
+                 //spam
+                oPref.Value = null;
+                if (WebMailPrefAccess.Get("bool","yahoo.bUseJunkMail",oPref))
+                {
+                    if (oPref.Value)
+                    {
+                        this.m_Log.Write("Yahoo-Prefs-Folders : login - Default Folders bulk");
+                        this.m_aszFolderList.push("%40B%40Bulk");
+                    }                
+                }
+            }
             
             
             this.m_szYahooMail = "http://mail.yahoo.com";
@@ -307,48 +366,39 @@ nsYahoo.prototype =
                     mainObject.m_szLocationURI = httpChannel.URI.prePath ;
                     mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - m_szLocationURI : "+mainObject.m_szLocationURI );
                     
-                    try
-                    {
-                        var aMailBoxURI =szResponse.match(patternYahooInbox);
-                        mainObject.m_szMailboxURI = aMailBoxURI[1];
-                        mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - m_szMaiboxURI : "+mainObject.m_szMailboxURI );
-                        
-                        //server response
-                        mainObject.serverComms("+OK Your in\r\n");
-                        mainObject.m_bAuthorised = true;
-                    }
-                    catch(e)
-                    {
-                        mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - m_szMaiboxURI frames found: ");
-                         
-                        var szWelcomeURI = mainObject.m_szLocationURI;
-                        szWelcomeURI += szResponse.match(patternYahooWelcomeFrame)[1];
-                        mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler -welcome: "+szWelcomeURI);
-                    
-                        mainObject.m_HttpComms.setURI(szWelcomeURI);
-                        mainObject.m_HttpComms.setRequestMethod("GET");
-                        var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);
-                        if (!bResult) throw new Error("httpConnection returned false");
-                        mainObject.m_iStage++;
-                    }             
+                    var szFolderURL = szResponse.match(PatternYahooFolderURL)[1];
+                    mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - szFolderURL : "+szFolderURL );
+
+                    mainObject.m_HttpComms.setURI(szFolderURL);
+                    mainObject.m_HttpComms.setRequestMethod("GET");
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);
+                    if (!bResult) throw new Error("httpConnection returned false");
+                    mainObject.m_iStage++;
+             
                 break;
                 
-                case 3:// welcome page                           
-                    var szMailBox = szResponse.match(patternYahooInboxFrameAlt)[1];
-                    mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - szMailBox: "+szMailBox);
-                    mainObject.m_szMailboxURI = szMailBox;
+                case 3:// folder list     
+                    var aszServerFolders = szResponse.match(PatternYahooFolders);
+                    mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - aszServerFolders : "+aszServerFolders);       
+                    mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - aszServerFolders : "+mainObject.m_aszFolderList); 
                     
-                    try
-                    { 
-                        var szBulkMail = szResponse.match(patternYahooBulkFrame)[1];
-                        mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - szBulkMail: "+szBulkMail);
-                        mainObject.m_szBulkFolderURI = szBulkMail;
-                    }
-                    catch(e)
+                    for (j=0; j<mainObject.m_aszFolderList.length; j++)
                     {
-                        mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - no junk folder");
+                        var regExp = new RegExp("^"+mainObject.m_aszFolderList[j]+"$","i");
+                        for (i=0; i<aszServerFolders.length; i++)
+                        {
+                            var szBox = aszServerFolders[i].match(PatternYahooFolderBox)[1];
+                            mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - szBox : "+szBox );
+                            
+                            if (szBox.search(regExp)!=-1)
+                            {
+                                var szURL = mainObject.m_szLocationURI + aszServerFolders[i].replace(/"/g,"");
+                                mainObject.m_aszFolderURLList.push(szURL);
+                                mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - szURL : "+szURL);
+                            }
+                        }
                     }
-                    
+                   
                     //server response
                     mainObject.serverComms("+OK Your in\r\n");
                     mainObject.m_bAuthorised = true;
@@ -380,8 +430,8 @@ nsYahoo.prototype =
         {
             this.m_Log.Write("nsYahoo.js - getNumMessages - START"); 
            
-            if (this.m_szMailboxURI == null) return false;
-            var szMailboxURI = this.m_szLocationURI + this.m_szMailboxURI; 
+            if (this.m_aszFolderURLList.length==0) return false;
+            var szMailboxURI = this.m_aszFolderURLList.shift();
             this.m_Log.Write("nsYahoo.js - getNumMessages - mail box url " + szMailboxURI); 
             
             this.m_HttpComms.clean();
@@ -413,7 +463,6 @@ nsYahoo.prototype =
         try
         {
             mainObject.m_Log.Write("nsYahoo.js - mailBoxOnloadHandler - START"); 
-            
             mainObject.m_Log.Write("nsYahoo.js - mailBoxOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -424,21 +473,7 @@ nsYahoo.prototype =
                 throw new Error("error status " + httpChannel.responseStatus);   
             
             mainObject.m_HttpComms.clean();
-             
-            if (!mainObject.m_szBulkFolderURI)
-            {
-                try
-                {
-                    mainObject.m_szBulkFolderURI = szResponse.match(patternYahooBulkFrame)[1];
-                    mainObject.m_Log.Write("nsYahoo.js - mailBoxOnloadHandler - bulk URL :" + mainObject.m_szBulkFolderURI);
-                }
-                catch(e)
-                {
-                    mainObject.m_Log.Write("nsYahoo.js - mailBoxOnloadHandler - no junk folder");
-                }
-            }
-                
-        
+            
             //get data for deleting
             if (mainObject.m_aDeleteData.length==0)
             {
@@ -549,12 +584,12 @@ nsYahoo.prototype =
                 var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler); 
                 if (!bResult) throw new Error("httpConnection returned false");
             }
-            //ckeck junk mail
-            else if ( mainObject.m_bUseJunkMail && mainObject.m_szBulkFolderURI && !mainObject.m_bJunkChecked)
+            //check for more folders
+            else if ( mainObject.m_aszFolderURLList.length>0)
             {
-                mainObject.m_Log.Write("nsYahoo.js - MailBoxOnload - load junkmail");
+                mainObject.m_Log.Write("nsYahoo.js - MailBoxOnload - load next folder");
                 
-                var szMailboxURI = mainObject.m_szLocationURI + mainObject.m_szBulkFolderURI; 
+                var szMailboxURI = mainObject.m_aszFolderURLList.shift(); 
                 mainObject.m_Log.Write("nsYahoo.js - getNumMessages - mail box url " + szMailboxURI); 
                 
                 mainObject.m_HttpComms.setURI(szMailboxURI);
@@ -564,7 +599,6 @@ nsYahoo.prototype =
                 
                 delete mainObject.m_aDeleteData;
                 mainObject.m_aDeleteData = new Array();
-                mainObject.m_bJunkChecked = true;
             }
             //no more pages report back to mozilla
             else
@@ -767,7 +801,6 @@ nsYahoo.prototype =
         try
         {
             mainObject.m_Log.Write("m_YahooLog.js - headerOnloadHandler - START");
-            
             mainObject.m_Log.Write("m_YahooLog.js - headerOnloadHandler - msg :\n" + szResponse); 
            
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -785,7 +818,8 @@ nsYahoo.prototype =
             {
                 case 0://process header
                     mainObject.m_szHeader  = "X-WebMail: true\r\n";
-                    mainObject.m_szHeader += "X-JunkFolder: " +(mainObject.m_bJunkFolder? "true":"false")+ "\r\n";
+                    var szFolder = mainObject.m_szBox.match(PatternYahooFolderBoxAlt)[1];
+                    mainObject.m_szHeader += "X-Folder: " +szFolder+ "\r\n";
                     mainObject.m_szHeader += szResponse; 
                     mainObject.m_szHeader = mainObject.m_szHeader.replace(/^\./mg,"..");    //bit padding 
                     mainObject.m_szHeader += ".\r\n";//msg end 
@@ -942,9 +976,8 @@ nsYahoo.prototype =
             {
                 case 0:  ///header
                     mainObject.m_szHeader = "X-WebMail: true\r\n";
-                    mainObject.m_szHeader += "X-JunkFolder: " +
-                                            (mainObject.m_bJunkFolder? "true":"false")+
-                                            "\r\n";
+                    var szFolder = mainObject.m_szBox.match(PatternYahooFolderBoxAlt)[1];
+                    mainObject.m_szHeader += "X-Folder: " + szFolder + "\r\n";
                                       
                     var aszHeaderRows = szResponse.split("\n");
                     mainObject.m_Log.Write("nsYahoo.js - emailOnloadHandler - aszHeaderRows - "+ aszHeaderRows); 
