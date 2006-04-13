@@ -182,7 +182,7 @@ nsYahoo.prototype =
                             for (j=3; j<aszFolders.length; j++)
                             {
                                 this.m_Log.Write("Yahoo-Prefs-Folders :  login - Custom Folders  - aszFolders[j] " + aszFolders[j]);
-                                this.m_aszFolderList.push(aszFolders[j]);
+                                this.m_aszFolderList.push(encodeURIComponent(aszFolders[j]));
                             }
                         }
                     }
