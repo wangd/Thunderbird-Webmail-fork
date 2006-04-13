@@ -1,6 +1,6 @@
 <!ENTITY YahooAbout.Title "关于 Yahoo">
 <!ENTITY YahooAbout.ExtName "Yahoo">
-<!ENTITY YahooAbout.ExtVersion "版本: 0.6.7">
+<!ENTITY YahooAbout.ExtVersion "版本: 0.7.0">
 <!ENTITY YahooAbout.ExtDescription "Web-Mail 扩展的 Yahoo 组件。">
 <!ENTITY YahooAbout.ExtCreaterTitle "创建者:">
 <!ENTITY YahooAbout.ExtCreator "ComodoDragon">
