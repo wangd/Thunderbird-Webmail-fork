@@ -34,14 +34,14 @@ var gYahooFoldersAdd =
         this.m_DebugLog.Write("Yahoo-Prefs-Folders-Add  : szValue " + szValue);
         
         //remove leading and trailing space
-        szValue = szValue.replace(/^\s/,"").replace(/\s*$/,"");
+        szValue = szValue.replace(/^\s*/,"").replace(/\s*$/,"");
         this.m_DebugLog.Write("Yahoo-Prefs-Folders-Add  : szValue " + szValue+ "length" +szValue.length);
         
         //check length > 0
         if (szValue.length<=0)
         {
             //error 
-            this.m_DebugLog.Write("Yahoo-Prefs-Folders-Add : check failed");
+            this.m_DebugLog.Write("Yahoo-Prefs-Folders-Add : length check failed");
             
             var strBundle = document.getElementById("stringsYahooFoldersAdd");
             var szTitle = strBundle.getString("errorTitle");
@@ -51,6 +51,22 @@ var gYahooFoldersAdd =
             PromptService.QueryInterface(Components.interfaces.nsIPromptService);
             PromptService.alert(window, szTitle, szText);
             
+            document.getElementById("labelFolderName").click();
+        }
+        else if (szValue.search(/^inbox$/i)!=-1 || szValue.search(/^trash$/i)!=-1 ||
+                 szValue.search(/^sent$/i)!=-1 || szValue.search(/^draft$/i)!=-1)
+        {
+            this.m_DebugLog.Write("Yahoo-Prefs-Folders-Add : folder check failed");
+    
+            var strBundle = document.getElementById("stringsYahooFoldersAdd");
+            var szTitle = strBundle.getString("errorTitle");
+            var szText = strBundle.getString("errorMsgName");
+            szText = szText.replace(/%s/,szValue);
+            
+            var PromptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService();
+            PromptService.QueryInterface(Components.interfaces.nsIPromptService);
+            PromptService.alert(window, szTitle, szText);
+  
             document.getElementById("labelFolderName").click();
         }
         else
