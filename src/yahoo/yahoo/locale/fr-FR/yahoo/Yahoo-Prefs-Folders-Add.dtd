@@ -1,7 +1,7 @@
-<!ENTITY Window.size "width: 30em; height: 10em">
-<!ENTITY TitleAdd "Add">
+<!ENTITY Window.size "largeur : 30em; hauteur : 10em">
+<!ENTITY TitleAdd "Ajouter">
 <!ENTITY Ok.label "Ok">
-<!ENTITY Cancel.label "Cancel">
-<!ENTITY folderName.label "Folder Name">
-<!ENTITY folderName.accessKey "F">
-<!ENTITY folders.label "Add download folder">
+<!ENTITY Cancel.label "Annuler">
+<!ENTITY folderName.label "Nom du dossier">
+<!ENTITY folderName.accessKey "d">
+<!ENTITY folders.label "Ajouter un dossier de téléchargement">

@@ -1,5 +1,5 @@
-<!ENTITY Options.szTitle "Yahoo-asetukset">
+<!ENTITY Options.szTitle "Yahoo - Asetukset">
 <!ENTITY POP.Panel.szTitle "POP">
 <!ENTITY SMTP.Panel.szTitle "SMTP">
-<!ENTITY Folders.Panel.szTitle "Folders">
+<!ENTITY Folders.Panel.szTitle "Kansiot">
 <!ENTITY Window.size "width: 40em; height: 29em">

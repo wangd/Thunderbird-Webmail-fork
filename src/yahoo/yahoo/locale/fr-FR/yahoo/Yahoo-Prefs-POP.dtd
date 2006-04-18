@@ -1,5 +1,4 @@
-<!ENTITY JunkMail.Label "Télécharger les Indésirables">
+<!ENTITY JunkMail.Label "Télécharger les courriers indésirables">
 <!ENTITY JunkMail.AccessKey "I">
 <!ENTITY DownloadUnread.Label "Ne relever que le courrier non lu">
 <!ENTITY DownloadUnread.AccessKey "u">
-

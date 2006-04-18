@@ -1,11 +1,11 @@
-<!ENTITY Edit.label "Edit Folders">
+<!ENTITY Edit.label "Muokkaa kansioita">
 <!ENTITY Ok.label "Ok">
-<!ENTITY Cancel.label "Cancel">
+<!ENTITY Cancel.label "Peruuta">
 <!ENTITY list.size "height: 10em; width:10em;">
-<!ENTITY JunkMail.Label "Download JunkMail">
-<!ENTITY JunkMail.AccessKey "J">
-<!ENTITY Add.Label "Add...">
-<!ENTITY Add.AccessKey "A">
-<!ENTITY Remove.Label "Remove">
-<!ENTITY Remove.AccessKey "R">
-<!ENTITY Folders.Label "Folders to download from">
+<!ENTITY JunkMail.Label "Lataa roskaposti">
+<!ENTITY JunkMail.AccessKey "L">
+<!ENTITY Add.Label "Lisää...">
+<!ENTITY Add.AccessKey "L">
+<!ENTITY Remove.Label "Poista">
+<!ENTITY Remove.AccessKey "P">
+<!ENTITY Folders.Label "Kansiot, josta ladataan">

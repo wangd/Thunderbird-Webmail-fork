@@ -1,11 +1,11 @@
-<!ENTITY Edit.label "Edit Folders">
+<!ENTITY Edit.label "Editar Pastas">
 <!ENTITY Ok.label "Ok">
-<!ENTITY Cancel.label "Cancel">
+<!ENTITY Cancel.label "Cancelar">
 <!ENTITY list.size "height: 10em; width:10em;">
-<!ENTITY JunkMail.Label "Download JunkMail">
+<!ENTITY JunkMail.Label "Baixar lixo eletrônico">
 <!ENTITY JunkMail.AccessKey "J">
-<!ENTITY Add.Label "Add...">
+<!ENTITY Add.Label "Adicionar...">
 <!ENTITY Add.AccessKey "A">
-<!ENTITY Remove.Label "Remove">
+<!ENTITY Remove.Label "Remover">
 <!ENTITY Remove.AccessKey "R">
-<!ENTITY Folders.Label "Folders to download from">
+<!ENTITY Folders.Label "Pastas para baixar">
