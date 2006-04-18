@@ -503,15 +503,15 @@ HotmailScreenRipperBETA.prototype =
                                 {
                                     var aTime = szRawDate.split(/:/);                        
                                     mainObject.m_Log.Write("Hotmail-SR-BETAR.js - mailBoxOnloadHandler - time "+aTime);
-                                    today.setHours(aTime[1]);
-                                    today.setMinutes(aTime[2]);
+                                    today.setHours(aTime[0]);
+                                    today.setMinutes(aTime[1]);
                                 } 
                                 else   //date
                                 {
                                     var aDate = szRawDate.split(/\//);                            
                                     mainObject.m_Log.Write("Hotmail-SR-BETAR.js - mailBoxOnloadHandler - date "+aDate); 
                                     today.setDate(aDate[0]);
-                                    today.setMonth(aDate[1]);
+                                    today.setMonth(aDate[1]-1);
                                     today.setFullYear(aDate[2]);
                                 }
                                               
