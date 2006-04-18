@@ -91,8 +91,9 @@ var gYahooFolder =
                                         var reg = new RegExp(szUserName,"i");
                                         for (j=0; j<this.m_aPrefList.length; j++)
                                         {
-                                            if (this.m_aPrefList[j].szUser.match(reg))
+                                            if (this.m_aPrefList[j].szUser.search(reg)!=-1)
                                             {
+                                                bFound = true;
                                                 data.bInbox= this.m_aPrefList[j].bInbox;
                                                 this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : getUserNameList - inbox " + data.bInbox);
                                                 data.bSpam = this.m_aPrefList[j].bSpam;
@@ -102,7 +103,8 @@ var gYahooFolder =
                                             }
                                         }
                                     }
-                                    else//folders not found 
+                                    
+                                    if (!bFound)//folders not found 
                                     {
                                         data.bInbox = true;
                                         this.m_DebugLog.Write("Hotmail-Prefs-WebDav.js : getUserNameList - inbox " + data.bInbox);
