@@ -1,7 +1,7 @@
 <!ENTITY Edit.label "Editer les dossiers">
 <!ENTITY Ok.label "Ok">
 <!ENTITY Cancel.label "Annuler">
-<!ENTITY list.size "hauteur : 10em; largeur :10em;">
+<!ENTITY list.size "height : 10em; width :10em;">
 <!ENTITY JunkMail.Label "Télécharger les mails indésirables">
 <!ENTITY JunkMail.AccessKey "i">
 <!ENTITY Add.Label "Ajouter...">

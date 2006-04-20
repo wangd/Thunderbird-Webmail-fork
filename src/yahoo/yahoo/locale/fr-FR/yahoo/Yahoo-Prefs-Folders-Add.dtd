@@ -1,4 +1,4 @@
-<!ENTITY Window.size "largeur : 30em; hauteur : 10em">
+<!ENTITY Window.size "width: 30em; height: 10em">
 <!ENTITY TitleAdd "Ajouter">
 <!ENTITY Ok.label "Ok">
 <!ENTITY Cancel.label "Annuler">

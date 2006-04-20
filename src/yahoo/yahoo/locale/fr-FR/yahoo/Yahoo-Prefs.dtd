@@ -2,4 +2,4 @@
 <!ENTITY POP.Panel.szTitle "POP">
 <!ENTITY SMTP.Panel.szTitle "SMTP">
 <!ENTITY Folders.Panel.szTitle "Dossiers">
-<!ENTITY Window.size "largeur : 40em; hauteur : 29em">
+<!ENTITY Window.size "width: 40em; height: 29em">

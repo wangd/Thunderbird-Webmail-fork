@@ -1,4 +1,4 @@
-<!ENTITY Window.size "largeur : 27em; hauteur : 20em">
+<!ENTITY Window.size "width : 27em; height : 20em">
 <!ENTITY Window.title "Image anti-spam de Yahoo">
 <!ENTITY Button.OK.label "OK">
 <!ENTITY YahooSpam.title "Yahoo">
