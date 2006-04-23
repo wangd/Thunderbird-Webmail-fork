@@ -197,6 +197,11 @@
      -moz-image-region: rect(0px, 672px, 32px, 640px)
 }
 
+.flag[value="20"]/*AR*/
+{
+     -moz-image-region: rect(0px, 704px, 32px, 672px)
+}
+
 
 #YahooHomePage
 {
