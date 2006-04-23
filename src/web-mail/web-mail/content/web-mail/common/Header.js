@@ -2,8 +2,10 @@ function headers(szHeaders)
 {
     var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
     scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
+    scriptLoader.loadSubScript("chrome://web-mail/content/common/base64.js");
+    scriptLoader.loadSubScript("chrome://web-mail/content/common/Quoted-Printable.js");
     scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-    
+        
     this.m_szHeaders = szHeaders;
     
     //remove folding
@@ -147,7 +149,8 @@ headers.prototype =
                 break;
                 
                 case 4://name
-                    szContent= szContentType.match(/name="(.*?)"/i)[1];
+                    var szName= szContentType.match(/name="(.*?)"/i)[1];
+                    szContent = this.decode(szName);
                 break;
             };
 
@@ -180,7 +183,8 @@ headers.prototype =
                 break;
                 
                 case 1: // filename
-                    szContent= szContentDispo.match(/filename="(.*?)"/)[1];
+                    var szFilename= szContentDispo.match(/filename="(.*?)"/)[1];
+                    szContent = this.decode(szFilename);
                 break;
             };
             return szContent;  
@@ -233,5 +237,30 @@ headers.prototype =
         szAddress = szAddress.replace(/\s/gm,""); 
         
         return szAddress;  
+    },
+    
+    
+    decode : function (szValue)
+    {
+        var szDecoded = szValue;
+        
+        //check for encoding
+        if (szValue.search(/^=\?.*?\?=$/)!=-1)
+        {
+            var aszEncoding = szValue.match(/^=\?(.*?)\?(.*?)\?(.*?)\?=$/);
+            var szType = aszEncoding[2];
+            if (szType.search(/B/i)!=-1)//base64
+            {
+                var oBase64 = new base64();
+                szDecoded = oBase64.decode(aszEncoding[3]);
+            }
+            else if (szType.search(/Q/i)!=-1)//quoted printable
+            {
+                var oQP = new QuotedPrintable();
+                szDecoded = oQP.decode(aszEncoding[3]);
+            }  
+        }
+        
+        return szDecoded;       
     },
 }

@@ -11,5 +11,5 @@ body.prototype.setBody = function (szBody)
 
 body.prototype.getBody = function ()
 {
-    return (!this.m_szBody) ? null : this.m_szBody;
+    return (!this.m_szBody) ? "" : this.m_szBody;
 }
