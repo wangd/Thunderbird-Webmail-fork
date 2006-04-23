@@ -188,6 +188,12 @@
      -moz-image-region: rect(0px, 640px, 32px, 608px)
 }
 
+
+.flag[value="20"]/*AR*/
+{
+     -moz-image-region: rect(0px, 704px, 32px, 672px)
+}
+
 #AOLHomePage
 {
     text-align: right;
