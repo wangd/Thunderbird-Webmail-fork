@@ -208,20 +208,24 @@ nsYahoo.prototype =
                 }
             }
             
-            
-            this.m_szYahooMail = "http://mail.yahoo.com";
-                    
-            if (this.m_szUserName.search(/@talk21.com$/)!=-1 ||  
-                this.m_szUserName.search(/@btinternet.com$/)!=-1  ||
-                this.m_szUserName.search(/@btopenworld.com$/)!=-1 )
-            {
+                        
+            if (this.m_szUserName.search(/yahoo/)!=-1)   
+            { //remove domain from user name  
+                this.m_szYahooMail = "http://mail.yahoo.com";
+                this.m_szLoginUserName = this.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
+            }  
+            else if (this.m_szUserName.search(/@talk21.com$/)!=-1 ||  
+                     this.m_szUserName.search(/@btinternet.com$/)!=-1  ||
+                     this.m_szUserName.search(/@btopenworld.com$/)!=-1 )
+            {//include domain 
                 this.m_szYahooMail = "http://bt.yahoo.com/";
                 this.m_szLoginUserName = this.m_szUserName;
             }    
             else
-            {
-                this.m_szLoginUserName = this.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
-            }
+            {//include domain in user name
+                this.m_szYahooMail = "http://mail.yahoo.com";
+                this.m_szLoginUserName = this.m_szUserName;
+            } 
             
             this.m_HttpComms.clean();
 

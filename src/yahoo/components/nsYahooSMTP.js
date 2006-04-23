@@ -132,22 +132,25 @@ nsYahooSMTP.prototype =
                      
            this.m_szYahooMail = "http://mail.yahoo.com";
                     
-             if (this.m_szUserName.search(/@talk21.com$/)!=-1 ||  
-                this.m_szUserName.search(/@btinternet.com$/)!=-1  ||
-                this.m_szUserName.search(/@btopenworld.com$/)!=-1 )
+            if (this.m_szUserName.search(/yahoo/)!=-1)   
+            { //remove domain from user name  
+                this.m_szYahooMail = "http://mail.yahoo.com";
+                this.m_szLoginUserName = this.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
+            }  
+            else if (this.m_szUserName.search(/@talk21.com$/)!=-1 ||  
+                     this.m_szUserName.search(/@btinternet.com$/)!=-1  ||
+                     this.m_szUserName.search(/@btopenworld.com$/)!=-1 )
             {
                 this.m_szYahooMail = "http://bt.yahoo.com/";
                 this.m_szLoginUserName = this.m_szUserName;
             }    
             else
-            {
-                this.m_szLoginUserName = this.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
-            }   
+            {//include domain in user name
+                this.m_szYahooMail = "http://mail.yahoo.com";
+                this.m_szLoginUserName = this.m_szUserName;
+            } 
             
             this.m_HttpComms.clean();
-            this.m_HttpComms.addRequestHeader("User-Agent", 
-                            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5",
-                            true);
                             
             this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
             if (this.m_SessionData && this.m_bReUseSession)
@@ -208,9 +211,6 @@ nsYahooSMTP.prototype =
                 throw new Error("return status " + httpChannel.responseStatus);
             
             mainObject.m_HttpComms.clean();
-            mainObject.m_HttpComms.addRequestHeader("User-Agent", 
-                            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5",
-                            true); 
                                       
             //page code                                
             switch (mainObject.m_iStage)
@@ -335,9 +335,6 @@ nsYahooSMTP.prototype =
             
             //get composer page
             this.m_HttpComms.clean();
-            this.m_HttpComms.addRequestHeader("User-Agent", 
-                            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5",
-                            true); 
             this.m_HttpComms.setURI(this.m_szComposeURI);
             this.m_HttpComms.setRequestMethod("GET");       
             var bResult = this.m_HttpComms.send(this.composerOnloadHandler);  
@@ -372,11 +369,7 @@ nsYahooSMTP.prototype =
             if (httpChannel.responseStatus != 200) 
                 throw new Error("return status " + httpChannel.responseStatus);
             
-            mainObject.m_HttpComms.clean();
-            mainObject.m_HttpComms.addRequestHeader("User-Agent", 
-                            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5",
-                            true); 
-            
+            mainObject.m_HttpComms.clean();            
             var szReferer = httpChannel.URI.spec;
             mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Referer :" +szReferer);
              
