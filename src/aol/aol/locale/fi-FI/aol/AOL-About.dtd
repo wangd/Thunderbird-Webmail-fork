@@ -1,0 +1,10 @@
+<!ENTITY AOLAbout.Title "AOL / Netscape - Tietoja">
+<!ENTITY AOLAbout.ExtName "AOL / Netscape">
+<!ENTITY AOLAbout.ExtVersion "versio 0.2.2">
+<!ENTITY AOLAbout.ExtDescription "AOL / Netscape -komponetti WebMail laajennukseen.">
+<!ENTITY AOLAbout.ExtCreaterTitle "Tekijä:">
+<!ENTITY AOLAbout.ExtCreator "ComodoDragon">
+<!ENTITY AOLAbout.ExtHome "Kotisivu">
+<!ENTITY AOLAbout.ExtHomeURL "http://webmail.mozdev.org/">
+<!ENTITY AOLAbout.ExtButton "Sulje">
+<!ENTITY AOLAbout.ExtContributorTitle "Avustajat:">

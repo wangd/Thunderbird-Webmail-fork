@@ -1,0 +1,5 @@
+<!ENTITY MailServers.Label "POP">
+<!ENTITY JunkMail.Label "Télécharger les mail indésirables">
+<!ENTITY JunkMail.AccessKey "I">
+<!ENTITY DownloadUnread.Label "Ne relever que le courrier non lu">
+<!ENTITY DownloadUnread.AccessKey "N">

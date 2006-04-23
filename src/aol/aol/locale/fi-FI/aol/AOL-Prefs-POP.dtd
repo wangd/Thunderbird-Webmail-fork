@@ -1,0 +1,5 @@
+<!ENTITY MailServers.Label "POP">
+<!ENTITY JunkMail.Label "Lataa roskaposti">
+<!ENTITY JunkMail.AccessKey "r">
+<!ENTITY DownloadUnread.Label "Lataa vain lukemattomat viestit">
+<!ENTITY DownloadUnread.AccessKey "l">

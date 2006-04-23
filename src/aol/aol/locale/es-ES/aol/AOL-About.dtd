@@ -1,0 +1,10 @@
+<!ENTITY AOLAbout.Title "AOL / Netscape - Acerca de">
+<!ENTITY AOLAbout.ExtName "AOL / Netscape">
+<!ENTITY AOLAbout.ExtVersion "versión 0.2.2">
+<!ENTITY AOLAbout.ExtDescription "Módulo AOL / Netscape para la extensión Web-Mail.">
+<!ENTITY AOLAbout.ExtCreaterTitle "Creada por:">
+<!ENTITY AOLAbout.ExtCreator "ComodoDragon">
+<!ENTITY AOLAbout.ExtHome "Página web">
+<!ENTITY AOLAbout.ExtHomeURL "http://webmail.mozdev.org/">
+<!ENTITY AOLAbout.ExtButton "Cerrar">
+<!ENTITY AOLAbout.ExtContributorTitle "Colaboradores:">
