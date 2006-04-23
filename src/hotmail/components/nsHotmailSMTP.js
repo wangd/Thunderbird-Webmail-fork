@@ -21,7 +21,7 @@ const patternHotmailSMTPType = /type="(.*?)"/i;
 const patternHotmailSMTPName = /name="(.*?)"/i;
 const patternHotmailSMTPValue = /value="(.*?)"/i;
 const patternHotmailSMTPRefresh =/<META.*?HTTP-EQUIV="REFRESH".*?URL=(.*?)".*?>/i;
-const patternHotmailSMTPJavaRefresh = /top.location.replace\("(.*?)"\);/i
+const patternHotmailSMTPJavaRefresh = /location\.replace\("(.*?)"\);/i
 const patternHotmailSMTP_UM = /_UM="(.*?)"/;
 const patternHotmailSMTPComposer = /onclick="G\('(.*?compose\?.*?)'\);"/i;
 const patternHotmailSMTPCompForm = /<form\s+name="composeform".*?>[\S\s]*?<\/form>/igm;
@@ -29,13 +29,13 @@ const patternHotmailSMTPAttForm = /<form\s+name="doattach".*?>[\S\s]*?<\/form>/i
 const patternHotmailAD = /<form.*?name="addtoAB".*?>/igm;
 
 /*********BETA**********/
-const patternHotmailSMTPJSRefresh = /<html><head><script.*?>top.location.replace.*?\("(.*?)"\).*?<\/script><\/head><\/html>/i;
+const patternHotmailSMTPJSRefresh = /<html><head><script.*?>.*?\.location\.replace.*?\("(.*?)"\).*?<\/script>.*?<\/html>/i;
 const patternHotmailSMTPLogOut = /<a href="(.*?logout.aspx)">/i;
 const patternHotmailSMTPViewState = /<input.*?id="__VIEWSTATE".*?value="(.*?)".*?\/>/i;
 const patternHotmailSMTPMailBoxTable = /<div class="dInboxContent">/ig;
 const patternHotmailSMTPEvent = /<input.*?id="__EVENTVALIDATION".*?value="(.*?)".*?\/>/i;
 const patternHotmailSMTPCompose =/NewMessageGo[\s\S]*?document.location.href="(.*?)"/i;
-
+const patternHotmailSMTPMailbox = /<a href="(\/cgi-bin\/HoTMaiL.*?)".*?tabindex=121.*?class="E">/;
 
 /******************************  Hotmail ***************************************/
 function nsHotmailSMTP()

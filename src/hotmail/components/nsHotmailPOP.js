@@ -11,7 +11,7 @@ const patternHotmailPOPInput = /<input.*?>/igm;
 const patternHotmailPOPType = /type="(.*?)"/i;
 const patternHotmailPOPName = /name="(.*?)"/i;
 const patternHotmailPOPValue = /value="(.*?)"/i;
-const patternHotmailPOPJavaRefresh = /top.location.replace\("(.*?)"\)/i;
+const patternHotmailPOPJavaRefresh = /location\.replace\("(.*?)"\)/i;
 const patternHotmailPOPRefresh =/<META.*?HTTP-EQUIV="REFRESH".*?URL=(.*?)".*?>/i;
 const patternHotmailPOPLogout = /<td><a.*?href="(.*?\/cgi-bin\/logout\?curmbox=.*?").*?>/m;
 const patternHotmailPOPMailbox = /<a href="(\/cgi-bin\/HoTMaiL.*?)".*?tabindex=121.*?class="E">/;
@@ -31,7 +31,7 @@ const patterHotmailPOPFolderID = /curmbox=(.*?)&/;
 const patternHotmailPOPSRRead = /msgread=1/gi;
 const patternHotmailPOPSRFrom =/<tr[\S\s]*name="(.*?)"><td>/i;
 /*********BETA*****************/
-const patternHotmailPOPJSRefresh = /<html><head><script.*?>top.location.replace.*?\("(.*?)"\).*?<\/script><\/head><\/html>/i;
+const patternHotmailPOPJSRefresh = /<html><head><script.*?>.*?\.location\.replace.*?\("(.*?)"\).*?<\/script>.*?<\/html>/i;
 const patternHotmailPOPLogOut = /<a href="(.*?logout.aspx)">/i;
 const patternHotmailPOPInbox = /<a href="(.*?mail.aspx\?Control=Inbox)".*?>/i;
 const patternHotmailPOPJunkFolderID = /<a href="(.*?mail.aspx\?Control=Inbox&FolderID.*?5)">/i;
