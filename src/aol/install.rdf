@@ -14,7 +14,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 		<em:creator>ComodoDragon</em:creator>
 		<em:homepageURL>http://webmail.mozdev.org</em:homepageURL>
 		
-    <em:iconURL>chrome://aol/skin/AOL-Icon.png</em:iconURL>
+        <em:iconURL>chrome://aol/skin/AOL-Icon.png</em:iconURL>
 		<em:aboutURL>chrome://aol/content/AOL-About.xul</em:aboutURL>
 		<em:optionsURL>chrome://aol/content/AOL-Prefs.xul</em:optionsURL>
 		<em:updateURL>http://webmail.mozdev.org/update/aolUpdate.rdf</em:updateURL>
@@ -24,7 +24,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 				<!-- Mozilla Thunderbird -->
 				<em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
 				<em:minVersion>1.4.0</em:minVersion>
-				<em:maxVersion>1.6.0</em:maxVersion>
+				<em:maxVersion>2.0a1</em:maxVersion>
 			</Description>
 		</em:targetApplication>
         
