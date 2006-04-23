@@ -323,9 +323,7 @@ HotmailScreenRipper.prototype =
                 break;
                
                 case 3:
-                    var szLocation = httpChannel.URI.spec;
-                    mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler - page check : " + szLocation);
-                    if (szLocation.indexOf("uilogin.srt")!= -1)
+                    if (szResponse.search(patternHotmailPOPMailbox) == -1)
                     {
                         if (mainObject.m_bReEntry)
                         {
@@ -340,7 +338,9 @@ HotmailScreenRipper.prototype =
                         else
                             throw new Error("error logging in");
                     } 
-                    mainObject.m_szHomeURI = szLocation;
+
+                    mainObject.m_szHomeURI =  httpChannel.URI.spec;
+                    mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler - m_szHomeURI : " + mainObject.m_szHomeURI );
                     
                     //get urls for later use
                     mainObject.m_szLocationURI = httpChannel.URI.prePath ;

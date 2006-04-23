@@ -97,7 +97,7 @@ HotmailSMTPScreenRipperBETA.prototype =
                 this.m_Log.Write("nsHotmail" +this.m_szHomeURI);    
             
                 //get home page
-                this.m_iStage =2;
+                this.m_iStage =3;
                 this.m_bReEntry = true;
                 this.m_HttpComms.setURI(this.m_szHomeURI);
                 this.m_HttpComms.setRequestMethod("GET");
@@ -247,29 +247,20 @@ HotmailSMTPScreenRipperBETA.prototype =
                     
                     var szDomain = mainObject.m_szUserName.split("@")[1];
                     var szURI = null;
-                    if (szDomain.search(/hotmail.co.jp/)!=-1 || szDomain.search(/hotmail.co.uk/)!=-1 ||
-                        szDomain.search(/hotmail.com/)!=-1 || szDomain.search(/hotmail.de/)!=-1 ||
-                        szDomain.search(/hotmail.fr/)!=-1 || szDomain.search(/hotmail.it/)!=-1  )
-                    {
-                        szURI = "https://loginnet.passport.com/ppsecure/post.srf";
-                        szURI += "?" + szQuery;
-                    }
-                    else if (szDomain.search(/msn.com/)!=-1 || szDomain.search(/compaq.net/)!=-1)
-                    {
-                        szURI = "https://msnialogin.passport.com/ppsecure/post.srf"; 
-                        szURI += "?" + szQuery;
-                    }
-                    else if (szDomain.search(/messengeruser.com/)!=-1 || szDomain.search(/passport.com/)!=-1 ||
-                             szDomain.search(/charter.com/)!=-1 || szDomain.search(/webtv.net/)!=-1)
-                    {
-                        szURI = "https://login.passport.com/ppsecure/post.srf"; 
-                        szURI += "?" + szQuery;
-                    }
-                    else
+                    var szRegExp = "g_DO\[\""+szDomain+"\"\]=\"(.*?)\"";
+                    mainObject.m_Log.Write("Hotmail-SR-BETAR- loginOnloadHandler szRegExp "+ szRegExp);
+                    var regExp = new RegExp(szRegExp,"i");
+                    var aszURI = szResponse.match(regExp);
+                    mainObject.m_Log.Write("Hotmail-SR-BETAR- loginOnloadHandler aszURI "+ aszURI);
+                    if (!aszURI)
                     {
                         szURI = szAction;
                     }
-
+                    else
+                    {
+                        szURI = aszURI[1]; 
+                    }
+                    szURI += "?" + szQuery;
                     mainObject.m_HttpComms.setURI(szURI);                     
                     
                     mainObject.m_HttpComms.setRequestMethod("POST");
@@ -278,7 +269,46 @@ HotmailSMTPScreenRipperBETA.prototype =
                     mainObject.m_iStage++;
                 break;
                
-                case 2: //inbox
+                case 2: //JS bounce
+                    var aRefresh = szResponse.match(patternHotmailSMTPForm);
+                    mainObject.m_Log.Write("Hotmail-SR-BETAR loginOnloadHandler - refresh "+ aRefresh); 
+                   
+                    if (aRefresh)
+                    {   
+                        //action
+                        var szAction = aRefresh[0].match(patternHotmailSMTPAction)[1];
+                        mainObject.m_Log.Write("Hotmail-SR-BETAR loginOnloadHandler "+ szAction);
+                        mainObject.m_HttpComms.setURI(szAction);
+                        
+                        //form data  
+                        var aInput =  aRefresh[0].match(patternHotmailSMTPInput);
+                        mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler "+ aInput); 
+                        var szName =  aInput[0].match(patternHotmailSMTPName)[1];
+                        var szValue =  aInput[0].match(patternHotmailSMTPValue)[1];
+                        szValue = encodeURIComponent(szValue);
+                        mainObject.m_HttpComms.addValuePair(szName,szValue);
+                        mainObject.m_HttpComms.setRequestMethod("POST");  
+                    }
+                    else
+                    {
+                        aRefresh = szResponse.match(patternHotmailSMTPRefresh);
+                        
+                        if (!aRefresh)
+                            aRefresh = szResponse.match(patternHotmailSMTPJavaRefresh);
+                            
+                        mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler refresh "+ aRefresh); 
+                        if (aRefresh == null) throw new Error("error parsing login page");    
+                        
+                        mainObject.m_HttpComms.setURI(aRefresh[1]);
+                        mainObject.m_HttpComms.setRequestMethod("GET");
+                    } 
+           
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);   
+                    if (!bResult) throw new Error("httpConnection returned false");
+                    mainObject.m_iStage++;
+                break;
+               
+                case 3: //inbox
                    //check for logout option 
                     var aszLogoutURL = szResponse.match(patternHotmailSMTPLogOut);
                     mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler - logout : " + aszLogoutURL);
