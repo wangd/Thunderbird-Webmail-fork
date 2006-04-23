@@ -21,7 +21,7 @@ const patternAOLVersion =/var VERSION="(.*?)"/i;
 const patternAOLUserID =/uid:(.*?)&/i;
 const patternAOLSend =/<form.*?name="SendForm".*?>[\s\S]*?<\/form>/igm;
 const patternAOLSendCheck = /parent.HandleSendSaveResponse/igm
-
+const patternAOLLogout = /Logout\.aspx/i;
 /******************************  AOL ***************************************/
 function nsAOLSMTP()
 {
@@ -330,7 +330,7 @@ nsAOLSMTP.prototype =
                 break;
                 
                 case 6://get urls
-                    if(szResponse.search(patternAOLMSGList)==-1)
+                    if(szResponse.search(patternAOLLogout)==-1)
                     {
                         if (mainObject.m_bReEntry)
                         {

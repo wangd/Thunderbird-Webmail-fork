@@ -23,7 +23,7 @@ const patternAOLMSGSender = /^fa[\s\S].*$/gmi;
 const patternAOLMSGData = /MI\(.*?\);/igm;
 const patternAOLMSGDataProcess =/MI\("(.*?)",.*?,"([\s\S]*)",(.*?),.*?,.*?,.*?,(.*?),.*?\);/i;
 const patternAOLURLPageNum = /page=(.*?)&/i;
-
+const patternAOLLogout = /Logout\.aspx/i;
 /***********************  AOL ********************************/
 
 
@@ -348,7 +348,7 @@ nsAOL.prototype =
                 break;
                 
                 case 6://get urls
-                    if(szResponse.search(patternAOLMSGList)==-1)
+                    if(szResponse.search(patternAOLLogout)==-1)
                     {
                         if (mainObject.m_bReEntry)
                         {
