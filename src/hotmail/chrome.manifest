@@ -17,3 +17,4 @@ locale  hotmail    sl-SI   jar:chrome/hotmail.jar!/locale/sl-SI/hotmail/
 locale  hotmail    tr-TR   jar:chrome/hotmail.jar!/locale/tr-TR/hotmail/
 locale  hotmail    sv-SE   jar:chrome/hotmail.jar!/locale/sv-SE/hotmail/
 locale  hotmail    br-PT   jar:chrome/hotmail.jar!/locale/br-PT/hotmail/
+locale  hotmail    es-AR   jar:chrome/hotmail.jar!/locale/es-AR/hotmail/
