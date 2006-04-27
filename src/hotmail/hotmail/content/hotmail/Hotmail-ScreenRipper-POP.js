@@ -251,29 +251,20 @@ HotmailScreenRipper.prototype =
                     
                     var szDomain = mainObject.m_szUserName.split("@")[1];
                     var szURI = null;
-                    if (szDomain.search(/hotmail.co.jp/)!=-1 || szDomain.search(/hotmail.co.uk/)!=-1 ||
-                        szDomain.search(/hotmail.com/)!=-1 || szDomain.search(/hotmail.de/)!=-1 ||
-                        szDomain.search(/hotmail.fr/)!=-1 || szDomain.search(/hotmail.it/)!=-1  )
-                    {
-                        szURI = "https://loginnet.passport.com/ppsecure/post.srf";
-                        szURI += "?" + szQuery;
-                    }
-                    else if (szDomain.search(/msn.com/)!=-1 || szDomain.search(/compaq.net/)!=-1)
-                    {
-                        szURI = "https://msnialogin.passport.com/ppsecure/post.srf"; 
-                        szURI += "?" + szQuery;
-                    }
-                    else if (szDomain.search(/messengeruser.com/)!=-1 || szDomain.search(/passport.com/)!=-1 ||
-                             szDomain.search(/charter.com/)!=-1 || szDomain.search(/webtv.net/)!=-1)
-                    {
-                        szURI = "https://login.passport.com/ppsecure/post.srf"; 
-                        szURI += "?" + szQuery;
-                    }
-                    else
+                    var szRegExp = "g_DO\[\""+szDomain+"\"\]=\"(.*?)\"";
+                    mainObject.m_Log.Write("Hotmail-SR-BETAR- loginOnloadHandler szRegExp "+ szRegExp);
+                    var regExp = new RegExp(szRegExp,"i");
+                    var aszURI = szResponse.match(regExp);
+                    mainObject.m_Log.Write("Hotmail-SR-BETAR- loginOnloadHandler aszURI "+ aszURI);
+                    if (!aszURI)
                     {
                         szURI = szAction;
                     }
-
+                    else
+                    {
+                        szURI = aszURI[1]; 
+                    }
+                    szURI += "?" + szQuery;
                     mainObject.m_HttpComms.setURI(szURI);                    
                     
                     mainObject.m_HttpComms.setRequestMethod("POST");
