@@ -103,7 +103,7 @@ NetscapePOP.prototype =
             
             this.m_HttpComms.clean();
             
-            this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
+            this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName.toLowerCase());
             if (this.m_SessionData && this.m_bReUseSession)
             {
                 this.m_Log.Write("NetscapePOP.js - logIN - Session Data found");
@@ -794,6 +794,9 @@ NetscapePOP.prototype =
         {
             mainObject.m_Log.Write("NetscapePOP.js - deleteMessageOnloadHandler - START");
             
+            var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
+            mainObject.m_Log.Write("NetscapePOP.js - emailOnloadHandler - msg :" + httpChannel.responseStatus);
+            
             //check status should be 200.
             if (httpChannel.responseStatus != 200) 
                 throw new Error("error status " + httpChannel.responseStatus);  
@@ -826,7 +829,7 @@ NetscapePOP.prototype =
             {
                 this.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
                 this.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
-                this.m_SessionData.szUserName = this.m_szUserName;
+                this.m_SessionData.szUserName = this.m_szUserName.toLowerCase();
                 
                 var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
                 componentData.QueryInterface(Components.interfaces.nsIComponentData);
@@ -857,30 +860,7 @@ NetscapePOP.prototype =
                                       + e.lineNumber);
             return false;
         }
-    },  
-    
-    
-    
-    logoutOnloadHandler : function (szResponse ,event , mainObject)
-    {
-        try
-        {
-            mainObject.m_Log.Write("NetscapePOP.js - logoutOnloadHandler - START"); 
-            mainObject.m_Log.Write("NetscapePOP.js - logoutOnloadHandler - END");
-        }
-        catch(err)
-        {
-            mainObject.m_Log.DebugDump("NetscapePOP.js: deleteMessageOnloadHandler : Exception : " 
-                                              + err.name 
-                                              + ".\nError message: " 
-                                              + err.message+ "\n"
-                                              + err.lineNumber);
-            
-            mainObject.serverComms("-ERR Comms Error from "+ mainObject.m_szUserName+"\r\n");
-        }
-    },
-    
-    
+    },      
     
     serverComms : function (szMsg)
     {

@@ -99,7 +99,7 @@ AOLSMTP.prototype =
           
             this.m_HttpComms.clean();
             
-            this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
+            this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName.toLowerCase());
             if (this.m_SessionData && this.m_bReUseSession)
             {
                 this.m_Log.Write("nsAOL.js - logIN - Session Data found");
@@ -119,7 +119,7 @@ AOLSMTP.prototype =
                 this.m_Log.Write("nsAOL.js - logIN - .m_szLocation" +this.m_szLocation);
                 
                 //get home page
-                this.m_iStage =6;
+                this.m_iStage =7;
                 this.m_bReEntry = true;
                 this.m_HttpComms.setURI(this.m_szHomeURI);
                 this.m_HttpComms.setRequestMethod("GET");
@@ -519,7 +519,7 @@ AOLSMTP.prototype =
                     {
                         mainObject.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
                         mainObject.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
-                        mainObject.m_SessionData.szUserName = mainObject.m_szUserName;
+                        mainObject.m_SessionData.szUserName = mainObject.m_szUserName.toLowerCase();
                         
                         var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
                         componentData.QueryInterface(Components.interfaces.nsIComponentData);
@@ -532,7 +532,8 @@ AOLSMTP.prototype =
                     mainObject.m_SessionData.oComponentData.addElement("szSuccessPath", mainObject.m_SuccessPath);
                     mainObject.m_SessionData.oComponentData.addElement("szHostURL",mainObject.m_szHostURL);
                     mainObject.m_SessionData.oComponentData.addElement("szLocation",mainObject.m_szLocation);
-                        
+                    
+                    mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);    
                     mainObject.serverComms("250 OK\r\n");
                 break;
             };

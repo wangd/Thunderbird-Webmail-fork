@@ -11,7 +11,7 @@ function NetscapeSMTP(oResponseStream, oLog)
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Email.js");
         
         this.m_Log =oLog; 
-        this.m_Log.Write("nsAOLSMTP.js - Constructor - START");   
+        this.m_Log.Write("NetscapeSMTP.js - Constructor - START");   
         this.m_oResponseStream = oResponseStream;
         this.m_bAuthorised = false;
         this.m_szUserName = null;   
@@ -86,7 +86,7 @@ NetscapeSMTP.prototype =
     {
         try
         {
-            this.m_Log.Write("AOLSMTP.js - logIN - START");   
+            this.m_Log.Write("NetscapeSMTP.js - logIN - START");   
             this.m_Log.Write("NetscapeSMTP.js - logIN - Username: " + szUserName 
                                                    + " Password: "  + szPassWord 
                                                    + " stream: "    + this.m_oResponseStream);
@@ -99,7 +99,7 @@ NetscapeSMTP.prototype =
           
             this.m_HttpComms.clean();
             
-            this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
+            this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName.toLowerCase());
             if (this.m_SessionData && this.m_bReUseSession)
             {
                 this.m_Log.Write("NetscapeSMTP.js - logIN - Session Data found");
@@ -505,9 +505,10 @@ NetscapeSMTP.prototype =
                     
                     if (!mainObject.m_SessionData)
                     {
+                        mainObject.m_Log.Write("NetscapeSMTP.js - composerOnloadHandler - Creating Session Data");
                         mainObject.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
                         mainObject.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
-                        mainObject.m_SessionData.szUserName = mainObject.m_szUserName;
+                        mainObject.m_SessionData.szUserName = mainObject.m_szUserName.toLowerCase();
                         
                         var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
                         componentData.QueryInterface(Components.interfaces.nsIComponentData);
@@ -520,7 +521,9 @@ NetscapeSMTP.prototype =
                     mainObject.m_SessionData.oComponentData.addElement("szSuccessPath", mainObject.m_SuccessPath);
                     mainObject.m_SessionData.oComponentData.addElement("szHostURL",mainObject.m_szHostURL);
                     mainObject.m_SessionData.oComponentData.addElement("szLocation",mainObject.m_szLocation);
-                        
+                    
+                    mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);
+                    
                     mainObject.serverComms("250 OK\r\n");
                 break;
             };
