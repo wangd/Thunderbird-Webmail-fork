@@ -43,6 +43,7 @@ function nsYahoo()
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/comms.js");
         scriptLoader.loadSubScript("chrome://yahoo/content/YahooMSG.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/Header.js");
               
         var date = new Date();
         var  szLogFileName = "Yahoo Log - " + date.getHours()+ "-" + date.getMinutes() + "-"+ date.getUTCMilliseconds() +" -";
@@ -209,14 +210,14 @@ nsYahoo.prototype =
             }
             
                         
-            if (this.m_szUserName.search(/yahoo/)!=-1)   
+            if (this.m_szUserName.search(/yahoo/i)!=-1)   
             { //remove domain from user name  
                 this.m_szYahooMail = "http://mail.yahoo.com";
                 this.m_szLoginUserName = this.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
             }  
-            else if (this.m_szUserName.search(/@talk21.com$/)!=-1 ||  
-                     this.m_szUserName.search(/@btinternet.com$/)!=-1  ||
-                     this.m_szUserName.search(/@btopenworld.com$/)!=-1 )
+            else if (this.m_szUserName.search(/@talk21.com$/i)!=-1 ||  
+                     this.m_szUserName.search(/@btinternet.com$/i)!=-1  ||
+                     this.m_szUserName.search(/@btopenworld.com$/i)!=-1 )
             {//include domain 
                 this.m_szYahooMail = "http://bt.yahoo.com/";
                 this.m_szLoginUserName = this.m_szUserName;
@@ -982,27 +983,11 @@ nsYahoo.prototype =
                     mainObject.m_szHeader = "X-WebMail: true\r\n";
                     var szFolder = mainObject.m_szBox.match(PatternYahooFolderBoxAlt)[1];
                     mainObject.m_szHeader += "X-Folder: " + szFolder + "\r\n";
-                                      
-                    var aszHeaderRows = szResponse.split("\n");
-                    mainObject.m_Log.Write("nsYahoo.js - emailOnloadHandler - aszHeaderRows - "+ aszHeaderRows); 
-                    
-                    for (i=0; i<aszHeaderRows.length; i++)
-                    {
-                        mainObject.m_Log.Write("nsYahoo.js - emailOnloadHandler - Row - "+ aszHeaderRows[i]  + " " + aszHeaderRows[i].length);
-                        
-                        var bFrom = (aszHeaderRows[i].search(/^From/i)==-1)? false:true; //From not found
-                        var bAt = (aszHeaderRows[i].search(/@/i)==-1)? false:true; //At sign not found
-                        
-                        if ( (!bFrom || bAt) && aszHeaderRows[i].length>1)
-                        {
-                            mainObject.m_Log.Write("nsYahoo.js - emailOnloadHandler - added");
-                            mainObject.m_szHeader += aszHeaderRows[i] + "\r\n";
-                        }                            
-                    }
-                    mainObject.m_szHeader +="\r\n";
-                    
-                    mainObject.m_iStage++;
-                    
+
+                    var oHeaders = new headers(szResponse);
+                    mainObject.m_szHeader += oHeaders.getAllHeaders();
+                    mainObject.m_Log.Write("nsYahoo.js - emailOnloadHandler - headers - "+mainObject.m_szHeader);
+            
                     //get body
                     var ios=Components.classes["@mozilla.org/network/io-service;1"];
                     ios = ios.getService(Components.interfaces.nsIIOService);
@@ -1013,6 +998,7 @@ nsYahoo.prototype =
                     mainObject.m_Log.Write("nsYahoo.js - emailOnloadHandler - url - "+ szDest);                       
                    
                     //get msg from yahoo
+                    mainObject.m_iStage++;
                     mainObject.m_HttpComms.clean();
                     mainObject.m_HttpComms.setURI(szDest);
                     mainObject.m_HttpComms.setRequestMethod("GET");
