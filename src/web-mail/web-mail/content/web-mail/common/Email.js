@@ -11,7 +11,11 @@ function email (Log)
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Quoted-Printable.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         
-        this.m_Log = Log;
+        var date = new Date();
+        var  szLogFileName = "EMail Parser - " + date.getHours()+ "-" + date.getMinutes() + "-"+ date.getUTCMilliseconds() +" -";
+        this.m_Log = new DebugLog("webmail.logging.comms", 
+                                  "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
+                                  szLogFileName),
         this.m_bDecodeBody = false;
     }
     catch(err)
