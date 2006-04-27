@@ -132,14 +132,14 @@ nsYahooSMTP.prototype =
                      
            this.m_szYahooMail = "http://mail.yahoo.com";
                     
-            if (this.m_szUserName.search(/yahoo/)!=-1)   
+            if (this.m_szUserName.search(/yahoo/i)!=-1)   
             { //remove domain from user name  
                 this.m_szYahooMail = "http://mail.yahoo.com";
                 this.m_szLoginUserName = this.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
             }  
-            else if (this.m_szUserName.search(/@talk21.com$/)!=-1 ||  
-                     this.m_szUserName.search(/@btinternet.com$/)!=-1  ||
-                     this.m_szUserName.search(/@btopenworld.com$/)!=-1 )
+            else if (this.m_szUserName.search(/@talk21.com$/i)!=-1 ||  
+                     this.m_szUserName.search(/@btinternet.com$/i)!=-1  ||
+                     this.m_szUserName.search(/@btopenworld.com$/i)!=-1 )
             {
                 this.m_szYahooMail = "http://bt.yahoo.com/";
                 this.m_szLoginUserName = this.m_szUserName;
