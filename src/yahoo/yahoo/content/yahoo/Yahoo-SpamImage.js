@@ -1,6 +1,6 @@
 var gYahooSpamImage = 
 {
-    m_Log : new DebugLog("webmail.logging.comms","{3c8e8390-2cf6-11d9-9669-0800200c9a66}","yahoo-SpamImage"),
+    m_Log : null,
     m_fileIamge : null,
     m_Timer : null,
     m_params : null,
@@ -10,6 +10,9 @@ var gYahooSpamImage =
     {
         try
         {
+            this.m_Log = new DebugLog("webmail.logging.comms",
+                                      "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
+                                      "yahoo-SpamImage"),
             this.m_Log.Write("YahooSpamImage : init - START");
             
             this.m_params = window.arguments[0].QueryInterface(Components.interfaces.nsIDialogParamBlock);
