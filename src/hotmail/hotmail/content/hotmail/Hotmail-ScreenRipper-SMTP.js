@@ -223,28 +223,26 @@ HotmailSMTPScreenRipper.prototype =
                     
                     var szAction = aForm[0].match(patternHotmailPOPAction)[1];
                     mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler "+ szAction);
-                    var IOService = Components.classes["@mozilla.org/network/io-service;1"];
-                    IOService = IOService.getService(Components.interfaces.nsIIOService);
-                    var nsIURI = IOService.newURI(szAction, null, null);
-                    var szQuery = nsIURI.QueryInterface(Components.interfaces.nsIURL).query;    
-                    mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler "+ szQuery);                   
-                    
                     var szDomain = mainObject.m_szUserName.split("@")[1];
-                    var szURI = null;
                     var szRegExp = "g_DO\[\""+szDomain+"\"\]=\"(.*?)\"";
                     mainObject.m_Log.Write("Hotmail-SR-BETAR- loginOnloadHandler szRegExp "+ szRegExp);
                     var regExp = new RegExp(szRegExp,"i");
                     var aszURI = szResponse.match(regExp);
                     mainObject.m_Log.Write("Hotmail-SR-BETAR- loginOnloadHandler aszURI "+ aszURI);
+                    var szURI = null;
                     if (!aszURI)
                     {
                         szURI = szAction;
                     }
                     else
                     {
-                        szURI = aszURI[1]; 
+                        var IOService = Components.classes["@mozilla.org/network/io-service;1"];
+                        IOService = IOService.getService(Components.interfaces.nsIIOService);
+                        var nsIURI = IOService.newURI(szAction, null, null);
+                        var szQuery = nsIURI.QueryInterface(Components.interfaces.nsIURL).query;    
+                        mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler "+ szQuery);      
+                        szURI = aszURI[1] + "?" + szQuery; 
                     }
-                    szURI += "?" + szQuery;
                     mainObject.m_HttpComms.setURI(szURI);                 
                     
                     mainObject.m_HttpComms.setRequestMethod("POST");

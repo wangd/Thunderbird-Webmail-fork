@@ -6,6 +6,8 @@ function HotmailScreenRipper(oResponseStream, oLog)
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/comms.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/Header.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/Email.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-MSG.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         
@@ -242,29 +244,27 @@ HotmailScreenRipper.prototype =
                     }
                     
                     var szAction = aForm[0].match(patternHotmailPOPAction)[1];
-                    mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler "+ szAction);
-                    var IOService = Components.classes["@mozilla.org/network/io-service;1"];
-                    IOService = IOService.getService(Components.interfaces.nsIIOService);
-                    var nsIURI = IOService.newURI(szAction, null, null);
-                    var szQuery = nsIURI.QueryInterface(Components.interfaces.nsIURL).query;    
-                    mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler "+ szQuery);                   
-                    
+                    mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler "+ szAction);    
                     var szDomain = mainObject.m_szUserName.split("@")[1];
-                    var szURI = null;
                     var szRegExp = "g_DO\[\""+szDomain+"\"\]=\"(.*?)\"";
                     mainObject.m_Log.Write("Hotmail-SR-BETAR- loginOnloadHandler szRegExp "+ szRegExp);
                     var regExp = new RegExp(szRegExp,"i");
                     var aszURI = szResponse.match(regExp);
                     mainObject.m_Log.Write("Hotmail-SR-BETAR- loginOnloadHandler aszURI "+ aszURI);
+                    var szURI = null;
                     if (!aszURI)
                     {
                         szURI = szAction;
                     }
                     else
-                    {
-                        szURI = aszURI[1]; 
+                    { 
+                        var IOService = Components.classes["@mozilla.org/network/io-service;1"];
+                        IOService = IOService.getService(Components.interfaces.nsIIOService);
+                        var nsIURI = IOService.newURI(szAction, null, null);
+                        var szQuery = nsIURI.QueryInterface(Components.interfaces.nsIURL).query;    
+                        mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler "+ szQuery); 
+                        szURI = aszURI[1] + "?" + szQuery; 
                     }
-                    szURI += "?" + szQuery;
                     mainObject.m_HttpComms.setURI(szURI);                    
                     
                     mainObject.m_HttpComms.setRequestMethod("POST");
@@ -867,9 +867,7 @@ HotmailScreenRipper.prototype =
                     
                     //clean up msg
                     mainObject.m_szMSG = mainObject.removeHTML(mainObject.m_szMSG);
-                    mainObject.m_szMSG =  mainObject.m_szMSG.replace(/^\./mg,"..");    //bit padding   
-                    mainObject.m_szMSG += "\r\n.\r\n";
-                    
+
                     mainObject.m_iStage =1;
                     mainObject.m_HttpComms.clean();
                     mainObject.m_HttpComms.setURI(mainObject.m_szMSGUri);
@@ -879,6 +877,17 @@ HotmailScreenRipper.prototype =
                 break;
             
                 case 1:  //marked as read
+                    //split body headers
+                    var oEmail = new email("");
+                    var aEmail = oEmail.splitHeaderBody(mainObject.m_szMSG);
+                    //clean headers
+                    var oHeaders = new headers(aEmail[1]);
+                    var szHeaders = oHeaders.getAllHeaders();
+                    //reconstruct email
+                    mainObject.m_szMSG = szHeaders + aEmail[2];
+                    mainObject.m_szMSG =  mainObject.m_szMSG.replace(/^\./mg,"..");    //bit padding
+                    mainObject.m_szMSG += "\r\n.\r\n";
+                  
                     var szPOPResponse = "+OK " +  mainObject.m_szMSG.length + "\r\n";                  
                     szPOPResponse +=  mainObject.m_szMSG;
         
