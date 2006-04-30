@@ -1,0 +1,30 @@
+#Hotmaillabel
+{   
+    margin-top: 10px;
+    font-size: x-large;
+    font-weight: bold;
+}
+
+#HotmailSpamDescri
+{
+    font-size: normal;
+    text-align: large;
+    margin-bottom: 10px;
+}
+
+#imageSpam
+{
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+#labelSpamImage
+{
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+#txtSpamImage
+{
+    margin-bottom: 20px;
+}

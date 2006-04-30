@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://hotmail/content/Hotmail-SpamImage.css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://hotmail/locale/Hotmail-SpamImage.dtd">
+
+<window id="spamimage" 
+        title="&Window.title;"
+        xmlns:html="http://www.w3.org/1999/xhtml"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        onload="return gHotmailSpamImage.init(); sizeToContent();">
+
+    <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
+    <script type="application/x-javascript" src="chrome://hotmail/content/Hotmail-SpamImage.js"/>
+    
+    <vbox flex="1">
+        <vbox>
+            <hbox>
+                <spacer flex="1"/>
+                <label id="Hotmaillabel" value="&HotmailSpam.title;"/>
+                <spacer flex="1"/>
+            </hbox>
+            <hbox>
+                <spacer flex="1"/>
+                <label id="HotmailSpamDescri" value="&HotmailSpam.decription;"/>
+                <spacer flex="1"/>
+            </hbox>
+        </vbox>
+           
+        <hbox>
+            <spacer flex="1"/>
+            <image id="imageSpam" width="290px" height="80px"/>
+            <spacer flex="1"/>
+        </hbox>      
+        
+        <label id="labelSpamImage" value="&HotmailSpam.label;" flex="1" control="txtSpamImage"/>
+        
+        <hbox>
+            <spacer flex="1"/>
+            <textbox  id="txtSpamImage" tabindex="1" size="20"/>
+            <spacer flex="1"/>
+        </hbox>  
+        
+        <spacer flex="2" />
+
+        <hbox align="end" pack="center">
+            <button label="&Button.OK.label;"
+                    oncommand ="gHotmailSpamImage.doOk();"/>
+        </hbox>    
+    </vbox>
+</window>
