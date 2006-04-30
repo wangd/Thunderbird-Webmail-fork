@@ -31,7 +31,8 @@ function HotmailSMTPScreenRipper(oResponseStream, oLog, bSaveCopy)
         this.m_bAttHandled = false;
         this.m_iAttCount = 0;
         this.m_iAttUploaded = 1;
-        
+        this.m_szImageVerForm = null;
+         
         this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"];
         this.m_SessionManager = this.m_SessionManager.getService();
         this.m_SessionManager.QueryInterface(Components.interfaces.nsISessionManager); 
@@ -500,6 +501,28 @@ HotmailSMTPScreenRipper.prototype =
                         
                         mainObject.serverComms("250 OK\r\n");    
                     }
+                    else if (szResponse.search(patternHotmailSpamForm)!=-1)//spam challenge 
+                    {
+                        mainObject.m_Log.Write("Hotmail-SR-SMTP - composerOnloadHandler - image verification");
+                        //get form
+                        mainObject.m_szImageVerForm = szResponse.match(patternHotmailSpamForm)[0];
+                        mainObject.m_Log.Write("Hotmail-SR-SMTP - composerOnloadHandler - form " + mainObject.m_szImageVerForm );
+                        
+                        //get base
+                        var szBase = szResponse.match(patternHotmailBase)[1];
+                        mainObject.m_Log.Write("Hotmail-SR-SMTP - composerOnloadHandler - image " + szBase);
+                        
+                        //get image
+                        var szImageUri = szResponse.match(patternHotmailSpamImage)[1];
+                        mainObject.m_Log.Write("Hotmail-SR-SMTP - composerOnloadHandler - image " + szImageUri);
+                     
+                        mainObject.m_HttpComms.setContentType(1);
+                        mainObject.m_HttpComms.setURI(szBase + szImageUri);
+                        mainObject.m_HttpComms.setRequestMethod("GET");
+                        mainObject.m_iStage = 4;
+                        var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);  
+                        if (!bResult) throw new Error("httpConnection returned false");                        
+                    }
                     else
                         mainObject.serverComms("502 Failed\r\n"); 
                 break;
@@ -580,9 +603,7 @@ HotmailSMTPScreenRipper.prototype =
                         catch(err){}
                 
                         if (i==0 && mainObject.m_iStage == 0) szName = "Attach.x";
-                       // if (i==0 && mainObject.m_iStage == 3) 
-                       //     mainObject.m_HttpComms.addValuePair("","");  
-                                                            
+
                         if (szName.search(/^attfile$/i)!=-1)
                         { 
                             //headers
@@ -611,6 +632,52 @@ HotmailSMTPScreenRipper.prototype =
                     mainObject.m_HttpComms.setRequestMethod("POST");
                     var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);  
                     if (!bResult) throw new Error("httpConnection returned false"); 
+                break;
+                
+                case 4: //downloaded image verifiaction
+                    mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - image download");
+                    var szPath = mainObject.writeImageFile(szResponse);
+                    mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - imageFile " + szPath);
+                    var szResult =  mainObject.openSpamWindow(szPath);
+                    
+                    if (!szResult)
+                    {
+                        mainObject.serverComms("502 Error Sending Email\r\n");
+                        return;
+                    }
+                    
+                    //construct form 
+                    var aszInput = mainObject.m_szImageVerForm.match(patternHotmailSMTPInput);
+                    for (i=0; i< aszInput.length; i++)
+                    {
+                        var szName = aszInput[i].match(patternHotmailSMTPName)[1];
+                        mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - Name " + szName); 
+                                              
+                        var szValue = "";
+                        if (szValue.search(/HIPSolution/i)!=-1)
+                        {
+                            szValue = szResult;
+                        }
+                        else
+                        {
+                            szValue = aszInput[i].match(patternHotmailSMTPValue)[1]
+                        }
+                        szValue = encodeURIComponent(szValue);
+                        mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - value " + szValue);
+                        
+                        mainObject.m_HttpComms.addValuePair(szName,(szValue.length>0)? szValue : "");
+                    }
+
+                    var szActionUrl = mainObject.m_szImageVerForm.match(patternHotmailSMTPAction)[1];
+                    mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - szFormAction " + szFormAction);
+                    
+                    //send data
+                    mainObject.m_HttpComms.setContentType(1);
+                    mainObject.m_HttpComms.setURI(mainObject.m_szLocationURI + szAction);
+                    mainObject.m_HttpComms.setRequestMethod("POST");
+                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);  
+                    if (!bResult) throw new Error("httpConnection returned false");
+                    mainObject.m_iStage = 1;
                 break;
             }; 
               
@@ -694,6 +761,101 @@ HotmailSMTPScreenRipper.prototype =
                                               + ".\nError message: " 
                                               + e.message+ "\n"
                                               + e.lineNumber);
+        }
+    },
+    
+    
+    writeImageFile : function(szData)
+    {
+        try
+        {
+            this.m_Log.Write("Hotmail-SR-SMTP.js - writeImageFile - End");
+            
+            var file = Components.classes["@mozilla.org/file/directory_service;1"];
+            file = file.getService(Components.interfaces.nsIProperties);
+            file = file.get("TmpD", Components.interfaces.nsIFile);
+            file.append("suggestedName.jpg");
+            file.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 420); 
+           
+            var deletefile = Components.classes["@mozilla.org/uriloader/external-helper-app-service;1"];
+            deletefile = deletefile.getService(Components.interfaces.nsPIExternalAppLauncher);
+            deletefile.deleteTemporaryFileOnExit(file);    
+            
+            var outputStream = Components.classes["@mozilla.org/network/file-output-stream;1"];
+            outputStream = outputStream.createInstance( Components.interfaces.nsIFileOutputStream );
+            outputStream.init( file, 0x04 | 0x08 | 0x10, 420, 0 );
+            
+            var binaryStream = Components.classes["@mozilla.org/binaryoutputstream;1"];
+            binaryStream = binaryStream.createInstance(Components.interfaces.nsIBinaryOutputStream);
+            binaryStream.setOutputStream(outputStream)
+            binaryStream.writeBytes( szData, szData.length );
+            outputStream.close();
+            binaryStream.close();
+                       
+            var ios = Components.classes["@mozilla.org/network/io-service;1"]
+                                .getService(Components.interfaces.nsIIOService);
+            var fileHandler = ios.getProtocolHandler("file")
+                                 .QueryInterface(Components.interfaces.nsIFileProtocolHandler);
+            var URL = fileHandler.getURLSpecFromFile(file);
+            this.m_Log.Write("Hotmail-SR-SMTP.js - writeImageFile - path " + URL);
+            
+            this.m_Log.Write("Hotmail-SR-SMTP.js - writeImageFile - End");
+            return URL;
+        }
+        catch(err)
+        {
+            this.m_Log.DebugDump("Hotmail-SR-SMTP.js: writeImageFile : Exception : " 
+                                                  + err.name 
+                                                  + ".\nError message: " 
+                                                  + err.message + "\n"
+                                                  + err.lineNumber);
+                                                  
+            return null;
+        }
+    },
+    
+    
+    
+    
+    openSpamWindow : function(szPath)
+    {
+        try
+        {
+            this.m_Log.Write("Hotmail-SR-SMTP : openWindow - START");
+            
+            var params = Components.classes["@mozilla.org/embedcomp/dialogparam;1"]
+                                   .createInstance(Components.interfaces.nsIDialogParamBlock);
+            params.SetNumberStrings(1);
+            params.SetString(0, szPath);           
+                      
+            var window = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
+                                  .getService(Components.interfaces.nsIWindowWatcher);
+            
+            window.openWindow(null, 
+                              "chrome://hotmail/content/Hotmail-SpamImage.xul",
+                              "_blank", 
+                              "chrome,alwaysRaised,dialog,modal,centerscreen,resizable",
+                              params);
+           
+            var iResult = params.GetInt(0);
+            this.m_Log.Write("Hotmail-SR-SMTP : openWindow - " + iResult);
+            var szResult =  null;
+            if (iResult) 
+            {
+                szResult = params.GetString(0);
+                this.m_Log.Write("Hotmail-SR-SMTP : openWindow - " + szResult);
+            }
+            
+            this.m_Log.Write("Hotmail-SR-SMTP : openWindow - END");
+            return szResult;
+        }
+        catch(err)
+        {
+            this.m_Log.DebugDump("Hotmail-SR-SMTP: Exception in openWindow : " 
+                                               + err.name 
+                                               + ".\nError message: " 
+                                               + err.message + "\n"
+                                               + err.lineNumber);
         }
     },
 }
