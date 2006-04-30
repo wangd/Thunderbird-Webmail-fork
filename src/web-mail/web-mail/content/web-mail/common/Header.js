@@ -7,11 +7,9 @@ function headers(szRawHeaders)
     scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
     scriptLoader.loadSubScript("chrome://web-mail/content/common/HeaderData.js");  
     
-    var date = new Date();
-    var  szLogFileName = "Header Parser - " + date.getHours()+ "-" + date.getMinutes() + "-"+ date.getUTCMilliseconds() +" -";
     this.m_Log = new DebugLog("webmail.logging.comms", 
                               "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
-                              szLogFileName),
+                              "Header Parser"),
     
     this.m_Log.Write("Header.js - raw - \n" +szRawHeaders);    
 

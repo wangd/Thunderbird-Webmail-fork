@@ -11,11 +11,9 @@ function email (Log)
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Quoted-Printable.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         
-        var date = new Date();
-        var  szLogFileName = "EMail Parser - " + date.getHours()+ "-" + date.getMinutes() + "-"+ date.getUTCMilliseconds() +" -";
         this.m_Log = new DebugLog("webmail.logging.comms", 
                                   "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
-                                  szLogFileName),
+                                  "EMail Parser"),
         this.m_bDecodeBody = false;
     }
     catch(err)
@@ -70,7 +68,6 @@ email.prototype.splitHeaderBody = function (szRaw)
 {
     this.m_Log.Write("email.js - splitHeaderBody START");
     var aRaw = szRaw.match(/(^[\s\S]*?)\r?\n\r?\n([\s\S]*?)\r?\n?\r?\n?$/);
-    aRaw[1] = aRaw[1].replace(/;\r\n/gm,"; "); //remove folding for headers
     this.m_Log.Write("email.js - splitHeaderBody Headers\n"+ aRaw[1]);
     this.m_Log.Write("email.js - splitHeaderBody Body\n"+ aRaw[2]);
     this.m_Log.Write("email.js - splitHeaderBody END");
