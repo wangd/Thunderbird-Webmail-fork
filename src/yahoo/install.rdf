@@ -6,7 +6,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 	<Description about="urn:mozilla:install-manifest">
 
 		<em:id>{d7103710-6112-11d9-9669-0800200c9a66}</em:id>
-	    <em:version>0.7.0</em:version>
+	    <em:version>0.7.1</em:version>
 	    <em:type>2</em:type>
         	
         <em:name>WebMail - Yahoo</em:name>
@@ -16,7 +16,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 	
     	<em:iconURL>chrome://yahoo/skin/Yahoo-SmallIcon.png</em:iconURL>
 		<em:aboutURL>chrome://yahoo/content/Yahoo-About.xul</em:aboutURL>
-		<em:optionsURL>chrome://yahoo/content/Yahoo-Prefs.xul</em:optionsURL>
+		<em:optionsURL>chrome://yahoo/content/Yahoo-Prefs-Window.xul</em:optionsURL>
 		<em:updateURL>http://webmail.mozdev.org/update/yahooUpdate.rdf</em:updateURL>
 		
         <em:targetApplication>
