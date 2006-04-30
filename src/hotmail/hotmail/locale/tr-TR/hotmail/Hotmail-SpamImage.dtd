@@ -1,0 +1,6 @@
+<!ENTITY Window.size "width: 27em; height: 20em">
+<!ENTITY Window.title "Hotmail Gereksiz Posta Engelleyici Resmi">
+<!ENTITY Button.OK.label "Tamam">
+<!ENTITY HotmailSpam.title "Hotmail">
+<!ENTITY HotmailSpam.decription "Gereksiz Posta Engelleme Doğrulayıcısı">
+<!ENTITY HotmailSpam.label "Yukarıdaki resimde gördüğünüzü yazınız.">

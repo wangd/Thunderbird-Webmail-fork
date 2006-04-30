@@ -1,0 +1,6 @@
+<!ENTITY Window.size "width: 27em; height: 20em">
+<!ENTITY Window.title "Hotmail - Imagen Anti Spam">
+<!ENTITY Button.OK.label "OK">
+<!ENTITY HotmailSpam.title "Hotmail">
+<!ENTITY HotmailSpam.decription "Verificación Anti Spam">
+<!ENTITY HotmailSpam.label "Escriba lo que ve en la imagen inferior.">
