@@ -122,6 +122,7 @@ var gHotmailStartUp =
             this.idCheck("hotmail.it", "pop" ,cszHotmailContentID);  
             this.idCheck("hotmail.fr", "pop" ,cszHotmailContentID);
             this.idCheck("hotmail.de", "pop" ,cszHotmailContentID);
+            this.idCheck("hotmail.co.jp", "pop" ,cszHotmailContentID);
             
             this.idCheck("hotmail.com", "smtp" ,cszHotmailSMTPContentID)
             this.idCheck("hotmail.co.uk","smtp" , cszHotmailSMTPContentID);
@@ -130,6 +131,7 @@ var gHotmailStartUp =
             this.idCheck("hotmail.it", "smtp" ,cszHotmailSMTPContentID);  
             this.idCheck("hotmail.fr", "smtp" ,cszHotmailSMTPContentID);
             this.idCheck("hotmail.de", "smtp" ,cszHotmailSMTPContentID)               
+            this.idCheck("hotmail.co.jp", "smtp" ,cszHotmailSMTPContentID);
             
             this.m_Log.Write("Hotmail.js : notify - END");
         }
