@@ -865,7 +865,7 @@ nsYahooSMTP.prototype =
             window.openWindow(null, 
                               "chrome://yahoo/content/Yahoo-SpamImage.xul",
                               "_blank", 
-                              "chrome,alwaysRaised,dialog,modal,centerscreen",
+                              "chrome,alwaysRaised,dialog,modal,centerscreen,resizable",
                               params);
            
             var iResult = params.GetInt(0);
