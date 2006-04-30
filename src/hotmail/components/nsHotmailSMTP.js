@@ -27,6 +27,9 @@ const patternHotmailSMTPComposer = /onclick="G\('(.*?compose\?.*?)'\);"/i;
 const patternHotmailSMTPCompForm = /<form\s+name="composeform".*?>[\S\s]*?<\/form>/igm;
 const patternHotmailSMTPAttForm = /<form\s+name="doattach".*?>[\S\s]*?<\/form>/igm
 const patternHotmailAD = /<form.*?name="addtoAB".*?>/igm;
+const patternHotmailSpamForm = /<form.*?forcehip.srf.*>/igm;
+const patternHotmailSpamImage =/<img.*?src="(.*?hip\.srf.*?").*?name="hipImage"\/>/igm;
+const patternHotmailBase = /<base href="(.*?)"\/>/igm;
 
 /*********BETA**********/
 const patternHotmailSMTPJSRefresh = /<html><head><script.*?>.*?\.location\.replace.*?\("(.*?)"\).*?<\/script>.*?<\/html>/i;
