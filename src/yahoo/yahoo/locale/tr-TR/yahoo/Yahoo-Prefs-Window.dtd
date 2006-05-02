@@ -1,0 +1,16 @@
+<!ENTITY Options.szTitle "Yahoo Options">
+<!ENTITY POP.Panel.szTitle "POP">
+<!ENTITY SMTP.Panel.szTitle "SMTP">
+<!ENTITY DownloadUnread.Label "Download unread emails only">
+<!ENTITY DownloadUnread.AccessKey "u">
+<!ENTITY JunkMail.Label "Download JunkMail">
+<!ENTITY JunkMail.AccessKey "J">
+<!ENTITY Add.Label "Add...">
+<!ENTITY Add.AccessKey "A">
+<!ENTITY Remove.Label "Remove">
+<!ENTITY Remove.AccessKey "R">
+<!ENTITY Folders.Label "Download folders">
+<!ENTITY SaveSentItems.Label "Save copy in sent items.">
+<!ENTITY SaveSentItems.AccessKey "s">
+<!ENTITY Ok.Label "Ok">
+<!ENTITY Cancel.Label "Cancel">
