@@ -222,14 +222,14 @@ HotmailSMTPScreenRipper.prototype =
                         }
                     }
                     
-                    var szAction = aForm[0].match(patternHotmailPOPAction)[1];
+                    var szAction = aForm[0].match(patternHotmailSMTPAction)[1];
                     mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler "+ szAction);
                     var szDomain = mainObject.m_szUserName.split("@")[1];
                     var szRegExp = "g_DO\[\""+szDomain+"\"\]=\"(.*?)\"";
-                    mainObject.m_Log.Write("Hotmail-SR-BETAR- loginOnloadHandler szRegExp "+ szRegExp);
+                    mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler szRegExp "+ szRegExp);
                     var regExp = new RegExp(szRegExp,"i");
                     var aszURI = szResponse.match(regExp);
-                    mainObject.m_Log.Write("Hotmail-SR-BETAR- loginOnloadHandler aszURI "+ aszURI);
+                    mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler aszURI "+ aszURI);
                     var szURI = null;
                     if (!aszURI)
                     {
@@ -481,10 +481,10 @@ HotmailSMTPScreenRipper.prototype =
                     mainObject.m_iStage = 1;
                 break;
                 
-                case 1: //MSG OK handler 
-                    mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - MSG OK"); 
+                case 1: //MSG OK handler  
                     if (szResponse.search(patternHotmailAD)!=-1)
                     {
+                        mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - MSG OK");
                         if (!mainObject.m_SessionData)
                         {
                             mainObject.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
@@ -503,20 +503,20 @@ HotmailSMTPScreenRipper.prototype =
                     }
                     else if (szResponse.search(patternHotmailSpamForm)!=-1)//spam challenge 
                     {
-                        mainObject.m_Log.Write("Hotmail-SR-SMTP - composerOnloadHandler - image verification");
+                        mainObject.m_Log.Write("Hotmail-SR-SMTP - composerOnloadHandler - image verification\n"+szResponse);
                         //get form
                         mainObject.m_szImageVerForm = szResponse.match(patternHotmailSpamForm)[0];
                         mainObject.m_Log.Write("Hotmail-SR-SMTP - composerOnloadHandler - form " + mainObject.m_szImageVerForm );
                         
                         //get base
                         var szBase = szResponse.match(patternHotmailBase)[1];
-                        mainObject.m_Log.Write("Hotmail-SR-SMTP - composerOnloadHandler - image " + szBase);
+                        mainObject.m_Log.Write("Hotmail-SR-SMTP - composerOnloadHandler - base " + szBase);
                         
                         //get image
                         var szImageUri = szResponse.match(patternHotmailSpamImage)[1];
                         mainObject.m_Log.Write("Hotmail-SR-SMTP - composerOnloadHandler - image " + szImageUri);
                      
-                        mainObject.m_HttpComms.setContentType(1);
+                        mainObject.m_HttpComms.setContentType(0);
                         mainObject.m_HttpComms.setURI(szBase + szImageUri);
                         mainObject.m_HttpComms.setRequestMethod("GET");
                         mainObject.m_iStage = 4;
@@ -635,7 +635,7 @@ HotmailSMTPScreenRipper.prototype =
                 break;
                 
                 case 4: //downloaded image verifiaction
-                    mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - image download");
+                    mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - image download"); 
                     var szPath = mainObject.writeImageFile(szResponse);
                     mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - imageFile " + szPath);
                     var szResult =  mainObject.openSpamWindow(szPath);
@@ -654,7 +654,7 @@ HotmailSMTPScreenRipper.prototype =
                         mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - Name " + szName); 
                                               
                         var szValue = "";
-                        if (szValue.search(/HIPSolution/i)!=-1)
+                        if (szName.search(/HIPSolution/i)!=-1)
                         {
                             szValue = szResult;
                         }
@@ -669,11 +669,11 @@ HotmailSMTPScreenRipper.prototype =
                     }
 
                     var szActionUrl = mainObject.m_szImageVerForm.match(patternHotmailSMTPAction)[1];
-                    mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - szFormAction " + szFormAction);
+                    mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - szFormAction " + szActionUrl);
                     
                     //send data
                     mainObject.m_HttpComms.setContentType(1);
-                    mainObject.m_HttpComms.setURI(mainObject.m_szLocationURI + szAction);
+                    mainObject.m_HttpComms.setURI(szActionUrl);
                     mainObject.m_HttpComms.setRequestMethod("POST");
                     var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);  
                     if (!bResult) throw new Error("httpConnection returned false");
