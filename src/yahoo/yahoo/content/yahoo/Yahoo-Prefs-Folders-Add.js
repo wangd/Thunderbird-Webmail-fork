@@ -2,7 +2,7 @@ var gYahooFoldersAdd =
 {
     m_DebugLog : new DebugLog("webmail.logging.comms", 
                               "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
-                              "yahooPrefs"),
+                              "YahooPrefs"),
     m_strBundle : null,
                                   
     init : function ()
