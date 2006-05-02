@@ -48,7 +48,9 @@ var gYahooStartUp =
             this.m_Log.Write("Yahoo.js : YahooStartUp - DB not loaded");
            
             window.removeEventListener("load", function() {gYahooStartUp.init();} , false);
-                    
+        
+            this.updatePrefs();
+                                    
         	this.m_Log.Write("Yahoo.js : YahooStartUP - END ");
         }
         catch(e)
@@ -94,6 +96,7 @@ var gYahooStartUp =
             this.idCheck("yahoo.com.sg", "POP" ,cszYahooContentID);
             this.idCheck("yahoo.com.ar", "POP" ,cszYahooContentID);
             this.idCheck("yahoo.ie", "POP" ,cszYahooContentID);
+            this.idCheck("yahoo.co.in", "POP" ,cszYahooContentID);
 
             this.idCheck("yahoo.com","SMTP",cszYahooSMTPContentID);                  
             this.idCheck("yahoo.es","SMTP", cszYahooSMTPContentID);
@@ -113,7 +116,8 @@ var gYahooStartUp =
             this.idCheck("yahoo.com.sg", "SMTP" ,cszYahooSMTPContentID);
             this.idCheck("yahoo.com.ar", "SMTP" ,cszYahooSMTPContentID);           
             this.idCheck("yahoo.ie", "SMTP" ,cszYahooSMTPContentID);
-            
+            this.idCheck("yahoo.co.in", "SMTP" ,cszYahooSMTPContentID);
+                        
             this.m_Log.Write("Yahoo.js : TimerCallback - END");
         }
         catch(e)
@@ -184,6 +188,79 @@ var gYahooStartUp =
                                             + e.name 
                                             + ".\nError message: " 
                                             + e.message);
+        }
+    },
+    
+    
+    updatePrefs : function ()
+    {
+        try
+        {
+            this.m_Log.Write("Yahoo.js : updatePrefs - START ");
+            
+            var oPref = {Value:null};
+            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+            
+            WebMailPrefAccess.Get("bool","yahoo.bDownloadUnread",oPref);
+            var bDefaultUnread = oPref.Value;
+            this.m_Log.Write("Yahoo.js : updatePrefs - bDefaultUnread "+bDefaultUnread);
+            oPref.Value = null;
+            
+            WebMailPrefAccess.Get("bool","yahoo.bSaveCopy",oPref);
+            var bDefaultSentItems = oPref.Value;
+            this.m_Log.Write("Yahoo.js : updatePrefs - bDefaultSentItems "+bDefaultSentItems);
+            oPref.Value = null;
+                
+            WebMailPrefAccess.Get("char","yahoo.szFolders",oPref);
+            if (oPref.Value)
+            {                       
+                var aszUsers =oPref.Value.split("\n");
+                this.m_Log.Write("Yahoo.js : updatePrefs - aszUsers " + aszUsers);
+                var iCount = 0;
+                for (i=0;i<aszUsers.length-1 ; i++)
+                {
+                    this.m_Log.Write("Yahoo.js : updatePrefs - aszUsers " + aszUsers[i]);
+                    var aszFolders = aszUsers[i].split("\r");
+        
+                    //user name
+                    WebMailPrefAccess.Set("char","yahoo.Account."+i+".user",aszFolders[0]);                
+        
+                    //spam
+                    WebMailPrefAccess.Set("bool","yahoo.Account."+i+".bUseJunkMail",aszFolders[2]);
+                    
+                    //unread
+                    WebMailPrefAccess.Set("bool","yahoo.Account."+i+".bDownloadUnread",bDefaultUnread);
+                    
+                    //sent items 
+                    WebMailPrefAccess.Set("bool","yahoo.Account."+i+".bSaveCopy",bDefaultSentItems); 
+                    
+                    //custom folders
+                    var szFolders = "";    
+                    if (aszFolders.length>3)             
+                    {
+                        for (j=3; j<aszFolders.length; j++)
+                        {
+                            szFolders += aszFolders[j];
+                            if (j!=aszFolders.length-1) szFolders += "\r";
+                            this.m_Log.Write("Yahoo.js : updatePrefs - aszFolders[j] " + aszFolders[j]);
+                        }
+                        this.m_Log.Write("Pref-Window.js - onOK - szFolders " + szFolders);
+                    }
+                    WebMailPrefAccess.Set("char","yahoo.Account."+i+".szFolders",szFolders);
+                    iCount++;               
+                }
+                WebMailPrefAccess.Set("int","yahoo.Account.Num", iCount);
+                WebMailPrefAccess.DeleteBranch("yahoo.szFolders");
+            }
+            this.m_Log.Write("Yahoo.js : updatePrefs - END ");
+        }
+        catch(e)
+        {
+            this.m_Log.DebugDump("Yahoo.js : Exception in updatePrefs " 
+                                            + e.name 
+                                            + ".\nError message: " 
+                                            + e.message + "\n"
+                                            + e.lineNumber);
         }
     },
 };
