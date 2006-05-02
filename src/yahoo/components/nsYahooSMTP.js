@@ -75,15 +75,6 @@ function nsYahooSMTP()
             this.m_bReUseSession=oPref.Value;
         else
             this.m_bReUseSession=true; 
-            
-        //do i save copy
-        oPref.Value = null;
-        var  PrefAccess = new WebMailCommonPrefAccess();
-        if (PrefAccess.Get("bool","yahoo.bSaveCopy",oPref))
-            this.m_bSaveCopy=oPref.Value;
-        else
-            this.m_bSaveCopy=true;          
-        delete oPref;
                              
         this.m_Log.Write("nsYahooSMTP.js - Constructor - END");  
     }
@@ -129,6 +120,9 @@ nsYahooSMTP.prototype =
                                                    + " stream: " + this.m_oResponseStream);
            
             if (!this.m_szUserName || !this.m_oResponseStream  || !this.m_szPassWord) return false;
+              
+            //get prefs
+            this.loadPrefs();  
                      
            this.m_szYahooMail = "http://mail.yahoo.com";
                     
@@ -889,6 +883,73 @@ nsYahooSMTP.prototype =
                                                + err.lineNumber);
         }
     },
+    
+    
+    
+    loadPrefs : function()
+    {
+        try
+        {
+            this.m_Log.Write("nsYahoo.js - loadPrefs - START"); 
+           
+            //get user prefs
+            var iCount = 0;
+            var oPref = {Value:null};
+            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+            if (WebMailPrefAccess.Get("int","yahoo.Account.Num",oPref))
+            {
+                this.m_Log.Write("nsYahoo.js - loadPrefs - num " + oPref.Value);
+                iCount = oPref.Value;
+            } 
+                
+            var bFound = false;
+            var regExp = new RegExp(this.m_szUserName,"i");
+            for (var i=0; i<iCount; i++)
+            {
+                //get user name
+                oPref.Value = null;
+                if (WebMailPrefAccess.Get("char","yahoo.Account."+i+".user",oPref.Value))
+                {
+                    this.m_Log.Write("nsYahoo.js - loadPrefs - user " + oPref.Value);
+                    if (oPref.Value.search(regExp)!=-1)
+                    {
+                        this.m_Log.Write("nsYahoo.js - loadPrefs - user found");
+                        bFound = true;
+                
+                        //do i save copy
+                        oPref.Value = null;
+                        var  PrefAccess = new WebMailCommonPrefAccess();
+                        if (PrefAccess.Get("bool","yahoo.Account."+i+".bSaveCopy",oPref))
+                            this.m_bSaveCopy=oPref.Value;
+                        else
+                            this.m_bSaveCopy=true;      
+                    }
+                }
+            }
+            
+            if (!bFound) //get defaults
+            {
+                this.m_Log.Write("Yahoo-Prefs-Folders : loadPrefs - Default Folders");
+                
+                //unread only
+                oPref.Value = null;
+                if (WebMailPrefAccess.Get("bool","yahoo.bSaveCopy",oPref))
+                    this.m_bSaveCopy=oPref.Value;
+                else
+                     this.m_bSaveCopy= true;
+            }
+            this.m_Log.Write("nsYahoo.js - loadPrefs - END");
+        }
+        catch(e)
+        {
+             this.m_Log.DebugDump("nsYahoo.js: loadPrefs : Exception : " 
+                                              + e.name + 
+                                              ".\nError message: " 
+                                              + e.message+ "\n"
+                                              + e.lineNumber);
+        }
+    },
+    
     
     
     ////////////////////////////////////////////////////////////////////////////

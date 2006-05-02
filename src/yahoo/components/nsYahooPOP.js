@@ -94,14 +94,7 @@ function nsYahoo()
             this.m_bReUseSession=oPref.Value;
         else
             this.m_bReUseSession=true; 
-                   
-        //do i download unread only
-        oPref.Value = null;
-        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-        if (WebMailPrefAccess.Get("bool","yahoo.bDownloadUnread",oPref))
-            this.m_bDownloadUnread=oPref.Value;
-        else
-            this.m_bDownloadUnread=false;
+                
                                                          
         this.m_Log.Write("nsYahoo.js - Constructor - END");  
     }
@@ -130,10 +123,7 @@ nsYahoo.prototype =
     get ResponseStream() {return this.m_oResponseStream;},
     set ResponseStream(responseStream) {return this.m_oResponseStream = responseStream;},
     
-    
-    
-    
-    
+      
     logIn : function()
     {
         try
@@ -143,73 +133,11 @@ nsYahoo.prototype =
                                                    + " Password: " + this.m_szPassWord 
                                                    + " stream: " + this.m_oResponseStream);
             
-            if (!this.m_szUserName || !this.m_oResponseStream  || !this.m_szPassWord) return false;
-            
-            //get folder list
-            var oPref = {Value:null};
-            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-            WebMailPrefAccess.Get("char","yahoo.szFolders",oPref)
-
-            if (oPref.Value)
-            {
-                var aszUsers =oPref.Value.split("\n");
-                this.m_Log.Write("nsYahoo : login - Custom Folders  - aszUsers " + aszUsers);
-                
-                for (i=0;i<aszUsers.length-1 ; i++)
-                {
-                    this.m_Log.Write("Yahoo-Prefs-Folders :  login - Custom Folders  - aszUsers " + aszUsers[i]);
-                    var aszFolders = aszUsers[i].split("\r");
-                                    
-                    //user name
-                    if (aszFolders[0].search(this.m_szUserName)!=-1)
-                    {
-                        //inbox
-                        if (aszFolders[1].search(/true/i)!=-1)
-                        {
-                            this.m_Log.Write("Yahoo-Prefs-Folders :  login - Custom Folders  -aszFolders[i] inbox");
-                            this.m_aszFolderList.push("inbox");
-                        }
-                        
-                        //spam
-                        if (aszFolders[2].search(/true/i)!=-1)
-                        {
-                            this.m_Log.Write("Yahoo-Prefs-Folders :  login - Custom Folders  - aszFolders[i] bulk");
-                            this.m_aszFolderList.push("%40B%40Bulk");
-                        }
-                            
-                        //custom folders
-                        if (aszFolders.length>3)
-                        {
-                            for (j=3; j<aszFolders.length; j++)
-                            {
-                                this.m_Log.Write("Yahoo-Prefs-Folders :  login - Custom Folders  - aszFolders[j] " + aszFolders[j]);
-                                this.m_aszFolderList.push(encodeURIComponent(aszFolders[j]));
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                this.m_Log.Write("Yahoo-Prefs-Folders :  login - Default Folders");
-                
-                //inbox
-                this.m_Log.Write("Yahoo-Prefs-Folders : login - Default Folders - inbox");
-                this.m_aszFolderList.push("inbox");
-                
-                 //spam
-                oPref.Value = null;
-                if (WebMailPrefAccess.Get("bool","yahoo.bUseJunkMail",oPref))
-                {
-                    if (oPref.Value)
-                    {
-                        this.m_Log.Write("Yahoo-Prefs-Folders : login - Default Folders bulk");
-                        this.m_aszFolderList.push("%40B%40Bulk");
-                    }                
-                }
-            }
-            
-                        
+            if (!this.m_szUserName || !this.m_oResponseStream  || !this.m_szPassWord) return false;        
+                       
+            //get prefs
+            this.loadPrefs();
+             
             if (this.m_szUserName.search(/yahoo/i)!=-1)   
             { //remove domain from user name  
                 this.m_szYahooMail = "http://mail.yahoo.com";
@@ -1175,6 +1103,109 @@ nsYahoo.prototype =
         }
     },
    
+   
+    
+    loadPrefs : function()
+    {
+        try
+        {
+            this.m_Log.Write("nsYahoo.js - loadPrefs - START"); 
+           
+            //get user prefs
+            var iCount = 0;
+            var oPref = {Value:null};
+            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+            if (WebMailPrefAccess.Get("int","yahoo.Account.Num",oPref))
+            {
+                this.m_Log.Write("nsYahoo.js - loadPrefs - num " + oPref.Value);
+                iCount = oPref.Value;
+            } 
+                
+            var bFound = false;
+            var regExp = new RegExp(this.m_szUserName,"i");
+            for (var i=0; i<iCount; i++)
+            {
+                //get user name
+                oPref.Value = null;
+                if (WebMailPrefAccess.Get("char","yahoo.Account."+i+".user",oPref.Value))
+                {
+                    this.m_Log.Write("nsYahoo.js - loadPrefs - user " + oPref.Value);
+                    if (oPref.Value.search(regExp)!=-1)
+                    {
+                        this.m_Log.Write("nsYahoo.js - loadPrefs - user found");
+                        bFound = true;
+                                                                                   
+                        //inbox
+                        this.m_aszFolderList.push("inbox"); 
+                        
+                        //get spam
+                        oPref.Value = null;
+                        if (WebMailPrefAccess.Set("bool","yahoo.Account."+i+".bUseJunkMail",oPref.Value))
+                        {
+                            this.m_Log.Write("nsYahoo.js - loadPrefs - bUseJunkMail " + oPref.Value);
+                            if (oPref.Value)           
+                                this.m_aszFolderList.push("%40B%40Bulk");
+                        }
+                        
+                        //get folders
+                        if (WebMailPrefAccess.Set("char","yahoo.Account."+i+".szFolders",oPref.Value))
+                        {
+                            this.m_Log.Write("nsYahoo.js - loadPrefs - szFolders " + oPref.Value);
+                            var aszFolders = oPref.Value.split("\r");
+                            for (j=0; j<aszFolders.length; j++)
+                            {
+                                this.m_Log.Write("Yahoo-Prefs-Folders :  login - loadPRefs - aszFolders[j] " + aszFolders[j]);
+                                this.m_aszFolderList.push(encodeURIComponent(aszFolders[j]));
+                            }
+                        }
+                        
+                        //get unread
+                        oPref.Value = null;
+                        if (WebMailPrefAccess.Set("bool","yahoo.Account."+i+".bDownloadUnread",oPref.Value))
+                            this.m_bDownloadUnread=oPref.Value;
+                        else
+                             this.m_bDownloadUnread= false;              
+                    }
+                }
+            }
+            
+            if (!bFound) //get defaults
+            {
+                this.m_Log.Write("Yahoo-Prefs-Folders : loadPrefs - Default Folders");
+                
+                //unread only
+                oPref.Value = null;
+                if (WebMailPrefAccess.Get("bool","yahoo.bDownloadUnread",oPref))
+                    this.m_bDownloadUnread=oPref.Value;
+                else
+                     this.m_bDownloadUnread= false;                   
+                          
+                //inbox
+                this.m_Log.Write("Yahoo-Prefs-Folders : loadPrefs - Default Folders - inbox");
+                this.m_aszFolderList.push("inbox");
+                
+                //spam
+                oPref.Value = null;
+                if (WebMailPrefAccess.Get("bool","yahoo.bUseJunkMail",oPref))
+                {
+                    if (oPref.Value)
+                    {
+                        this.m_Log.Write("Yahoo-Prefs-Folders : loadPrefs - Default Folders - spam");
+                        this.m_aszFolderList.push("%40B%40Bulk");
+                    }
+                }
+            }
+            this.m_Log.Write("nsYahoo.js - loadPrefs - END");
+        }
+        catch(e)
+        {
+             this.m_Log.DebugDump("nsYahoo.js: loadPrefs : Exception : " 
+                                              + e.name + 
+                                              ".\nError message: " 
+                                              + e.message+ "\n"
+                                              + e.lineNumber);
+        }
+    },
    
 /******************************************************************************/
 /***************** XPCOM  stuff ***********************************************/
