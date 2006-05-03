@@ -39,7 +39,7 @@ const patternHotmailPOPNextPage = /<a href="(.*?PageAnchor.*?next&Page.*?)">/i;
 const patternHotmailPOPMailBoxTable = /<table.*?class="dInboxContentTable".*?>[\s\S]*?<\/table>/ig;
 const patternHotmailPOPMailBoxTableRow = /<tr>[\s\S]*?<\/tr>/ig;
 const patternHotmailPOPEMailURL = /<td.*?dInboxContentTableTitleCol.*>.*?<a href="(.*?)".*?>/i;
-const patternHotmailPOPEmailRead = /<td.*?class="dInboxContentTableFromCol"><strong>.*?<\/strong><\/td>/i;
+const patternHotmailPOPEmailRead = /<td.*?class="dInboxContentTableFromCol"><strong>.*?<\/strong><\/td>/gi;
 const patternHotmailPOPEmailSender = /<td.*?dInboxContentTableFromCol.*?>(.*?)<\/td>/i; 
 const patternHotmailPOPEmailSubject = /<td.*?dInboxContentTableTitleCol.*?>.*?<a href=.*?>(.*?)<\/a>.*?<\/td>/i; 
 const patternHotmailPOPEmailDate = /<td.*?dInboxContentTableDateCol.*?>(.*?)<\/td>/i;

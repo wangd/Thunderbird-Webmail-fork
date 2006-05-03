@@ -480,7 +480,7 @@ HotmailScreenRipperBETA.prototype =
                         var bRead = true;
                         if (mainObject.m_bDownloadUnread)
                         {
-                            bRead = (szMsgRows[j].search(patternHotmailPOPEmailRead)!=-1) ? false : true;
+                            bRead = (szMsgRows[j].search(patternHotmailPOPEmailRead)!=-1) ? true : false;
                             mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - bRead -" + bRead);
                         }
                          
