@@ -1,5 +1,4 @@
 overlay chrome://messenger/content/messenger.xul    chrome://yahoo/content/Yahoo-Start.xul
-
 content yahoo    jar:chrome/yahoo.jar!/content/yahoo/
 
 skin	yahoo	 classic/1.0     jar:chrome/yahoo.jar!/skin/classic/yahoo/
