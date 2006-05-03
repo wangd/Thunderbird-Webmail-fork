@@ -171,7 +171,7 @@ headers.prototype =
                 break;
                 
                 case 3://boundary
-                    szContent= szContentType.match(/ boundary="(.*?)"/)[1];
+                    szContent= szContentType.match(/boundary="(.*?)"/)[1];
                     szContent = szContent.replace(/\s/,"");
                 break;
                 
@@ -205,7 +205,7 @@ headers.prototype =
         try
         {
             this.m_Log.Write("Header.js - getContentDisposition - START " + iField); 
-            var szContentDispo =  this.getHeader("Content-Type");
+            var szContentDispo =  this.getHeader("Content-Disposition");
             var szContent= null;
             
             if (szContentDispo)
@@ -218,7 +218,10 @@ headers.prototype =
                     
                     case 1: // filename
                         var aszFilename= szContentDispo.match(/filename="(.*?)"/);
-                        if (aszFilename)                           
+                        if (!aszFilename)  
+                            aszFilename= szContentDispo.match(/name="(.*?)"/);                         
+                        
+                        if (aszFilename)//aszFilename[1]
                             szContent = this.decode(aszFilename[1]);
                     break;
                 };
