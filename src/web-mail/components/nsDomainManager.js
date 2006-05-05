@@ -67,7 +67,7 @@ nsDomainManager.prototype =
             }while(!bFound && i<aData.length);
                         
             this.m_Log.Write("nsDomainManager.js - getDomainForProtocol - END");
-            return true;
+            return bFound;
         }
         catch(e)
         {
