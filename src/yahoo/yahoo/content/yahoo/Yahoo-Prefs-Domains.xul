@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://yahoo/content/Yahoo-Prefs-Domains.css" type="text/css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://yahoo/locale/Yahoo-Prefs-Domains.dtd">
+
+<window id="domainWindow" 
+        title="&TitleAdd;"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        onload="return gYahooDomain.init();">
+
+    <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
+    <script type="application/x-javascript" src="chrome://yahoo/content/Yahoo-Prefs-Domains.js"/>
+     
+    <stringbundleset>
+        <stringbundle id="stringsYahooDomainWindow" src="chrome://yahoo/locale/Yahoo-Prefs-Domains.properties"/>
+    </stringbundleset>  
+          
+    <vbox flex="1">
+        <hbox>
+            <vbox>
+                <image id="imageDomain" class="folder"/>
+                <spacer flex="1"/>
+            </vbox>
+            
+            <vbox>
+                  <label id="labelDomain"
+                         value="&domain.label;"/>
+            </vbox>
+        </hbox>   
+        
+        <hbox align="center">   
+            <spacer flex="1"/>  
+            <richlistbox id="listView" 
+                          class="listbox"
+                          onselect="gYahooDomain.onSelect();"/>  
+            <spacer flex="1"/>    
+        </hbox>
+        <hbox align="center" flex="1">
+            <spacer flex="1"/>
+            <button id="add" 
+                    label="&Add.label;" 
+                    accesskey="&Add.accessKey;"
+                    oncommand ="gYahooDomain.onAdd();"/>
+            <button id="remove" 
+                    label="&Remove.label;" 
+                    accesskey="&Remove.accessKey;"
+                    disabled = "true"
+                    oncommand ="gYahooDomain.onRemove();"/>
+            <spacer flex="1"/>
+        </hbox>
+        
+        <spacer flex="1" />
+
+        <hbox align="end" pack="end">
+            <button id="close" 
+                    default="true"
+                    label="&Close.label;"
+                    accesskey="&Close.accessKey;" 
+                    oncommand ="gYahooDomain.doClose();"/>
+        </hbox>    
+    </vbox>
+</window>

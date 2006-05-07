@@ -1,0 +1,12 @@
+#include "nsISupports.idl"
+
+[scriptable, uuid(05093cf0-dbc6-11da-a94d-0800200c9a66)]
+interface nsIYahooDomains : nsISupports
+{  
+    boolean addDomain(in string szDomain);
+    
+    boolean removeDomain (in string szDomain);
+    
+    boolean getAllDomains(out PRUint32 count,
+                         [array, size_is(count)] out string szDomains);
+};

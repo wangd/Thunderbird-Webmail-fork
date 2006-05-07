@@ -1,0 +1,77 @@
+#addWindow
+{
+    width: 30em; 
+    height: 20em;
+}
+
+#imageDomain
+{
+    margin-left: 10px; 
+    margin-top: 10px;
+    margin-bottom : 10px;
+    list-style-image: url("chrome://yahoo/skin/domains.png");
+}
+
+
+#labelDomain
+{
+    margin-left: 10px; 
+    margin-top: 15px;
+}
+
+#labelDomainName
+{
+    margin-left: 10px; 
+}
+
+
+#listView
+{
+    height: 15em;
+    width: 15em;
+}
+
+
+.listItem
+{
+    padding: 4px 4px 4px 4px;
+    min-height: 25px !important;
+    border-bottom: 1px dotted #C0C0C0;
+}
+
+.listItem[selected="true"] 
+{
+    -moz-user-focus: normal;
+    background-image: url("chrome://mozapps/skin/shared/itemSelected.png");
+}
+
+#yahooImage
+{
+    list-style-image: url("chrome://yahoo/skin/Yahoo-VerySmall.png");
+    margin-left: 5px;
+}
+
+.domain
+{
+}
+
+
+
+.listError
+{
+    padding-top: 4px;
+}
+
+
+#imageError
+{
+    list-style-image: url("chrome://yahoo/skin/error.png");
+}
+
+.errorMSG
+{
+    font-weight: bold;
+	font-size: medium;
+    letter-spacing: 0.3ex;
+    line-height: 2em;
+}
