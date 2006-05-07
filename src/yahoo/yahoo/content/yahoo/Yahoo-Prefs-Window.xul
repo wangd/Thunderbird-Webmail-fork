@@ -9,10 +9,12 @@
 <!DOCTYPE dialog SYSTEM "chrome://yahoo/locale/Yahoo-Prefs-Window.dtd">
 
 
-<window id="prefsWindow"
+<dialog id="prefsWindow"
         title="&Options.szTitle;" 
         onload ="gPrefWindow.init();"
-        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        ondialogaccept="return gPrefWindow.onPrefWindowOK();"
+        ondialogcancel="return gPrefWindow.onPrefWindowCancel();" >
         
         <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
         <script type="application/x-javascript" src="chrome://web-mail/content/common/CommonPrefs.js"/>
@@ -78,17 +80,16 @@
             </vbox>
         </hbox>
         
-        <vbox id="buttons" pack="end" flex="1">        
-            <hbox align="end" pack="end">    
-                <button id="OK" 
-                        label="&Ok.Label;" 
-                        accesskey=""
-                        oncommand ="gPrefWindow.onPrefWindowOK();"/>
-                        
-                <button id="Cancel" 
-                        label="&Cancel.Label;" 
-                        accesskey=""
-                        oncommand ="gPrefWindow.onPrefWindowCancel();"/>
-            </hbox>
+        <vbox id="buttons" pack="end" flex="1">    
+                <hbox pack="start">
+                    <button id="AddDomain"
+                            label ="&AddDomain.Label;"
+                            accesskey="&AddDomain.AccessKey;" 
+                            oncommand ="gPrefWindow.addDomains()"/>
+                </hbox>
+                <hbox pack="end">   
+                    <button dlgtype="accept"/>
+                    <button dlgtype="cancel"/>
+                </hbox>
         </vbox>
-</window>
+</dialog>

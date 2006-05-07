@@ -714,4 +714,17 @@ var gPrefWindow=
         
         this.m_DebugLog.Write("Pref-Window : chkSentItemsOnChange - END");
     },
+    
+        
+    
+    addDomains : function()
+    {
+        this.m_DebugLog.Write("Pref-Window : addDomains - START");
+
+        window.openDialog("chrome://yahoo/content/Yahoo-Prefs-Domains.xul",
+                          "Add Domains",
+                          "chrome, centerscreen, modal");  
+       
+        this.m_DebugLog.Write("Pref-Window : addDomains - END");    
+    },
 }
