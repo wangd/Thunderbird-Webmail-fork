@@ -1,0 +1,21 @@
+<database>
+    <domain>yahoo.com</domain>
+    <domain>yahoo.com.cn</domain>
+    <domain>yahoo.com.au</domain>
+    <domain>yahoo.com.hk</domain>
+    <domain>yahoo.com.sg</domain>
+    <domain>yahoo.com.ar</domain>
+    <domain>yahoo.es</domain>
+    <domain>yahoo.se</domain>
+    <domain>yahoo.it</domain>    
+    <domain>yahoo.fr</domain>
+    <domain>yahoo.de</domain>
+    <domain>yahoo.ca</domain>
+    <domain>yahoo.ie</domain>
+    <domain>yahoo.co.jp</domain>
+    <domain>yahoo.co.uk</domain>
+    <domain>yahoo.co.in</domain>
+    <domain>talk21.com</domain>
+    <domain>btinternet.com</domain>
+    <domain>btopenworld.com</domain>
+</database>
