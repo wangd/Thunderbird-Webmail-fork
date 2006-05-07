@@ -4,10 +4,9 @@
 
 <!DOCTYPE dialog SYSTEM "chrome://yahoo/locale/Yahoo-Prefs-Folders-Add.dtd">
 
-<window id="Add" 
+<window id="addWindow" 
         title="&TitleAdd;"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-        style="&Window.size;"
         onload="return gYahooFoldersAdd.init();">
 
     <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
@@ -51,10 +50,13 @@
         <hbox align="end" pack="center">
             <button id="add" 
                     label="&Ok.label;"
+                    accesskey="&Ok.accessKey;"
+                    default="true"
                     oncommand ="gYahooFoldersAdd.doOk();"/>
             <button id="cancel" 
                     label="&Cancel.label;" 
+                    accesskey="&Cancel.accessKey;"
                     oncommand ="gYahooFoldersAdd.doCancel();"/>
-        </hbox>    
+        </hbox> 
     </vbox>
 </window>

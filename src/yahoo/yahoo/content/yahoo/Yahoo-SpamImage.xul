@@ -45,6 +45,7 @@
 
         <hbox align="end" pack="center">
             <button label="&Button.OK.label;"
+                    default="true"
                     oncommand ="gYahooSpamImage.doOk();"/>
         </hbox>    
     </vbox>
