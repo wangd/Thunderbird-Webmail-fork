@@ -1,7 +1,8 @@
-<!ENTITY Window.size "width: 30em; height: 10em">
-<!ENTITY TitleAdd "Adicionar">
+<!ENTITY TitleAdd "Add">
+<!ENTITY folderName.label "Folder Name">
+<!ENTITY folderName.accessKey "F">
+<!ENTITY folders.label "Add download folder">
 <!ENTITY Ok.label "Ok">
-<!ENTITY Cancel.label "Cancelar">
-<!ENTITY folderName.label "Nome da Pasta">
-<!ENTITY folderName.accessKey "P">
-<!ENTITY folders.label "Adicionar pasta de download">
+<!ENTITY Ok.accessKey "O">
+<!ENTITY Cancel.label "Cancel">
+<!ENTITY Cancel.accessKey "C">

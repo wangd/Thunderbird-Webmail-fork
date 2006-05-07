@@ -1,7 +1,8 @@
-<!ENTITY Window.size "width: 30em; height: 10em">
 <!ENTITY TitleAdd "Add">
-<!ENTITY Ok.label "Ok">
-<!ENTITY Cancel.label "Cancel">
 <!ENTITY folderName.label "Folder Name">
 <!ENTITY folderName.accessKey "F">
 <!ENTITY folders.label "Add download folder">
+<!ENTITY Ok.label "Ok">
+<!ENTITY Ok.accessKey "O">
+<!ENTITY Cancel.label "Cancel">
+<!ENTITY Cancel.accessKey "C">

@@ -14,3 +14,5 @@
 <!ENTITY SaveSentItems.AccessKey "s">
 <!ENTITY Ok.Label "Ok">
 <!ENTITY Cancel.Label "Cancel">
+<!ENTITY AddDomain.Label "Add Domain..">
+<!ENTITY AddDomain.AccessKey "D">
