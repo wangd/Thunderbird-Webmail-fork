@@ -896,19 +896,18 @@ nsYahooSMTP.prototype =
             var iCount = 0;
             var oPref = {Value:null};
             var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-            if (WebMailPrefAccess.Get("int","yahoo.Account.Num",oPref))
-            {
-                this.m_Log.Write("nsYahoo.js - loadPrefs - num " + oPref.Value);
-                iCount = oPref.Value;
-            } 
-                
+            WebMailPrefAccess.Get("int","yahoo.Account.Num",oPref);
+            this.m_Log.Write("nsYahoo.js - loadPrefs - num " + oPref.Value);
+            if (oPref.Value) iCount = oPref.Value;
+ 
             var bFound = false;
             var regExp = new RegExp(this.m_szUserName,"i");
             for (var i=0; i<iCount; i++)
             {
                 //get user name
                 oPref.Value = null;
-                if (WebMailPrefAccess.Get("char","yahoo.Account."+i+".user",oPref.Value))
+                WebMailPrefAccess.Get("char","yahoo.Account."+i+".user",oPref);
+                if (oPref.Value)
                 {
                     this.m_Log.Write("nsYahoo.js - loadPrefs - user " + oPref.Value);
                     if (oPref.Value.search(regExp)!=-1)
@@ -918,8 +917,8 @@ nsYahooSMTP.prototype =
                 
                         //do i save copy
                         oPref.Value = null;
-                        var  PrefAccess = new WebMailCommonPrefAccess();
-                        if (PrefAccess.Get("bool","yahoo.Account."+i+".bSaveCopy",oPref))
+                        WebMailPrefAccess.Get("bool","yahoo.Account."+i+".bSaveCopy",oPref);
+                        if (oPref.Value)
                             this.m_bSaveCopy=oPref.Value;
                         else
                             this.m_bSaveCopy=true;      
@@ -933,7 +932,8 @@ nsYahooSMTP.prototype =
                 
                 //unread only
                 oPref.Value = null;
-                if (WebMailPrefAccess.Get("bool","yahoo.bSaveCopy",oPref))
+                WebMailPrefAccess.Get("bool","yahoo.bSaveCopy",oPref)
+                if (oPref.Value)
                     this.m_bSaveCopy=oPref.Value;
                 else
                      this.m_bSaveCopy= true;
