@@ -1,0 +1,25 @@
+<!ENTITY ServerStatus.Label "Состояние сервера">
+<!ENTITY Ports.Label "Порты">
+<!ENTITY Ports.AccessKey "r">
+<!ENTITY Pop.Label "POP">
+<!ENTITY Pop.AccessKey "O">
+<!ENTITY POP.Default.Label "по-умолчанию: 110">
+<!ENTITY Note.Label "Порты до 1024 могут быть блокированы ОС">
+<!ENTITY Restart.Label "Чтобы изменения вступили в силу необходимо перезапустить Thunderbird.">
+<!ENTITY SMTP.Label "SMTP">
+<!ENTITY SMTP.AccessKey "S">
+<!ENTITY SMTP.Default.Label "по-умолчанию: 25">
+<!ENTITY IMAP.Label "IMAP">
+<!ENTITY IMAP.AccessKey "I">
+<!ENTITY IMAP.Default.Label "по-умолчанию: 143">
+<!ENTITY Enable.POP.Label "Включить POP-сервер.">
+<!ENTITY Enable.POP.AccessKey "P">
+<!ENTITY Enable.SMTP.Label "Включить SMTP-сервер.">
+<!ENTITY Enable.SMTP.AccessKey "T">
+<!ENTITY Enable.IMAP.Label "Включить IMAP-сервер.">
+<!ENTITY Enable.IMAP.AccessKey "M">
+<!ENTITY Enable.Label "Включение">
+<!ENTITY Enable.AccessKey "E">
+<!ENTITY Status.Label "Состояние">
+<!ENTITY Status.AccessKey "u">
+<!ENTITY StatusBox.size "width: 6em;">

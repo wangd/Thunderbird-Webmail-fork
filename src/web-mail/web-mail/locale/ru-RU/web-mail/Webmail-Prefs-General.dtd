@@ -1,0 +1,4 @@
+<!ENTITY AccountWizard.Label "Добавить WebMail к Мастеру учётных записей">
+<!ENTITY AccountWizard.AccessKey "A">
+<!ENTITY AccountWizardWarning.Label "Необходим доступ на запись к папке приложения.">
+<!ENTITY Restart.Label "Чтобы изменения вступили в силу необходимо перезапустить Thunderbird.">
