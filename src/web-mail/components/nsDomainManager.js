@@ -182,16 +182,17 @@ nsDomainManager.prototype =
             var bFound=false;
             
             do{
-                var temp = aData.pop();
+                var temp = aData.shift();
                 this.m_Log.Write("nsDomainManager.js - removeDomainForProtocol - " + temp.szDomain);
                 
                 if (temp.szDomain.search(regExp)==-1)
                 {
-                    this.m_Log.Write("nsDomainManager.js - removeDomainForProtocol - Found");
+                    this.m_Log.Write("nsDomainManager.js - removeDomainForProtocol - pushed back");
                     aData.push(temp);
                 } 
                 else
                 {
+                    this.m_Log.Write("nsDomainManager.js - removeDomainForProtocol - Found");
                     bFound = true;                        
                 }   
                 i++;   
