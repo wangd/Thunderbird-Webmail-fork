@@ -210,21 +210,33 @@ nsWebMailCookieManager.prototype =
             this.m_Log.Write("CookieManger.js - findCookie - domain - " + szDomain);
             
             var szCookies = "";
-            for (var i=0; i<this.m_aCookies.length; i++ )
+            var iCookieCount = this.m_aCookies.length
+            for (var i=0; i<iCookieCount; i++ )
             {
-                if (this.domainCheck(this.m_aCookies[i].getDomain(),szDomain))
+                var oCookie = this.m_aCookies.shift();
+                if (this.domainCheck(oCookie.getDomain(),szDomain))
                 {
-                    var szName = this.m_aCookies[i].getName();
-                    var szValue = this.m_aCookies[i].getValue();
-                    this.m_Log.Write("CookieManger.js - findCookie - cookie - found " + szName + " " + szValue );
-                    if (szValue.length>0)
+                   
+                    if (this.expiryCheck(oCookie.getExpiry()))
                     {
-                        szCookies +=  szName; 
-                        szCookies += "=";
-                        szCookies +=  szValue;
-                        szCookies +=  "; " ;
+                        var szName = oCookie.getName();
+                        var szValue = oCookie.getValue();
+                        this.m_Log.Write("CookieManger.js - findCookie - cookie - found " + szName + " " + szValue );
+                        if (szValue.length>0)
+                        {
+                            szCookies +=  szName; 
+                            szCookies += "=";
+                            szCookies +=  szValue;
+                            szCookies +=  "; " ;
+                        }
+                        this.m_aCookies.push(oCookie); //valid cookie put it back
                     }
+                    else  //delete expired cookie
+                        delete oCookie;
                 }
+                else //domain not found
+                    this.m_aCookies.push(oCookie);
+                
             }
 
             this.m_Log.Write("CookieManger.js - findCookie - szCookies " + szCookies);   
@@ -265,16 +277,11 @@ nsWebMailCookieManager.prototype =
                 regexp = new RegExp(tempDomain+"$", "i");
             }
            
-           
-            if (szSubject.search(regexp)!=-1)
-            { 
-                this.m_Log.Write("CookieManger.js - domainCheck - found domain END"); 
-                return true;
-            }
-            
- 
-            return false;
-            this.m_Log.Write("CookieManger.js - domainCheck END"); 
+            var bFound = false;
+            if (szSubject.search(regexp)!=-1)bFound =  true;
+        
+            this.m_Log.Write("CookieManger.js - domainCheck END " +bFound); 
+            return bFound;
         }
         catch(err)
         {
@@ -290,15 +297,33 @@ nsWebMailCookieManager.prototype =
             this.m_Log.Write("CookieManger.js - cookieCheck - START"); 
             this.m_Log.Write("CookieManger.js - cookieCheck - cookie "+szCookieName + " wanted " + szWantedName); 
             var regexp =  new RegExp("^"+szCookieName+"$", "i");
+            var bFound = false
+            if (szWantedName.search(regexp)!=-1) bFound = true;
+            this.m_Log.Write("CookieManger.js - cookieCheck - END " + bFound); 
+            return bFound;
+        }
+        catch(err)
+        {
+            return false;   
+        }
+    },
+    
+    
+    expiryCheck : function (iExpiryTime)
+    {
+        try
+        {
+            this.m_Log.Write("CookieManger.js - expiryCheck - START"); 
+            var iTimeNow = Date.now();
+            this.m_Log.Write("CookieManger.js - expiryCheck - iExpiryTime "+iExpiryTime + " NOW " + iTimeNow); 
             
-            if (szWantedName.search(regexp)!=-1)
-            {
-                this.m_Log.Write("CookieManger.js - cookieCheck - found cookie END"); 
-                return true; 
-            }
-            
-            this.m_Log.Write("CookieManger.js - cookieCheck - END"); 
-            return false;
+            var bFound = true;
+
+            if (iExpiryTime != -1)
+                if (iExpiryTime<iTimeNow) bFound = false;
+
+            this.m_Log.Write("CookieManger.js - cookieCheck - END " +bFound);
+            return bFound; 
         }
         catch(err)
         {
