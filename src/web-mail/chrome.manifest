@@ -2,9 +2,9 @@ overlay chrome://messenger/content/messenger.xul    chrome://web-mail/content/We
 
 content web-mail    jar:chrome/web-mail.jar!/content/web-mail/
 
-skin	web-mail	classic/1.0	jar:chrome/web-mail.jar!/skin/classic/web-mail/
+skin	web-mail    classic/1.0  jar:chrome/web-mail.jar!/skin/classic/web-mail/
 
-locale	web-mail	en-US	jar:chrome/web-mail.jar!/locale/en-US/web-mail/
+locale	web-mail    en-US   jar:chrome/web-mail.jar!/locale/en-US/web-mail/
 locale  web-mail    it-IT   jar:chrome/web-mail.jar!/locale/it-IT/web-mail/
 locale  web-mail    es-ES   jar:chrome/web-mail.jar!/locale/es-ES/web-mail/
 locale  web-mail    fr-FR   jar:chrome/web-mail.jar!/locale/fr-FR/web-mail/
@@ -19,3 +19,4 @@ locale  web-mail    sv-SE   jar:chrome/web-mail.jar!/locale/sv-SE/web-mail/
 locale  web-mail    cs-CZ   jar:chrome/web-mail.jar!/locale/cs-CZ/web-mail/
 locale  web-mail    pt-BR   jar:chrome/web-mail.jar!/locale/pt-BR/web-mail/
 locale  web-mail    sk-SK   jar:chrome/web-mail.jar!/locale/sk-SK/web-mail/
+locale  web-mail    ru-RU   jar:chrome/web-mail.jar!/locale/ru-RU/web-mail/
