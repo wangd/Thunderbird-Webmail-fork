@@ -1,4 +1,4 @@
-function HotmailSMTPScreenRipper(oResponseStream, oLog, bSaveCopy)
+function HotmailSMTPScreenRipper(oResponseStream, oLog)
 {
     try
     {       
@@ -8,7 +8,6 @@ function HotmailSMTPScreenRipper(oResponseStream, oLog, bSaveCopy)
         scriptLoader.loadSubScript("chrome://web-mail/content/common/comms.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Email.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
-        scriptLoader.loadSubScript("chrome://global/content/strres.js");
                
         this.m_Log = oLog; 
                 
@@ -17,7 +16,6 @@ function HotmailSMTPScreenRipper(oResponseStream, oLog, bSaveCopy)
         this.m_szUserName = null;   
         this.m_szPassWord =null; 
         this.m_oResponseStream = oResponseStream;  
-        this.m_bSaveCopy =  bSaveCopy;
         this.m_HttpComms = new Comms(this,this.m_Log);   
         this.m_szUM = null;
         this.m_szLocationURI = null;
@@ -40,14 +38,28 @@ function HotmailSMTPScreenRipper(oResponseStream, oLog, bSaveCopy)
         
         this.m_bReEntry = false;
           
-        //do i reuse the session
-        var oPref = new Object();
-        oPref.Value = null;
+        //do i save copy
+        var oPref = {Value:null};
         var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+        if (WebMailPrefAccess.Get("bool","hotmail.bSaveCopy",oPref))
+            this.m_bSaveCopy=oPref.Value;
+        else
+            this.m_bSaveCopy=true;          
+  
+        //do i reuse the session
+        oPref.Value = null;
         if (WebMailPrefAccess.Get("bool","hotmail.bReUseSession",oPref))
             this.m_bReUseSession=oPref.Value;
         else
             this.m_bReUseSession=true; 
+            
+        //what do i do with alternative parts
+        oPref.Value = null;
+        if (WebMailPrefAccess.Get("bool","hotmail.bSendHtml",oPref))
+            this.m_bSendHtml = oPref.Value;
+        else
+            this.m_bSendHtml = false;    
+    
                                                          
         this.m_Log.Write("Hotmail-SR-SMTP.js - Constructor - END");  
     }
@@ -205,9 +217,9 @@ HotmailSMTPScreenRipper.prototype =
                             {
                                 var szData = null;   
                                 if (szName.search(/login/i)!=-1)
-                                    szData = encodeURIComponent(mainObject.m_szUserName);
+                                    szData = escape(mainObject.m_szUserName);
                                 else if (szName.search(/passwd/i)!=-1)
-                                    szData = encodeURIComponent(mainObject.m_szPassWord);
+                                    szData = escape(mainObject.m_szPassWord);
                                 else if (szName.search(/PwdPad/i)!=-1)
                                 {
                                     var szPasswordPadding = "IfYouAreReadingThisYouHaveTooMuchFreeTime";
@@ -215,7 +227,7 @@ HotmailSMTPScreenRipper.prototype =
                                     szData += szPasswordPadding.substr(0,(lPad<0)?0:lPad);
                                 }
                                 else 
-                                    szData = szValue;
+                                    szData = encodeURIComponent(szValue);
                                     
                                 mainObject.m_HttpComms.addValuePair(szName,szData);
                             }
@@ -225,7 +237,7 @@ HotmailSMTPScreenRipper.prototype =
                     var szAction = aForm[0].match(patternHotmailSMTPAction)[1];
                     mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler "+ szAction);
                     var szDomain = mainObject.m_szUserName.split("@")[1];
-                    var szRegExp = "g_DO\[\""+szDomain+"\"\]=\"(.*?)\"";
+                    var szRegExp = "g_DO\\[\""+szDomain+"\"\\]=\"(.*?)\"";
                     mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler szRegExp "+ szRegExp);
                     var regExp = new RegExp(szRegExp,"i");
                     var aszURI = szResponse.match(regExp);
@@ -237,12 +249,9 @@ HotmailSMTPScreenRipper.prototype =
                     }
                     else
                     {
-                        var IOService = Components.classes["@mozilla.org/network/io-service;1"];
-                        IOService = IOService.getService(Components.interfaces.nsIIOService);
-                        var nsIURI = IOService.newURI(szAction, null, null);
-                        var szQuery = nsIURI.QueryInterface(Components.interfaces.nsIURL).query;    
-                        mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler "+ szQuery);      
-                        szURI = aszURI[1] + "?" + szQuery; 
+                        var szQS =  szResponse.match(patternHotmailSMTPQS)[1];    
+                        mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler szQuery "+ szQS); 
+                        szURI = aszURI[1] + "?" + szQS; 
                     }
                     mainObject.m_HttpComms.setURI(szURI);                 
                     
@@ -349,15 +358,6 @@ HotmailSMTPScreenRipper.prototype =
             
             if (!this.m_Email.parse(szEmail))
                 throw new Error ("Parse Failed")
-            
-            if (!this.m_Email.txtBody) 
-            {
-                var stringBundle =srGetStrBundle("chrome://hotmail/locale/Hotmail-SMTP.properties");
-                var szError = stringBundle.GetStringFromName("HtmlError");
-
-                this.serverComms("502 "+ szError + "\r\n");
-                return false;
-            }
                 
             this.m_aszTo = aszTo;
             this.m_szFrom = szFrom;
@@ -424,8 +424,6 @@ HotmailSMTPScreenRipper.prototype =
                     var aInput = szForm.match(patternHotmailSMTPInput);
                     mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - INPUT " + aInput);
                     
-                    var szTxtBody = mainObject.m_Email.txtBody.body.getBody();
-                    
                     for (i=0; i<aInput.length; i++)
                     {   
                         var szName = aInput[i].match(patternHotmailSMTPName)[1]; 
@@ -474,7 +472,20 @@ HotmailSMTPScreenRipper.prototype =
                         mainObject.m_HttpComms.addValuePair(szName,szValue);
                     }
                     
-                    mainObject.m_HttpComms.addValuePair("body",escape(szTxtBody));
+                    if (mainObject.m_Email.txtBody && !mainObject.m_bSendHtml || !mainObject.m_Email.htmlBody)
+                    {
+                        mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - plain");
+                        var szTxtBody = mainObject.m_Email.txtBody.body.getBody();
+                        mainObject.m_HttpComms.addValuePair("body",escape(szTxtBody));
+                    }
+                    else if (mainObject.m_Email.htmlBody && mainObject.m_bSendHtml || !mainObject.m_Email.txtBody)
+                    {   
+                        mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - html");
+                        var szHTMLBody = mainObject.m_Email.htmlBody.body.getBody();
+                        szHTMLBody = szHTMLBody.match(/<html>[\s\S]*<\/html>/)[0];
+                        mainObject.m_HttpComms.addValuePair("body",escape(szHTMLBody));
+                    }
+                    
                     mainObject.m_HttpComms.setRequestMethod("POST");
                     var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);      
                     if (!bResult) throw new Error("httpConnection returned false");

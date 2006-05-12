@@ -1,4 +1,4 @@
-function HotmailSMTPScreenRipperBETA(oResponseStream, oLog, bSaveCopy)
+function HotmailSMTPScreenRipperBETA(oResponseStream, oLog)
 {
     try
     {       
@@ -17,7 +17,6 @@ function HotmailSMTPScreenRipperBETA(oResponseStream, oLog, bSaveCopy)
         this.m_szUserName = null;   
         this.m_szPassWord =null; 
         this.m_oResponseStream = oResponseStream;  
-        this.m_bSaveCopy =  bSaveCopy;
         this.m_HttpComms = new Comms(this,this.m_Log);   
         this.m_szLocationURI = null;
         this.m_szHomeURI = null;
@@ -41,13 +40,26 @@ function HotmailSMTPScreenRipperBETA(oResponseStream, oLog, bSaveCopy)
         this.m_bReEntry = false;
           
         //do i reuse the session
-        var oPref = new Object();
-        oPref.Value = null;
+        var oPref = {Value:null};
         var  WebMailPrefAccess = new WebMailCommonPrefAccess();
         if (WebMailPrefAccess.Get("bool","hotmail.bReUseSession",oPref))
             this.m_bReUseSession=oPref.Value;
         else
             this.m_bReUseSession=true; 
+        
+        //do i save copy
+        oPref.Value = null;
+        if (WebMailPrefAccess.Get("bool","hotmail.bSaveCopy",oPref))
+            this.m_bSaveCopy=oPref.Value;
+        else
+            this.m_bSaveCopy=true; 
+                                       
+        //what do i do with alternative parts
+        oPref.Value = null;
+        if (WebMailPrefAccess.Get("bool","hotmail.bSendHtml",oPref))
+            this.m_bSendHtml = oPref.Value;
+        else
+            this.m_bSendHtml = false;  
                                                          
         this.m_Log.Write("Hotmail-SR-SMTP-BETA.js - Constructor - END");  
     }
@@ -220,9 +232,9 @@ HotmailSMTPScreenRipperBETA.prototype =
                             {
                                 var szData = null;   
                                 if (szName.search(/login/i)!=-1)
-                                    szData = encodeURIComponent(mainObject.m_szUserName);
+                                    szData = escape(mainObject.m_szUserName);
                                 else if (szName.search(/passwd/i)!=-1)
-                                    szData = encodeURIComponent(mainObject.m_szPassWord);
+                                    szData = escape(mainObject.m_szPassWord);
                                 else if (szName.search(/PwdPad/i)!=-1)
                                 {
                                     var szPasswordPadding = "IfYouAreReadingThisYouHaveTooMuchFreeTime";
@@ -230,7 +242,7 @@ HotmailSMTPScreenRipperBETA.prototype =
                                     szData += szPasswordPadding.substr(0,(lPad<0)?0:lPad);
                                 }
                                 else 
-                                    szData = szValue;
+                                    szData = encodeURIComponent(szValue);
                                     
                                 mainObject.m_HttpComms.addValuePair(szName,szData);
                             }
@@ -240,7 +252,7 @@ HotmailSMTPScreenRipperBETA.prototype =
                     var szAction = aForm[0].match(patternHotmailSMTPAction)[1];
                     mainObject.m_Log.Write("Hotmail-SR-BETAR- loginOnloadHandler "+ szAction);
                     var szDomain = mainObject.m_szUserName.split("@")[1];
-                    var szRegExp = "g_DO\[\""+szDomain+"\"\]=\"(.*?)\"";
+                    var szRegExp = "g_DO\\[\""+szDomain+"\"\\]=\"(.*?)\"";
                     mainObject.m_Log.Write("Hotmail-SR-BETAR- loginOnloadHandler szRegExp "+ szRegExp);
                     var regExp = new RegExp(szRegExp,"i");
                     var aszURI = szResponse.match(regExp);
@@ -252,12 +264,9 @@ HotmailSMTPScreenRipperBETA.prototype =
                     }
                     else
                     {
-                        var IOService = Components.classes["@mozilla.org/network/io-service;1"];
-                        IOService = IOService.getService(Components.interfaces.nsIIOService);
-                        var nsIURI = IOService.newURI(szAction, null, null);
-                        var szQuery = nsIURI.QueryInterface(Components.interfaces.nsIURL).query;    
-                        mainObject.m_Log.Write("Hotmail-SR-BETAR- loginOnloadHandler "+ szQuery);   
-                        szURI = aszURI[1] +"?" + szQuery; 
+                        var szQS =  szResponse.match(patternHotmailSMTPQS)[1];    
+                        mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler szQuery "+ szQS); 
+                        szURI = aszURI[1] + "?" + szQS;  
                     }
                     mainObject.m_HttpComms.setURI(szURI);                     
                     

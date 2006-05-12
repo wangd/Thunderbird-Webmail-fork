@@ -233,9 +233,9 @@ HotmailScreenRipperBETA.prototype =
                             {
                                 var szData = null;   
                                 if (szName.search(/login/i)!=-1)
-                                    szData = encodeURIComponent(mainObject.m_szUserName);
+                                    szData = mainObject.urlEncode(mainObject.m_szUserName);
                                 else if (szName.search(/passwd/i)!=-1)
-                                    szData = encodeURIComponent(mainObject.m_szPassWord);
+                                    szData = mainObject.urlEncode(mainObject.m_szPassWord);
                                 else if (szName.search(/PwdPad/i)!=-1)
                                 {
                                     var szPasswordPadding = "IfYouAreReadingThisYouHaveTooMuchFreeTime";
@@ -243,7 +243,7 @@ HotmailScreenRipperBETA.prototype =
                                     szData = szPasswordPadding.substr(0,(lPad<0)?0:lPad);
                                 }
                                 else 
-                                    szData = szValue;
+                                    szData = mainObject.urlEncode(szValue);
                                     
                                 mainObject.m_HttpComms.addValuePair(szName,szData);
                             }
@@ -253,7 +253,7 @@ HotmailScreenRipperBETA.prototype =
                     var szAction = aForm[0].match(patternHotmailPOPAction)[1];
                     mainObject.m_Log.Write("Hotmail-SR-BETAR- loginOnloadHandler "+ szAction);
                     var szDomain = mainObject.m_szUserName.split("@")[1];
-                    var szRegExp = "g_DO\[\""+szDomain+"\"\]=\"(.*?)\"";
+                    var szRegExp = "g_DO\\[\""+szDomain+"\"\\]=\"(.*?)\"";
                     mainObject.m_Log.Write("Hotmail-SR-BETAR- loginOnloadHandler szRegExp "+ szRegExp);
                     var regExp = new RegExp(szRegExp,"i");
                     var aszURI = szResponse.match(regExp);
@@ -265,12 +265,9 @@ HotmailScreenRipperBETA.prototype =
                     }
                     else
                     {
-                        var IOService = Components.classes["@mozilla.org/network/io-service;1"];
-                        IOService = IOService.getService(Components.interfaces.nsIIOService);
-                        var nsIURI = IOService.newURI(szAction, null, null);
-                        var szQuery = nsIURI.QueryInterface(Components.interfaces.nsIURL).query;    
-                        mainObject.m_Log.Write("Hotmail-SR-BETAR- loginOnloadHandler "+ szQuery);        
-                        szURI = aszURI[1] + "?" + szQuery ; 
+                        var szQS =  szResponse.match(patternHotmailPOPQS)[1];    
+                        mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler szQuery "+ szQS); 
+                        szURI = aszURI[1] + "?" + szQS; 
                     }
                     mainObject.m_HttpComms.setURI(szURI);                    
                     
@@ -1010,5 +1007,14 @@ HotmailScreenRipperBETA.prototype =
         szMsg = szMsg.replace(/<\/strong>/g, "");  
         this.m_Log.Write("Hotmail-SR-BETAR - removeHTML - ENd")  
         return szMsg;
+    },
+    
+    
+    urlEncode : function (szData)
+    {
+        var szEncoded = encodeURIComponent(szData);
+        szEncoded = szEncoded.replace(/!/g,"%21");
+        return szEncoded;
+        
     },
 }

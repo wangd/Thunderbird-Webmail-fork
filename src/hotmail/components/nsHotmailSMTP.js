@@ -30,7 +30,7 @@ const patternHotmailAD = /<form.*?name="addtoAB".*?>/igm;
 const patternHotmailSpamForm = /<form.*?forcehip.srf.*>/igm;
 const patternHotmailSpamImage =/<img.*?src="(.*?hip\.srf.*?)".*?name="hipImage"\/>/i;
 const patternHotmailBase = /<base href="(.*?)"\/>/i;
-
+const patternHotmailSMTPQS = /g_QS="(.*?)"/i;
 /*********BETA**********/
 const patternHotmailSMTPJSRefresh = /<html><head><script.*?>.*?\.location\.replace.*?\("(.*?)"\).*?<\/script>.*?<\/html>/i;
 const patternHotmailSMTPLogOut = /<a href="(.*?logout.aspx)">/i;
@@ -53,7 +53,6 @@ function nsHotmailSMTP()
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-ScreenRipper-SMTP.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-ScreenRipper-SMTP-BETA.js");
               
-        
         var date = new Date();
         var  szLogFileName = "Hotmail SMTP Log - " + date.getHours()
                                            + "-" + date.getMinutes() 
@@ -68,18 +67,7 @@ function nsHotmailSMTP()
         this.m_aszTo = new Array();
         this.m_szFrom = null;
         this.m_CommMethod = null;
-              
-        //do i save copy
-        var oPref = new Object();
-        oPref.Value = null;
-        var  PrefAccess = new WebMailCommonPrefAccess();
-        if (PrefAccess.Get("bool","hotmail.bSaveCopy",oPref))
-            this.m_bSaveCopy=oPref.Value;
-        else
-            this.m_bSaveCopy=true;          
-        delete oPref;
-        
-        
+               
         this.m_Log.Write("nsHotmailSMTP.js - Constructor - END");  
     }
     catch(err)
@@ -154,15 +142,15 @@ nsHotmailSMTP.prototype =
                         {
                             this.m_Log.Write("nsHotmail.js - logIN - username found");  
                             if (item[1]==1)
-                                this.m_CommMethod = new HotmailSMTPWebDav(this.m_oResponseStream, this.m_Log, this.m_bSaveCopy);    
+                                this.m_CommMethod = new HotmailSMTPWebDav(this.m_oResponseStream, this.m_Log);    
                             else if (item[1]==2)
-                                this.m_CommMethod = new HotmailSMTPScreenRipperBETA(this.m_oResponseStream, this.m_Log, this.m_bSaveCopy);    
+                                this.m_CommMethod = new HotmailSMTPScreenRipperBETA(this.m_oResponseStream, this.m_Log);    
                         } 
                     } 
                 } 
             }
             if (!this.m_CommMethod)
-                this.m_CommMethod = new HotmailSMTPScreenRipper(this.m_oResponseStream,this.m_Log, this.m_bSaveCopy);
+                this.m_CommMethod = new HotmailSMTPScreenRipper(this.m_oResponseStream,this.m_Log);
              
             var bResult = this.m_CommMethod.logIn(this.m_szUserName, this.m_szPassWord);
                        

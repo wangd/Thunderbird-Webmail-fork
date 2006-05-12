@@ -30,6 +30,8 @@ const patternHotmailPOPUM = /_UM="(.*?)"/;
 const patterHotmailPOPFolderID = /curmbox=(.*?)&/;
 const patternHotmailPOPSRRead = /msgread=1/gi;
 const patternHotmailPOPSRFrom =/<tr[\S\s]*name="(.*?)"><td>/i;
+const patternHotmailPOPQS = /g_QS="(.*?)"/i;
+
 /*********BETA*****************/
 const patternHotmailPOPJSRefresh = /<html><head><script.*?>.*?\.location\.replace.*?\("(.*?)"\).*?<\/script>.*?<\/html>/i;
 const patternHotmailPOPLogOut = /<a href="(.*?logout.aspx)">/i;

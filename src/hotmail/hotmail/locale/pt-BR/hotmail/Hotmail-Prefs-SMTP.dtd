@@ -1,2 +1,7 @@
 <!ENTITY SaveSentItems.Label "Salvar cópia nos ítens enviados">
 <!ENTITY SaveSentItems.AccessKey "S">
+<!ENTITY AlternativeGroup.Label "Emails Alternative\Multipart">
+<!ENTITY SendPlain.Label "Enviar texto sem formatação">
+<!ENTITY SendPlain.AccessKey "f">
+<!ENTITY SendHtml.Label "Enviar texto html">
+<!ENTITY SendHtml.AccessKey "h">
