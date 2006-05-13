@@ -1,4 +1,4 @@
-function HotmailSMTPWebDav(oResponseStream, oLog, bSaveCopy)
+function HotmailSMTPWebDav(oResponseStream, oLog)
 {
     try
     {       
@@ -16,7 +16,6 @@ function HotmailSMTPWebDav(oResponseStream, oLog, bSaveCopy)
         this.m_oResponseStream = oResponseStream;       
         this.m_HttpComms = new Comms(this,this.m_Log); 
         this.m_HttpComms.setHandleHttpAuth(true);
-        this.m_bSaveCopy =  bSaveCopy;
         
         this.m_iStage=0; 
         this.m_szSendUri = null;
@@ -39,6 +38,14 @@ function HotmailSMTPWebDav(oResponseStream, oLog, bSaveCopy)
             this.m_bReUseSession=oPref.Value;
         else
             this.m_bReUseSession=true; 
+        
+        //do i save copy
+        var oPref = {Value:null};
+        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+        if (WebMailPrefAccess.Get("bool","hotmail.bSaveCopy",oPref))
+            this.m_bSaveCopy=oPref.Value;
+        else
+            this.m_bSaveCopy=true;     
             
         this.m_Log.Write("HotmailWD-SMTP.js - Constructor - END");  
     }
