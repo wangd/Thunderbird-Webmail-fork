@@ -12,6 +12,8 @@ function nsHttpAuthManager()
                                  .getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpAuthToken.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/hash.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/base64.js");
 
         var date = new Date();
         var szLogFileName = "HttpAuthManager Log - " + date.getHours()+ "-" 
@@ -70,8 +72,9 @@ nsHttpAuthManager.prototype =
                         if (szDomain.search(regexp)!=-1)
                         { 
                             this.m_Log.Write("nsHttpAuthManager.js - addToken - found domain - deleted");
-                            var oTokens = new HttpAuthToken( this.m_Log);
-                            oTokens.newToken(szDomain, szHeader, szURI,szUserName, szPassword);                                   
+                            var oTokens = new HttpAuthToken();   
+                            oTokens.setDomain(szDomain);
+                            oTokens.setToken(this.newToken(szHeader, szURI, szUserName, szPassword));                           
                             this.m_aTokens.push(oTokens); //place cookie in array
                             this.m_Log.Write("nsHttpAuthManager.js - addToken - found domain END");
                             return true;
@@ -87,9 +90,10 @@ nsHttpAuthManager.prototype =
             
             //domain not found create new cookie        
             this.m_Log.Write("nsHttpAuthManager - addToken - creating new token"); 
-            var oTokens = new HttpAuthToken( this.m_Log);
-            oTokens.newToken(szDomain, szHeader, szURI,szUserName, szPassword);                                   
-            this.m_aTokens.push(oTokens); 
+            var oTokens = new HttpAuthToken();   
+            oTokens.setDomain(szDomain);
+            oTokens.setToken(this.newToken(szHeader, szURI, szUserName, szPassword));                           
+            this.m_aTokens.push(oTokens); //place cookie in array
             
             this.m_Log.Write("nsHttpAuthManager - addToken - END"); 
             return true;   
@@ -126,7 +130,7 @@ nsHttpAuthManager.prototype =
                 if (szDomain.search(regexp)!=-1)
                 { 
                     this.m_Log.Write("nsHttpAuthManager.js - findToken - found domain"); 
-                    return temp.getTokenString();
+                    return temp.getToken();
                 }   
             }
             
@@ -145,6 +149,103 @@ nsHttpAuthManager.prototype =
         }
     },
 
+    
+    
+    
+    randomString : function () 
+    {
+    	var seed = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
+    	var iLength = 10;
+    	var szRandom = "";
+    	for (var i=0; i<iLength; i++) 
+        {
+    		var rnum = Math.floor(Math.random() * seed.length);
+    		szRandom += seed.substring(rnum,rnum+1);
+    	}
+	    return szRandom;
+    },
+    
+    
+    
+    newToken : function (szValue, szURI ,szUserName, szPassword)
+    {
+        try
+        {
+            this.m_Log.Write("nsHttpAuthManager.js - newToken - START");
+            
+            var szAuth = null;
+            if (szValue.search(/basic/i)!= -1)
+            {//authentication on the cheap
+                this.m_Log.Write("nsHttpAuthManager.js - newToken - basic Authenticate");
+               
+                var oBase64 = new base64();
+                szAuth ="Basic ";
+                szAuth += oBase64.encode(szUserName+":"+szPassword);
+            }
+            else 
+            {
+                this.m_Log.Write("nsHttpAuthManager.js - newToken - digest Authenticate");
+              
+                szAuth ="Digest ";
+                szAuth +="username=\"" + szUserName + "\", "; 
+                var szRealm = szValue.match(/realm="(.*?)"/i)[1];
+                szAuth +="realm=\"" + szRealm + "\", "; 
+                var szNC = "00000001";
+                szAuth +="nc=" + szNC + ", "; 
+                szAuth +="algorithm=\"MD5\", ";
+                
+                var tempURI = null;
+                try 
+                {
+                    tempURI = szURI.match(/(.*?)\?/i)[1]; 
+                }
+                catch(e)
+                {
+                    tempURI = szURI; 
+                }
+                
+                szAuth +="uri=\"" + tempURI + "\", ";
+                var szConce = this.randomString();
+                szAuth +="cnonce=\"" + szConce + "\", "; 
+                  
+                //find qop and noncem 
+                var szQop = szValue.match(/qop="(.*?)"/i)[1];
+                this.m_Log.Write("nsHttpAuthManager.js - newToken - Qop: " + szQop);
+                szAuth +="qop=\"" + szQop + "\", ";
+                
+                var szNonce = szValue.match(/nonce="(.*?)"/i)[1];
+                this.m_Log.Write("nsHttpAuthManager.js - newToken - Nonce : " + szNonce);      
+                szAuth +="nonce=\"" + szNonce + "\", "; 
+                
+                //hash
+                var oHash = new hash();
+                
+                var szHA1=oHash.md5Hash(szUserName+":"+szRealm+":"+szPassword);
+                this.m_Log.Write("nsHttpAuthManager.js - newToken - HA1 " + szHA1);
+                
+                var szHA2 = oHash.md5Hash("PROPFIND:"+tempURI);
+                this.m_Log.Write("nsHttpAuthManager.js - newToken - HA2 " + szHA2);
+                
+                var szResponse = oHash.md5Hash(szHA1+":"+szNonce+":"+szNC+":"+szConce+":"+szQop+":"+szHA2);
+
+                this.m_Log.Write("nsHttpAuthManager.js - newToken - response " + szResponse);                
+                szAuth +="response=\"" + szResponse + "\""; 
+            }
+            
+            this.m_Log.Write("nsHttpAuthManager.js - newToken - " +  szAuth);
+            this.m_Log.Write("nsHttpAuthManager.js - newToken - END");
+            return szAuth;
+        }
+        catch(e)
+        {
+            this.m_Log.Write("nsHttpAuthManager.js: newToken : Exception : " 
+                                          + e.name 
+                                          + ".\nError message: " 
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
+        }
+    },
+    
     
 /******************************************************************************/
 /***************** XPCOM  stuff ***********************************************/

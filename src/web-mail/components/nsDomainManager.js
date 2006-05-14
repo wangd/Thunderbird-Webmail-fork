@@ -37,6 +37,12 @@ nsDomainManager.prototype =
             this.m_Log.Write("nsDomainManager.js - getDomainForProtocol - START");           
             this.m_Log.Write("nsDomainManager.js - getDomainForProtocol - " +szAddress+ " " +szProtocol); 
 
+            if (!szAddress || !szProtocol )
+            {
+                this.m_Log.Write("nsDomainManager.js - getDomainForProtocol - bad param" );
+                return 0; 
+            }
+            
             if (!this.m_bReady) 
             {
                 this.m_Log.Write("nsDomainManager.js - getDomainForProtocol - DB not Loaded" );
@@ -91,6 +97,13 @@ nsDomainManager.prototype =
                                                                             + " Content " + szContentID 
                                                                             + " protocol " + szProtocol); 
 
+            if (!szAddress || !szProtocol || !szContentID)
+            {
+                this.m_Log.Write("nsDomainManager.js - newDomainForProtocol - bad param" );
+                return 0; 
+            }
+            
+            
             if (!this.m_bReady) 
             {
                 this.m_Log.Write("nsDomainManager.js - newDomainForProtocol - DB not Loaded" );
@@ -128,6 +141,13 @@ nsDomainManager.prototype =
         {
             this.m_Log.Write("nsDomainManager.js - getAllDomainsForProtocol -  START " + szProtocol); 
 
+            
+            if (!szProtocol )
+            {
+                this.m_Log.Write("nsDomainManager.js - getAllDomainsForProtocol - bad param" );
+                return 0; 
+            }
+            
             if (!this.m_bReady) 
             {
                 this.m_Log.Write("nsDomainManager.js - getAllDomainsForProtocol - DB not Loaded" );
@@ -169,6 +189,12 @@ nsDomainManager.prototype =
         {
             this.m_Log.Write("nsDomainManager.js - removeDomainForProtocol -  START" );  
             this.m_Log.Write("nsDomainManager.js - removeDomainForProtocol - " + szAddress+ " " + szProtocol);
+
+            if (!szAddress || !szProtocol )
+            {
+                this.m_Log.Write("nsDomainManager.js - removeDomainForProtocol - bad param" );
+                return 0; 
+            }
 
             if (!this.m_bReady) 
             {
