@@ -384,7 +384,7 @@ nsWebMailCookieManagerModule.registerSelf = function(compMgr, fileSpec, location
 nsWebMailCookieManagerModule.unregisterSelf = function(aCompMgr, aFileSpec, aLocation)
 {
     aCompMgr = aCompMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
-    aCompMgr.unregisterFactoryLocation(nsCookieManagerClassID, aFileSpec);
+    aCompMgr.unregisterFactoryLocation(nsWebMailCookieManagerClassID, aFileSpec);
 }
 
  
