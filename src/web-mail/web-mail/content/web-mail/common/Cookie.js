@@ -6,11 +6,23 @@ function Cookie()
     this.m_iExpiry =  -1;   
     this.m_szPath = null;
     this.m_bSecure = false;
+    this.m_szUserName = null;
 }
 
 
 Cookie.prototype =
 {
+    getUserName : function ()
+    {
+        return this.m_szUserName;
+    },
+    
+    setUserName : function (szUserName)
+    {
+        this.m_szUserName = szUserName;
+    },
+    
+    
     getDomain : function ()
     {
         return this.m_szDomain;
