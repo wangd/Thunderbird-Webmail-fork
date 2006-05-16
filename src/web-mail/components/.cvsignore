@@ -8,3 +8,6 @@ nsICookieManager.bat
 nsIHttpAuthManager.bat
 nsISessionData.bat
 nsISessionManager.bat
+nsIComponentData2.bat
+nsIHttpAuthManager2.bat
+nsIWMCookieManager2.bat
