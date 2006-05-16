@@ -610,9 +610,7 @@ HotmailSMTPScreenRipperBETA.prototype =
                             }
                             catch(err){}
                            
-                            if (szName.search(/__VIEWSTATE/i)!=-1)
-                                mainObject.m_HttpComms.addValuePair(szName, szValue); 
-                            else
+                            if (szName.search(/file/i)!=-1)
                             {
                                 if ( mainObject.m_Email.attachments.length > mainObject.m_iAttachPlaceNum)
                                     mainObject.m_HttpComms.addFile(szName, "", ""); 
@@ -635,6 +633,9 @@ HotmailSMTPScreenRipperBETA.prototype =
                                     
                                 } 
                             }
+                            else
+                                mainObject.m_HttpComms.addValuePair(szName, szValue);
+                            
                         }  
                     }  
                     
