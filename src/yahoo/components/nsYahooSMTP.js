@@ -30,7 +30,7 @@ function nsYahooSMTP()
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Email.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/comms.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
         scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-SpamImage.js");
         
         
@@ -46,7 +46,7 @@ function nsYahooSMTP()
         this.m_szUserName = null;   
         this.m_szPassWord = null; 
         this.m_oResponseStream = null;  
-        this.m_HttpComms = new Comms(this , this.m_Log);
+        this.m_HttpComms = new HttpComms();
         this.m_aszTo = new Array;
         this.m_szFrom = null;
         this.m_iStage = 0;
@@ -56,15 +56,13 @@ function nsYahooSMTP()
         this.m_szHomeURI = null;
         this.m_bReEntry = false;
         this.m_bAttHandled = false;
-        this.m_Email = new email(this.m_Log);
+        this.m_Email = new email("");
         this.m_Email.decodeBody(true);
         this.m_szImageVerForm = null;
         this.m_szLoginUserName = null;
         
-        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"];
-        this.m_SessionManager = this.m_SessionManager.getService();
-        this.m_SessionManager.QueryInterface(Components.interfaces.nsISessionManager); 
-        this.m_SessionData = null;
+        this.m_ComponentManager = Components.classes["@mozilla.org/nsComponentData2;1"];
+        this.m_ComponentManager = this.m_ComponentManager.getService(Components.interfaces.nsIComponentData2);
         
         this.m_bReEntry = false;
         
@@ -124,7 +122,7 @@ nsYahooSMTP.prototype =
             //get prefs
             this.loadPrefs();  
                      
-           this.m_szYahooMail = "http://mail.yahoo.com";
+            this.m_szYahooMail = "http://mail.yahoo.com";
                     
             if (this.m_szUserName.search(/yahoo/i)!=-1)   
             { //remove domain from user name  
@@ -143,33 +141,28 @@ nsYahooSMTP.prototype =
                 this.m_szYahooMail = "http://mail.yahoo.com";
                 this.m_szLoginUserName = this.m_szUserName;
             } 
+        
+            this.m_HttpComms.setUserName(this.m_szUserName);
+            this.m_iStage = 0;
+            this.m_HttpComms.setURI(this.m_szYahooMail);                    
+            this.m_HttpComms.setRequestMethod("GET");
             
-            this.m_HttpComms.clean();
-                            
-            this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
-            if (this.m_SessionData && this.m_bReUseSession)
+            if (this.m_bReUseSession)
             {
-                this.m_Log.Write("nsYahoo.js - logIN - Session Data found");
-                this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
-                this.m_szHomeURI = this.m_SessionData.oComponentData.findElement("szHomeURI");
-                this.m_Log.Write("nsYahoo" +this.m_szHomeURI);    
-            
-                //get home page
-                this.m_iStage =2;
-                this.m_bReEntry = true;
-                this.m_HttpComms.setURI(this.m_szHomeURI);
-                this.m_HttpComms.setRequestMethod("GET");
-                var bResult = this.m_HttpComms.send(this.loginOnloadHandler);                             
-                if (!bResult) throw new Error("httpConnection returned false");
+                this.m_Log.Write("nsYahoo.js - logIN - Getting Session Data");           
+                this.m_szHomeURI = this.m_ComponentManager.findElement(this.m_szUserName, "szHomeURI");
+                this.m_Log.Write("nsYahoo.js - logIN - szHomeURI " +this.m_szHomeURI);    
+                if (this.m_szHomeURI)
+                {
+                    this.m_Log.Write("nsYahoo.js - logIN - Session Data Found"); 
+                    this.m_iStage =2;
+                    this.m_bReEntry = true;
+                    this.m_HttpComms.setURI(this.m_szHomeURI);
+                }
             }
-            else
-            {   //get YahooLog.com webpage
-                this.m_iStage = 0;
-                this.m_HttpComms.setURI(this.m_szYahooMail);
-                this.m_HttpComms.setRequestMethod("GET");
-                var bResult = this.m_HttpComms.send(this.loginOnloadHandler);                             
-                if (!bResult) throw new Error("httpConnection returned false");        
-            }
+
+            var bResult = this.m_HttpComms.send(this.loginOnloadHandler,this);                             
+            if (!bResult) throw new Error("httpConnection returned false");  
             
             this.m_Log.Write("nsYahooSMTP.js - logIN - END");    
             return true;
@@ -194,7 +187,7 @@ nsYahooSMTP.prototype =
         try
         {
             mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - START"); 
-            
+            mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler : \n" + szResponse);            
             mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler : " + mainObject.m_iStage );  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -203,8 +196,6 @@ nsYahooSMTP.prototype =
             mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - status :" +httpChannel.responseStatus );
             if (httpChannel.responseStatus != 200) 
                 throw new Error("return status " + httpChannel.responseStatus);
-            
-            mainObject.m_HttpComms.clean();
                                       
             //page code                                
             switch (mainObject.m_iStage)
@@ -246,8 +237,7 @@ nsYahooSMTP.prototype =
                                         
                     mainObject.m_HttpComms.setURI(szLoginURL);
                     mainObject.m_HttpComms.setRequestMethod("POST");
-                    mainObject.m_HttpComms.setContentType(0);
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
@@ -261,7 +251,7 @@ nsYahooSMTP.prototype =
 
                     mainObject.m_HttpComms.setURI(szLocation);
                     mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
@@ -278,7 +268,7 @@ nsYahooSMTP.prototype =
                             mainObject.m_iStage =0;
                             mainObject.m_HttpComms.setURI(mainObject.m_szYahooMail);
                             mainObject.m_HttpComms.setRequestMethod("GET");
-                            var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);                             
+                            var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);                             
                             if (!bResult) throw new Error("httpConnection returned false");
                             return;
                         }
@@ -328,10 +318,9 @@ nsYahooSMTP.prototype =
                 throw new Error ("Parse Failed")
             
             //get composer page
-            this.m_HttpComms.clean();
             this.m_HttpComms.setURI(this.m_szComposeURI);
             this.m_HttpComms.setRequestMethod("GET");       
-            var bResult = this.m_HttpComms.send(this.composerOnloadHandler);  
+            var bResult = this.m_HttpComms.send(this.composerOnloadHandler, this);  
             if (!bResult) throw new Error("httpConnection returned false");
             
             this.m_Log.Write("nsYahooSMTP.js - rawMSG - END");    
@@ -354,16 +343,16 @@ nsYahooSMTP.prototype =
         try
         {
             mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - START"); 
+            mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler : " + mainObject.m_iStage);  
-            
+
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             
             //if this fails we've gone somewhere new
             mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - status :" +httpChannel.responseStatus );
             if (httpChannel.responseStatus != 200) 
                 throw new Error("return status " + httpChannel.responseStatus);
-            
-            mainObject.m_HttpComms.clean();            
+                        
             var szReferer = httpChannel.URI.spec;
             mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Referer :" +szReferer);
              
@@ -454,10 +443,9 @@ nsYahooSMTP.prototype =
                     }
                                                            
                     mainObject.m_iStage++;
-                    mainObject.m_HttpComms.setContentType(0);
                     mainObject.m_HttpComms.setURI(szActionURI);
                     mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);                                                    
+                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler,mainObject);                                                    
                     if (!bResult) throw new Error("httpConnection returned false");
                 break;
                 
@@ -465,19 +453,18 @@ nsYahooSMTP.prototype =
                     //check for add address to addressbook
                     if (szResponse.search(/AddAddresses/i)!=-1)
                     {
-                        if (!mainObject.m_SessionData)
-                        {
-                            mainObject.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
-                            mainObject.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
-                            mainObject.m_SessionData.szUserName = mainObject.m_szUserName;
-                            
-                            var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
-                            componentData.QueryInterface(Components.interfaces.nsIComponentData);
-                            mainObject.m_SessionData.oComponentData = componentData;
+                        if (mainObject.m_bReUseSession)
+                        { 
+                            mainObject.m_Log.Write("nsYahoo.js - logIN - Setting Session Data");           
+                            mainObject.m_ComponentManager.addElement(this.m_szUserName, "szHomeURI", mainObject.m_szHomeURI);
+                            mainObject.m_Log.Write("nsYahoo.js - logIN - szHomeURI" + mainObject.m_szHomeURI);    
                         }
-                        mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
-                        mainObject.m_SessionData.oComponentData.addElement("szHomeURI",mainObject.m_szHomeURI);
-                        mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);
+                        else
+                        {
+                            mainObject.m_Log.Write("nsYahoo.js - logIN - deleting Session Data");
+                            mainObject.m_HttpComms.deleteSessionData(); 
+                            mainObject.m_HttpComms.deleteAllElements(mainObject.m_szUserName);
+                        }
                         
                         mainObject.serverComms("250 OK\r\n");                      
                     }
@@ -488,12 +475,11 @@ nsYahooSMTP.prototype =
                         mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - form " + mainObject.m_szImageVerForm );
                         var szImageUri = szResponse.match(patternYahooImage)[1];
                         mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - image " + szImageUri);
-                     
-                        mainObject.m_HttpComms.setContentType(1);
+                    
                         mainObject.m_HttpComms.setURI(szImageUri);
                         mainObject.m_HttpComms.setRequestMethod("GET");
                         mainObject.m_iStage = 5;
-                        var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);  
+                        var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler,mainObject);  
                         if (!bResult) throw new Error("httpConnection returned false");
                     }
                     else
@@ -550,10 +536,9 @@ nsYahooSMTP.prototype =
                     mainObject.m_HttpComms.addValuePair("Body","");
                  
                     mainObject.m_iStage = 3; 
-                    mainObject.m_HttpComms.setContentType(0);
                     mainObject.m_HttpComms.setURI(szActionURI);
                     mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);  
+                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler,mainObject);  
                     if (!bResult) throw new Error("httpConnection returned false");
                 break;
                 
@@ -617,10 +602,10 @@ nsYahooSMTP.prototype =
                             mainObject.m_HttpComms.addFile(szName, "", ""); 
                     }
                    
-                    mainObject.m_HttpComms.setContentType(1);
+                    mainObject.m_HttpComms.setContentType("multipart/form-data");
                     mainObject.m_HttpComms.setURI(szAction);                  
                     mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);  
+                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler,mainObject);  
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage = 4;
                 break;
@@ -662,10 +647,9 @@ nsYahooSMTP.prototype =
                         mainObject.m_HttpComms.addValuePair(szName,(szValue.length>0)? szValue : "");
                     }
                    
-                    mainObject.m_HttpComms.setContentType(0);
                     mainObject.m_HttpComms.setURI(szAction);
                     mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);  
+                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler, mainObject);  
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage = 0;
                 break;
@@ -711,10 +695,10 @@ nsYahooSMTP.prototype =
                     var szAction = szActionUrl;
                     
                     //send data
-                    mainObject.m_HttpComms.setContentType(1);
+                    mainObject.m_HttpComms.setContentType("multipart/form-data");
                     mainObject.m_HttpComms.setURI(mainObject.m_szLocationURI + szAction);
                     mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);  
+                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler, mainObject);  
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage = 1;
                    
