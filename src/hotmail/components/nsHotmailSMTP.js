@@ -31,11 +31,12 @@ const patternHotmailSpamForm = /<form.*?forcehip.srf.*>/igm;
 const patternHotmailSpamImage =/<img.*?src="(.*?hip\.srf.*?)".*?name="hipImage"\/>/i;
 const patternHotmailBase = /<base href="(.*?)"\/>/i;
 const patternHotmailSMTPQS = /g_QS="(.*?)"/i;
+
 /*********BETA**********/
 const patternHotmailSMTPJSRefresh = /<html><head><script.*?>.*?\.location\.replace.*?\("(.*?)"\).*?<\/script>.*?<\/html>/i;
-const patternHotmailSMTPLogOut = /<a href="(.*?logout.aspx)">/i;
+const patternHotmailSMTPLogOut = /<.*?"(.*?logout.aspx.*?)".*?>/gi;
 const patternHotmailSMTPViewState = /<input.*?id="__VIEWSTATE".*?value="(.*?)".*?\/>/i;
-const patternHotmailSMTPMailBoxTable = /<div class="dInboxContent">/ig;
+const patternHotmailSMTPMailBoxTable = /<div id="inbox">/ig;
 const patternHotmailSMTPEvent = /<input.*?id="__EVENTVALIDATION".*?value="(.*?)".*?\/>/i;
 const patternHotmailSMTPCompose =/NewMessageGo[\s\S]*?document.location.href="(.*?)"/i;
 const patternHotmailSMTPMailbox = /<a href="(\/cgi-bin\/HoTMaiL.*?)".*?tabindex=121.*?class="E">/;

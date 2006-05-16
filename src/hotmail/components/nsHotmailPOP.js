@@ -34,11 +34,11 @@ const patternHotmailPOPQS = /g_QS="(.*?)"/i;
 
 /*********BETA*****************/
 const patternHotmailPOPJSRefresh = /<html><head><script.*?>.*?\.location\.replace.*?\("(.*?)"\).*?<\/script>.*?<\/html>/i;
-const patternHotmailPOPLogOut = /<a href="(.*?logout.aspx)">/i;
+const patternHotmailPOPLogOut = /<.*?"(.*?logout.aspx.*?)".*?>/gi;
 const patternHotmailPOPInbox = /<a href="(.*?mail.aspx\?Control=Inbox)".*?>/i;
 const patternHotmailPOPJunkFolderID = /<a href="(.*?mail.aspx\?Control=Inbox&FolderID.*?5)">/i;
 const patternHotmailPOPNextPage = /<a href="(.*?PageAnchor.*?next&Page.*?)">/i;
-const patternHotmailPOPMailBoxTable = /<table.*?class="dInboxContentTable".*?>[\s\S]*?<\/table>/ig;
+const patternHotmailPOPMailBoxTable = /<table.*?class="dItemListContentTable".*?>[\s\S]*?<\/table>/ig;
 const patternHotmailPOPMailBoxTableRow = /<tr>[\s\S]*?<\/tr>/ig;
 const patternHotmailPOPEMailURL = /<td.*?dInboxContentTableTitleCol.*>.*?<a href="(.*?)".*?>/i;
 const patternHotmailPOPEmailRead = /<td.*?class="dInboxContentTableFromCol"><strong>.*?<\/strong><\/td>/gi;
