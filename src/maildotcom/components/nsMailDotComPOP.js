@@ -10,7 +10,7 @@ const patternMailDotComLoginInput = /<input type=(?!"submit").*?>/igm;
 const patternMailDotComType = /type="(.*?)"/i;
 const patternMailDotComValue = /value=\s?['??|"??](\S*)['??|"??]/i;
 const patternMailDotComName = /name=\s?["??|'??](\S*)["??|'??]/i;
-const patternMailDotComFrame = /<frame.*?src="(.*?)".*?name="mailcomframe".*?SCROLLING="AUTO">/;
+const patternMailDotComFrame = /<frame.*?src="(.*?)".*?name="mailcomframe".*?>/i;
 const patternMailDotComFolders = /href="(.*?folders.mail.*?)"/;
 const patternMailDotComFolderList = /href=".*?".*?class="fb"/gm;
 const patternMailDotComFolderURI= /href="(.*?)"/;
