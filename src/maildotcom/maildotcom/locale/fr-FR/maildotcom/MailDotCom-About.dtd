@@ -1,6 +1,6 @@
 <!ENTITY MailDotComAbout.Title "MailDotCom - À propos">
 <!ENTITY MailDotComAbout.ExtName "MailDotCom">
-<!ENTITY MailDotComAbout.ExtVersion "version 0.5.5">
+<!ENTITY MailDotComAbout.ExtVersion "version 0.5.6">
 <!ENTITY MailDotComAbout.ExtDescription "Composant MailDotCom pour l'extension Web-mail.">
 <!ENTITY MailDotComAbout.ExtCreaterTitle "Créé par :">
 <!ENTITY MailDotComAbout.ExtCreator "ComodoDragon">
