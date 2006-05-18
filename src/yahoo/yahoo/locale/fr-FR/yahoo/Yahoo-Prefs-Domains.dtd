@@ -1,7 +1,4 @@
-<!ENTITY TitleAdd "Yahoo Domains">
-<!ENTITY Close.label "Close">
-<!ENTITY Close.accessKey "C">
-<!ENTITY Add.label "Add">
+<!ENTITY Add.label "Add...">
 <!ENTITY Add.accessKey "A">
 <!ENTITY Remove.label "Remove">
 <!ENTITY Remove.accessKey "R">

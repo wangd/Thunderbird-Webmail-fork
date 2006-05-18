@@ -1,95 +1,28 @@
 <?xml version="1.0"?> 
-
 <?xml-stylesheet href="chrome://global/skin/global.css"?>
 <?xml-stylesheet href="chrome://messenger/skin/preferences/preferences.css"?>
 <?xml-stylesheet href="chrome://mozapps/content/preferences/preferences.css"?>
-
-<?xml-stylesheet href="chrome://yahoo/content/Yahoo-Prefs-Window.css" type="text/css"?>
+<?xml-stylesheet href="chrome://yahoo/content/Yahoo-Prefs-Window.css"?>
 
 <!DOCTYPE dialog SYSTEM "chrome://yahoo/locale/Yahoo-Prefs-Window.dtd">
 
+<prefwindow xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+            type="prefsWindow"
+            title="&Window.szTitle;"
+            id="prefsWindow"
+            lastSelected = "paneAccounts"
+            onload = "gPrefsWindow.init();"
+            ondialogaccept = "return gPrefAccounts.save();"
+            ondialogcancel = ""
+            buttons="accept, cancel">
 
-<dialog id="prefsWindow"
-        title="&Options.szTitle;" 
-        onload ="gPrefWindow.init();"
-        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-        ondialogaccept="return gPrefWindow.onPrefWindowOK();"
-        ondialogcancel="return gPrefWindow.onPrefWindowCancel();" >
-        
-        <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
-        <script type="application/x-javascript" src="chrome://web-mail/content/common/CommonPrefs.js"/>
-        <script type="application/x-javascript" src="chrome://yahoo/content/Yahoo-Prefs-Window-Data.js"/>
-        <script type="application/x-javascript" src="chrome://yahoo/content/Yahoo-Prefs-Window.js"/>
-         
-        <stringbundleset>
-            <stringbundle id="stringsYahooWindow" src="chrome://yahoo/locale/Yahoo-Prefs-Window.properties"/>
-        </stringbundleset> 
-         
-        <hbox flex="1">
-            <vbox id="userList">
-                <richlistbox id="listView" 
-                             class="listbox"
-                             flex="1"
-                             onclick="gPrefWindow.userClick();"/>
-            </vbox>                     
-            <vbox id = "optionsPanel" flex="1">
-                <hbox id="toolbar" class="listBox buttonBox">
-                    <button id="radioPOP"  orient="vertical" class="buttonBoxButton" label="&POP.Panel.szTitle;"  type="radio" group="prefs" oncommand="gPrefWindow.toolBarClick(0);"/>
-                    <button id="radioSMTP" orient="vertical" class="buttonBoxButton" label="&SMTP.Panel.szTitle;" type="radio" group="prefs" oncommand="gPrefWindow.toolBarClick(1);"/>              
-                </hbox>
-                
-                <deck id="optionsDeck" flex="1">
-                    <vbox id="popPanel" class="panel">
-                        <checkbox label="&DownloadUnread.Label;" 
-                                  accesskey="&DownloadUnread.AccessKey;"
-                                  id="chkDownloadUnread"
-                                  onclick ="gPrefWindow.chkDownloadUreadOnChange();"/> 
-                                  
-                        <checkbox label="&JunkMail.Label;" 
-                                  accesskey="&JunkMail.AccessKey;"
-                                  id="chkJunkMail"
-                                  onclick ="gPrefWindow.chkJunkMailOnChange();"/>
-        
-                        <label value="&Folders.Label;" id="labelFolders"/>
-                        <vbox id="boxFolders">               
-                            <richlistbox id="listFolders" 
-                                         class="listbox"
-                                         onselect="gPrefWindow.folderListSelect();"/> 
-                            
-                            <hbox pack="end">    
-                                    <button id="addFolderList" 
-                                            label="&Add.Label;" 
-                                            accesskey="&Add.AccessKey;"
-                                            oncommand ="gPrefWindow.folderListAdd();"/>
-                                            
-                                    <button id="removeFolderList" 
-                                            label="&Remove.Label;" 
-                                            accesskey="&Remove.AccessKey;"
-                                            oncommand ="gPrefWindow.folderListRemove();"
-                                            disabled="true"/>
-                            </hbox>
-                        </vbox> 
-                    </vbox>
-                    <vbox id="smptPanel" class="panel">
-                        <checkbox label="&SaveSentItems.Label;"
-                                  accesskey="&SaveSentItems.AccessKey;" 
-                                  id="chkSentItems"
-                                  onclick ="gPrefWindow.chkSentItemsOnChange();"/>
-                    </vbox>
-                </deck>
-            </vbox>
-        </hbox>
-        
-        <vbox id="buttons" pack="end" flex="1">    
-                <hbox pack="start">
-                    <button id="AddDomain"
-                            label ="&AddDomain.Label;"
-                            accesskey="&AddDomain.AccessKey;" 
-                            oncommand ="gPrefWindow.addDomains()"/>
-                </hbox>
-                <hbox pack="end">   
-                    <button dlgtype="accept"/>
-                    <button dlgtype="cancel"/>
-                </hbox>
-        </vbox>
-</dialog>
+    <!-- Accounts --> 
+    <prefpane id="paneAccounts" 
+              label="&Accounts.Panel.szTitle;"
+              src="chrome://yahoo/content/Yahoo-Prefs-Accounts.xul"/>
+  
+    <!-- Domains -->   
+    <prefpane id="paneDomains" 
+              label="&Domains.Panel.szTitle;"
+              src="chrome://yahoo/content/Yahoo-Prefs-Domains.xul"/>
+</prefwindow>

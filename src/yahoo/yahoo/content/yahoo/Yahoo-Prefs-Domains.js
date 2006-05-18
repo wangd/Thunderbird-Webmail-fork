@@ -51,7 +51,7 @@ var gYahooDomain =
     {
         this.m_DebugLog.Write("Yahoo-Prefs-Domains : domainList - START " +szDomain);
         
-        var list = document.getElementById("listView");
+        var list = document.getElementById("listDomain");
             
         var newItem = document.createElement("richlistitem"); 
         newItem.setAttribute("id", szDomain);
@@ -127,7 +127,7 @@ var gYahooDomain =
         newItem.setAttribute("align", "center");
         newItem.appendChild(vBox);               
         
-        var list = document.getElementById("listView");
+        var list = document.getElementById("listDomain");
         list.appendChild(newItem);
         
         this.m_DebugLog.Write("Yahoo-Prefs-Domains : errorList - END");
@@ -142,7 +142,7 @@ var gYahooDomain =
         {
             this.m_DebugLog.Write("Yahoo-Prefs-Domains : onSelect - START");
 
-            var listView = document.getElementById("listView");   //click item
+            var listView = document.getElementById("listDomain");   //click item
             var iIndex = listView.selectedIndex;
             this.m_DebugLog.Write("Yahoo-Prefs-Domains : onSelect - iIndex "+iIndex);
             
@@ -187,7 +187,7 @@ var gYahooDomain =
                 if (this.m_Domains.addDomain(oParam.szDomain))
                 {
                     //remove error message
-                    var listView = document.getElementById("listView");  
+                    var listView = document.getElementById("listDomain");  
                     var item = listView.getItemAtIndex(0);
                     var szError = item.getAttribute("id");
                     if (szError.search(/error/i)!=-1)
@@ -198,7 +198,7 @@ var gYahooDomain =
                 
                 var event = document.createEvent("Events");
                 event.initEvent("change", false, true);
-                document.getElementById("listView").dispatchEvent(event);
+                document.getElementById("listDomain").dispatchEvent(event);
             }
             this.m_DebugLog.Write("Yahoo-Prefs-Domains : onAdd - END");
         }
@@ -220,7 +220,7 @@ var gYahooDomain =
             this.m_DebugLog.Write("Yahoo-Prefs-Domains : doRemove - START");
             
             //get selected item
-            var listView = document.getElementById("listView");   //click item
+            var listView = document.getElementById("listDomain");   //click item
             var iIndex = listView.selectedIndex;
             this.m_DebugLog.Write("Yahoo-Prefs-Domains : doRemove - iIndex "+iIndex);
             
@@ -249,7 +249,7 @@ var gYahooDomain =
             }
             var event = document.createEvent("Events");
             event.initEvent("change", false, true);
-            document.getElementById("listView").dispatchEvent(event);
+            document.getElementById("listDomain").dispatchEvent(event);
                    
             this.m_DebugLog.Write("Yahoo-Prefs-Domains: doRemove - END");
             return true;
@@ -262,17 +262,5 @@ var gYahooDomain =
                                           + e.message + "\n"
                                           + e.lineNumber);
         }
-    }, 
-     
-     
-     
-    doClose: function ()
-    {
-        this.m_DebugLog.Write("Yahoo-Prefs-Domains : doCancel - START");
-    
-        window.close();
-        
-        this.m_DebugLog.Write("Yahoo-Prefs-DOmains : doCancel - END");
-        return true;
     },
 }

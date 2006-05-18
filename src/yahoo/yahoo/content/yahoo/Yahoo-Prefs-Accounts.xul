@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/global.css"?>
+<?xml-stylesheet href="chrome://yahoo/content/Yahoo-Prefs-Accounts.css" type="text/css"?>
+<!DOCTYPE dialog SYSTEM "chrome://yahoo/locale/Yahoo-Prefs-Accounts.dtd">
+
+<overlay id="paneAccountsOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+           
+    <prefpane id = "paneAccounts" onpaneload= "gPrefAccounts.init();">
+        <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
+        <script type="application/x-javascript" src="chrome://web-mail/content/common/CommonPrefs.js"/>
+        <script type="application/x-javascript" src="chrome://yahoo/content/Yahoo-Prefs-Accounts.js"/>
+        <script type="application/x-javascript" src="chrome://yahoo/content/Yahoo-Prefs-Accounts-Data.js"/>
+           
+       <stringbundleset>
+            <stringbundle id="stringsYahooWindow" src="chrome://yahoo/locale/Yahoo-Prefs-Accounts.properties"/>
+        </stringbundleset> 
+         
+        <hbox flex="1">
+            <vbox id="userList">
+                <richlistbox id="listUsers" 
+                             class="listbox"
+                             flex="1"
+                             onclick="gPrefAccounts.userClick();"/>
+            </vbox>                     
+            
+           <vbox id = "optionsPanel" flex="1">
+                <hbox id="toolbar" class="listBox buttonBox">
+                    <button id="radioPOP"  orient="vertical" class="buttonBoxButton" label="&POP.Panel.szTitle;"  type="radio" group="prefs" oncommand="gPrefAccounts.toolBarClick(0);"/>
+                    <button id="radioSMTP" orient="vertical" class="buttonBoxButton" label="&SMTP.Panel.szTitle;" type="radio" group="prefs" oncommand="gPrefAccounts.toolBarClick(1);"/>              
+                </hbox>
+                
+                <deck id="optionsDeck" flex="1">
+                    <vbox id="popPanel" class="panel">
+                        <checkbox label="&DownloadUnread.Label;" 
+                                  accesskey="&DownloadUnread.AccessKey;"
+                                  id="chkDownloadUnread"
+                                  onclick ="gPrefAccounts.chkDownloadUreadOnChange();"/> 
+                                  
+                        <checkbox label="&JunkMail.Label;" 
+                                  accesskey="&JunkMail.AccessKey;"
+                                  id="chkJunkMail"
+                                  onclick ="gPrefAccounts.chkJunkMailOnChange();"/>
+        
+                        <label value="&Folders.Label;" id="labelFolders"/>
+                        <vbox id="boxFolders">               
+                            <richlistbox id="listFolders" 
+                                         class="listbox"
+                                         onselect="gPrefAccounts.folderListSelect();"/> 
+                            
+                            <hbox pack="end">    
+                                    <button id="addFolderList" 
+                                            label="&Add.Label;" 
+                                            accesskey="&Add.AccessKey;"
+                                            oncommand ="gPrefAccounts.folderListAdd();"/>
+                                            
+                                    <button id="removeFolderList" 
+                                            label="&Remove.Label;" 
+                                            accesskey="&Remove.AccessKey;"
+                                            oncommand ="gPrefAccounts.folderListRemove();"
+                                            disabled="true"/>
+                            </hbox>
+                        </vbox> 
+                    </vbox>
+                    <vbox id="smptPanel" class="panel">
+                        <checkbox label="&SaveSentItems.Label;"
+                                  accesskey="&SaveSentItems.AccessKey;" 
+                                  id="chkSentItems"
+                                  onclick ="gPrefAccounts.chkSentItemsOnChange();"/>
+                    </vbox>
+                </deck>
+            </vbox>
+        </hbox>
+    </prefpane>
+</overlay>

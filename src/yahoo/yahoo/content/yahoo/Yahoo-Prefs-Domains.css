@@ -1,34 +1,12 @@
-#addWindow
+#listDomain
 {
-    width: 30em; 
-    height: 20em;
+    width: 25em;
+    height: 23em;
 }
-
-#imageDomain
-{
-    margin-left: 10px; 
-    margin-top: 10px;
-    margin-bottom : 10px;
-    list-style-image: url("chrome://yahoo/skin/domains.png");
-}
-
 
 #labelDomain
 {
-    margin-left: 10px; 
-    margin-top: 15px;
-}
-
-#labelDomainName
-{
-    margin-left: 10px; 
-}
-
-
-#listView
-{
-    height: 15em;
-    width: 15em;
+    margin-bottom: 10px;
 }
 
 
@@ -50,11 +28,6 @@
     list-style-image: url("chrome://yahoo/skin/Yahoo-VerySmall.png");
     margin-left: 5px;
 }
-
-.domain
-{
-}
-
 
 
 .listError
