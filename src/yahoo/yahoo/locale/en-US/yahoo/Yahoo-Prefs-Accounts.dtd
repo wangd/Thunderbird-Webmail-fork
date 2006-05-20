@@ -13,3 +13,4 @@
 <!ENTITY SaveSentItems.AccessKey "s">
 <!ENTITY AddDomain.Label "Add Domain..">
 <!ENTITY AddDomain.AccessKey "D">
+<!ENTITY error.Label "No Yahoo Accounts Found"> 
