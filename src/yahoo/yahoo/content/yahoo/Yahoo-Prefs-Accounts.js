@@ -46,19 +46,12 @@ var gPrefAccounts =
 
             if (this.m_aszUserList.length>0) //select first item
             {
-                document.getElementById("listUsers").selectedIndex=0;
-                document.getElementById("radioPOP").checked = true;  
-                document.getElementById("optionsDeck").selectedIndex = 0;
+                document.getElementById("menuAccounts").selectedIndex=0;
             }
-            else //disable elements
+           else //disable elements
             {
-                document.getElementById("radioPOP").checked = true;  
-                document.getElementById("optionsDeck").selectedIndex = 0;
-                document.getElementById("chkDownloadUnread").disabled=true;
-                document.getElementById("chkJunkMail").disabled=true;
-                document.getElementById("addFolderList").disabled=true;
-                document.getElementById("chkSentItems").disabled=true;
-                document.getElementById("OK").disabled=true;
+                document.getElementById("boxAccounts").setAttribute("hidden", true);
+                document.getElementById("boxError").setAttribute("hidden", false);
             }
             this.userClick();
             
@@ -80,35 +73,36 @@ var gPrefAccounts =
         {
             this.m_DebugLog.Write("Yahoo-Pref-Accounts : onOK - START");
             
-            //write prefs
-            var WebMailPrefAccess = new WebMailCommonPrefAccess();
-    
-            for (var i=0; i<this.m_aszUserList.length; i++)
+            if (this.m_aszUserList.length>0)
             {
-                WebMailPrefAccess.Set("char","yahoo.Account."+i+".user",this.m_aszUserList[i].szUser);
-                this.m_DebugLog.Write("Yahoo-Pref-Accounts.js - onOK - user " + this.m_aszUserList[i].szUser);
-                WebMailPrefAccess.Set("bool","yahoo.Account."+i+".bDownloadUnread",this.m_aszUserList[i].bUnread);
-                this.m_DebugLog.Write("Yahoo-Pref-Accounts.js - onOK - bDownloadUnread " + this.m_aszUserList[i].bUnread); 
-                WebMailPrefAccess.Set("bool","yahoo.Account."+i+".bUseJunkMail",this.m_aszUserList[i].bJunkMail);
-                this.m_DebugLog.Write("Yahoo-Pref-Accounts.js - onOK - bUseJunkMail " + this.m_aszUserList[i].bJunkMail);
-                WebMailPrefAccess.Set("bool","yahoo.Account."+i+".bSaveCopy",this.m_aszUserList[i].bSaveSentItem);
-                this.m_DebugLog.Write("Yahoo-Pref-Accounts.js - onOK - bSaveCopy " + this.m_aszUserList[i].bSaveSentItem);
-                
-                var szFolders = "";
-                if (this.m_aszUserList[i].aszFolder)
+                //write prefs
+                var WebMailPrefAccess = new WebMailCommonPrefAccess();
+        
+                for (var i=0; i<this.m_aszUserList.length; i++)
                 {
-                    for (var j=0; j<this.m_aszUserList[i].aszFolder.length; j++)
-                    {
-                        szFolders += this.m_aszUserList[i].aszFolder[j];
-                        if (j!=this.m_aszUserList[i].aszFolder.length-1) szFolders += "\r";
-                    }
-                }
-                WebMailPrefAccess.Set("char","yahoo.Account."+i+".szFolders",szFolders);
-                this.m_DebugLog.Write("Yahoo-Pref-Accounts.js - onOK - szFolders " + szFolders);   
-            }
-            WebMailPrefAccess.Set("int","yahoo.Account.Num",this.m_aszUserList.length);
+                    WebMailPrefAccess.Set("char","yahoo.Account."+i+".user",this.m_aszUserList[i].szUser);
+                    this.m_DebugLog.Write("Yahoo-Pref-Accounts.js - onOK - user " + this.m_aszUserList[i].szUser);
+                    WebMailPrefAccess.Set("bool","yahoo.Account."+i+".bDownloadUnread",this.m_aszUserList[i].bUnread);
+                    this.m_DebugLog.Write("Yahoo-Pref-Accounts.js - onOK - bDownloadUnread " + this.m_aszUserList[i].bUnread); 
+                    WebMailPrefAccess.Set("bool","yahoo.Account."+i+".bUseJunkMail",this.m_aszUserList[i].bJunkMail);
+                    this.m_DebugLog.Write("Yahoo-Pref-Accounts.js - onOK - bUseJunkMail " + this.m_aszUserList[i].bJunkMail);
+                    WebMailPrefAccess.Set("bool","yahoo.Account."+i+".bSaveCopy",this.m_aszUserList[i].bSaveSentItem);
+                    this.m_DebugLog.Write("Yahoo-Pref-Accounts.js - onOK - bSaveCopy " + this.m_aszUserList[i].bSaveSentItem);
                     
-            window.close();
+                    var szFolders = "";
+                    if (this.m_aszUserList[i].aszFolder)
+                    {
+                        for (var j=0; j<this.m_aszUserList[i].aszFolder.length; j++)
+                        {
+                            szFolders += this.m_aszUserList[i].aszFolder[j];
+                            if (j!=this.m_aszUserList[i].aszFolder.length-1) szFolders += "\r";
+                        }
+                    }
+                    WebMailPrefAccess.Set("char","yahoo.Account."+i+".szFolders",szFolders);
+                    this.m_DebugLog.Write("Yahoo-Pref-Accounts.js - onOK - szFolders " + szFolders);   
+                }
+                WebMailPrefAccess.Set("int","yahoo.Account.Num",this.m_aszUserList.length);
+            }
             
             this.m_DebugLog.Write("Yahoo-Pref-Accounts : onOK - END");
         }
@@ -310,97 +304,23 @@ var gPrefAccounts =
         try
         {
             this.m_DebugLog.Write("Yahoo-Pref-Accounts : userAdd - START");
-                        
+                  
+            var list = document.getElementById("popupAccounts");    
             if (this.m_aszUserList.length > 0) 
-            {   
-                var list = document.getElementById("listUsers");
-                
+            {        
                 for(i =0 ; i< this.m_aszUserList.length; i++)
                 {
                     var szUserName = this.m_aszUserList[i].szUser;
-                        
-                    var newItem = document.createElement("richlistitem"); 
+                    var newItem = document.createElement("menuitem"); 
                     newItem.setAttribute("id", szUserName);
-                    newItem.setAttribute("class", "listItem");
-                    newItem.setAttribute("tabIndex", i);
-                    newItem.setAttribute("allowEvents", "true");
-                    newItem.setAttribute("selected","false"); 
-                    newItem.setAttribute("align", "center");
-                    
-                    //image
-                    var space = document.createElement("spacer")
-                    space.setAttribute("flex","1");
-                    var vBoxPerson = document.createElement("vbox");
-                    vBoxPerson.setAttribute("id", "boxPerson");
-                    vBoxPerson.appendChild(space);
-                    var image = document.createElement("image");  
-                    image.setAttribute("id","personImage");
-                    vBoxPerson.appendChild(image);
-                    var space1 = document.createElement("spacer")
-                    space1.setAttribute("flex","1");
-                    vBoxPerson.appendChild(space1);
-                    newItem.appendChild(vBoxPerson);
-                   
-                    //user name
-                    var vBoxUser = document.createElement("vbox");
-                    var aszUserName = szUserName.split("@");
-                    var labelUser = document.createElement("label");
-                    labelUser.setAttribute("value",aszUserName[0]); 
-                    labelUser.setAttribute("class","emailAddress");
-                    vBoxUser.appendChild(labelUser);
-                    var labelDomain = document.createElement("label");
-                    labelDomain.setAttribute("value",aszUserName[1]); 
-                    labelDomain.setAttribute("class","emailDomain");
-                    vBoxUser.appendChild(labelDomain);
-                    newItem.appendChild(vBoxUser);
-                    
+                    newItem.setAttribute("label", szUserName);
+                    newItem.setAttribute("class", "menuitem-iconic"); 
+                    newItem.setAttribute("src","chrome://yahoo/skin/person.png");
+                    newItem.setAttribute("oncommand","gPrefAccounts.userClick()"); 
                     list.appendChild(newItem);
                 }
             }
-            else //no users
-            {                               
-                var vBox = document.createElement("vbox");
-                vBox.setAttribute("align","center");
-                vBox.setAttribute("pack","center");
-                vBox.setAttribute("flex","1");
- 
-                //image
-                var space = document.createElement("spacer")
-                space.setAttribute("flex","1");
-                vBox.appendChild(space);
-                var image = document.createElement("image");  
-                image.setAttribute("id","imageError");
-                vBox.appendChild(image);
-                var space1 = document.createElement("spacer")
-                space1.setAttribute("flex","1");
-                vBox.appendChild(space1);
-                  
-                var strBundle = document.getElementById("stringsYahooWindow");
-                var szMSG = strBundle.getString("errorMSG");  
-                var aszMSG = szMSG.split(/\s/);
-                   
-                //message
-                for (var i=0; i<aszMSG.length; i++)
-                {
-                    var labelMSG = document.createElement("label");
-                    labelMSG.setAttribute("value",aszMSG[i]); 
-                    labelMSG.setAttribute("class","errorMSG");
-                    vBox.appendChild(labelMSG);
-                }
-                
-                var newItem = document.createElement("richlistitem"); 
-                newItem.setAttribute("id", "error");
-                newItem.setAttribute("class", "listError");
-                newItem.setAttribute("tabIndex",0);
-                newItem.setAttribute("allowEvents", "false");
-                newItem.setAttribute("selected","false"); 
-                newItem.setAttribute("align", "center");
-                newItem.appendChild(vBox);               
-                
-                var list = document.getElementById("listUsers");
-                list.appendChild(newItem);
-            }
-           
+            
             this.m_DebugLog.Write("Yahoo-Pref-Accounts : userAdd - END");
         }
         catch(err)
@@ -420,7 +340,7 @@ var gPrefAccounts =
         {
             this.m_DebugLog.Write("Yahoo-Pref-Accounts : userClick - START");
                         
-            var listView = document.getElementById("listUsers");   //click item
+            var listView = document.getElementById("menuAccounts");   //click item
             this.m_iIndex = listView.selectedIndex;
             this.m_DebugLog.Write("Yahoo-Pref-Accounts : userListDBClick - iIndex "+this.m_iIndex);
             
@@ -467,18 +387,6 @@ var gPrefAccounts =
                                           + e.lineNumber);
         }
     },
-    
-    
-    toolBarClick : function (iButton)
-    {
-        this.m_DebugLog.Write("Yahoo-Pref-Accounts : onToolBarClick - START " +iButton );
-        
-        document.getElementById("optionsDeck").selectedIndex = iButton;
-            
-        this.m_DebugLog.Write("Yahoo-Pref-Accounts : onToolBarClick - END");
-    },
-
-
 
 
 /**********************************************************************/

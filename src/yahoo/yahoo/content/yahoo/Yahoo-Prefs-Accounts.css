@@ -1,91 +1,9 @@
-#userList 
+#tabsAccount
 {
-    width : 15em;
-    border-right: 2px groove ThreeDFace;
+    margin-top:15px;
+    margin-left: 5px;
+    margin-right: 5px; 
 }
-
-
-#buttons
-{
-    border-top: 2px groove ThreeDFace;
-}
-
-.listItem
-{
-    padding: 4px 4px 4px 4px;
-    min-height: 25px !important;
-    border-bottom: 1px dotted #C0C0C0;
-}
-
-.listItem[selected="true"] 
-{
-    -moz-user-focus: normal;
-    background-image: url("chrome://mozapps/skin/shared/itemSelected.png");
-}
-
-#personImage
-{
-    list-style-image: url("chrome://yahoo/skin/person.png");
-}
-
-.emailAddress
-{
-    font-style: italic;
-	font-size: small;
-}
-
-
-.buttonBox 
-{
-    margin: 0px 0px 0px 0px !important;
-    border-bottom: 2px groove ThreeDFace;
-    background-color: -moz-Field;
-    color: -moz-FieldText;
-}
-
-.buttonBoxButton
-{
-    -moz-appearance: none;
-    border: 1px solid transparent;
-    background-color: transparent;
-    margin-left: 1px;
-    margin-right: 1px;
-    list-style-image: url("chrome://yahoo/skin/Yahoo-Prefs-Accounts.png")
-}
-
-.buttonBoxButton:hover, .buttonBoxButton:focus
-{
-    border: 1px solid;
-    -moz-border-left-colors: #98B4E2;
-    -moz-border-top-colors: #98B4E2;
-    -moz-border-right-colors: #98B4E2;
-    -moz-border-bottom-colors: #98B4E2;
-    background-color: #E0E8F6;
-}
-
-.buttonBoxButton[checked="true"]
-{
-    border: 1px solid;
-    -moz-border-left-colors: #316AC5;
-    -moz-border-top-colors: #316AC5;
-    -moz-border-right-colors: #316AC5;
-    -moz-border-bottom-colors: #316AC5;
-    background-color: #C1D2EE;
-}
-
-
-
-#radioPOP
-{   
-    -moz-image-region: rect(0px, 32px, 32px, 0px) 
-}
-
-
-#radioSMTP
-{
-    -moz-image-region: rect(0px, 64px, 32px, 32px) 
-}
-
 
 #labelFolders
 {
@@ -105,7 +23,7 @@
 #listFolders
 {
     height: 10em; 
-    width :10em;
+    width : 20em;
 }
 
 #customFolderImage
@@ -120,23 +38,15 @@
     margin-left: 10px; 
 }
 
-
-.listError
-{
-    padding-top: 4px;
-}
-
-
 #imageError
 {
     list-style-image: url("chrome://yahoo/skin/error.png");
 }
 
-.errorMSG
+#labelError
 {
     font-weight: bold;
 	font-size: medium;
     font-style: italic;
-    letter-spacing: 0.3ex;
     line-height: 2em;
 }
