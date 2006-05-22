@@ -221,7 +221,7 @@ headers.prototype =
                         if (!aszFilename)  
                             aszFilename= szContentDispo.match(/name="(.*?)"/);                         
                         
-                        if (aszFilename)//aszFilename[1]
+                        if (aszFilename)
                             szContent = this.decode(aszFilename[1]);
                     break;
                 };
@@ -304,9 +304,11 @@ headers.prototype =
         return szAddress;  
     },
     
-    
+
     decode : function (szValue)
     {
+        //szValue = "=?ISO-2022-JP?B?GyRCPCs4Sj5SMnAhSjcvRWchSxsoQi50eHQ=?=";
+        //szValue = "=?Shift_JIS?B?w73ELnR4dA==?=";
         this.m_Log.Write("Header.js - decode - START " + szValue);
         
         var szDecoded = szValue;
@@ -329,9 +331,34 @@ headers.prototype =
                 var oQP = new QuotedPrintable();
                 szDecoded = oQP.decode(aszEncoding[3]);
             }  
+            
+            this.m_Log.Write("Header.js - decode - " + szDecoded);
+
+            if (aszEncoding[1].search(/ISO-2022-JP/i)!=-1)
+            {
+                try
+                {
+                    //convert coding
+                    var Converter = Components.classes["@mozilla.org/intl/scriptableunicodeconverter"].
+                                        getService(Components.interfaces.nsIScriptableUnicodeConverter);
+    
+                    Converter.charset =  aszEncoding[1];
+                    var unicode =  Converter.ConvertToUnicode(szDecoded);
+                    this.m_Log.Write("Header.js - decode - unicode " + unicode);
+                
+                    Converter.charset = "Shift-JIS";
+                    szDecoded = Converter.ConvertFromUnicode(unicode);
+                    this.m_Log.Write("Header.js - decode - Shift-JIS "+szDecoded);
+                }
+                catch (ex)
+                {
+                    this.m_Log.Write("Header.js - decode - unicode err");
+                
+                }
+            }
         }
         
-        this.m_Log.Write("Header.js - decode - END " + szDecoded);
+        this.m_Log.Write("Header.js - decode - END ");
         return szDecoded;       
     },
 }
