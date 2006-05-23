@@ -34,6 +34,7 @@ const patternHotmailPOPQS = /g_QS="(.*?)"/i;
 
 /*********BETA*****************/
 const patternHotmailPOPJSRefresh = /<html><head><script.*?>.*?\.location\.replace.*?\("(.*?)"\).*?<\/script>.*?<\/html>/i;
+const patternHotmailPOPFrame = /<frame.*?name="main".*?src="(.*?)".*?>/i;
 const patternHotmailPOPLogOut = /<.*?"(.*?logout.aspx.*?)".*?>/gi;
 const patternHotmailPOPInbox = /<a href="(.*?mail.aspx\?Control=Inbox)".*?>/i;
 const patternHotmailPOPJunkFolderID = /<a href="(.*?mail.aspx\?Control=Inbox&FolderID.*?5)">/i;
@@ -74,7 +75,7 @@ const patternHotmailPOPSubject = /<m:subject>(.*?)<\/m:subject>/i;
 const patternHotmailPOPDate = /<m:date>(.*?)T(.*?)<\/m:date>/i;
 /*******************************************************************************/
 
-
+const userAgent ="Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.0.3) Gecko/20060426 Firefox/1.5.0.3";
 
 /************************************  Hotmail ********************************/
 
