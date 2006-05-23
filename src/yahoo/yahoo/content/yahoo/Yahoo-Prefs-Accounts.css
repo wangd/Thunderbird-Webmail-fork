@@ -26,6 +26,21 @@
     width : 20em;
 }
 
+
+.listItem
+{
+    padding: 4px 8px 4px 4px;
+    min-height: 35px !important;
+    border-bottom: 1px dotted #C0C0C0;
+}
+
+
+.listItem[selected="true"] 
+{
+    -moz-user-focus: normal;
+    background-image: url("chrome://mozapps/skin/shared/itemSelected.png");
+}
+
 #customFolderImage
 {
     list-style-image: url("chrome://yahoo/skin/custom.png");
