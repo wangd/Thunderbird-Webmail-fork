@@ -202,6 +202,11 @@
      -moz-image-region: rect(0px, 704px, 32px, 672px)
 }
 
+.flag[value="21"]/*AK*/
+{
+     -moz-image-region: rect(0px, 736px, 32px,704px)
+}
+
 
 #YahooHomePage
 {
