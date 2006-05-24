@@ -1,8 +1,8 @@
-<!ENTITY TitleAdd "Add">
-<!ENTITY folderName.label "Folder Name">
-<!ENTITY folderName.accessKey "F">
-<!ENTITY folders.label "Add download folder">
-<!ENTITY Ok.label "Ok">
+<!ENTITY TitleAdd "Lisää">
+<!ENTITY folderName.label "Kansion nimi">
+<!ENTITY folderName.accessKey "K">
+<!ENTITY folders.label "Lisää latauskansio">
+<!ENTITY Ok.label "OK">
 <!ENTITY Ok.accessKey "O">
-<!ENTITY Cancel.label "Cancel">
-<!ENTITY Cancel.accessKey "C">
+<!ENTITY Cancel.label "Peruuta">
+<!ENTITY Cancel.accessKey "P">

@@ -1,3 +1,3 @@
-<!ENTITY Window.szTitle "Yahoo Options">
-<!ENTITY Accounts.Panel.szTitle "Accounts">
-<!ENTITY Domains.Panel.szTitle "Domains">
+<!ENTITY Window.szTitle "Yahoo - Asetukset">
+<!ENTITY Accounts.Panel.szTitle "Tilit">
+<!ENTITY Domains.Panel.szTitle "Verkkotunnukset">

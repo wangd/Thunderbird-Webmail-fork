@@ -1,16 +1,16 @@
 <!ENTITY POP.Panel.szTitle "POP">
 <!ENTITY SMTP.Panel.szTitle "SMTP">
-<!ENTITY DownloadUnread.Label "Download unread emails only">
+<!ENTITY DownloadUnread.Label "Lataa vain lukemattomat viestit">
 <!ENTITY DownloadUnread.AccessKey "u">
-<!ENTITY JunkMail.Label "Download JunkMail">
-<!ENTITY JunkMail.AccessKey "J">
-<!ENTITY Add.Label "Add...">
-<!ENTITY Add.AccessKey "A">
-<!ENTITY Remove.Label "Remove">
-<!ENTITY Remove.AccessKey "R">
-<!ENTITY Folders.Label "Download folders">
-<!ENTITY SaveSentItems.Label "Save copy in sent items.">
-<!ENTITY SaveSentItems.AccessKey "s">
-<!ENTITY AddDomain.Label "Add Domain..">
-<!ENTITY AddDomain.AccessKey "D">
-<!ENTITY error.Label "No Yahoo Accounts Found"> 
+<!ENTITY JunkMail.Label "Lataa roskaposti">
+<!ENTITY JunkMail.AccessKey "r">
+<!ENTITY Add.Label "Lisää...">
+<!ENTITY Add.AccessKey "L">
+<!ENTITY Remove.Label "Poista">
+<!ENTITY Remove.AccessKey "P">
+<!ENTITY Folders.Label "Lataa kansioista">
+<!ENTITY SaveSentItems.Label "Tallennna kopio lähettetyihin.">
+<!ENTITY SaveSentItems.AccessKey "k">
+<!ENTITY AddDomain.Label "Lisää verkkotunnus...">
+<!ENTITY AddDomain.AccessKey "v">
+<!ENTITY error.Label "Yahoo-tilejä ei löytynyt">
