@@ -5,23 +5,21 @@
 <!ENTITY Pop.AccessKey "O">
 <!ENTITY POP.Default.Label "predefinita 110">
 <!ENTITY Note.Label "Le porte sotto la 1024 potrebbero essere bloccate dal S.O.">
-<!ENTITY Restart.Label "Riavviare Thunderbird per rendere effettive le modifiche.">
+<!ENTITY Restart.Label "Riavviare Thunderbird per rendere effettive le modifiche">
 <!ENTITY SMTP.Label "SMTP">
 <!ENTITY SMTP.AccessKey "T">
 <!ENTITY SMTP.Default.Label "predefinita 25">
 <!ENTITY IMAP.Label "IMAP">
 <!ENTITY IMAP.AccessKey "M">
 <!ENTITY IMAP.Default.Label "predefinita 143">
-<!ENTITY Enable.POP.Label "Attiva il server POP.">
+<!ENTITY Enable.POP.Label "Attiva il server POP">
 <!ENTITY Enable.POP.AccessKey "r">
-<!ENTITY Enable.SMTP.Label "Attiva il server SMTP.">
+<!ENTITY Enable.SMTP.Label "Attiva il server SMTP">
 <!ENTITY Enable.SMTP.AccessKey "v">
-<!ENTITY Enable.IMAP.Label "Attiva il server IMAP.">
+<!ENTITY Enable.IMAP.Label "Attiva il server IMAP">
 <!ENTITY Enable.IMAP.AccessKey "e">
 <!ENTITY Enable.Label "Attiva">
 <!ENTITY Enable.AccessKey "A">
 <!ENTITY Status.Label "Stato">
 <!ENTITY Status.AccessKey "S">
 <!ENTITY StatusBox.size "width: 6em;">
-
-

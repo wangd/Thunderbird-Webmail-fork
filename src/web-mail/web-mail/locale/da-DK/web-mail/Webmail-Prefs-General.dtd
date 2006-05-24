@@ -1,0 +1,4 @@
+<!ENTITY AccountWizard.Label "Tilføj WebMail til Konto-guiden">
+<!ENTITY AccountWizard.AccessKey "a">
+<!ENTITY AccountWizardWarning.Label "Kræver skriveadgang til programmets mappe.">
+<!ENTITY Restart.Label "En genstart af Thunderbird er påkrævet før ændringerne træder i kraft.">

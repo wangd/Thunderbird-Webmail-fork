@@ -1,0 +1,10 @@
+<!ENTITY HotmailAbout.Title "Hotmail - Om">
+<!ENTITY HotmailAbout.ExtName "Hotmail">
+<!ENTITY HotmailAbout.ExtVersion "version 0.10.5">
+<!ENTITY HotmailAbout.ExtDescription "Hotmail-komponent for Web-Mail udvidelsen.">
+<!ENTITY HotmailAbout.ExtCreaterTitle "Skabt af:">
+<!ENTITY HotmailAbout.ExtCreator "ComodoDragon">
+<!ENTITY HotmailAbout.ExtHome "Hjemmeside">
+<!ENTITY HotmailAbout.ExtHomeURL "http://webmail.mozdev.org/">
+<!ENTITY HotmailAbout.ExtButton "Luk">
+<!ENTITY HotmailAbout.ExtContributorTitle "Bidragsydere:">
