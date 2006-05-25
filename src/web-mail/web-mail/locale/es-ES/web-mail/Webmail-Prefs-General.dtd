@@ -1,4 +1,4 @@
-<!ENTITY AccountWizard.AccessKey "A">
 <!ENTITY AccountWizard.Label "Añadir Webmail al asistente de cuentas">
+<!ENTITY AccountWizard.AccessKey "A">
 <!ENTITY AccountWizardWarning.Label "Requiere permiso de escritura a la carpeta del programa.">
 <!ENTITY Restart.Label "Es necesario reiniciar Thunderbird para aplicar los cambios.">

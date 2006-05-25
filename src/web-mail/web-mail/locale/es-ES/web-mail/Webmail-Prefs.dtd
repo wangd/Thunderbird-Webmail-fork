@@ -1,6 +1,6 @@
-<!ENTITY Domains.Panel.szTitle "Dominios">
-<!ENTITY General.Panel.szTitle "General">
-<!ENTITY Logging.Panel.szTitle "Registro">
 <!ENTITY Options.szTitle "Opciones Web Mail">
 <!ENTITY Servers.Panel.szTitle "Servidor">
+<!ENTITY Domains.Panel.szTitle "Dominios">
+<!ENTITY Logging.Panel.szTitle "Registro">
+<!ENTITY General.Panel.szTitle "General">
 <!ENTITY Window.size "width: 46em; height: 37em">

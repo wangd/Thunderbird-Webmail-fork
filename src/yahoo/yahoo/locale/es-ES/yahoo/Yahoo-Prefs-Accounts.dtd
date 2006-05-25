@@ -1,16 +1,16 @@
 <!ENTITY POP.Panel.szTitle "POP">
 <!ENTITY SMTP.Panel.szTitle "SMTP">
-<!ENTITY DownloadUnread.Label "Download unread emails only">
-<!ENTITY DownloadUnread.AccessKey "u">
-<!ENTITY JunkMail.Label "Download JunkMail">
+<!ENTITY DownloadUnread.Label "Descargar sólo los mensajes no leídos">
+<!ENTITY DownloadUnread.AccessKey "s">
+<!ENTITY JunkMail.Label "Descargar correo basura">
 <!ENTITY JunkMail.AccessKey "J">
-<!ENTITY Add.Label "Add...">
+<!ENTITY Add.Label "Añadir...">
 <!ENTITY Add.AccessKey "A">
-<!ENTITY Remove.Label "Remove">
-<!ENTITY Remove.AccessKey "R">
-<!ENTITY Folders.Label "Download folders">
-<!ENTITY SaveSentItems.Label "Save copy in sent items.">
-<!ENTITY SaveSentItems.AccessKey "s">
-<!ENTITY AddDomain.Label "Add Domain..">
+<!ENTITY Remove.Label "Borrar">
+<!ENTITY Remove.AccessKey "B">
+<!ENTITY Folders.Label "Descargar carpetas">
+<!ENTITY SaveSentItems.Label "Guardar una copia en la carpeta enviados">
+<!ENTITY SaveSentItems.AccessKey "G">
+<!ENTITY AddDomain.Label "Añadir dominio...">
 <!ENTITY AddDomain.AccessKey "D">
-<!ENTITY error.Label "No Yahoo Accounts Found"> 
+<!ENTITY error.Label "No se han encontrado cuentas yahoo">
