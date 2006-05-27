@@ -6,7 +6,7 @@
 <!ENTITY LogFile.AccessKey "l">
 <!ENTITY Location.Label "Местоположение">
 <!ENTITY Location.AccessKey "O">
-<!ENTITY Note.Label "В журнал будут включены имена пароли.">
+<!ENTITY Note.Label "В журнал будут включены имена и пароли.">
 <!ENTITY Restart.Label "Чтобы изменения вступили в силу необходимо перезапустить Thunderbird.">
 <!ENTITY Button.Label "Просмотр...">
 <!ENTITY Button.AccessKey "B">

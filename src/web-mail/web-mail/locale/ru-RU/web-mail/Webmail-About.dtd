@@ -1,4 +1,4 @@
-<!ENTITY WebmailAbout.Title "Справка о WebMail">
+<!ENTITY WebmailAbout.Title "о WebMail">
 <!ENTITY WebmailAbout.ExtName "Web Mail">
 <!ENTITY WebmailAbout.ExtVersion "версия 1.0.6">
 <!ENTITY WebmailAbout.ExtDescription "Доступ к учётной записи WebMail через Thunderbird.">
@@ -7,4 +7,4 @@
 <!ENTITY WebmailAbout.ExtHome "Сайт проекта">
 <!ENTITY WebmailAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY WebmailAbout.ExtButton "Закрыть">
-<!ENTITY WebmailAbout.ExtContributorTitle "Contributors:">
+<!ENTITY WebmailAbout.ExtContributorTitle "Участники:">
