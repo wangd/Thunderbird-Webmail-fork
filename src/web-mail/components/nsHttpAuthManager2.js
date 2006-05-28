@@ -14,7 +14,7 @@ function nsHttpAuthManager()
 nsHttpAuthManager.prototype =
 {
 
-    addToken : function (sszUserName, zDomain, szHeader, szURI, szPassword)
+    addToken : function (szUserName, szDomain, szHeader, szURI, szPassword)
     {
         try
         {
@@ -110,7 +110,7 @@ nsHttpAuthManager.prototype =
                 var usernameRegExp = new RegExp(temp.getUserName(),"i");
                 this.m_Log.Write("nsHttpAuthManager.js - findToken - usernameRegExp " +usernameRegExp);
                 
-                if (szDomain.search(regexp)!=-1 && szUserName.search(usernameRegExp)!=-1)
+                if (szDomain.search(domainRegExp)!=-1 && szUserName.search(usernameRegExp)!=-1)
                 { 
                     this.m_Log.Write("nsHttpAuthManager.js - findToken - found domain"); 
                     szToken = temp.getToken();
