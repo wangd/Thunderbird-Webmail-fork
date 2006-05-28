@@ -430,7 +430,7 @@ HttpComms.prototype =
                     }
                 }
                 else  //other
-                    MultiStream.appendStream(this.inputStream(oTemp.szValue));    
+                    MultiStream.appendStream(this.inputStream(this.m_aFormData[0].szValue));    
                     
                 var uploadChannel = channel.QueryInterface(Components.interfaces.nsIUploadChannel);
                 uploadChannel.setUploadStream(MultiStream , szContentType , -1);  
