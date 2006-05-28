@@ -5,7 +5,7 @@ function HotmailSMTPWebDav(oResponseStream, oLog)
         var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/comms.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
                     
         this.m_Log = oLog; 
         this.m_Log.Write("HotmailWebDav.js - Constructor - START");   
@@ -14,7 +14,7 @@ function HotmailSMTPWebDav(oResponseStream, oLog)
         this.m_szUserName = null;
         this.m_szPassWord = null;
         this.m_oResponseStream = oResponseStream;       
-        this.m_HttpComms = new Comms(this,this.m_Log); 
+        this.m_HttpComms = new HttpComms(); 
         this.m_HttpComms.setHandleHttpAuth(true);
         
         this.m_iStage=0; 
@@ -24,15 +24,9 @@ function HotmailSMTPWebDav(oResponseStream, oLog)
         this.m_IOS = this.m_IOS.getService(Components.interfaces.nsIIOService);
         
         this.m_bJunkMail = false;
-        
-        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"];
-        this.m_SessionManager = this.m_SessionManager.getService();
-        this.m_SessionManager.QueryInterface(Components.interfaces.nsISessionManager); 
-        this.m_SessionData = null;   
-                
+      
         //do i reuse the session
         var oPref = new Object();
-        oPref.Value = null;
         var  WebMailPrefAccess = new WebMailCommonPrefAccess();
         if (WebMailPrefAccess.Get("bool","hotmail.bReUseSession",oPref))
             this.m_bReUseSession=oPref.Value;
@@ -40,8 +34,6 @@ function HotmailSMTPWebDav(oResponseStream, oLog)
             this.m_bReUseSession=true; 
         
         //do i save copy
-        var oPref = {Value:null};
-        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
         if (WebMailPrefAccess.Get("bool","hotmail.bSaveCopy",oPref))
             this.m_bSaveCopy=oPref.Value;
         else
@@ -77,26 +69,13 @@ HotmailSMTPWebDav.prototype =
             
             if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
             
-            this.m_HttpComms.clean();
-            
-            this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
-            if (this.m_SessionData && this.m_bReUseSession)
-            {
-                this.m_Log.Write("HotmailWD-SMTP.js - logIN - Session Data found");
-                if (this.m_SessionData.oCookieManager)
-                    this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
-                
-                if (this.m_SessionData.oHttpAuthManager)
-                    this.m_HttpComms.setHttpAuthManager(this.m_SessionData.oHttpAuthManager); 
-            }
-            
             this.m_HttpComms.setUserName(this.m_szUserName);
             this.m_HttpComms.setPassword(this.m_szPassWord);
-            this.m_HttpComms.setContentType(-1);
+            this.m_HttpComms.setContentType("text/xml");
             this.m_HttpComms.setURI("http://oe.hotmail.com/svcs/hotmail/httpmail.asp");
             this.m_HttpComms.setRequestMethod("PROPFIND");
-            this.m_HttpComms.addData(HotmailSMTPSchema,"text/xml");
-            var bResult = this.m_HttpComms.send(this.loginOnloadHandler);                             
+            this.m_HttpComms.addData(HotmailSMTPSchema);
+            var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);                             
             if (!bResult) throw new Error("httpConnection returned false");
                         
             this.m_Log.Write("HotmailWD-SMTP.js - logIN - END");    
@@ -128,8 +107,6 @@ HotmailSMTPWebDav.prototype =
            
             if (httpChannel.responseStatus != 200 && httpChannel.responseStatus != 207 ) 
                 throw new Error("return status " + httpChannel.responseStatus);
-            
-            mainObject.m_HttpComms.clean();
             
             mainObject.m_iStage++;
             mainObject.m_Log.Write("HotmailWD-SMTP.js - loginOnloadHandler - get url - start");
@@ -176,13 +153,12 @@ HotmailSMTPWebDav.prototype =
             szMsg += szEmail.match(/(^[\s\S]*)\r?\n\./)[1];//removes SMTP termiator
             szMsg +="\r\n\r\n";
             
-            this.m_HttpComms.clean();
-            this.m_HttpComms.setContentType(-1);
+            this.m_HttpComms.setContentType("message/rfc821");
             this.m_HttpComms.setURI(this.m_szSendUri);
             this.m_HttpComms.setRequestMethod("POST");
             this.m_HttpComms.addRequestHeader("SAVEINSENT", this.m_bSaveCopy?"t":"f", false); 
-            this.m_HttpComms.addData(szMsg,"message/rfc821");
-            var bResult = this.m_HttpComms.send(this.composerOnloadHandler);  
+            this.m_HttpComms.addData(szMsg);
+            var bResult = this.m_HttpComms.send(this.composerOnloadHandler,this);  
             if (!bResult) throw new Error("httpConnection returned false");
             
             this.m_Log.Write("HotmailWD-SMTP.js - rawMSG - END");    
@@ -222,16 +198,12 @@ HotmailSMTPWebDav.prototype =
             }
             else
             {
-                if (!mainObject.m_SessionData)
+                if (!mainObject.m_bReUseSession)
                 {
-                    mainObject.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
-                    mainObject.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
-                    mainObject.m_SessionData.szUserName = mainObject.m_szUserName;  
-                } 
-                mainObject.m_SessionData.oComponentData = null;
-                mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
-                mainObject.m_SessionData.oHttpAuthManager = mainObject.m_HttpComms.getHttpAuthManager();
-                mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);
+                    mainObject.m_Log.Write("nsYahoo.js - logIN - deleting Session Data");
+                    mainObject.m_HttpComms.deleteSessionData(); 
+                    mainObject.m_HttpComms.deleteAllElements(mainObject.m_szUserName);
+                }
                 
                 mainObject.serverComms("250 OK\r\n");       
             }

@@ -5,7 +5,7 @@ function HotmailSMTPScreenRipper(oResponseStream, oLog)
         var scriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/comms.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Email.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
                
@@ -16,14 +16,14 @@ function HotmailSMTPScreenRipper(oResponseStream, oLog)
         this.m_szUserName = null;   
         this.m_szPassWord =null; 
         this.m_oResponseStream = oResponseStream;  
-        this.m_HttpComms = new Comms(this,this.m_Log);   
+        this.m_HttpComms = new HttpComms();   
         this.m_szUM = null;
         this.m_szLocationURI = null;
         this.m_szHomeURI = null;
         this.m_szComposer = null;
         this.aszTo = null;
         this.szFrom = null;
-        this.m_Email = new email(this.m_Log);
+        this.m_Email = new email("");
         this.m_Email.decodeBody(true);
         this.m_iStage = 0;  
         this.m_bAttHandled = false;
@@ -31,10 +31,8 @@ function HotmailSMTPScreenRipper(oResponseStream, oLog)
         this.m_iAttUploaded = 1;
         this.m_szImageVerForm = null;
          
-        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"];
-        this.m_SessionManager = this.m_SessionManager.getService();
-        this.m_SessionManager.QueryInterface(Components.interfaces.nsISessionManager); 
-        this.m_SessionData = null;
+        this.m_ComponentManager = Components.classes["@mozilla.org/nsComponentData2;1"];
+        this.m_ComponentManager = this.m_ComponentManager.getService(Components.interfaces.nsIComponentData2);
         
         this.m_bReEntry = false;
           
@@ -92,37 +90,26 @@ HotmailSMTPScreenRipper.prototype =
             if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
             
             this.m_iStage= 0;
-            this.m_HttpComms.clean();
-            this.m_HttpComms.setContentType(-1);
-             
-             this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
-            if (this.m_SessionData && this.m_bReUseSession)
-            {
-                this.m_Log.Write("nsHotmail.js - logIN - Session Data found"); 
-                if (this.m_SessionData.oComponentData)
-                    this.m_szHomeURI = this.m_SessionData.oComponentData.findElement("szHomeURI");
+            this.m_HttpComms.setURI("http://www.hotmail.com");
+            
+            //get session data
+            if (this.m_bReUseSession)
+            { 
+                this.m_Log.Write("Hotmail-SR-BETAR - logIN - Getting Session Data");           
+                this.m_szHomeURI = this.m_ComponentManager.findElement(this.m_szUserName, "szHomeURI");
+                this.m_Log.Write("Hotmail-SR-BETAR - logIN - szHomeURI " +this.m_szHomeURI);    
+                if (this.m_szHomeURI)
+                {
+                    this.m_Log.Write("Hotmail-SR-BETAR - logIN - Session Data Found"); 
+                    this.m_iStage =3;
+                    this.m_bReEntry = true;
+                    this.m_HttpComms.setURI(this.m_szHomeURI);
+                }
             }
             
-            if (this.m_szHomeURI)
-            {
-                this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
-                this.m_Log.Write("nsHotmail" +this.m_szHomeURI);    
-            
-                //get home page
-                this.m_iStage =3;
-                this.m_bReEntry = true;
-                this.m_HttpComms.setURI(this.m_szHomeURI);
-                this.m_HttpComms.setRequestMethod("GET");
-                var bResult = this.m_HttpComms.send(this.loginOnloadHandler);                             
-                if (!bResult) throw new Error("httpConnection returned false");
-            }
-            else
-            {    
-                this.m_HttpComms.setURI("http://www.hotmail.com");
-                this.m_HttpComms.setRequestMethod("GET");
-                var bResult = this.m_HttpComms.send(this.loginOnloadHandler);  
-                if (!bResult) throw new Error("httpConnection returned false");        
-            }
+            this.m_HttpComms.setRequestMethod("GET");
+            var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);  
+            if (!bResult) throw new Error("httpConnection returned false");        
                        
             this.m_Log.Write("Hotmail-SR-SMTP - logIN - END");    
             return true;
@@ -152,9 +139,6 @@ HotmailSMTPScreenRipper.prototype =
             //if this fails we've gone somewhere new
             if (httpChannel.responseStatus != 200 ) 
                 throw new Error("return status " + httpChannel.responseStatus);
-  
-            mainObject.m_HttpComms.clean();
-            mainObject.m_HttpComms.setContentType(0);
              
             //page code                                
             switch (mainObject.m_iStage)
@@ -183,7 +167,7 @@ HotmailSMTPScreenRipper.prototype =
                     }
                     
                     mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);   
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);   
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
@@ -256,7 +240,7 @@ HotmailSMTPScreenRipper.prototype =
                     mainObject.m_HttpComms.setURI(szURI);                 
                     
                     mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);                   
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler,mainObject);                   
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
@@ -295,7 +279,7 @@ HotmailSMTPScreenRipper.prototype =
                         mainObject.m_HttpComms.setRequestMethod("GET");
                     } 
            
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);   
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);   
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
@@ -309,7 +293,7 @@ HotmailSMTPScreenRipper.prototype =
                             mainObject.m_iStage =0;
                             mainObject.m_HttpComms.setURI("http://www.hotmail.com");
                             mainObject.m_HttpComms.setRequestMethod("GET");
-                            var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);                             
+                            var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);                             
                             if (!bResult) throw new Error("httpConnection returned false");
                             return;
                         }
@@ -365,11 +349,10 @@ HotmailSMTPScreenRipper.prototype =
             this.m_iAttUploaded = 0;
         
             this.m_iStage=0;
-            this.m_HttpComms.clean();
             var szUri = this.m_szLocationURI + this.m_szComposer + this.m_szUM;
             this.m_HttpComms.setURI(szUri);
             this.m_HttpComms.setRequestMethod("GET");
-            var bResult = this.m_HttpComms.send(this.composerOnloadHandler);      
+            var bResult = this.m_HttpComms.send(this.composerOnloadHandler, this);      
             if (!bResult) throw new Error("httpConnection returned false");
             
             this.m_Log.Write("Hotmail-SR-SMTP.js - rawMSG - END"); 
@@ -402,9 +385,7 @@ HotmailSMTPScreenRipper.prototype =
            
             //if this fails we've gone somewhere new
             if (httpChannel.responseStatus != 200) 
-                mainObject.serverComms("502 Error Sending Email\r\n");  
-             
-            mainObject.m_HttpComms.clean();
+                mainObject.serverComms("502 Error Sending Email\r\n");
                         
             if (mainObject.m_Email.attachments.length>0 && !mainObject.m_bAttHandled)
                 mainObject.m_iStage = 2;
@@ -487,7 +468,7 @@ HotmailSMTPScreenRipper.prototype =
                     }
                     
                     mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);      
+                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler, mainObject);      
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage = 1;
                 break;
@@ -496,19 +477,19 @@ HotmailSMTPScreenRipper.prototype =
                     if (szResponse.search(patternHotmailAD)!=-1)
                     {
                         mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - MSG OK");
-                        if (!mainObject.m_SessionData)
-                        {
-                            mainObject.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
-                            mainObject.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
-                            mainObject.m_SessionData.szUserName = mainObject.m_szUserName;
-                            
-                            var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
-                            componentData.QueryInterface(Components.interfaces.nsIComponentData);
-                            mainObject.m_SessionData.oComponentData = componentData;
+                        
+                        if (mainObject.m_bReUseSession)
+                        { 
+                            mainObject.m_Log.Write("Hotmail-SR- logIN - Setting Session Data");           
+                            mainObject.m_ComponentManager.addElement(mainObject.m_szUserName, "szHomeURI", mainObject.m_szHomeURI);
+                            mainObject.m_Log.Write("nsYahoo.js - logIN - szHomeURI" + mainObject.m_szHomeURI);    
                         }
-                        mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
-                        mainObject.m_SessionData.oComponentData.addElement("szHomeURI",mainObject.m_szHomeURI);
-                        mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);
+                        else
+                        {
+                            mainObject.m_Log.Write("Hotmail-SR- logIN - deleting Session Data");
+                            mainObject.m_HttpComms.deleteSessionData(); 
+                            mainObject.m_HttpComms.deleteAllElements(mainObject.m_szUserName);
+                        }
                         
                         mainObject.serverComms("250 OK\r\n");    
                     }
@@ -526,12 +507,11 @@ HotmailSMTPScreenRipper.prototype =
                         //get image
                         var szImageUri = szResponse.match(patternHotmailSpamImage)[1];
                         mainObject.m_Log.Write("Hotmail-SR-SMTP - composerOnloadHandler - image " + szImageUri);
-                     
-                        mainObject.m_HttpComms.setContentType(0);
+                        
                         mainObject.m_HttpComms.setURI(szBase + szImageUri);
                         mainObject.m_HttpComms.setRequestMethod("GET");
                         mainObject.m_iStage = 4;
-                        var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);  
+                        var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler, mainObject);  
                         if (!bResult) throw new Error("httpConnection returned false");                        
                     }
                     else
@@ -576,7 +556,7 @@ HotmailSMTPScreenRipper.prototype =
                                         
                     mainObject.m_HttpComms.addValuePair("body","");
                     
-                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);      
+                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler, mainObject);      
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_bAttHandled = true;
                     mainObject.m_iStage = 3;
@@ -638,10 +618,10 @@ HotmailSMTPScreenRipper.prototype =
                             mainObject.m_HttpComms.addValuePair(szName,szValue);
                     } 
                     mainObject.m_iAttUploaded++;   
-                    mainObject.m_HttpComms.setContentType(1);
+                    mainObject.m_HttpComms.setContentType("multipart/form-data");
                     mainObject.m_HttpComms.setURI(szAction);
                     mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);  
+                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler, mainObject);  
                     if (!bResult) throw new Error("httpConnection returned false"); 
                 break;
                 
@@ -683,10 +663,10 @@ HotmailSMTPScreenRipper.prototype =
                     mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - szFormAction " + szActionUrl);
                     
                     //send data
-                    mainObject.m_HttpComms.setContentType(1);
+                    mainObject.m_HttpComms.setContentType("multipart/form-data");
                     mainObject.m_HttpComms.setURI(szActionUrl);
                     mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);  
+                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler, mainObject);  
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage = 1;
                 break;

@@ -5,7 +5,7 @@ function HotmailScreenRipperBETA(oResponseStream, oLog)
         var scriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/comms.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-MSG.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         
@@ -16,7 +16,7 @@ function HotmailScreenRipperBETA(oResponseStream, oLog)
         this.m_szUserName = null;   
         this.m_szPassWord = null; 
         this.m_oResponseStream = oResponseStream;  
-        this.m_HttpComms = new Comms(this,this.m_Log);   
+        this.m_HttpComms = new HttpComms();   
         this.m_szMailboxURI = null;
         this.m_szLocationURI = null;
         this.m_szJunkFolderURI = null;
@@ -27,12 +27,10 @@ function HotmailScreenRipperBETA(oResponseStream, oLog)
         this.m_iTotalSize = 0; 
         this.m_iStage = 0;  
         this.m_bJunkMail = false;
-       
-        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"];
-        this.m_SessionManager = this.m_SessionManager.getService();
-        this.m_SessionManager.QueryInterface(Components.interfaces.nsISessionManager); 
-        this.m_SessionData = null;
         
+        this.m_ComponentManager = Components.classes["@mozilla.org/nsComponentData2;1"];
+        this.m_ComponentManager = this.m_ComponentManager.getService(Components.interfaces.nsIComponentData2);
+
         this.m_bReEntry = false;
         
         //do i reuse the session
@@ -93,37 +91,27 @@ HotmailScreenRipperBETA.prototype =
                      
             //get hotmail.com webpage
             this.m_iStage= 0;
-            this.m_HttpComms.clean();
-            this.m_HttpComms.setContentType(-1);
-             
-            this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
-            if (this.m_SessionData && this.m_bReUseSession)
-            {
-                this.m_Log.Write("nsHotmail.js - logIN - Session Data found"); 
-                if (this.m_SessionData.oComponentData)
-                    this.m_szHomeURI = this.m_SessionData.oComponentData.findElement("szHomeURI");
+            this.m_HttpComms.setURI("http://www.hotmail.com");
+                      
+            //get session data
+            if (this.m_bReUseSession)
+            { 
+                this.m_Log.Write("Hotmail-SR-BETAR - logIN - Getting Session Data");           
+                this.m_szHomeURI = this.m_ComponentManager.findElement(this.m_szUserName, "szHomeURI");
+                this.m_Log.Write("Hotmail-SR-BETAR - logIN - szHomeURI " +this.m_szHomeURI);    
+                if (this.m_szHomeURI)
+                {
+                    this.m_Log.Write("Hotmail-SR-BETAR - logIN - Session Data Found"); 
+                    this.m_iStage =3;
+                    this.m_bReEntry = true;
+                    this.m_HttpComms.setURI(this.m_szHomeURI);
+                }
             }
-            
-            if (this.m_szHomeURI)
-            {
-                this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
-                this.m_Log.Write("nsHotmail" +this.m_szHomeURI);    
-            
-                //get home page
-                this.m_iStage =3;
-                this.m_bReEntry = true;
-                this.m_HttpComms.setURI(this.m_szHomeURI);
-                this.m_HttpComms.setRequestMethod("GET");
-                var bResult = this.m_HttpComms.send(this.loginOnloadHandler);                             
-                if (!bResult) throw new Error("httpConnection returned false");
-            }
-            else
-            {    
-                this.m_HttpComms.setURI("http://www.hotmail.com");
-                this.m_HttpComms.setRequestMethod("GET");
-                var bResult = this.m_HttpComms.send(this.loginOnloadHandler);  
-                if (!bResult) throw new Error("httpConnection returned false");        
-            }
+                       
+            this.m_HttpComms.setRequestMethod("GET");
+            var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);  
+            if (!bResult) throw new Error("httpConnection returned false");        
+
               
             this.m_Log.Write("Hotmail-SR-BETAR - logIN - END");    
             return true;
@@ -153,9 +141,6 @@ HotmailScreenRipperBETA.prototype =
             //if this fails we've gone somewhere new
             if (httpChannel.responseStatus != 200 ) 
                 throw new Error("return status " + httpChannel.responseStatus);
-  
-            mainObject.m_HttpComms.clean();
-            mainObject.m_HttpComms.setContentType(0);
             
             //check for java refresh
             var aRefresh = szResponse.match(patternHotmailPOPJSRefresh);
@@ -166,7 +151,7 @@ HotmailScreenRipperBETA.prototype =
                 mainObject.m_HttpComms.setURI(aRefresh[1]);
                 mainObject.m_HttpComms.setRequestMethod("GET");
                 
-                var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);   
+                var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);   
                 if (!bResult) throw new Error("httpConnection returned false");
                 return;   
             }
@@ -199,7 +184,7 @@ HotmailScreenRipperBETA.prototype =
                     }
                     
                     mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);   
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);   
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
@@ -272,7 +257,7 @@ HotmailScreenRipperBETA.prototype =
                     mainObject.m_HttpComms.setURI(szURI);                    
                     
                     mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);                   
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);                   
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
@@ -311,7 +296,7 @@ HotmailScreenRipperBETA.prototype =
                         mainObject.m_HttpComms.setRequestMethod("GET");
                     } 
            
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);   
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);   
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
@@ -330,7 +315,7 @@ HotmailScreenRipperBETA.prototype =
                             mainObject.m_iStage =0;
                             mainObject.m_HttpComms.setURI("http://www.hotmail.com");
                             mainObject.m_HttpComms.setRequestMethod("GET");
-                            var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);                             
+                            var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);                             
                             if (!bResult) throw new Error("httpConnection returned false");
                             return;
                         }
@@ -384,11 +369,10 @@ HotmailScreenRipperBETA.prototype =
             this.m_Log.Write("Hotmail-SR-BETAR - getNumMessages - mail box url " + szMailboxURI); 
             
             this.m_iStage = 0;  
-            this.m_HttpComms.clean();
             this.m_HttpComms.setURI(szMailboxURI);
             this.m_HttpComms.setRequestMethod("GET");
 
-            var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler); 
+            var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this); 
             if (!bResult) throw new Error("httpConnection returned false");
             this.m_bStat = true;            
             this.m_Log.Write("Hotmail-SR-BETAR - getNumMessages - END"); 
@@ -554,15 +538,14 @@ HotmailScreenRipperBETA.prototype =
                     } 
                 } 
             }
-           
-            mainObject.m_HttpComms.clean();                
+                           
                                                                          
             if (szNextPage)//more pages
             {           
                 //set cookies
                 mainObject.m_HttpComms.setURI(szNextPage);
                 mainObject.m_HttpComms.setRequestMethod("GET");
-                var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler); 
+                var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler, mainObject); 
                 if (!bResult) throw new Error("httpConnection returned false");
             }
             else  //done with mailbox
@@ -583,7 +566,7 @@ HotmailScreenRipperBETA.prototype =
                     mainObject.m_HttpComms.setURI(mainObject.m_szJunkFolderURI);
                     mainObject.m_HttpComms.setRequestMethod("GET");
 
-                    var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler); 
+                    var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler, mainObject); 
                     if (!bResult) throw new Error("httpConnection returned false");
                 }
                 else  //all uri's collected
@@ -656,12 +639,11 @@ HotmailScreenRipperBETA.prototype =
                 var szMailboxURI = this.m_szLocationURI + this.m_szMailboxURI; 
                 this.m_Log.Write("Hotmail-SR-BETAR - getMessageSizes - mail box url " + szMailboxURI); 
                 
-                this.m_iStage = 0;  
-                this.m_HttpComms.clean();
+                this.m_iStage = 0;
                 this.m_HttpComms.setURI(szMailboxURI);
                 this.m_HttpComms.setRequestMethod("GET");
 
-                var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler); 
+                var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this); 
                 if (!bResult) throw new Error("httpConnection returned false");
             }
             this.m_Log.Write("Hotmail-SR-BETAR - getMessageSizes - END"); 
@@ -783,11 +765,10 @@ HotmailScreenRipperBETA.prototype =
             this.m_iStage = 0;
             
             //get msg from hotmail
-            this.m_HttpComms.clean();
             this.m_HttpComms.setURI(szMsgURI);
             this.m_HttpComms.setRequestMethod("GET");
 
-            var bResult = this.m_HttpComms.send(this.emailOnloadHandler); 
+            var bResult = this.m_HttpComms.send(this.emailOnloadHandler, this); 
             if (!bResult) throw new Error("httpConnection returned false");
             
             this.m_Log.Write("Hotmail-SR-BETAR - getMessage - END"); 
@@ -867,8 +848,7 @@ HotmailScreenRipperBETA.prototype =
             var szID = oMSG.szMSGUri.match(patternHotmailPOPEMailID)[1]; //msg id
             this.m_Log.Write("Hotmail-SR-BETAR - deleteMessage - MSGid " + szID );    
                 
-            this.m_HttpComms.clean();
-            this.m_HttpComms.setContentType(1);
+            this.m_HttpComms.setContentType("multipart/form-data");
             this.m_HttpComms.setRequestMethod("POST");
 
             
@@ -889,7 +869,7 @@ HotmailScreenRipperBETA.prototype =
             this.m_HttpComms.addValuePair("messages",szID);
             this.m_HttpComms.addValuePair(szID,"on");
             
-            var bResult = this.m_HttpComms.send(this.deleteMessageOnloadHandler);                   
+            var bResult = this.m_HttpComms.send(this.deleteMessageOnloadHandler, this);                   
             if (!bResult) throw new Error("httpConnection returned false");
 
             this.m_Log.Write("Hotmail-SR-BETAR - deleteMessage - END");     
@@ -946,19 +926,18 @@ HotmailScreenRipperBETA.prototype =
         {
             this.m_Log.Write("Hotmail-SR-BETAR - logOUT - START"); 
             
-            if (!this.m_SessionData)
-            {
-                this.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
-                this.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
-                this.m_SessionData.szUserName = this.m_szUserName;
-                
-                var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
-                componentData.QueryInterface(Components.interfaces.nsIComponentData);
-                this.m_SessionData.oComponentData = componentData;
+            if (this.m_bReUseSession)
+            { 
+                this.m_Log.Write("Hotmail-SR-BETAR - logIN - Setting Session Data");           
+                this.m_ComponentManager.addElement(this.m_szUserName, "szHomeURI", this.m_szHomeURI);
+                this.m_Log.Write("nsYahoo.js - logIN - szHomeURI" + this.m_szHomeURI);    
             }
-            this.m_SessionData.oCookieManager = this.m_HttpComms.getCookieManager();
-            this.m_SessionData.oComponentData.addElement("szHomeURI",this.m_szHomeURI);
-            this.m_SessionManager.setSessionData(this.m_SessionData);
+            else
+            {
+                this.m_Log.Write("Hotmail-SR-BETAR - logIN - deleting Session Data");
+                this.m_HttpComms.deleteSessionData(); 
+                this.m_HttpComms.deleteAllElements(this.m_szUserName);
+            }
               
             this.m_bAuthorised = false;
             this.serverComms("+OK Your Out\r\n");  
