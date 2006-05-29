@@ -14,9 +14,8 @@ function nsLycosSMTP()
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/base64.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/comms.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
-        
         
         var date = new Date();
         var  szLogFileName = "Lycos SMTP Log - " + date.getHours()
@@ -30,18 +29,13 @@ function nsLycosSMTP()
         this.m_szUserName = null;   
         this.m_szPassWord = null; 
         this.m_oResponseStream = null;  
-        this.m_HttpComms = new Comms(this , this.m_Log);
+        this.m_HttpComms = new HttpComms();
         this.m_HttpComms.setHandleHttpAuth(true);
         this.m_aszTo = new Array;
         this.m_szFrom = null;
         this.m_iStage = 0;
         this.m_szSendUri = null;
            
-        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"];
-        this.m_SessionManager = this.m_SessionManager.getService();
-        this.m_SessionManager.QueryInterface(Components.interfaces.nsISessionManager); 
-        this.m_SessionData = null;   
-        
         //do i reuse the session
         var oPref = new Object();
         oPref.Value = null;
@@ -127,23 +121,14 @@ nsLycosSMTP.prototype =
                 throw new Error("Unknown domain");
             
             this.m_iStage = 0;
-            this.m_HttpComms.clean();
-            
-            this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
-            if (this.m_SessionData && this.m_bReUseSession)
-            {
-                this.m_Log.Write("nsLycos.js - logIN - Session Data found");
-                this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
-                this.m_HttpComms.setHttpAuthManager(this.m_SessionData.oHttpAuthManager); 
-            }
-            
+
             this.m_HttpComms.setUserName(this.m_szUserName);
             this.m_HttpComms.setPassword(this.m_szPassWord);
-            this.m_HttpComms.setContentType(-1);
+            this.m_HttpComms.setContentType("text/xml");
             this.m_HttpComms.setURI(szLocation);
             this.m_HttpComms.setRequestMethod("PROPFIND");
-            this.m_HttpComms.addData(LycosSchema,"text/xml");
-            var bResult = this.m_HttpComms.send(this.loginOnloadHandler);                             
+            this.m_HttpComms.addData(LycosSchema);
+            var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);                             
             if (!bResult) throw new Error("httpConnection returned false");
             
             this.m_Log.Write("nsLycosSMTP.js - logIN - END");    
@@ -216,12 +201,11 @@ nsLycosSMTP.prototype =
             szMsg += szEmail.match(/(^[\s\S]*)\r?\n\./)[1];//removes SMTP termiator;
             szMsg +="\r\n\r\n";
             
-            this.m_HttpComms.clean();
-            this.m_HttpComms.setContentType(-1);
+            this.m_HttpComms.setContentType("message/rfc821");
             this.m_HttpComms.setURI(this.m_szSendUri);
             this.m_HttpComms.setRequestMethod("POST");
             this.m_HttpComms.addRequestHeader("SAVEINSENT", this.m_bSaveCopy?"t":"f", false); 
-            this.m_HttpComms.addData(szMsg,"message/rfc821");     
+            this.m_HttpComms.addData(szMsg);     
             var bResult = this.m_HttpComms.send(this.composerOnloadHandler);  
             if (!bResult) throw new Error("httpConnection returned false");
             
@@ -261,19 +245,12 @@ nsLycosSMTP.prototype =
             }
             else
             { 
-                if (!mainObject.m_SessionData)
+            
+                if (!mainObject.m_bReUseSession)
                 {
-                    mainObject.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
-                    mainObject.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
-                    mainObject.m_SessionData.szUserName = mainObject.m_szUserName;
-                    
-                    var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
-                    componentData.QueryInterface(Components.interfaces.nsIComponentData);
-                    mainObject.m_SessionData.oComponentData = componentData;
+                    mainObject.m_Log.Write("Lycos.js - logIN - deleting Session Data"); 
+                this.m_HttpComms.deleteSessionData();
                 }
-                mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
-                mainObject.m_SessionData.oHttpAuthManager = mainObject.m_HttpComms.getHttpAuthManager();
-                mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);
                 
                 mainObject.serverComms("250 OK\r\n");       
             }

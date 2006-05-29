@@ -1032,7 +1032,7 @@ HotmailScreenRipper.prototype =
             {
                 mainObject.m_Log.Write("Hotmail-SR - logIN - deleting Session Data");
                 mainObject.m_HttpComms.deleteSessionData(); 
-                mainObject.m_HttpComms.deleteAllElements(mainObject.m_szUserName);
+                mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
             }
               
             mainObject.m_bAuthorised = false;

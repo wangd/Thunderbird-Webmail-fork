@@ -517,7 +517,7 @@ HotmailSMTPScreenRipperBETA.prototype =
                         {
                             mainObject.m_Log.Write("Hotmail-SR-BETAR - logIN - deleting Session Data");
                             mainObject.m_HttpComms.deleteSessionData(); 
-                            mainObject.m_HttpComms.deleteAllElements(mainObject.m_szUserName);
+                            mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
                         }
                     
                         mainObject.serverComms("250 OK\r\n");    

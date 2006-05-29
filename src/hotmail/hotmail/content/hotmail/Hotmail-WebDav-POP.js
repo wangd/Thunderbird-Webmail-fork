@@ -31,9 +31,6 @@ function HotmailWebDav(oResponseStream, oLog)
         this.m_IOS = Components.classes["@mozilla.org/network/io-service;1"];
         this.m_IOS = this.m_IOS.getService(Components.interfaces.nsIIOService);
         
-        this.m_ComponentManager = Components.classes["@mozilla.org/nsComponentData2;1"];
-        this.m_ComponentManager = this.m_ComponentManager.getService(Components.interfaces.nsIComponentData2);
-        
         this.m_bJunkMail = false;
 
         this.m_Timer = Components.classes["@mozilla.org/timer;1"];
@@ -809,9 +806,8 @@ HotmailWebDav.prototype =
             
             if (!this.m_bReUseSession)
             {
-                this.m_Log.Write("nsYahoo.js - logIN - deleting Session Data");
+                this.m_Log.Write("HotmailWebDav.js - logIN - deleting Session Data");
                 this.m_HttpComms.deleteSessionData(); 
-                this.m_HttpComms.deleteAllElements(this.m_szUserName);
             }
               
             this.m_bAuthorised = false;

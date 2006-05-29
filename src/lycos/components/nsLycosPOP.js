@@ -32,7 +32,7 @@ function nsLycos()
         var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/comms.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://lycos/content/Lycos-POPMSG.js");
         
@@ -49,7 +49,7 @@ function nsLycos()
         this.m_szUserName = null;   
         this.m_szPassWord = null; 
         this.m_oResponseStream = null;  
-        this.m_HttpComms = new Comms(this,this.m_Log); 
+        this.m_HttpComms = new HttpComms(); 
         this.m_HttpComms.setHandleHttpAuth(true);    
         this.m_bAuthorised = false; 
         this.m_iStage=0; 
@@ -62,12 +62,7 @@ function nsLycos()
         this.m_iTotalSize = 0;     
         this.m_bJunkMail = false;
         this.m_aRawData = new Array();
-             
-        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"];
-        this.m_SessionManager = this.m_SessionManager.getService();
-        this.m_SessionManager.QueryInterface(Components.interfaces.nsISessionManager); 
-        this.m_SessionData = null;
-        
+
         this.m_Timer = Components.classes["@mozilla.org/timer;1"];
         this.m_Timer = this.m_Timer.createInstance(Components.interfaces.nsITimer);
         this.m_iTime = 10;
@@ -171,23 +166,13 @@ nsLycos.prototype =
             else
                 throw new Error("Unknown domain");
             
-            this.m_HttpComms.clean();
-            
-            this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
-            if (this.m_SessionData && this.m_bReUseSession)
-            {
-                this.m_Log.Write("nsLycos.js - logIN - Session Data found");
-                this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
-                this.m_HttpComms.setHttpAuthManager(this.m_SessionData.oHttpAuthManager); 
-            }
-            
             this.m_HttpComms.setUserName(this.m_szUserName);
             this.m_HttpComms.setPassword(this.m_szPassWord);
-            this.m_HttpComms.setContentType(-1);
+            this.m_HttpComms.setContentType("text/xml");
             this.m_HttpComms.setURI(szLocation);
             this.m_HttpComms.setRequestMethod("PROPFIND");
-            this.m_HttpComms.addData(LycosSchema,"text/xml");
-            var bResult = this.m_HttpComms.send(this.loginOnloadHandler);                             
+            this.m_HttpComms.addData(LycosSchema);
+            var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);                             
             if (!bResult) throw new Error("httpConnection returned false");
             
             this.m_Log.Write("nsLycos.js - logIN - END " + bResult);    
@@ -213,7 +198,6 @@ nsLycos.prototype =
             mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler : "+ mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
-            mainObject.m_HttpComms.clean();
             
             //if this fails we've gone somewhere new
             mainObject.m_Log.Write("nsLycos - loginOnloadHandler - status :" +httpChannel.responseStatus );
@@ -255,13 +239,12 @@ nsLycos.prototype =
              
             if (this.m_szFolderURI == null) return false;
             this.m_Log.Write("nsLycos.js - getNumMessages - mail box url " + this.m_szFolderURI); 
-            
-            this.m_HttpComms.clean();
-            this.m_HttpComms.setContentType(-1);
+        
+            this.m_HttpComms.setContentType("text/xml");
             this.m_HttpComms.setURI(this.m_szFolderURI);
             this.m_HttpComms.setRequestMethod("PROPFIND");
-            this.m_HttpComms.addData(LycosFolderSchema,"text/xml");
-            var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler);                             
+            this.m_HttpComms.addData(LycosFolderSchema);
+            var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this);                             
             if (!bResult) throw new Error("httpConnection returned false");
             this.m_bStat = true;              
             this.m_Log.Write("nsLycos.js - getNumMessages - END"); 
@@ -286,7 +269,6 @@ nsLycos.prototype =
             mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
-            mainObject.m_HttpComms.clean();
             
             //if this fails we've gone somewhere new
             mainObject.m_Log.Write("nsLycos - mailBoxOnloadHandler - status :" +httpChannel.responseStatus );
@@ -313,11 +295,11 @@ nsLycos.prototype =
                     mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - junkmail - " + mainObject.m_szJunkMailURI);
                   
                     //load mailbox
-                    mainObject.m_HttpComms.setContentType(-1);
+                    mainObject.m_HttpComms.setContentType("text/xml");
                     mainObject.m_HttpComms.setURI(mainObject.m_szInBoxURI);
                     mainObject.m_HttpComms.setRequestMethod("PROPFIND");
-                    mainObject.m_HttpComms.addData(LycosMailSchema,"text/xml");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler);                             
+                    mainObject.m_HttpComms.addData(LycosMailSchema);
+                    var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler, mainObject);                             
                     if (!bResult) throw new Error("httpConnection returned false");
                                         
                     mainObject.m_iStage++;  
@@ -341,11 +323,11 @@ nsLycos.prototype =
                     if (mainObject.m_bUseJunkMail && !mainObject.m_bJunkMail)
                     {
                         //load junkmail
-                        mainObject.m_HttpComms.setContentType(-1);
+                        mainObject.m_HttpComms.setContentType("text/xml");
                         mainObject.m_HttpComms.setURI(mainObject.m_szJunkMailURI);
                         mainObject.m_HttpComms.setRequestMethod("PROPFIND");
-                        mainObject.m_HttpComms.addData(LycosMailSchema,"text/xml");
-                        var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler);                             
+                        mainObject.m_HttpComms.addData(LycosMailSchema);
+                        var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler, mainObject);                             
                         if (!bResult) throw new Error("httpConnection returned false");
                         mainObject.m_bJunkMail = true;
                     }
@@ -579,12 +561,11 @@ nsLycos.prototype =
                 if (this.m_szFolderURI == null) return false;
                 this.m_Log.Write("nsLycos.js - getNumMessages - mail box url " + this.m_szFolderURI); 
                 
-                this.m_HttpComms.clean();
-                this.m_HttpComms.setContentType(-1);
+                this.m_HttpComms.setContentType("text/xml");
                 this.m_HttpComms.setURI(this.m_szFolderURI);
                 this.m_HttpComms.setRequestMethod("PROPFIND");
-                this.m_HttpComms.addData(LycosFolderSchema,"text/xml");
-                var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler);                             
+                this.m_HttpComms.addData(LycosFolderSchema);
+                var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this);                             
                 if (!bResult) throw new Error("httpConnection returned false");
             }
                    
@@ -700,11 +681,9 @@ nsLycos.prototype =
             this.m_bJunkMail = oMSG.bJunkFolder;
             this.m_iStage =0;
             //get msg from lycos
-            this.m_HttpComms.clean();
-            this.m_HttpComms.setContentType(-1);
             this.m_HttpComms.setURI(szMsgID);
             this.m_HttpComms.setRequestMethod("GET");
-            var bResult = this.m_HttpComms.send(this.emailOnloadHandler);                             
+            var bResult = this.m_HttpComms.send(this.emailOnloadHandler, this);                             
             if (!bResult) throw new Error("httpConnection returned false");
                   
             this.m_Log.Write("nsLycos.js - getMessage - END"); 
@@ -746,13 +725,12 @@ nsLycos.prototype =
                     mainObject.m_szMSG += "\r\n.\r\n";//msg end 
                     
                     //mark email as read        
-                    mainObject.m_HttpComms.clean();
-                    mainObject.m_HttpComms.setContentType(-1);
+                    mainObject.m_HttpComms.setContentType("text/xml");
                     var szUri = httpChannel.URI.spec;
                     mainObject.m_HttpComms.setURI(szUri);
                     mainObject.m_HttpComms.setRequestMethod("PROPPATCH");
-                    mainObject.m_HttpComms.addData(LycosReadSchema,"text/xml");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler);          
+                    mainObject.m_HttpComms.addData(LycosReadSchema);
+                    var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, maiObject);          
                     mainObject.m_iStage++;          
                 break;
                 
@@ -797,16 +775,15 @@ nsLycos.prototype =
             var sztemp ="<D:href>"+szMsgID+"</D:href>\r\n"
             var szData = szStart + sztemp + szEnd;
             
-            this.m_HttpComms.clean();
             this.m_HttpComms.setURI(szPath);
             this.m_HttpComms.setRequestMethod("MOVE");
-            this.m_HttpComms.setContentType(-1); 
-            this.m_HttpComms.addData(szData,"text/xml");          
+            this.m_HttpComms.setContentType("text/xml"); 
+            this.m_HttpComms.addData(szData);          
 
             var szDestination= this.m_szTrashURI + szMsgID;
             this.m_Log.Write("nsLycos.js - deleteMessage - Destination " + szDestination );
             this.m_HttpComms.addRequestHeader("Destination", szDestination , false);
-            var bResult = this.m_HttpComms.send(this.deleteMessageOnloadHandler);                             
+            var bResult = this.m_HttpComms.send(this.deleteMessageOnloadHandler, this);                             
             if (!bResult) throw new Error("httpConnection returned false");
                   
             this.m_Log.Write("nsLycos.js - deleteMessage - END");     
@@ -868,19 +845,11 @@ nsLycos.prototype =
             var  WebMailPrefAccess = new WebMailCommonPrefAccess();
             WebMailPrefAccess.Get("bool","lycos.bEmptyTrash",oPref);
         
-            if (!this.m_SessionData)
+            if (!this.m_bReUseSession)
             {
-                this.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
-                this.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
-                this.m_SessionData.szUserName = this.m_szUserName;
-                
-                var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
-                componentData.QueryInterface(Components.interfaces.nsIComponentData);
-                this.m_SessionData.oComponentData = componentData;
+                this.m_Log.Write("Lycos.js - logIN - deleting Session Data");
+                this.m_HttpComms.deleteSessionData();
             }
-            this.m_SessionData.oCookieManager = this.m_HttpComms.getCookieManager();
-            this.m_SessionData.oHttpAuthManager = this.m_HttpComms.getHttpAuthManager();
-            this.m_SessionManager.setSessionData(this.m_SessionData);
             
             if (!oPref.Value)
             {
@@ -890,12 +859,11 @@ nsLycos.prototype =
             }
            
             //get trash 
-            this.m_HttpComms.clean();
-            this.m_HttpComms.setContentType(-1);
+            this.m_HttpComms.setContentType("text/xml");
             this.m_HttpComms.setURI(this.m_szTrashURI);
             this.m_HttpComms.setRequestMethod("PROPFIND");
-            this.m_HttpComms.addData(LycosMailSchema,"text/xml");
-            var bResult = this.m_HttpComms.send(this.logoutOnloadHandler);                             
+            this.m_HttpComms.addData(LycosMailSchema);
+            var bResult = this.m_HttpComms.send(this.logoutOnloadHandler, this);                             
             if (!bResult) throw new Error("httpConnection returned false");           
             this.m_iStage=0;
             this.m_Log.Write("nsLycos.js - logOUT - END");  
@@ -949,12 +917,11 @@ nsLycos.prototype =
                         }
                         szDeleteMsg+= szEnd;
                         
-                        mainObject.m_HttpComms.clean();
-                        mainObject.m_HttpComms.setContentType(-1);
+                        mainObject.m_HttpComms.setContentType("text/xml");
                         mainObject.m_HttpComms.setURI(mainObject.m_szTrashURI);
                         mainObject.m_HttpComms.setRequestMethod("BDELETE");
-                        mainObject.m_HttpComms.addData(szDeleteMsg,"text/xml");
-                        var bResult = mainObject.m_HttpComms.send(mainObject.logoutOnloadHandler);                             
+                        mainObject.m_HttpComms.addData(szDeleteMsg);
+                        var bResult = mainObject.m_HttpComms.send(mainObject.logoutOnloadHandler, mainObject);                             
                         if (!bResult) throw new Error("httpConnection returned false");           
                         mainObject.m_iStage=1;
                     } 

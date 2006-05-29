@@ -1039,7 +1039,7 @@ nsYahoo.prototype =
             {
                 this.m_Log.Write("nsYahoo.js - logIN - deleting Session Data");
                 this.m_HttpComms.deleteSessionData(); 
-                this.m_HttpComms.deleteAllElements(this.m_szUserName);
+                this.m_ComponentManager.deleteAllElements(this.m_szUserName);
             }
                    
             this.m_bAuthorised = false;

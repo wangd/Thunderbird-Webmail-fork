@@ -201,8 +201,7 @@ HotmailSMTPWebDav.prototype =
                 if (!mainObject.m_bReUseSession)
                 {
                     mainObject.m_Log.Write("nsYahoo.js - logIN - deleting Session Data");
-                    mainObject.m_HttpComms.deleteSessionData(); 
-                    mainObject.m_HttpComms.deleteAllElements(mainObject.m_szUserName);
+                    mainObject.m_HttpComms.deleteSessionData();
                 }
                 
                 mainObject.serverComms("250 OK\r\n");       
