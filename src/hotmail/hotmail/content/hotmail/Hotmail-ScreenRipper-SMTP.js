@@ -131,6 +131,7 @@ HotmailSMTPScreenRipper.prototype =
         try
         {
             mainObject.m_Log.Write("Hotmail-SR-SMTP - loginOnloadHandler - START"); 
+            mainObject.m_Log.Write("Hotmail-SR-SMTP - loginOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("Hotmail-SR-SMTP - loginOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -377,8 +378,9 @@ HotmailSMTPScreenRipper.prototype =
     {
         try
         {
-            mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - START"); 
-            mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler : " + mainObject.m_iStage );  
+            mainObject.m_Log.Write("Hotmail-SR-SMTP - composerOnloadHandler - START"); 
+            mainObject.m_Log.Write("Hotmail-SR-SMTP - composerOnloadHandler : \n" + szResponse);
+            mainObject.m_Log.Write("Hotmail-SR-SMTP - composerOnloadHandler : " + mainObject.m_iStage );  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - status :" +httpChannel.responseStatus );

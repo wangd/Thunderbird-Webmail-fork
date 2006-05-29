@@ -139,6 +139,7 @@ HotmailScreenRipper.prototype =
         try
         {
             mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler - START"); 
+            mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -387,6 +388,7 @@ HotmailScreenRipper.prototype =
         try
         {
             mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - START"); 
+            mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -817,7 +819,8 @@ HotmailScreenRipper.prototype =
         try
         {
             mainObject.m_Log.Write("Hotmail-SR - emailOnloadHandler - START");
-             
+            mainObject.m_Log.Write("Hotmail-SR - emailOnloadHandler : \n" + szResponse);
+            
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             mainObject.m_Log.Write("Hotmail-SR - emailOnloadHandler - msg :" + httpChannel.responseStatus);
                        
@@ -955,7 +958,8 @@ HotmailScreenRipper.prototype =
         try
         {
             mainObject.m_Log.Write("Hotmail-SR - deleteMessageOnload - START");    
-                    
+            mainObject.m_Log.Write("Hotmail-SR - deleteMessageOnload : \n" + szResponse);
+            
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             
             //check status should be 200.
@@ -1014,7 +1018,8 @@ HotmailScreenRipper.prototype =
         try
         {
             mainObject.m_Log.Write("Hotmail-SR - logoutOnloadHandler - START");    
-                    
+            mainObject.m_Log.Write("Hotmail-SR - logoutOnloadHandler : \n" + szResponse);
+                                
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             
             //check status should be 200.

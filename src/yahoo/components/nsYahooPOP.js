@@ -1031,9 +1031,9 @@ nsYahoo.prototype =
             
             if (this.m_bReUseSession)
             { 
-                this.m_Log.Write("nsYahoo.js - logIN - Setting Session Data");           
+                this.m_Log.Write("nsYahoo.js - logOut - Setting Session Data");           
                 this.m_ComponentManager.addElement(this.m_szUserName, "szHomeURI", this.m_szHomeURI);
-                this.m_Log.Write("nsYahoo.js - logIN - szHomeURI" + this.m_szHomeURI);    
+                this.m_Log.Write("nsYahoo.js - logOut - szHomeURI" + this.m_szHomeURI);    
             }
             else
             {

@@ -137,6 +137,7 @@ HotmailWebDav.prototype =
         try
         {
             mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - START"); 
+            mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -216,6 +217,7 @@ HotmailWebDav.prototype =
         try
         {
             mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - START"); 
+            mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -666,11 +668,14 @@ HotmailWebDav.prototype =
         }
     },    
     
+    
+    
     emailOnloadHandler : function (szResponse ,event , mainObject)
     {
         try
         {
             mainObject.m_Log.Write("HotmailWebDav.js - emailOnloadHandler - START"); 
+            mainObject.m_Log.Write("HotmailWebDav.js - emailOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("HotmailWebDav.js - emailOnloadHandler : " + mainObject.m_iStage);  
                         
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -772,7 +777,8 @@ HotmailWebDav.prototype =
     {
         try
         {
-            mainObject.m_Log.Write("HotmailWebDav.js - deleteMessageOnload - START");    
+            mainObject.m_Log.Write("HotmailWebDav.js - deleteMessageOnload - START");  
+            mainObject.m_Log.Write("HotmailWebDav.js - deleteMessageOnload : \n" + szResponse);  
             mainObject.m_Log.Write("HotmailWebDav.js - deleteMessageOnload : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);

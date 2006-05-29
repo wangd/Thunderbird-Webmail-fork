@@ -98,6 +98,7 @@ HotmailSMTPWebDav.prototype =
         try
         {
             mainObject.m_Log.Write("HotmailWD-SMTP.js - loginOnloadHandler - START"); 
+            mainObject.m_Log.Write("HotmailWD-SMTP.js - loginOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("HotmailWD-SMTP.js - loginOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -185,7 +186,8 @@ HotmailSMTPWebDav.prototype =
     {
         try
         {
-            mainObject.m_Log.Write("HotmailWD-SMTP.js - composerOnloadHandler - START"); 
+            mainObject.m_Log.Write("HotmailWD-SMTP.js - composerOnloadHandler - START");
+            mainObject.m_Log.Write("HotmailWD-SMTP.js - composerOnloadHandler : \n" + szResponse); 
             mainObject.m_Log.Write("HotmailWD-SMTP.js - composerOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
