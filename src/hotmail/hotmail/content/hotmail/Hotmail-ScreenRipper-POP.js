@@ -1022,17 +1022,17 @@ HotmailScreenRipper.prototype =
             if (httpChannel.responseStatus != 200 ) 
                 throw new Error("error status " + httpChannel.responseStatus);   
              
-            if (this.m_bReUseSession)
+            if (mainObject.m_bReUseSession)
             { 
-                this.m_Log.Write("Hotmail-SR - logIN - Setting Session Data");           
-                this.m_ComponentManager.addElement(this.m_szUserName, "szHomeURI", this.m_szHomeURI);
-                this.m_Log.Write("nsYahoo.js - logIN - szHomeURI" + this.m_szHomeURI);    
+                mainObject.m_Log.Write("Hotmail-SR - logIN - Setting Session Data");           
+                mainObject.m_ComponentManager.addElement(mainObject.m_szUserName, "szHomeURI", mainObject.m_szHomeURI);
+                mainObject.m_Log.Write("nsYahoo.js - logIN - szHomeURI" + mainObject.m_szHomeURI);    
             }
             else
             {
-                this.m_Log.Write("Hotmail-SR - logIN - deleting Session Data");
-                this.m_HttpComms.deleteSessionData(); 
-                this.m_HttpComms.deleteAllElements(this.m_szUserName);
+                mainObject.m_Log.Write("Hotmail-SR - logIN - deleting Session Data");
+                mainObject.m_HttpComms.deleteSessionData(); 
+                mainObject.m_HttpComms.deleteAllElements(mainObject.m_szUserName);
             }
               
             mainObject.m_bAuthorised = false;
