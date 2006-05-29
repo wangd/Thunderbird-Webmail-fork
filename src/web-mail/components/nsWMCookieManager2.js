@@ -21,70 +21,76 @@ nsWebMailCookieManager.prototype =
             this.m_Log.Write("CookieManager.js - addCookie - " + szCookie + " " + url + " " + szUserName);
             if (!szCookie || !url || !szUserName) return false; 
             
-            var szDefaultDomain = url.prePath.match(/\/\/(.*?)$/)[1];  
-            this.m_Log.Write("CookieManager.js - addCookie - default domain " + szDefaultDomain);
+            //search for username 
+            var bNewUser = false; 
+            var oUser = this.findUser(szUserName);
+            if (!oUser) //user not found create
+            {      
+                this.m_Log.Write("CookieManager.js - addCookie - Creating new User");
+                oUser = new User();
+                oUser.szUser = szUserName;
+                oUser.aData = new Array();
+                bNewUser = true;
+            }
             
-            //split into rows
-            var aszCookie = szCookie.split(/\n/);
+            //process cookies         
+            var aszCookie = szCookie.split(/\n/); //split into rows
             this.m_Log.Write("CookieManager.js - addCookie - cookie rows " + aszCookie);
-            
-            //process cookies
-            var aTempCookies = new Array();
+            var szDefaultDomain = url.prePath.match(/\/\/(.*?)$/)[1];  
+            this.m_Log.Write("CookieManager.js - addCookie - default domain " + szDefaultDomain); 
+
             for (i=0; i<aszCookie.length; i++)
             { 
-                var oNewCookie =this.createCookie(aszCookie[i]);                
-                if (!oNewCookie.getDomain()) oNewCookie.setDomain(szDefaultDomain);
-                oNewCookie.setUserName(szUserName);
-                
-                var bFound = false;
-                //update existing cookies 
-                if (this.m_aCookies.length>0)
+                var bCookieFound = false;
+                var oNewCookie = this.createCookie(aszCookie[i]);                
+                if (!oNewCookie.getDomain()) oNewCookie.setDomain(szDefaultDomain);   
+           
+                if (oUser.aData.length>0)
                 {     
-                    var j=0;
-                  
+                    var k=0;
                     do 
                     {
-                        this.m_Log.Write("CookieManger.js - addCookie - Update - checking Cookie " + j);
-                        var tempCookie = this.m_aCookies[j];
-                        var usernameRegExp = new RegExp("^"+tempCookie.getUserName()+"$","i");
-                        this.m_Log.Write("CookieManger.js - addCookie - Update -user  " +tempCookie.getUserName() );
-                        if (szUserName.search(usernameRegExp)!=-1)
+                        this.m_Log.Write("CookieManger.js - addCookie - Update - checking Cookie " + k);
+                        
+                        var tempDomain = oUser.aData[k].getDomain();
+                        var szNewCookieDomain = oNewCookie.getDomain();
+                        if (this.domainCheck(tempDomain,szNewCookieDomain))
                         {
-                            this.m_Log.Write("CookieManger.js - addCookie - Update -user found ");
-                            var tempDomain = tempCookie.getDomain();
-                            var szNewCookieDomain = oNewCookie.getDomain();
-                            if (this.domainCheck(tempDomain,szNewCookieDomain))
+                            this.m_Log.Write("CookieManger.js - addCookie - Update - Domain found")
+                            //found domain
+                            var tempName = oUser.aData[k].getName();
+                            var szNewCookieName = oNewCookie.getName();
+                            if (this.cookieCheck(tempName,szNewCookieName))
                             {
-                                this.m_Log.Write("CookieManger.js - addCookie - Update - Domain found")
-                                //found domain
-                                var tempName = tempCookie.getName();
-                                var szNewCookieName = oNewCookie.getName();
-                                if (this.cookieCheck(tempName,szNewCookieName))
-                                {
-                                    this.m_Log.Write("CookieManger.js - addCookie - Update - Cookie found");
-                                    //cookie found - update
-                                    tempCookie.setValue(oNewCookie.getValue());
-                                    tempCookie.setExpiry(oNewCookie.getExpiry());
-                                    bFound = true;
-                                }
+                                this.m_Log.Write("CookieManger.js - addCookie - Update - Cookie found");
+                                //cookie found - update
+                                oUser.aData[k].setValue(oNewCookie.getValue());
+                                oUser.aData[k].setExpiry(oNewCookie.getExpiry());
+                                bCookieFound = true;
                             }
                         }
-                        j++;
-                    }while(j!=this.m_aCookies.length && !bFound ) 
+                        k++;
+                    }while(k!=oUser.aData.length && !bCookieFound ) 
                 }
-                        
-                if (bFound)
+                
+                if (bCookieFound)
                 {
                     delete oNewCookie;
                     this.m_Log.Write("CookieManger.js - addCookie - Update - deleted");
                 }
                 else
                 {
-                    this.m_aCookies.push(oNewCookie);                        
+                    oUser.aData.push(oNewCookie);                        
                     this.m_Log.Write("CookieManger.js - addCookie - Update - saved");
                 }
             }
-   
+            
+            if (bNewUser) 
+            {
+                this.m_Log.Write("CookieManager.js - addCookie - New User Added");
+                this.m_aCookies.push(oUser);
+            }
+            
             this.m_Log.Write("CookieManager.js - addCookie - END"); 
             return true;   
         }
@@ -105,48 +111,45 @@ nsWebMailCookieManager.prototype =
         {
             this.m_Log.Write("CookieManger.js - findCookie - START");
             this.m_Log.Write("CookieManger.js - findCookie - " + szUserName + " " + url);
-            if (!url || !szUserName) return false;
-            
+            if (!url || !szUserName) return null;
+            if (this.m_aCookies.length==0) return null;
+          
+            //find user    
+            var oUser = this.findUser(szUserName);
+            if (!oUser) return null; //user not found
+        
             var szDomain = url.prePath.match(/\/\/(.*?)$/)[1]
             this.m_Log.Write("CookieManger.js - findCookie - domain - " + szDomain);
             
-            var szCookies = "";
-            var iCookieCount = this.m_aCookies.length
+            //find cookie 
+            var szCookies = "";  
+            var iCookieCount = oUser.aData.length;
             for (var i=0; i<iCookieCount; i++ )
             {
-                var oCookie = this.m_aCookies.shift();
-                var usernameRegExp = new RegExp("^"+oCookie.getUserName()+"$","i");  
-                this.m_Log.Write("CookieManger.js - findCookie - Update -user  " +oCookie.getUserName() );     
-                if (szUserName.search(usernameRegExp)!=-1)
+                var oCookie = oUser.aData.shift();
+                this.m_Log.Write("CookieManger.js - findCookie - Update -user found ");
+                if (this.domainCheck(oCookie.getDomain(),szDomain))
                 {
-                    this.m_Log.Write("CookieManger.js - findCookie - Update -user found ");
-                    if (this.domainCheck(oCookie.getDomain(),szDomain))
+                    this.m_Log.Write("CookieManger.js - findCookie - Update - domain found ");                       
+                    if (this.expiryCheck(oCookie.getExpiry()))
                     {
-                        this.m_Log.Write("CookieManger.js - findCookie - Update - domain found ");                       
-                        if (this.expiryCheck(oCookie.getExpiry()))
+                        var szName = oCookie.getName();
+                        var szValue = oCookie.getValue();
+                        this.m_Log.Write("CookieManger.js - findCookie - cookie - found " + szName + " " + szValue );
+                        if (szValue.length>0)
                         {
-                            var szName = oCookie.getName();
-                            var szValue = oCookie.getValue();
-                            this.m_Log.Write("CookieManger.js - findCookie - cookie - found " + szName + " " + szValue );
-                            if (szValue.length>0)
-                            {
-                                szCookies +=  szName; 
-                                szCookies += "=";
-                                szCookies +=  szValue;
-                                szCookies +=  "; " ;
-                            }
-                            this.m_aCookies.push(oCookie); //valid cookie put it back
+                            szCookies += szName;
+                            szCookies += "=";
+                            szCookies +=  szValue;
+                            szCookies +=  "; " ;
                         }
-                        else  //delete expired cookie
-                            delete oCookie;
+                        oUser.aData.push(oCookie); //valid cookie put it back
                     }
-                    else //domain not found
-                        this.m_aCookies.push(oCookie);
-                        
+                    else  //delete expired cookie
+                        delete oCookie;
                 }
-                else //user not found
-                    this.m_aCookies.push(oCookie);
-                
+                else //domain not found
+                    oUser.aData.push(oCookie);                
             }
 
             this.m_Log.Write("CookieManger.js - findCookie - szCookies " + szCookies);   
@@ -175,24 +178,31 @@ nsWebMailCookieManager.prototype =
             this.m_Log.Write("CookieManager.js - deleteCookie - START " + szUserName);
             if (!szUserName) return false; 
           
-            //process cookies
+            var bUserFound = false;  
             if (this.m_aCookies.length>0)
-            {
-                var iCookieCount = this.m_aCookies.length;
-                for (var i=0; i<iCookieCount; i++ )
+            {     
+                var usernameRegExp = new RegExp("^"+szUserName+"$","i");
+                this.m_Log.Write("CookieManger.js - deleteCookie - Target User  " +usernameRegExp);
+       
+                var i=0;
+                do 
                 {
-                    this.m_Log.Write("CookieManger.js - deleteCookie - Update - checking Cookie " + j);
-                    var oCookie = this.m_aCookies.shift();
-                    
-                    var usernameRegExp = new RegExp("^"+tempCookie.getUserName()+"$","i");
-                    if (szUserName.search(usernameRegExp)!=-1)
+                    var oTempUser = this.m_aCookies.shift();
+                    this.m_Log.Write("CookieManager.js - deleteCookie - Checking User " + szUser);
+                    if (szUser.search()!=-1)
                     {
-                        this.m_Log.Write("CookieManger.js - deleteCookie - Domain found");
-                        delete oCookie;
+                        this.m_Log.Write("CookieManager.js - deleteCookie - user Found");
+                        delete oTempUser;
+                        bUserFound = true;
+                    } 
+                    else
+                    {
+                        this.m_Log.Write("CookieManager.js - deleteCookie - user Not Found");
+                        this.m_aCookies.push(oTempUser);
                     }
-                }
+                }while(i!=this.m_aCookies.length && !bUserFound)
             }
-                       
+                                 
             this.m_Log.Write("CookieManager.js - deleteCookie - END"); 
             return true;   
         }
@@ -209,6 +219,47 @@ nsWebMailCookieManager.prototype =
 
 
 
+    findUser : function (szUserName)
+    {
+        try
+        {
+            this.m_Log.Write("CookieManager.js - findUser - START "); 
+            if (this.m_aCookies.length==0) return null;
+            
+            //find user                
+            var bUserFound = false;   
+            var usernameRegExp = new RegExp("^"+szUserName+"$","i");
+            this.m_Log.Write("CookieManger.js - findUser - Target User  " +usernameRegExp);
+            var oTempUser = null; 
+            var i=0;
+            do 
+            {
+                oTempUser = this.m_aCookies[i];
+                this.m_Log.Write("CookieManager.js - findUser - Checking User " + oTempUser.szUser);
+                if (oTempUser.szUser.search(usernameRegExp)!=-1)
+                {
+                    this.m_Log.Write("CookieManager.js - findCookie - user Found");
+                    bUserFound = true;
+                } 
+                i++;
+            }while(i!=this.m_aCookies.length && !bUserFound)
+            
+            this.m_Log.Write("CookieManager.js - findUser - END"); 
+            return !bUserFound ? null : oTempUser;   
+        }
+        catch(e)
+        {
+             this.m_Log.Write("CookieManger.js: findUser : Exception : " 
+                                          + e.name 
+                                          + ".\nError message: " 
+                                          + e.message + " \n"
+                                          + e.lineNumber);
+            return null;
+        }
+    },
+    
+    
+    
     createCookie : function (szCookie)
     {
         try
@@ -225,7 +276,6 @@ nsWebMailCookieManager.prototype =
                 var iNameSplit = aData[j].indexOf("=");
                 var szTempName = aData[j].substr(0, iNameSplit);
                 var szTempValue = aData[j].substr(iNameSplit+1);
-                this.m_Log.Write("CookieManager.js - createCookie ITEM - name : " + szTempName + "  value : " +szTempValue);
                              
                 if (szTempName.search(/domain/i)!=-1) //get domain
                 {
@@ -271,7 +321,7 @@ nsWebMailCookieManager.prototype =
                     {
                         szName = szTempName;
                         szValue = szTempValue;
-                        this.m_Log.Write("CookieManager.js - createCookie data - szName " + szName + " szValue " + szValue);
+                        this.m_Log.Write("CookieManager.js - createCookie - szName " + szName + " szValue " + szValue);
                         oCookie.setName(szName);
                         oCookie.setValue(szValue);
                     }
@@ -396,7 +446,7 @@ nsWebMailCookieManager.prototype =
                 // This happens after profile has been loaded and user preferences have been read.
                 // startup code here
                 this.m_scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-                this.m_scriptLoader.loadSubScript("chrome://web-mail/content/common/Cookie.js");                
+                this.m_scriptLoader.loadSubScript("chrome://web-mail/content/common/Cookie.js");            
                 this.m_Log = new DebugLog("webmail.logging.comms", 
                                           "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
                                           "CookieManager 2 ");
