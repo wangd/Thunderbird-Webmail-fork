@@ -195,6 +195,7 @@ nsLycos.prototype =
         try
         {
             mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - START"); 
+            mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler : "+ mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -266,6 +267,7 @@ nsLycos.prototype =
         try
         {
             mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - START"); 
+            mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -705,7 +707,8 @@ nsLycos.prototype =
     {
         try
         {
-            mainObject.m_Log.Write("nsLycos.js - emailOnloadHandler - START"); 
+            mainObject.m_Log.Write("nsLycos.js - emailOnloadHandler - START");
+            mainObject.m_Log.Write("nsLycos.js - emailOnloadHandler : \n" + szResponse); 
             mainObject.m_Log.Write("nsLycos.js - emailOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -730,7 +733,7 @@ nsLycos.prototype =
                     mainObject.m_HttpComms.setURI(szUri);
                     mainObject.m_HttpComms.setRequestMethod("PROPPATCH");
                     mainObject.m_HttpComms.addData(LycosReadSchema);
-                    var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, maiObject);          
+                    var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);          
                     mainObject.m_iStage++;          
                 break;
                 
@@ -807,6 +810,7 @@ nsLycos.prototype =
         try
         {
             mainObject.m_Log.Write("nsLycos.js - deleteMessageOnloadHandler - START");
+            mainObject.m_Log.Write("nsLycos.js - deleteMessageOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("nsLycos.js - deleteMessageOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -887,6 +891,7 @@ nsLycos.prototype =
         try
         {
             mainObject.m_Log.Write("nsLycos.js - logoutOnloadHandler - START");
+            mainObject.m_Log.Write("nsLycos.js - logoutOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("nsLycos.js - logoutOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);

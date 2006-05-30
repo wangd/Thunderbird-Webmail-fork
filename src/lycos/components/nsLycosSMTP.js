@@ -154,6 +154,7 @@ nsLycosSMTP.prototype =
         try
         {
             mainObject.m_Log.Write("nsLycosSMTP.js - loginOnloadHandler - START"); 
+            mainObject.m_Log.Write("nsLycosSMTP.js - loginOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("nsLycosSMTP.js - loginOnloadHandler : " + mainObject.m_iStage );  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -206,7 +207,7 @@ nsLycosSMTP.prototype =
             this.m_HttpComms.setRequestMethod("POST");
             this.m_HttpComms.addRequestHeader("SAVEINSENT", this.m_bSaveCopy?"t":"f", false); 
             this.m_HttpComms.addData(szMsg);     
-            var bResult = this.m_HttpComms.send(this.composerOnloadHandler);  
+            var bResult = this.m_HttpComms.send(this.composerOnloadHandler, this);  
             if (!bResult) throw new Error("httpConnection returned false");
             
             this.m_Log.Write("nsLycosSMTP.js - rawMSG - END");    
@@ -232,7 +233,8 @@ nsLycosSMTP.prototype =
         try
         {
             mainObject.m_Log.Write("nsLycosSMTP.js - composerOnloadHandler - START"); 
-            mainObject.m_Log.Write("nsLycosSMTP.js - composerOnloadHandler : " + mainObject.m_iStage + "\n");  
+            mainObject.m_Log.Write("nsLycosSMTP.js - composerOnloadHandler : \n" + szResponse);
+            mainObject.m_Log.Write("nsLycosSMTP.js - composerOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             
