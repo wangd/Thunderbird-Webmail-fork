@@ -28,7 +28,7 @@ function nsMailDotComSMTP()
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/comms.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Email.js");
         
         
@@ -44,7 +44,7 @@ function nsMailDotComSMTP()
         this.m_szUserName = null;   
         this.m_szPassWord = null; 
         this.m_oResponseStream = null;  
-        this.m_HttpComms = new Comms(this , this.m_Log);
+        this.m_HttpComms = new HttpComms();
         this.m_aszTo = new Array;
         this.m_szFrom = null;
         
@@ -57,11 +57,9 @@ function nsMailDotComSMTP()
         this.m_Email.decodeBody(true);
         this.m_iAttCount = 0;
         this.m_iAttUploaded = 1;
-        
-        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"];
-        this.m_SessionManager = this.m_SessionManager.getService();
-        this.m_SessionManager.QueryInterface(Components.interfaces.nsISessionManager); 
-        this.m_SessionData = null;
+
+        this.m_ComponentManager = Components.classes["@mozilla.org/nsComponentData2;1"];
+        this.m_ComponentManager = this.m_ComponentManager.getService(Components.interfaces.nsIComponentData2);
         
         this.m_bReEntry = false;
         
@@ -139,33 +137,29 @@ nsMailDotComSMTP.prototype =
             if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
                  
             //get mail.com webpage
-            this.m_HttpComms.clean();
-            this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
-            if (this.m_SessionData && this.m_bReUseSession)
+            this.m_iStage =0;
+            this.m_HttpComms.setURI("http://www.mail.com");
+            this.m_HttpComms.setRequestMethod("GET");
+            this.m_HttpComms.setUserName(this.m_szUserName);           
+            
+            if (this.m_bReUseSession)
             {
                 this.m_Log.Write("nsMailDotCom.js - logIN - Session Data found");
-                this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
-                this.m_szLocation = this.m_SessionData.oComponentData.findElement("szLocation");
+                this.m_szLocation =  this.m_ComponentManager.findElement(this.m_szUserName, "szLocation");
                 this.m_Log.Write("nsMailDotCom.js - logIN - szLocation - " +this.m_szLocation);    
-                this.m_szFolderList = this.m_SessionData.oComponentData.findElement("szFolderList");
+                this.m_szFolderList =  this.m_ComponentManager.findElement(this.m_szUserName, "szFolderList");
                 this.m_Log.Write("nsMailDotCom.js - logIN - szFolderList - " +this.m_szFolderList);    
                 
-                //get folder list
-                this.m_iStage =3;
-                this.m_bReEntry = true;
-                this.m_HttpComms.setURI(this.m_szFolderList);
-                this.m_HttpComms.setRequestMethod("GET");
-                var bResult = this.m_HttpComms.send(this.loginOnloadHandler);                             
-                if (!bResult) throw new Error("httpConnection returned false");
+                if (this.m_szLocation)//get folder list
+                {
+                    this.m_iStage =3;
+                    this.m_bReEntry = true;
+                    this.m_HttpComms.setURI(this.m_szFolderList);
+                }
             }
-            else
-            {   //get mail.com webpage 
-                this.m_iStage =0;
-                this.m_HttpComms.setURI("http://www.mail.com");
-                this.m_HttpComms.setRequestMethod("GET");
-                var bResult = this.m_HttpComms.send(this.loginOnloadHandler);                             
-                if (!bResult) throw new Error("httpConnection returned false");
-            }
+            
+            var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);                             
+            if (!bResult) throw new Error("httpConnection returned false");
             
             this.m_Log.Write("nsMailDotCom.js - logIN - END");    
             return true;
@@ -190,6 +184,7 @@ nsMailDotComSMTP.prototype =
         try
         {
             mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - START"); 
+            mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler : " +mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -206,8 +201,6 @@ nsMailDotComSMTP.prototype =
                 if (!bAd)throw new Error("Ad Handler failed");
                 return true;
             }
-            
-            mainObject.m_HttpComms.clean();
                         
             //page code                                
             switch (mainObject.m_iStage)
@@ -218,7 +211,7 @@ nsMailDotComSMTP.prototype =
                     
                     mainObject.m_HttpComms.setURI(szRefreshURI);
                     mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);                             
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);                             
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
@@ -237,8 +230,6 @@ nsMailDotComSMTP.prototype =
                     //get login input form
                     var aszLoginInput= szForm.match(patternMailDotComLoginInput);
                     mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - login input " + aszLoginInput);
-                    
-                    mainObject.m_HttpComms.setContentType(0);
                     
                     //login data 
                     for (i=0; i<aszLoginInput.length; i++)
@@ -281,7 +272,7 @@ nsMailDotComSMTP.prototype =
                     
                     mainObject.m_HttpComms.setURI(szLoginURI);
                     mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);      
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);      
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
@@ -295,7 +286,7 @@ nsMailDotComSMTP.prototype =
                 
                     mainObject.m_HttpComms.setURI(szMailBox);
                     mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++
                 break;
@@ -312,7 +303,7 @@ nsMailDotComSMTP.prototype =
                             mainObject.m_iStage =0;
                             mainObject.m_HttpComms.setURI("http://www.mail.com");
                             mainObject.m_HttpComms.setRequestMethod("GET");
-                            var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);                             
+                            var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);                             
                             if (!bResult) throw new Error("httpConnection returned false");
                             return;
                         }
@@ -385,10 +376,9 @@ nsMailDotComSMTP.prototype =
             this.m_iAttUploaded = 0;
              
             //get composer page
-            this.m_HttpComms.clean();
             this.m_HttpComms.setURI(this.m_szComposeURI);
             this.m_HttpComms.setRequestMethod("GET");       
-            var bResult = this.m_HttpComms.send(this.composerOnloadHandler);  
+            var bResult = this.m_HttpComms.send(this.composerOnloadHandler , this);  
             if (!bResult) throw new Error("httpConnection returned false");
             
             this.m_Log.Write("nsMailDotComSMTP.js - rawMSG - END");    
@@ -411,6 +401,7 @@ nsMailDotComSMTP.prototype =
         try
         {
             mainObject.m_Log.Write("nsMailDotComSMTP.js - composerOnloadHandler - START"); 
+            mainObject.m_Log.Write("nsMailDotComSMTP.js - composerOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("nsMailDotComSMTP.js - composerOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -427,8 +418,6 @@ nsMailDotComSMTP.prototype =
                 if (!bAd)throw new Error("Ad Handler failed");
                 return;
             }
-            
-            mainObject.m_HttpComms.clean();
             
             var szReferer = httpChannel.URI.spec;
             mainObject.m_Log.Write("nsMailDotComSMTP.js - composerOnloadHandler - Referer :" +szReferer);
@@ -538,8 +527,7 @@ nsMailDotComSMTP.prototype =
                     
                     mainObject.m_HttpComms.setURI(szURI);
                     mainObject.m_HttpComms.setRequestMethod("POST");
-                    mainObject.m_HttpComms.setContentType(0);
-                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);
+                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler, mainObject);
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage=1;
                 break;
@@ -548,21 +536,19 @@ nsMailDotComSMTP.prototype =
                     mainObject.m_Log.Write("nsMailDotCom.js - composerOnloadHandler - message ok");
                     if (szResponse.search(/aftersent/igm)!=-1)
                     {
-                        if (!mainObject.m_SessionData)
-                        {
-                            mainObject.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
-                            mainObject.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
-                            mainObject.m_SessionData.szUserName = mainObject.m_szUserName;
-                            
-                            var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
-                            componentData.QueryInterface(Components.interfaces.nsIComponentData);
-                            mainObject.m_SessionData.oComponentData = componentData;
+                        if (mainObject.m_bReUseSession)
+                        { 
+                            mainObject.m_Log.Write("nsMailDotCom.js - Logout - Setting Session Data");           
+                            mainObject.m_ComponentManager.addElement(mainObject.m_szUserName, "szLocation",mainObject.m_szLocation);   
+                            mainObject.m_ComponentManager.addElement(mainObject.m_szUserName, "szFolderList", mainObject.m_szFolderList); 
                         }
-                        mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
-                        mainObject.m_SessionData.oComponentData.addElement("szLocation",mainObject.m_szLocation);
-                        mainObject.m_SessionData.oComponentData.addElement("szFolderList", mainObject.m_szFolderList);
-                        mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);
-                        
+                        else
+                        {
+                            mainObject.m_Log.Write("nsMailDotCom.js - logIN - deleting Session Data");
+                            mainObject.m_HttpComms.deleteSessionData(); 
+                            mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
+                        }
+
                         mainObject.serverComms("250 OK\r\n");
                     }
                     else
@@ -616,8 +602,7 @@ nsMailDotComSMTP.prototype =
                     mainObject.m_bAttHandled =true;
                     mainObject.m_HttpComms.setURI(szURI);
                     mainObject.m_HttpComms.setRequestMethod("POST");
-                    mainObject.m_HttpComms.setContentType(0);
-                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);
+                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler, mainObject);
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage =3;
                 break;
@@ -690,10 +675,10 @@ nsMailDotComSMTP.prototype =
                     }  
                     
                     mainObject.m_iAttUploaded ++;
-                    mainObject.m_HttpComms.setContentType(1);
+                    mainObject.m_HttpComms.setContentType("multipart/form-data");
                     mainObject.m_HttpComms.setURI(szURI);                  
                     mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);  
+                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler, mainObject);  
                     if (!bResult) throw new Error("httpConnection returned false");
                 break;
                 
@@ -739,10 +724,10 @@ nsMailDotComSMTP.prototype =
                         }
                     }  
                     
-                    mainObject.m_HttpComms.setContentType(1);
+                    mainObject.m_HttpComms.setContentType("multipart/form-data");
                     mainObject.m_HttpComms.setURI(szURI);                  
                     mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);  
+                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler, mainObject);  
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage = 0;
                 break;
@@ -821,10 +806,9 @@ nsMailDotComSMTP.prototype =
             
             this.m_BeforeAdsCallback = callback;
             
-            this.m_HttpComms.clean();
             this.m_HttpComms.setURI(szDataPage);
             this.m_HttpComms.setRequestMethod("GET");
-            var bResult = this.m_HttpComms.send(this.adsHandler); 
+            var bResult = this.m_HttpComms.send(this.adsHandler, this); 
             if (!bResult) throw new Error("httpConnection returned false"); 
            
             this.m_Log.Write("nsMailDotComSMTP.js - ads - END");
@@ -847,15 +831,15 @@ nsMailDotComSMTP.prototype =
         try
         {
             mainObject.m_Log.Write("nsMailDotComSMTP.js - adsHandler - START");
+            mainObject.m_Log.Write("nsMailDotComSMTP.js - adsHandler : \n" + szResponse);
             var szMailBox = szResponse.match(patternMailDotComFrame)[1];
             if (!szMailBox) 
                 throw new Error("error parsing mail.com login web page");
             mainObject.m_Log.Write("nsMailDotComSMTP.js - adsHandler - mailbox " + szMailBox);
            
-            mainObject.m_HttpComms.clean();
             mainObject.m_HttpComms.setURI(szMailBox);
             mainObject.m_HttpComms.setRequestMethod("GET");
-            var bResult = mainObject.m_HttpComms.send(mainObject.m_BeforeAdsCallback); 
+            var bResult = mainObject.m_HttpComms.send(mainObject.m_BeforeAdsCallback, mainObject); 
             if (!bResult) throw new Error("httpConnection returned false"); 
                   
             mainObject.m_Log.Write("nsMailDotComSMTP.js - adsHandler - START");
