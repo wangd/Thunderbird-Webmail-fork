@@ -92,7 +92,8 @@ HotmailScreenRipperBETA.prototype =
             //get hotmail.com webpage
             this.m_iStage= 0;
             this.m_HttpComms.setURI("http://www.hotmail.com");
-                      
+            this.m_HttpComms.setUserName(this.m_szUserName);
+                                  
             //get session data
             if (this.m_bReUseSession)
             { 
