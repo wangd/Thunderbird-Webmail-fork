@@ -28,6 +28,7 @@ const PatternYahooFoldersPart = /"(.*?ShowFolder\?box=.*?)"/gim;
 const PatternYahooFolderURL =/'(.*?Folders\?YY.*?)'"/i;
 const PatternYahooFolderBox = /box=(.*?)&/i;
 const PatternYahooFolderBoxAlt = /box=(.*?)$/i;
+const PatternYahooLogout = /id="signoutlink"/i;
 /******************************  Yahoo ***************************************/
 
 
@@ -269,7 +270,7 @@ nsYahoo.prototype =
                 case 2: //mail box
                     var szLocation  = httpChannel.URI.spec;
                     mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - page check : " + szLocation );
-                    if (szLocation.indexOf("uilogin.srt")!= -1)
+                    if (szResponse.search(PatternYahooLogout)== -1)
                     {
                         if (mainObject.m_bReEntry)
                         {
@@ -1134,7 +1135,7 @@ nsYahoo.prototype =
                             var aszFolders = oPref.Value.split("\r");
                             for (j=0; j<aszFolders.length; j++)
                             {
-                                this.m_Log.Write("Yahoo-Prefs-Folders :  login - loadPRefs - aszFolders[j] " + aszFolders[j]);
+                                this.m_Log.Write("nsYahoo - loadPRefs - aszFolders[j] " + aszFolders[j]);
                                 this.m_aszFolderList.push(encodeURIComponent(aszFolders[j]));
                             }
                         }
@@ -1152,7 +1153,7 @@ nsYahoo.prototype =
             
             if (!bFound) //get defaults
             {
-                this.m_Log.Write("Yahoo-Prefs-Folders : loadPrefs - Default Folders");
+                this.m_Log.Write("nsYahoo - loadPrefs - Default Folders");
                 
                 //unread only
                 oPref.Value = null;
@@ -1162,7 +1163,7 @@ nsYahoo.prototype =
                      this.m_bDownloadUnread= false;                   
                           
                 //inbox
-                this.m_Log.Write("Yahoo-Prefs-Folders : loadPrefs - Default Folders - inbox");
+                this.m_Log.Write("nsYahoo - loadPrefs - Default Folders - inbox");
                 this.m_aszFolderList.push("inbox");
                 
                 //spam
@@ -1171,7 +1172,7 @@ nsYahoo.prototype =
                 {
                     if (oPref.Value)
                     {
-                        this.m_Log.Write("Yahoo-Prefs-Folders : loadPrefs - Default Folders - spam");
+                        this.m_Log.Write("nsYahoo - loadPrefs - Default Folders - spam");
                         this.m_aszFolderList.push("%40B%40Bulk");
                     }
                 }

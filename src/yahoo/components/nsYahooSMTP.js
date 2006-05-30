@@ -18,6 +18,7 @@ const patternYahooAttachCheck = /javascript\:VirusScanResults\(0\)/igm;
 const patternYahooImageVerifiaction = /<form.*?name=ImgVerification[\S\s]*?>[\s\S]*?<\/form>/igm;
 const patternYahooImage = /<input.*?name="IMG".*?value="(.*?)">/i;
 const patternYahooImageAction = /<form.*?name=ImgVerification.*?action="([\S\s]*?)">/i;
+const PatternYahooLogout = /id="signoutlink"/i;
 
 /******************************  Yahoo ***************************************/
 function nsYahooSMTP()
@@ -260,7 +261,7 @@ nsYahooSMTP.prototype =
                     var szLocation = httpChannel.URI.spec;
                     var iIndex = szLocation.indexOf("uilogin.srt");
                     mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - page check : " + szLocation);
-                    if (szLocation.indexOf("uilogin.srt")!= -1)
+                    if (szResponse.search(PatternYahooLogout) == -1)
                     {
                         if (mainObject.m_bReEntry)
                         {
