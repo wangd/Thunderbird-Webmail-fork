@@ -6,7 +6,7 @@ function NetscapeSMTP(oResponseStream, oLog)
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/base64.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/comms.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Email.js");
         
@@ -16,7 +16,7 @@ function NetscapeSMTP(oResponseStream, oLog)
         this.m_bAuthorised = false;
         this.m_szUserName = null;   
         this.m_szPassWord = null;   
-        this.m_HttpComms = new Comms(this , this.m_Log);
+        this.m_HttpComms = new HttpComms();
         this.m_aszTo = new Array;
         this.m_szFrom = null;
         this.m_iStage = 0;
@@ -34,10 +34,9 @@ function NetscapeSMTP(oResponseStream, oLog)
         this.m_Email.decodeBody(true);
         this.m_iAttCount = 0;
          
-        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"];
-        this.m_SessionManager = this.m_SessionManager.getService();
-        this.m_SessionManager.QueryInterface(Components.interfaces.nsISessionManager); 
-        this.m_SessionData = null;   
+        this.m_ComponentManager = Components.classes["@mozilla.org/nsComponentData2;1"];
+        this.m_ComponentManager = this.m_ComponentManager.getService(Components.interfaces.nsIComponentData2);
+ 
         
         //do i reuse the session
         var oPref = {Value:null};
@@ -96,44 +95,38 @@ NetscapeSMTP.prototype =
             this.m_szUserName = szUserName;
             this.m_szPassWord = szPassWord;
             this.m_szAOLMail= "http://mail.netscape.com/";  
-          
-            this.m_HttpComms.clean();
-            
-            this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName.toLowerCase());
-            if (this.m_SessionData && this.m_bReUseSession)
+            this.m_HttpComms.setUserName(this.m_szUserName);
+            this.m_iStage = 0;
+            this.m_HttpComms.setURI(this.m_szAOLMail);
+            this.m_HttpComms.setRequestMethod("GET");
+        
+            if (this.m_bReUseSession)
             {
-                this.m_Log.Write("NetscapeSMTP.js - logIN - Session Data found");
+                this.m_Log.Write("NetscapePOP.js - logIN - Session Data found");
+                this.m_szHomeURI = this.m_ComponentManager.findElement(this.m_szUserName, "szHomeURI");
+                this.m_Log.Write("NetscapePOP.js - logIN - m_szHomeURI " +this.m_szHomeURI);
+                this.m_szUserId = this.m_ComponentManager.findElement(this.m_szUserName,"szUserId");
+                this.m_Log.Write("NetscapePOP.js - logIN - m_szUserId " +this.m_szUserId);   
+                this.m_szVersion = this.m_ComponentManager.findElement(this.m_szUserName,"szVersion");
+                this.m_Log.Write("NetscapePOP.js - logIN - m_szVersion " +this.m_szVersion);      
+                this.m_SuccessPath = this.m_ComponentManager.findElement(this.m_szUserName,"szSuccessPath");
+                this.m_Log.Write("NetscapePOP.js - logIN - .m_SuccessPath " +this.m_SuccessPath); 
+                this.m_szHostURL = this.m_ComponentManager.findElement(this.m_szUserName,"szHostURL");
+                this.m_Log.Write("NetscapePOP.js - logIN - .m_szHostURL" +this.m_szHostURL); 
+                this.m_szLocation =this.m_ComponentManager.findElement(this.m_szUserName,"szLocation");
+                this.m_Log.Write("NetscapePOP.js - logIN - .m_szLocation" +this.m_szLocation);
                 
-                this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
-                this.m_szHomeURI = this.m_SessionData.oComponentData.findElement("szHomeURI");
-                this.m_Log.Write("NetscapeSMTP.js - logIN - m_szHomeURI " +this.m_szHomeURI);
-                this.m_szUserId = this.m_SessionData.oComponentData.findElement("szUserId");
-                this.m_Log.Write("NetscapeSMTP.js - logIN - m_szUserId " +this.m_szUserId);   
-                this.m_szVersion = this.m_SessionData.oComponentData.findElement("szVersion");
-                this.m_Log.Write("NetscapeSMTP.js - logIN - m_szVersion " +this.m_szVersion);      
-                this.m_SuccessPath = this.m_SessionData.oComponentData.findElement("szSuccessPath");
-                this.m_Log.Write("NetscapeSMTP.js - logIN - .m_SuccessPath " +this.m_SuccessPath); 
-                this.m_szHostURL = this.m_SessionData.oComponentData.findElement("szHostURL");
-                this.m_Log.Write("NetscapeSMTP.js - logIN - .m_szHostURL" +this.m_szHostURL); 
-                this.m_szLocation = this.m_SessionData.oComponentData.findElement("szLocation");
-                this.m_Log.Write("NetscapeSMTP.js - logIN - .m_szLocation" +this.m_szLocation);
-                
-                //get home page
-                this.m_iStage =6;
-                this.m_bReEntry = true;
-                this.m_HttpComms.setURI(this.m_szHomeURI);
-                this.m_HttpComms.setRequestMethod("GET");
-                var bResult = this.m_HttpComms.send(this.loginOnloadHandler);                             
-                if (!bResult) throw new Error("httpConnection returned false");
+                if (this.m_szHomeURI) //get home page
+                {
+                    this.m_iStage =6;
+                    this.m_bReEntry = true;
+                    this.m_HttpComms.setURI(this.m_szHomeURI);
+                }
             }
-            else
-            {   
-                this.m_iStage = 0;
-                this.m_HttpComms.setURI(this.m_szAOLMail);
-                this.m_HttpComms.setRequestMethod("GET");
-                var bResult = this.m_HttpComms.send(this.loginOnloadHandler);                             
-                if (!bResult) throw new Error("httpConnection returned false");        
-            }
+            
+            var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);                             
+            if (!bResult) throw new Error("httpConnection returned false");        
+
                               
             this.m_Log.Write("NetscapeSMTP.js - logIN - END " + bResult);    
             return true;
@@ -155,6 +148,7 @@ NetscapeSMTP.prototype =
         try
         {
             mainObject.m_Log.Write("NetscapeSMTP.js - loginOnloadHandler - START"); 
+            mainObject.m_Log.Write("NetscapeSMTP.js - loginOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("NetscapeSMTP.js - loginOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -167,8 +161,6 @@ NetscapeSMTP.prototype =
                     throw new Error("return status " + httpChannel.responseStatus);
             }
             
-            mainObject.m_HttpComms.clean();
-            
              //page code                                
             switch (mainObject.m_iStage)
             {
@@ -180,7 +172,7 @@ NetscapeSMTP.prototype =
 
                     mainObject.m_HttpComms.setURI(szLoginReplaceURL);
                     mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);      
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);      
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
@@ -194,7 +186,7 @@ NetscapeSMTP.prototype =
                          
                     mainObject.m_HttpComms.setURI(szLoginRedirectURL);
                     mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);      
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);      
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                     
@@ -237,7 +229,7 @@ NetscapeSMTP.prototype =
                     
                     mainObject.m_HttpComms.setURI(szLoginURL);
                     mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);      
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);      
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
@@ -251,7 +243,7 @@ NetscapeSMTP.prototype =
                    
                     mainObject.m_HttpComms.setURI(szLoginVerify);
                     mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);      
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);      
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
@@ -266,7 +258,7 @@ NetscapeSMTP.prototype =
                                
                     mainObject.m_HttpComms.setURI(szURL);
                     mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);      
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);      
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
@@ -286,7 +278,7 @@ NetscapeSMTP.prototype =
                     
                     mainObject.m_HttpComms.setURI(szURL);
                     mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);      
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);      
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
@@ -300,7 +292,7 @@ NetscapeSMTP.prototype =
                             mainObject.m_iStage =0;
                             mainObject.m_HttpComms.setURI(mainObject.m_szAOLMail);
                             mainObject.m_HttpComms.setRequestMethod("GET");
-                            var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);                             
+                            var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler,mainObject);                             
                             if (!bResult) throw new Error("httpConnection returned false");
                             return;
                         }
@@ -351,7 +343,7 @@ NetscapeSMTP.prototype =
             this.m_Log.Write("NetscapeSMTP.js - rawMSG szComposer " + szComposer);
             this.m_HttpComms.setURI(szComposer);
             this.m_HttpComms.setRequestMethod("GET");
-            var bResult = this.m_HttpComms.send(this.composerOnloadHandler);                             
+            var bResult = this.m_HttpComms.send(this.composerOnloadHandler, this);                             
             if (!bResult) throw new Error("httpConnection returned false");
             
             this.m_Log.Write("NetscapeSMTP.js - rawMSG - END");    
@@ -385,8 +377,6 @@ NetscapeSMTP.prototype =
             mainObject.m_Log.Write("NetscapeSMTP.js - composerOnloadHandler - status :" +httpChannel.responseStatus );
             if (httpChannel.responseStatus != 200) 
                 throw new Error("return status " + httpChannel.responseStatus);
-           
-            mainObject.m_HttpComms.clean();
         
             switch(mainObject.m_iStage)
             {
@@ -484,11 +474,11 @@ NetscapeSMTP.prototype =
                         }
                     }  
                     
-                    mainObject.m_HttpComms.setContentType(1);
+                    mainObject.m_HttpComms.setContentType("multipart/form-data");
                     var szAction = mainObject.m_szLocation + "SendMessage.aspx?version="+mainObject.m_szVersion;
                     mainObject.m_HttpComms.setURI(szAction);
                     mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);  
+                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler, mainObject);  
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage = 1;
                 break;
@@ -503,26 +493,22 @@ NetscapeSMTP.prototype =
                         return; 
                     }
                     
-                    if (!mainObject.m_SessionData)
-                    {
-                        mainObject.m_Log.Write("NetscapeSMTP.js - composerOnloadHandler - Creating Session Data");
-                        mainObject.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
-                        mainObject.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
-                        mainObject.m_SessionData.szUserName = mainObject.m_szUserName.toLowerCase();
-                        
-                        var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
-                        componentData.QueryInterface(Components.interfaces.nsIComponentData);
-                        mainObject.m_SessionData.oComponentData = componentData;
+                    if (mainObject.m_bReUseSession)
+                    { 
+                        mainObject.m_Log.Write("NetscapeSMTP.js - Logout - Setting Session Data");           
+                        mainObject.m_ComponentManager.addElement(mainObject.m_szUserName, "szHomeURI", mainObject.m_szHomeURI);   
+                        mainObject.m_ComponentManager.addElement(mainObject.m_szUserName, "szUserId",mainObject.m_szUserId);
+                        mainObject.m_ComponentManager.addElement(mainObject.m_szUserName, "szVersion",mainObject.m_szVersion);
+                        mainObject.m_ComponentManager.addElement(mainObject.m_szUserName, "szSuccessPath", mainObject.m_SuccessPath);
+                        mainObject.m_ComponentManager.addElement(mainObject.m_szUserName, "szHostURL",mainObject.m_szHostURL);
+                        mainObject.m_ComponentManager.addElement(mainObject.m_szUserName, "szLocation",mainObject.m_szLocation);  
                     }
-                    mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
-                    mainObject.m_SessionData.oComponentData.addElement("szHomeURI",mainObject.m_szHomeURI);
-                    mainObject.m_SessionData.oComponentData.addElement("szUserId",mainObject.m_szUserId);
-                    mainObject.m_SessionData.oComponentData.addElement("szVersion",mainObject.m_szVersion);
-                    mainObject.m_SessionData.oComponentData.addElement("szSuccessPath", mainObject.m_SuccessPath);
-                    mainObject.m_SessionData.oComponentData.addElement("szHostURL",mainObject.m_szHostURL);
-                    mainObject.m_SessionData.oComponentData.addElement("szLocation",mainObject.m_szLocation);
-                    
-                    mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);
+                    else
+                    {
+                        mainObject.m_Log.Write("NetscapeSMTP.js - logIN - deleting Session Data");
+                        mainObject.m_HttpComms.deleteSessionData(); 
+                        mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
+                    }
                     
                     mainObject.serverComms("250 OK\r\n");
                 break;

@@ -6,7 +6,7 @@ function AOLSMTP(oResponseStream, oLog)
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/base64.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/comms.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Email.js");
         
@@ -16,7 +16,7 @@ function AOLSMTP(oResponseStream, oLog)
         this.m_bAuthorised = false;
         this.m_szUserName = null;   
         this.m_szPassWord = null; 
-        this.m_HttpComms = new Comms(this , this.m_Log);
+        this.m_HttpComms = new HttpComms();
         this.m_aszTo = new Array;
         this.m_szFrom = null;
         this.m_iStage = 0;
@@ -34,11 +34,9 @@ function AOLSMTP(oResponseStream, oLog)
         this.m_Email.decodeBody(true);
         this.m_iAttCount = 0;
          
-        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"];
-        this.m_SessionManager = this.m_SessionManager.getService();
-        this.m_SessionManager.QueryInterface(Components.interfaces.nsISessionManager); 
-        this.m_SessionData = null;   
-        
+        this.m_ComponentManager = Components.classes["@mozilla.org/nsComponentData2;1"];
+        this.m_ComponentManager = this.m_ComponentManager.getService(Components.interfaces.nsIComponentData2);
+
         //do i reuse the session
         var oPref = {Value:null};
         var  WebMailPrefAccess = new WebMailCommonPrefAccess();
@@ -96,45 +94,37 @@ AOLSMTP.prototype =
             this.m_szUserName = szUserName;
             this.m_szPassWord = szPassWord;
             this.m_szAOLMail= "http://www.aol.com"; 
-          
-            this.m_HttpComms.clean();
-            
-            this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName.toLowerCase());
-            if (this.m_SessionData && this.m_bReUseSession)
+            this.m_iStage = 0;
+            this.m_HttpComms.setURI(this.m_szAOLMail);
+            this.m_HttpComms.setRequestMethod("GET");
+            this.m_HttpComms.setUserName(this.m_szUserName);
+            if (this.m_bReUseSession)
             {
                 this.m_Log.Write("nsAOL.js - logIN - Session Data found");
-                
-                this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
-                this.m_szHomeURI = this.m_SessionData.oComponentData.findElement("szHomeURI");
+                this.m_szHomeURI = this.m_ComponentManager.findElement(this.m_szUserName, "szHomeURI");
                 this.m_Log.Write("nsAOL.js - logIN - m_szHomeURI " +this.m_szHomeURI);
-                this.m_szUserId = this.m_SessionData.oComponentData.findElement("szUserId");
+                this.m_szUserId = this.m_ComponentManager.findElement(this.m_szUserName,"szUserId");
                 this.m_Log.Write("nsAOL.js - logIN - m_szUserId " +this.m_szUserId);   
-                this.m_szVersion = this.m_SessionData.oComponentData.findElement("szVersion");
+                this.m_szVersion = this.m_ComponentManager.findElement(this.m_szUserName,"szVersion");
                 this.m_Log.Write("nsAOL.js - logIN - m_szVersion " +this.m_szVersion);      
-                this.m_SuccessPath = this.m_SessionData.oComponentData.findElement("szSuccessPath");
+                this.m_SuccessPath = this.m_ComponentManager.findElement(this.m_szUserName,"szSuccessPath");
                 this.m_Log.Write("nsAOL.js - logIN - .m_SuccessPath " +this.m_SuccessPath); 
-                this.m_szHostURL = this.m_SessionData.oComponentData.findElement("szHostURL");
+                this.m_szHostURL = this.m_ComponentManager.findElement(this.m_szUserName,"szHostURL");
                 this.m_Log.Write("nsAOL.js - logIN - .m_szHostURL" +this.m_szHostURL); 
-                this.m_szLocation = this.m_SessionData.oComponentData.findElement("szLocation");
+                this.m_szLocation =this.m_ComponentManager.findElement(this.m_szUserName,"szLocation");
                 this.m_Log.Write("nsAOL.js - logIN - .m_szLocation" +this.m_szLocation);
                 
-                //get home page
-                this.m_iStage =7;
-                this.m_bReEntry = true;
-                this.m_HttpComms.setURI(this.m_szHomeURI);
-                this.m_HttpComms.setRequestMethod("GET");
-                var bResult = this.m_HttpComms.send(this.loginOnloadHandler);                             
-                if (!bResult) throw new Error("httpConnection returned false");
+                if (this.m_szHomeURI) //get home page
+                {
+                    this.m_iStage =7;
+                    this.m_bReEntry = true;
+                    this.m_HttpComms.setURI(this.m_szHomeURI);
+                }
             }
-            else
-            {   
-                this.m_iStage = 0;
-                this.m_HttpComms.setURI(this.m_szAOLMail);
-                this.m_HttpComms.setRequestMethod("GET");
-                var bResult = this.m_HttpComms.send(this.loginOnloadHandler);                             
-                if (!bResult) throw new Error("httpConnection returned false");        
-            }
-                              
+
+            var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);                             
+            if (!bResult) throw new Error("httpConnection returned false");        
+                 
             this.m_Log.Write("nsAOL.js - logIN - END " + bResult);    
             return true;
         }
@@ -155,6 +145,7 @@ AOLSMTP.prototype =
         try
         {
             mainObject.m_Log.Write("nsAOL.js - loginOnloadHandler - START"); 
+            mainObject.m_Log.Write("nsAOL.js - loginOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("nsAOL.js - loginOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -167,8 +158,6 @@ AOLSMTP.prototype =
                     throw new Error("return status " + httpChannel.responseStatus);
             }
             
-            mainObject.m_HttpComms.clean();
-            
              //page code                                
             switch (mainObject.m_iStage)
             {
@@ -180,7 +169,7 @@ AOLSMTP.prototype =
                    
                     mainObject.m_HttpComms.setURI(szLoginURL);
                     mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);      
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);      
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
@@ -221,7 +210,7 @@ AOLSMTP.prototype =
                     
                     mainObject.m_HttpComms.setURI(szLoginURL);
                     mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);      
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);      
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
@@ -235,7 +224,7 @@ AOLSMTP.prototype =
                    
                     mainObject.m_HttpComms.setURI(szLoginVerify);
                     mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);      
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);      
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
@@ -246,7 +235,7 @@ AOLSMTP.prototype =
                                                     
                     mainObject.m_HttpComms.setURI("http://webmail.aol.com");
                     mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);      
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);      
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
@@ -259,7 +248,7 @@ AOLSMTP.prototype =
 
                     mainObject.m_HttpComms.setURI(szLoginReplaceURL);
                     mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);      
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);      
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
@@ -275,7 +264,7 @@ AOLSMTP.prototype =
                                
                     mainObject.m_HttpComms.setURI(szURL);
                     mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);      
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);      
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
@@ -296,7 +285,7 @@ AOLSMTP.prototype =
                     
                     mainObject.m_HttpComms.setURI(szURL);
                     mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);      
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);      
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
@@ -310,7 +299,7 @@ AOLSMTP.prototype =
                             mainObject.m_iStage =0;
                             mainObject.m_HttpComms.setURI(mainObject.m_szAOLMail);
                             mainObject.m_HttpComms.setRequestMethod("GET");
-                            var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);                             
+                            var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);                             
                             if (!bResult) throw new Error("httpConnection returned false");
                             return;
                         }
@@ -362,7 +351,7 @@ AOLSMTP.prototype =
             this.m_Log.Write("nsAOLSMTP.js - rawMSG szComposer " + szComposer);
             this.m_HttpComms.setURI(szComposer);
             this.m_HttpComms.setRequestMethod("GET");
-            var bResult = this.m_HttpComms.send(this.composerOnloadHandler);                             
+            var bResult = this.m_HttpComms.send(this.composerOnloadHandler, this);                             
             if (!bResult) throw new Error("httpConnection returned false");
             
             this.m_Log.Write("nsAOLSMTP.js - rawMSG - END");    
@@ -388,7 +377,8 @@ AOLSMTP.prototype =
         try
         {
             mainObject.m_Log.Write("nsAOLSMTP.js - composerOnloadHandler - START"); 
-            mainObject.m_Log.Write("nsAOLSMTP.js - composerOnloadHandler : " + mainObject.m_iStage + "\n");  
+            mainObject.m_Log.Write("nsAOLSMTP.js - composerOnloadHandler : \n" + szResponse);
+            mainObject.m_Log.Write("nsAOLSMTP.js - composerOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             
@@ -396,8 +386,6 @@ AOLSMTP.prototype =
             mainObject.m_Log.Write("nsAOLSMTP.js - composerOnloadHandler - status :" +httpChannel.responseStatus );
             if (httpChannel.responseStatus != 200) 
                 throw new Error("return status " + httpChannel.responseStatus);
-           
-            mainObject.m_HttpComms.clean();
         
             switch(mainObject.m_iStage)
             {
@@ -495,12 +483,12 @@ AOLSMTP.prototype =
                         }
                     }  
                     
-                    mainObject.m_HttpComms.setContentType(1);
+                    mainObject.m_HttpComms.setContentType("multipart/form-data");
                     var szLocation = mainObject.m_szLocation.replace("Mail","RPC");
                     var szAction = szLocation + "SendMessage.aspx?version="+mainObject.m_szVersion;
                     mainObject.m_HttpComms.setURI(szAction);
                     mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler);  
+                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler, mainObject);  
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage = 1;
                 break;
@@ -515,25 +503,23 @@ AOLSMTP.prototype =
                         return; 
                     }
                     
-                    if (!mainObject.m_SessionData)
-                    {
-                        mainObject.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
-                        mainObject.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
-                        mainObject.m_SessionData.szUserName = mainObject.m_szUserName.toLowerCase();
-                        
-                        var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
-                        componentData.QueryInterface(Components.interfaces.nsIComponentData);
-                        mainObject.m_SessionData.oComponentData = componentData;
+                    if (mainObject.m_bReUseSession)
+                    { 
+                        mainObject.m_Log.Write("nsAOLSMTP.js - Logout - Setting Session Data");           
+                        mainObject.m_ComponentManager.addElement(this.m_szUserName, "szHomeURI", mainObject.m_szHomeURI);   
+                        mainObject.m_ComponentManager.addElement(this.m_szUserName, "szUserId",mainObject.m_szUserId);
+                        mainObject.m_ComponentManager.addElement(this.m_szUserName, "szVersion",mainObject.m_szVersion);
+                        mainObject.m_ComponentManager.addElement(this.m_szUserName, "szSuccessPath", mainObject.m_SuccessPath);
+                        mainObject.m_ComponentManager.addElement(this.m_szUserName, "szHostURL",mainObject.m_szHostURL);
+                        mainObject.m_ComponentManager.addElement(this.m_szUserName, "szLocation",mainObject.m_szLocation);  
                     }
-                    mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
-                    mainObject.m_SessionData.oComponentData.addElement("szHomeURI",mainObject.m_szHomeURI);
-                    mainObject.m_SessionData.oComponentData.addElement("szUserId",mainObject.m_szUserId);
-                    mainObject.m_SessionData.oComponentData.addElement("szVersion",mainObject.m_szVersion);
-                    mainObject.m_SessionData.oComponentData.addElement("szSuccessPath", mainObject.m_SuccessPath);
-                    mainObject.m_SessionData.oComponentData.addElement("szHostURL",mainObject.m_szHostURL);
-                    mainObject.m_SessionData.oComponentData.addElement("szLocation",mainObject.m_szLocation);
-                    
-                    mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);    
+                    else
+                    {
+                        mainObject.m_Log.Write("nsAOLSMTP.js - logIN - deleting Session Data");
+                        mainObject.m_HttpComms.deleteSessionData(); 
+                        mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
+                    }
+                        
                     mainObject.serverComms("250 OK\r\n");
                 break;
             };

@@ -5,17 +5,17 @@ function AOLPOP(oResponseStream, oLog)
         var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/comms.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://aol/content/AOL-MSG.js");
 
         this.m_Log = oLog;
-        this.m_Log.Write("NetscapePOP.js - Constructor - START");   
+        this.m_Log.Write("AOLPOP.js - Constructor - START");   
         this.m_oResponseStream = oResponseStream;
         this.m_szUserName = null;   
         this.m_szPassWord = null; 
   
-        this.m_HttpComms = new Comms(this,this.m_Log); 
+        this.m_HttpComms = new HttpComms(); 
         this.m_bAuthorised = false; 
         this.m_iStage=0; 
          
@@ -38,10 +38,8 @@ function AOLPOP(oResponseStream, oLog)
         this.m_szMSG = null;
         this.iID = -1;
         
-        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"];
-        this.m_SessionManager = this.m_SessionManager.getService();
-        this.m_SessionManager.QueryInterface(Components.interfaces.nsISessionManager); 
-        this.m_SessionData = null;
+        this.m_ComponentManager = Components.classes["@mozilla.org/nsComponentData2;1"];
+        this.m_ComponentManager = this.m_ComponentManager.getService(Components.interfaces.nsIComponentData2);
          
         //do i reuse the session
         var oPref = {Value:null};
@@ -100,45 +98,38 @@ AOLPOP.prototype =
             this.m_szUserName = szUserName;
             this.m_szPassWord = szPassWord;
             this.m_szAOLMail= "http://www.aol.com";  
-            
-            this.m_HttpComms.clean();
-            
-            this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName.toLowerCase());
-            if (this.m_SessionData && this.m_bReUseSession)
-            {
-                this.m_Log.Write("AOLPOP.js - logIN - Session Data found");
-                
-                this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
-                this.m_szHomeURI = this.m_SessionData.oComponentData.findElement("szHomeURI");
-                this.m_Log.Write("AOLPOP.js - logIN - m_szHomeURI " +this.m_szHomeURI);
-                this.m_szUserId = this.m_SessionData.oComponentData.findElement("szUserId");
+            this.m_iStage = 0;
+            this.m_HttpComms.setURI(this.m_szAOLMail);
+            this.m_HttpComms.setRequestMethod("GET");
+            this.m_HttpComms.setUserName(this.m_szUserName);
+            //get session data
+            if (this.m_bReUseSession)
+            { 
+                this.m_Log.Write("AOLPOP.js - logIN - Session Data found");           
+                this.m_szHomeURI = this.m_ComponentManager.findElement(this.m_szUserName, "szHomeURI");
+                this.m_Log.Write("AOLPOP.js - logIN - szHomeURI " +this.m_szHomeURI);   
+                this.m_szUserId = this.m_ComponentManager.findElement(this.m_szUserName, "szUserId");
                 this.m_Log.Write("AOLPOP.js - logIN - m_szUserId " +this.m_szUserId);   
-                this.m_szVersion = this.m_SessionData.oComponentData.findElement("szVersion");
+                this.m_szVersion = this.m_ComponentManager.findElement(this.m_szUserName, "szVersion");
                 this.m_Log.Write("AOLPOP.js - logIN - m_szVersion " +this.m_szVersion);      
-                this.m_SuccessPath = this.m_SessionData.oComponentData.findElement("szSuccessPath");
+                this.m_SuccessPath = this.m_ComponentManager.findElement(this.m_szUserName, "szSuccessPath");
                 this.m_Log.Write("AOLPOP.js - logIN - .m_SuccessPath " +this.m_SuccessPath); 
-                this.m_szHostURL = this.m_SessionData.oComponentData.findElement("szHostURL");
+                this.m_szHostURL = this.m_ComponentManager.findElement(this.m_szUserName, "szHostURL");
                 this.m_Log.Write("AOLPOP.js - logIN - .m_szHostURL" +this.m_szHostURL); 
-                this.m_szLocation = this.m_SessionData.oComponentData.findElement("szLocation");
+                this.m_szLocation = this.m_ComponentManager.findElement(this.m_szUserName, "szLocation");
                 this.m_Log.Write("AOLPOP.js - logIN - .m_szLocation" +this.m_szLocation);
+            
+                if (this.m_szHomeURI) //get home page
+                {
+                    this.m_iStage =7;
+                    this.m_bReEntry = true;
+                    this.m_HttpComms.setURI(this.m_szHomeURI);
+                }
+            }     
                 
-                //get home page
-                this.m_iStage =7;
-                this.m_bReEntry = true;
-                this.m_HttpComms.setURI(this.m_szHomeURI);
-                this.m_HttpComms.setRequestMethod("GET");
-                var bResult = this.m_HttpComms.send(this.loginOnloadHandler);                             
-                if (!bResult) throw new Error("httpConnection returned false");
-            }
-            else
-            {   
-                this.m_iStage = 0;
-                this.m_HttpComms.setURI(this.m_szAOLMail);
-                this.m_HttpComms.setRequestMethod("GET");
-                var bResult = this.m_HttpComms.send(this.loginOnloadHandler);                             
-                if (!bResult) throw new Error("httpConnection returned false");        
-            }
-                              
+            var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);                             
+            if (!bResult) throw new Error("httpConnection returned false");        
+                          
             this.m_Log.Write("AOLPOP.js - logIN - END " + bResult);    
             return true;
         }
@@ -159,6 +150,7 @@ AOLPOP.prototype =
         try
         {
             mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - START"); 
+            mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -171,8 +163,6 @@ AOLPOP.prototype =
                     throw new Error("return status " + httpChannel.responseStatus);
             }
             
-            mainObject.m_HttpComms.clean();
-            
              //page code                                
             switch (mainObject.m_iStage)
             {         
@@ -184,7 +174,7 @@ AOLPOP.prototype =
                    
                     mainObject.m_HttpComms.setURI(szLoginURL);
                     mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);      
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);      
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
@@ -225,7 +215,7 @@ AOLPOP.prototype =
                     
                     mainObject.m_HttpComms.setURI(szLoginURL);
                     mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);      
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);      
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
@@ -239,7 +229,7 @@ AOLPOP.prototype =
                    
                     mainObject.m_HttpComms.setURI(szLoginVerify);
                     mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);      
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);      
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
@@ -250,7 +240,7 @@ AOLPOP.prototype =
                                                     
                     mainObject.m_HttpComms.setURI("http://webmail.aol.com");
                     mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);      
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);      
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
@@ -263,7 +253,7 @@ AOLPOP.prototype =
 
                     mainObject.m_HttpComms.setURI(szLoginReplaceURL);
                     mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);      
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);      
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
@@ -279,7 +269,7 @@ AOLPOP.prototype =
                                
                     mainObject.m_HttpComms.setURI(szURL);
                     mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);      
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);      
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
@@ -300,7 +290,7 @@ AOLPOP.prototype =
                     
                     mainObject.m_HttpComms.setURI(szURL);
                     mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);      
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);      
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
@@ -314,7 +304,7 @@ AOLPOP.prototype =
                             mainObject.m_iStage =0;
                             mainObject.m_HttpComms.setURI(mainObject.m_szAOLMail);
                             mainObject.m_HttpComms.setRequestMethod("GET");
-                            var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler);                             
+                            var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);                             
                             if (!bResult) throw new Error("httpConnection returned false");
                             return;
                         }
@@ -370,10 +360,9 @@ AOLPOP.prototype =
             this.m_Log.Write("AOLPOP.js - getNumMessages - mail box url " + this.m_szInboxURL); 
             
             this.m_iStage = 0;
-            this.m_HttpComms.clean();
             this.m_HttpComms.setURI(this.m_szInboxURL);
             this.m_HttpComms.setRequestMethod("GET");
-            var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler); 
+            var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this); 
             if (!bResult) throw new Error("httpConnection returned false");
             this.m_bStat = true;
             
@@ -395,8 +384,8 @@ AOLPOP.prototype =
     {
         try
         {
-            mainObject.m_Log.Write("AOLPOP.js - mailBoxOnloadHandler - START"); 
-            
+            mainObject.m_Log.Write("AOLPOP.js - mailBoxOnloadHandler - START");
+            mainObject.m_Log.Write("AOLPOP.js - mailBoxOnloadHandler : \n" + szResponse); 
             mainObject.m_Log.Write("AOLPOP.js - mailBoxOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -405,9 +394,6 @@ AOLPOP.prototype =
             mainObject.m_Log.Write("AOLPOP.js - mailBoxOnloadHandler - status :" +httpChannel.responseStatus );
             if (httpChannel.responseStatus != 200)
                 throw new Error("return status " + httpChannel.responseStatus);
-             
-            mainObject.m_HttpComms.clean();
-        
                            
             //process page
             var aszMSGDetails = szResponse.match(patternAOLMSGData);
@@ -488,7 +474,7 @@ AOLPOP.prototype =
                                        
                     mainObject.m_HttpComms.setURI(mainObject.m_szSpamURL);
                     mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler); 
+                    var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler, mainObject); 
                     if (!bResult) throw new Error("httpConnection returned false");
                 }
                 else  //all uri's collected
@@ -558,10 +544,9 @@ AOLPOP.prototype =
                 this.m_Log.Write("AOLPOP.js - getNumMessages - mail box url " + this.m_szInboxURL); 
                 
                 this.m_iStage = 0;
-                this.m_HttpComms.clean();
                 this.m_HttpComms.setURI(this.m_szInboxURL);
                 this.m_HttpComms.setRequestMethod("GET");
-                var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler); 
+                var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this); 
                 if (!bResult) throw new Error("httpConnection returned false");
             }
                            
@@ -676,10 +661,9 @@ AOLPOP.prototype =
             szURL += "user="+ this.m_szUserId;
             
             this.m_iStage = 0;
-            this.m_HttpComms.clean();
             this.m_HttpComms.setURI(szURL);
             this.m_HttpComms.setRequestMethod("GET");
-            var bResult = this.m_HttpComms.send(this.emailOnloadHandler); 
+            var bResult = this.m_HttpComms.send(this.emailOnloadHandler, this); 
             if (!bResult) throw new Error("httpConnection returned false");
            
             this.m_Log.Write("AOLPOP.js - getMessage - END"); 
@@ -702,6 +686,7 @@ AOLPOP.prototype =
         try
         {
             mainObject.m_Log.Write("AOLPOP.js - emailOnloadHandler - START"); 
+            mainObject.m_Log.Write("AOLPOP.js - emailOnloadHandler : \n" + szResponse);
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             mainObject.m_Log.Write("AOLPOP.js - emailOnloadHandler - msg :" + httpChannel.responseStatus);
@@ -726,10 +711,9 @@ AOLPOP.prototype =
                     szURL += "version="+ mainObject.m_szVersion +"&";
                     szURL += "user="+ mainObject.m_szUserId;
                                        
-                    mainObject.m_HttpComms.clean();
                     mainObject.m_HttpComms.setURI(szURL);
                     mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler); 
+                    var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject); 
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
@@ -776,10 +760,9 @@ AOLPOP.prototype =
             szURL += "user="+ this.m_szUserId;
             
             this.m_iStage = 0;
-            this.m_HttpComms.clean();
             this.m_HttpComms.setURI(szURL);
             this.m_HttpComms.setRequestMethod("GET");
-            var bResult = this.m_HttpComms.send(this.deleteMessageOnloadHandler); 
+            var bResult = this.m_HttpComms.send(this.deleteMessageOnloadHandler, this); 
             if (!bResult) throw new Error("httpConnection returned false");
 
             this.m_Log.Write("AOLPOP.js - deleteMessage - END");     
@@ -803,6 +786,7 @@ AOLPOP.prototype =
         try
         {
             mainObject.m_Log.Write("AOLPOP.js - deleteMessageOnloadHandler - START");
+            mainObject.m_Log.Write("AOLPOP.js - deleteMessageOnloadHandler : \n" + szResponse);
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             mainObject.m_Log.Write("AOLPOP.js - emailOnloadHandler - msg :" + httpChannel.responseStatus);
@@ -835,25 +819,22 @@ AOLPOP.prototype =
         {
             this.m_Log.Write("AOLPOP.js - logOUT - START"); 
             
-            if (!this.m_SessionData)
-            {
-                this.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
-                this.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
-                this.m_SessionData.szUserName = this.m_szUserName.toLowerCase();
-                
-                var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
-                componentData.QueryInterface(Components.interfaces.nsIComponentData);
-                this.m_SessionData.oComponentData = componentData;
+            if (this.m_bReUseSession)
+            { 
+                this.m_Log.Write("AOLPOP.js - Logout - Setting Session Data");           
+                this.m_ComponentManager.addElement(this.m_szUserName, "szHomeURI", this.m_szHomeURI);   
+                this.m_ComponentManager.addElement(this.m_szUserName, "szUserId",this.m_szUserId);
+                this.m_ComponentManager.addElement(this.m_szUserName, "szVersion",this.m_szVersion);
+                this.m_ComponentManager.addElement(this.m_szUserName, "szSuccessPath", this.m_SuccessPath);
+                this.m_ComponentManager.addElement(this.m_szUserName, "szHostURL",this.m_szHostURL);
+                this.m_ComponentManager.addElement(this.m_szUserName, "szLocation",this.m_szLocation);  
             }
-            this.m_SessionData.oCookieManager = this.m_HttpComms.getCookieManager();
-            this.m_SessionData.oComponentData.addElement("szHomeURI",this.m_szHomeURI);
-            this.m_SessionData.oComponentData.addElement("szUserId",this.m_szUserId);
-            this.m_SessionData.oComponentData.addElement("szVersion",this.m_szVersion);
-            this.m_SessionData.oComponentData.addElement("szSuccessPath", this.m_SuccessPath);
-            this.m_SessionData.oComponentData.addElement("szHostURL",this.m_szHostURL);
-            this.m_SessionData.oComponentData.addElement("szLocation",this.m_szLocation);
- 
-            this.m_SessionManager.setSessionData(this.m_SessionData);
+            else
+            {
+                this.m_Log.Write("AOLPOP.js - logIN - deleting Session Data");
+                this.m_HttpComms.deleteSessionData(); 
+                this.m_ComponentManager.deleteAllElements(this.m_szUserName);
+            }
            
             this.m_bAuthorised = false;
             this.serverComms("+OK Your Out\r\n");        
