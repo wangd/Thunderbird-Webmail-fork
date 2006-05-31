@@ -7,7 +7,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
 		<em:id>{a6a33690-2c6a-11d9-9669-0800200c9a66}</em:id>
 		<em:type>2</em:type>
-		<em:version>0.10.8</em:version>
+		<em:version>0.10.9</em:version>
 		
 		<em:name>WebMail - Hotmail</em:name>
 		<em:description>Hotmail component for Web-Mail extension</em:description>
@@ -32,8 +32,8 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
             <Description>
                 <!-- requires web-mail extension-->
                 <em:id>{3c8e8390-2cf6-11d9-9669-0800200c9a66}</em:id>
-                <em:minVersion>0.9</em:minVersion>
-                <em:maxVersion>1.0.*</em:maxVersion>
+                <em:minVersion>1.0.6</em:minVersion>
+                <em:maxVersion>1.1.*</em:maxVersion>
                 <em:name>WebMail</em:name>
                 <em:homepageURL>http://webmail.mozdev.org/</em:homepageURL>
                 <em:updateURL>http://webmail.mozdev.org/update/webmailUpdate.rdf</em:updateURL>
