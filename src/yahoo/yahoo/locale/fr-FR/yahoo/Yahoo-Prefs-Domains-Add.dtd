@@ -1,8 +1,8 @@
-<!ENTITY TitleAdd "Add Domain">
-<!ENTITY domainName.label "Domain">
+<!ENTITY TitleAdd "AJouter le domaine">
+<!ENTITY domainName.label "Domaine">
 <!ENTITY domainName.accessKey "D">
-<!ENTITY domain.label "Add Yahoo domain">
+<!ENTITY domain.label "AJouter le domaine Yahoo">
 <!ENTITY Ok.label "Ok">
 <!ENTITY Ok.accessKey "O">
-<!ENTITY Cancel.label "Cancel">
-<!ENTITY Cancel.accessKey "C">
+<!ENTITY Cancel.label "Annuler">
+<!ENTITY Cancel.accessKey "A">

@@ -1,8 +1,8 @@
-<!ENTITY TitleAdd "Add">
-<!ENTITY folderName.label "Folder Name">
-<!ENTITY folderName.accessKey "F">
-<!ENTITY folders.label "Add download folder">
+<!ENTITY TitleAdd "Ajouter">
+<!ENTITY folderName.label "Nom de dossier">
+<!ENTITY folderName.accessKey "d">
+<!ENTITY folders.label "Ajouter le dossier de destination">
 <!ENTITY Ok.label "Ok">
 <!ENTITY Ok.accessKey "O">
-<!ENTITY Cancel.label "Cancel">
-<!ENTITY Cancel.accessKey "C">
+<!ENTITY Cancel.label "Annuler">
+<!ENTITY Cancel.accessKey "A">
