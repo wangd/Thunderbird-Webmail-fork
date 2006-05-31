@@ -444,8 +444,7 @@ HotmailScreenRipperBETA.prototype =
             
                 
             //search for inbox content
-            
-            if (szResponse.match(patternHotmailPOPInboxCotent)==-1)
+            if (szResponse.search(patternHotmailPOPInboxCotent)==-1)
                 throw new Error("Error Parsing Web Page");
                 
             //get msg urls
@@ -541,7 +540,12 @@ HotmailScreenRipperBETA.prototype =
                     } 
                 } 
             }
-                           
+            else
+            {
+                mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler - check for empty mail box");                
+                if (szResponse.search(patternHotmailPOPInboxNoContent)==-1)
+                    throw new Error("Error Parsing Web Page");
+            }               
                                                                          
             if (szNextPage)//more pages
             {           
