@@ -49,7 +49,7 @@ const patternHotmailPOPEmailDate = /<td.*?dInboxContentTableDateCol.*?>(.*?)<\/t
 const patternHotmailPOPEMailID =/ReadMessageID=(.*?)&/i;
 const patternHotmailPOPViewState = /<input.*?id="__VIEWSTATE".*?value="(.*?)".*?\/>/i;
 const patternHotmailPOPFolderID = /FolderID=(.*?)$/i;
-const patternHotmailPOPInboxCotent = /<div class="dInboxContent">/ig
+const patternHotmailPOPInboxCotent = /<div id="inbox">/ig
 const patternHotmailPOPInboxNoContent =/<div.*?ContentNoMsg.*?>/ig
 /*******************************************************************************/
 
