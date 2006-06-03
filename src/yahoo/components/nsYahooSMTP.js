@@ -18,7 +18,7 @@ const patternYahooAttachCheck = /javascript\:VirusScanResults\(0\)/igm;
 const patternYahooImageVerifiaction = /<form.*?name=ImgVerification[\S\s]*?>[\s\S]*?<\/form>/igm;
 const patternYahooImage = /<input.*?name="IMG".*?value="(.*?)">/i;
 const patternYahooImageAction = /<form.*?name=ImgVerification.*?action="([\S\s]*?)">/i;
-const PatternYahooLogout = /id="signoutlink"/i;
+const PatternYahooLogout = /id="signoutlink"/im;
 
 /******************************  Yahoo ***************************************/
 function nsYahooSMTP()
@@ -160,6 +160,12 @@ nsYahooSMTP.prototype =
                     this.m_bReEntry = true;
                     this.m_HttpComms.setURI(this.m_szHomeURI);
                 }
+            }
+            else
+            {
+                this.m_Log.Write("nsYahoo.js - logIN - deleting Session Data");
+                this.m_HttpComms.deleteSessionData(); 
+                this.m_ComponentManager.deleteAllElements(this.m_szUserName);
             }
 
             var bResult = this.m_HttpComms.send(this.loginOnloadHandler,this);                             

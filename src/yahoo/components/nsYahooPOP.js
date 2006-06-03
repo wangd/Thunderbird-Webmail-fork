@@ -28,7 +28,7 @@ const PatternYahooFoldersPart = /"(.*?ShowFolder\?box=.*?)"/gim;
 const PatternYahooFolderURL =/'(.*?Folders\?YY.*?)'"/i;
 const PatternYahooFolderBox = /box=(.*?)&/i;
 const PatternYahooFolderBoxAlt = /box=(.*?)$/i;
-const PatternYahooLogout = /id="signoutlink"/i;
+const PatternYahooLogout = /id="signoutlink"/im;
 /******************************  Yahoo ***************************************/
 
 
@@ -174,7 +174,13 @@ nsYahoo.prototype =
                     this.m_HttpComms.setURI(this.m_szHomeURI);
                 }
             }
-           
+            else
+            {
+                this.m_Log.Write("nsYahoo.js - logIN - deleting Session Data");
+                this.m_HttpComms.deleteSessionData(); 
+                this.m_ComponentManager.deleteAllElements(this.m_szUserName);
+            }
+            
             this.m_HttpComms.setRequestMethod("GET");
             var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);                             
             if (!bResult) throw new Error("httpConnection returned false");
@@ -1038,7 +1044,7 @@ nsYahoo.prototype =
             }
             else
             {
-                this.m_Log.Write("nsYahoo.js - logIN - deleting Session Data");
+                this.m_Log.Write("nsYahoo.js - logOUT - deleting Session Data");
                 this.m_HttpComms.deleteSessionData(); 
                 this.m_ComponentManager.deleteAllElements(this.m_szUserName);
             }
