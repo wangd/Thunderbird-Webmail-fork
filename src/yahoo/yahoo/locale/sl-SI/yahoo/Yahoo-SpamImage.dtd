@@ -1,5 +1,4 @@
-<!ENTITY Window.size "width: 27em; height: 20em">
-<!ENTITY Window.title "Slika Yahoo Anti Spam">
+<!ENTITY Window.title "Slika protizaščite Yahoo">
 <!ENTITY Button.OK.label "V redu">
 <!ENTITY YahooSpam.title "Yahoo">
 <!ENTITY YahooSpam.decription "Preverjanje lažnih prijav">
