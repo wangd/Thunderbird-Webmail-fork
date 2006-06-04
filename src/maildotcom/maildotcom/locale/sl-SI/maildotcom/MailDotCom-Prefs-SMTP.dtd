@@ -1,0 +1,7 @@
+<!ENTITY SaveSentItems.Label "Shrani kopijo med poslanim.">
+<!ENTITY SaveSentItems.AccessKey "S">
+<!ENTITY AlternativeGroup.Label "Alternativna\večdelna e-sporočila">
+<!ENTITY SendPlain.Label "Pošlji navadno besedilo">
+<!ENTITY SendPlain.AccessKey "n">
+<!ENTITY SendHtml.Label "Pošlji besedilo html">
+<!ENTITY SendHtml.AccessKey "h">

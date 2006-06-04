@@ -1,0 +1,5 @@
+<!ENTITY MailServers.Label "POP">
+<!ENTITY EmptyTrash.Label "Izprazni koš">
+<!ENTITY EmptyTrash.AccessKey "I">
+<!ENTITY DownloadUnread.Label "Prenesi le neprebrana sporočila">
+<!ENTITY DownloadUnread.AccessKey "n">
