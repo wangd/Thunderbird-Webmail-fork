@@ -5,7 +5,7 @@ const ExtHotmailGuid = "{3c8e8390-2cf6-11d9-9669-0800200c9a66}";
 
 /************************Screen Rippper constants******************************/
 const patternHotmailSMTPSRuri =/[^\.\/]+\.[^\.\/]+$/;
-
+const UserAgent = "1.1 on Mac OS X — Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-us) Gecko/20060516 SeaMonkey/1.1.0";
 
 /************************Webdav constants *************************************/
 const HotmailSMTPSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:h=\"http://schemas.microsoft.com/hotmail/\" xmlns:hm=\"urn:schemas:httpmail:\">\r\n<D:prop>\r\n<h:adbar/>\r\n<hm:contacts/>\r\n<hm:inbox/>\r\n<hm:outbox/>\r\n<hm:sendmsg/>\r\n<hm:sentitems/>\r\n<hm:deleteditems/>\r\n<hm:drafts/>\r\n<hm:msgfolderroot/>\r\n<h:maxpoll/>\r\n<h:sig/>\r\n</D:prop>\r\n</D:propfind>";

@@ -92,7 +92,9 @@ HotmailSMTPScreenRipperBETA.prototype =
             this.m_iStage= 0;
             this.m_HttpComms.setURI("http://www.hotmail.com");
             this.m_HttpComms.setUserName(this.m_szUserName);
-            
+ 
+            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true); 
+                                  
             //get session data
             if (this.m_bReUseSession)
             { 
@@ -142,7 +144,8 @@ HotmailSMTPScreenRipperBETA.prototype =
             if (httpChannel.responseStatus != 200 ) 
                 throw new Error("return status " + httpChannel.responseStatus);
   
-                             
+            mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
+                                      
             //check for java refresh
             var aRefresh = szResponse.match(patternHotmailSMTPJSRefresh);
             if (aRefresh)
@@ -380,7 +383,9 @@ HotmailSMTPScreenRipperBETA.prototype =
                 this.serverComms("502 "+ szError + "\r\n");
                 return false;
             }
-                 
+            
+            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
+                  
             this.m_iStage=0;
             this.m_HttpComms.setURI(this.m_szComposer);
             this.m_HttpComms.setRequestMethod("GET");
@@ -419,6 +424,8 @@ HotmailSMTPScreenRipperBETA.prototype =
             //if this fails we've gone somewhere new
             if (httpChannel.responseStatus != 200) 
                 mainObject.serverComms("502 Error Sending Email\r\n");
+             
+            mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
                                         
             if (mainObject.m_Email.attachments.length>0 && !mainObject.m_bAttHandled)
                 mainObject.m_iStage = 2;

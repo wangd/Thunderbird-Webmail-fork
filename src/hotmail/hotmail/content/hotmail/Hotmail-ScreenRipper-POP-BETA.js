@@ -93,7 +93,8 @@ HotmailScreenRipperBETA.prototype =
             this.m_iStage= 0;
             this.m_HttpComms.setURI("http://www.hotmail.com");
             this.m_HttpComms.setUserName(this.m_szUserName);
-                                  
+            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);                    
+            
             //get session data
             if (this.m_bReUseSession)
             { 
@@ -144,6 +145,8 @@ HotmailScreenRipperBETA.prototype =
             if (httpChannel.responseStatus != 200 ) 
                 throw new Error("return status " + httpChannel.responseStatus);
             
+            mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);                   
+
             //check for java refresh
             var aRefresh = szResponse.match(patternHotmailPOPJSRefresh);
             if (aRefresh)
@@ -369,7 +372,8 @@ HotmailScreenRipperBETA.prototype =
             if (this.m_szMailboxURI == null) return false;
             var szMailboxURI = this.m_szLocationURI + this.m_szMailboxURI; 
             this.m_Log.Write("Hotmail-SR-BETAR - getNumMessages - mail box url " + szMailboxURI); 
-            
+            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);            
+
             this.m_iStage = 0;  
             this.m_HttpComms.setURI(szMailboxURI);
             this.m_HttpComms.setRequestMethod("GET");
@@ -409,7 +413,8 @@ HotmailScreenRipperBETA.prototype =
             if (httpChannel.responseStatus != 200 ) 
                 throw new Error("error status " + httpChannel.responseStatus);   
             
-           
+            mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);        
+
             // get trash folder uri      
             if (!mainObject.m_szJunkFolderURI && mainObject.m_bUseJunkMail)
             {
@@ -646,6 +651,8 @@ HotmailScreenRipperBETA.prototype =
                 var szMailboxURI = this.m_szLocationURI + this.m_szMailboxURI; 
                 this.m_Log.Write("Hotmail-SR-BETAR - getMessageSizes - mail box url " + szMailboxURI); 
                 
+                this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);                    
+
                 this.m_iStage = 0;
                 this.m_HttpComms.setURI(szMailboxURI);
                 this.m_HttpComms.setRequestMethod("GET");
@@ -771,6 +778,8 @@ HotmailScreenRipperBETA.prototype =
             this.m_bJunkMail = oMSG.bJunkFolder;
             this.m_iStage = 0;
             
+            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);                     
+
             //get msg from hotmail
             this.m_HttpComms.setURI(szMsgURI);
             this.m_HttpComms.setRequestMethod("GET");
@@ -868,7 +877,8 @@ HotmailScreenRipperBETA.prototype =
             var szURL = this.m_szLocationURI+szDirectory;
             this.m_Log.Write("Hotmail-SR-POP-BETA - loginOnloadHandler - szURL : " +szURL);           
             
-            
+            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);  
+
             var szFolderID = oMSG.szMSGUri.match(patternHotmailPOPFolderID)[1];
             this.m_HttpComms.setURI(szURL+this.m_szDelete+"&FolderID="+szFolderID);
             this.m_HttpComms.addValuePair("__VIEWSTATE",oMSG.szStatView);
