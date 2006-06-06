@@ -10,3 +10,4 @@ locale	aol    fi-FI   jar:chrome/aol.jar!/locale/fi-FI/aol/
 locale	aol    fr-FR   jar:chrome/aol.jar!/locale/fr-FR/aol/
 locale	aol    it-IT   jar:chrome/aol.jar!/locale/it-IT/aol/
 locale	aol    pt-Br   jar:chrome/aol.jar!/locale/pt-BR/aol/
+locale	aol    sl-SI   jar:chrome/aol.jar!/locale/sl-SI/aol/
