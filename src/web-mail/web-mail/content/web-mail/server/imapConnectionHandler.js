@@ -267,8 +267,12 @@ IMAPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
            
             case "logout":
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - logout - START "+this.iID);
-                this.m_DomainHandler.tag = aCommand[0];
-                this.m_DomainHandler.logOut();
+                if (this.m_DomainHandler)
+                {
+                    this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - logout - manager found");
+                    this.m_DomainHandler.tag = aCommand[0];
+                    this.m_DomainHandler.logOut();
+                }
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - logout - END "+this.iID);
             break;
                     
