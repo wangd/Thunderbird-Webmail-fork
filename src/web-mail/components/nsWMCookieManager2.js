@@ -189,7 +189,7 @@ nsWebMailCookieManager.prototype =
                 {
                     var oTempUser = this.m_aCookies.shift();
                     this.m_Log.Write("CookieManager.js - deleteCookie - Checking User " + szUser);
-                    if (szUser.search()!=-1)
+                    if (szUser.search(usernameRegExp)!=-1)
                     {
                         this.m_Log.Write("CookieManager.js - deleteCookie - user Found");
                         delete oTempUser;
