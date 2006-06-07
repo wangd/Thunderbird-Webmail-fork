@@ -18,7 +18,7 @@ const patternYahooAttachCheck = /javascript\:VirusScanResults\(0\)/igm;
 const patternYahooImageVerifiaction = /<form.*?name=ImgVerification[\S\s]*?>[\s\S]*?<\/form>/igm;
 const patternYahooImage = /<input.*?name="IMG".*?value="(.*?)">/i;
 const patternYahooImageAction = /<form.*?name=ImgVerification.*?action="([\S\s]*?)">/i;
-const PatternYahooLogout = /id="signoutlink"/im;
+const PatternYahooLogout = /Logout/im;
 
 /******************************  Yahoo ***************************************/
 function nsYahooSMTP()

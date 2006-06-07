@@ -28,7 +28,7 @@ const PatternYahooFoldersPart = /"(.*?ShowFolder\?box=.*?)"/gim;
 const PatternYahooFolderURL =/'(.*?Folders\?YY.*?)'"/i;
 const PatternYahooFolderBox = /box=(.*?)&/i;
 const PatternYahooFolderBoxAlt = /box=(.*?)$/i;
-const PatternYahooLogout = /id="signoutlink"/im;
+const PatternYahooLogout = /Logout/im;
 /******************************  Yahoo ***************************************/
 
 
