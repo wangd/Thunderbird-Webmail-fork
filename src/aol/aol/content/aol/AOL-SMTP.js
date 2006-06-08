@@ -325,6 +325,7 @@ AOLSMTP.prototype =
                                           + ".\nError message: " 
                                           + err.message +"\n" +
                                             err.lineNumber);
+            mainObject.m_HttpComms.deleteSessionData();
             mainObject.serverComms("502 negative vibes from " +mainObject.m_szUserName +"\r\n");
         }
     },

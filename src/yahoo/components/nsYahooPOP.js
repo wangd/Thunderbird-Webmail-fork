@@ -345,7 +345,8 @@ nsYahoo.prototype =
                                           + ".\nError message: " 
                                           + err.message + "\n"
                                           + err.lineNumber);
-                                              
+            
+            mainObject.m_HttpComms.deleteSessionData();                                  
             mainObject.serverComms("-ERR negative vibes from "+ mainObject.m_szUserName +"\r\n");
         }
     },
