@@ -1,6 +1,6 @@
 <!ENTITY WebmailAbout.Title "Webmail - Sobre">
 <!ENTITY WebmailAbout.ExtName "Web Mail">
-<!ENTITY WebmailAbout.ExtVersion "versão 1.0.6">
+<!ENTITY WebmailAbout.ExtVersion "versão 1.0.7">
 <!ENTITY WebmailAbout.ExtDescription "Acessa contas de web mail utilizando Thunderbird.">
 <!ENTITY WebmailAbout.ExtCreaterTitle "Criado por:">
 <!ENTITY WebmailAbout.ExtCreator "ComodoDragon">
