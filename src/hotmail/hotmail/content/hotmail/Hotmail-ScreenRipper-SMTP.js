@@ -325,13 +325,18 @@ HotmailSMTPScreenRipper.prototype =
         }
         catch(err)
         {
-             mainObject.m_Log.DebugDump("Hotmail-SR-SMTP: loginHandler : Exception : " 
+            mainObject.m_Log.DebugDump("Hotmail-SR-SMTP: loginHandler : Exception : " 
                                           + err.name 
                                           + ".\nError message: " 
                                           + err.message+ "\n"
                                           + err.lineNumber);
-             mainObject.m_HttpComms.deleteSessionData();
-             mainObject.serverComms("502 negative vibes from " + mainObject.m_szUserName + "\r\n");
+            
+            var szSession = mainObject.m_ComponentManager.findElement(mainObject.m_szUserName, "szHomeURI");    
+            if (!szSession)
+            {
+                mainObject.m_HttpComms.deleteSessionData();
+            } 
+            mainObject.serverComms("502 negative vibes from " + mainObject.m_szUserName + "\r\n");
         }
     },
     
