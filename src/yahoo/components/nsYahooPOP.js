@@ -346,7 +346,7 @@ nsYahoo.prototype =
                                           + err.message + "\n"
                                           + err.lineNumber);
             //check if session data exists
-            var szSession = this.m_ComponentManager.findElement(mainObject.m_szUserName, "szHomeURI");    
+            var szSession = mainObject.m_ComponentManager.findElement(mainObject.m_szUserName, "szHomeURI");    
             if (!szSession)
             {
                 //Session data not found login has not been successful
