@@ -62,14 +62,19 @@ function nsLycos()
         this.m_iTotalSize = 0;     
         this.m_bJunkMail = false;
         this.m_aRawData = new Array();
-
+        
         this.m_Timer = Components.classes["@mozilla.org/timer;1"];
         this.m_Timer = this.m_Timer.createInstance(Components.interfaces.nsITimer);
-        this.m_iTime = 10;
-        
-        //do i reuse the session
+
         var oPref = {Value:null};
         var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+        if (WebMailPrefAccess.Get("int","lycos.iProcessDelay",oPref))
+            this.m_iTime=oPref.Value;
+        else
+            this.m_iTime=10; 
+        
+        //do i reuse the session
+        oPref.Value = null;
         if (WebMailPrefAccess.Get("bool","lycos.bReUseSession",oPref))
             this.m_bReUseSession=oPref.Value;
         else
