@@ -6,4 +6,4 @@ pref("lycos.bDownloadUnread", false);
 pref("lycos.bReUseSession", true);
 pref("lycos.iProcessTrigger", 50);
 pref("lycos.iProcessAmount", 25);
-
+pref("lycos.iProcessDelay", 10);

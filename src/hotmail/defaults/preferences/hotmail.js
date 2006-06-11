@@ -5,5 +5,5 @@ pref("hotmail.bDownloadUnread", false);
 pref("hotmail.bReUseSession", true);
 pref("hotmail.iProcessTrigger", 50);
 pref("hotmail.iProcessAmount", 25);
+pref("lycos.iProcessDelay", 10);
 pref("hotmail.bSendHtml", true);
-
