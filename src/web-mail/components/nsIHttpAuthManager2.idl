@@ -12,5 +12,5 @@ interface nsIHttpAuthManager2 : nsISupports
     string findToken(in string szUserName,
                      in string szDomain);
                      
-    boolean deleteTokens(in string szUserName);
+    boolean deleteToken(in string szUserName);
 };
