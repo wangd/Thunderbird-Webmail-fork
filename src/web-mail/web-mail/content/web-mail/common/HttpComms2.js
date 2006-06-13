@@ -96,7 +96,7 @@ HttpComms.prototype =
     deleteSessionData : function()
     {
         this.m_oCookies.deleteCookie(this.m_szUserName);
-        this.m_AuthToken.deleteTokens(this.m_szUserName);
+        this.m_AuthToken.deleteToken(this.m_szUserName);
     },
     
     setUserName : function (szUserName)
