@@ -1,6 +1,6 @@
 <!ENTITY WebmailAbout.Title "о WebMail">
 <!ENTITY WebmailAbout.ExtName "Web Mail">
-<!ENTITY WebmailAbout.ExtVersion "версия 1.0.7">
+<!ENTITY WebmailAbout.ExtVersion "версия 1.0.8">
 <!ENTITY WebmailAbout.ExtDescription "Доступ к учётной записи WebMail через Thunderbird.">
 <!ENTITY WebmailAbout.ExtCreaterTitle "Автор:">
 <!ENTITY WebmailAbout.ExtCreator "ComodoDragon">
