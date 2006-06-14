@@ -647,8 +647,17 @@ nsIMAPFolders.prototype =
                     {
                         this.m_Log.Write("nsIMAPFolder.js - addMSG MSG added");
                         oFolder.aMSG.push(MSG);
+                        //oFolder.aMSG = oFolder.aMSG.sort(this.sortUID);
                         oFolder.aUIDs.push(szUID);
+                        //oFolder.aUIDs = oFolder.aUIDs.sort(this.sortMSGUID);
                         bResult = true;
+                        oFolder.iMSGCount++;
+                        if (!bRead) oFolder.iUnreadCount++;
+                    }
+                    else
+                    {
+                        oMSG.bDelete = false;
+                        oMSG.bRead = bRead;
                         oFolder.iMSGCount++;
                         if (!bRead) oFolder.iUnreadCount++;
                     }
@@ -669,6 +678,16 @@ nsIMAPFolders.prototype =
         }
     },
          
+      
+    sortUID : function (a,b)
+    {
+        return ((a<b)?-1:1);
+    },
+    
+    sortMSGUID : function (a,b)
+    {
+        return ((a.szUID<b.szUID)?-1:1);
+    },
     
 
     getMSG : function (szUser, szHierarchy, szUID, iIndex, szHref, bRead, bDelete, szTo, szFrom, szSubject, szDate, iSize)
