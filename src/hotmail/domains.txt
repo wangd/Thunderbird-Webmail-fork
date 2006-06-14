@@ -1,0 +1,10 @@
+<database>
+    <domain>hotmail.com</domain>
+    <domain>msn.com</domain>
+    <domain>hotmail.it</domain>
+    <domain>hotmail.fr</domain>
+    <domain>hotmail.de</domain>
+    <domain>hotmail.co.jp</domain>
+    <domain>hotmail.co.uk</domain>
+    <domain>msn.co.uk</domain>
+</database>
