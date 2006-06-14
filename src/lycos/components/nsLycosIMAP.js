@@ -622,43 +622,24 @@ nsLycosIMAP.prototype =
                 case 1:  //message headers
                     mainObject.m_Log.Write("nsLycosIMAP.js - selectOnloadHandler - get msg list - START");
                     
-                    //delete old msgs
-                    mainObject.m_oFolder.cleanAllMSG(mainObject.m_szUserName, mainObject.m_szSelectFolder);
-                    
                     //get uid list
                     var aszResponses = szResponse.match(LycosIMAPResponse);
                     mainObject.m_Log.Write("nsLycosIMAP.js - selectOnloadHandler - \n" + aszResponses);
+                    delete mainObject.m_aRawData;
                     if (aszResponses)
                     {
-                        delete mainObject.m_aRawData;
-                        mainObject.m_aRawData = aszResponses;  
-                        mainObject.m_iTimerTask =0;
-                        mainObject.m_Log.Write("nsLycosIMAP.js - mailBoxOnloadHandler - starting delay");
-                        //start timer
-                        mainObject.m_Timer.initWithCallback(mainObject, 
-                                                            mainObject.m_iTime, 
-                                              Components.interfaces.nsITimer.TYPE_REPEATING_SLACK); 
+                        mainObject.m_aRawData = aszResponses; 
                     }
                     else
-                    {
-                        var oHref = {value:null};
-                        var oUID = {value:null};
-                        var oMSGCount = {value:null};
-                        var oUnreadCount = {value:null};
-                        
-                        if (!mainObject.m_oFolder.getFolderDetails(mainObject.m_szUserName, mainObject.m_szSelectFolder , oHref , oUID, oMSGCount, oUnreadCount))
-                            throw new Error("folder not found");
-                            
-                        //send select ok message back to TB
-                        var szSelectResponse= "* " +  oMSGCount.value + " EXISTS\r\n";
-                        szSelectResponse+= "* " + oUnreadCount.value + " RECENT\r\n";
-                        szSelectResponse+= "* OK [UIDVALIDITY " + oUID.value + "] UIDs\r\n";
-                        szSelectResponse+= "* FLAGS (\\Seen \\Deleted)\r\n";
-                        szSelectResponse+= "* OK [PERMANENTFLAGS (\Seen)] Limited\r\n";
-                        szSelectResponse+= this.m_iTag +" OK [READ-WRITE] SELECT COMPLETE\r\n"; 
-                        
-                        mainObject.serverComms(szSelectResponse);
-                    }
+                        mainObject.m_aRawData = new Array();     
+                                        
+                    mainObject.m_iTimerTask =0;
+                    mainObject.m_Log.Write("nsLycosIMAP.js - mailBoxOnloadHandler - starting delay");
+                    //start timer
+                    mainObject.m_Timer.initWithCallback(mainObject, 
+                                                        mainObject.m_iTime, 
+                                              Components.interfaces.nsITimer.TYPE_REPEATING_SLACK); 
+                   
             
                     mainObject.m_Log.Write("nsLycosIMAP.js - selectOnloadHandler - get msg list - END");
                 break;
@@ -864,6 +845,7 @@ nsLycosIMAP.prototype =
             {
                 szResponse += "* "+oIndex.value+ " FETCH (FLAGS (";
                 szResponse +=  oRead.value?"\\Seen":"\\Recent" ; //flags
+                szResponse +=  oDelete.value?"\\Deleted":"";
                 szResponse += ") UID " + iUID + ")\r\n"; 
                 this.serverComms(szResponse);
             }
@@ -1263,7 +1245,7 @@ nsLycosIMAP.prototype =
                 this.m_HttpComms.setContentType("text/xml");
                 this.m_HttpComms.setRequestMethod("PROPPATCH");
                 this.m_HttpComms.addData(LycosPROPUnReadSchema);
-                var bResult = this.m_HttpComms.send(this.storeOnloadHandlerm, this);                             
+                var bResult = this.m_HttpComms.send(this.storeOnloadHandler, this);                             
                 if (!bResult) throw new Error("httpConnection returned false");
             }
             else if(szDataItem.search(/seen/i)!=-1) 
@@ -1340,6 +1322,7 @@ nsLycosIMAP.prototype =
                 szResponse+=  oRead.value?"\\Seen ":"";
                 szResponse+="\\Deleted)\r\n";
                 this.serverComms(szResponse);
+                this.m_oFolder.setMSGDeleteFlag(this.m_szUserName, this.m_szSelectFolder, iUID, true);
             }
             
             this.m_Log.Write("nsLycosIMAP.js - storeDelete - rawData " + this.m_aRawData.length);            

@@ -144,17 +144,17 @@ IMAPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
             
             case "list":
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - list - START "+this.iID);
-                this.m_DomainHandler.tag = aCommand[0];
-                var szHierarchy = aCommand[3].substring(1,aCommand[3].length-1); 
-                this.m_DomainHandler.list(szHierarchy);
+                this.m_DomainHandler.tag = aCommand[0]; 
+                var szFolders = aCommand[3].substring(1, aCommand[3].length-1);  
+                this.m_DomainHandler.list(szFolders);
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - list - END "+this.iID);
             break;
             
             case "select":
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - select - START "+this.iID);
                 this.m_DomainHandler.tag = aCommand[0];
-                var szHierarchy = aCommand[2].substring(1,aCommand[2].length-1); 
-                this.m_DomainHandler.select(szHierarchy);
+                var szFolders = aStream[0].substring( aStream[0].indexOf("\"")+1,aStream[0].lastIndexOf("\"")); 
+                this.m_DomainHandler.select(szFolders);
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - select - END "+this.iID);
             break;
             
