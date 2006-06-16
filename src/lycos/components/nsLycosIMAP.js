@@ -1329,21 +1329,15 @@ nsLycosIMAP.prototype =
         {
             this.m_Log.Write("nsLycosIMAP.js - notify - START");
             
-            var Item = null;
-            if (this.m_aRawData.length>0)  
-                var Item = this.m_aRawData.shift();
-            else
-            {
-                this.m_Timer.cancel();
-                delete this.m_aRawData;
-            }         
-            
             switch(this.m_iTimerTask)
             {
                 case 0: //process MSG
                     this.m_Log.Write("nsLycosIMAP.js - notify - processing MSG");    
-                    if (Item)
+                    if (this.m_aRawData.length>0)
+                    {  
+                        var Item = this.m_aRawData.shift();
                         this.processMSG(Item);
+                    }
                     else
                     {
                         this.m_Log.Write("nsLycosIMAP.js - processMSG - all data handled"); 
@@ -1366,26 +1360,66 @@ nsLycosIMAP.prototype =
                         szSelectResponse+= this.m_iTag +" OK [READ-WRITE] SELECT COMPLETE\r\n"; 
                         
                         this.serverComms(szSelectResponse);
+                        delete this.m_aRawData;
+                        this.m_aRawData = new Array();
+                        this.m_Timer.cancel();
                     }
                 break;
                 
                 case 1: //Fetch ID's
                     this.m_Log.Write("nsLycosIMAP.js - notify - Fetch IDS");
+                    var Item = null;
+                    if (this.m_aRawData.length>0)  
+                        Item = this.m_aRawData.shift();
+                    else
+                    {
+                        delete this.m_aRawData;
+                        this.m_aRawData = new Array();
+                        this.m_Timer.cancel();
+                    }         
                     this.fetchIDs(Item);
                 break;
                 
                 case 2: //Fetch Header
                     this.m_Log.Write("nsLycosIMAP.js - notify - Fetch HEADERs");
+                    var Item = null;
+                    if (this.m_aRawData.length>0)  
+                        Item = this.m_aRawData.shift();
+                    else
+                    {
+                        delete this.m_aRawData;
+                        this.m_aRawData = new Array();
+                        this.m_Timer.cancel();
+                    }     
                     this.fetchHeaders(Item);
                 break;
                 
                 case 3: //Store Delete
                     this.m_Log.Write("nsLycosIMAP.js - notify - Store Delete");
+                    var Item = null;
+                    if (this.m_aRawData.length>0)  
+                        Item = this.m_aRawData.shift();
+                    else
+                    {
+                        delete this.m_aRawData;
+                        this.m_aRawData = new Array();
+                        this.m_Timer.cancel();
+                    }     
                     this.storeDelete(Item);
                 break;
                 
                 case 4: //noop
                     this.m_Log.Write("nsLycosIMAP.js - notify - noop");    
+                    var Item = null;
+                    if (this.m_aRawData.length>0)  
+                        Item = this.m_aRawData.shift();
+                    else
+                    {
+                        delete this.m_aRawData;
+                        this.m_aRawData = new Array();
+                        this.m_Timer.cancel();
+                    }     
+                    
                     if (Item)
                         this.processMSG(Item);
                     else
@@ -1408,6 +1442,19 @@ nsLycosIMAP.prototype =
                         
                         this.serverComms(szSelectResponse);
                     }
+                break;
+                
+                case 5: //expunge
+                    var oIndex ={value:null};
+                    if (this.m_oFolder.deleteMSG(this.m_szUserName, this.m_szSelectFolder ,oIndex))
+                    {
+                        this.serverComms("* " + oIndex.value +" EXPUNGE\r\n");
+                    }
+                    else
+                    {
+                        this.serverComms(this.m_iTag +" OK EXPUNGE COMPLETE\r\n");
+                        this.m_Timer.cancel();
+                    }    
                 break;
                 
                 default:
@@ -2051,7 +2098,14 @@ nsLycosIMAP.prototype =
         try
         {
             this.m_Log.Write("nsLycosIMAP.js - expunge - START");
-            this.serverComms(this.m_iTag +" NO expunge\r\n");
+
+            this.m_iTimerTask =5;
+            this.m_Log.Write("nsLycosIMAP.js - expunge - starting delay");
+            //start timer
+            this.m_Timer.initWithCallback(this, 
+                                          this.m_iTime, 
+                                      Components.interfaces.nsITimer.TYPE_REPEATING_SLACK); 
+            
             this.m_Log.Write("nsLycosIMAP.js - expunge - END");  
         }
         catch(err)
