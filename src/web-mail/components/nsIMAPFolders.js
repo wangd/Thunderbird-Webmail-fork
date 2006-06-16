@@ -221,8 +221,8 @@ nsIMAPFolders.prototype =
                         bFound = true;
                         oUser.aFolders[i].szHref = szHref;
                         oUser.aFolders[i].szUID = szUID;
-                        oUser.aFolders[i].iMSGCount = iMSGCount;
-                        oUser.aFolders[i].iUnreadCount = iUnreadCount;
+                       // oUser.aFolders[i].iMSGCount = iMSGCount;
+                       // oUser.aFolders[i].iUnreadCount = iUnreadCount;
                         delete oFolder;
                     }
                     i++;
@@ -640,25 +640,29 @@ nsIMAPFolders.prototype =
                     this.m_Log.Write("nsIMAPFolder.js - addMSG - folder found");
                     
                     var oMSG = {value : null};
-                    var oIndex = {valie : null};
+                    var oIndex = {value : null};
                     var bMSG = this.findMSG(oFolder, szUID, oMSG, oIndex);
                                         
                     if (!bMSG)
                     {
                         this.m_Log.Write("nsIMAPFolder.js - addMSG MSG added");
                         oFolder.aMSG.push(MSG);
-                        //oFolder.aMSG = oFolder.aMSG.sort(this.sortUID);
+                        var aTempMSG = oFolder.aMSG.sort(this.sortMSGUID);
+                        delete oFolder.aMSG;
+                        oFolder.aMSG = aTempMSG;
+                        
                         oFolder.aUIDs.push(szUID);
-                        //oFolder.aUIDs = oFolder.aUIDs.sort(this.sortMSGUID);
+                        var aTempUID = oFolder.aUIDs.sort(this.sortUID);
+                        oFolder.aUIDs = aTempUID;  
                         bResult = true;
                         oFolder.iMSGCount++;
                         if (!bRead) oFolder.iUnreadCount++;
                     }
                     else
                     {
+                        this.m_Log.Write("nsIMAPFolder.js - addMSG MSG Found");
                         oMSG.bDelete = false;
                         oMSG.bRead = bRead;
-                        oFolder.iMSGCount++;
                         if (!bRead) oFolder.iUnreadCount++;
                     }
                 }
@@ -681,12 +685,12 @@ nsIMAPFolders.prototype =
       
     sortUID : function (a,b)
     {
-        return ((a<b)?-1:1);
+        return (a-b);
     },
     
     sortMSGUID : function (a,b)
     {
-        return ((a.szUID<b.szUID)?-1:1);
+        return (a.szUID - b.szUID);
     },
     
 
@@ -869,7 +873,7 @@ nsIMAPFolders.prototype =
                     {
                         this.m_Log.Write("nsIMAPFolder.js - findMSG found");
                         oMSG.value = oFolder.aMSG[i];
-                        oIndex.value = i;
+                        oIndex.value = i+1;
                         bResult = true;
                     }
                     i++;
