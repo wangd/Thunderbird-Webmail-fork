@@ -115,8 +115,12 @@ IMAPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
             
             case "lsub":
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - lsub - START " +this.iID);
+                
+                if (!this.m_DomainHandler.bAuthorised) throw new Error("not logged in");
+
                 this.m_DomainHandler.tag = aCommand[0];
                 this.m_DomainHandler.listSubscribe();
+                    
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - lsub - END "+this.iID);
             break;
             
@@ -124,6 +128,7 @@ IMAPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
             
             case "subscribe":
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - subscribe - START " +this.iID);
+                if (!this.m_DomainHandler.bAuthorised) throw new Error("not logged in");
                 this.m_DomainHandler.tag = aCommand[0];
                 var szFolders = aStream[0].substring( aStream[0].indexOf("\"")+1,aStream[0].lastIndexOf("\""));
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - subscribe - folders " +szFolders );
@@ -134,6 +139,7 @@ IMAPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
             
             case "unsubscribe":
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - unsubscribe - START "+this.iID);
+                if (!this.m_DomainHandler.bAuthorised) throw new Error("not logged in");
                 this.m_DomainHandler.tag = aCommand[0];
                 var szFolders = aStream[0].substring( aStream[0].indexOf("\"")+1,aStream[0].lastIndexOf("\""));
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - unsubscribe - folder " + szFolders);
@@ -144,6 +150,7 @@ IMAPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
             
             case "list":
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - list - START "+this.iID);
+                if (!this.m_DomainHandler.bAuthorised) throw new Error("not logged in");
                 this.m_DomainHandler.tag = aCommand[0]; 
                 var szFolders = aCommand[3].substring(1, aCommand[3].length-1);  
                 this.m_DomainHandler.list(szFolders);
@@ -152,6 +159,7 @@ IMAPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
             
             case "select":
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - select - START "+this.iID);
+                if (!this.m_DomainHandler.bAuthorised) throw new Error("not logged in");
                 this.m_DomainHandler.tag = aCommand[0];
                 var szFolders = aStream[0].substring( aStream[0].indexOf("\"")+1,aStream[0].lastIndexOf("\"")); 
                 this.m_DomainHandler.select(szFolders);
@@ -161,7 +169,7 @@ IMAPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
             
             case "uid":
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - uid - START "+this.iID);
-                
+                if (!this.m_DomainHandler.bAuthorised) throw new Error("not logged in");
                 if (aCommand[2].toLowerCase() == "fetch")
                 {
                     this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - fetch");
@@ -193,6 +201,7 @@ IMAPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
             
             case "check":
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - check - START "+this.iID);
+                if (!this.m_DomainHandler.bAuthorised) throw new Error("not logged in");
                 this.m_DomainHandler.tag = aCommand[0];
                 this.m_DomainHandler.check();
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - check - END "+this.iID);
@@ -201,6 +210,7 @@ IMAPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
             
             case "noop":
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - noop - START "+this.iID);
+                if (!this.m_DomainHandler.bAuthorised) throw new Error("not logged in");
                 this.m_DomainHandler.tag = aCommand[0];
                 this.m_DomainHandler.noop();
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - noop - END "+this.iID);
@@ -208,6 +218,7 @@ IMAPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
             
             case "expunge":
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - expunge - START "+this.iID);
+                if (!this.m_DomainHandler.bAuthorised) throw new Error("not logged in");
                 this.m_DomainHandler.tag = aCommand[0];
                 this.m_DomainHandler.expunge();
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - expunge - END "+this.iID);
@@ -215,6 +226,7 @@ IMAPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
             
             case "examine":
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - examine - START "+this.iID);
+                if (!this.m_DomainHandler.bAuthorised) throw new Error("not logged in");
                 this.m_DomainHandler.tag = aCommand[0];
                 this.m_DomainHandler.examine();
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - examine - END "+this.iID);
@@ -223,6 +235,7 @@ IMAPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
             
             case "create":
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - create - START "+this.iID);
+                if (!this.m_DomainHandler.bAuthorised) throw new Error("not logged in");
                 this.m_DomainHandler.tag = aCommand[0];
                 var szFolders = aStream[0].substring( aStream[0].indexOf("\"")+1,aStream[0].lastIndexOf("\""));
                 this.m_DomainHandler.createFolder(szFolders);
@@ -232,6 +245,7 @@ IMAPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
          
             case "delete":
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - delete - START "+this.iID);
+                if (!this.m_DomainHandler.bAuthorised) throw new Error("not logged in");
                 this.m_DomainHandler.tag = aCommand[0];
                 var szFolders = aStream[0].substring( aStream[0].indexOf("\"")+1,aStream[0].lastIndexOf("\""));
                 this.m_DomainHandler.deleteFolder(szFolders);
@@ -241,6 +255,7 @@ IMAPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
             
             case "rename":
                 this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - rename - START "+this.iID);
+                if (!this.m_DomainHandler.bAuthorised) throw new Error("not logged in");
                 this.m_DomainHandler.tag = aCommand[0];
                 
                 //get start of old folder
