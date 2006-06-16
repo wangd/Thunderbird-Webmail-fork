@@ -93,4 +93,8 @@ interface nsIIMAPFolders : nsISupports
                              in string szHierarchy,
                              in string szUID,
                              in boolean bDelete);
+                             
+    boolean deleteMSG(in string szUser,
+                       in string szHierarchy,
+                       out PRUint32 iIndex);
 };

@@ -849,6 +849,76 @@ nsIMAPFolders.prototype =
 
 
 
+    deleteMSG : function (szUser, szHierarchy, oIndex)
+    {
+        try
+        {
+            this.m_Log.Write("nsIMAPFolder.js - deleteMSGs - START ");
+            var bResult = false;
+            var aResult = new Array();
+            
+            var oUser = this.getUser(szUser);  
+            if (oUser) //user found
+            {
+                this.m_Log.Write("nsIMAPFolder.js - deleteMSGs - user found");
+                
+                //get folder
+                var oFolder = this.getFolder(oUser ,szHierarchy);
+                if (oFolder)
+                {
+                    this.m_Log.Write("nsIMAPFolder.js - deleteMSGs - folder found");
+                    
+                    var  i=0;
+                    do
+                    { 
+                        var TempMSG = oFolder.aMSG.shift();
+                        var TempID = oFolder.aUIDs.shift();
+                         
+                        if (!TempMSG.bDelete)
+                        {
+                           this.m_Log.Write("nsIMAPFolder.js - deleteMSGs - Deleted MSG found");
+                           oIndex.value = i+1;
+                           bResult = true;
+                           delete TempMSG;
+                           delete TempID;
+                        }
+                        else
+                        {
+                            this.m_Log.Write("nsIMAPFolder.js - deleteMSGs - Deleted MSG NOT found");
+                            oFolder.aMSG.push(TempMSG);
+                           
+                            
+                            oFolder.aUIDs.push(TempID); 
+                            
+                        }
+                        i++;
+                    }while(i!=oFolder.aMSG.length && !bResult) 
+                    
+                    //resort arrays
+                    var aTempMSG = oFolder.aMSG.sort(this.sortMSGUID);
+                    delete oFolder.aMSG;
+                    oFolder.aMSG = aTempMSG;
+                            
+                    var aTempUID = oFolder.aUIDs.sort(this.sortUID);
+                    delete oFolder.aUIDs;
+                    oFolder.aUIDs = aTempUID; 
+                }
+            }
+                 
+            this.m_Log.Write("nsIMAPFolder.js - deleteMSGs - END " +bResult);
+            return bResult;
+        }
+        catch(err)
+        {
+            this.m_Log.DebugDump("nsIMAPFolder.js: deleteMSGs : Exception : " 
+                              + err.name 
+                              + ".\nError message: " 
+                              + err.message + "\n"
+                              + err.lineNumber);
+            return false;
+        }
+    },
+
 
 
     findMSG : function (oFolder, szUID , oMSG, oIndex)
