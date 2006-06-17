@@ -69,6 +69,9 @@ function nsLycosIMAP()
         this.m_aRawData = new Array();
         this.m_iTimerTask = -1;
         this.m_iStore = 0;
+        this.m_iLastCheck = 0;
+        this.m_szRange = null;
+        this.m_szFlag = null;
             
         this.m_Timer = Components.classes["@mozilla.org/timer;1"];
         this.m_Timer = this.m_Timer.createInstance(Components.interfaces.nsITimer);
@@ -631,7 +634,8 @@ nsLycosIMAP.prototype =
                     }
                     else
                         mainObject.m_aRawData = new Array();     
-                                        
+                     
+                    mainObject.m_iLastCheck = mainObject.getTime();                   
                     mainObject.m_iTimerTask =0;
                     mainObject.m_Log.Write("nsLycosIMAP.js - mailBoxOnloadHandler - starting delay");
                     //start timer
@@ -721,7 +725,8 @@ nsLycosIMAP.prototype =
             }
             else
                 mainObject.m_aRawData = new Array();     
-                                
+            
+            mainObject.m_iLastCheck = mainObject.getTime();                    
             mainObject.m_iTimerTask =4;
             mainObject.m_Log.Write("nsLycosIMAP.js - noopOnloadHandler - starting delay");
             //start timer
@@ -825,34 +830,61 @@ nsLycosIMAP.prototype =
         {
             this.m_Log.Write("nsLycosIMAP.js - fetch - START");
             this.m_Log.Write("nsLycosIMAP.js - fetch - Range " + szRange + " Flags "+ szFlag);
-          
-            delete this.m_aRawData;
-            this.m_aRawData = this.range(szRange);
-            this.m_Log.Write("nsLycosIMAP.js - fetch - Range " +this.m_aRawData);
             
-            if (szFlag.search(/Header/i)!=-1)
+            if ((this.m_iLastCheck + 300000)<this.getTime()) //recheck mail box if last check was more than 5m ago
             {
-                this.m_Log.Write("nsLycosIMAP.js - fetch - headers "); 
-                this.m_iTimerTask =2;
-                //start timer
-                this.m_Timer.initWithCallback(this, 
-                                              this.m_iTime, 
-                                      Components.interfaces.nsITimer.TYPE_REPEATING_SLACK); 
+                this.m_Log.Write("nsLycosIMAP.js - fetch - Check for new data");
+                this.m_szRange = szRange;
+                this.m_szFlag = szFlag;
+                
+                var oHref = {value:null};
+                var oUID = {value:null};
+                var oMSGCount = {value:null};
+                var oUnreadCount = {value:null};
+                if (!this.m_oFolder.getFolderDetails(this.m_szUserName, this.m_szSelectFolder , oHref , oUID, oMSGCount, oUnreadCount))
+                    throw new Error("Folder not found");
+               
+                this.m_Log.Write("nsLycosIMAP.js - noop - " + oHref.value + " " + oUID.value + " " + oMSGCount.value + " " + oUnreadCount.value);
+                
+                this.m_HttpComms.setURI(oHref.value);
+                this.m_HttpComms.setContentType("text/xml");
+                this.m_HttpComms.setRequestMethod("PROPFIND");
+                this.m_HttpComms.addData(LycosMailIMAPSchema);
+                var bResult = this.m_HttpComms.send(this.fetchOnloadHandler, this);                             
+                if (!bResult) throw new Error("httpConnection returned false"); 
             }
-            else if (szFlag.search(/Body/i)!=-1)
+            else
             {
-                this.m_Log.Write("nsLycosIMAP.js - fetch - body ");
-                this.fetchBody(); 
+                this.m_Log.Write("nsLycosIMAP.js - fetch - Use stored data");
+                
+                delete this.m_aRawData;
+                this.m_aRawData = this.range(szRange);
+                this.m_Log.Write("nsLycosIMAP.js - fetch - Range " +this.m_aRawData);
+                
+                if (szFlag.search(/Header/i)!=-1)
+                {
+                    this.m_Log.Write("nsLycosIMAP.js - fetch - headers "); 
+                    this.m_iTimerTask =2;
+                    //start timer
+                    this.m_Timer.initWithCallback(this, 
+                                                  this.m_iTime, 
+                                          Components.interfaces.nsITimer.TYPE_REPEATING_SLACK); 
+                }
+                else if (szFlag.search(/Body/i)!=-1)
+                {
+                    this.m_Log.Write("nsLycosIMAP.js - fetch - body ");
+                    this.fetchBody(); 
+                }
+                else  //get message ids
+                {
+                    this.m_Log.Write("nsLycosIMAP.js - fetch - ids ");   
+                    this.m_iTimerTask =1;
+                    //start timer
+                    this.m_Timer.initWithCallback(this, 
+                                                  this.m_iTime, 
+                                          Components.interfaces.nsITimer.TYPE_REPEATING_SLACK); 
+                }                 
             }
-            else  //get message ids
-            {
-                this.m_Log.Write("nsLycosIMAP.js - fetch - ids ");   
-                this.m_iTimerTask =1;
-                //start timer
-                this.m_Timer.initWithCallback(this, 
-                                              this.m_iTime, 
-                                      Components.interfaces.nsITimer.TYPE_REPEATING_SLACK); 
-            }                 
             
             this.m_Log.Write("nsLycosIMAP.js - fetch - END");
             return true;
@@ -871,6 +903,54 @@ nsLycosIMAP.prototype =
     },
     
         
+        
+        
+    fetchOnloadHandler : function (szResponse ,event , mainObject)
+    {
+        try
+        {
+            mainObject.m_Log.Write("nsLycosIMAP.js - fetchOnloadHandler - START");
+            mainObject.m_Log.Write("nsLycosIMAP.js - fetchOnloadHandler : \n"+ szResponse); 
+            
+            var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
+
+            //if this fails we've gone somewhere new
+            mainObject.m_Log.Write("nsLycos - fetchOnloadHandler - status :" +httpChannel.responseStatus );
+            if (httpChannel.responseStatus != 200 && httpChannel.responseStatus != 207) 
+                throw new Error("return status " + httpChannel.responseStatus);
+            
+            //get uid list
+            var aszResponses = szResponse.match(LycosIMAPResponse);
+            mainObject.m_Log.Write("nsLycosIMAP.js - fetchOnloadHandler - \n" + aszResponses);
+            delete mainObject.m_aRawData;
+            if (aszResponses)
+            {
+                mainObject.m_aRawData = aszResponses; 
+            }
+            else
+                mainObject.m_aRawData = new Array();     
+            
+            mainObject.m_iLastCheck = mainObject.getTime();                    
+            mainObject.m_iTimerTask =6;
+            mainObject.m_Log.Write("nsLycosIMAP.js - fetchOnloadHandler - starting delay");
+            //start timer
+            mainObject.m_Timer.initWithCallback(mainObject, 
+                                                mainObject.m_iTime, 
+                                      Components.interfaces.nsITimer.TYPE_REPEATING_SLACK); 
+
+            mainObject.m_Log.Write("nsLycosIMAP.js - fetchOnloadHandler - END");
+        }
+        catch(err)
+        {
+             mainObject.m_Log.DebugDump("nsLycosIMAP.js: fetchOnloadHandler : Exception : "
+                                              + err.name 
+                                              + ".\nError message: " 
+                                              + err.message +"\n"
+                                              + err.lineNumber);
+            
+             mainObject.serverComms(mainObject.m_iTag +" BAD error\r\n");
+        }
+    },
         
         
     
@@ -1445,6 +1525,7 @@ nsLycosIMAP.prototype =
                 break;
                 
                 case 5: //expunge
+                    this.m_Log.Write("nsLycosIMAP.js - notify - expunge");
                     var oIndex ={value:null};
                     if (this.m_oFolder.deleteMSG(this.m_szUserName, this.m_szSelectFolder ,oIndex))
                     {
@@ -1456,6 +1537,48 @@ nsLycosIMAP.prototype =
                         this.m_Timer.cancel();
                     }    
                 break;
+                
+                case 6: //fetch
+                    this.m_Log.Write("nsLycosIMAP.js - notify - fetch");
+                    if (this.m_aRawData.length>0)
+                    {  
+                        var Item = this.m_aRawData.shift();
+                        this.processMSG(Item);
+                    }
+                    else
+                    {
+                        this.m_Log.Write("nsLycosIMAP.js - notify - fetch - all data handled"); 
+                        this.m_Timer.cancel();
+                        delete this.m_aRawData;
+                        this.m_aRawData = this.range(this.m_szRange);
+                        this.m_Log.Write("nsLycosIMAP.js - notify - Range " +this.m_aRawData);
+                        
+                        if (this.m_szFlag.search(/Header/i)!=-1)
+                        {
+                            this.m_Log.Write("nsLycosIMAP.js - notify - fetch - headers "); 
+                            this.m_iTimerTask =2;
+                            //start timer
+                            this.m_Timer.initWithCallback(this, 
+                                                          this.m_iTime, 
+                                                  Components.interfaces.nsITimer.TYPE_REPEATING_SLACK); 
+                        }
+                        else if (this.m_szFlag.search(/Body/i)!=-1)
+                        {
+                            this.m_Log.Write("nsLycosIMAP.js - notify - fetch - body ");
+                            this.fetchBody(); 
+                        }
+                        else  //get message ids
+                        {
+                            this.m_Log.Write("nsLycosIMAP.js - notify - fetch - ids ");   
+                            this.m_iTimerTask =1;
+                            //start timer
+                            this.m_Timer.initWithCallback(this, 
+                                                          this.m_iTime, 
+                                                  Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
+                        }
+                    }
+                break;
+                
                 
                 default:
                     this.m_Log.Write("nsLycosIMAP.js - notify - UNKNOWN COMMAND");
@@ -2142,6 +2265,14 @@ nsLycosIMAP.prototype =
             this.serverComms(this.m_iTag +" BAD error\r\n");
             return false;
         }
+    },
+    
+    
+    getTime : function()
+    {
+        var date = new Date();
+        var time = date.getTime();
+        return time;
     },
     
     

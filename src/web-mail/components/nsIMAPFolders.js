@@ -734,7 +734,7 @@ nsIMAPFolders.prototype =
                 }
             }
             
-            this.m_Log.Write("nsIMAPFolder.js - addMSG - END " +bResult);
+            this.m_Log.Write("nsIMAPFolder.js - getMSG - END " +bResult);
             return bResult;
         }
         catch(err)
@@ -868,40 +868,40 @@ nsIMAPFolders.prototype =
                 {
                     this.m_Log.Write("nsIMAPFolder.js - deleteMSGs - folder found");
                     
-                    var  i=0;
-                    do
-                    { 
-                        var TempMSG = oFolder.aMSG.shift();
-                        var TempID = oFolder.aUIDs.shift();
-                         
-                        if (!TempMSG.bDelete)
-                        {
-                           this.m_Log.Write("nsIMAPFolder.js - deleteMSGs - Deleted MSG found");
-                           oIndex.value = i+1;
-                           bResult = true;
-                           delete TempMSG;
-                           delete TempID;
-                        }
-                        else
-                        {
-                            this.m_Log.Write("nsIMAPFolder.js - deleteMSGs - Deleted MSG NOT found");
-                            oFolder.aMSG.push(TempMSG);
-                           
-                            
-                            oFolder.aUIDs.push(TempID); 
-                            
-                        }
-                        i++;
-                    }while(i!=oFolder.aMSG.length && !bResult) 
+                    if (oFolder.aMSG.length > 0)
+                    {
+                        var  i=0;
+                        do
+                        { 
+                            var TempMSG = oFolder.aMSG.shift();
+                            var TempID = oFolder.aUIDs.shift();
+                             
+                            if (TempMSG.bDelete)
+                            {
+                               this.m_Log.Write("nsIMAPFolder.js - deleteMSGs - Deleted MSG found - Index" + i+1 + " UID " +TempMSG.szUID );
+                               oIndex.value = i+1;
+                               bResult = true;
+                               delete TempMSG;
+                               delete TempID;
+                            }
+                            else
+                            {
+                                this.m_Log.Write("nsIMAPFolder.js - deleteMSGs - Deleted MSG NOT found - UID " +TempMSG.szUID);
+                                oFolder.aMSG.push(TempMSG);
+                                oFolder.aUIDs.push(TempID);
+                            }
+                            i++;
+                        }while(i!=oFolder.aMSG.length && !bResult) 
                     
-                    //resort arrays
-                    var aTempMSG = oFolder.aMSG.sort(this.sortMSGUID);
-                    delete oFolder.aMSG;
-                    oFolder.aMSG = aTempMSG;
-                            
-                    var aTempUID = oFolder.aUIDs.sort(this.sortUID);
-                    delete oFolder.aUIDs;
-                    oFolder.aUIDs = aTempUID; 
+                        //resort arrays
+                        var aTempMSG = oFolder.aMSG.sort(this.sortMSGUID);
+                        delete oFolder.aMSG;
+                        oFolder.aMSG = aTempMSG;
+                                
+                        var aTempUID = oFolder.aUIDs.sort(this.sortUID);
+                        delete oFolder.aUIDs;
+                        oFolder.aUIDs = aTempUID;
+                    } 
                 }
             }
                  
