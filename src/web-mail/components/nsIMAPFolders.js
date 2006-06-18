@@ -663,7 +663,6 @@ nsIMAPFolders.prototype =
                         this.m_Log.Write("nsIMAPFolder.js - addMSG MSG Found");
                         oMSG.bDelete = false;
                         oMSG.bRead = bRead;
-                        if (!bRead) oFolder.iUnreadCount++;
                     }
                 }
             }
@@ -878,11 +877,13 @@ nsIMAPFolders.prototype =
                              
                             if (TempMSG.bDelete)
                             {
-                               this.m_Log.Write("nsIMAPFolder.js - deleteMSGs - Deleted MSG found - Index" + i+1 + " UID " +TempMSG.szUID );
-                               oIndex.value = i+1;
-                               bResult = true;
-                               delete TempMSG;
-                               delete TempID;
+                                this.m_Log.Write("nsIMAPFolder.js - deleteMSGs - Deleted MSG found - Index" + i+1 + " UID " +TempMSG.szUID );
+                                oIndex.value = i+1;
+                                bResult = true;
+                                oFolder.iMSGCount--;
+                                if (TempMSG.bRead) oFolder.iUnreadCount--;
+                                delete TempMSG;
+                                delete TempID;
                             }
                             else
                             {
