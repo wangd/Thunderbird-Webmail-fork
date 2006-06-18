@@ -13,10 +13,17 @@ function nsHotmailDomains()
     this.m_oFile = null;
     this.m_Timer = null;
     this.m_bChange = false;
+    this.m_bReady = false;
 }
 
 nsHotmailDomains.prototype =
 {
+    isReady : function ()
+    {
+        this.m_Log.Write("nsHotmailDomains.js - isReady - " +  this.m_bReady);
+        return this.m_bReady;
+    },
+    
     addDomain : function (szDomain)
     {
         try
@@ -33,8 +40,6 @@ nsHotmailDomains.prototype =
                 return false; 
             }
             
-            this.m_bChange = true;
-            this.m_aszDomains.push(szDomain);
             var bADD = false;
             
             if (!this.domainCheck(szDomain, "POP", "@mozilla.org/HotmailPOP;1"))
@@ -43,6 +48,28 @@ nsHotmailDomains.prototype =
             if (!this.domainCheck(szDomain, "SMTP", "@mozilla.org/HotmailSMTP;1"))
                 bADD = this.domainAdd(szDomain, "SMTP", "@mozilla.org/HotmailSMTP;1")
             
+            var bFound = false;
+            if (this.m_aszDomain.length>0)
+            {
+                this.m_Log.Write("nsHotmailDomains.js - addDomain - search for domain"); 
+                
+                var i=0;
+                var regExp = new RegExp("^"+szDomain+"$", "i");
+                do{
+                    if (this.m_aszDomain[i].search(regExp)!=-1)
+                        bFound = true;
+                    i++;
+                }while(i<this.m_aszDomain.length && !bFound)                   
+            }
+           
+            if (!bFound)
+            {
+                this.m_Log.Write("nsHotmailDomains.js - addDomain - not Found added");
+                this.m_aszDomain.push(szDomain);
+            }
+                
+            this.m_bChange = true;
+
             this.m_Log.Write("nsHotmailDomains.js - addDomain - END");
             return bADD;
         }
@@ -163,7 +190,7 @@ nsHotmailDomains.prototype =
             //get location of DB
             this.m_oFile = Components.classes["@mozilla.org/file/directory_service;1"].
                                       createInstance(Components.interfaces.nsIProperties).
-                                      get("ProfD", Components.interfaces.nsIFile);                                 
+                                      get("ProfD", Components.interfaces.nsIFile);
             this.m_oFile.append("extensions");          //goto profile extension folder
             this.m_oFile.append("{a6a33690-2c6a-11d9-9669-0800200c9a66}"); //goto client extension folder
             this.m_oFile.append("domains.txt");       //goto logfiles folder
@@ -201,6 +228,7 @@ nsHotmailDomains.prototype =
         }
     },
 
+    
     
     onStreamComplete : function(aLoader, aContext, aStatus, ResultLength, Result)
     { 
@@ -292,7 +320,8 @@ nsHotmailDomains.prototype =
                 if (!this.domainCheck(this.m_aszDomains[i], "SMTP", "@mozilla.org/HotmailSMTP;1"))
                     this.domainAdd(this.m_aszDomains[i], "SMTP", "@mozilla.org/HotmailSMTP;1")
             }
-                        
+            
+            this.m_bReady = true;           
             this.m_Log.Write("nsHotmailDomains.js : TimerCallback - END");
         }
         catch(e)
