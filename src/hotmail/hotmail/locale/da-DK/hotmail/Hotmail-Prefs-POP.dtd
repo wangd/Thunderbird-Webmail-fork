@@ -1,5 +1,0 @@
-<!ENTITY MailServers.Label "POP">
-<!ENTITY JunkMail.Label "Hent Junkmail">
-<!ENTITY JunkMail.AccessKey "J">
-<!ENTITY DownloadUnread.Label "Hent kun ulæste meddelelser">
-<!ENTITY DownloadUnread.AccessKey "u">

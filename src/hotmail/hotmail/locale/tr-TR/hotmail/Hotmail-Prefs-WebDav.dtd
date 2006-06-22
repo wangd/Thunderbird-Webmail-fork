@@ -1,7 +1,0 @@
-<!ENTITY MailServers.Label "WebDav">
-<!ENTITY UserName.Label "Kullanıcı Adı">
-<!ENTITY ScreenRipper.Label "Ekran Bölümleyici">
-<!ENTITY WebDav.Label "Web Dav">
-<!ENTITY list.size "height: 17em !important;">
-<!ENTITY Edit.label "Mod değiştir">
-<!ENTITY Edit.accessKey "M">

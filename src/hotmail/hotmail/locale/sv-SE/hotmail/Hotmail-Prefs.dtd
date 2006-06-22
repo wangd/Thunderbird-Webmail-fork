@@ -1,5 +1,3 @@
-<!ENTITY Options.szTitle "Iställningar för Hotmail">
-<!ENTITY WebDav.Panel.szTitle "WebDav">
-<!ENTITY POP.Panel.szTitle "POP">
-<!ENTITY SMTP.Panel.szTitle "SMTP">
-<!ENTITY Window.size "width: 40em; height: 29em">
+<!ENTITY Window.szTitle "Hotmail Options">
+<!ENTITY Accounts.Panel.szTitle "Accounts">
+<!ENTITY Domains.Panel.szTitle "Domains">

@@ -1,7 +1,0 @@
-<!ENTITY SaveSentItems.Label "Enregistrer une copie dans les éléments envoyés.">
-<!ENTITY SaveSentItems.AccessKey "s">
-<!ENTITY AlternativeGroup.Label "emails Alternatif\Multipart">
-<!ENTITY SendPlain.Label "Envoyer au format texte">
-<!ENTITY SendPlain.AccessKey "T">
-<!ENTITY SendHtml.Label "Envoyer au format html">
-<!ENTITY SendHtml.AccessKey "h">

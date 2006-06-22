@@ -1,5 +1,0 @@
-<!ENTITY MailServers.Label "POP">
-<!ENTITY JunkMail.Label "Ladda ner Skräppost">
-<!ENTITY JunkMail.AccessKey "J">
-<!ENTITY DownloadUnread.Label "Ladda bara ner oläst e-post">
-<!ENTITY DownloadUnread.AccessKey "O">

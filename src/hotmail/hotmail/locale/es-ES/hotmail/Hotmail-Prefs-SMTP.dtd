@@ -1,7 +1,0 @@
-<!ENTITY SaveSentItems.Label "Guardar una copia en los mensajes enviados.">
-<!ENTITY SaveSentItems.AccessKey "G">
-<!ENTITY SaveSentItems.Label "Guardar copia en la carpeta enviados.">
-<!ENTITY SendHtml.AccessKey "h">
-<!ENTITY SendHtml.Label "Enviar con formato html">
-<!ENTITY SendPlain.AccessKey "s">
-<!ENTITY SendPlain.Label "Enviar como texto sin formato">
