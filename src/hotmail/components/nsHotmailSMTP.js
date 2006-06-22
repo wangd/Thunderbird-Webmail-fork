@@ -50,6 +50,7 @@ function nsHotmailSMTP()
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
+        scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-Prefs-Data.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-WebDav-SMTP.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-ScreenRipper-SMTP.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-ScreenRipper-SMTP-BETA.js");
@@ -119,40 +120,17 @@ nsHotmailSMTP.prototype =
            
             if (!this.m_szUserName || !this.m_oResponseStream  || !this.m_szPassWord) return false;
              
-            //load webdav address
-            //load webdav address
-            var WebMailPrefAccess = new WebMailCommonPrefAccess();
-            var oPref = {Value : null};
-            if (WebMailPrefAccess.Get("char","hotmail.mode",oPref))
-            {
-                var szUserNames = oPref.Value;
-                this.m_Log.Write("nsHotmail.js - logIN - szUserNames " + szUserNames);
-                
-                var aRows = szUserNames.split("\r");
-                this.m_Log.Write("Hotmail-Prefs-WebDav.js : logIN - "+aRows);
-                if (aRows)
-                {
-                    for(i=0; i<aRows.length; i++)
-                    {   
-                        var item = aRows[i].split("\n");
-                        this.m_Log.Write("Hotmail.js : logIN - "+item);
-                     
-                        var reg = new RegExp(item[0],"i");
-                        this.m_Log.Write("nsHotmail.js - logIN - username search " + reg);
-                        if (this.m_szUserName.match(reg))
-                        {
-                            this.m_Log.Write("nsHotmail.js - logIN - username found");  
-                            if (item[1]==1)
-                                this.m_CommMethod = new HotmailSMTPWebDav(this.m_oResponseStream, this.m_Log);    
-                            else if (item[1]==2)
-                                this.m_CommMethod = new HotmailSMTPScreenRipperBETA(this.m_oResponseStream, this.m_Log);    
-                        } 
-                    } 
-                } 
-            }
-            if (!this.m_CommMethod)
-                this.m_CommMethod = new HotmailSMTPScreenRipper(this.m_oResponseStream,this.m_Log);
-             
+            //load prefs 
+            var PrefData = this.getPrefs();
+            
+            if (PrefData.iMode==1) ///webdav
+                this.m_CommMethod = new HotmailSMTPWebDav(this.m_oResponseStream, this.m_Log, PrefData);    
+            else if (PrefData.iMode==2) //beta
+                this.m_CommMethod = new HotmailSMTPScreenRipperBETA(this.m_oResponseStream, this.m_Log, PrefData);    
+        
+            if (!this.m_CommMethod) //default screen ripper
+                this.m_CommMethod = new HotmailSMTPScreenRipper(this.m_oResponseStream, this.m_Log, PrefData);
+                        
             var bResult = this.m_CommMethod.logIn(this.m_szUserName, this.m_szPassWord);
                        
             this.m_Log.Write("nsHotmailSMTP.js - logIN - "+ bResult +"- END");    
@@ -222,6 +200,104 @@ nsHotmailSMTP.prototype =
         }
     },
      
+     
+     
+     
+    getPrefs : function ()
+    {
+        try
+        {
+            this.m_Log.Write("nsHotmailSMTP.js - getPrefs - START"); 
+            
+            var WebMailPrefAccess = new WebMailCommonPrefAccess();
+            var oPref = {Value : null};
+            var oData = new PrefData();
+             
+            ////////
+            //load defaults
+            ////////                          
+            //do i reuse the session
+            if (WebMailPrefAccess.Get("bool","hotmail.bReUseSession",oPref))
+                oData.bReUseSession = oPref.Value;
+            else
+                oData.bReUseSession = true; 
+            this.m_Log.Write("nsHotmailSMTP.js - getPrefs - hotmail.bReUseSession " + oData.bReUseSession);
+                                        
+            //save copy in sent items
+            oPref.Value = null;
+            if (WebMailPrefAccess.Get("bool","hotmail.bSaveCopy",oPref))
+                oData.bSaveCopy=oPref.Value;
+            else
+                oData.bSaveCopy=true;            
+            this.m_Log.Write("nsHotmailSMTP.js - getPrefs - hotmail.bSaveCopy " + oData.bSaveCopy);
+                        
+            //what do i do with alternative parts
+            oPref.Value = null;
+            if (WebMailPrefAccess.Get("bool","hotmail.bSendHtml",oPref))    
+                oData.bSendHtml = oPref.Value;
+            else
+                oData.bSendHtml = false;     
+            this.m_Log.Write("nsHotmailSMTP.js - getPrefs - hotmail.bSendHtml " + oData.bSendHtml);
+            
+                
+            //////
+            //load User prefs
+            //////
+            var iCount = 0;
+            oPref.Value = null;
+            WebMailPrefAccess.Get("int","hotmail.Account.Num",oPref);
+            this.m_Log.Write("nsHotmailSMTP.js - getPrefs - Users Num " + oPref.Value);
+            if (oPref.Value) iCount = oPref.Value;
+            
+            var regExp = new RegExp(this.m_szUserName,"i");
+            
+            for(var i=0; i<iCount; i++)    
+            {  
+                oPref.Value = null;
+                WebMailPrefAccess.Get("char","hotmail.Account."+i+".user",oPref);
+                this.m_Log.Write("nsHotmailSMTP.js - getPrefs - szUserName " + oPref.Value);
+                if (oPref.Value)
+                {
+                    if (oPref.Value.search(regExp)!=-1)
+                    {
+                        this.m_Log.Write("nsHotmailSMTP.js - getPrefs - user found "+ i);
+                        
+                        //get Mode 
+                        oPref.Value = null;
+                        WebMailPrefAccess.Get("int","hotmail.Account."+i+".iMode",oPref);
+                        this.m_Log.Write("nsHotmailSMTP.js - getPrefs - iMode " + oPref.Value);
+                        if (oPref.Value) oData.iMode = oPref.Value;   
+                        
+                        //do i save copy
+                        oPref.Value = null;
+                        WebMailPrefAccess.Get("bool","hotmail.Account."+i+".bSaveCopy",oPref);
+                        this.m_Log.Write("nsHotmailSMTP.js - getPrefs - bSaveCopy " + oPref.Value);
+                        if (oPref.Value) oData.bSaveCopy=oPref.Value;
+                       
+                        //what do i do with alternative parts
+                        oPref.Value = null;
+                        WebMailPrefAccess.Get("bool","hotmail.Account."+i+".bSendHtml",oPref);  
+                        this.m_Log.Write("nsHotmailSMTP.js - getPrefs - bSendHtml " + oPref.Value);
+                        if (oPref.Value) oData.bSendHtml = oPref.Value; 
+                    }
+                }
+            }          
+                                           
+            this.m_Log.Write("nsHotmailSMTP.js - getPrefs - END");  
+            return oData;
+        }
+        catch(e)
+        {
+            this.m_Log.DebugDump("nsHotmailSMTP.js: getPrefs : Exception : " 
+                                      + e.name 
+                                      + ".\nError message: " 
+                                      + e.message+ "\n"
+                                      + e.lineNumber);
+            return null;
+        }
+    }, 
+    
+    
 /******************************************************************************/
 /***************** XPCOM  stuff ***********************************************/
 /******************************************************************************/

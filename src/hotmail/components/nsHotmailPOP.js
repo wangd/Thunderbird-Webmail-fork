@@ -18,7 +18,8 @@ const patternHotmailPOPMailbox = /<a href="(\/cgi-bin\/HoTMaiL.*?)".*?tabindex=1
 const PatternHotmailPOPFolderBase = /document.location = "(.*?)"\+f/; 
 const PatternHotmailPOPFolderList =/href="javascript:G\('\/cgi-bin\/folders\?'\)"(.*?)<a href="javascript:G\('\/cgi-bin\/folders\?'\)"/;
 const PatternHotmailPOPFolderLinks =/<a.*?>/g;
-const PatternHotmailPOPTabindex =/tabindex="(.*?)"/;
+const PatternHotmailPOPTabindex =/tabindex="(.*?)"/i;
+const PatternHotmailPOPTabTitle =/title="(.*?)"/i;
 const PatternHotmailPOPHMFO =/HMFO\('(.*?)'\)/;
 const patternHotmailPOPMsgTable = /MsgTable.*?>(.*?)<\/table>/m;
 const patternHotmailPOPMultPageNum = /<select name="MultPageNum" onChange="window\.location\.href='(.*?)'\+_UM\+'(.*?)'.*?>(.*?)<\/select>/;
@@ -51,6 +52,9 @@ const patternHotmailPOPViewState = /<input.*?id="__VIEWSTATE".*?value="(.*?)".*?
 const patternHotmailPOPFolderID = /FolderID=(.*?)$/i;
 const patternHotmailPOPInboxCotent = /<div id="inbox">/ig
 const patternHotmailPOPInboxNoContent =/<div.*?ContentNoMsg.*?>/ig
+const patternHotmailPOPFolderList =/<div class="dIndexListText">.*?Inbox&FolderID.*?<\/div>/igm;
+const patternHotmailPOPFolderHref = /<a href="(.*?)">/i;
+const patternHotmailPOPTitle = /<a href=".*?">(.*?)<\/a>/i;
 /*******************************************************************************/
 
 
@@ -64,10 +68,10 @@ const patternHotmailPOPFolder = /<hm:msgfolderroot>(.*?)<\/hm:msgfolderroot>/;
 const patternHotmailPOPTrash = /<hm:deleteditems>(.*?)<\/hm:deleteditems>/;
 const patternHotmailPOPMSGID = /[^\/]+$/;
 const patternHotmailPOPResponse = /<D:response>[\S\s]*?<\/D:response>/gm;
-const patternHotmailPOPTrashFolder = /<D:href>(.*?HM_BuLkMail.*?)<\/D:href>/i;
-const patternHotmailPOPinboxFolder = /<D:href>(.*?\/folders\/active\/)<\/D:href>/i;
 const patternHotmailPOPID = /<D:id>(.*?)<\/D:id>/;
 const patternHotmailPOPHref = /<D:href>(.*?)<\/D:href>/;
+const patternHotmailPOPHrefList = /<D:href>.*?<\/D:href>/igm;
+const patternHotmailPOPFolderName = /folders\/(.*?)\//i;
 const patternHotmailPOPSize = /<D:getcontentlength>(.*?)<\/D:getcontentlength>/;
 const patternHotmailPOPRead = /<hm:read>(.*?)<\/hm:read>/i;
 const patternHotmailPOPTo = /<m:to>(.*?)<\/m:to>/i;
@@ -76,7 +80,7 @@ const patternHotmailPOPSubject = /<m:subject>(.*?)<\/m:subject>/i;
 const patternHotmailPOPDate = /<m:date>(.*?)T(.*?)<\/m:date>/i;
 /*******************************************************************************/
 
-const UserAgent = "1.1 on Mac OS X — Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-us) Gecko/20060516 SeaMonkey/1.1.0"
+const UserAgent = "1.1 on Mac OS X — Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-us) Gecko/20060516 SeaMonkey/1.1.0";
 
 /************************************  Hotmail ********************************/
 
@@ -91,6 +95,7 @@ function nsHotmail()
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-ScreenRipper-POP.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-ScreenRipper-POP-BETA.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
+        scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-Prefs-Data.js");
         
         var date = new Date();
         
@@ -150,38 +155,15 @@ nsHotmail.prototype =
             if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
             
             //load webdav address
-            var WebMailPrefAccess = new WebMailCommonPrefAccess();
-            var oPref = {Value : null};
-            if (WebMailPrefAccess.Get("char","hotmail.mode",oPref))
-            {
-                var szUserNames = oPref.Value;
-                this.m_HotmailLog.Write("nsHotmail.js - logIN - szUserNames " + szUserNames);
-                
-                var aRows = szUserNames.split("\r");
-                this.m_HotmailLog.Write("Hotmail-Prefs-WebDav.js : logIN - "+aRows);
-                if (aRows)
-                {
-                    for(i=0; i<aRows.length; i++)
-                    {   
-                        var item = aRows[i].split("\n");
-                        this.m_HotmailLog.Write("Hotmail.js : logIN - "+item);
-                     
-                        var reg = new RegExp(item[0],"i");
-                        this.m_HotmailLog.Write("nsHotmail.js - logIN - username search " + reg);
-                        if (this.m_szUserName.match(reg))
-                        {
-                            this.m_HotmailLog.Write("nsHotmail.js - logIN - username found");  
-                            if (item[1]==1) ///webdav
-                                this.m_CommMethod = new HotmailWebDav(this.m_oResponseStream, this.m_HotmailLog);    
-                            else if (item[1]==2) //beta
-                                this.m_CommMethod = new HotmailScreenRipperBETA(this.m_oResponseStream, this.m_HotmailLog);    
-                        } 
-                    } 
-                } 
-            }
-                     
+            var PrefData = this.getPrefs();
+            
+            if (PrefData.iMode==1) ///webdav
+                this.m_CommMethod = new HotmailWebDav(this.m_oResponseStream, this.m_HotmailLog, PrefData);    
+            else if (PrefData.iMode==2) //beta
+                this.m_CommMethod = new HotmailScreenRipperBETA(this.m_oResponseStream, this.m_HotmailLog, PrefData);    
+        
             if (!this.m_CommMethod) //default screen ripper
-                this.m_CommMethod = new HotmailScreenRipper(this.m_oResponseStream, this.m_HotmailLog);
+                this.m_CommMethod = new HotmailScreenRipper(this.m_oResponseStream, this.m_HotmailLog, PrefData);
             
             var bResult = this.m_CommMethod.logIn(this.m_szUserName, this.m_szPassWord);
                        
@@ -388,6 +370,132 @@ nsHotmail.prototype =
     },  
     
   
+  
+    getPrefs : function ()
+    {
+        try
+        {
+            this.m_HotmailLog.Write("nsHotmail.js - getPrefs - START"); 
+            
+            var WebMailPrefAccess = new WebMailCommonPrefAccess();
+            var oPref = {Value : null};
+            var oData = new PrefData();
+             
+            ////////
+            //load defaults
+            ////////
+            
+            //delay processing time delay
+            if (WebMailPrefAccess.Get("int","hotmail.iProcessDelay",oPref))
+                oData.iProcessDelay = oPref.Value;
+            else
+                oData.iProcessDelay = 10; 
+            
+            //delay process trigger
+            oPref.Value = null;
+            if (WebMailPrefAccess.Get("bool","hotmail.iProcessTrigger",oPref))
+                oData.iProcessTrigger = oPref.Value;
+            else
+                oData.iProcessTrigger = 50; 
+        
+            //delay proccess amount
+            oPref.Value = null;
+            if (WebMailPrefAccess.Get("bool","hotmail.iProcessAmount",oPref))
+                oData.iProcessAmount = oPref.Value;
+            else
+                oData.iProcessAmount = 25;    
+                                     
+            //do i reuse the session
+            oPref.Value = null;
+            if (WebMailPrefAccess.Get("bool","hotmail.bReUseSession",oPref))
+                oData.bReUseSession = oPref.Value;
+            else
+                oData.bReUseSession = true; 
+        
+            //do i download junkmail
+            oPref.Value = null;
+            if (WebMailPrefAccess.Get("bool","hotmail.bUseJunkMail",oPref))
+                oData.bUseJunkMail=oPref.Value;
+            else
+                oData.bUseJunkMail=false;
+                                          
+            //do i download unread only
+            oPref.Value = null;
+            if (WebMailPrefAccess.Get("bool","hotmail.bDownloadUnread",oPref))
+                oData.bDownloadUnread = oPref.Value;
+            else
+                oData.bDownloadUnread = false; 
+
+            //////
+            //load User prefs
+            //////
+            var iCount = 0;
+            oPref.Value = null;
+            WebMailPrefAccess.Get("int","hotmail.Account.Num",oPref);
+            this.m_HotmailLog.Write("nsHotmail.js - getPrefs - Users Num " + oPref.Value);
+            if (oPref.Value) iCount = oPref.Value;
+            
+            var regExp = new RegExp(this.m_szUserName,"i");
+            
+            for(var i=0; i<iCount; i++)    
+            {  
+                oPref.Value = null;
+                WebMailPrefAccess.Get("char","hotmail.Account."+i+".user",oPref);
+                this.m_HotmailLog.Write("nsHotmail.js - getPrefs - szUserName " + oPref.Value);
+                if (oPref.Value)
+                {
+                    if (oPref.Value.search(regExp)!=-1)
+                    {
+                        this.m_HotmailLog.Write("nsHotmail.js - getPrefs - user found "+ i);
+                        
+                        //get Mode 
+                        oPref.Value = null;
+                        WebMailPrefAccess.Get("int","hotmail.Account."+i+".iMode",oPref);
+                        this.m_HotmailLog.Write("nsHotmail.js - getPrefs - iMode " + oPref.Value);
+                        if (oPref.Value) oData.iMode = oPref.Value;   
+                                                                                 
+                        //get spam
+                        oPref.Value = null;
+                        WebMailPrefAccess.Get("bool","hotmail.Account."+i+".bUseJunkMail",oPref);
+                        this.m_HotmailLog.Write("nsHotmail.js - getPrefs - bUseJunkMail " + oPref.Value);
+                        if (oPref.Value) oData.bUseJunkMail = oPref.Value;         
+                                              
+                        //get unread
+                        oPref.Value = null;
+                        WebMailPrefAccess.Get("bool","hotmail.Account."+i+".bDownloadUnread",oPref);
+                        this.m_HotmailLog.Write("nsHotmail.js - getPrefs - bDownloadUnread " + oPref.Value);
+                        if (oPref.Value) oData.bDownloadUnread = oPref.Value;
+                        
+                         //get folders
+                        oPref.Value = null;
+                        WebMailPrefAccess.Get("char","hotmail.Account."+i+".szFolders",oPref);
+                        this.m_HotmailLog.Write("nsHotmail.js - getPrefs - szFolders " + oPref.Value);
+                        if (oPref.Value)
+                        {
+                            var aszFolders = oPref.Value.split("\r");
+                            for (j=0; j<aszFolders.length; j++)
+                            {
+                                this.m_HotmailLog.Write("nsHotmail.js - getPrefs - aszFolders " + aszFolders[j]);
+                                oData.aszFolder.push(aszFolders[j]);
+                            }
+                        }
+                    }
+                }
+            }          
+                                           
+            this.m_HotmailLog.Write("nsHotmail.js - getPrefs - END");  
+            return oData;
+        }
+        catch(e)
+        {
+            this.m_HotmailLog.DebugDump("nsHotmail.js: getPrefs : Exception : " 
+                                      + e.name 
+                                      + ".\nError message: " 
+                                      + e.message+ "\n"
+                                      + e.lineNumber);
+            return null;
+        }
+    },
 /******************************************************************************/
 /***************** XPCOM  stuff ***********************************************/
 /******************************************************************************/

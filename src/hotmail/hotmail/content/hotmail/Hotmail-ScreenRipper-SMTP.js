@@ -1,4 +1,4 @@
-function HotmailSMTPScreenRipper(oResponseStream, oLog)
+function HotmailSMTPScreenRipper(oResponseStream, oLog, oPrefData)
 {
     try
     {       
@@ -7,7 +7,7 @@ function HotmailSMTPScreenRipper(oResponseStream, oLog)
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Email.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
+        scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-Prefs-Data.js");
                
         this.m_Log = oLog; 
                 
@@ -35,30 +35,11 @@ function HotmailSMTPScreenRipper(oResponseStream, oLog)
         this.m_ComponentManager = this.m_ComponentManager.getService(Components.interfaces.nsIComponentData2);
         
         this.m_bReEntry = false;
-          
-        //do i save copy
-        var oPref = {Value:null};
-        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-        if (WebMailPrefAccess.Get("bool","hotmail.bSaveCopy",oPref))
-            this.m_bSaveCopy=oPref.Value;
-        else
-            this.m_bSaveCopy=true;          
-  
-        //do i reuse the session
-        oPref.Value = null;
-        if (WebMailPrefAccess.Get("bool","hotmail.bReUseSession",oPref))
-            this.m_bReUseSession=oPref.Value;
-        else
-            this.m_bReUseSession=true; 
-            
-        //what do i do with alternative parts
-        oPref.Value = null;
-        if (WebMailPrefAccess.Get("bool","hotmail.bSendHtml",oPref))
-            this.m_bSendHtml = oPref.Value;
-        else
-            this.m_bSendHtml = false;    
-    
-                                                         
+                       
+        this.m_bReUseSession = oPrefData.bReUseSession;    //do i reuse the session
+        this.m_bSaveCopy= oPrefData.bSaveCopy;            //do i save copy
+        this.m_bSendHtml = oPrefData.bSendHtml;          //what do i do with alternative parts
+                                     
         this.m_Log.Write("Hotmail-SR-SMTP.js - Constructor - END");  
     }
     catch(e)

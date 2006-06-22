@@ -1,4 +1,4 @@
-function HotmailScreenRipper(oResponseStream, oLog)
+function HotmailScreenRipper(oResponseStream, oLog, oPrefData)
 {
     try
     {       
@@ -9,61 +9,52 @@ function HotmailScreenRipper(oResponseStream, oLog)
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Header.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Email.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-MSG.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
-        
-        this.m_Log = oLog; 
+        scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-Prefs-Data.js");
+        scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-FolderList.js");
                 
+        this.m_Log = oLog;
         this.m_Log.Write("Hotmail-SR - Constructor - START");   
        
         this.m_szUserName = null;   
         this.m_szPassWord = null; 
         this.m_oResponseStream = oResponseStream;  
         this.m_HttpComms = new HttpComms();   
-        this.m_szMailboxURI = null;
         this.m_szLogOutURI = null;
         this.m_szLocationURI = null;
-        this.m_szJunkFolderURI = null;
-        this.m_bJunkMailDone = false;
         this.m_aMsgDataStore = new Array();
         this.m_aszPageURLS = new Array();
         this.m_szHomeURI = null;
+        this.m_szFolderURI = null;
+        this.m_szFolderName = null;
         this.m_iPageCount =0;
         this.m_iTotalSize = 0; 
         this.m_szUM = null;
         this.m_iStage = 0;  
-        this.m_bJunkMail = false;
+
         this.m_szMSG = null;
         this.m_szMSGUri = null;
+        this.bNeedFolderUri = true;
         
         this.m_ComponentManager = Components.classes["@mozilla.org/nsComponentData2;1"];
         this.m_ComponentManager = this.m_ComponentManager.getService(Components.interfaces.nsIComponentData2);
 
         this.m_bReEntry = false;
         
-        //do i reuse the session
-        var oPref = {Value:null};
-        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-        if (WebMailPrefAccess.Get("bool","hotmail.bReUseSession",oPref))
-            this.m_bReUseSession=oPref.Value;
-        else
-            this.m_bReUseSession=true; 
-                  
-        //do i download junkmail
-        oPref.Value = null;
-        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-        if (WebMailPrefAccess.Get("bool","hotmail.bUseJunkMail",oPref))
-            this.m_bUseJunkMail=oPref.Value;
-        else
-            this.m_bUseJunkMail=false;
+        this.m_bReUseSession = oPrefData.bReUseSession;    //do i reuse the session
+        this.m_bUseJunkMail= oPrefData.bUseJunkMail;       //do i download junkmail
+        this.m_bDownloadUnread = oPrefData.bDownloadUnread; //do i download unread only
+        
+        this.m_bJunkMail = false;
+        this.m_aszFolderURLList = new Array();
 
-        //do i download unread only
-        oPref.Value = null;
-        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-        if (WebMailPrefAccess.Get("bool","hotmail.bDownloadUnread",oPref))
-            this.m_bDownloadUnread=oPref.Value;
-        else
-            this.m_bDownloadUnread=false;   
-
+        //process folders
+        this.m_aszFolders = new Array();
+        for(var i=0; i<oPrefData.aszFolder.length; i++)
+        {
+            this.m_aszFolders.push(oPrefData.aszFolder[i]);
+        }
+        this.m_Log.Write("Hotmail-SR - Constructor - m_aszFolders "+ this.m_aszFolders);
+        
         this.m_bStat = false;
         
         this.m_Log.Write("Hotmail-SR.js - Constructor - END");  
@@ -362,11 +353,12 @@ HotmailScreenRipper.prototype =
             this.m_Log.Write("Hotmail-SR - getNumMessages - START"); 
             
             if (this.m_szMailboxURI == null) return false;
-            var szMailboxURI = this.m_szLocationURI + this.m_szMailboxURI + "&sort=Date"; 
-            this.m_Log.Write("Hotmail-SR - getNumMessages - mail box url " + szMailboxURI); 
+            this.m_szFolderURI = this.m_szLocationURI + this.m_szMailboxURI + "&sort=Date"; 
+            this.m_Log.Write("Hotmail-SR - getNumMessages - mail box url " + this.m_szFolderURI); 
+            this.m_szFolderName = "INBOX";
             
             this.m_iStage = 0;
-            this.m_HttpComms.setURI(szMailboxURI);
+            this.m_HttpComms.setURI(this.m_szFolderURI);
             this.m_HttpComms.setRequestMethod("GET");
             var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this); 
             if (!bResult) throw new Error("httpConnection returned false");
@@ -392,7 +384,7 @@ HotmailScreenRipper.prototype =
     {
         try
         {
-            mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - START"); 
+            mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - START");
             mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler : " + mainObject.m_iStage);  
             
@@ -402,50 +394,10 @@ HotmailScreenRipper.prototype =
             //check status should be 200.
             if (httpChannel.responseStatus != 200 ) 
                 throw new Error("error status " + httpChannel.responseStatus);   
-            
-           
-            // get trash folder uri      
-            if (!mainObject.m_szJunkFolderURI && mainObject.m_bUseJunkMail)
-            {
-                try
-                {
-                    var szFolderURL = szResponse.match(PatternHotmailPOPFolderBase)[1];
-                    mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - folder base: " +szFolderURL);
-                          
-                    var szFolderList = szResponse.match(PatternHotmailPOPFolderList)[1];    
-                    mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - folder list: " +szFolderList);
-                    
-                    var aszFolderLinks = szFolderList.match(PatternHotmailPOPFolderLinks);
-                    mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - folder links: " +aszFolderLinks
-                                                                       + " length " + aszFolderLinks.length);
-                   
-                    var szJunkFolder=null;
-                    for (i=0 ; i<aszFolderLinks.length-1; i++ )
-                    {
-                        mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - folder link: " +aszFolderLinks[i]);
-                        //get tabindex
-                        var iIndex = aszFolderLinks[i].match(PatternHotmailPOPTabindex)[1]; 
-                        mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - folder index: " +iIndex);
-                        if(iIndex == 131)
-                        {
-                            szJunkFolder = aszFolderLinks[i].match(PatternHotmailPOPHMFO)[1];
-                            mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - folder id: " +szJunkFolder);
-                        }
-                    }
+              
+            // get folder uri's
+            if (mainObject.bNeedFolderUri) mainObject.processFolder(szResponse)      
     
-                    mainObject.m_szJunkFolderURI = mainObject.m_szLocationURI + szFolderURL + szJunkFolder;
-                    mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - folder uri: " +mainObject.m_szJunkFolderURI);
-                }
-                catch(err)
-                {
-                    mainObject.m_Log.DebugDump("Hotmail-SR: mailBoxOnloadHandler folder: Exception : " 
-                                                      + err.name 
-                                                      + ".\nError message: " 
-                                                      + err.message+ "\n"
-                                                      + err.lineNumber);
-                }   
-            }
-                     
                       
             //get pages uri
             if (mainObject.m_aszPageURLS.length==0)
@@ -466,15 +418,11 @@ HotmailScreenRipper.prototype =
                     //construct page urls
                     for (i =1 ; i < aNums.length ; i++)  //start at second page
                     {
-                        mainObject.m_aszPageURLS.push(mainObject.m_szLocationURI + aPages[1] 
-                                                       + mainObject.m_szUM + aPages[2] + (i+1));        
+                        mainObject.m_aszPageURLS.push(mainObject.m_szLocationURI + aPages[1] + mainObject.m_szUM + aPages[2] + (i+1));        
                     }
                 }
                 
-                 mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler -msg pages url : " 
-                                                        + mainObject.m_aszPageURLS
-                                                        + " length "
-                                                        + mainObject.m_aszPageURLS.length);
+                 mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler -msg pages url : " + mainObject.m_aszPageURLS + " length " + mainObject.m_aszPageURLS.length);
             }
             
             
@@ -489,88 +437,15 @@ HotmailScreenRipper.prototype =
             //first row  = headers , last row = footer
             for (j = 1; j < szMsgRows.length-1; j++)
             {
-                mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - row  : " +szMsgRows);
-                
-                var aEmailURL = szMsgRows[j].match(patternHotmailPOPEmailURL);
-                mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - Email URL : " +aEmailURL);
-                if (aEmailURL)
-                {
-                    var bRead = true;
-                    if (mainObject.m_bDownloadUnread)
-                    {
-                        bRead = (szMsgRows[j].search(patternHotmailPOPSRRead)!=-1) ? false : true;
-                        mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - bRead -" + bRead);
-                    }
-                     
-                    if (bRead)
-                    {       
-                        var oMSG = new HotmailMSG();
-                        var szPath = mainObject.m_szLocationURI+aEmailURL[1]+"&"+mainObject.m_szUM;
-                        mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - Email URL : " +szPath);
-                        oMSG.szMSGUri = szPath;
-                                            
-                        var aEmailLength = aEmailURL[1].match(patternHotmailPOPEmailLength);                    
-                        var iSize = aEmailLength?  parseInt(aEmailLength[1]) : 2000;
-                        mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - size : " +iSize);
-                        oMSG.iSize = iSize;    
-                        mainObject.m_iTotalSize += iSize;
-                        
-                        oMSG.bJunkFolder = mainObject.m_bJunkMailDone;
-                
-                        oMSG.szTo = mainObject.m_szUserName;
-                
-                        var szFrom = "";
-                        try
-                        {
-                            szFrom = szMsgRows[j].match(patternHotmailPOPSRFrom)[1];
-                        }
-                        catch(err){}
-                        oMSG.szFrom = szFrom;
-                        
-                        var data = szMsgRows[j].match(/<td>.*?<\/td>/gi);
-                        
-                        var szSubject= "";
-                        try
-                        {
-                            szSubject= data[6].match(/<td>(.*?)<\/td>/)[1];
-                            szSubject= mainObject.removeHTML(szSubject);             
-                        }
-                        catch(err){}
-                        oMSG.szSubject = szSubject;
-                        
-                        try
-                        {
-                            var szRawDate = data[7].match(/<td>(.*?)<\/td>/)[1];
-                            szRawDate = mainObject.removeHTML(szRawDate);
-                            var aRawDate = szRawDate.split(/\s/);
-                            mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - "+aRawDate);
-                            
-                            var today = new Date();
-                            var szDate = aRawDate[0] +" ,"+aRawDate[1] +" " + today.getFullYear();
-                            mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - "+szDate);
-                           
-                            var newDate= new Date(Date.parse(szDate));
-                            newDate.setHours(today.getHours());
-                            newDate.setMinutes(today.getMinutes());
-                            
-                            oMSG.szDate = newDate.toUTCString();
-                            mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - " + oMSG.szDate);
-                        }
-                        catch(err){}
-                        
-                        mainObject.m_aMsgDataStore.push(oMSG);
-                    }
-                }  
+                var oMSG = mainObject.processMSG(szMsgRows[j]);
+                if (oMSG) mainObject.m_aMsgDataStore.push(oMSG);               
             }
     
             mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler -msg pages : " +mainObject.m_aszPageURLS);    
-            mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler -msg pages count : " 
-                                                        + mainObject.m_aszPageURLS.length + " "
-                                                        + mainObject.m_iPageCount);   
+            mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler -msg pages count : " + mainObject.m_aszPageURLS.length + " "  + mainObject.m_iPageCount);   
                                                                              
             if (mainObject.m_aszPageURLS.length!= mainObject.m_iPageCount)//more pages
             {           
-                //set cookies
                 var szTempURI = mainObject.m_aszPageURLS[ mainObject.m_iPageCount];
                 mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - page: " + szTempURI); 
                 
@@ -582,21 +457,16 @@ HotmailScreenRipper.prototype =
                 mainObject.m_iPageCount++;                       
             }
             else  //done with mailbox
-            {  
-                mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - use junkmail: " 
-                                                        + mainObject.m_bUseJunkMail
-                                                        + " Done " + mainObject.m_bJunkMailDone
-                                                        + " uri " + mainObject.m_szJunkFolderURI );
-                 
-                if (!mainObject.m_bJunkMailDone && mainObject.m_bUseJunkMail && mainObject.m_szJunkFolderURI)
-                { //get junkmail
-                    mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - junkmail: " + mainObject.m_bUseJunkMail); 
-                    
-                    mainObject.m_bJunkMailDone = true;
+            {                   
+                if (mainObject.m_aszFolderURLList.length>0)
+                { 
+                    var oFolder = mainObject.m_aszFolderURLList.shift();
+                    mainObject.m_szFolderURI = oFolder.szURI;
+                    mainObject.m_szFolderName = oFolder.szName;
                     mainObject.m_iPageCount = 0; //reset array
                     mainObject.m_aszPageURLS = new Array;
                 
-                    mainObject.m_HttpComms.setURI(mainObject.m_szJunkFolderURI);
+                    mainObject.m_HttpComms.setURI(mainObject.m_szFolderURI);
                     mainObject.m_HttpComms.setRequestMethod("GET");
                     var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler, mainObject); 
                     if (!bResult) throw new Error("httpConnection returned false");
@@ -605,26 +475,19 @@ HotmailScreenRipper.prototype =
                 {
                     if (mainObject.m_bStat) //called by stat
                     {
-                        //server response
-                        mainObject.serverComms("+OK "+ 
-                                               mainObject.m_aMsgDataStore.length + 
-                                               " " + 
-                                               mainObject.m_iTotalSize + 
-                                               "\r\n");
+                        mainObject.serverComms("+OK " + mainObject.m_aMsgDataStore.length + " " + mainObject.m_iTotalSize + "\r\n");
                     }
                     else //called by list
                     {
-                        var szPOPResponse = "+OK " + mainObject.m_aMsgDataStore.length + " Messages\r\n"; 
-                        this.m_Log.Write("Hotmail-SR.js - mailBoxOnloadHandler - : " + mainObject.m_aMsgDataStore.length);
+                        mainObject.serverComms("+OK " + mainObject.m_aMsgDataStore.length + " Messages\r\n"); 
          
                         for (i = 0; i <  mainObject.m_aMsgDataStore.length; i++)
                         {
                             var iEmailSize = mainObject.m_aMsgDataStore[i].iSize;
-                            szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";       
+                            mainObject.serverComms((i+1) + " " + iEmailSize + "\r\n");       
                         }         
                        
-                        szPOPResponse += ".\r\n";
-                        mainObject.serverComms(szPOPResponse);
+                        mainObject.serverComms(".\r\n");
                     }
                 }
             }
@@ -638,12 +501,169 @@ HotmailScreenRipper.prototype =
                                               + err.message+ "\n"
                                               + err.lineNumber);
             
-            mainObject.serverComms("-ERR negative vibes from " +mainObject.m_szUserName+ "\r\n");
-            
+            mainObject.serverComms("-ERR negative vibes from " +mainObject.m_szUserName+ "\r\n");  
         }   
     },
  
     
+    
+    processFolder : function (szResponse)
+    {
+        try
+        {
+            this.m_Log.Write("Hotmail-SR: processFolder - START");
+            
+            var szFolderURL = szResponse.match(PatternHotmailPOPFolderBase)[1];
+            this.m_Log.Write("Hotmail-SR - processFolder - folder base: " +szFolderURL);
+                  
+            var szFolderList = szResponse.match(PatternHotmailPOPFolderList)[1];    
+            this.m_Log.Write("Hotmail-SR - processFolder - folder list: " +szFolderList);
+            
+            var aszFolderLinks = szFolderList.match(PatternHotmailPOPFolderLinks);
+            this.m_Log.Write("Hotmail-SR - processFolder - folder links: " +aszFolderLinks+ " length " + aszFolderLinks.length);
+            
+                 
+            for (i=0 ; i<aszFolderLinks.length; i++ )
+            {
+                this.m_Log.Write("Hotmail-SR - processFolder - folder link: " +aszFolderLinks[i]);
+                //get tabindex
+                var iIndex = aszFolderLinks[i].match(PatternHotmailPOPTabindex)[1]; 
+                this.m_Log.Write("Hotmail-SR - processFolder - folder index: " +iIndex);                      
+                if (this.m_bUseJunkMail)
+                {
+                    if(iIndex == 131) // junkmail
+                    {
+                        var iFolder = aszFolderLinks[i].match(PatternHotmailPOPHMFO)[1];
+                        var szURI = this.m_szLocationURI + szFolderURL + iFolder;
+                        this.m_Log.Write("Hotmail-SR - processFolder - szURI : " +szURI);
+                        var oFolder = new FolderData();
+                        oFolder.szName = "Junk Mail";
+                        oFolder.szURI = szURI;
+                        this.m_aszFolderURLList.push(oFolder);
+                    }
+                }
+                
+                for (var j=0; j<this.m_aszFolders.length; j++)
+                {
+                    var szTitle = aszFolderLinks[i].match(PatternHotmailPOPTabTitle)[1];   
+                    this.m_Log.Write("Hotmail-SR - processFolder - folder szTitle: " +szTitle); 
+                    
+                    var regExp = new RegExp("^"+this.m_aszFolders[j]+"$","i");
+                    this.m_Log.Write("HotmailWebDav.js - processFolder - regExp : "+regExp );
+                    
+                    if (szTitle.search(regExp)!=-1)
+                    {
+                        var iFolder = aszFolderLinks[i].match(PatternHotmailPOPHMFO)[1];
+                        var szURI = this.m_szLocationURI + szFolderURL + iFolder;
+                        this.m_Log.Write("Hotmail-SR - processFolder - szURI : " +szURI);
+                        var oFolder = new FolderData();
+                        oFolder.szName = szTitle;
+                        oFolder.szURI = szURI;
+                        this.m_aszFolderURLList.push(oFolder);   
+                    }
+                }
+            }
+          
+            this.bNeedFolderUri = false;
+            this.m_Log.Write("Hotmail-SR: processFolder - START");
+        }
+        catch(err)
+        {
+            this.m_Log.DebugDump("Hotmail-SR: processFolder: Exception : " 
+                                              + err.name 
+                                              + ".\nError message: " 
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
+        }   
+    },
+    
+    
+    
+    
+    processMSG : function (szMSGData)
+    {
+        this.m_Log.Write("Hotmail-SR: processMSG - START");
+        this.m_Log.Write("Hotmail-SR: processMSG - szMSGData " +szMSGData);
+        
+        var aEmailURL = szMSGData.match(patternHotmailPOPEmailURL);
+        this.m_Log.Write("Hotmail-SR - processMSG - Email URL : " +aEmailURL);                    
+       
+        var oMSG = null;
+        if (aEmailURL)
+        {
+            oMSG = new HotmailMSG();
+            var bRead = true;
+            if (this.m_bDownloadUnread)
+            {
+                bRead = (szMSGData.search(patternHotmailPOPSRRead)!=-1) ? false : true;
+                this.m_Log.Write("HotmailWebDav.js - processMSG - bRead -" + bRead);
+            }
+             
+            if (bRead)
+            {       
+                var szPath = this.m_szLocationURI+aEmailURL[1]+"&"+this.m_szUM;
+                this.m_Log.Write("Hotmail-SR - processMSG - Email URL : " +szPath);
+                oMSG.szMSGUri = szPath;
+                                    
+                var aEmailLength = aEmailURL[1].match(patternHotmailPOPEmailLength);                    
+                var iSize = aEmailLength?  parseInt(aEmailLength[1]) : 2000;
+                this.m_Log.Write("Hotmail-SR - processMSG - size : " +iSize);
+                oMSG.iSize = iSize;    
+                this.m_iTotalSize += iSize;
+                
+                oMSG.szFolder = this.m_szFolderName;
+        
+                oMSG.szTo = this.m_szUserName;
+        
+                var szFrom = "";
+                try
+                {
+                    szFrom = szMSGData.match(patternHotmailPOPSRFrom)[1];
+                }
+                catch(err){}
+                oMSG.szFrom = szFrom;
+                
+                var data = szMSGData.match(/<td>.*?<\/td>/gi);
+                
+                var szSubject= "";
+                try
+                {
+                    szSubject= data[6].match(/<td>(.*?)<\/td>/)[1];
+                    szSubject= this.removeHTML(szSubject);             
+                }
+                catch(err){}
+                oMSG.szSubject = szSubject;
+                
+                try
+                {
+                    var szRawDate = data[7].match(/<td>(.*?)<\/td>/)[1];
+                    szRawDate = this.removeHTML(szRawDate);
+                    var aRawDate = szRawDate.split(/\s/);
+                    this.m_Log.Write("Hotmail-SR - processMSG - "+aRawDate);
+                    
+                    var today = new Date();
+                    var szDate = aRawDate[0] +" ,"+aRawDate[1] +" " + today.getFullYear();
+                    this.m_Log.Write("Hotmail-SR - processMSG - "+szDate);
+                   
+                    var newDate= new Date(Date.parse(szDate));
+                    newDate.setHours(today.getHours());
+                    newDate.setMinutes(today.getMinutes());
+                    
+                    oMSG.szDate = newDate.toUTCString();
+                    this.m_Log.Write("Hotmail-SR - processMSG - " + oMSG.szDate);
+                }
+                catch(err){}
+            }
+        } 
+         
+        this.m_Log.Write("Hotmail-SR: processMSG - END");
+        return oMSG;
+    },
+    
+       
+       
+       
+       
                      
     //list
     //i'm not downloading the mailbox again. 
@@ -753,7 +773,7 @@ HotmailScreenRipper.prototype =
             var oMSG = this.m_aMsgDataStore[lID-1];
             
             var szHeaders = "X-WebMail: true\r\n";
-            szHeaders += "X-JunkFolder: " +(oMSG.bJunkFolder? "true":"false")+ "\r\n";
+            szHeaders += "X-Folder: " +oMSG.szFolder+ "\r\n";
             szHeaders += "To: "+ oMSG.szTo +"\r\n";
             szHeaders += "From: "+ oMSG.szFrom +"\r\n";
             szHeaders += "Subject: "+ oMSG.szSubject +"\r\n";
@@ -795,7 +815,7 @@ HotmailScreenRipper.prototype =
             var szMsgURI = this.m_szMSGUri + "&raw=1";
             this.m_Log.Write("Hotmail-SR - getMessage - msg uri" + szMsgURI); 
            
-            this.m_bJunkMail = oMSG.bJunkFolder;
+            this.m_szFolderName = oMSG.szFolder;
             this.m_iStage = 0;
             
             //get msg from hotmail
@@ -837,7 +857,7 @@ HotmailScreenRipper.prototype =
             {
                 case 0: //construct msg
                     mainObject.m_szMSG = "X-WebMail: true\r\n";
-                    mainObject.m_szMSG += "X-JunkFolder: " + (mainObject.m_bJunkMail? "true":"false")+ "\r\n";
+                    mainObject.m_szMSG += "X-Folder: " + mainObject.m_szFolderName+ "\r\n";
                                                                                          
                     //get msg
                     var aTemp = szResponse.split(/<pre>\s+/); 

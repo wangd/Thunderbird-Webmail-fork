@@ -1,4 +1,4 @@
-function HotmailSMTPWebDav(oResponseStream, oLog)
+function HotmailSMTPWebDav(oResponseStream, oLog, oPrefData)
 {
     try
     {       
@@ -6,7 +6,8 @@ function HotmailSMTPWebDav(oResponseStream, oLog)
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
-                    
+        scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-Prefs-Data.js");
+                            
         this.m_Log = oLog; 
         this.m_Log.Write("HotmailWebDav.js - Constructor - START");   
         
@@ -22,23 +23,10 @@ function HotmailSMTPWebDav(oResponseStream, oLog)
        
         this.m_IOS = Components.classes["@mozilla.org/network/io-service;1"];
         this.m_IOS = this.m_IOS.getService(Components.interfaces.nsIIOService);
-        
-        this.m_bJunkMail = false;
+              
+        this.m_bReUseSession = oPrefData.bReUseSession;    //do i reuse the session
+        this.m_bSaveCopy= oPrefData.bSaveCopy;          //do i save copy
       
-        //do i reuse the session
-        var oPref = new Object();
-        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-        if (WebMailPrefAccess.Get("bool","hotmail.bReUseSession",oPref))
-            this.m_bReUseSession=oPref.Value;
-        else
-            this.m_bReUseSession=true; 
-        
-        //do i save copy
-        if (WebMailPrefAccess.Get("bool","hotmail.bSaveCopy",oPref))
-            this.m_bSaveCopy=oPref.Value;
-        else
-            this.m_bSaveCopy=true;     
-            
         this.m_Log.Write("HotmailWD-SMTP.js - Constructor - END");  
     }
     catch(e)
