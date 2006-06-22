@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/"?>
+<?xml-stylesheet href="chrome://hotmail/content/Hotmail-Prefs-Domains.css"?>
+<!DOCTYPE dialog SYSTEM "chrome://hotmail/locale/Hotmail-Prefs-Domains.dtd">
+
+<overlay id="paneDomainsOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+           
+    <prefpane id = "paneDomains" onpaneload= "gHotmailDomain.init();"> 
+        <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
+        <script type="application/x-javascript" src="chrome://hotmail/content/Hotmail-Prefs-Domains.js"/>
+     
+        <stringbundleset>
+            <stringbundle id="stringsHotmailDomainWindow" src="chrome://hotmail/locale/Hotmail-Prefs-Domains.properties"/>
+        </stringbundleset>  
+       
+        <vbox flex="1">
+            <label value="&domain.label;" id="labelDomain"/>
+            <hbox align="center">     
+                <spacer flex="1"/>
+                <richlistbox  id="listDomain" 
+                              class="listDomainbox"
+                              onselect="gHotmailDomain.onSelect();"/>
+           
+                <vbox align="center" pack="center">
+                    <button id="add" 
+                            label="&Add.label;" 
+                            accesskey="&Add.accessKey;"
+                            oncommand ="gHotmailDomain.onAdd();"/>
+                    <button id="remove" 
+                            label="&Remove.label;" 
+                            accesskey="&Remove.accessKey;"
+                            disabled = "true"
+                            oncommand ="gHotmailDomain.onRemove();"/>
+                </vbox> 
+                <spacer flex="1"/>
+            </hbox>
+        </vbox>
+    </prefpane>
+    
+</overlay>

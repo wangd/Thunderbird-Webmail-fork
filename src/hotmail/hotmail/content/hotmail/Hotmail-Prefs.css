@@ -1,25 +1,20 @@
+#prefsWindow
+{
+    width: 45em; 
+    height: 37em;
+}
+
 radio[pane] 
 {
     list-style-image: url("chrome://hotmail/skin/Hotmail-Prefs.png"); 
 }
 
-radio[pane=paneWebDav]
-{
-	-moz-image-region: rect(0px, 128px, 32px, 96px)
-}
-
-radio[pane=panePOP]
+radio[pane=paneAccounts]
 {
     -moz-image-region: rect(0px, 32px, 32px, 0px)
 }
 
-radio[pane=paneIMAP]
+radio[pane=paneDomains]
 {
-	-moz-image-region: rect(0px, 64px, 32px, 32px)
-}
-
-
-radio[pane=paneSMTP]
-{
-    -moz-image-region: rect(0px, 96px, 32px, 64px)
+    -moz-image-region: rect(0px, 64px, 32px, 32px)
 }

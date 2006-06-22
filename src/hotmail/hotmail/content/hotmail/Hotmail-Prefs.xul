@@ -1,36 +1,28 @@
 <?xml version="1.0"?> 
-
 <?xml-stylesheet href="chrome://global/skin/global.css"?>
 <?xml-stylesheet href="chrome://messenger/skin/preferences/preferences.css"?>
 <?xml-stylesheet href="chrome://mozapps/content/preferences/preferences.css"?>
-
-<?xml-stylesheet href="chrome://hotmail/content/Hotmail-Prefs.css" type="text/css"?>
+<?xml-stylesheet href="chrome://hotmail/content/Hotmail-Prefs.css"?>
 
 <!DOCTYPE dialog SYSTEM "chrome://hotmail/locale/Hotmail-Prefs.dtd">
 
-
-<prefwindow type="prefwindow"
-            id="WebMail-Prefs"
-            title="&Options.szTitle;"
-            xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-            style="&Window.size;"
-            lastSelected = "paneWebDav"
+<prefwindow xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+            type="prefsWindow"
+            title="&Window.szTitle;"
+            id="prefsWindow"
+            lastSelected = "paneAccounts"
+            onload = "gPrefsWindow.init();"
+            ondialogaccept = "return gPrefAccounts.save();"
+            ondialogcancel = ""
             buttons="accept, cancel">
+
+    <!-- Accounts --> 
+    <prefpane id="paneAccounts" 
+              label="&Accounts.Panel.szTitle;"
+              src="chrome://hotmail/content/Hotmail-Prefs-Accounts.xul"/>
   
-      
-    <!-- webdav --> 
-    <prefpane id="paneWebDav" 
-              label="&WebDav.Panel.szTitle;"
-              src="chrome://hotmail/content/Hotmail-Prefs-WebDav.xul"/>
-  
-    <!-- pop --> 
-    <prefpane id="panePOP" 
-              label="&POP.Panel.szTitle;"
-              src="chrome://hotmail/content/Hotmail-Prefs-POP.xul"/>
-              
-    <!-- SMTP --> 
-    <prefpane id="paneSMTP" 
-              label="&SMTP.Panel.szTitle;"
-              src="chrome://hotmail/content/Hotmail-Prefs-SMTP.xul"/>  
-                  
+    <!-- Domains -->   
+    <prefpane id="paneDomains" 
+              label="&Domains.Panel.szTitle;"
+              src="chrome://hotmail/content/Hotmail-Prefs-Domains.xul"/>
 </prefwindow>

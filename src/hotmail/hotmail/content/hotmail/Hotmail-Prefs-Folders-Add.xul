@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://hotmail/content/Hotmail-Prefs-Folders-Add.css" type="text/css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://hotmail/locale/Hotmail-Prefs-Folders-Add.dtd">
+
+<window id="addWindow" 
+        title="&TitleAdd;"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        onload="return gHotmailFoldersAdd.init();">
+
+    <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
+    <script type="application/x-javascript" src="chrome://hotmail/content/Hotmail-Prefs-Folders-Add.js"/>
+    
+    
+    <stringbundleset>
+	   <stringbundle id="stringsHotmailFoldersAdd" src="chrome://hotmail/locale/Hotmail-Prefs-Folders-Add.properties"/>
+	</stringbundleset>
+    
+    <vbox flex="1">
+        <hbox>
+            <vbox>
+                <image id="folderImage" class="folder"/>
+                <spacer flex="1"/>
+            </vbox>
+            
+            <vbox>
+                  <label id="labelFolder"
+                         value="&folders.label;"/>
+            </vbox>
+        </hbox>   
+    
+        <hbox align="center">     
+            <label id="labelFolderName"
+                   value="&folderName.label;" 
+                   accesskey="&folderName.accessKey;"
+                   control="txtDomain"/>           
+            
+            <textbox id="txtDomain" 
+                     value="" 
+                     flex="2" 
+                     onchange = ""/>
+                     
+            <spacer flex="1"/> 
+        </hbox>
+
+        
+        <spacer flex="1" />
+
+        <hbox align="end" pack="center">
+            <button id="add" 
+                    label="&Ok.label;"
+                    accesskey="&Ok.accessKey;"
+                    default="true"
+                    oncommand ="gHotmailFoldersAdd.doOk();"/>
+            <button id="cancel" 
+                    label="&Cancel.label;" 
+                    accesskey="&Cancel.accessKey;"
+                    oncommand ="gHotmailFoldersAdd.doCancel();"/>
+        </hbox> 
+    </vbox>
+</window>
