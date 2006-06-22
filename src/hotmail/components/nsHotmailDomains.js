@@ -49,23 +49,23 @@ nsHotmailDomains.prototype =
                 bADD = this.domainAdd(szDomain, "SMTP", "@mozilla.org/HotmailSMTP;1")
             
             var bFound = false;
-            if (this.m_aszDomain.length>0)
+            if (this.m_aszDomains.length>0)
             {
                 this.m_Log.Write("nsHotmailDomains.js - addDomain - search for domain"); 
                 
                 var i=0;
                 var regExp = new RegExp("^"+szDomain+"$", "i");
                 do{
-                    if (this.m_aszDomain[i].search(regExp)!=-1)
+                    if (this.m_aszDomains[i].search(regExp)!=-1)
                         bFound = true;
                     i++;
-                }while(i<this.m_aszDomain.length && !bFound)                   
+                }while(i<this.m_aszDomains.length && !bFound)                   
             }
            
             if (!bFound)
             {
                 this.m_Log.Write("nsHotmailDomains.js - addDomain - not Found added");
-                this.m_aszDomain.push(szDomain);
+                this.m_aszDomains.push(szDomain);
             }
                 
             this.m_bChange = true;
