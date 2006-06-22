@@ -976,8 +976,7 @@ nsLycosIMAP.prototype =
             {
                 var szResponse = "* "+oIndex.value+ " FETCH (FLAGS (";
                 szResponse +=  oRead.value?"\\Seen":"\\Recent" ; //flags
-                szResponse += " ";
-                szResponse +=  oDelete.value?"\\Deleted":"";
+                szResponse +=  oDelete.value?" \\Deleted":"";
                 szResponse += ") UID " + iUID + ")\r\n"; 
                 this.serverComms(szResponse);
             }

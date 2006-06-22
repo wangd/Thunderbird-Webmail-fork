@@ -10,14 +10,14 @@
 }
 
 
-.listItem
+.listItemDomain
 {
     padding: 4px 4px 4px 4px;
     min-height: 25px !important;
     border-bottom: 1px dotted #C0C0C0;
 }
 
-.listItem[selected="true"] 
+.listItemDomain[selected="true"] 
 {
     -moz-user-focus: normal;
     background-image: url("chrome://mozapps/skin/shared/itemSelected.png");

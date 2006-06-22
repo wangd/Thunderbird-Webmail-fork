@@ -55,7 +55,7 @@ var gYahooDomain =
             
         var newItem = document.createElement("richlistitem"); 
         newItem.setAttribute("id", szDomain);
-        newItem.setAttribute("class", "listItem");
+        newItem.setAttribute("class", "listItemDomain");
         newItem.setAttribute("allowEvents", "true");
         newItem.setAttribute("selected","false"); 
         newItem.setAttribute("align", "center");

@@ -1,8 +1,0 @@
-#include "nsISupports.idl"
-#include "mozIStorageConnection.idl"
-
-[scriptable, uuid(fe1d7e50-9c0b-11da-a746-0800200c9a66)]
-interface nsIDataBaseManager : nsISupports
-{  
-    mozIStorageConnection dbConnection ();
-};

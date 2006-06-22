@@ -29,37 +29,35 @@ var gHotmailStartUp =
             var WebMailPrefAccess = new WebMailCommonPrefAccess();
             var oPref = {Value : null};
             
-            if (WebMailPrefAccess.Get("int","hotmail.webdav.iAccountNum",oPref))
+            WebMailPrefAccess.Get("char","hotmail.mode",oPref);
+            if (oPref.Value)
             {
-                var iAccountNum = oPref.Value;
-                this.m_Log.Write("nsHotmail.js - init - convert " + iAccountNum);
+                var szUserNames = oPref.Value;
+                this.m_Log.Write("nsHotmail.js - init - szUserNames " + szUserNames);
                 
-                if(iAccountNum>0)
+                var aRows = szUserNames.split("\r");
+                this.m_Log.Write("Hotmail-Prefs-WebDav.js : init - "+aRows);
+                
+                if (aRows)
                 {
-                    var szData = null;
-                    
-                    for (i=0; i<iAccountNum; i++)
-                    {
-                        this.m_Log.Write("nsHotmail.js - init - converting " + i);
-                        WebMailPrefAccess.Get("char","hotmail.webdav.Account."+i,oPref);
+                    for(i=0; i<aRows.length; i++)
+                    {   
+                        var item = aRows[i].split("\n");
+                        this.m_Log.Write("Hotmail.js : init - "+item);
+                     
+                        WebMailPrefAccess.Set("char","hotmail.Account."+i+".user",item[0]);
+                        this.m_Log.Write("Hotmail.js - init - user " + item[0]);
                         
-                        szData ? szData+="\r" : szData="";
-                        szData += oPref.Value;
-                        szData +="\n";
-                        szData += 1;
+                        WebMailPrefAccess.Set("int","hotmail.Account."+i+".iMode",item[1]);
+                        this.m_Log.Write("Hotmail.js - init - iMode " +item[1]);
                     }
-                    
-                    if (WebMailPrefAccess.Set("char","hotmail.mode",szData))
-                    {
-                        this.m_Log.Write("nsHotmail.js - init - deleting old keys");
-                        WebMailPrefAccess.DeleteBranch("hotmail.webdav");
-                    }
-                }
-                else
-                {
-                    this.m_Log.Write("nsHotmail.js - init - deleting old keys");
-                    WebMailPrefAccess.DeleteBranch("hotmail.webdav");
-                }    
+                    WebMailPrefAccess.Set("int","hotmail.Account.Num",i);
+                    this.m_Log.Write("Hotmail.js - init - i " +i);
+                } 
+                
+                this.m_Log.Write("nsHotmail.js - init - deleting old keys");
+                WebMailPrefAccess.DeleteBranch("hotmail.mode");
+                
             }
             delete WebMailPrefAccess;
             
