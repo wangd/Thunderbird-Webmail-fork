@@ -1,4 +1,4 @@
-function HttpComms()
+function HttpComms(oLog)
 {
     try
     {
@@ -6,15 +6,21 @@ function HttpComms()
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/commsData.js");
-         
-        var date = new Date();
-        var  szLogFileName = "HTTP Comms Log - " + date.getHours()
-                                           + "-" + date.getMinutes() 
-                                           + "-" + date.getUTCMilliseconds() +" -";       
-        this.m_Log = new DebugLog("webmail.logging.comms", 
-                                  "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
-                                  szLogFileName);
-                                  
+        
+        if (oLog)
+        { 
+            this.m_Log = oLog;
+        }
+        else
+        {
+            var date = new Date();
+            var  szLogFileName = "HTTP Comms Log - " + date.getHours()
+                                               + "-" + date.getMinutes() 
+                                               + "-" + date.getUTCMilliseconds() +" -";       
+            this.m_Log = new DebugLog("webmail.logging.comms", 
+                                      "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
+                                      szLogFileName);
+        }                              
         this.m_Log.Write("HttpComms2.js - constructor - START");
           
         this.m_IOService = Components.classes["@mozilla.org/network/io-service;1"];

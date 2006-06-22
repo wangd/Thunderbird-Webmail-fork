@@ -777,7 +777,7 @@ nsIMAPFolders.prototype =
                         this.m_Log.Write("nsIMAPFolder.js - setMSGSeenFlag MSG found");
                         bResult = true;
                         oMSG.value.bRead = bSeen;
-                        !bSeen? oFolder.iUnreadCount-- : oFolder.iUnreadCount++;
+                        bSeen? oFolder.iUnreadCount-- : oFolder.iUnreadCount++;
                     }
                 }
             }

@@ -1,6 +1,6 @@
 <!ENTITY HotmailAbout.Title "Hotmail - Om">
 <!ENTITY HotmailAbout.ExtName "Hotmail">
-<!ENTITY HotmailAbout.ExtVersion "version 0.10.12">
+<!ENTITY HotmailAbout.ExtVersion "version 1.0.0">
 <!ENTITY HotmailAbout.ExtDescription "Hotmailkomponenter för tillägget webmail.">
 <!ENTITY HotmailAbout.ExtCreaterTitle "Skapad av:">
 <!ENTITY HotmailAbout.ExtCreator "ComodoDragon">
