@@ -127,7 +127,27 @@ nsHotmailDomains.prototype =
             var bFound=false;
             var szTempDomain;
 
-
+            //custom domains
+            if (this.m_aszStandardDomains.length >0)
+            {
+                do{
+                    szTempDomain = this.m_aszStandardDomains.shift();
+                    this.m_Log.Write("nsHotmailDomains.js - removeDomain Standard- " + szTempDomain);
+                    
+                    if (szTempDomain.search(regExp)==-1)
+                    {
+                        this.m_Log.Write("nsHotmailDomains.js - removeDomain Standard- pushed back");
+                        this.m_aszStandardDomains.push(szTempDomain);
+                    } 
+                    else
+                    {   
+                        this.m_Log.Write("nsHotmailDomains.js - removeDomain Standard -found");
+                        bFound = true;                        
+                    }
+                    i++;   
+                }while(i<this.m_aszStandardDomains.length && !bFound)
+            }
+            
             //custom domains
             if (this.m_aszCustomDomains.length >0)
             {
@@ -148,29 +168,6 @@ nsHotmailDomains.prototype =
                     i++;   
                 }while(i<this.m_aszCustomDomains.length && !bFound)
             }
-            
-    
-            //standard domains
-            if (!bFound && this.m_aszStandardDomains.length >0)
-            {
-                do{
-                    szTempDomain = this.m_aszStandardDomains.shift();
-                    this.m_Log.Write("nsHotmailDomains.js - removeDomain Standard- " + szTempDomain);
-                    
-                    if (szTempDomain.search(regExp)==-1)
-                    {
-                        this.m_Log.Write("nsHotmailDomains.js - removeDomain Standard- pushed back");
-                        this.m_aszStandardDomains.push(szTempDomain);
-                    } 
-                    else
-                    {   
-                        this.m_Log.Write("nsHotmailDomains.js - removeDomain Standard -found");
-                        bFound = true;                        
-                    }
-                    i++;   
-                }while(i<this.m_aszStandardDomains.length && !bFound)
-            }
-            
             
             
             if (bFound)
