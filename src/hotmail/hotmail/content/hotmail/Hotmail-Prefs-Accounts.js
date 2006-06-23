@@ -89,7 +89,7 @@ var gPrefAccounts =
     {
         try
         {
-            this.m_DebugLog.Write("Hotmail-Pref-Accounts : onOK - START");
+            this.m_DebugLog.Write("Hotmail-Pref-Accounts : save - START");
             
             if (this.m_aszUserList.length>0)
             {
@@ -99,22 +99,22 @@ var gPrefAccounts =
                 for (var i=0; i<this.m_aszUserList.length; i++)
                 {
                     WebMailPrefAccess.Set("char","hotmail.Account."+i+".user",this.m_aszUserList[i].szUser);
-                    this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - onOK - user " + this.m_aszUserList[i].szUser);
+                    this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - save - user " + this.m_aszUserList[i].szUser);
                     
                     WebMailPrefAccess.Set("bool","hotmail.Account."+i+".bDownloadUnread",this.m_aszUserList[i].bDownloadUnread);
-                    this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - onOK - bDownloadUnread " + this.m_aszUserList[i].bDownloadUnread); 
+                    this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - save - bDownloadUnread " + this.m_aszUserList[i].bDownloadUnread); 
                     
                     WebMailPrefAccess.Set("bool","hotmail.Account."+i+".bUseJunkMail",this.m_aszUserList[i].bUseJunkMail);
-                    this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - onOK - bUseJunkMail " + this.m_aszUserList[i].bUseJunkMail);
+                    this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - save - bUseJunkMail " + this.m_aszUserList[i].bUseJunkMail);
                     
                     WebMailPrefAccess.Set("bool","hotmail.Account."+i+".bSendHtml",this.m_aszUserList[i].bSendHtml);
-                    this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - onOK - bSendHtml " + this.m_aszUserList[i].bSendHtml);
+                    this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - save - bSendHtml " + this.m_aszUserList[i].bSendHtml);
                     
                     WebMailPrefAccess.Set("bool","hotmail.Account."+i+".bSaveCopy",this.m_aszUserList[i].bSaveCopy);
-                    this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - onOK - bSaveCopy " + this.m_aszUserList[i].bSaveCopy);
+                    this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - save - bSaveCopy " + this.m_aszUserList[i].bSaveCopy);
                     
                     WebMailPrefAccess.Set("int","hotmail.Account."+i+".iMode",this.m_aszUserList[i].iMode);
-                    this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - onOK - iMode " + this.m_aszUserList[i].iMode);
+                    this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - save - iMode " + this.m_aszUserList[i].iMode);
 
                     var szFolders = "";
                     if (this.m_aszUserList[i].aszFolder)
@@ -126,17 +126,17 @@ var gPrefAccounts =
                         }
                     }
                     WebMailPrefAccess.Set("char","hotmail.Account."+i+".szFolders",szFolders);
-                    this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - onOK - szFolders " + szFolders);
+                    this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - save - szFolders " + szFolders);
    
                 }
                 WebMailPrefAccess.Set("int","hotmail.Account.Num",this.m_aszUserList.length);
             }
             
-            this.m_DebugLog.Write("Hotmail-Pref-Accounts : onOK - END");
+            this.m_DebugLog.Write("Hotmail-Pref-Accounts : save - END");
         }
         catch(e)
         {
-            this.m_DebugLog.DebugDump("Hotmail-Pref-Accounts : Exception in onOK : " 
+            this.m_DebugLog.DebugDump("Hotmail-Pref-Accounts : Exception in save : " 
                                           + e.name + 
                                           ".\nError message: " 
                                           + e.message + "\n"
@@ -481,7 +481,7 @@ var gPrefAccounts =
         var iMode = document.getElementById("radiogroupMode").value;
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : rgModeOnChange -  iMode "+ iMode);
         this.m_aszUserList[this.m_iIndex].iMode = iMode;
-        
+        this.save();
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : rgModeOnChange - END");
     },
     
@@ -601,6 +601,7 @@ var gPrefAccounts =
                 var event = document.createEvent("Events");
                 event.initEvent("change", false, true);
                 document.getElementById("listFolders").dispatchEvent(event);
+                this.save();
             }
             this.m_DebugLog.Write("YHotmail-Pref-Accounts : folderListAdd - END");
         }
@@ -651,7 +652,7 @@ var gPrefAccounts =
             var event = document.createEvent("Events");
             event.initEvent("change", false, true);
             document.getElementById("listFolders").dispatchEvent(event);
-                   
+            this.save();       
             this.m_DebugLog.Write("YHotmail-Pref-Accounts : folderListRemove - END");
             return true;
         }
@@ -673,7 +674,7 @@ var gPrefAccounts =
         var bUnread = document.getElementById("chkDownloadUnread").checked;
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : chkDownloadUreadOnChange -  bUnread "+ !bUnread);
         this.m_aszUserList[this.m_iIndex].bDownloadUnread = !bUnread;
-        
+        this.save();
         this.m_DebugLog.Write("YHotmail-Pref-Accounts : chkDownloadUreadOnChange - END");
     },
  
@@ -685,7 +686,7 @@ var gPrefAccounts =
         var bJunkMail = document.getElementById("chkJunkMail").checked;
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : chkJunkMailOnChange bJunkMail"+ !bJunkMail);
         this.m_aszUserList[this.m_iIndex].bUseJunkMail = !bJunkMail;
-        
+        this.save();
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : chkJunkMailOnChange - END");
     },
  
@@ -701,7 +702,7 @@ var gPrefAccounts =
         var bSaveItem = document.getElementById("chkSentItems").checked;
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : chkSentItemsOnChange -  bSaveItem "+ !bSaveItem);
         this.m_aszUserList[this.m_iIndex].bSaveCopy = !bSaveItem;
-        
+        this.save();
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : chkSentItemsOnChange - END");
     },
     
@@ -714,7 +715,7 @@ var gPrefAccounts =
         var bSendHtml = document.getElementById("radiogroupAlt").value;
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : rgAltOnChange -  bSendHtml "+ bSendHtml);
         this.m_aszUserList[this.m_iIndex].bSendHtml = bSendHtml;
-        
+        this.save();
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : rgAltOnChange - END");
     },
 }

@@ -7,10 +7,12 @@
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
            
     <prefpane id = "paneAccounts" onpaneload= "gPrefAccounts.init();">
+
         <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
         <script type="application/x-javascript" src="chrome://web-mail/content/common/CommonPrefs.js"/>
         <script type="application/x-javascript" src="chrome://hotmail/content/Hotmail-Prefs-Accounts.js"/>
         <script type="application/x-javascript" src="chrome://hotmail/content/Hotmail-Prefs-Data.js"/>
+
                   
         <vbox id="boxError" hidden="true" >
             <hbox pack="center">
@@ -92,12 +94,12 @@
                             <radiogroup id="radiogroupAlt" onclick ="gPrefAccounts.rgAltOnChange();" class="radio">
                                 <radio label="&SendPlain.Label;" 
                                        accesskey="&SendPlain.AccessKey;"
-                                       value = "false"
+                                       value = "0"
                                        id="rdSendPlain"/>
                                        
                                 <radio label="&SendHtml.Label;" 
                                        accesskey="&SendHtml.AccessKey;"
-                                       value = "true"
+                                       value = "1"
                                        id="rdSendHtml"/>
                             </radiogroup>
                         </vbox>

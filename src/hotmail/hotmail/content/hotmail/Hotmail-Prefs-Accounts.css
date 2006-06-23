@@ -1,6 +1,6 @@
 #tabsAccount
 {
-    margin-top:15px;
+    margin-top:10px;
     margin-left: 5px;
     margin-right: 5px; 
 }
@@ -23,6 +23,10 @@
     margin-left: 10px;
 }
 
+.emailAddress
+{
+   	font-size: medium; 
+}
 
 #boxFolders
 {
