@@ -55,6 +55,8 @@ const patternHotmailPOPInboxNoContent =/<div.*?ContentNoMsg.*?>/ig
 const patternHotmailPOPFolderList =/<div class="dIndexListText">.*?Inbox&FolderID.*?<\/div>/igm;
 const patternHotmailPOPFolderHref = /<a href="(.*?)">/i;
 const patternHotmailPOPTitle = /<a href=".*?">(.*?)<\/a>/i;
+const kDisplayName = /<D:displayname>(.*?)<\/D:displayname>/;
+const kSpecial = /<hm:special>(.*?)<\/hm:special>/;
 /*******************************************************************************/
 
 

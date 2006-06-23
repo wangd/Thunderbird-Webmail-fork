@@ -534,7 +534,15 @@ HotmailWebDav.prototype =
             var szHeaders = "X-WebMail: true\r\n";
             var szFolderURI = oMSG.szMSGUri.match(patternHotmailPOPFolder)[1];
             this.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - get folder url - " + szFolderURI);
-            szHeaders += "X-JunkFolder: " +szFolderURI+ "\r\n";
+            
+            var szCleanName = szFolderName;
+            if (szFolderName.search(/active/i)!=-1)
+                szCleanName = "Inbox"
+            else if (szFolderName.search(/HM_BuLkMail_/i)!=-1)
+                szCleanName = "Spam";
+            mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - szCleanName - " + szCleanName); 
+            
+            szHeaders += "X-JunkFolder: " +szCleanName+ "\r\n";
             szHeaders += "To: "+ oMSG.szTo +"\r\n";
             szHeaders += "From: "+ oMSG.szFrom +"\r\n";
             szHeaders += "Subject: "+ oMSG.szSubject +"\r\n";
@@ -621,9 +629,17 @@ HotmailWebDav.prototype =
                       
                     var szUri = httpChannel.URI.spec;
                     mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - szUri - " + szUri);
-                    var szFolderURI = szUri.match(patternHotmailPOPFolderName)[1];
-                    mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - get folder url - " + szFolderURI);
-                    mainObject.m_szMSG += "X-Folder: " +szFolderURI+ "\r\n";
+                    
+                    var szFolderName= szUri.match(patternHotmailPOPFolderName)[1];
+                    mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - szFolderName - " + szFolderName);
+                    
+                    var szCleanName = szFolderName;
+                    if (szFolderName.search(/active/i)!=-1)
+                        szCleanName = "Inbox"
+                    else if (szFolderName.search(/HM_BuLkMail_/i)!=-1)
+                        szCleanName = "Spam";
+                    mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - szCleanName - " + szCleanName);    
+                    mainObject.m_szMSG += "X-Folder: " +szCleanName+ "\r\n";
                     
                     mainObject.m_szMSG +=szResponse;
                     mainObject.m_szMSG = mainObject.m_szMSG.replace(/^\./mg,"..");    //bit padding 
