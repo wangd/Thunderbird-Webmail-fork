@@ -39,7 +39,7 @@ const patternHotmailPOPFrame = /<frame.*?name="main".*?src="(.*?)".*?>/i;
 const patternHotmailPOPLogOut = /<.*?"(.*?logout.aspx.*?)".*?>/gi;
 const patternHotmailPOPInbox = /<a href="(.*?mail.aspx\?Control=Inbox)".*?>/i;
 const patternHotmailPOPJunkFolderID = /<a href="(.*?mail.aspx\?Control=Inbox&FolderID.*?5)">/i;
-const patternHotmailPOPNextPage = /<a href="(.*?PageAnchor.*?next&Page.*?)">/i;
+const patternHotmailPOPNextPage = /<div class="dItemListHeaderNav">[\s\S]*?<a href="(.*?InboxPage=next&Page=[\d]*?)">/i;
 const patternHotmailPOPMailBoxTable = /<table.*?ContentTable".*?>[\s\S]*?<\/table>/ig;
 const patternHotmailPOPMailBoxTableRow = /<tr>[\s\S]*?<\/tr>/ig;
 const patternHotmailPOPEMailURL = /<td.*?dInboxContentTableTitleCol.*>.*?<a href="(.*?)".*?>/i;
