@@ -212,7 +212,11 @@ nsYahoo.prototype =
             mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - status :" +httpChannel.responseStatus );
             if (httpChannel.responseStatus != 200) 
                 throw new Error("return status " + httpChannel.responseStatus);
-                            
+             
+             
+            //if (szResponse.search(patternYahooForm)!=-1) mainObject.m_iStage =0;
+                
+                
             //page code                                
             switch (mainObject.m_iStage)
             {
