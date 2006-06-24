@@ -454,8 +454,7 @@ var gPrefAccounts =
             label.setAttribute("class","folderName");          
             newItem.appendChild(label);
             
-            document.getElementById("listFolders").appendChild(newItem);
-            
+            document.getElementById("listFolders").appendChild(newItem);           
             this.m_DebugLog.Write("YYahoo-Pref-Accounts : addItemFolderList - END");
             return true;
         }
@@ -502,6 +501,7 @@ var gPrefAccounts =
                 var event = document.createEvent("Events");
                 event.initEvent("change", false, true);
                 document.getElementById("listFolders").dispatchEvent(event);
+                this.save();
             }
             this.m_DebugLog.Write("YYahoo-Pref-Accounts : folderListAdd - END");
         }
@@ -552,7 +552,7 @@ var gPrefAccounts =
             var event = document.createEvent("Events");
             event.initEvent("change", false, true);
             document.getElementById("listFolders").dispatchEvent(event);
-                   
+            this.save();                   
             this.m_DebugLog.Write("YYahoo-Pref-Accounts : folderListRemove - END");
             return true;
         }
@@ -574,7 +574,7 @@ var gPrefAccounts =
         var bUnread = document.getElementById("chkDownloadUnread").checked;
         this.m_DebugLog.Write("Yahoo-Pref-Accounts : chkDownloadUreadOnChange -  bUnread "+ !bUnread);
         this.m_aszUserList[this.m_iIndex].bUnread = !bUnread;
-        
+        this.save();        
         this.m_DebugLog.Write("YYahoo-Pref-Accounts : chkDownloadUreadOnChange - END");
     },
  
@@ -586,7 +586,7 @@ var gPrefAccounts =
         var bJunkMail = document.getElementById("chkJunkMail").checked;
         this.m_DebugLog.Write("Yahoo-Pref-Accounts : chkJunkMailOnChange bJunkMail"+ !bJunkMail);
         this.m_aszUserList[this.m_iIndex].bJunkMail = !bJunkMail;
-        
+        this.save();      
         this.m_DebugLog.Write("Yahoo-Pref-Accounts : chkJunkMailOnChange - END");
     },
  
@@ -602,20 +602,7 @@ var gPrefAccounts =
         var bSaveItem = document.getElementById("chkSentItems").checked;
         this.m_DebugLog.Write("Yahoo-Pref-Accounts : chkSentItemsOnChange -  bSaveItem "+ !bSaveItem);
         this.m_aszUserList[this.m_iIndex].bSaveSentItem = !bSaveItem;
-        
+        this.save();       
         this.m_DebugLog.Write("Yahoo-Pref-Accounts : chkSentItemsOnChange - END");
-    },
-    
-        
-    
-    addDomains : function()
-    {
-        this.m_DebugLog.Write("Yahoo-Pref-Accounts : addDomains - START");
-
-        window.openDialog("chrome://yahoo/content/Yahoo-Prefs-Domains.xul",
-                          "Add Domains",
-                          "chrome, centerscreen, modal");  
-       
-        this.m_DebugLog.Write("Yahoo-Pref-Accounts : addDomains - END");    
     },
 }

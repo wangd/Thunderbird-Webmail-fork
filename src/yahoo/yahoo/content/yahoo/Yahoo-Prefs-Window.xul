@@ -11,10 +11,7 @@
             title="&Window.szTitle;"
             id="prefsWindow"
             lastSelected = "paneAccounts"
-            onload = "gPrefsWindow.init();"
-            ondialogaccept = "return gPrefAccounts.save();"
-            ondialogcancel = ""
-            buttons="accept, cancel">
+            buttons="close">
 
     <!-- Accounts --> 
     <prefpane id="paneAccounts" 
