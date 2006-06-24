@@ -446,10 +446,7 @@ HotmailScreenRipperBETA.prototype =
             
             mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);     
                                             
-            //get view state
-            var szStatView = szResponse.match(patternHotmailPOPViewState)[1];
-            mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler - szViewState : " +szStatView);
-                    
+              
             //delete uri
             if (!mainObject.m_szDelete)
             {
@@ -466,6 +463,10 @@ HotmailScreenRipperBETA.prototype =
             mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler -msg table : " +aMsgTable);
             if (aMsgTable) 
             {
+                //get view state
+                var szStatView = szResponse.match(patternHotmailPOPViewState)[1];
+                mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler - szViewState : " +szStatView);
+      
                 var szMsgRows = aMsgTable[0].match(patternHotmailPOPMailBoxTableRow);  //split on rows
                 mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler -split msg table : " +szMsgRows);
                 if (szMsgRows) 
@@ -473,7 +474,7 @@ HotmailScreenRipperBETA.prototype =
                     for (j = 0; j < szMsgRows.length; j++)
                     {
                         mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler - row  : " +szMsgRows[j]);
-                        var oMSG = mainObject.processMSG(szMsgRows[j]); 
+                        var oMSG = mainObject.processMSG(szMsgRows[j],szStatView); 
                         if (oMSG) mainObject.m_aMsgDataStore.push(oMSG);
                     } 
                 } 
@@ -488,9 +489,9 @@ HotmailScreenRipperBETA.prototype =
             
             //get pages uri
             var aszNextPage = szResponse.match(patternHotmailPOPNextPage);
-            mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler -aszNextPage : " +aszNextPage);
             if (aszNextPage)  //get next url
             {
+                mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler -aszNextPage : " +aszNextPage[1]);
                 var szNextPage = mainObject.m_szLocationURI + aszNextPage[1];
                 mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler -next page url : " +szNextPage);
                   
@@ -552,8 +553,11 @@ HotmailScreenRipperBETA.prototype =
  
     
     
-    processMSG : function (szMSGData)
+    processMSG : function (szMSGData,szStatView)
     {
+        this.m_Log.Write("Hotmail-SR-BETAR - processMSG - START");
+        this.m_Log.Write("Hotmail-SR-BETAR - processMSG - \n" + szMSGData);
+        
         var oMSG =  null;
         var bRead = true;
         if (this.m_bDownloadUnread)
@@ -568,7 +572,7 @@ HotmailScreenRipperBETA.prototype =
             
             var szEmailURL = szMSGData.match(patternHotmailPOPEMailURL)[1];
             var szPath = this.m_szLocationURI + szEmailURL;
-            mainObject.m_Log.Write("Hotmail-SR-BETAR - processMSG - Email URL : " +szPath);
+            this.m_Log.Write("Hotmail-SR-BETAR - processMSG - Email URL : " +szPath);
             oMSG.szMSGUri = szPath;
                                 
             oMSG.iSize = 2000;    //size unknown
@@ -630,6 +634,8 @@ HotmailScreenRipperBETA.prototype =
             
             oMSG.szStatView = szStatView;
         }
+        
+        this.m_Log.Write("Hotmail-SR-BETAR - processMSG - END");
         return oMSG;
     },
           
