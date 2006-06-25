@@ -1,0 +1,14 @@
+#include "nsISupports.idl"
+
+[scriptable, uuid(5ae675f0-03d2-11db-92e3-0800200c9a66)]
+interface nsIMailDotComDomains : nsISupports
+{  
+    boolean isReady();
+    
+    boolean addDomain(in string szDomain);
+    
+    boolean removeDomain (in string szDomain);
+    
+    boolean getAllDomains(out PRUint32 count,
+                         [array, size_is(count)] out string szDomains);
+};

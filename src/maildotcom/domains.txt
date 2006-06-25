@@ -1,0 +1,17 @@
+<database>
+    <domain>email.com</domain>
+    <domain>mail.com</domain>
+    <domain>journalism.com</domain>
+    <domain>iname.com</domain>
+    <domain>scientist.com</domain>
+    <domain>earthling.net</domain>
+    <domain>techie.com</domain>
+    <domain>usa.com</domain>
+    <domain>post.com</domain>
+    <domain>witty.com</domain>
+    <domain>whoever.com</domain>
+    <domain>writeme.com</domain>
+    <domain>unforgettable.com</domain>
+    <domain>teacher.com</domain>
+    <domain>consultant.com</domain>
+</database>
