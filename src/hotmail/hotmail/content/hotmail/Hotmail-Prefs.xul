@@ -21,7 +21,7 @@
 <window title="&Window.szTitle;"
         id ="prefsWindow"
         onload="Startup();" 
-        onclose="return onClose(false);"
+        onclose="return onClose();"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
 
