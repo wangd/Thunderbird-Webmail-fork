@@ -481,7 +481,7 @@ var gPrefAccounts =
         var iMode = document.getElementById("radiogroupMode").value;
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : rgModeOnChange -  iMode "+ iMode);
         this.m_aszUserList[this.m_iIndex].iMode = iMode;
-        this.save();
+        
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : rgModeOnChange - END");
     },
     
@@ -601,7 +601,6 @@ var gPrefAccounts =
                 var event = document.createEvent("Events");
                 event.initEvent("change", false, true);
                 document.getElementById("listFolders").dispatchEvent(event);
-                this.save();
             }
             this.m_DebugLog.Write("YHotmail-Pref-Accounts : folderListAdd - END");
         }
@@ -652,7 +651,7 @@ var gPrefAccounts =
             var event = document.createEvent("Events");
             event.initEvent("change", false, true);
             document.getElementById("listFolders").dispatchEvent(event);
-            this.save();       
+      
             this.m_DebugLog.Write("YHotmail-Pref-Accounts : folderListRemove - END");
             return true;
         }
@@ -674,7 +673,7 @@ var gPrefAccounts =
         var bUnread = document.getElementById("chkDownloadUnread").checked;
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : chkDownloadUreadOnChange -  bUnread "+ !bUnread);
         this.m_aszUserList[this.m_iIndex].bDownloadUnread = !bUnread;
-        this.save();
+        
         this.m_DebugLog.Write("YHotmail-Pref-Accounts : chkDownloadUreadOnChange - END");
     },
  
@@ -686,7 +685,7 @@ var gPrefAccounts =
         var bJunkMail = document.getElementById("chkJunkMail").checked;
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : chkJunkMailOnChange bJunkMail"+ !bJunkMail);
         this.m_aszUserList[this.m_iIndex].bUseJunkMail = !bJunkMail;
-        this.save();
+        
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : chkJunkMailOnChange - END");
     },
  
@@ -702,7 +701,7 @@ var gPrefAccounts =
         var bSaveItem = document.getElementById("chkSentItems").checked;
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : chkSentItemsOnChange -  bSaveItem "+ !bSaveItem);
         this.m_aszUserList[this.m_iIndex].bSaveCopy = !bSaveItem;
-        this.save();
+        
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : chkSentItemsOnChange - END");
     },
     
@@ -715,7 +714,7 @@ var gPrefAccounts =
         var bSendHtml = document.getElementById("radiogroupAlt").value;
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : rgAltOnChange -  bSendHtml "+ bSendHtml);
         this.m_aszUserList[this.m_iIndex].bSendHtml = bSendHtml;
-        this.save();
+        
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : rgAltOnChange - END");
     },
 }
