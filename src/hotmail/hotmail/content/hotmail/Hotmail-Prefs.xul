@@ -200,8 +200,8 @@
     <!-- buttons>-->
     <vbox pack = "end">
         <hbox id="buttons" pack="end" align="end" flex="1">
-            <button id="OK"     label="OK"     oncommand="onOK();"/>
-            <button id="Cancel" label="Cancel" oncommand="onClose();"/>
+            <button id="&Ok.label;"     label="OK"     oncommand="onOK();"/>
+            <button id="&Cancel.label;" label="Cancel" oncommand="onClose();"/>
         </hbox>
     </vbox>
 </window>
