@@ -58,6 +58,11 @@
     </script>
     
     
+    <stringbundleset>
+        <stringbundle id="stringsHotmailDomainWindow" src="chrome://hotmail/locale/Hotmail-Prefs-Domains.properties"/>
+    </stringbundleset>  
+    
+    
     <keyset>
         <key id="key_close"  keycode="VK_ESCAPE" command="cmd_close"/>
     </keyset>
