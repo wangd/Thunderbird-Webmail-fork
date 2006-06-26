@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+
+<bindings id="YahooPrefsBindings"
+          xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+    <!-- borrowed from prefs -->
+    <binding id="viewbutton" extends="chrome://global/content/bindings/radio.xml#radio">
+        <resources>
+            <stylesheet src="chrome://mozapps/skin/extensions/extensions.css"/>
+        </resources>
+        <content>
+            <xul:image class="viewButtonIcon" xbl:inherits="src"/>
+            <xul:label class="viewButtonLabel" xbl:inherits="value=label"/>
+        </content>
+        <implementation implements="nsIAccessibleProvider">
+            <property name="accessible">
+                <getter>
+                    <![CDATA[
+                        var accService = Components.classes["@mozilla.org/accessibilityService;1"]
+                                               .getService(Components.interfaces.nsIAccessibilityService);
+                        return accService.createXULListitemAccessible(this);
+                    ]]>
+                </getter>
+            </property>
+        </implementation>
+    </binding>
+</bindings>

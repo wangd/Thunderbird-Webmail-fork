@@ -1,3 +1,5 @@
 <!ENTITY Window.szTitle "Yahoo - Asetukset">
 <!ENTITY Accounts.Panel.szTitle "Tilit">
 <!ENTITY Domains.Panel.szTitle "Verkkotunnukset">
+<!ENTITY Ok.label "OK">
+<!ENTITY Cancel.label "Peruuta">

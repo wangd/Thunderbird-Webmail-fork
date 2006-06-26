@@ -1,11 +1,12 @@
 #listDomain
 {
     width: 25em;
-    height: 23em;
+    height: 27em;
 }
 
 #labelDomain
 {
+    margin-top: 5px;
     margin-bottom: 10px;
 }
 

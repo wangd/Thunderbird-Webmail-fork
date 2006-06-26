@@ -1,3 +1,5 @@
 <!ENTITY Window.szTitle "Možnosti Yahoo">
 <!ENTITY Accounts.Panel.szTitle "Računi">
 <!ENTITY Domains.Panel.szTitle "Domene">
+<!ENTITY Ok.label "V redu">
+<!ENTITY Cancel.label "Prekliči">

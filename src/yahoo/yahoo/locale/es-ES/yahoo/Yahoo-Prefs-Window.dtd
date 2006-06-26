@@ -1,3 +1,5 @@
 <!ENTITY Window.szTitle "Opciones Yahoo">
 <!ENTITY Accounts.Panel.szTitle "Cuentas">
 <!ENTITY Domains.Panel.szTitle "Dominios">
+<!ENTITY Ok.label "Ok">
+<!ENTITY Cancel.label "Cancelar">
