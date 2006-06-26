@@ -84,15 +84,15 @@ var gLycosStartUp =
             this.idCheck("lycos.es", "pop" ,cszLycosPOPContentID);  
             this.idCheck("caramail.com", "pop" ,cszLycosPOPContentID);
             this.idCheck("lycos.nl", "pop" ,cszLycosPOPContentID);
-         /*  
+  
             this.idCheck("lycos.co.uk", "imap" ,cszLycosIMAPContentID); 
             this.idCheck("lycos.it", "imap" ,cszLycosIMAPContentID);
             this.idCheck("lycos.at", "imap" ,cszLycosIMAPContentID);
             this.idCheck("lycos.de", "imap" ,cszLycosIMAPContentID);
             this.idCheck("lycos.es", "imap" ,cszLycosIMAPContentID);  
-            this.idCheck("lycos.fr", "imap" ,cszLycosIMAPContentID); 
+            this.idCheck("caramail.com", "imap" ,cszLycosIMAPContentID); 
             this.idCheck("lycos.nl", "imap" ,cszLycosIMAPContentID);
-           */
+
             this.idCheck("lycos.co.uk", "smtp" ,cszLycosSMTPContentID); 
             this.idCheck("lycos.it", "smtp" ,cszLycosSMTPContentID);
             this.idCheck("lycos.at", "smtp" ,cszLycosSMTPContentID);

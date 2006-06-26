@@ -641,8 +641,18 @@ nsIMAPFolders.prototype =
                     
                     var oMSG = {value : null};
                     var oIndex = {value : null};
-                    var bMSG = this.findMSG(oFolder, szUID, oMSG, oIndex);
-                                        
+                    var bMSG; 
+                    if (szUID)    
+                        bMSG = this.findMSGUID(oFolder, szUID, oMSG, oIndex);
+                    else
+                    {
+                        bMSG = this.findMSGURI(oFolder, szHref, oMSG, oIndex);
+                        if (!bMSg) 
+                        {
+                            MSG.szUID = oUser.iNextMSGID;
+                            oUser.iNextMSGID++;
+                        }
+                    }                      
                     if (!bMSG)
                     {
                         this.m_Log.Write("nsIMAPFolder.js - addMSG MSG added");
@@ -922,27 +932,27 @@ nsIMAPFolders.prototype =
 
 
 
-    findMSG : function (oFolder, szUID , oMSG, oIndex)
+    findMSGUID : function (oFolder, szUID , oMSG, oIndex)
     {
         try
         {
-            this.m_Log.Write("nsIMAPFolder.js - findMSG - START");
+            this.m_Log.Write("nsIMAPFolder.js - findMSGUID - START");
             
             if (oFolder.aMSG.length>0)
             {
                 var regexpMSG = new RegExp(szUID+"$");
-                this.m_Log.Write("nsIMAPFolder.js - findMSG  Reg "+ regexpMSG);
+                this.m_Log.Write("nsIMAPFolder.js - findMSGUID  Reg "+ regexpMSG);
                 
                 var bResult = false;
                 var  i=0;
                 do
                 {                   
                     var szTempID = oFolder.aMSG[i].szUID;
-                    this.m_Log.Write("nsIMAPFolder.js - findMSG " + i + " "+ szTempID);
+                    this.m_Log.Write("nsIMAPFolder.js - findMSGUID " + i + " "+ szTempID);
                    
                     if (szTempID.search(regexpMSG)!=-1)
                     {
-                        this.m_Log.Write("nsIMAPFolder.js - findMSG found");
+                        this.m_Log.Write("nsIMAPFolder.js - findMSGUID found");
                         oMSG.value = oFolder.aMSG[i];
                         oIndex.value = i+1;
                         bResult = true;
@@ -951,12 +961,12 @@ nsIMAPFolders.prototype =
                 }while(i!=oFolder.aMSG.length && !bResult)
             }
             
-            this.m_Log.Write("nsIMAPFolder.js - findMSG - End");
+            this.m_Log.Write("nsIMAPFolder.js - findMSGUID - End");
             return bResult;
         }
         catch(err)
         {
-            this.m_Log.DebugDump("nsIMAPFolder.js: findMSG : Exception : " 
+            this.m_Log.DebugDump("nsIMAPFolder.js: findMSGUID : Exception : " 
                                           + err.name 
                                           + ".\nError message: " 
                                           + err.message + "\n"
@@ -965,6 +975,54 @@ nsIMAPFolders.prototype =
         }
         
     },
+    
+    
+    
+    
+    findMSGURI : function (oFolder, szHref , oMSG, oIndex)
+    {
+        try
+        {
+            this.m_Log.Write("nsIMAPFolder.js - findMSGURI - START");
+            
+            if (oFolder.aMSG.length>0)
+            {
+                var regexpMSG = new RegExp(szHref+"$");
+                this.m_Log.Write("nsIMAPFolder.js - findMSGURI  Reg "+ regexpMSG);
+                
+                var bResult = false;
+                var  i=0;
+                do
+                {                   
+                    var szTempID = oFolder.aMSG[i].szHref;
+                    this.m_Log.Write("nsIMAPFolder.js - findMSGURI " + i + " "+ szTempID);
+                   
+                    if (szTempID.search(regexpMSG)!=-1)
+                    {
+                        this.m_Log.Write("nsIMAPFolder.js - findMSGURI found");
+                        oMSG.value = oFolder.aMSG[i];
+                        oIndex.value = i+1;
+                        bResult = true;
+                    }
+                    i++;
+                }while(i!=oFolder.aMSG.length && !bResult)
+            }
+            
+            this.m_Log.Write("nsIMAPFolder.js - findMSGURI - End");
+            return bResult;
+        }
+        catch(err)
+        {
+            this.m_Log.DebugDump("nsIMAPFolder.js: findMSGURI : Exception : " 
+                                          + err.name 
+                                          + ".\nError message: " 
+                                          + err.message + "\n"
+                                          + err.lineNumber);
+            return null;
+        }
+        
+    },
+    
     
     
     getFolder : function (oUser, szFolder)
@@ -1103,6 +1161,11 @@ nsIMAPFolders.prototype =
                             }
                         }
                         
+                        oPref.Value= null;
+                        WebMailPrefAccess.Get("int","webmail.IMAPSubFolders."+i+".iNextMSGID",oPref);
+                        this.m_Log.Write("nsIMAPFolder.js - loadPrefs - iNextMSGID " + oPref.Value);
+                        if (oPref.Value) data.aszSubFolders.iNextMSGID = oPref.Value;
+                        
                         this.m_aUsers.push(data);
                     }
                 }
@@ -1152,7 +1215,10 @@ nsIMAPFolders.prototype =
                     }
 
                     WebMailPrefAccess.Set("char","webmail.IMAPSubFolders."+i+".szFolders",szFolders);
-                    this.m_Log.Write("nsIMAPFolder.js - saveSubData - szFolders " + szFolders);   
+                    this.m_Log.Write("nsIMAPFolder.js - saveSubData - szFolders " + szFolders);
+                    
+                    WebMailPrefAccess.Set("int","webmail.IMAPSubFolders."+i+".iNextMSGID",this.m_aUsers[i].iNextMSGID);
+                    this.m_Log.Write("nsIMAPFolder.js - saveSubData - iNextMSGID " + this.m_aUsers[i].iNextMSGID);   
                 }
             }
      

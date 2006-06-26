@@ -7,7 +7,7 @@ function IMAPUser()
 IMAPUser.prototype.szUser = null;
 IMAPUser.prototype.aszSubFolders = null;
 IMAPUser.prototype.aFolders = null;
-
+IMAPUser.prototype.iNextMSGID = 0;
 
 /*****************/
 function IMAPFolderData()
