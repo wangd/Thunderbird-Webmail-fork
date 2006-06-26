@@ -1,6 +1,5 @@
-<!ENTITY Add.label "Add...">
+<!ENTITY Add.label "Agergar...">
 <!ENTITY Add.accessKey "A">
-<!ENTITY Remove.label "Remove">
+<!ENTITY Remove.label "Remover">
 <!ENTITY Remove.accessKey "R">
-<!ENTITY domain.label "Domains supported by Hotmail extension">
-
+<!ENTITY domain.label "Dominios soportados por la extensión Hotmail">

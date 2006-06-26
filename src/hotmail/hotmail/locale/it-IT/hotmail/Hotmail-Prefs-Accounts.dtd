@@ -1,28 +1,24 @@
-<!ENTITY Mode.Panel.szTitle "Mode">
+<!ENTITY Mode.Panel.szTitle "Modo">
 <!ENTITY POP.Panel.szTitle "POP">
 <!ENTITY SMTP.Panel.szTitle "SMTP">
-
-<!ENTITY Mode.label "Select the communications method the extension will use to connect to Microsoft's servers">
-<!ENTITY ScreenScraper.label "Hotmail Website (production)">
+<!ENTITY Mode.label "Selezionare come il componente Hotmail si collegherà ai server Microsoft">
+<!ENTITY ScreenScraper.label "Sito web di Hotmail (produzione)">
 <!ENTITY WebDav.label "WebDav">
-<!ENTITY Beta.label "Hotmail Website (BETA)">
-
-<!ENTITY DownloadUnread.Label "Download unread emails only">
-<!ENTITY DownloadUnread.AccessKey "u">
-<!ENTITY JunkMail.Label "Download JunkMail">
-<!ENTITY JunkMail.AccessKey "J">
-<!ENTITY Add.Label "Add...">
+<!ENTITY Beta.label "Sito web di Hotmail (BETA)">
+<!ENTITY DownloadUnread.Label "Scarica solo messaggi non letti">
+<!ENTITY DownloadUnread.AccessKey "N">
+<!ENTITY JunkMail.Label "Scarica posta indesiderata">
+<!ENTITY JunkMail.AccessKey "I">
+<!ENTITY Add.Label "Aggiungi...">
 <!ENTITY Add.AccessKey "A">
-<!ENTITY Remove.Label "Remove">
-<!ENTITY Remove.AccessKey "R">
-<!ENTITY Folders.Label "Download folders">
-
-<!ENTITY SaveSentItems.Label "Save copy in sent items.">
+<!ENTITY Remove.Label "Elimina">
+<!ENTITY Remove.AccessKey "E">
+<!ENTITY Folders.Label "Cartelle da cui scaricare i messaggi:">
+<!ENTITY SaveSentItems.Label "Salva una copia del messaggio in &apos;Posta inviata&apos;">
 <!ENTITY SaveSentItems.AccessKey "s">
-<!ENTITY AlternativeGroup.Label "When sending rich text emails which part should the extension send?">
-<!ENTITY SendPlain.Label "Send plain text">
+<!ENTITY AlternativeGroup.Label "Quando si inviano messaggi sia in testo semplice che in HTML, il componente Hotmail:">
+<!ENTITY SendPlain.Label "invia in testo semplice">
 <!ENTITY SendPlain.AccessKey "p">
-<!ENTITY SendHtml.Label "Send html text">
+<!ENTITY SendHtml.Label "invia in HTML">
 <!ENTITY SendHtml.AccessKey "h">
-
-<!ENTITY error.Label "No Hotmail Accounts Found"> 
+<!ENTITY error.Label "Nessun account Hotmail trovato">

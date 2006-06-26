@@ -1,3 +1,5 @@
-<!ENTITY Window.szTitle "Hotmail Options">
-<!ENTITY Accounts.Panel.szTitle "Accounts">
-<!ENTITY Domains.Panel.szTitle "Domains">
+<!ENTITY Window.szTitle "Hotmail - Asetukset">
+<!ENTITY Accounts.Panel.szTitle "Tilit">
+<!ENTITY Domains.Panel.szTitle "Verkko-osoitteet">
+<!ENTITY Ok.label "Ok">
+<!ENTITY Cancel.label "Peruuta">

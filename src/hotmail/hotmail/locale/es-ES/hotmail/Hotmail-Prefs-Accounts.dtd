@@ -1,28 +1,24 @@
-<!ENTITY Mode.Panel.szTitle "Mode">
+<!ENTITY Mode.Panel.szTitle "Modo">
 <!ENTITY POP.Panel.szTitle "POP">
 <!ENTITY SMTP.Panel.szTitle "SMTP">
-
-<!ENTITY Mode.label "Select the communications method the extension will use to connect to Microsoft's servers">
-<!ENTITY ScreenScraper.label "Hotmail Website (production)">
+<!ENTITY Mode.label "Seleccione el método de comunicación que la extensión usará con los servidores de Microsoft">
+<!ENTITY ScreenScraper.label "Página web de Hotmail (producción)">
 <!ENTITY WebDav.label "WebDav">
-<!ENTITY Beta.label "Hotmail Website (BETA)">
-
-<!ENTITY DownloadUnread.Label "Download unread emails only">
-<!ENTITY DownloadUnread.AccessKey "u">
-<!ENTITY JunkMail.Label "Download JunkMail">
-<!ENTITY JunkMail.AccessKey "J">
-<!ENTITY Add.Label "Add...">
+<!ENTITY Beta.label "Página web de hotmail (BETA)">
+<!ENTITY DownloadUnread.Label "Descargar sólo los mensajes no leídos">
+<!ENTITY DownloadUnread.AccessKey "s">
+<!ENTITY JunkMail.Label "Descargar correo no deseado">
+<!ENTITY JunkMail.AccessKey "n">
+<!ENTITY Add.Label "Añadir...">
 <!ENTITY Add.AccessKey "A">
-<!ENTITY Remove.Label "Remove">
-<!ENTITY Remove.AccessKey "R">
-<!ENTITY Folders.Label "Download folders">
-
-<!ENTITY SaveSentItems.Label "Save copy in sent items.">
-<!ENTITY SaveSentItems.AccessKey "s">
-<!ENTITY AlternativeGroup.Label "When sending rich text emails which part should the extension send?">
-<!ENTITY SendPlain.Label "Send plain text">
-<!ENTITY SendPlain.AccessKey "p">
-<!ENTITY SendHtml.Label "Send html text">
+<!ENTITY Remove.Label "Borrar">
+<!ENTITY Remove.AccessKey "B">
+<!ENTITY Folders.Label "Descargar carpetas">
+<!ENTITY SaveSentItems.Label "Guardar una copia en la carpeta enviados.">
+<!ENTITY SaveSentItems.AccessKey "G">
+<!ENTITY AlternativeGroup.Label "Al enviar correos con formato enriquecido, ¿qué parte debe enviarse?">
+<!ENTITY SendPlain.Label "Enviar como texto plano">
+<!ENTITY SendPlain.AccessKey "t">
+<!ENTITY SendHtml.Label "Enviar como html">
 <!ENTITY SendHtml.AccessKey "h">
-
-<!ENTITY error.Label "No Hotmail Accounts Found"> 
+<!ENTITY error.Label "No se han encontrado cuentas hotmail">

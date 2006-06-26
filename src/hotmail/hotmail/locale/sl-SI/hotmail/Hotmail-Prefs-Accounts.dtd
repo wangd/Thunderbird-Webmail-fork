@@ -1,28 +1,24 @@
-<!ENTITY Mode.Panel.szTitle "Mode">
+<!ENTITY Mode.Panel.szTitle "Način">
 <!ENTITY POP.Panel.szTitle "POP">
 <!ENTITY SMTP.Panel.szTitle "SMTP">
-
-<!ENTITY Mode.label "Select the communications method the extension will use to connect to Microsoft's servers">
-<!ENTITY ScreenScraper.label "Hotmail Website (production)">
+<!ENTITY Mode.label "Izberite metodo komunikacije, ki jo naj uporablja razširitev za povezovanje na strežnike Microsoft">
+<!ENTITY ScreenScraper.label "Strani Hotmail (produkcija)">
 <!ENTITY WebDav.label "WebDav">
-<!ENTITY Beta.label "Hotmail Website (BETA)">
-
-<!ENTITY DownloadUnread.Label "Download unread emails only">
-<!ENTITY DownloadUnread.AccessKey "u">
-<!ENTITY JunkMail.Label "Download JunkMail">
-<!ENTITY JunkMail.AccessKey "J">
-<!ENTITY Add.Label "Add...">
-<!ENTITY Add.AccessKey "A">
-<!ENTITY Remove.Label "Remove">
-<!ENTITY Remove.AccessKey "R">
-<!ENTITY Folders.Label "Download folders">
-
-<!ENTITY SaveSentItems.Label "Save copy in sent items.">
+<!ENTITY Beta.label "Strani Hotmail (BETA)">
+<!ENTITY DownloadUnread.Label "Prenesi le neprebrana sporočila">
+<!ENTITY DownloadUnread.AccessKey "n">
+<!ENTITY JunkMail.Label "Prenesi neželeno pošto">
+<!ENTITY JunkMail.AccessKey "ž">
+<!ENTITY Add.Label "Dodaj ...">
+<!ENTITY Add.AccessKey "D">
+<!ENTITY Remove.Label "Odstrani">
+<!ENTITY Remove.AccessKey "O">
+<!ENTITY Folders.Label "Prenesi mape">
+<!ENTITY SaveSentItems.Label "Shrani kopijo v odposlanem.">
 <!ENTITY SaveSentItems.AccessKey "s">
-<!ENTITY AlternativeGroup.Label "When sending rich text emails which part should the extension send?">
-<!ENTITY SendPlain.Label "Send plain text">
-<!ENTITY SendPlain.AccessKey "p">
-<!ENTITY SendHtml.Label "Send html text">
+<!ENTITY AlternativeGroup.Label "Pri pošiljanju e-sporočil z obogatenim besedilom naj kateri del pošlje razširitev?">
+<!ENTITY SendPlain.Label "Pošlji navadno besedilo">
+<!ENTITY SendPlain.AccessKey "b">
+<!ENTITY SendHtml.Label "Pošlji besedilo html">
 <!ENTITY SendHtml.AccessKey "h">
-
-<!ENTITY error.Label "No Hotmail Accounts Found"> 
+<!ENTITY error.Label "Ni najdenih računov Hotmail">
