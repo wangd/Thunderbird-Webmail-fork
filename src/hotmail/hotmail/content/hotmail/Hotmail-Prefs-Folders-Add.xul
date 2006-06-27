@@ -17,6 +17,16 @@
 	   <stringbundle id="stringsHotmailFoldersAdd" src="chrome://hotmail/locale/Hotmail-Prefs-Folders-Add.properties"/>
 	</stringbundleset>
     
+    <keyset>
+        <key id="key_close"  keycode="VK_ESCAPE" command="cmd_close"/>
+    </keyset>
+    
+    <commandset id="globalCommands">
+        <command id="cmd_close" oncommand="gHotmailFoldersAdd.doCancel();"/>
+    </commandset>
+    
+    
+    
     <vbox flex="1">
         <hbox>
             <vbox>

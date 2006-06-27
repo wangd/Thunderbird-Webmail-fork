@@ -16,6 +16,16 @@
 	   <stringbundle id="stringsHotmailDomainsAdd" src="chrome://hotmail/locale/Hotmail-Prefs-Domains-Add.properties"/>
 	</stringbundleset>
      
+     
+    <keyset>
+        <key id="key_close"  keycode="VK_ESCAPE" command="cmd_close"/>
+    </keyset>
+    
+    <commandset id="globalCommands">
+        <command id="cmd_close" oncommand="gHotmailDomainAdd.doCancel();"/>
+    </commandset>
+    
+     
     <vbox flex="1">
         <hbox>
             <vbox>

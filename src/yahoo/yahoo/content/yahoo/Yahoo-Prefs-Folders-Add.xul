@@ -12,10 +12,19 @@
     <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
     <script type="application/x-javascript" src="chrome://yahoo/content/Yahoo-Prefs-Folders-Add.js"/>
     
-    
     <stringbundleset>
 	   <stringbundle id="stringsYahooFoldersAdd" src="chrome://yahoo/locale/Yahoo-Prefs-Folders-Add.properties"/>
 	</stringbundleset>
+    
+      
+    <keyset>
+        <key id="key_close"  keycode="VK_ESCAPE" command="cmd_close"/>
+    </keyset>
+    
+    <commandset id="globalCommands">
+        <command id="cmd_close" oncommand="gYahooFoldersAdd.doCancel();"/>
+    </commandset>
+    
     
     <vbox flex="1">
         <hbox>

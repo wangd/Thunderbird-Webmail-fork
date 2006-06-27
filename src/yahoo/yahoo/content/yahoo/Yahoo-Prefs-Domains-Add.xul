@@ -16,6 +16,16 @@
 	   <stringbundle id="stringsYahooDomainsAdd" src="chrome://yahoo/locale/Yahoo-Prefs-Domains-Add.properties"/>
 	</stringbundleset>
      
+     
+    <keyset>
+        <key id="key_close"  keycode="VK_ESCAPE" command="cmd_close"/>
+    </keyset>
+    
+    <commandset id="globalCommands">
+        <command id="cmd_close" oncommand="gYahooDomainAdd.doCancel();"/>
+    </commandset>
+     
+     
     <vbox flex="1">
         <hbox>
             <vbox>
