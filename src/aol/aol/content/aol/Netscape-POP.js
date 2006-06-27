@@ -106,7 +106,7 @@ NetscapePOP.prototype =
             
             if (this.m_bReUseSession)
             {
-                this.m_Log.Write("NetscapePOP.js - logIN - Session Data found");
+                this.m_Log.Write("NetscapePOP.js - logIN - FIND Session Data");
                 this.m_szHomeURI = this.m_ComponentManager.findElement(this.m_szUserName, "szHomeURI");
                 this.m_Log.Write("NetscapePOP.js - logIN - m_szHomeURI " +this.m_szHomeURI);
                 this.m_szUserId = this.m_ComponentManager.findElement(this.m_szUserName,"szUserId");
@@ -126,6 +126,14 @@ NetscapePOP.prototype =
                     this.m_bReEntry = true;
                     this.m_HttpComms.setURI(this.m_szHomeURI);
                 }
+                else
+                {
+                    this.m_HttpComms.deleteSessionData();
+                }
+            }
+            else
+            {
+                this.m_HttpComms.deleteSessionData();
             }
 
             var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);                             
@@ -843,24 +851,11 @@ NetscapePOP.prototype =
         }
     },      
     
+    
     serverComms : function (szMsg)
     {
-        try
-        { 
-            this.m_Log.Write("NetscapePOP.js - serverComms - START");
-            this.m_Log.Write("NetscapePOP.js - serverComms msg " + szMsg);
-            var iCount = this.m_oResponseStream.write(szMsg,szMsg.length);
-            this.m_Log.Write("NetscapePOP.js - serverComms sent count: " + iCount 
-                                                        +" msg length: " +szMsg.length);
-            this.m_Log.Write("NetscapePOP.js - serverComms - END");  
-        }
-        catch(e)
-        {
-            this.m_Log.DebugDump("NetscapePOP.js: serverComms : Exception : " 
-                                              + e.name 
-                                              + ".\nError message: " 
-                                              + e.message+ "\n"
-                                              + e.lineNumber);
-        }
+        this.m_Log.Write("NetscapePOP.js - serverComms msg " + szMsg);
+        var iCount = this.m_oResponseStream.write(szMsg,szMsg.length);
+        this.m_Log.Write("NetscapePOP.js - serverComms sent count: " + iCount +" msg length: " +szMsg.length); 
     },
 }

@@ -90,6 +90,14 @@ HotmailSMTPScreenRipperBETA.prototype =
                     this.m_bReEntry = true;
                     this.m_HttpComms.setURI(this.m_szHomeURI);
                 }
+                else
+                {
+                    this.m_HttpComms.deleteSessionData();
+                }
+            }
+            else
+            {
+                this.m_HttpComms.deleteSessionData();
             }
         
             this.m_HttpComms.setRequestMethod("GET");

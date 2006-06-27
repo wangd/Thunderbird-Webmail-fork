@@ -120,6 +120,14 @@ AOLSMTP.prototype =
                     this.m_bReEntry = true;
                     this.m_HttpComms.setURI(this.m_szHomeURI);
                 }
+                else
+                {
+                    this.m_HttpComms.deleteSessionData();
+                }
+            }
+            else
+            {
+                this.m_HttpComms.deleteSessionData();
             }
 
             var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);                             
