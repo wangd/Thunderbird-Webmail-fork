@@ -368,26 +368,24 @@ nsMailDotComDomains.prototype =
                         else    
                             this.m_aszCustomDomains.push(szDomain);              
                     }
-                    
-                    if (this.m_iFile ==0)
-                        this.loadCustomData();
-                    else
-                    {
-                        //assume DB not ready start timer  
-                        this.m_Timer = Components.classes["@mozilla.org/timer;1"]
-                                                .createInstance(Components.interfaces.nsITimer); 
-                        this.m_Timer.initWithCallback(this, 
-                                                      100, 
-                                                      Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
-                    }
                 }
             }
             catch(err)
             {
-                this.m_Log.Write("nsMailDotComDomains.js - onStreamComplete - NO DATA \n" 
-                                                                  + ".\nError message: " 
-                                                                  + err.message + "\n"
-                                                                  + err.lineNumber);      
+                this.m_Log.Write("nsMailDotComDomains.js - onStreamComplete - NO DATA" );      
+            }
+            
+            
+            if (this.m_iFile ==0)
+                this.loadCustomData();
+            else
+            {
+                //assume DB not ready start timer  
+                this.m_Timer = Components.classes["@mozilla.org/timer;1"]
+                                        .createInstance(Components.interfaces.nsITimer); 
+                this.m_Timer.initWithCallback(this, 
+                                              100, 
+                                              Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
             }
             
             this.m_Log.Write("nsMailDotComDomains.js - onStreamComplete - END");  
@@ -422,7 +420,7 @@ nsMailDotComDomains.prototype =
             }    
             timer.cancel();
             
-            var aszDomain = this.m_aszCustomDomains.concat(this.m_aszCustomDomains);
+            var aszDomain = this.m_aszStandardDomains.concat(this.m_aszCustomDomains);
             for (i=0; i < aszDomain.length; i++)
             {   
                 if (!this.domainCheck(aszDomain[i], "POP", "@mozilla.org/MailDotComPOP;1"))
@@ -617,7 +615,7 @@ nsMailDotComDomains.prototype =
 /******************************************************************************/
     QueryInterface : function (iid)
     {
-        if (!iid.equals(Components.interfaces.nsIMailDotComDomains) 
+        if (!iid.equals(Components.interfaces.nsIDomains) 
         	    && !iid.equals(Components.interfaces.nsISupports)
                     && !iid.equals(Components.interfaces.nsIObserver))
             throw Components.results.NS_ERROR_NO_INTERFACE;

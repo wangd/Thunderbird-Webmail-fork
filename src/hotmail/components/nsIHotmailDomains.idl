@@ -1,7 +1,7 @@
 #include "nsISupports.idl"
 
 [scriptable, uuid(e2e095b0-fbe6-11da-974d-0800200c9a66)]
-interface nsIHotmailDomains : nsISupports
+interface nsIDomains : nsISupports
 {  
     boolean isReady();
     

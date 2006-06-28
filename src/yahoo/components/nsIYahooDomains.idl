@@ -1,7 +1,7 @@
 #include "nsISupports.idl"
 
-[scriptable, uuid(05093cf0-dbc6-11da-a94d-0800200c9a66)]
-interface nsIYahooDomains : nsISupports
+[scriptable, uuid(e2e095b0-fbe6-11da-974d-0800200c9a66)]
+interface nsIDomains : nsISupports
 {  
     boolean isReady();
     

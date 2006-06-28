@@ -127,27 +127,7 @@ nsHotmailDomains.prototype =
             var bFound=false;
             var szTempDomain;
 
-            //custom domains
-            if (this.m_aszStandardDomains.length >0)
-            {
-                do{
-                    szTempDomain = this.m_aszStandardDomains.shift();
-                    this.m_Log.Write("nsHotmailDomains.js - removeDomain Standard- " + szTempDomain);
-                    
-                    if (szTempDomain.search(regExp)==-1)
-                    {
-                        this.m_Log.Write("nsHotmailDomains.js - removeDomain Standard- pushed back");
-                        this.m_aszStandardDomains.push(szTempDomain);
-                    } 
-                    else
-                    {   
-                        this.m_Log.Write("nsHotmailDomains.js - removeDomain Standard -found");
-                        bFound = true;                        
-                    }
-                    i++;   
-                }while(i<this.m_aszStandardDomains.length && !bFound)
-            }
-            
+
             //custom domains
             if (this.m_aszCustomDomains.length >0)
             {
@@ -168,6 +148,29 @@ nsHotmailDomains.prototype =
                     i++;   
                 }while(i<this.m_aszCustomDomains.length && !bFound)
             }
+            
+    
+            //standard domains
+            if (!bFound && this.m_aszStandardDomains.length >0)
+            {
+                do{
+                    szTempDomain = this.m_aszStandardDomains.shift();
+                    this.m_Log.Write("nsHotmailDomains.js - removeDomain Standard- " + szTempDomain);
+                    
+                    if (szTempDomain.search(regExp)==-1)
+                    {
+                        this.m_Log.Write("nsHotmailDomains.js - removeDomain Standard- pushed back");
+                        this.m_aszStandardDomains.push(szTempDomain);
+                    } 
+                    else
+                    {   
+                        this.m_Log.Write("nsHotmailDomains.js - removeDomain Standard -found");
+                        bFound = true;                        
+                    }
+                    i++;   
+                }while(i<this.m_aszStandardDomains.length && !bFound)
+            }
+            
             
             
             if (bFound)
@@ -365,26 +368,24 @@ nsHotmailDomains.prototype =
                         else    
                             this.m_aszCustomDomains.push(szDomain);              
                     }
-                    
-                    if (this.m_iFile ==0)
-                        this.loadCustomData();
-                    else
-                    {
-                        //assume DB not ready start timer  
-                        this.m_Timer = Components.classes["@mozilla.org/timer;1"]
-                                                .createInstance(Components.interfaces.nsITimer); 
-                        this.m_Timer.initWithCallback(this, 
-                                                      100, 
-                                                      Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
-                    }
                 }
             }
             catch(err)
             {
-                this.m_Log.Write("nsHotmailDomains.js - onStreamComplete - NO DATA \n" 
-                                                                  + "\nError message: " 
-                                                                  + err.message + "\n"
-                                                                  + err.lineNumber);      
+                this.m_Log.Write("nsHotmailDomains.js - onStreamComplete - NO DATA ");      
+            }
+            
+             
+            if (this.m_iFile ==0)
+                this.loadCustomData();
+            else
+            {
+                //assume DB not ready start timer  
+                this.m_Timer = Components.classes["@mozilla.org/timer;1"]
+                                        .createInstance(Components.interfaces.nsITimer); 
+                this.m_Timer.initWithCallback(this, 
+                                              100, 
+                                              Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
             }
             
             this.m_Log.Write("nsHotmailDomains.js - onStreamComplete - END");  
@@ -419,13 +420,15 @@ nsHotmailDomains.prototype =
             }    
             timer.cancel();
             
-            var aszDomain = this.m_aszCustomDomains.concat(this.m_aszCustomDomains);
+            var aszDomain = this.m_aszStandardDomains.concat(this.m_aszCustomDomains);
             for (i=0; i < aszDomain.length; i++)
             {   
                 if (!this.domainCheck(aszDomain[i], "POP", "@mozilla.org/HotmailPOP;1"))
                     this.domainAdd(aszDomain[i], "POP", "@mozilla.org/HotmailPOP;1")      
                 if (!this.domainCheck(aszDomain[i], "SMTP", "@mozilla.org/HotmailSMTP;1"))
                     this.domainAdd(aszDomain[i], "SMTP", "@mozilla.org/HotmailSMTP;1")
+                if (!this.domainCheck(aszDomain[i], "IMAP", "@mozilla.org/HotmailIMAP;1"))
+                    this.domainAdd(aszDomain[i], "IMAP", "@mozilla.org/HotmailIMAP;1")
             }
             
             this.m_bReady = true;           
@@ -613,7 +616,7 @@ nsHotmailDomains.prototype =
 /******************************************************************************/
     QueryInterface : function (iid)
     {
-        if (!iid.equals(Components.interfaces.nsIHotmailDomains) 
+        if (!iid.equals(Components.interfaces.nsIDomains) 
         	    && !iid.equals(Components.interfaces.nsISupports)
                     && !iid.equals(Components.interfaces.nsIObserver))
             throw Components.results.NS_ERROR_NO_INTERFACE;
