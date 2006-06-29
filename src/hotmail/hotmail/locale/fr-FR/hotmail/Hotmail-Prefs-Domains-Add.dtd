@@ -1,8 +1,8 @@
-<!ENTITY TitleAdd "Add Domain">
-<!ENTITY domainName.label "Domain">
+<!ENTITY TitleAdd "Ajouter un domaine">
+<!ENTITY domainName.label "Domaine">
 <!ENTITY domainName.accessKey "D">
-<!ENTITY domain.label "Add Hotmail domain">
-<!ENTITY Ok.label "Ok">
-<!ENTITY Ok.accessKey "O">
-<!ENTITY Cancel.label "Cancel">
-<!ENTITY Cancel.accessKey "C">
+<!ENTITY domain.label "Ajouter un domaine Hotmail">
+<!ENTITY Ok.label "Accepter">
+<!ENTITY Ok.accessKey "A">
+<!ENTITY Cancel.label "Annuler">
+<!ENTITY Cancel.accessKey "n">

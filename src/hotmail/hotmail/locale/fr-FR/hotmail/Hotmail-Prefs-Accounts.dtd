@@ -1,28 +1,24 @@
 <!ENTITY Mode.Panel.szTitle "Mode">
 <!ENTITY POP.Panel.szTitle "POP">
 <!ENTITY SMTP.Panel.szTitle "SMTP">
-
-<!ENTITY Mode.label "Select the communications method the extension will use to connect to Microsoft's servers">
-<!ENTITY ScreenScraper.label "Hotmail Website (production)">
+<!ENTITY Mode.label "Sélectionner la méthode de communication utilisée par l&apos;extension pour se connecter sur les serveurs de Microsoft">
+<!ENTITY ScreenScraper.label "Site Web de Hotmail (production)">
 <!ENTITY WebDav.label "WebDav">
-<!ENTITY Beta.label "Hotmail Website (BETA)">
-
-<!ENTITY DownloadUnread.Label "Download unread emails only">
-<!ENTITY DownloadUnread.AccessKey "u">
-<!ENTITY JunkMail.Label "Download JunkMail">
-<!ENTITY JunkMail.AccessKey "J">
-<!ENTITY Add.Label "Add...">
+<!ENTITY Beta.label "Site Web de Hotmail (BETA)">
+<!ENTITY DownloadUnread.Label "Télécharger seulement les mails non lus">
+<!ENTITY DownloadUnread.AccessKey "T">
+<!ENTITY JunkMail.Label "Télécharger les indésirables">
+<!ENTITY JunkMail.AccessKey "i">
+<!ENTITY Add.Label "Ajouter ...">
 <!ENTITY Add.AccessKey "A">
-<!ENTITY Remove.Label "Remove">
-<!ENTITY Remove.AccessKey "R">
-<!ENTITY Folders.Label "Download folders">
-
-<!ENTITY SaveSentItems.Label "Save copy in sent items.">
+<!ENTITY Remove.Label "Enlever">
+<!ENTITY Remove.AccessKey "E">
+<!ENTITY Folders.Label "Dossiers de téléchargement">
+<!ENTITY SaveSentItems.Label "Sauver une copie dans &apos;Éléments envoyés&apos;.">
 <!ENTITY SaveSentItems.AccessKey "s">
-<!ENTITY AlternativeGroup.Label "When sending rich text emails which part should the extension send?">
-<!ENTITY SendPlain.Label "Send plain text">
-<!ENTITY SendPlain.AccessKey "p">
-<!ENTITY SendHtml.Label "Send html text">
+<!ENTITY AlternativeGroup.Label "Lors de l&apos;envoi de courriels en format &apos;texte riche&apos;, quelle partie l&apos;extension doit-elle envoyer ?">
+<!ENTITY SendPlain.Label "Envoyer en texte brut">
+<!ENTITY SendPlain.AccessKey "y">
+<!ENTITY SendHtml.Label "Envoyer en texte html">
 <!ENTITY SendHtml.AccessKey "h">
-
-<!ENTITY error.Label "No Hotmail Accounts Found"> 
+<!ENTITY error.Label "Aucun compte Hotmail trouvé">

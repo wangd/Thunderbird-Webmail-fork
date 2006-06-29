@@ -1,5 +1,5 @@
-<!ENTITY Window.szTitle "Hotmail Options">
-<!ENTITY Accounts.Panel.szTitle "Accounts">
-<!ENTITY Domains.Panel.szTitle "Domains">
-<!ENTITY Ok.label "Ok">
-<!ENTITY Cancel.label "Cancel">
+<!ENTITY Window.szTitle "Options de Hotmail">
+<!ENTITY Accounts.Panel.szTitle "Comptes">
+<!ENTITY Domains.Panel.szTitle "Domaines">
+<!ENTITY Ok.label "Accepter">
+<!ENTITY Cancel.label "Annuler">
