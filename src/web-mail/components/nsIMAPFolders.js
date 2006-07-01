@@ -647,12 +647,14 @@ nsIMAPFolders.prototype =
                     else
                     {
                         bMSG = this.findMSGURI(oFolder, szHref, oMSG, oIndex);
-                        if (!bMSg) 
+                        if (!bMSG) 
                         {
-                            MSG.szUID = oUser.iNextMSGID;
+                            MSG.szUID  = oUser.iNextMSGID;
+                            this.m_Log.Write("nsIMAPFolder.js - addMSG - MSG.szUID " + MSG.szUID );
                             oUser.iNextMSGID++;
                         }
-                    }                      
+                    }  
+                                        
                     if (!bMSG)
                     {
                         this.m_Log.Write("nsIMAPFolder.js - addMSG MSG added");
@@ -661,12 +663,13 @@ nsIMAPFolders.prototype =
                         delete oFolder.aMSG;
                         oFolder.aMSG = aTempMSG;
                         
-                        oFolder.aUIDs.push(szUID);
+                        oFolder.aUIDs.push(MSG.szUID);
                         var aTempUID = oFolder.aUIDs.sort(this.sortUID);
                         oFolder.aUIDs = aTempUID;  
                         bResult = true;
-                        oFolder.iMSGCount++;
-                        if (!bRead) oFolder.iUnreadCount++;
+                        oFolder.iMSGCount++;                             
+                        if (!bRead) oFolder.iUnreadCount++; 
+                        this.m_Log.Write("nsIMAPFolder.js - addMSG MSG - oFolder.iMSGCount " + oFolder.iMSGCount +  " oFolder.iUnreadCount " + oFolder.iUnreadCount);
                     }
                     else
                     {
@@ -724,8 +727,8 @@ nsIMAPFolders.prototype =
                     
                     var oMSG = {value : null};
                     var oIndex = {value : null};
-                    var bMSG = this.findMSG(oFolder, szUID, oMSG, oIndex);
-                                        
+                    var bMSG = this.findMSGUID(oFolder, szUID, oMSG, oIndex);
+                    
                     if (bMSG)
                     {
                         this.m_Log.Write("nsIMAPFolder.js - getMSG MSG found");
@@ -780,14 +783,18 @@ nsIMAPFolders.prototype =
                     
                     var oMSG = {value : null};
                     var oIndex = {value : null};
-                    var bMSG = this.findMSG(oFolder, szUID, oMSG, oIndex);
-                                        
+                    var bMSG = this.findMSGUID(oFolder, szUID, oMSG, oIndex);
+                                            
                     if (bMSG)
                     {
                         this.m_Log.Write("nsIMAPFolder.js - setMSGSeenFlag MSG found");
-                        bResult = true;
+                        bResult = true; 
+                        if (bSeen)
+                            if (oFolder.iUnreadCount>0)oFolder.iUnreadCount--;
+                        else
+                            oFolder.iUnreadCount++;
+                            
                         oMSG.value.bRead = bSeen;
-                        bSeen? oFolder.iUnreadCount-- : oFolder.iUnreadCount++;
                     }
                 }
             }
@@ -831,8 +838,8 @@ nsIMAPFolders.prototype =
                     
                     var oMSG = {value : null};
                     var oIndex = {value : null};
-                    var bMSG = this.findMSG(oFolder, szUID, oMSG, oIndex);
-                                        
+                    var bMSG = this.findMSGUID(oFolder, szUID, oMSG, oIndex);
+                      
                     if (bMSG)
                     {
                         this.m_Log.Write("nsIMAPFolder.js - setMSGDeleteFlag MSG found");
@@ -940,14 +947,14 @@ nsIMAPFolders.prototype =
             
             if (oFolder.aMSG.length>0)
             {
-                var regexpMSG = new RegExp(szUID+"$");
+                var regexpMSG = new RegExp("^"+szUID+"$");
                 this.m_Log.Write("nsIMAPFolder.js - findMSGUID  Reg "+ regexpMSG);
                 
                 var bResult = false;
                 var  i=0;
                 do
                 {                   
-                    var szTempID = oFolder.aMSG[i].szUID;
+                    var szTempID = new String(oFolder.aMSG[i].szUID);
                     this.m_Log.Write("nsIMAPFolder.js - findMSGUID " + i + " "+ szTempID);
                    
                     if (szTempID.search(regexpMSG)!=-1)
@@ -987,7 +994,7 @@ nsIMAPFolders.prototype =
             
             if (oFolder.aMSG.length>0)
             {
-                var regexpMSG = new RegExp(szHref+"$");
+                var regexpMSG = new RegExp("^"+szHref+"$");
                 this.m_Log.Write("nsIMAPFolder.js - findMSGURI  Reg "+ regexpMSG);
                 
                 var bResult = false;
@@ -1160,12 +1167,12 @@ nsIMAPFolders.prototype =
                                 data.aszSubFolders.push(aszFolders[j]);
                             }
                         }
-                        
+/* 
                         oPref.Value= null;
                         WebMailPrefAccess.Get("int","webmail.IMAPSubFolders."+i+".iNextMSGID",oPref);
                         this.m_Log.Write("nsIMAPFolder.js - loadPrefs - iNextMSGID " + oPref.Value);
-                        if (oPref.Value) data.aszSubFolders.iNextMSGID = oPref.Value;
-                        
+                        if (oPref.Value) data.iNextMSGID = oPref.Value;
+*/
                         this.m_aUsers.push(data);
                     }
                 }
@@ -1195,32 +1202,32 @@ nsIMAPFolders.prototype =
             this.m_Log.Write("nsIMAPFolder.js - saveSubData - START");   
             
             this.m_Log.Write("nsIMAPFolder.js - saveSubData - " +this.m_bSubUpdate);
-            if (this.m_bSubUpdate)
-            {
-                //write prefs
-                var WebMailPrefAccess = new WebMailCommonPrefAccess();
-                WebMailPrefAccess.DeleteBranch("webmail.IMAPSubFolders");
-                WebMailPrefAccess.Set("int","webmail.IMAPSubFolders.Num",this.m_aUsers.length);
-                
-                for (var i=0; i<this.m_aUsers.length; i++)
-                {
-                    WebMailPrefAccess.Set("char","webmail.IMAPSubFolders."+i+".user",this.m_aUsers[i].szUser);
-                    this.m_Log.Write("nsIMAPFolder.js - saveSubData - user " + this.m_aUsers[i].szUser);
-                    
-                    var szFolders = "";
-                    for (var j=0; j<this.m_aUsers[i].aszSubFolders.length; j++)
-                    {
-                        szFolders += this.m_aUsers[i].aszSubFolders[j];
-                        if (j!=this.m_aUsers[i].aszSubFolders.length-1) szFolders += "\r";
-                    }
 
-                    WebMailPrefAccess.Set("char","webmail.IMAPSubFolders."+i+".szFolders",szFolders);
-                    this.m_Log.Write("nsIMAPFolder.js - saveSubData - szFolders " + szFolders);
-                    
-                    WebMailPrefAccess.Set("int","webmail.IMAPSubFolders."+i+".iNextMSGID",this.m_aUsers[i].iNextMSGID);
-                    this.m_Log.Write("nsIMAPFolder.js - saveSubData - iNextMSGID " + this.m_aUsers[i].iNextMSGID);   
+            //write prefs
+            var WebMailPrefAccess = new WebMailCommonPrefAccess();
+            WebMailPrefAccess.DeleteBranch("webmail.IMAPSubFolders");
+            WebMailPrefAccess.Set("int","webmail.IMAPSubFolders.Num",this.m_aUsers.length);
+            
+            for (var i=0; i<this.m_aUsers.length; i++)
+            {
+                WebMailPrefAccess.Set("char","webmail.IMAPSubFolders."+i+".user",this.m_aUsers[i].szUser);
+                this.m_Log.Write("nsIMAPFolder.js - saveSubData - user " + this.m_aUsers[i].szUser);
+                
+                var szFolders = "";
+                for (var j=0; j<this.m_aUsers[i].aszSubFolders.length; j++)
+                {
+                    szFolders += this.m_aUsers[i].aszSubFolders[j];
+                    if (j!=this.m_aUsers[i].aszSubFolders.length-1) szFolders += "\r";
                 }
+
+                WebMailPrefAccess.Set("char","webmail.IMAPSubFolders."+i+".szFolders",szFolders);
+                this.m_Log.Write("nsIMAPFolder.js - saveSubData - szFolders " + szFolders);
+/*
+                WebMailPrefAccess.Set("int","webmail.IMAPSubFolders."+i+".iNextMSGID",this.m_aUsers[i].iNextMSGID);
+                this.m_Log.Write("nsIMAPFolder.js - saveSubData - iNextMSGID " + this.m_aUsers[i].iNextMSGID);   
+*/
             }
+        
      
             this.m_Log.Write("nsIMAPFolder.js - saveSubData - END");  
             return true;
