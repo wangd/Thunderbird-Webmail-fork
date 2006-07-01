@@ -534,15 +534,24 @@ nsHotmailIMAP.prototype =
             {
                 this.m_Log.Write("nsHotmailIMAP.js - select - Use stored data");
                 
-                delete this.m_aRawData;
-                this.m_aRawData = this.range(szRange);
-                this.m_Log.Write("nsHotmailIMAP.js - select - Range " +this.m_aRawData);
-                this.m_iTimerTask =0;
-                //start timer
-                this.m_Timer.initWithCallback(this, 
-                                              this.m_iTime, 
-                                      Components.interfaces.nsITimer.TYPE_REPEATING_SLACK); 
-               
+                //get folder details
+                var oHref = {value:null};
+                var oUID = {value:null};
+                var oMSGCount = {value:null};
+                var oUnreadCount = {value:null};
+                
+                if (!this.m_oFolder.getFolderDetails(this.m_szUserName, this.m_szSelectFolder , oHref , oUID, oMSGCount, oUnreadCount))
+                    throw new Error("folder not found");
+                    
+                //send select ok message back to TB
+                var szSelectResponse= "* " +  oMSGCount.value + " EXISTS\r\n";
+                szSelectResponse+= "* " + oUnreadCount.value + " RECENT\r\n";
+                szSelectResponse+= "* OK [UIDVALIDITY " + oUID.value + "] UIDs\r\n";
+                szSelectResponse+= "* FLAGS (\\Seen \\Deleted)\r\n";
+                szSelectResponse+= "* OK [PERMANENTFLAGS (\\Seen)] Limited\r\n";
+                szSelectResponse+= this.m_iTag +" OK [READ-WRITE] SELECT COMPLETE\r\n"; 
+                
+                this.serverComms(szSelectResponse);
             }    
             
                                                                                                 
@@ -578,16 +587,21 @@ nsHotmailIMAP.prototype =
             else
             {
                 this.m_Log.Write("nsHotmailIMAP.js - noop - Use stored data");
+                //get folder details
+                var oHref = {value:null};
+                var oUID = {value:null};
+                var oMSGCount = {value:null};
+                var oUnreadCount = {value:null};
                 
-                delete this.m_aRawData;
-                this.m_aRawData = this.range(szRange);
-                this.m_Log.Write("nsHotmailIMAP.js - noop - Range " +this.m_aRawData);
-                this.m_iTimerTask =4;
-                //start timer
-                this.m_Timer.initWithCallback(this, 
-                                              this.m_iTime, 
-                                      Components.interfaces.nsITimer.TYPE_REPEATING_SLACK); 
-               
+                if (!this.m_oFolder.getFolderDetails(this.m_szUserName, this.m_szSelectFolder , oHref , oUID, oMSGCount, oUnreadCount))
+                    throw new Error("folder not found");
+                    
+                //send select ok message back to TB
+                var szSelectResponse= "* " +  oMSGCount.value + " EXISTS\r\n";
+                szSelectResponse+= "* " + oUnreadCount.value + " RECENT\r\n";
+                szSelectResponse+= this.m_iTag +" OK NOOP COMPLETE\r\n"; 
+                
+                this.serverComms(szSelectResponse);
             }
             this.m_Log.Write("nsHotmailIMAP.js - noop - END");   
         }
@@ -1543,8 +1557,7 @@ nsHotmailIMAP.prototype =
                         }
                     }
                 break;
-                
-                
+
                 default:
                     this.m_Log.Write("nsHotmailIMAP.js - notify - UNKNOWN COMMAND");
                     this.m_Timer.cancel();
