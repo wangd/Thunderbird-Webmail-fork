@@ -13,7 +13,7 @@ var gHotmailDomain =
             
             this.m_Domains = Components.classes["@mozilla.org/HotmailDomains;1"].
                              getService().
-                             QueryInterface(Components.interfaces.nsIHotmailDomains);
+                             QueryInterface(Components.interfaces.nsIDomains);
             
             var aszDomains = {value : null};
             var iCount = {value : null }; 

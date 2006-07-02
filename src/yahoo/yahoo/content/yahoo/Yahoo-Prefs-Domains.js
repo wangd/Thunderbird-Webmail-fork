@@ -13,7 +13,7 @@ var gYahooDomain =
             
             this.m_Domains = Components.classes["@mozilla.org/YahooDomains;1"].
                              getService().
-                             QueryInterface(Components.interfaces.nsIYahooDomains);
+                             QueryInterface(Components.interfaces.nsIDomains);
             
             var aszDomains = {value : null};
             var iCount = {value : null }; 
