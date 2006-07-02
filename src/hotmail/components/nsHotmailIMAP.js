@@ -83,6 +83,14 @@ function nsHotmailIMAP()
         else
             this.m_iTime=10; 
         
+         //do i reuse the session
+        oPref.Value = null;
+        if (WebMailPrefAccess.Get("int","hotmail.iBiff",oPref))
+            this.m_iBiff =oPref.Value;
+        else
+            this.m_iBiff = 300000; 
+      
+        
         //do i reuse the session
         oPref.Value = null;
         if (WebMailPrefAccess.Get("bool","hotmail.bReUseSession",oPref))
@@ -525,7 +533,7 @@ nsHotmailIMAP.prototype =
             this.m_szSelectFolder = szReference;
                 
             
-            if ((this.m_iLastCheck + 300000)<this.getTime()) //recheck mail box if last check was more than 5m ago
+            if ((this.m_iLastCheck + this.m_iBiff)<this.getTime()) //recheck mail box if last check was more than 5m ago
             {
                 this.m_Log.Write("nsHotmailIMAP.js - select - Check for new data");
                 this.refreshMSGlist(0);  
@@ -579,7 +587,7 @@ nsHotmailIMAP.prototype =
         {
             this.m_Log.Write("nsHotmailIMAP.js - noop - START");
             
-            if ((this.m_iLastCheck + 300000)<this.getTime()) //recheck mail box if last check was more than 5m ago
+            if ((this.m_iLastCheck + this.m_iBiff)<this.getTime()) //recheck mail box if last check was more than 5m ago
             {
                 this.m_Log.Write("nsHotmailIMAP.js - noop - Check for new data");
                 this.refreshMSGlist(4);  
@@ -809,7 +817,7 @@ nsHotmailIMAP.prototype =
             this.m_Log.Write("nsHotmailIMAP.js - fetch - START");
             this.m_Log.Write("nsHotmailIMAP.js - fetch - Range " + szRange + " Flags "+ szFlag);
             
-            if ((this.m_iLastCheck + 300000)<this.getTime()) //recheck mail box if last check was more than 5m ago
+            if ((this.m_iLastCheck + this.m_iBiff)<this.getTime()) //recheck mail box if last check was more than 5m ago
             {
                 this.m_Log.Write("nsHotmailIMAP.js - fetch - Check for new data");
                 this.m_szRange = szRange;
@@ -2074,9 +2082,9 @@ nsHotmailIMAP.prototype =
                     
                     var aWildCardTemp = aTempRange[i].split(/\:/);  
                     this.m_Log.Write("nsHotmailIMAP.js - range - aWildCardTemp "+aWildCardTemp);
-                    var min = aWildCardTemp[0];
+                    var min = parseInt(aWildCardTemp[0]);
                     var max = -1;
-                    if (aWildCardTemp[1].search(/\d/)!=-1) max = aWildCardTemp[1];
+                    if (aWildCardTemp[1].search(/\d/)!=-1) max = parseInt(aWildCardTemp[1]);
                     this.m_Log.Write("nsHotmailIMAP.js - range - min " + min + " max " +max );
                        
                     var aiUIDS = {value : null};

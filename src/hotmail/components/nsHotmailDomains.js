@@ -427,8 +427,8 @@ nsHotmailDomains.prototype =
                     this.domainAdd(aszDomain[i], "POP", "@mozilla.org/HotmailPOP;1")      
                 if (!this.domainCheck(aszDomain[i], "SMTP", "@mozilla.org/HotmailSMTP;1"))
                     this.domainAdd(aszDomain[i], "SMTP", "@mozilla.org/HotmailSMTP;1")
-              //  if (!this.domainCheck(aszDomain[i], "IMAP", "@mozilla.org/HotmailIMAP;1"))
-                //    this.domainAdd(aszDomain[i], "IMAP", "@mozilla.org/HotmailIMAP;1")
+                if (!this.domainCheck(aszDomain[i], "IMAP", "@mozilla.org/HotmailIMAP;1"))
+                    this.domainAdd(aszDomain[i], "IMAP", "@mozilla.org/HotmailIMAP;1")
             }
             
             this.m_bReady = true;           
