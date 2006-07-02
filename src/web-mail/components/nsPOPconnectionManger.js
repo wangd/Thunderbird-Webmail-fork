@@ -172,6 +172,7 @@ nsPOPConnectionManager.prototype.onSocketAccepted = function(serverSocket, trans
 nsPOPConnectionManager.prototype.onStopListening = function(serverSocket, status)
 {
    this.m_Log.Write("nsPOPConnectionManager - onStopListening - START");
+   this.m_iStatus = 0;
    this.m_Log.Write("nsPOPConnectionManager - onStopListening - END"); 
 }
 
@@ -234,7 +235,7 @@ nsPOPConnectionManager.prototype.observe = function(aSubject, aTopic, aData)
                             getService(Components.interfaces.nsIObserverService);
             obsSvc.addObserver(this, "profile-after-change", false);
             obsSvc.addObserver(this, "quit-application", false);
-            
+             	       
             this.m_scriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                                     .getService(Components.interfaces.mozIJSSubScriptLoader);
                                     
@@ -256,8 +257,9 @@ nsPOPConnectionManager.prototype.observe = function(aSubject, aTopic, aData)
                                       "popServerlog"); 
             this.intial();
         break;
-        
+            
         case "quit-application": // shutdown code here
+            this.m_Log.Write("nsPOPConnectionManager : quit-application");
             this.Stop();
         break;
         
