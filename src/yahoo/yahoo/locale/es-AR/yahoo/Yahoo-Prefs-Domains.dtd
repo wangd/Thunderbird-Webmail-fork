@@ -1,0 +1,5 @@
+<!ENTITY Add.label "Agregar...">
+<!ENTITY Add.accessKey "A">
+<!ENTITY Remove.label "Eliminar">
+<!ENTITY Remove.accessKey "R">
+<!ENTITY domain.label "Dominios soportados por la extension para Yahoo">

@@ -1,0 +1,25 @@
+<!ENTITY ServerStatus.Label "Estado del Servidor">
+<!ENTITY Ports.Label "Puertos">
+<!ENTITY Ports.AccessKey "r">
+<!ENTITY Pop.Label "POP">
+<!ENTITY Pop.AccessKey "O">
+<!ENTITY POP.Default.Label "por defecto 110">
+<!ENTITY Note.Label "Los puertos por debajo del 1024 pueden ser bloqueados por el SO">
+<!ENTITY Restart.Label "Es necesario reiniciar el Thunderbird para activar los cambios.">
+<!ENTITY SMTP.Label "SMTP">
+<!ENTITY SMTP.AccessKey "S">
+<!ENTITY SMTP.Default.Label "por defecto 25">
+<!ENTITY IMAP.Label "IMAP">
+<!ENTITY IMAP.AccessKey "I">
+<!ENTITY IMAP.Default.Label "por defecto 143">
+<!ENTITY Enable.POP.Label "Habilitar servidor POP">
+<!ENTITY Enable.POP.AccessKey "P">
+<!ENTITY Enable.SMTP.Label "Habilitar servidor SMTP">
+<!ENTITY Enable.SMTP.AccessKey "T">
+<!ENTITY Enable.IMAP.Label "Habilitar servidor IMAP">
+<!ENTITY Enable.IMAP.AccessKey "M">
+<!ENTITY Enable.Label "Habilitar">
+<!ENTITY Enable.AccessKey "E">
+<!ENTITY Status.Label "Estado">
+<!ENTITY Status.AccessKey "u">
+<!ENTITY StatusBox.size "ancho: 6em;">

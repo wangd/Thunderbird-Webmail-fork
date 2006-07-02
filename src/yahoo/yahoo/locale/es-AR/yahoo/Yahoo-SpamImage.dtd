@@ -1,0 +1,5 @@
+<!ENTITY Window.title "Imágen Anti Spam Yahoo">
+<!ENTITY Button.OK.label "Ok">
+<!ENTITY YahooSpam.title "Yahoo">
+<!ENTITY YahooSpam.decription "Verificación Anti Spam">
+<!ENTITY YahooSpam.label "Escriba lo que ve en la imagen de arriba.">
