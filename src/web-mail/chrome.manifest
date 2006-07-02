@@ -21,3 +21,4 @@ locale  web-mail    pt-BR   jar:chrome/web-mail.jar!/locale/pt-BR/web-mail/
 locale  web-mail    sk-SK   jar:chrome/web-mail.jar!/locale/sk-SK/web-mail/
 locale  web-mail    ru-RU   jar:chrome/web-mail.jar!/locale/ru-RU/web-mail/
 locale  web-mail    da-DK   jar:chrome/web-mail.jar!/locale/da-DK/web-mail/
+locale  web-mail    es-AR   jar:chrome/web-mail.jar!/locale/es-AR/web-mail/
