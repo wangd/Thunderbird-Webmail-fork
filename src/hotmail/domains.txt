@@ -7,4 +7,5 @@
     <domain>hotmail.co.jp</domain>
     <domain>hotmail.co.uk</domain>
     <domain>msn.co.uk</domain>
+    <domain>live.com</domain>
 </database>
