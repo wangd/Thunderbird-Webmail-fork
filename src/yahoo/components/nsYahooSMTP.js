@@ -29,7 +29,8 @@ const kPatternSendMSGResponse = "<ymws:SendMessageResponse.*?>([\s\S]*?)<\/ymws:
 const kPatternWssid = /wssid.*?'(.*?)',/i;
 const kPatternWebserviceUrl = /webserviceUrl.*?'(.*?)',/i;
 const kPatternLogOut = /exit/ig;
-
+const kPatternAttchUploadForm = /<form.*?id="upload_form".*?>([\s\S]*?)<\/form>/i;
+const kPatternInput = /<input.*?type="hidden".*?>/igm;
 /******************************  Yahoo ***************************************/
 function nsYahooSMTP()
 {

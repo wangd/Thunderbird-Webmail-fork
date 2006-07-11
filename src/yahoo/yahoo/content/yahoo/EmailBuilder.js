@@ -110,11 +110,11 @@ emailBuilder.prototype.build = function ()
         }
         else  //muilt part email
         {
-            szEmail += "This email was constructed by a Thunderbird Extesnion\r\n";
+            szEmail += "This email was created By Yahoo Webmail Extension\r\n";
               
             var szBaseBoundary = this.m_oHeader.getContentType(3); //get boundary
-            var szStartBoundary = "\r\n--" +  szBaseBoundary + "\r\n";
-            var szEndBoundary = "\r\n--" +  szBaseBoundary + "--" + "\r\n\r\n";
+            var szStartBoundary = "--" + szBaseBoundary + "\r\n";
+            var szEndBoundary = "\r\n--" + szBaseBoundary + "--\r\n\r\n";
             
             //is this alternative only
             var szSubType = this.m_oHeader.getContentType(2);
