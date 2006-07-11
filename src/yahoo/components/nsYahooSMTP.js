@@ -22,6 +22,14 @@ const patternYahooImage = /<input.*?name="IMG".*?value="(.*?)">/i;
 const patternYahooImageAction = /<form.*?name=ImgVerification.*?action="([\S\s]*?)">/i;
 const PatternYahooLogout = /Logout/im;
 
+
+/******************************  BETA ***************************************/
+const kSendMessge = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><m:SendMessage xmlns:m=\"urn:yahoo:ymws\"><param1><greq gve=\"8\"><gid>cg</gid></greq><message><to>TOADDRESS</to><bcc>BCCEMAILADDRESS</bcc><cc>-CCEMAILADDRESS</cc><from><addr>FROMADDRESS</addr></from><reply-to><addr>FROMADDRESS</addr></reply-to><body>EMAILBODY</body><subject>EMAILSUBJECT</subject></message></param1></m:SendMessage></SOAP-ENV:Body></SOAP-ENV:Envelope>";
+const kPatternSendMSGResponse = "<ymws:SendMessageResponse.*?>([\s\S]*?)<\/ymws:SendMessageResponse>";
+const kPatternWssid = /wssid.*?'(.*?)',/i;
+const kPatternWebserviceUrl = /webserviceUrl.*?'(.*?)',/i;
+const kPatternLogOut = /exit/ig;
+
 /******************************  Yahoo ***************************************/
 function nsYahooSMTP()
 {
@@ -32,15 +40,12 @@ function nsYahooSMTP()
         
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/Email.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
-        scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-SpamImage.js");
-        
-        
+        scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-SMTP.js"); 
+        scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-SMTP-Beta.js");  
+        scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-Prefs-Accounts-Data.js");
+    
         var date = new Date();
-        var  szLogFileName = "Yahoo SMTP Log - " + date.getHours()
-                                           + "-" + date.getMinutes() 
-                                           + "-"+ date.getUTCMilliseconds() +" -";
+        var  szLogFileName = "Yahoo SMTP Log - " + date.getHours() + "-" + date.getMinutes() + "-"+ date.getUTCMilliseconds() +" -";
         this.m_Log = new DebugLog("webmail.logging.comms", ExtYahooGuid, szLogFileName); 
         
         this.m_Log.Write("nsYahooSMTP.js - Constructor - START");   
@@ -49,36 +54,10 @@ function nsYahooSMTP()
         this.m_szUserName = null;   
         this.m_szPassWord = null; 
         this.m_oResponseStream = null;  
-        this.m_HttpComms = new HttpComms();
-        this.m_aszTo = new Array;
+        this.m_CommMethod = null;
+        this.m_aszTo = new Array();
         this.m_szFrom = null;
-        this.m_iStage = 0;
-        this.m_szComposeURI = null;
-        this.m_szLocationURI = null; 
-        this.m_szYahooMail = null;
-        this.m_szHomeURI = null;
-        this.m_bReEntry = false;
-        this.m_bAttHandled = false;
-        this.m_Email = new email("");
-        this.m_Email.decodeBody(true);
-        this.m_szImageVerForm = null;
-        this.m_szLoginUserName = null;
         
-        this.m_ComponentManager = Components.classes["@mozilla.org/nsComponentData2;1"];
-        this.m_ComponentManager = this.m_ComponentManager.getService(Components.interfaces.nsIComponentData2);
-        
-        this.m_bReEntry = false;
-        this.m_aLoginForm = null; 
-        this.m_iLoginCount = 0;
-        
-        //do i reuse the session
-        var oPref = {Value:null};
-        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-        if (WebMailPrefAccess.Get("bool","yahoo.bReUseSession",oPref))
-            this.m_bReUseSession=oPref.Value;
-        else
-            this.m_bReUseSession=true; 
-                             
         this.m_Log.Write("nsYahooSMTP.js - Constructor - END");  
     }
     catch(e)
@@ -101,7 +80,10 @@ nsYahooSMTP.prototype =
     get passWord() {return this.m_szPassWord;},
     set passWord(passWord) {return this.m_szPassWord = passWord;},
     
-    get bAuthorised() {return this.m_bAuthorised;},
+    get bAuthorised()
+    {
+        return (this.m_CommMethod)? this.m_CommMethod.m_bAuthorised: false;
+    },
   
     get ResponseStream() {return this.m_oResponseStream;},
     set ResponseStream(responseStream) {return this.m_oResponseStream = responseStream;},
@@ -124,60 +106,17 @@ nsYahooSMTP.prototype =
            
             if (!this.m_szUserName || !this.m_oResponseStream  || !this.m_szPassWord) return false;
               
+     
             //get prefs
-            this.loadPrefs();  
-                     
-            this.m_szYahooMail = "http://mail.yahoo.com";
-                    
-            if (this.m_szUserName.search(/yahoo/i)!=-1)   
-            { //remove domain from user name  
-                this.m_szYahooMail = "http://mail.yahoo.com";
-                this.m_szLoginUserName = this.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
-            }  
-            else if (this.m_szUserName.search(/@talk21.com$/i)!=-1 ||  
-                     this.m_szUserName.search(/@btinternet.com$/i)!=-1  ||
-                     this.m_szUserName.search(/@btopenworld.com$/i)!=-1 )
-            {
-                this.m_szYahooMail = "http://bt.yahoo.com/";
-                this.m_szLoginUserName = this.m_szUserName;
-            }    
-            else
-            {//include domain in user name
-                this.m_szYahooMail = "http://mail.yahoo.com";
-                this.m_szLoginUserName = this.m_szUserName;
-            } 
+            var oData = this.loadPrefs();
+             
+            if (oData.bBeta) //use beta site
+                this.m_CommMethod = new YahooSMTPBETA(this.m_oResponseStream, this.m_Log, oData);
         
-            this.m_HttpComms.setUserName(this.m_szUserName);
-            this.m_iStage = 0;
-            this.m_HttpComms.setURI(this.m_szYahooMail);                    
-            this.m_HttpComms.setRequestMethod("GET");
-            
-            if (this.m_bReUseSession)
-            {
-                this.m_Log.Write("nsYahoo.js - logIN - Getting Session Data");           
-                this.m_szHomeURI = this.m_ComponentManager.findElement(this.m_szUserName, "szHomeURI");
-                this.m_Log.Write("nsYahoo.js - logIN - szHomeURI " +this.m_szHomeURI);    
-                if (this.m_szHomeURI)
-                {
-                    this.m_Log.Write("nsYahoo.js - logIN - Session Data Found"); 
-                    this.m_iStage =2;
-                    this.m_bReEntry = true;
-                    this.m_HttpComms.setURI(this.m_szHomeURI);
-                }
-                else
-                {
-                    this.m_HttpComms.deleteSessionData();
-                }
-            }
-            else
-            {
-                this.m_Log.Write("nsYahoo.js - logIN - deleting Session Data");
-                this.m_HttpComms.deleteSessionData(); 
-                this.m_ComponentManager.deleteAllElements(this.m_szUserName);
-            }
+            if (!this.m_CommMethod) //use standard site
+                this.m_CommMethod = new YahooSMTP(this.m_oResponseStream, this.m_Log, oData);
 
-            var bResult = this.m_HttpComms.send(this.loginOnloadHandler,this);                             
-            if (!bResult) throw new Error("httpConnection returned false");  
+            var bResult = this.m_CommMethod.logIn(this.m_szUserName, this.m_szPassWord); 
             
             this.m_Log.Write("nsYahooSMTP.js - logIN - END");    
             return true;
@@ -196,244 +135,20 @@ nsYahooSMTP.prototype =
         }
     },
 
-   
-    loginOnloadHandler : function(szResponse ,event , mainObject)
-    {
-        try
-        {
-            mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - START"); 
-            mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler : \n" + szResponse);            
-            mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler : " + mainObject.m_iStage );  
-            
-            var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
-            
-            //if this fails we've gone somewhere new
-            mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - status :" +httpChannel.responseStatus );
-            if (httpChannel.responseStatus != 200) 
-                throw new Error("return status " + httpChannel.responseStatus);
-            
-            
-            if (szResponse.search(patternYahooLoginForm)!=-1) 
-            {
-                if ( mainObject.m_iLoginCount<=3)
-                {                    
-                    if (szResponse.search(patternYahooLogInSpam)!=-1)
-                    {
-                        mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - Spam Image found");
-                        mainObject.m_iStage =3; //spam image found
-                        mainObject.m_iLoginCount++;
-                    }
-                    else
-                    {
-                        mainObject.m_iLoginCount++;
-                        mainObject.m_iStage =0;
-                    }
-                }
-                else
-                    throw new Error ("Too Many Login's");
-            } 
-            
-                                      
-            //page code                                
-            switch (mainObject.m_iStage)
-            {
-                case 0: // login page               
-                    var aLoginForm = szResponse.match(patternYahooLoginForm);
-                    if (aLoginForm == null)
-                         throw new Error("error parsing yahoo login web page");
-                    mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - loginForm " + aLoginForm);
-                    
-                    var szLoginURL = aLoginForm[0].match(patternYahooAction)[1];
-                    mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - loginURL " + szLoginURL);
-                    
-                    var aLoginData = aLoginForm[0].match(patternYahooInput);
-                    mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - loginData " + aLoginData);
-                   
-                    for (i=0; i<aLoginData.length; i++)
-                    {
-                        var szName=aLoginData[i].match(patternYahooNameAlt)[1];
-                        szName = szName.replace(/"/gm,"");
-                        szName = szName.replace(/'/gm,"");
-                        mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - loginData name " + szName);
-                        
-                        var szValue = aLoginData[i].match(patternYahooAltValue)[1]
-                        szValue = szValue.replace(/"/gm,"");
-                        szValue = szValue.replace(/'/gm,""); 
-                        mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - loginData value " + szValue);
-                        
-                        mainObject.m_HttpComms.addValuePair(szName,(szValue? encodeURIComponent(szValue):""));
-                    }
-                    
-                    var szLogin = encodeURIComponent(mainObject.m_szLoginUserName);
-                    mainObject.m_HttpComms.addValuePair("login", szLogin);
-                    
-                    var szPass = encodeURIComponent(mainObject.m_szPassWord);
-                    mainObject.m_HttpComms.addValuePair("passwd",szPass);
-                   
-                    mainObject.m_HttpComms.addValuePair(".persistent","y");
-                                        
-                    mainObject.m_HttpComms.setURI(szLoginURL);
-                    mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
-                break;
-                                  
-                case 1: //redirect
-                    var aLoginRedirect = szResponse.match(patternYahooRedirect);
-                    if (aLoginRedirect == null)
-                         throw new Error("error parsing yahoo login web page");
-                    mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - login redirect " + aLoginRedirect);    
-                    var szLocation = aLoginRedirect[1];
-
-                    mainObject.m_HttpComms.setURI(szLocation);
-                    mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
-                break;
-            
-                case 2: //mail box
-                    var szLocation = httpChannel.URI.spec;
-                    var iIndex = szLocation.indexOf("uilogin.srt");
-                    mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - page check : " + szLocation);
-                    if (szResponse.search(PatternYahooLogout) == -1)
-                    {
-                        if (mainObject.m_bReEntry)
-                        {
-                            mainObject.m_bReEntry = false;
-                            mainObject.m_iStage =0;
-                            mainObject.m_HttpComms.setURI(mainObject.m_szYahooMail);
-                            mainObject.m_HttpComms.setRequestMethod("GET");
-                            var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);                             
-                            if (!bResult) throw new Error("httpConnection returned false");
-                            return;
-                        }
-                        else
-                            throw new Error("error logging in");
-                    } 
-                    mainObject.m_szHomeURI = szLocation;
-                    
-                    //get urls for later use
-                    mainObject.m_szLocationURI = httpChannel.URI.prePath ;
-                    mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - m_szLocationURI : "+mainObject.m_szLocationURI );
-                        
-                    mainObject.m_szComposeURI = szResponse.match(patternYahooCompose)[1] ;
-                    mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - m_szComposeURI : "+mainObject.m_szComposeURI );
-            
-                    //server response
-                    mainObject.serverComms("235 Your In\r\n");
-                    mainObject.m_bAuthorised = true;
-                break;
-                
-                
-                
-                case 3: //download spam image
-                    mainObject.m_aLoginForm = szResponse.match(patternYahooLoginForm);
-                    if ( mainObject.m_aLoginForm  == null)
-                         throw new Error("error parsing yahoo login web page");
-                    mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - loginForm Spam " +  mainObject.m_aLoginForm ); 
-
-                    var szSpamURI = mainObject.m_aLoginForm[0].match(patternYahooSpanURI)[1];  
-                    mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - szSpamURI " +  szSpamURI );
-              
-                    mainObject.m_HttpComms.setURI(szSpamURI);
-                    mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);      
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
-                break;
-                
-                
-                
-                case 4: //send login
-                    mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - image download");
-                    var szPath = mainObject.writeImageFile(szResponse);
-                    mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - imageFile " + szPath);
-                    var szResult =  mainObject.openSpamWindow(szPath); 
-                    if (!szResult) throw new Error("Spam Handling Error");
-                     
-                    //construct form 
-                    var szLoginURL = mainObject.m_aLoginForm[0].match(patternYahooAction)[1];
-                    mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - loginURL " + szLoginURL);
-                    
-                    var aLoginData = mainObject.m_aLoginForm[0].match(patternYahooLogIn);
-                    mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - loginData " + aLoginData);
-                   
-                    for (i=0; i<aLoginData.length; i++)
-                    {
-                        var szName=aLoginData[i].match(patternYahooNameAlt)[1];
-                        szName = szName.replace(/["|']/gm,"");
-                        szName = szName.replace(/^\s*|\s*$/gm,"");
-                        mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - loginData name " + szName);
-                        
-                        var szValue = aLoginData[i].match(patternYahooAltValue)[1];
-                        szValue = szValue.replace(/["|']/gm,"");
-                        szValue = szValue.replace(/^\s*|\s*$/gm,"");
-                        mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - loginData value " + szValue);
-                        
-                        mainObject.m_HttpComms.addValuePair(szName,(szValue? encodeURIComponent(szValue):""));
-                    }
-                    
-                    var szLogin = encodeURIComponent(mainObject.m_szLoginUserName);
-                    mainObject.m_HttpComms.addValuePair("login", szLogin);
-                    
-                    var szPass = encodeURIComponent(mainObject.m_szPassWord);
-                    mainObject.m_HttpComms.addValuePair("passwd",szPass);
-                    
-                    mainObject.m_HttpComms.addValuePair("secword",szResult);
-                    
-                    mainObject.m_HttpComms.addValuePair(".persistent","y");
-                                             
-                    mainObject.m_HttpComms.setURI(szLoginURL);
-                    mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);      
-                    if (!bResult) throw new Error("httpConnection returned false");               
-                    mainObject.m_iStage=1;
-                break;
-            };
-                      
-            mainObject.m_Log.Write("nsYahooSMTP.js - loginOnloadHandler - END");
-        }
-        catch(err)
-        {
-            mainObject.m_Log.DebugDump("nsYahooSMTP.js: loginHandler : Exception : " 
-                                          + err.name 
-                                          + ".\nError message: " 
-                                          + err.message+ "\n"
-                                          + err.lineNumber);
-            //check if session data exists
-            var szSession = mainObject.m_ComponentManager.findElement(mainObject.m_szUserName, "szHomeURI");    
-            if (!szSession)
-            {
-                //Session data not found login has not been successful
-                mainObject.m_HttpComms.deleteSessionData();
-            }                                
-            mainObject.serverComms("502 negative vibes from "+mainObject.m_szUserName+"\r\n");
-        }
-    },
-    
-    
+      
     rawMSG : function (szEmail)
     {
         try
         {
-            this.m_Log.Write("nsYahooSMTP.js - rawMSG - START");   
-            this.m_Log.Write("nsYahooSMTP.js - rawMSG " + szEmail);
+            this.m_Log.Write("nsHotmailSMTP.js - rawMSG - START");   
+            this.m_Log.Write("nsHotmailSMTP.js - rawMSG from " +this.m_szFrom );
+            this.m_Log.Write("nsHotmailSMTP.js - rawMSG to " +this.m_aszTo );
+            this.m_Log.Write("nsHotmailSMTP.js - rawMSG " + szEmail);
     
-            this.m_iStage =0 ;
-
-            if (!this.m_Email.parse(szEmail))
-                throw new Error ("Parse Failed")
+            var bResult = this.m_CommMethod.rawMSG(this.m_szFrom, this.m_aszTo, szEmail);
             
-            //get composer page
-            this.m_HttpComms.setURI(this.m_szComposeURI);
-            this.m_HttpComms.setRequestMethod("GET");       
-            var bResult = this.m_HttpComms.send(this.composerOnloadHandler, this);  
-            if (!bResult) throw new Error("httpConnection returned false");
-            
-            this.m_Log.Write("nsYahooSMTP.js - rawMSG - END");    
-            return true;
+            this.m_Log.Write("nsHotmailSMTP.js - rawMSG -" + bResult +" END");    
+            return bResult;
         }
         catch(err)
         {
@@ -447,537 +162,7 @@ nsYahooSMTP.prototype =
     },
     
     
-    composerOnloadHandler : function(szResponse ,event , mainObject)
-    {
-        try
-        {
-            mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - START"); 
-            mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler : \n" + szResponse);
-            mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler : " + mainObject.m_iStage);  
 
-            var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
-            
-            //if this fails we've gone somewhere new
-            mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - status :" +httpChannel.responseStatus );
-            if (httpChannel.responseStatus != 200) 
-                throw new Error("return status " + httpChannel.responseStatus);
-                        
-            var szReferer = httpChannel.URI.spec;
-            mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Referer :" +szReferer);
-             
-            if (mainObject.m_Email.attachments.length>0 && !mainObject.m_bAttHandled)
-                mainObject.m_iStage = 2;
-        
-            switch(mainObject.m_iStage)
-            {
-                case 0: //MSG handler
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Send MSG");
-                    
-                    var szForm = szResponse.match(patternYahooComposeForm)[0];
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Form " + szForm);
-             
-                    var szActionURI = szForm.match(patternYahooAction)[1];
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Action " + szActionURI);
-                    if (szActionURI.search(/^http/i)==-1)
-                        szActionURI = mainObject.m_szLocationURI + szActionURI;
-                        
-                    var aszInput = szForm.match(patternYahooInput);
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Input " + aszInput);
-                    
-                    for (i=0; i< aszInput.length; i++)
-                    {
-                        var szName = aszInput[i].match(patternYahooNameAlt)[1];
-                        szName = szName.replace(/"/mg,"");
-                        szName = szName.replace(/'/mg,"");
-                        mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Name " + szName); 
-                                    
-                        if (szName.search(/^Send$/i)!=-1)
-                        {
-                            mainObject.m_HttpComms.addValuePair(szName,"1"); 
-                        }
-                        else if (szName.search(/SaveCopy/i)!=-1)
-                        {
-                            var szSave = mainObject.m_bSaveCopy ? "yes" : "no";
-                            mainObject.m_HttpComms.addValuePair(szName,szSave);
-                        }
-                        else if (szName.search(/format/i)!=-1)
-                        {
-                            //do nothing
-                        }
-                        else if (szName.search(/PlainMsg/i)!=-1)
-                        {
-                            //do nothing
-                        }
-                        else
-                        {
-                            var szValue = aszInput[i].match(patternYahooAltValue)[1]
-                            szValue = szValue.replace(/"/mg,"");
-                            szValue = szValue.replace(/'/mg,"");
-                            mainObject.m_HttpComms.addValuePair(szName, (szValue? szValue : ""));
-                        }
-                    }
-                    
-                    var szTo = mainObject.m_Email.headers.getTo(); 
-                    mainObject.m_HttpComms.addValuePair("To", (szTo? szTo : ""));
-                    
-                    var szCc = mainObject.m_Email.headers.getCc();
-                    mainObject.m_HttpComms.addValuePair("Cc", (szCc? szCc : ""));                    
-                    
-                    var szBCC = mainObject.getBcc(szTo, szCc);
-                    mainObject.m_HttpComms.addValuePair("Bcc", (szBCC? szBCC : ""));
-                  
-                    var szSubject = mainObject.m_Email.headers.getSubject(); 
-                    mainObject.m_HttpComms.addValuePair("Subj",
-                                            (szSubject? escape(szSubject) : "%20"));
-                    
-                    if (mainObject.m_Email.htmlBody)
-                    {
-                        mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - html");
-                        var szHtmlBody = mainObject.m_Email.htmlBody.body.getBody();
-                        mainObject.m_HttpComms.addValuePair("Format","html");
-                        mainObject.m_HttpComms.addValuePair("Body",mainObject.escapeStr(szHtmlBody));
-                        
-                        if (mainObject.m_Email.txtBody)
-                        {
-                            mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - TEXT");
-                            var szTxtBody = mainObject.m_Email.txtBody.body.getBody();
-                            mainObject.m_HttpComms.addValuePair("PlainMsg",mainObject.escapeStr(szTxtBody));
-                        }
-                    } 
-                    else
-                    { 
-                        mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - plain"); 
-                        var szTxtBody = mainObject.m_Email.txtBody.body.getBody();
-                        mainObject.m_HttpComms.addValuePair("Body",mainObject.escapeStr(szTxtBody));
-                    }
-                                                           
-                    mainObject.m_iStage++;
-                    mainObject.m_HttpComms.setURI(szActionURI);
-                    mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler,mainObject);                                                    
-                    if (!bResult) throw new Error("httpConnection returned false");
-                break;
-                
-                case 1: //MSG OK handler
-                    //check for add address to addressbook
-                    if (szResponse.search(/AddAddresses/i)!=-1)
-                    {
-                        if (mainObject.m_bReUseSession)
-                        { 
-                            mainObject.m_Log.Write("nsYahoo.js - logIN - Setting Session Data");           
-                            mainObject.m_ComponentManager.addElement(this.m_szUserName, "szHomeURI", mainObject.m_szHomeURI);
-                            mainObject.m_Log.Write("nsYahoo.js - logIN - szHomeURI" + mainObject.m_szHomeURI);    
-                        }
-                        else
-                        {
-                            mainObject.m_Log.Write("nsYahoo.js - logIN - deleting Session Data");
-                            mainObject.m_HttpComms.deleteSessionData(); 
-                            mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
-                        }
-                        
-                        mainObject.serverComms("250 OK\r\n");                      
-                    }
-                    else if(szResponse.search(/<form.*?name=ImgVerification[\S\s]*?>/igm)!=-1)
-                    { 
-                        mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - image verification");
-                        mainObject.m_szImageVerForm = szResponse.match(patternYahooImageVerifiaction)[0];
-                        mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - form " + mainObject.m_szImageVerForm );
-                        var szImageUri = szResponse.match(patternYahooImage)[1];
-                        mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - image " + szImageUri);
-                    
-                        mainObject.m_HttpComms.setURI(szImageUri);
-                        mainObject.m_HttpComms.setRequestMethod("GET");
-                        mainObject.m_iStage = 5;
-                        var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler,mainObject);  
-                        if (!bResult) throw new Error("httpConnection returned false");
-                    }
-                    else
-                    {
-                        mainObject.serverComms("502 Error Sending Email\r\n");   
-                    }
-                break;
-                
-                case 2: //Attchment request
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - attachment request"); 
-                    mainObject.m_bAttHandled =true;
-                    
-                    var szForm = szResponse.match(patternYahooComposeForm)[0];
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Form " + szForm);
-             
-                    var szActionURI = szForm.match(patternYahooAction)[1];
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Action " + szActionURI);
-                    if (szActionURI.search(/^http/i)==-1)
-                        szActionURI = mainObject.m_szLocationURI + szActionURI;
-                        
-                    var aszInput = szForm.match(patternYahooInput);
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Input " + aszInput);
-                    
-                    for (i=0; i< aszInput.length; i++)
-                    {
-                        var szName = aszInput[i].match(patternYahooNameAlt)[1];
-                        szName = szName.replace(/"/mg,"");
-                        szName = szName.replace(/'/mg,"");
-                        mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Name " + szName); 
-                        
-                        if (szName.search(/^ATT$/i)!=-1)
-                        {
-                            mainObject.m_HttpComms.addValuePair(szName,"1");
-                        }
-                        else if (szName.search(/SaveCopy/i)!=-1)
-                        {
-                            mainObject.m_HttpComms.addValuePair(szName,
-                                                mainObject.m_bSaveCopy ? "yes" : "no");
-                        }
-                        else
-                        {
-                            var szValue = aszInput[i].match(patternYahooAltValue)[1]
-                            szValue = szValue.replace(/"/mg,"");
-                            szValue = szValue.replace(/'/mg,"");                  
-                            mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler -  value " + szValue);
-                            mainObject.m_HttpComms.addValuePair(szName,(szValue.length>0) ? szValue : "");
-                        }
-                    }
-                    
-                    mainObject.m_HttpComms.addValuePair("To","");
-                    mainObject.m_HttpComms.addValuePair("Bcc","");
-                    mainObject.m_HttpComms.addValuePair("Cc","");
-                    mainObject.m_HttpComms.addValuePair("Subj","");
-                    mainObject.m_HttpComms.addValuePair("Body","");
-                 
-                    mainObject.m_iStage = 3; 
-                    mainObject.m_HttpComms.setURI(szActionURI);
-                    mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler,mainObject);  
-                    if (!bResult) throw new Error("httpConnection returned false");
-                break;
-                
-                case 3: //Attchment handler
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - attach upload");
-                    
-                    var szForm = szResponse.match(patternYahooAttachmentForm)[0];
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Form " + szForm);
-                    
-                    var szAction = szForm.match(patternYahooAction)[1];
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Action " + szAction);
-                    if (szAction.search(/^http/i)==-1)
-                        szAction = mainObject.m_szLocationURI + szAction;
-                    
-                    var aszInput = szForm.match(patternYahooInput);
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Input " + aszInput);
-                   
-                    var aszFileInput = szForm.match(patternYahooFile);
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - File Input " + aszFileInput);
-                   
-                    for (i=0; i< aszInput.length; i++)
-                    {
-                        var szName = aszInput[i].match(patternYahooNameAlt)[1];
-                        szName = szName.replace(/"/mg,"");
-                        szName = szName.replace(/'/mg,"");
-                        mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Name " + szName); 
-                        
-                        if(szName.search(/^UPL$/i)!=-1)
-                        {
-                            mainObject.m_HttpComms.addValuePair(szName,"Attach Files");          
-                        }
-                        else
-                        { 
-                            var szValue = aszInput[i].match(patternYahooAltValue)[1]
-                            szValue = szValue.replace(/"/mg,""); 
-                            szValue = szValue.replace(/'/mg,"");              
-                            mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - value " + szValue);
-                            mainObject.m_HttpComms.addValuePair(szName, (szValue.length>0) ? szValue : "");  
-                        }
-                    }
-                    
-                    for (i=0; i< aszFileInput.length; i++)
-                    {
-                        var szName = aszFileInput[i].match(patternYahooNameAlt)[1];
-                        szName = szName.replace(/"/mg,"");
-                        mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Name " + szName); 
-                        
-                        if (i < mainObject.m_Email.attachments.length)
-                        {
-                            //headers
-                            var oAttach = mainObject.m_Email.attachments[i];
-                            var szFileName = oAttach.headers.getContentType(4);
-                            if (!szFileName) szFileName = "";
-                            mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Filename " + szFileName); 
-                          
-                            //body
-                            var szBody = oAttach.body.getBody();
-                            mainObject.m_HttpComms.addFile(szName, szFileName, szBody); 
-                        }
-                        else
-                            mainObject.m_HttpComms.addFile(szName, "", ""); 
-                    }
-                   
-                    mainObject.m_HttpComms.setContentType("multipart/form-data");
-                    mainObject.m_HttpComms.setURI(szAction);                  
-                    mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler,mainObject);  
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage = 4;
-                break;
-                
-                case 4: //Attachment OK handler
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - attach ok handler");
-                    
-                    if (szResponse.search(patternYahooAttachCheck)==-1)
-                    {
-                        mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - attach check failed");
-                        mainObject.serverComms("502 Error Sending Email\r\n");    
-                        return;
-                    }
-                    
-                    var szForm = szResponse.match(patternYahooComposeForm)[0];
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Form " + szForm);
-                    
-                    var szAction = szForm.match(patternYahooAction)[1];
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Action " + szAction);
-                    if (szAction.search(/^http/i)==-1)
-                        szAction = mainObject.m_szLocationURI + szAction;
-                   
-                    var aszInput = szForm.match(patternYahooInput);
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Input " + aszInput);
-                   
-                    
-                    for (i=0; i< aszInput.length; i++)
-                    {
-                        var szName = aszInput[i].match(patternYahooNameAlt)[1];
-                        szName = szName.replace(/"/mg,"");
-                        szName = szName.replace(/'/mg,"");
-                        mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Name " + szName); 
-                       
-                        var szValue = aszInput[i].match(patternYahooAltValue)[1]
-                        szValue = szValue.replace(/"/mg,""); 
-                        szValue = szValue.replace(/'/mg,"");              
-                        mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - value " + szValue);
-                        
-                        mainObject.m_HttpComms.addValuePair(szName,(szValue.length>0)? szValue : "");
-                    }
-                   
-                    mainObject.m_HttpComms.setURI(szAction);
-                    mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler, mainObject);  
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage = 0;
-                break;
-                
-                
-                case 5: //downloaded image verifiaction
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - image download");
-                    var szPath = mainObject.writeImageFile(szResponse);
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - imageFile " + szPath);
-                    var szResult =  mainObject.openSpamWindow(szPath);
-                    
-                    if (!szResult)
-                    {
-                        mainObject.serverComms("502 Error Sending Email\r\n");
-                        return;
-                    }
-                    
-                    //construct form 
-                    var aszInput = mainObject.m_szImageVerForm.match(patternYahooInput);
-                    for (i=0; i< aszInput.length; i++)
-                    {
-                        var szName = aszInput[i].match(patternYahooNameAlt)[1];
-                        szName = szName.replace(/"/mg,"");
-                        szName = szName.replace(/'/mg,"");
-                        mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Name " + szName); 
-                       
-                        var szValue = aszInput[i].match(patternYahooAltValue)[1]
-                        szValue = szValue.replace(/"/mg,""); 
-                        szValue = szValue.replace(/'/mg,"");   
-                        szValue = mainObject.escapeStr(szValue);
-                        mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - value " + szValue);
-                        
-                        mainObject.m_HttpComms.addValuePair(szName,(szValue.length>0)? szValue : "");
-                    }
-                    
-                    szValue = mainObject.escapeStr(szResult);
-                    mainObject.m_HttpComms.addValuePair("Word",(szValue.length>0)? szValue : "");
-                    
-                    var szFormAction = mainObject.m_szImageVerForm.match(patternYahooImageAction)[1];
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - szFormAction " + szFormAction);
-                    var szActionUrl = szFormAction.replace(/\r/g,"").replace(/\n/g,"");
-                    mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - aszActionUrl " + szActionUrl);
-                    var szAction = szActionUrl;
-                    
-                    //send data
-                    mainObject.m_HttpComms.setContentType("multipart/form-data");
-                    mainObject.m_HttpComms.setURI(mainObject.m_szLocationURI + szAction);
-                    mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler, mainObject);  
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage = 1;
-                   
-                break;
-            };
-                     
-            mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - END");
-        }
-        catch(err)
-        {
-            mainObject.m_Log.DebugDump("nsYahooSMTP.js: composerOnloadHandler : Exception : " 
-                                          + err.name 
-                                          + ".\nError message: " 
-                                          + err.message + "\n"
-                                          + err.lineNumber);
-                                            
-            mainObject.serverComms("502 negative vibes from "+mainObject.m_szUserName+"\r\n");
-        }
-    },
-    
-    
-    escapeStr : function(szMSG)
-    {
-        var szEncode = escape(szMSG);
-        szEncode = szEncode.replace(/%20/gm,"+"); //replace space
-        return szEncode;
-    },
-    
-    
-    getBcc : function (szTo,szCc)
-    {
-        try
-        {
-            this.m_Log.Write("nsYahooSMTP.js - getBcc - START");
-            if (this.m_aszTo.length==0) return null;
-            this.m_Log.Write("nsYahooSMTP.js - getBcc - szRcptList " + this.m_aszTo);  
-            
-            var szBcc = null;
-            var szAddress = null;
-            if (szTo) szAddress = szTo;
-            if (szCc) szAddress = (szTo ? (szAddress + ","+ szCc) : szCc);
-            this.m_Log.Write("nsYahooSMTP.js - getBcc - szAddress " + szAddress);
-           
-            if (!szAddress) 
-                szBcc = this.m_aszTo;
-            else
-            {     
-                for (j=0; j<this.m_aszTo.length; j++)
-                {
-                    var regExp = new RegExp(this.m_aszTo[j]);
-                    if (szAddress.search(regExp)==-1)
-                    {    
-                        szBcc? (szBcc += this.m_aszTo[j]) : (szBcc = this.m_aszTo[j]);
-                        szBcc +=",";
-                    }
-                }
-            }
-            this.m_Log.Write("nsYahooSMTP.js - getBcc szBcc- " + szBcc);
-            
-            this.m_Log.Write("nsYahooSMTP.js - getBcc - End");
-            return szBcc;  
-        }
-        catch(err)
-        {
-            this.m_Log.DebugDump("nsYahooSMTP.js: getBcc : Exception : " 
-                                                  + err.name 
-                                                  + ".\nError message: " 
-                                                  + err.message + "\n"
-                                                  + err.lineNumber);
-                                                  
-            return null;
-        }
-    },
-    
-    
-    writeImageFile : function(szData)
-    {
-        try
-        {
-            this.m_Log.Write("nsYahooSMTP.js - writeImageFile - End");
-            
-            var file = Components.classes["@mozilla.org/file/directory_service;1"];
-            file = file.getService(Components.interfaces.nsIProperties);
-            file = file.get("TmpD", Components.interfaces.nsIFile);
-            file.append("suggestedName.jpg");
-            file.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 420); 
-           
-            var deletefile = Components.classes["@mozilla.org/uriloader/external-helper-app-service;1"];
-            deletefile = deletefile.getService(Components.interfaces.nsPIExternalAppLauncher);
-            deletefile.deleteTemporaryFileOnExit(file);    
-            
-            var outputStream = Components.classes["@mozilla.org/network/file-output-stream;1"];
-            outputStream = outputStream.createInstance( Components.interfaces.nsIFileOutputStream );
-            outputStream.init( file, 0x04 | 0x08 | 0x10, 420, 0 );
-            
-            var binaryStream = Components.classes["@mozilla.org/binaryoutputstream;1"];
-            binaryStream = binaryStream.createInstance(Components.interfaces.nsIBinaryOutputStream);
-            binaryStream.setOutputStream(outputStream)
-            binaryStream.writeBytes( szData, szData.length );
-            outputStream.close();
-            binaryStream.close();
-                       
-            var ios = Components.classes["@mozilla.org/network/io-service;1"]
-                                .getService(Components.interfaces.nsIIOService);
-            var fileHandler = ios.getProtocolHandler("file")
-                                 .QueryInterface(Components.interfaces.nsIFileProtocolHandler);
-            var URL = fileHandler.getURLSpecFromFile(file);
-            this.m_Log.Write("nsYahooSMTP.js - writeImageFile - path " + URL);
-            
-            this.m_Log.Write("nsYahooSMTP.js - writeImageFile - End");
-            return URL;
-        }
-        catch(err)
-        {
-            this.m_Log.DebugDump("nsYahooSMTP.js: writeImageFile : Exception : " 
-                                                  + err.name 
-                                                  + ".\nError message: " 
-                                                  + err.message + "\n"
-                                                  + err.lineNumber);
-                                                  
-            return null;
-        }
-    },
-    
-    
-    
-    
-    openSpamWindow : function(szPath)
-    {
-        try
-        {
-            this.m_Log.Write("nsYahooSMTP : openWindow - START");
-            
-            var params = Components.classes["@mozilla.org/embedcomp/dialogparam;1"]
-                                   .createInstance(Components.interfaces.nsIDialogParamBlock);
-            params.SetNumberStrings(1);
-            params.SetString(0, szPath);           
-                      
-            var window = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
-                                  .getService(Components.interfaces.nsIWindowWatcher);
-            
-            window.openWindow(null, 
-                              "chrome://yahoo/content/Yahoo-SpamImage.xul",
-                              "_blank", 
-                              "chrome,alwaysRaised,dialog,modal,centerscreen,resizable",
-                              params);
-           
-            var iResult = params.GetInt(0);
-            this.m_Log.Write("nsYahooSMTP : openWindow - " + iResult);
-            var szResult =  null;
-            if (iResult) 
-            {
-                szResult = params.GetString(0);
-                this.m_Log.Write("nsYahooSMTP : openWindow - " + szResult);
-            }
-            
-            this.m_Log.Write("nsYahooSMTP : openWindow - END");
-            return szResult;
-        }
-        catch(err)
-        {
-            this.m_Log.DebugDump("nsYahooSMTP: Exception in openWindow : " 
-                                               + err.name 
-                                               + ".\nError message: " 
-                                               + err.message + "\n"
-                                               + err.lineNumber);
-        }
-    },
-    
-    
     
     loadPrefs : function()
     {
@@ -986,52 +171,54 @@ nsYahooSMTP.prototype =
             this.m_Log.Write("nsYahoo.js - loadPrefs - START"); 
            
             //get user prefs
-            var iCount = 0;
+            var oData = new PrefData();
             var oPref = {Value:null};
+            //do i reuse the session
             var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+            WebMailPrefAccess.Get("bool","yahoo.bReUseSession",oPref);
+            this.m_Log.Write("nsYahoo.js - loadPrefs - bReUseSession " + oPref.Value);
+            if (oPref.Value) oData.bReUseSession = oPref.Value;
+            
+            oPref.Value = null;
+            WebMailPrefAccess.Get("bool","yahoo.Account.bSaveCopy",oPref);
+            if (oPref.Value) oData.bSaveSentItem=oPref.Value;        
+            
+            var iCount = 0;
+            oPref.Value = null;
             WebMailPrefAccess.Get("int","yahoo.Account.Num",oPref);
             this.m_Log.Write("nsYahoo.js - loadPrefs - num " + oPref.Value);
             if (oPref.Value) iCount = oPref.Value;
- 
+            
             var bFound = false;
             var regExp = new RegExp(this.m_szUserName,"i");
-            for (var i=0; i<iCount; i++)
+            for (i=0; i<iCount; i++)
             {
                 //get user name
                 oPref.Value = null;
                 WebMailPrefAccess.Get("char","yahoo.Account."+i+".user",oPref);
+                this.m_Log.Write("nsYahoo.js - loadPrefs - user " + oPref.Value);
                 if (oPref.Value)
                 {
-                    this.m_Log.Write("nsYahoo.js - loadPrefs - user " + oPref.Value);
                     if (oPref.Value.search(regExp)!=-1)
                     {
-                        this.m_Log.Write("nsYahoo.js - loadPrefs - user found");
+                        this.m_Log.Write("nsYahoo.js - loadPrefs - user found "+ i);
                         bFound = true;
-                
+                                                                                                           
+                        //use yahoo beta site
+                        oPref.Value = null;
+                        WebMailPrefAccess.Get("bool","yahoo.Account."+i+".bBeta",oPref);
+                        if (oPref.Value) oData.bBeta=oPref.Value;   
+                        
                         //do i save copy
                         oPref.Value = null;
                         WebMailPrefAccess.Get("bool","yahoo.Account."+i+".bSaveCopy",oPref);
-                        if (oPref.Value)
-                            this.m_bSaveCopy=oPref.Value;
-                        else
-                            this.m_bSaveCopy=true;      
+                        if (oPref.Value) oData.bSaveSentItem=oPref.Value;
                     }
                 }
             }
-            
-            if (!bFound) //get defaults
-            {
-                this.m_Log.Write("Yahoo-Prefs-Folders : loadPrefs - Default Folders");
-                
-                //unread only
-                oPref.Value = null;
-                WebMailPrefAccess.Get("bool","yahoo.bSaveCopy",oPref)
-                if (oPref.Value)
-                    this.m_bSaveCopy=oPref.Value;
-                else
-                     this.m_bSaveCopy= true;
-            }
+        
             this.m_Log.Write("nsYahoo.js - loadPrefs - END");
+            return oData;
         }
         catch(e)
         {
@@ -1040,11 +227,15 @@ nsYahooSMTP.prototype =
                                               ".\nError message: " 
                                               + e.message+ "\n"
                                               + e.lineNumber);
+            return null;
         }
     },
     
     
     
+
+    
+
     ////////////////////////////////////////////////////////////////////////////
     /////  Comms                  
     

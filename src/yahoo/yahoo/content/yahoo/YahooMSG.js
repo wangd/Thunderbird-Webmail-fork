@@ -12,6 +12,10 @@ YahooMSG.prototype.szDeleteUri = null;
 
 YahooMSG.prototype.iSize = 0;
 
+YahooMSG.prototype.szFolder = null;
+
+YahooMSG.prototype.szID = null;
+
 
 
 
