@@ -1020,7 +1020,8 @@ YahooPOPBETA.prototype =
                     
                     //base64 file
                     var oB64 = new base64();
-                    var szB64Response = oB64.encode(szResponse)
+                    oB64.bLineBreak = true;
+                    var szB64Response = oB64.encode(szResponse);
                     mainObject.m_oEmail.addBody(szHeader,szB64Response);
                     
                     if (mainObject.m_aDownloadFiles.length==0) //no files
