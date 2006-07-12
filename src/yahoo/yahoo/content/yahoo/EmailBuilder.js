@@ -113,7 +113,7 @@ emailBuilder.prototype.build = function ()
             szEmail += "This email was created By Yahoo Webmail Extension\r\n";
               
             var szBaseBoundary = this.m_oHeader.getContentType(3); //get boundary
-            var szStartBoundary = "--" + szBaseBoundary + "\r\n";
+            var szStartBoundary = "\r\n--" + szBaseBoundary + "\r\n";
             var szEndBoundary = "\r\n--" + szBaseBoundary + "--\r\n\r\n";
             
             //is this alternative only
