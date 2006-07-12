@@ -217,9 +217,9 @@ headers.prototype =
                     break;
                     
                     case 1: // filename
-                        var aszFilename= szContentDispo.match(/filename="(.*?)"/);
+                        var aszFilename= szContentDispo.match(/filename="(.*?)"/i);
                         if (!aszFilename)  
-                            aszFilename= szContentDispo.match(/name="(.*?)"/);                         
+                            aszFilename= szContentDispo.match(/name="(.*?)"/i);                         
                         
                         if (aszFilename)
                             szContent = this.decode(aszFilename[1]);
