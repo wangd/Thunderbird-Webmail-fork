@@ -1,28 +1,24 @@
-<!ENTITY Mode.Panel.szTitle "Mode">
+<!ENTITY Mode.Panel.szTitle "Modo">
 <!ENTITY POP.Panel.szTitle "POP">
 <!ENTITY SMTP.Panel.szTitle "SMTP">
-
-<!ENTITY Mode.label "Select the communications method the extension will use to connect to Microsoft's servers">
-<!ENTITY ScreenScraper.label "Hotmail Website (production)">
+<!ENTITY Mode.label "Selecione o método de comunicação que a extensão deve utilizar para conectar aos servidores da Microsoft">
+<!ENTITY ScreenScraper.label "Website do Hotmail (produção)">
 <!ENTITY WebDav.label "WebDav">
-<!ENTITY Beta.label "Hotmail Website (BETA)">
-
-<!ENTITY DownloadUnread.Label "Download unread emails only">
-<!ENTITY DownloadUnread.AccessKey "u">
-<!ENTITY JunkMail.Label "Download JunkMail">
-<!ENTITY JunkMail.AccessKey "J">
-<!ENTITY Add.Label "Add...">
+<!ENTITY Beta.label "Website do Hotmail (BETA)">
+<!ENTITY DownloadUnread.Label "Baixar apenas e-mails não lidos">
+<!ENTITY DownloadUnread.AccessKey "n">
+<!ENTITY JunkMail.Label "Baixar lixo eletrônico">
+<!ENTITY JunkMail.AccessKey "l">
+<!ENTITY Add.Label "Adicionar...">
 <!ENTITY Add.AccessKey "A">
-<!ENTITY Remove.Label "Remove">
+<!ENTITY Remove.Label "Remover">
 <!ENTITY Remove.AccessKey "R">
-<!ENTITY Folders.Label "Download folders">
-
-<!ENTITY SaveSentItems.Label "Save copy in sent items.">
+<!ENTITY Folders.Label "Baixar pastas">
+<!ENTITY SaveSentItems.Label "Salvar cópia em ítens enviados.">
 <!ENTITY SaveSentItems.AccessKey "s">
-<!ENTITY AlternativeGroup.Label "When sending rich text emails which part should the extension send?">
-<!ENTITY SendPlain.Label "Send plain text">
+<!ENTITY AlternativeGroup.Label "Ao enviar e-mails rich text que parte a extensão deve enviar?">
+<!ENTITY SendPlain.Label "Enviar texto plano">
 <!ENTITY SendPlain.AccessKey "p">
-<!ENTITY SendHtml.Label "Send html text">
+<!ENTITY SendHtml.Label "Enviar texto html">
 <!ENTITY SendHtml.AccessKey "h">
-
-<!ENTITY error.Label "No Hotmail Accounts Found"> 
+<!ENTITY error.Label "Nenhuma conta do Hotmail foi encontrada">
