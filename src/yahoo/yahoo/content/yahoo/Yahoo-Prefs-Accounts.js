@@ -82,12 +82,18 @@ var gPrefAccounts =
                 {
                     WebMailPrefAccess.Set("char","yahoo.Account."+i+".user",this.m_aszUserList[i].szUser);
                     this.m_DebugLog.Write("Yahoo-Pref-Accounts.js - onOK - user " + this.m_aszUserList[i].szUser);
+                    
                     WebMailPrefAccess.Set("bool","yahoo.Account."+i+".bDownloadUnread",this.m_aszUserList[i].bUnread);
                     this.m_DebugLog.Write("Yahoo-Pref-Accounts.js - onOK - bDownloadUnread " + this.m_aszUserList[i].bUnread); 
+                    
                     WebMailPrefAccess.Set("bool","yahoo.Account."+i+".bUseJunkMail",this.m_aszUserList[i].bJunkMail);
                     this.m_DebugLog.Write("Yahoo-Pref-Accounts.js - onOK - bUseJunkMail " + this.m_aszUserList[i].bJunkMail);
+                    
                     WebMailPrefAccess.Set("bool","yahoo.Account."+i+".bSaveCopy",this.m_aszUserList[i].bSaveSentItem);
                     this.m_DebugLog.Write("Yahoo-Pref-Accounts.js - onOK - bSaveCopy " + this.m_aszUserList[i].bSaveSentItem);
+                    
+                    WebMailPrefAccess.Set("bool","yahoo.Account."+i+".bBeta",this.m_aszUserList[i].bBeta);
+                    this.m_DebugLog.Write("Yahoo-Pref-Accounts.js - onOK - bBeta " + this.m_aszUserList[i].bBeta);
                     
                     var szFolders = "";
                     if (this.m_aszUserList[i].aszFolder)
@@ -163,6 +169,12 @@ var gPrefAccounts =
                         oData.bSaveSentItem = oPref.Value;
                         this.m_DebugLog.Write("Yahoo-Pref-Accounts.js - getAccountPrefs - oData.bSaveSentItem " + oData.bSaveSentItem);
                         
+                         //get bBeta
+                        oPref.Value = null;
+                        WebMailPrefAccess.Get("bool","yahoo.Account."+i+".bBeta",oPref);
+                        oData.bBeta = oPref.Value;
+                        this.m_DebugLog.Write("Yahoo-Pref-Accounts.js - getAccountPrefs - oData.bBeta " + oData.bBeta);
+     
                         //get szFolders
                         oPref.Value = null;
                         WebMailPrefAccess.Get("char","yahoo.Account."+i+".szFolders",oPref);
@@ -251,12 +263,18 @@ var gPrefAccounts =
                                         {
                                             if (this.m_aszPrefsList[j].szUser.search(reg)!=-1)
                                             {
+                                                data.bBeta = this.m_aszPrefsList[j].bBeta;
+                                                this.m_DebugLog.Write("Yahoo-Pref-Accounts : getUserNameList - bBeta " + data.bBeta);
+                                                
                                                 data.bJunkMail = this.m_aszPrefsList[j].bJunkMail;
                                                 this.m_DebugLog.Write("Yahoo-Pref-Accounts : getUserNameList - bJunkFolder " + data.bJunkMail);
+                                              
                                                 data.aszFolder = this.m_aszPrefsList[j].aszFolder;
                                                 this.m_DebugLog.Write("Yahoo-Pref-Accounts : getUserNameList - aszFolder " + data.aszFolder);
+                                              
                                                 data.bUnread = this.m_aszPrefsList[j].bUnread;
                                                 this.m_DebugLog.Write("Yahoo-Pref-Accounts : getUserNameList - bUnread " + data.bUnread);
+                                              
                                                 data.bSaveSentItem = this.m_aszPrefsList[j].bSaveSentItem;
                                                 this.m_DebugLog.Write("Yahoo-Pref-Accounts : getUserNameList - bSaveSentItem " + data.bSaveSentItem);
                                                 bFound= true;
@@ -348,10 +366,16 @@ var gPrefAccounts =
             {
                 var data = this.m_aszUserList[this.m_iIndex];
                 this.m_DebugLog.Write("Yahoo-Pref-Accounts : userListDBClick -  data.szUser "+ data.szUser);
+                
+                this.m_DebugLog.Write("Yahoo-Pref-Accounts : userClick -  data.bBeta "+ data.bBeta);
+                document.getElementById("radiogroupMode").selectedIndex = data.bBeta? 1 : 0;
+                
                 document.getElementById("chkDownloadUnread").checked = data.bUnread;
                 this.m_DebugLog.Write("Yahoo-Pref-Accounts : userListDBClick -  data.bUnread "+ data.bUnread);
+               
                 document.getElementById("chkJunkMail").checked = data.bJunkMail;
                 this.m_DebugLog.Write("Yahoo-Pref-Accounts : userListDBClick -  data.bJunkFolder "+ data.bJunkMail);
+               
                 document.getElementById("chkSentItems").checked = data.bSaveSentItem;
                 this.m_DebugLog.Write("Yahoo-Pref-Accounts : userListDBClick -  data.bSaveSentItem "+ data.bSaveSentItem);
                 
@@ -387,6 +411,27 @@ var gPrefAccounts =
                                           + e.lineNumber);
         }
     },
+
+
+
+/**********************************************************************/
+//Deck Mode Panel
+/**********************************************************************/    
+
+
+    rgModeOnChange : function ()
+    {
+        this.m_DebugLog.Write("Yahoo-Pref-Accounts : rgModeOnChange - START");
+        
+        var iMode = document.getElementById("radiogroupMode").value;
+        this.m_DebugLog.Write("Yahoo-Pref-Accounts : rgModeOnChange -  iMode "+ iMode);
+        this.m_aszUserList[this.m_iIndex].bBeta = iMode==1? true : false;
+                
+        this.m_DebugLog.Write("Yahoo-Pref-Accounts : rgModeOnChange - END");
+    },
+    
+
+
 
 
 /**********************************************************************/

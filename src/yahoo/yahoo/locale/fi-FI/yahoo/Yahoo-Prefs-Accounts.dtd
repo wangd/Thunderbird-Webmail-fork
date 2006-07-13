@@ -1,5 +1,11 @@
 <!ENTITY POP.Panel.szTitle "POP">
 <!ENTITY SMTP.Panel.szTitle "SMTP">
+<!ENTITY Mode.Panel.szTitle "Mode">
+
+<!ENTITY Mode.label "Select website the extension will use">
+<!ENTITY ScreenScraper.label "Production Website">
+<!ENTITY Beta.label "BETA Website">
+
 <!ENTITY DownloadUnread.Label "Lataa vain lukemattomat viestit">
 <!ENTITY DownloadUnread.AccessKey "u">
 <!ENTITY JunkMail.Label "Lataa roskaposti">
@@ -9,8 +15,8 @@
 <!ENTITY Remove.Label "Poista">
 <!ENTITY Remove.AccessKey "P">
 <!ENTITY Folders.Label "Lataa kansioista">
+
 <!ENTITY SaveSentItems.Label "Tallennna kopio lähettetyihin.">
 <!ENTITY SaveSentItems.AccessKey "k">
-<!ENTITY AddDomain.Label "Lisää verkkotunnus...">
-<!ENTITY AddDomain.AccessKey "v">
+
 <!ENTITY error.Label "Yahoo-tilejä ei löytynyt">

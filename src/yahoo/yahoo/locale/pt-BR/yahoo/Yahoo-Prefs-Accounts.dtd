@@ -1,5 +1,11 @@
 <!ENTITY POP.Panel.szTitle "POP">
 <!ENTITY SMTP.Panel.szTitle "SMTP">
+<!ENTITY Mode.Panel.szTitle "Mode">
+
+<!ENTITY Mode.label "Select website the extension will use">
+<!ENTITY ScreenScraper.label "Production Website">
+<!ENTITY Beta.label "BETA Website">
+
 <!ENTITY DownloadUnread.Label "Baixar apenas mensagens não lidas">
 <!ENTITY DownloadUnread.AccessKey "n">
 <!ENTITY JunkMail.Label "Baixar lixo eletrônico">
@@ -9,8 +15,8 @@
 <!ENTITY Remove.Label "Excluir">
 <!ENTITY Remove.AccessKey "x">
 <!ENTITY Folders.Label "Pastas de download">
+
 <!ENTITY SaveSentItems.Label "Salvar uma cópia nos ítens enviados.">
 <!ENTITY SaveSentItems.AccessKey "s">
-<!ENTITY AddDomain.Label "Adicionar domínio..">
-<!ENTITY AddDomain.AccessKey "D">
+
 <!ENTITY error.Label "Nenhuma conta do Yahoo foi encontrada">

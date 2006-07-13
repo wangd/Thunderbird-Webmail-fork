@@ -96,10 +96,21 @@
                 
                 <tabbox  flex="1" id="tabsAccount">
                     <tabs>
-                        <tab label="&POP.Panel.szTitle;"/>
-                        <tab label="&SMTP.Panel.szTitle;"/>
+                        <tab label="&Mode.Panel.szTitle;" id ="tabMode"/>
+                        <tab label="&POP.Panel.szTitle;" id ="tabPOP"/>
+                        <tab label="&SMTP.Panel.szTitle;" id ="tabSMTP"/>
                     </tabs>
-                    <tabpanels flex="1" >                       
+                    <tabpanels flex="1" >    
+                        <vbox id="modePanel" class="panel">
+                            <vbox>
+                                <label value="&Mode.label;" id="labelMode" flex="1"/>
+                                <radiogroup id="radiogroupMode" onclick ="gPrefAccounts.rgModeOnChange();"  class="radio">
+                                    <radio label="&ScreenScraper.label;" value="0"/>
+                                    <radio label="&Beta.label;"          value="1"/>
+                                </radiogroup>
+                             </vbox>   
+                        </vbox>          
+                                 
                         <vbox id="popPanel" class="panel">
                             <checkbox label="&DownloadUnread.Label;" 
                                       accesskey="&DownloadUnread.AccessKey;"
