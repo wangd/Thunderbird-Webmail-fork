@@ -32,7 +32,7 @@ function YahooPOPBETA(oResponseStream, oLog, oPrefs)
         this.m_oResponseStream = oResponseStream;  
         
         //comms
-        this.m_HttpComms = new HttpComms();
+        this.m_HttpComms = new HttpComms(this.m_Log);
         this.m_szLoginUserName = null;
         this.m_aLoginForm = null;
         this.m_bReEntry = false;
@@ -160,7 +160,7 @@ YahooPOPBETA.prototype =
         try
         {
             mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - START"); 
-            mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler : \n" + szResponse);
+           // mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler : Stage" + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);     
@@ -382,7 +382,7 @@ YahooPOPBETA.prototype =
                     var szPass = encodeURIComponent(mainObject.m_szPassWord);
                     mainObject.m_HttpComms.addValuePair("passwd",szPass);
                     
-                    mainObject.m_HttpComms.addValuePair("secword",szResult);
+                    mainObject.m_HttpComms.addValuePair(".secword",szResult);
                     
                     mainObject.m_HttpComms.addValuePair(".persistent","y");
                                              
@@ -470,7 +470,7 @@ YahooPOPBETA.prototype =
         try
         {
             mainObject.m_Log.Write("YahooPOPBETA.js - mailBoxOnloadHandler - START"); 
-            mainObject.m_Log.Write("YahooPOPBETA.js - mailBoxOnloadHandler : \n" + szResponse);
+            //mainObject.m_Log.Write("YahooPOPBETA.js - mailBoxOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("YahooPOPBETA.js - mailBoxOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -721,7 +721,10 @@ YahooPOPBETA.prototype =
             //get msg id
             var oMSGData = this.m_aMsgDataStore[lID-1]; 
             this.m_szMsgID = oMSGData.szID;  
-            this.m_szBox = oMSGData.szFolder;
+            
+            var szFolder = oMSGData.szFolder;
+            if (oMSGData.szFolder.search(/%40B%40Bulk/i)!=-1) szFolder = "Bulk"; 
+            this.m_szBox = szFolder;
             var szData = kMSGHeaders.replace(/MSGID/,oMSGData.szID).replace(/FOLDERNAME/,oMSGData.szFolder);
             this.m_Log.Write("YahooPOPBETA.js - getHeaders - szData " + szData);
              
@@ -757,7 +760,7 @@ YahooPOPBETA.prototype =
         try
         {
             mainObject.m_Log.Write("YahooPOPBETA.js - headerOnloadHandler - START");
-            mainObject.m_Log.Write("YahooPOPBETA.js - headerOnloadHandler - msg :\n" + szResponse); 
+            //mainObject.m_Log.Write("YahooPOPBETA.js - headerOnloadHandler - msg :\n" + szResponse); 
            
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
                       
@@ -812,7 +815,9 @@ YahooPOPBETA.prototype =
             //get msg id
             var oMSGData = this.m_aMsgDataStore[lID-1]
             this.m_szMsgID = oMSGData.szID;  
-            this.m_szBox = oMSGData.szFolder;
+            var szFolder = oMSGData.szFolder;
+            if (oMSGData.szFolder.search(/%40B%40Bulk/i)!=-1) szFolder = "Bulk"; 
+            this.m_szBox = szFolder;
             this.m_Log.Write("YahooPOPBETA.js - getMessage - msg id" + this.m_szMsgID + " Folder " + this.m_szBox); 
             
             var szData = kMSGHeaders.replace(/MSGID/,oMSGData.szID).replace(/FOLDERNAME/,oMSGData.szFolder);
@@ -849,7 +854,7 @@ YahooPOPBETA.prototype =
         try
         {
             mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - START");
-            mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler : \n" + szResponse);          
+           // mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler : \n" + szResponse);          
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
                       
             //check status should be 200.
@@ -1118,7 +1123,7 @@ YahooPOPBETA.prototype =
         try
         {
             mainObject.m_Log.Write("YahooPOPBETA.js - deleteMessageOnload - START");    
-            mainObject.m_Log.Write("YahooPOPBETA.js - deleteMessageOnload : \n" + szResponse);
+           // mainObject.m_Log.Write("YahooPOPBETA.js - deleteMessageOnload : \n" + szResponse);
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             
             //check status should be 200.

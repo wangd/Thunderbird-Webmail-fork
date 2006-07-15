@@ -22,7 +22,7 @@ function YahooSMTP(oResponseStream, oLog, oPref)
         
         //comms
         this.m_oResponseStream = oResponseStream;
-        this.m_HttpComms = new HttpComms();
+        this.m_HttpComms = new HttpComms(this.m_Log);
         this.m_bAuthorised = false;
         this.m_szUserName = null;   
         this.m_szPassWord = null; 
@@ -149,7 +149,7 @@ YahooSMTP.prototype =
         {
             mainObject.m_Log.Write("YahooSMTP.js - loginOnloadHandler - START"); 
             mainObject.m_Log.Write("YahooSMTP.js - loginOnloadHandler : \n" + szResponse);            
-            mainObject.m_Log.Write("YahooSMTP.js - loginOnloadHandler : " + mainObject.m_iStage );  
+            //mainObject.m_Log.Write("YahooSMTP.js - loginOnloadHandler : " + mainObject.m_iStage );  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             
@@ -327,7 +327,7 @@ YahooSMTP.prototype =
                     var szPass = encodeURIComponent(mainObject.m_szPassWord);
                     mainObject.m_HttpComms.addValuePair("passwd",szPass);
                     
-                    mainObject.m_HttpComms.addValuePair("secword",szResult);
+                    mainObject.m_HttpComms.addValuePair(".secword",szResult);
                     
                     mainObject.m_HttpComms.addValuePair(".persistent","y");
                                              
@@ -400,7 +400,7 @@ YahooSMTP.prototype =
         {
             mainObject.m_Log.Write("YahooSMTP.js - composerOnloadHandler - START"); 
             mainObject.m_Log.Write("YahooSMTP.js - composerOnloadHandler : \n" + szResponse);
-            mainObject.m_Log.Write("YahooSMTP.js - composerOnloadHandler : " + mainObject.m_iStage);  
+            //mainObject.m_Log.Write("YahooSMTP.js - composerOnloadHandler : " + mainObject.m_iStage);  
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             

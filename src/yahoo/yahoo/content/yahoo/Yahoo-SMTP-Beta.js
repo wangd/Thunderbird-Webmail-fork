@@ -21,7 +21,7 @@ function YahooSMTPBETA(oResponseStream, oLog, oPref)
         
         //comms
         this.m_oResponseStream = oResponseStream;
-        this.m_HttpComms = new HttpComms(/*this.m_Log*/);
+        this.m_HttpComms = new HttpComms(this.m_Log);
         
         this.m_bAuthorised = false;
         this.m_szUserName = null;   
@@ -344,7 +344,7 @@ YahooSMTPBETA.prototype =
                     var szPass = encodeURIComponent(mainObject.m_szPassWord);
                     mainObject.m_HttpComms.addValuePair("passwd",szPass);
                     
-                    mainObject.m_HttpComms.addValuePair("secword",szResult);
+                    mainObject.m_HttpComms.addValuePair(".secword",szResult);
                     
                     mainObject.m_HttpComms.addValuePair(".persistent","y");
                                              

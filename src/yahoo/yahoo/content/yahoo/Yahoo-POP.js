@@ -27,7 +27,7 @@ function YahooPOP(oResponseStream, oLog, oPrefs)
         this.m_oResponseStream = oResponseStream;  
         
         //comms
-        this.m_HttpComms = new HttpComms();
+        this.m_HttpComms = new HttpComms(this.m_Log);
         this.m_szLoginUserName = null;
         this.m_szYahooMail = null;
         this.m_szHomeURI = null;
@@ -149,7 +149,7 @@ YahooPOP.prototype =
         try
         {
             mainObject.m_Log.Write("YahooPOP.js - loginOnloadHandler - START"); 
-            mainObject.m_Log.Write("YahooPOP.js - loginOnloadHandler : \n" + szResponse);
+            //mainObject.m_Log.Write("YahooPOP.js - loginOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("YahooPOP.js - loginOnloadHandler : Stage" + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);     
@@ -357,7 +357,7 @@ YahooPOP.prototype =
                     var szPass = encodeURIComponent(mainObject.m_szPassWord);
                     mainObject.m_HttpComms.addValuePair("passwd",szPass);
                     
-                    mainObject.m_HttpComms.addValuePair("secword",szResult);
+                    mainObject.m_HttpComms.addValuePair(".secword",szResult);
                     
                     mainObject.m_HttpComms.addValuePair(".persistent","y");
                                              
@@ -431,7 +431,7 @@ YahooPOP.prototype =
         try
         {
             mainObject.m_Log.Write("YahooPOP.js - mailBoxOnloadHandler - START"); 
-            mainObject.m_Log.Write("YahooPOP.js - mailBoxOnloadHandler : \n" + szResponse);
+            //mainObject.m_Log.Write("YahooPOP.js - mailBoxOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("YahooPOP.js - mailBoxOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -766,7 +766,7 @@ YahooPOP.prototype =
         try
         {
             mainObject.m_Log.Write("YahooPOP.js - headerOnloadHandler - START");
-            mainObject.m_Log.Write("YahooPOP.js - headerOnloadHandler - msg :\n" + szResponse); 
+           // mainObject.m_Log.Write("YahooPOP.js - headerOnloadHandler - msg :\n" + szResponse); 
            
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
                       
@@ -893,7 +893,7 @@ YahooPOP.prototype =
         try
         {
             mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - START");
-            mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler : \n" + szResponse);          
+          //  mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler : \n" + szResponse);          
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
                       
             //check status should be 200.
@@ -944,12 +944,7 @@ YahooPOP.prototype =
                     var oHeaders = new headers(szResponse);
                     mainObject.m_szHeader += oHeaders.getAllHeaders();
                     mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - headers - "+mainObject.m_szHeader);
-            
-                    //get body
-                    //var ios=Components.classes["@mozilla.org/network/io-service;1"];
-                    //ios = ios.getService(Components.interfaces.nsIIOService);
-                    
-                   
+                              
                     var szDest = mainObject.m_szLocationURI + mainObject.m_szMsgID.match(/.*?&/) 
                                     + mainObject.m_szBox + "&bodyPart=TEXT";
                     mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - url - "+ szDest);                       
@@ -1042,7 +1037,7 @@ YahooPOP.prototype =
         try
         {
             mainObject.m_Log.Write("YahooPOP.js - deleteMessageOnload - START");    
-            mainObject.m_Log.Write("YahooPOP.js - deleteMessageOnload : \n" + szResponse);
+           // mainObject.m_Log.Write("YahooPOP.js - deleteMessageOnload : \n" + szResponse);
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             
             //check status should be 200.
