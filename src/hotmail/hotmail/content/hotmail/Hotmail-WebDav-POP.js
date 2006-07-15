@@ -366,7 +366,7 @@ HotmailWebDav.prototype =
             var szHref = rawData.match(patternHotmailPOPHref)[1];
             this.m_Log.Write("HotmailWebDav.js - processItem - href - "+ szHref);
             oMSG.szMSGUri = szHref;
-    
+            
             //size 
             var iSize = parseInt(rawData.match(patternHotmailPOPSize)[1]);
             this.m_Log.Write("HotmailWebDav.js - processItem - size - "+ iSize);
@@ -532,15 +532,13 @@ HotmailWebDav.prototype =
             var oMSG = this.m_aMsgDataStore[lID-1];
             
             var szHeaders = "X-WebMail: true\r\n";
-            var szFolderURI = oMSG.szMSGUri.match(patternHotmailPOPFolder)[1];
-            this.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - get folder url - " + szFolderURI);
+            var szFolderURI = oMSG.szMSGUri.match(patternHotmailPOPFolderName)[1];
+            this.m_Log.Write("HotmailWebDav.js - getHeaders - get folder url - " + szFolderURI);
             
-            var szCleanName = szFolderName;
-            if (szFolderName.search(/active/i)!=-1)
-                szCleanName = "Inbox"
-            else if (szFolderName.search(/HM_BuLkMail_/i)!=-1)
-                szCleanName = "Spam";
-            mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - szCleanName - " + szCleanName); 
+            var szCleanName = szFolderURI;
+            if (szFolderURI.search(/active/i)!=-1) szCleanName = "Inbox"
+            else if (szFolderURI.search(/BuLkMail/i)!=-1) szCleanName = "Spam";
+            this.m_Log.Write("HotmailWebDav.js - getHeaders - szCleanName - " + szCleanName); 
             
             szHeaders += "X-JunkFolder: " +szCleanName+ "\r\n";
             szHeaders += "To: "+ oMSG.szTo +"\r\n";
@@ -557,7 +555,7 @@ HotmailWebDav.prototype =
             this.m_Log.Write("HotmailWebDav.js - getHeaders - END");
             return true; 
         }
-        catch(err)
+        catch(e)
         {
             this.m_Log.DebugDump("HotmailWebDav.js: getHeaders : Exception : " 
                                           + e.name + 
@@ -579,14 +577,10 @@ HotmailWebDav.prototype =
                     
             //get msg id
             var oMSG = this.m_aMsgDataStore[lID-1];
-            var szMsgID = oMSG.szMSGUri;
-            this.m_Log.Write("HotmailWebDav.js - getMessage - msg id" + szMsgID); 
+            this.m_Log.Write("HotmailWebDav.js - getMessage - msg url" + oMSG.szMSGUri); 
         
-            this.m_bJunkMail = oMSG.bJunkFolder;
-            this.m_Log.Write("HotmailWebDav.js - getMessage - m_bJunkMail" + this.m_bJunkMail); 
-              
             //get email
-            this.m_HttpComms.setURI(szMsgID);
+            this.m_HttpComms.setURI(oMSG.szMSGUri);
             this.m_HttpComms.setRequestMethod("GET");
             var bResult = this.m_HttpComms.send(this.emailOnloadHandler, this);                             
             if (!bResult) throw new Error("httpConnection returned false");
@@ -634,10 +628,8 @@ HotmailWebDav.prototype =
                     mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - szFolderName - " + szFolderName);
                     
                     var szCleanName = szFolderName;
-                    if (szFolderName.search(/active/i)!=-1)
-                        szCleanName = "Inbox"
-                    else if (szFolderName.search(/HM_BuLkMail_/i)!=-1)
-                        szCleanName = "Spam";
+                    if (szFolderName.search(/active/i)!=-1) szCleanName = "Inbox"
+                    else if (szFolderName.search(/BuLkMail/i)!=-1) szCleanName = "Spam";
                     mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - szCleanName - " + szCleanName);    
                     mainObject.m_szMSG += "X-Folder: " +szCleanName+ "\r\n";
                     
