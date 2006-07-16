@@ -131,11 +131,6 @@ HttpComms.prototype =
         }
         catch(err)
         {
-            this.m_Log.DebugDump("HttpComms2.js: setURI : Exception : " 
-                                                  + err.name 
-                                                  + ".\nError message: " 
-                                                  + err.message + "\n"
-                                                  + err.lineNumber);
             return false;
         }
     },
