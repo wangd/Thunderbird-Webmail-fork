@@ -22,3 +22,4 @@
 <!ENTITY SendHtml.Label "Pošlji besedilo html">
 <!ENTITY SendHtml.AccessKey "h">
 <!ENTITY error.Label "Ni najdenih računov Hotmail">
+<!ENTITY notNA.Label "No SMPT options for Hotmail BETA">

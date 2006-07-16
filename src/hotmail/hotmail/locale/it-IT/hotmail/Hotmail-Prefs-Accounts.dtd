@@ -22,3 +22,4 @@
 <!ENTITY SendHtml.Label "invia in HTML">
 <!ENTITY SendHtml.AccessKey "h">
 <!ENTITY error.Label "Nessun account Hotmail trovato">
+<!ENTITY notNA.Label "No SMPT options for Hotmail BETA">

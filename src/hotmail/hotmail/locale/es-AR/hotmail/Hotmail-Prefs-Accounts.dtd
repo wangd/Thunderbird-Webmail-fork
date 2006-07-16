@@ -22,3 +22,4 @@
 <!ENTITY SendHtml.Label "Enviar como texto HTML">
 <!ENTITY SendHtml.AccessKey "h">
 <!ENTITY error.Label "No se encontraron Cuentas de Hotmail">
+<!ENTITY notNA.Label "No SMPT options for Hotmail BETA">

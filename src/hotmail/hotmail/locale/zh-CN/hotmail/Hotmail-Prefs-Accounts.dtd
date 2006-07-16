@@ -26,3 +26,4 @@
 <!ENTITY SendHtml.AccessKey "h">
 
 <!ENTITY error.Label "No Hotmail Accounts Found"> 
+<!ENTITY notNA.Label "No SMPT options for Hotmail BETA">
