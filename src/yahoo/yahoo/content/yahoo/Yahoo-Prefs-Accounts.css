@@ -73,3 +73,8 @@
     font-style: italic;
     line-height: 2em;
 }
+
+#imageNA
+{
+    list-style-image: url("chrome://yahoo/skin/information.png");
+}

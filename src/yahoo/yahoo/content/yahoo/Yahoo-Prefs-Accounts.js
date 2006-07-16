@@ -399,6 +399,17 @@ var gPrefAccounts =
                         this.addItemFolderList(data.aszFolder[i]);
                     }
                 }
+                
+                if (data.bBeta)
+                {
+                    document.getElementById("vboxSmtpItems").setAttribute("hidden", true);
+                    document.getElementById("vboxSmtpNA").setAttribute("hidden", false);
+                }
+                else
+                {
+                    document.getElementById("vboxSmtpNA").setAttribute("hidden", true);
+                    document.getElementById("vboxSmtpItems").setAttribute("hidden", false);
+                }
             }
             this.m_DebugLog.Write("Yahoo-Pref-Accounts : userClick - END");
         }
@@ -427,6 +438,17 @@ var gPrefAccounts =
         this.m_DebugLog.Write("Yahoo-Pref-Accounts : rgModeOnChange -  iMode "+ iMode);
         this.m_aszUserList[this.m_iIndex].bBeta = iMode==1? true : false;
                 
+        if (this.m_aszUserList[this.m_iIndex].bBeta)
+        {
+            document.getElementById("vboxSmtpItems").setAttribute("hidden", true);
+            document.getElementById("vboxSmtpNA").setAttribute("hidden", false);
+        }
+        else
+        {
+            document.getElementById("vboxSmtpNA").setAttribute("hidden", true);
+            document.getElementById("vboxSmtpItems").setAttribute("hidden", false);
+        }
+            
         this.m_DebugLog.Write("Yahoo-Pref-Accounts : rgModeOnChange - END");
     },
     

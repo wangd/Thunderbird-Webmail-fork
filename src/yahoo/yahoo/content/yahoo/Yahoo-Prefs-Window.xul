@@ -147,10 +147,20 @@
                         </vbox>
                         
                         <vbox id="smptPanel" class="panel">
-                            <checkbox label="&SaveSentItems.Label;"
-                                      accesskey="&SaveSentItems.AccessKey;" 
-                                      id="chkSentItems"
-                                      onclick ="gPrefAccounts.chkSentItemsOnChange();"/>
+                            <vbox id="vboxSmtpItems">
+                                <checkbox label="&SaveSentItems.Label;"
+                                          accesskey="&SaveSentItems.AccessKey;" 
+                                          id="chkSentItems"
+                                          onclick ="gPrefAccounts.chkSentItemsOnChange();"/>
+                            </vbox>
+                            <vbox id="vboxSmtpNA">
+                                <hbox pack="center">
+                                    <image id="imageNA" />
+                                </hbox>
+                                <vbox align="center">
+                                    <label id="labelError" flex="1" value="&notNA.Label;"/>
+                                </vbox>        
+                            </vbox>
                         </vbox>
                     </tabpanels>
                 </tabbox>
