@@ -16,7 +16,7 @@ function HotmailScreenRipperBETA(oResponseStream, oLog, oPrefData)
         this.m_szUserName = null;   
         this.m_szPassWord = null; 
         this.m_oResponseStream = oResponseStream;  
-        this.m_HttpComms = new HttpComms();   
+        this.m_HttpComms = new HttpComms(this.m_Log);   
         this.m_szMailboxURI = null;
         this.m_szLocationURI = null;
         this.m_szJunkFolderURI = null;
@@ -134,7 +134,7 @@ HotmailScreenRipperBETA.prototype =
         try
         {
             mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler - START"); 
-            mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler : \n" + szResponse);
+           // mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -442,7 +442,7 @@ HotmailScreenRipperBETA.prototype =
         try
         {
             mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler - START"); 
-            mainObject.m_Log.Write("Hotmail-SR-BETA - mailBoxOnloadHandler : \n" + szResponse);
+           // mainObject.m_Log.Write("Hotmail-SR-BETA - mailBoxOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -829,7 +829,7 @@ HotmailScreenRipperBETA.prototype =
         try
         {
             mainObject.m_Log.Write("Hotmail-SR-BETA - emailOnloadHandler - START");
-            mainObject.m_Log.Write("Hotmail-SR-BETA - emailOnloadHandler : \n" + szResponse);
+            //mainObject.m_Log.Write("Hotmail-SR-BETA - emailOnloadHandler : \n" + szResponse);
              
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             mainObject.m_Log.Write("Hotmail-SR-BETAR - emailOnloadHandler - msg :" + httpChannel.responseStatus);
@@ -932,7 +932,7 @@ HotmailScreenRipperBETA.prototype =
         try
         {
             mainObject.m_Log.Write("Hotmail-SR-BETA - deleteMessageOnload - START");    
-            mainObject.m_Log.Write("Hotmail-SR-BETA - deleteMessageOnload : \n" + szResponse);
+            //mainObject.m_Log.Write("Hotmail-SR-BETA - deleteMessageOnload : \n" + szResponse);
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             

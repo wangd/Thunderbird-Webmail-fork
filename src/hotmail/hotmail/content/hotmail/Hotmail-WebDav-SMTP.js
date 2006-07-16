@@ -15,7 +15,7 @@ function HotmailSMTPWebDav(oResponseStream, oLog, oPrefData)
         this.m_szUserName = null;
         this.m_szPassWord = null;
         this.m_oResponseStream = oResponseStream;       
-        this.m_HttpComms = new HttpComms(); 
+        this.m_HttpComms = new HttpComms(this.m_Log); 
         this.m_HttpComms.setHandleHttpAuth(true);
         
         this.m_iStage=0; 
@@ -86,7 +86,7 @@ HotmailSMTPWebDav.prototype =
         try
         {
             mainObject.m_Log.Write("HotmailWD-SMTP.js - loginOnloadHandler - START"); 
-            mainObject.m_Log.Write("HotmailWD-SMTP.js - loginOnloadHandler : \n" + szResponse);
+            //mainObject.m_Log.Write("HotmailWD-SMTP.js - loginOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("HotmailWD-SMTP.js - loginOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -175,7 +175,7 @@ HotmailSMTPWebDav.prototype =
         try
         {
             mainObject.m_Log.Write("HotmailWD-SMTP.js - composerOnloadHandler - START");
-            mainObject.m_Log.Write("HotmailWD-SMTP.js - composerOnloadHandler : \n" + szResponse); 
+            //mainObject.m_Log.Write("HotmailWD-SMTP.js - composerOnloadHandler : \n" + szResponse); 
             mainObject.m_Log.Write("HotmailWD-SMTP.js - composerOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);

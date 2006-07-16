@@ -18,7 +18,7 @@ function HotmailScreenRipper(oResponseStream, oLog, oPrefData)
         this.m_szUserName = null;   
         this.m_szPassWord = null; 
         this.m_oResponseStream = oResponseStream;  
-        this.m_HttpComms = new HttpComms();   
+        this.m_HttpComms = new HttpComms(this.m_Log);   
         this.m_szLogOutURI = null;
         this.m_szLocationURI = null;
         this.m_aMsgDataStore = new Array();
@@ -138,7 +138,7 @@ HotmailScreenRipper.prototype =
         try
         {
             mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler - START"); 
-            mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler : \n" + szResponse);
+            //mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -392,7 +392,7 @@ HotmailScreenRipper.prototype =
         try
         {
             mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - START");
-            mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler : \n" + szResponse);
+            //mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -851,7 +851,7 @@ HotmailScreenRipper.prototype =
         try
         {
             mainObject.m_Log.Write("Hotmail-SR - emailOnloadHandler - START");
-            mainObject.m_Log.Write("Hotmail-SR - emailOnloadHandler : \n" + szResponse);
+            //mainObject.m_Log.Write("Hotmail-SR - emailOnloadHandler : \n" + szResponse);
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             mainObject.m_Log.Write("Hotmail-SR - emailOnloadHandler - msg :" + httpChannel.responseStatus);
@@ -990,7 +990,7 @@ HotmailScreenRipper.prototype =
         try
         {
             mainObject.m_Log.Write("Hotmail-SR - deleteMessageOnload - START");    
-            mainObject.m_Log.Write("Hotmail-SR - deleteMessageOnload : \n" + szResponse);
+            //mainObject.m_Log.Write("Hotmail-SR - deleteMessageOnload : \n" + szResponse);
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             
@@ -1050,7 +1050,7 @@ HotmailScreenRipper.prototype =
         try
         {
             mainObject.m_Log.Write("Hotmail-SR - logoutOnloadHandler - START");    
-            mainObject.m_Log.Write("Hotmail-SR - logoutOnloadHandler : \n" + szResponse);
+            //mainObject.m_Log.Write("Hotmail-SR - logoutOnloadHandler : \n" + szResponse);
                                 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             

@@ -17,7 +17,7 @@ function HotmailSMTPScreenRipperBETA(oResponseStream, oLog, oPrefData)
         this.m_szUserName = null;   
         this.m_szPassWord =null; 
         this.m_oResponseStream = oResponseStream;  
-        this.m_HttpComms = new HttpComms();   
+        this.m_HttpComms = new HttpComms(this.m_Log);   
         this.m_szLocationURI = null;
         this.m_szHomeURI = null;
         this.m_szComposer = null;
@@ -124,7 +124,7 @@ HotmailSMTPScreenRipperBETA.prototype =
         try
         {
             mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA - loginOnloadHandler - START"); 
-            mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA - loginOnloadHandler : \n" + szResponse);
+            //mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA - loginOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA - loginOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -410,7 +410,7 @@ HotmailSMTPScreenRipperBETA.prototype =
         try
         {
             mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA - composerOnloadHandler - START"); 
-            mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA - composerOnloadHandler : \n" + szResponse);
+            //mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA - composerOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA - composerOnloadHandler : " + mainObject.m_iStage );  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);

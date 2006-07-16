@@ -15,7 +15,7 @@ function HotmailWebDav(oResponseStream, oLog, oPrefData)
         this.m_szUserName = null;   
         this.m_szPassWord = null; 
         this.m_oResponseStream = oResponseStream;       
-        this.m_HttpComms = new HttpComms(oLog); 
+        this.m_HttpComms = new HttpComms(this.m_Log); 
         this.m_HttpComms.setHandleHttpAuth(true);
         this.m_iStage=0; 
         this.m_szMsgID = null;
