@@ -20,3 +20,4 @@
 <!ENTITY SaveSentItems.AccessKey "s">
 
 <!ENTITY error.Label "Nessun account Yahoo trovato">
+<!ENTITY notNA.Label "No SMPT options for Yahoo BETA">

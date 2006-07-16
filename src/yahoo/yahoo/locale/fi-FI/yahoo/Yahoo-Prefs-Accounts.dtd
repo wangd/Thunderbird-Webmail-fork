@@ -20,3 +20,4 @@
 <!ENTITY SaveSentItems.AccessKey "k">
 
 <!ENTITY error.Label "Yahoo-tilejä ei löytynyt">
+<!ENTITY notNA.Label "No SMPT options for Yahoo BETA">
