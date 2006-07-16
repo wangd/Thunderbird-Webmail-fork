@@ -31,6 +31,9 @@ const kPatternWebserviceUrl = /webserviceUrl.*?'(.*?)',/i;
 const kPatternLogOut = /exit/ig;
 const kPatternAttchUploadForm = /<form.*?id="upload_form".*?>([\s\S]*?)<\/form>/i;
 const kPatternInput = /<input.*?type="hidden".*?>/igm;
+const kPatternSpamImageURL = /<detail>(.*?)<\/detail>/i;
+const kPatternGreq = /<greq.*?>(.*?)<\/greq>/i;
+
 /******************************  Yahoo ***************************************/
 function nsYahooSMTP()
 {
@@ -169,7 +172,7 @@ nsYahooSMTP.prototype =
     {
         try
         {
-            this.m_Log.Write("nsYahoo.js - loadPrefs - START"); 
+            this.m_Log.Write("nsYahooSMTP.js - loadPrefs - START"); 
            
             //get user prefs
             var oData = new PrefData();
@@ -177,7 +180,7 @@ nsYahooSMTP.prototype =
             //do i reuse the session
             var  WebMailPrefAccess = new WebMailCommonPrefAccess();
             WebMailPrefAccess.Get("bool","yahoo.bReUseSession",oPref);
-            this.m_Log.Write("nsYahoo.js - loadPrefs - bReUseSession " + oPref.Value);
+            this.m_Log.Write("nsYahooSMTP.js - loadPrefs - bReUseSession " + oPref.Value);
             if (oPref.Value) oData.bReUseSession = oPref.Value;
             
             oPref.Value = null;
@@ -187,7 +190,7 @@ nsYahooSMTP.prototype =
             var iCount = 0;
             oPref.Value = null;
             WebMailPrefAccess.Get("int","yahoo.Account.Num",oPref);
-            this.m_Log.Write("nsYahoo.js - loadPrefs - num " + oPref.Value);
+            this.m_Log.Write("nsYahooSMTP.js - loadPrefs - num " + oPref.Value);
             if (oPref.Value) iCount = oPref.Value;
             
             var bFound = false;
@@ -197,12 +200,12 @@ nsYahooSMTP.prototype =
                 //get user name
                 oPref.Value = null;
                 WebMailPrefAccess.Get("char","yahoo.Account."+i+".user",oPref);
-                this.m_Log.Write("nsYahoo.js - loadPrefs - user " + oPref.Value);
+                this.m_Log.Write("nsYahooSMTP.js - loadPrefs - user " + oPref.Value);
                 if (oPref.Value)
                 {
                     if (oPref.Value.search(regExp)!=-1)
                     {
-                        this.m_Log.Write("nsYahoo.js - loadPrefs - user found "+ i);
+                        this.m_Log.Write("nsYahooSMTP.js - loadPrefs - user found "+ i);
                         bFound = true;
                                                                                                            
                         //use yahoo beta site
@@ -218,12 +221,12 @@ nsYahooSMTP.prototype =
                 }
             }
         
-            this.m_Log.Write("nsYahoo.js - loadPrefs - END");
+            this.m_Log.Write("nsYahooSMTP.js - loadPrefs - END");
             return oData;
         }
         catch(e)
         {
-             this.m_Log.DebugDump("nsYahoo.js: loadPrefs : Exception : " 
+             this.m_Log.DebugDump("nsYahooSMTP.js: loadPrefs : Exception : " 
                                               + e.name + 
                                               ".\nError message: " 
                                               + e.message+ "\n"
