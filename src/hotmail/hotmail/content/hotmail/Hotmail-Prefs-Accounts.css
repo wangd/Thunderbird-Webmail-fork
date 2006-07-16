@@ -82,3 +82,9 @@
     font-style: italic;
     line-height: 2em;
 }
+
+
+#imageNA
+{
+    list-style-image: url("chrome://hotmail/skin/information.png");
+}

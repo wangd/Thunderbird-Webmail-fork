@@ -442,16 +442,28 @@ var gPrefAccounts =
                     }
                 }
                 
-                //hid AlternativeGroup
-                if (data.iMode==0)  //enable alt part
+                
+                if (data.iMode == 2)  //Hotmail Beta
                 {
-                    this.m_DebugLog.Write("Hotmail-Pref-Accounts : userClick -  show  AlternativeGroup");
-                    document.getElementById("vboxAlt").setAttribute("hidden", false);
+                    document.getElementById("vboxSmtpItems").setAttribute("hidden", true);
+                    document.getElementById("vboxSmtpNA").setAttribute("hidden", false);
                 }
-                else                //disable alt part
+                else
                 {
-                    this.m_DebugLog.Write("Hotmail-Pref-Accounts : userClick -  Hide  AlternativeGroup");
-                    document.getElementById("vboxAlt").setAttribute("hidden", true);
+                    document.getElementById("vboxSmtpNA").setAttribute("hidden", true);
+                    document.getElementById("vboxSmtpItems").setAttribute("hidden", false);
+                    
+                    //hid AlternativeGroup
+                    if (data.iMode==0)  //enable alt part  -- ScreenRipper
+                    {
+                        this.m_DebugLog.Write("Hotmail-Pref-Accounts : userClick -  show  AlternativeGroup");
+                        document.getElementById("vboxAlt").setAttribute("hidden", false);
+                    }
+                    else                //disable alt part  -- Webdav
+                    {
+                        this.m_DebugLog.Write("Hotmail-Pref-Accounts : userClick -  Hide  AlternativeGroup");
+                        document.getElementById("vboxAlt").setAttribute("hidden", true);
+                    }  
                 }
             }
             this.m_DebugLog.Write("Hotmail-Pref-Accounts : userClick - END");
@@ -481,6 +493,30 @@ var gPrefAccounts =
         var iMode = document.getElementById("radiogroupMode").value;
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : rgModeOnChange -  iMode "+ iMode);
         this.m_aszUserList[this.m_iIndex].iMode = iMode;
+        
+        if (this.m_aszUserList[this.m_iIndex].iMode == 2)  //Hotmail Beta
+        {
+            document.getElementById("vboxSmtpItems").setAttribute("hidden", true);
+            document.getElementById("vboxSmtpNA").setAttribute("hidden", false);
+        }
+        else
+        {
+            document.getElementById("vboxSmtpNA").setAttribute("hidden", true);
+            document.getElementById("vboxSmtpItems").setAttribute("hidden", false);
+            
+            //hid AlternativeGroup
+            if (this.m_aszUserList[this.m_iIndex].iMode == 0)  //enable alt part  -- ScreenRipper
+            {
+                this.m_DebugLog.Write("Hotmail-Pref-Accounts : userClick -  show  AlternativeGroup");
+                document.getElementById("vboxAlt").setAttribute("hidden", false);
+            }
+            else                //disable alt part  -- Webdav
+            {
+                this.m_DebugLog.Write("Hotmail-Pref-Accounts : userClick -  Hide  AlternativeGroup");
+                document.getElementById("vboxAlt").setAttribute("hidden", true);
+            }  
+        }
+        
         
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : rgModeOnChange - END");
     },
