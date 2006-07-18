@@ -29,6 +29,13 @@ nsIMAPConnectionManager.prototype.Start = function()
                                                    Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
                 this.m_bGarbage = true;
             }
+
+            if (!this.m_serverSocket)
+            {
+                this.m_serverSocket = Components.classes["@mozilla.org/network/server-socket;1"]
+                                                .createInstance(Components.interfaces.nsIServerSocket);
+            }
+
             
             //get pref settings
             var  WebMailPrefAccess = new WebMailCommonPrefAccess();
@@ -79,6 +86,8 @@ nsIMAPConnectionManager.prototype.Stop = function()
         {
             this.m_Log.Write("nsIMAPConnectionManager.js - Stop - stopping");
             this.m_serverSocket.close();  //stop new conections
+            delete this.m_serverSocket;
+            this.m_serverSocket = null;
             this.m_iStatus = 1;  //set status to waiting = 1
         }
         
@@ -167,6 +176,7 @@ nsIMAPConnectionManager.prototype.onSocketAccepted = function(serverSocket, tran
 nsIMAPConnectionManager.prototype.onStopListening = function(serverSocket, status)
 {
    this.m_Log.Write("nsIMAPConnectionManager.js - onStopListening - START");
+   this.m_iStatus = 0;
    this.m_Log.Write("nsIMAPConnectionManager.js - onStopListening - END"); 
 }
 
@@ -230,7 +240,8 @@ nsIMAPConnectionManager.prototype.observe = function(aSubject, aTopic, aData)
                             getService(Components.interfaces.nsIObserverService);
             obsSvc.addObserver(this, "profile-after-change", false);
             obsSvc.addObserver(this, "quit-application", false);
-            
+            obsSvc.addObserver(this, "network:offline-status-changed", false);
+                 
             this.m_scriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                                     .getService(Components.interfaces.mozIJSSubScriptLoader);
                                     
@@ -259,6 +270,22 @@ nsIMAPConnectionManager.prototype.observe = function(aSubject, aTopic, aData)
         
         case "app-startup":
         break;
+        
+        case "network:offline-status-changed":
+            this.m_Log.Write("nsIMAPConnectionManager : network:offline-status-changed " + aData);
+            
+            if (aData.search(/online/)!=-1)
+            {
+                this.m_Log.Write("nsIMAPConnectionManager : going  Online");
+                this.Start();
+            }
+            else
+            {   
+                this.m_Log.Write("nsIMAPConnectionManager : going Offline");
+                this.Stop();
+            }    
+        break;
+        
         
         default:
             throw Components.Exception("Unknown topic: " + aTopic);

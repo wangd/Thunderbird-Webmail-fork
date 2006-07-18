@@ -35,6 +35,12 @@ nsPOPConnectionManager.prototype.Start = function()
                 this.m_bGarbage = true;
             }
             
+            if (!this.m_serverSocket)
+            {
+                this.m_serverSocket = Components.classes["@mozilla.org/network/server-socket;1"]
+                                                .createInstance(Components.interfaces.nsIServerSocket);
+            }
+            
             //get pref settings
             var  WebMailPrefAccess = new WebMailCommonPrefAccess();
             var oPref = new Object();
@@ -83,6 +89,8 @@ nsPOPConnectionManager.prototype.Stop = function()
         {
             this.m_Log.Write("nsPOPConnectionManager - Stop - stopping");
             this.m_serverSocket.close();  //stop new conections
+            delete this.m_serverSocket;
+            this.m_serverSocket = null;
             this.m_iStatus = 1;  //set status to waiting = 1
         }
         
@@ -235,6 +243,7 @@ nsPOPConnectionManager.prototype.observe = function(aSubject, aTopic, aData)
                             getService(Components.interfaces.nsIObserverService);
             obsSvc.addObserver(this, "profile-after-change", false);
             obsSvc.addObserver(this, "quit-application", false);
+            obsSvc.addObserver(this, "network:offline-status-changed", false);
              	       
             this.m_scriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                                     .getService(Components.interfaces.mozIJSSubScriptLoader);
@@ -261,6 +270,21 @@ nsPOPConnectionManager.prototype.observe = function(aSubject, aTopic, aData)
         case "quit-application": // shutdown code here
             this.m_Log.Write("nsPOPConnectionManager : quit-application");
             this.Stop();
+        break;
+        
+        case "network:offline-status-changed":
+            this.m_Log.Write("nsPOPConnectionManager : network:offline-status-changed " + aData);
+            
+            if (aData.search(/online/)!=-1)
+            {
+                this.m_Log.Write("nsPOPConnectionManager : going  Online");
+                this.Start();
+            }
+            else
+            {   
+                this.m_Log.Write("nsPOPConnectionManager : going Offline");
+                this.Stop();
+            }    
         break;
         
         case "app-startup":

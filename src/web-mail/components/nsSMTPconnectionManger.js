@@ -32,6 +32,12 @@ nsSMTPConnectionManager.prototype.Start = function()
                 this.m_bGarbage = true;
             }
         
+            if (!this.m_serverSocket)
+            {
+                this.m_serverSocket = Components.classes["@mozilla.org/network/server-socket;1"]
+                                                .createInstance(Components.interfaces.nsIServerSocket);
+            }
+
         
             //get pref settings
             var  WebMailPrefAccess = new WebMailCommonPrefAccess();
@@ -80,6 +86,8 @@ nsSMTPConnectionManager.prototype.Stop = function()
         {   
             this.m_Log.Write("nsSMTPConnectionManager.js - Stop - stopping");
             this.m_serverSocket.close();  //stop new conections
+            delete this.m_serverSocket;
+            this.m_serverSocket = null;
             this.m_iStatus = 1;  //set status to waiting = 1
         }
         
@@ -165,6 +173,7 @@ nsSMTPConnectionManager.prototype.onSocketAccepted = function(serverSocket, tran
 nsSMTPConnectionManager.prototype.onStopListening = function(serverSocket, status)
 {
    this.m_Log.Write("nsSMTPConnectionManager.js - onStopListening - START");
+   this.m_iStatus = 0;
    this.m_Log.Write("nsSMTPConnectionManager.js - onStopListening - END"); 
 }
 
@@ -226,6 +235,7 @@ nsSMTPConnectionManager.prototype.observe = function(aSubject, aTopic, aData)
                             getService(Components.interfaces.nsIObserverService);
             obsSvc.addObserver(this, "profile-after-change", false);
             obsSvc.addObserver(this, "quit-application", false);
+            obsSvc.addObserver(this, "network:offline-status-changed", false);
             
             this.m_scriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                                     .getService(Components.interfaces.mozIJSSubScriptLoader);
@@ -255,6 +265,22 @@ nsSMTPConnectionManager.prototype.observe = function(aSubject, aTopic, aData)
         
         case "app-startup":
         break;
+        
+        case "network:offline-status-changed":
+            this.m_Log.Write("nsSMTPConnectionManager : network:offline-status-changed " + aData);
+            
+            if (aData.search(/online/)!=-1)
+            {
+                this.m_Log.Write("nsSMTPConnectionManager : going  Online");
+                this.Start();
+            }
+            else
+            {   
+                this.m_Log.Write("nsSMTPConnectionManager : going Offline");
+                this.Stop();
+            }    
+        break;
+        
         
         default:
             throw Components.Exception("Unknown topic: " + aTopic);
