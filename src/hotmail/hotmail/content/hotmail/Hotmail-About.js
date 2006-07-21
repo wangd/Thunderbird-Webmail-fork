@@ -8,6 +8,9 @@ var gHotmailAbout =
 
     init : function()
     {
+        var hBoxVerNum = document.getElementById("HotmailVersionNumber");
+        hBoxVerNum.setAttribute("value", this.getVersion());
+        
         var strBundle = document.getElementById("stringsHotmailAbout");
         var szContributors = strBundle.getString("ExtContributorNames");
         var aszNames = szContributors.split(";");
@@ -24,6 +27,20 @@ var gHotmailAbout =
     },
 
 
+    getVersion : function ()
+    {
+        try
+        {
+            var nsIExtensionManager = Components.classes["@mozilla.org/extensions/manager;1"]
+                                    .getService(Components.interfaces.nsIExtensionManager);
+            return nsIExtensionManager.getItemForID("{a6a33690-2c6a-11d9-9669-0800200c9a66}").version;
+        }
+        catch(ex)
+        {
+            return "Unknown";
+        }
+    },
+    
     createDeck : function(base, aszNames)
     {
         var deck = document.createElement("deck"); 

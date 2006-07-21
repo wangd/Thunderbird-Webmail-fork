@@ -22,11 +22,13 @@
 }
 
 
-#YahooVersion
+.YahooVersion
 {
     color: #909090;
     margin-bottom: 3px;
+    margin-right: 5px;
 }
+
 
 #YahooDescription
 {

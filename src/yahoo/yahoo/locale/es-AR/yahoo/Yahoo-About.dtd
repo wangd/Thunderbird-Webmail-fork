@@ -1,6 +1,6 @@
 <!ENTITY YahooAbout.Title "Yahoo - Acerca de">
 <!ENTITY YahooAbout.ExtName "Yahoo">
-<!ENTITY YahooAbout.ExtVersion "version 1.1.0">
+<!ENTITY YahooAbout.ExtVersion "version">
 <!ENTITY YahooAbout.ExtDescription "Componente Yahoo para la extensión Web-Mail">
 <!ENTITY YahooAbout.ExtCreaterTitle "Creado por:">
 <!ENTITY YahooAbout.ExtCreator "ComodoDragon">

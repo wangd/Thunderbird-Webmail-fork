@@ -22,7 +22,10 @@
     <groupbox align="center" orient="horizontal">
         <vbox>
             <image id="Yahoo"/>
-            <text value="&YahooAbout.ExtVersion;" id = "YahooVersion"/>
+            <hbox>
+                <text value="&YahooAbout.ExtVersion;" id = "YahooVersionTitle" class="YahooVersion"/>
+                <text id = "YahooVersionNumber" class="YahooVersion"/>
+            </hbox>
             <text value="&YahooAbout.ExtDescription;" id = "YahooDescription"/>
             <text value="&YahooAbout.ExtCreaterTitle;" id = "YahooCreatorLabel"/>
             <hbox>

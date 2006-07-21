@@ -27,7 +27,10 @@
                 <spacer flex="1"/>
             </hbox>
             <!--<text value="&HotmailAbout.ExtName;" id = "HotmailName"/>-->
-            <text value="&HotmailAbout.ExtVersion;" id = "HotmailVersion"/>
+             <hbox>
+                <text value="&HotmailAbout.ExtVersion;" id = "HotmailVersionTitle" class="HotmailVersion"/>
+                <text id = "HotmailVersionNumber" class="HotmailVersion"/>
+            </hbox>
             <text value="&HotmailAbout.ExtDescription;" id = "HotmailDescription"/>
             <text value="&HotmailAbout.ExtCreaterTitle;" id = "HotmailCreatorLabel"/>
             <hbox>
