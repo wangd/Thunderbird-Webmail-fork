@@ -2,7 +2,7 @@
 <!ENTITY domainName.label "Domaine">
 <!ENTITY domainName.accessKey "D">
 <!ENTITY domain.label "AJouter le domaine Yahoo">
-<!ENTITY Ok.label "Ok">
-<!ENTITY Ok.accessKey "O">
+<!ENTITY Ok.label "Accepter">
+<!ENTITY Ok.accessKey "c">
 <!ENTITY Cancel.label "Annuler">
 <!ENTITY Cancel.accessKey "A">

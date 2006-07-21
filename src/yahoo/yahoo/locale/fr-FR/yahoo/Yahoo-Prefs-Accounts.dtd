@@ -1,11 +1,9 @@
 <!ENTITY POP.Panel.szTitle "POP">
 <!ENTITY SMTP.Panel.szTitle "SMTP">
 <!ENTITY Mode.Panel.szTitle "Mode">
-
-<!ENTITY Mode.label "Select website the extension will use">
-<!ENTITY ScreenScraper.label "Production Website">
-<!ENTITY Beta.label "BETA Website">
-
+<!ENTITY Mode.label "Sélectionner le site Web, que l&apos;extension va utiliser">
+<!ENTITY ScreenScraper.label "Site Web de production">
+<!ENTITY Beta.label "Site Web BETA">
 <!ENTITY DownloadUnread.Label "Télécharger seulement les messages non lus">
 <!ENTITY DownloadUnread.AccessKey "u">
 <!ENTITY JunkMail.Label "Télécharger les indésirables">
@@ -15,9 +13,7 @@
 <!ENTITY Remove.Label "Enlever">
 <!ENTITY Remove.AccessKey "E">
 <!ENTITY Folders.Label "Dossier de destination">
-
 <!ENTITY SaveSentItems.Label "Garder une copie dans la boîte d&apos;envoi">
 <!ENTITY SaveSentItems.AccessKey "d">
-
 <!ENTITY error.Label "Aucun compte Yahoo trouvé">
-<!ENTITY notNA.Label "No SMPT options for Yahoo BETA">
+<!ENTITY notNA.Label "Aucune option SMTP pour Yahoo BETA">
