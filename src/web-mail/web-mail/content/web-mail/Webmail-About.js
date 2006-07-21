@@ -8,6 +8,9 @@ var gWebMailAbout =
 
     init : function()
     {
+        var hBoxVerNum = document.getElementById("WebmailVersionNumber");
+        hBoxVerNum.setAttribute("value", this.getVersion());
+        
         var strBundle = document.getElementById("stringsWebmailAbout");
         var szContributors = strBundle.getString("ExtContributorNames");
         var aszNames = szContributors.split(";");
@@ -23,6 +26,20 @@ var gWebMailAbout =
         
     },
 
+
+    getVersion : function ()
+    {
+        try
+        {
+            var nsIExtensionManager = Components.classes["@mozilla.org/extensions/manager;1"]
+                                    .getService(Components.interfaces.nsIExtensionManager);
+            return nsIExtensionManager.getItemForID("{3c8e8390-2cf6-11d9-9669-0800200c9a66}").version;
+        }
+        catch(ex)
+        {
+            return "Unknown";
+        }
+    },
 
     createDeck : function(base, aszNames)
     {

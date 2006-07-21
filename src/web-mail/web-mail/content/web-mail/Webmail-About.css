@@ -20,10 +20,11 @@
     margin-bottom: 9px;
 }
 
-#WebmailVersion
+.WebmailVersion
 {
     color: #909090;
     margin-bottom: 3px;
+    margin-right: 5px;
 }
 
 #WebmailDescription

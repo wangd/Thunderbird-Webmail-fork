@@ -26,7 +26,10 @@
                 <image id="WebmailImage"/>
                 <spacer flex="1"/>
             </hbox>
-            <text value="&WebmailAbout.ExtVersion;" id = "WebmailVersion"/>
+            <hbox>
+                <text value="&WebmailAbout.ExtVersion;" id = "WebmailVersionTitle" class="WebmailVersion"/>
+                <text id = "WebmailVersionNumber" class="WebmailVersion"/>
+            </hbox>
             <text value="&WebmailAbout.ExtDescription;" id = "WebmailDescription"/>
             <text value="&WebmailAbout.ExtCreaterTitle;" id = "WebmailCreatorLabel"/>
             <hbox>
