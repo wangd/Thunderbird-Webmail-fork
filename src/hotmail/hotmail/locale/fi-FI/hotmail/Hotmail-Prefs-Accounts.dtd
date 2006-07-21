@@ -22,4 +22,4 @@
 <!ENTITY SendHtml.Label "Lähetä HTML">
 <!ENTITY SendHtml.AccessKey "H">
 <!ENTITY error.Label "Hotmail-tilejä ei löytynyt">
-<!ENTITY notNA.Label "No SMPT options for Hotmail BETA">
+<!ENTITY notNA.Label "Hotmail BETA:lle ei ole SMTP-asetuksia">

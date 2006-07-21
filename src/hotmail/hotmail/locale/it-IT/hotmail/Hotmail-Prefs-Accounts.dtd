@@ -1,10 +1,10 @@
-<!ENTITY Mode.Panel.szTitle "Modo">
+<!ENTITY Mode.Panel.szTitle "Modalità">
 <!ENTITY POP.Panel.szTitle "POP">
 <!ENTITY SMTP.Panel.szTitle "SMTP">
 <!ENTITY Mode.label "Selezionare come il componente Hotmail si collegherà ai server Microsoft">
-<!ENTITY ScreenScraper.label "Sito web di Hotmail (produzione)">
+<!ENTITY ScreenScraper.label "Sito web di produzione di Hotmail">
 <!ENTITY WebDav.label "WebDav">
-<!ENTITY Beta.label "Sito web di Hotmail (BETA)">
+<!ENTITY Beta.label "Sito web di Hotmail BETA">
 <!ENTITY DownloadUnread.Label "Scarica solo messaggi non letti">
 <!ENTITY DownloadUnread.AccessKey "N">
 <!ENTITY JunkMail.Label "Scarica posta indesiderata">
@@ -22,4 +22,4 @@
 <!ENTITY SendHtml.Label "invia in HTML">
 <!ENTITY SendHtml.AccessKey "h">
 <!ENTITY error.Label "Nessun account Hotmail trovato">
-<!ENTITY notNA.Label "No SMPT options for Hotmail BETA">
+<!ENTITY notNA.Label "Nessuna opzione SMPT per Hotmail BETA">
