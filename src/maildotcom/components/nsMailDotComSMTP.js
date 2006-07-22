@@ -11,14 +11,13 @@ const patternMailDotComType = /type="(.*?)"/i;
 const patternMailDotComValue = /value=\s?['??|"??](\S*)['??|"??]/i;
 const patternMailDotComName = /name=\s?["??|'??](\S*)["??|'??]/i;
 const patternMailDotComFrame = /<frame.*?src="(.*?)".*?name="mailcomframe".*?>/i;
-const patternMailDotComComposeButtonForm = /<form.*?>.*?<input type="button".*?compose.*?>.*?<\/form>/igm;
-const patternMailDotComSMTPInput = /<input.*?>/igm;
-const patternMailDotComComposerURI = /onclick="document.location.href='(.*?compose.*?)';"/i
+const patternMailDotComComposeButtonForm = /<form.*?>[\s\S]*?<input type="button".*?compose.*?>[\s\S]*?<\/form>/igm;
+const patternMailDotComComposerURI = /'(.*?compose.*?)'/i
 const patternMailDotComComposeForm = /<form.*?composeForm.*?>[\s\S]*<\/form>/igm;
 const patternMailDotComAddURI = /document.location.href="(.*?)"/;
 const patternMailDotComAttachForm = /<form.*?attachmentForm.*?>[\s\S]*<\/form>/igm;
-const patternMailDotComFolders = /href="(.*?folders.mail.*?)"/;
-
+const patternMailDotComFolders = /href="(.*?folders.mail.*?)"/i;
+const patternMailDotComSMTPInput = /<input.*?>/igm;
 /******************************  MailDotCom ***************************************/
 function nsMailDotComSMTP()
 {
@@ -299,10 +298,8 @@ nsMailDotComSMTP.prototype =
                 break;
                 
                 
-                case 3://get folder list
-                    var szLocation = httpChannel.URI.spec;
-                    mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - location "+ szLocation);
-                    if (szLocation.search(/frontpage.main/)==-1)
+                case 3://get composer link
+                    if (szResponse.search(/logout/i)==-1)
                     {
                         if (mainObject.m_bReEntry)
                         {
@@ -318,11 +315,8 @@ nsMailDotComSMTP.prototype =
                             throw new Error("error logging in");
                     }
                     
-                    mainObject.m_szLocation = httpChannel.URI.prePath 
-                    mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - location "+ mainObject.m_szLocation);
-                        
                     
-                    //get composer uri
+                    
                     var aszComposerForm = szResponse.match(patternMailDotComComposeButtonForm);
                     mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - aszComposerForm "+ aszComposerForm);
                     var aInputs = aszComposerForm[0].match(patternMailDotComSMTPInput);
@@ -331,21 +325,23 @@ nsMailDotComSMTP.prototype =
                     for (i=0; i<aInputs.length; i++)
                     {
                         mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - Input "+ aInputs[i]); 
-                        if (aInputs[i].search(/compose/)!=-1)
+                        if (aInputs[i].search(/compose/i)!=-1)  //get composer url
                         {
-                            szComposer = aInputs[i].match(patternMailDotComComposerURI)[1];
-                            mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - szComposer "+ szComposer);
-                            mainObject.m_szComposeURI =  mainObject.m_szLocation + szComposer;
+                            mainObject.m_szComposeURI =  aInputs[i].match(patternMailDotComComposerURI)[1];
                             mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - composer "+ mainObject.m_szComposeURI);
                         }
                     }
                     
+                    
+                    mainObject.m_szLocation = httpChannel.URI.prePath;     
+                    mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - m_szLocation "+ mainObject.m_szLocation); 
+            
+            
                     //get folder uri
                     var szFolder = szResponse.match(patternMailDotComFolders)[1];
                     mainObject.m_szFolderList =  mainObject.m_szLocation + szFolder;
                     mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - folders "+ mainObject.m_szFolderList);
-                  
-                  
+                    
                     //server response
                     mainObject.serverComms("235 Your In\r\n");
                     mainObject.m_bAuthorised = true;
