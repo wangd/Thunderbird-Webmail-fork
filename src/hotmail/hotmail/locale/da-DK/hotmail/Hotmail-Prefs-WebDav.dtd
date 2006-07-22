@@ -1,7 +1,0 @@
-<!ENTITY MailServers.Label "WebDav">
-<!ENTITY UserName.Label "Brugernavn">
-<!ENTITY ScreenRipper.Label "Skærmripper">
-<!ENTITY WebDav.Label "Web Dav">
-<!ENTITY list.size "height: 17em !important;">
-<!ENTITY Edit.label "Skift modus">
-<!ENTITY Edit.accessKey "m">
