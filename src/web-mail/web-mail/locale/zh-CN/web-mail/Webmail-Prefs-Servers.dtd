@@ -4,7 +4,7 @@
 <!ENTITY Pop.Label "POP">
 <!ENTITY Pop.AccessKey "O">
 <!ENTITY POP.Default.Label "默认: 110">
-<!ENTITY Note.Label "OS 可能会阻止低于 1024 的端口。">
+<!ENTITY Note.Label "操作系统可能会阻止低于 1024 的端口。">
 <!ENTITY Restart.Label "所有更改将在重新启动 Thunderbird 后生效。">
 <!ENTITY SMTP.Label "SMTP">
 <!ENTITY SMTP.AccessKey "S">
@@ -22,4 +22,4 @@
 <!ENTITY Enable.AccessKey "E">
 <!ENTITY Status.Label "状态">
 <!ENTITY Status.AccessKey "u">
-<!ENTITY StatusBox.size "width: 6em;">
+<!ENTITY StatusBox.size "宽度: 6em;">
