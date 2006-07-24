@@ -14,7 +14,7 @@ const patternMailDotComFrame = /<frame.*?src="(.*?)".*?name="mailcomframe".*?>/i
 const patternMailDotComFolders = /href="(.*?folders.mail.*?)"/;
 const patternMailDotComFolderList = /href=".*?".*?class="fb"/gm;
 const patternMailDotComFolderURI= /href="(.*?)"/;
-const patternMailDotComFolderName=/.*?folder=(.*?)&.*?$/i;
+const patternMailDotComFolderName=/folder=(.*?)&/i;
 const patternMailDotComAddURI = /document.location.href="(.*?)"/;
 const patternMailDotComMsgTable = /<tbody>[\S\s]*<\/tbody>/igm;
 const patternMailDotComNext = /<a href="(.*?mailbox.mail.*?)" class="fl">Next<\/a>/;
@@ -44,56 +44,43 @@ function nsMailDotCom()
         scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://maildotcom/content/MailDotCom-MSG.js");
+        scriptLoader.loadSubScript("chrome://maildotcom/content/MailDotCom-Prefs-Data.js");
             
         var date = new Date();
         var  szLogFileName = "MailDotCom Log - " + date.getHours()+ "-" 
                                     + date.getMinutes() + "-"+ date.getUTCMilliseconds() +" -";
         this.m_Log = new DebugLog("webmail.logging.comms", ExtMailDotComGuid, szLogFileName); 
-        
         this.m_Log.Write("nsMailDotCom.js - Constructor - START");   
        
+        //login data
         this.m_bAuthorised = false;
         this.m_szUserName = null;   
         this.m_szPassWord = null; 
-        this.m_HttpComms = new HttpComms();
-        this.m_oResponseStream = null; 
-        this.m_iStage = 0;
-        this.m_BeforeAdsCallback = null;
-        
-        this.m_szLocation=null;
-        this.m_szFolderList=null;
-        this.m_szInboxURI=null;
-        this.m_szTrashURI=null;
-        this.m_szDeleteURI = null;
-        this.m_szMSGID = null;
-                       
-        this.m_iTotalSize = 0; 
-        this.m_aMsgDataStore = new Array();
-        this.m_bJunkMail= false;
-        this.m_szHeaders = null;
-        
-        this.m_ComponentManager = Components.classes["@mozilla.org/nsComponentData2;1"];
-        this.m_ComponentManager = this.m_ComponentManager.getService(Components.interfaces.nsIComponentData2);
-        
+        this.m_oResponseStream = null;
         this.m_bReEntry = false;
         
-        //do i reuse the session
-        var oPref = {Value:null};
-        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-        if (WebMailPrefAccess.Get("bool","maildotcom.bReUseSession",oPref))
-            this.m_bReUseSession=oPref.Value;
-        else
-            this.m_bReUseSession=true; 
-            
-        //do i download unread only
-        oPref.Value = null;
-        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-        if (WebMailPrefAccess.Get("bool","maildotcom.bDownloadUnread",oPref))
-            this.m_bDownloadUnread=oPref.Value;
-        else
-            this.m_bDownloadUnread=false;
+        this.m_prefData = null;
         
-        this.m_bStat = false;               
+        //comms
+        this.m_HttpComms = new HttpComms(this.m_Log); 
+        this.m_iStage = 0;
+        this.m_BeforeAdsCallback = null;
+        this.m_szLocation=null;
+        this.m_szFolderList=null;
+        this.m_aszURI = new Array();
+        this.m_szTrashURI=null;
+        this.m_szDeleteURI = null;
+        
+        //msg data
+        this.m_szMSGID = null;               
+        this.m_iTotalSize = 0; 
+        this.m_aMsgDataStore = new Array();
+        this.m_szFolderName = null;
+        this.m_szHeaders = null;
+        this.m_bStat = false;   
+         
+        this.m_ComponentManager = Components.classes["@mozilla.org/nsComponentData2;1"];
+        this.m_ComponentManager = this.m_ComponentManager.getService(Components.interfaces.nsIComponentData2);            
         this.m_Log.Write("nsMailDotCom.js - Constructor - END");  
     }
     catch(e)
@@ -135,12 +122,14 @@ nsMailDotCom.prototype =
             
             if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
             
+            this.m_prefData = this.loadPrefs();   //get prefs
+            
             this.m_iStage =0;
             this.m_HttpComms.setURI("http://www.mail.com");
             this.m_HttpComms.setRequestMethod("GET");
             this.m_HttpComms.setUserName(this.m_szUserName);         
-            
-            if (this.m_bReUseSession)
+                
+            if (this.m_prefData.bReUseSession)
             {
                 this.m_Log.Write("nsMailDotCom.js - logIN - Session Data found");
                 this.m_szLocation =  this.m_ComponentManager.findElement(this.m_szUserName, "szLocation");
@@ -187,7 +176,7 @@ nsMailDotCom.prototype =
         try
         {
             mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - START"); 
-            mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler : \n" + szResponse);
+         //   mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler : " +mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -222,8 +211,7 @@ nsMailDotCom.prototype =
                 case 1: //login page
                     //get login form
                     var szForm= szResponse.match(patternMailDotComLoginForm)[0];
-                    if (!szForm) 
-                    
+                    if (!szForm)
                         throw new Error("error parsing mail.com login web page");
                     mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - form " + szForm );
                     
@@ -348,23 +336,29 @@ nsMailDotCom.prototype =
                     var szPath = szLocation.match(/(http:\/\/.*?)\//i)[1];  
                     mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - path "+ szPath);
                     
-                    for(i=0; i<aszFolderList.length; i++)
+                    for (j=0; j<mainObject.m_prefData.aszFolder.length; j++)
                     {
-                        var szHref = aszFolderList[i].match(patternMailDotComFolderURI)[1];
-                        mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - folders uri "+ szHref);
-                        var szName = szHref.match(patternMailDotComFolderName)[1];     
-                        mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - folders name "+ szName);
-                    
-                        if (szName.search(/inbox/i)!=-1) //get inbox
+                        var regExp = new RegExp("^"+mainObject.m_prefData.aszFolder[j]+"$","i");
+                        mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - regExp "+ regExp);
+                        
+                        for(i=0; i<aszFolderList.length; i++)
                         {
-                            mainObject.m_szInboxURI =  szPath + szHref +"&order=Oldest"; 
-                            mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - Inbox "+ mainObject.m_szInboxURI);
+                            var szHref = aszFolderList[i].match(patternMailDotComFolderURI)[1];
+                            mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - folders uri "+ szHref);
+                            var szName = szHref.match(patternMailDotComFolderName)[1];     
+                            mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - folders name "+ szName);
+                        
+                            if (szName.search(regExp)!=-1) //get urls
+                            {
+                                mainObject.m_aszURI.push(szPath + szHref +"&order=Oldest"); 
+                                mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - mailbox found");
+                            }
+                            else if (szName.search(/trash/i)!=-1 && mainObject.m_szTrashURI == null)//get trash
+                            {
+                                mainObject.m_szTrashURI =  szPath + szHref;
+                                mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - trash found");
+                            }  
                         }
-                        else if (szName.search(/trash/i)!=-1)//get trash
-                        {
-                            mainObject.m_szTrashURI =  szPath + szHref;
-                            mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - trash "+ mainObject.m_szTrashURI);
-                        }  
                     }
                     
                     //server response
@@ -396,13 +390,13 @@ nsMailDotCom.prototype =
     {
         try
         {
-            this.m_Log.Write("nsMailDotCom.js - getNumMessages - START"); 
-            
-            if (this.m_szInboxURI == null) return false;
-            this.m_Log.Write("nsMailDotCom.js - getNumMessages - Inbox " + this.m_szInboxURI); 
-            
+            this.m_Log.Write("nsMailDotCom.js - getNumMessages - START");
+            if (this.m_aszURI.length==0) return false;
+             
             this.m_iStage=0;
-            this.m_HttpComms.setURI(this.m_szInboxURI);
+            var szURI = this.m_aszURI.shift();
+            
+            this.m_HttpComms.setURI(szURI);
             this.m_HttpComms.setRequestMethod("GET");
             var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this); 
             if (!bResult) throw new Error("httpConnection returned false");
@@ -429,7 +423,7 @@ nsMailDotCom.prototype =
         try
         {
             mainObject.m_Log.Write("nsMailDotCom.js - mailBoxOnloadHandler - START"); 
-            mainObject.m_Log.Write("nsMailDotCom.js - mailBoxOnloadHandler : \n" + szResponse);                      
+           // mainObject.m_Log.Write("nsMailDotCom.js - mailBoxOnloadHandler : \n" + szResponse);                      
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             mainObject.m_Log.Write("nsMailDotCom.js - mailBoxOnloadHandler - Mailbox :" + httpChannel.responseStatus);
                       
@@ -552,6 +546,14 @@ nsMailDotCom.prototype =
                 var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler, mainObject); 
                 if (!bResult) throw new Error("httpConnection returned false");
             }
+            else if(mainObject.m_aszURI.length>0)
+            {
+                var szURI = mainObject.m_aszURI.shift();
+                mainObject.m_HttpComms.setURI(szURI);
+                mainObject.m_HttpComms.setRequestMethod("GET");
+                var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler, mainObject); 
+                if (!bResult) throw new Error("httpConnection returned false");
+            }
             else  //return msg number
             {
                 if (mainObject.m_bStat) //called by stat
@@ -618,7 +620,7 @@ nsMailDotCom.prototype =
             }
             else
             { //download msg list   
-                this.m_Log.Write("AOL - getMessageSizes - calling stat"); 
+                this.m_Log.Write("nsMailDotCom - getMessageSizes - calling stat"); 
                 
                 if (this.m_szInboxURI == null) return false;
                 this.m_Log.Write("nsMailDotCom.js - getNumMessages - Inbox " + this.m_szInboxURI); 
@@ -690,9 +692,11 @@ nsMailDotCom.prototype =
             this.m_Log.Write("nsMailDotCom.js - getHeaders - id " + lID ); 
             
             var oMSG = this.m_aMsgDataStore[lID-1];
+            var szHref = oMSG.szMSGUri;
+            var szFolderName = szHref.match(patternMailDotComFolderName)[1];
             
             var szHeaders = "X-WebMail: true\r\n";
-            szHeaders += "X-JunkFolder: " +(oMSG.bJunkFolder? "true":"false")+ "\r\n";
+            szHeaders += "X-Folder: " +szFolderName+ "\r\n";
             szHeaders += "To: "+ oMSG.szTo +"\r\n";
             szHeaders += "From: "+ oMSG.szFrom +"\r\n";
             szHeaders += "Subject: "+ oMSG.szSubject +"\r\n";
@@ -732,9 +736,11 @@ nsMailDotCom.prototype =
             var szHref = oMSG.szMSGUri;
             this.m_Log.Write("nsMailDotCom.js - getMessage - msg id" + szHref); 
             this.m_szMSGID = szHref.match(patternMailDotComMsgId)[1];
+            this.m_szFolderName = szHref.match(patternMailDotComFolderName)[1];
             var szMsgURI = this.m_szLocation;
             szMsgURI += "/scripts/mail/mesg.mail";
-            szMsgURI += "?folder=INBOX&msg_uid=" + this.m_szMSGID+"&mhead=f&print=1";
+            szMsgURI += "?folder=" + this.m_szFolderName;
+            szMsgURI += "&msg_uid=" + this.m_szMSGID+"&mhead=f&print=1";
             
             this.m_bJunkMail = oMSG.bJunkFolder;
             
@@ -765,7 +771,7 @@ nsMailDotCom.prototype =
         try
         {
             mainObject.m_Log.Write("nsMailDotCom.js - emailOnloadHandler - START");
-            mainObject.m_Log.Write("nsMailDotCom.js - emailOnloadHandler : \n" + szResponse);            
+            //mainObject.m_Log.Write("nsMailDotCom.js - emailOnloadHandler : \n" + szResponse);            
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             mainObject.m_Log.Write("nsMailDotCom.js - emailOnloadHandler - msg code :" + httpChannel.responseStatus);
                       
@@ -787,9 +793,7 @@ nsMailDotCom.prototype =
             {
                 case 0: //parse email web page
                     mainObject.m_szHeaders = "X-WebMail: true\r\n";
-                    mainObject.m_szHeaders += "X-JunkFolder: " +
-                                            (mainObject.m_bJunkMail? "true":"false")+
-                                            "\r\n";
+                    mainObject.m_szHeaders += "X-Folder: " + mainObject.m_szFolderName+"\r\n";
                      
                     //get message block
                     var aszMSG = szResponse.match(patternMailDotComMSG);
@@ -895,11 +899,11 @@ nsMailDotCom.prototype =
             //create URL
             var szDest = this.m_aMsgDataStore[lID-1].szMSGUri;
             this.m_Log.Write("nsMailDotCom.js - deleteMessage - id " + szDest );
-            
+            var szFolderName = szDest.match(patternMailDotComFolderName)[1];
             var szPath = this.m_szLocation + this.m_szDeleteURI;
             this.m_Log.Write("nsMailDotCom.js - deleteMessage - URI " + szPath );
-            
-            this.m_HttpComms.addValuePair("folder","INBOX");  
+                      
+            this.m_HttpComms.addValuePair("folder",szFolderName);  
             this.m_HttpComms.addValuePair("order","Newest");  
             this.m_HttpComms.addValuePair("changeview","0");  
             this.m_HttpComms.addValuePair("mview","a"); 
@@ -943,7 +947,7 @@ nsMailDotCom.prototype =
         try
         {
             mainObject.m_Log.Write("nsMailDotCom.js - deleteMessageOnload - START");    
-            mainObject.m_Log.Write("nsMailDotCom.js - deleteMessageOnload :\n" + szResponse); 
+           // mainObject.m_Log.Write("nsMailDotCom.js - deleteMessageOnload :\n" + szResponse); 
            
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
            
@@ -1020,7 +1024,7 @@ nsMailDotCom.prototype =
         try
         {
             mainObject.m_Log.Write("nsMailDotCom.js - logOutOnloadHandler - START");    
-            mainObject.m_Log.Write("nsMailDotCom.js - logOutOnloadHandler : \n" + szResponse);
+            //mainObject.m_Log.Write("nsMailDotCom.js - logOutOnloadHandler : \n" + szResponse);
                                   
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             mainObject.m_Log.Write("nsMailDotCom.js - logOutOnloadHandler :" + httpChannel.responseStatus);
@@ -1036,7 +1040,7 @@ nsMailDotCom.prototype =
                 return;
             }
                  
-            if (mainObject.m_bReUseSession)
+            if (mainObject.m_prefData.bReUseSession)
             { 
                 mainObject.m_Log.Write("nsMailDotCom.js - Logout - Setting Session Data");           
                 mainObject.m_ComponentManager.addElement(mainObject.m_szUserName, "szLocation",mainObject.m_szLocation);   
@@ -1102,7 +1106,7 @@ nsMailDotCom.prototype =
         try
         {
             mainObject.m_Log.Write("nsMailDotCom.js - adsHandler - START");
-            mainObject.m_Log.Write("nsMailDotCom.js - adsHandler : \n" + szResponse);
+            //mainObject.m_Log.Write("nsMailDotCom.js - adsHandler : \n" + szResponse);
                         
             var szMailBox = szResponse.match(patternMailDotComFrame)[1];
             if (!szMailBox) 
@@ -1128,8 +1132,97 @@ nsMailDotCom.prototype =
     },
     
 
+
+    loadPrefs : function()
+    {
+        try
+        {
+            this.m_Log.Write("nsMailDotCom.js - loadPrefs - START"); 
+           
+            //get user prefs
+            var oData = new PrefData();
+            var oPref = {Value:null};
+            //do i reuse the session
+            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+            WebMailPrefAccess.Get("bool","maildotcom.bReUseSession",oPref);
+            this.m_Log.Write("nsMailDotCom.js - loadPrefs - bReUseSession " + oPref.Value);
+            if (oPref.Value) oData.bReUseSession = oPref.Value;
+                        
+            var iCount = 0;
+            oPref.Value = null;
+            WebMailPrefAccess.Get("int","maildotcom.Account.Num",oPref);
+            this.m_Log.Write("nsMailDotCom.js - loadPrefs - num " + oPref.Value);
+            if (oPref.Value) iCount = oPref.Value;
+                       
+            var bFound = false;
+            var regExp = new RegExp(this.m_szUserName,"i");
+            for (i=0; i<iCount; i++)
+            {
+                //get user name
+                oPref.Value = null;
+                WebMailPrefAccess.Get("char","maildotcom.Account."+i+".user",oPref);
+                this.m_Log.Write("nsMailDotCom.js - loadPrefs - user " + oPref.Value);
+                if (oPref.Value)
+                {
+                    if (oPref.Value.search(regExp)!=-1)
+                    {
+                        this.m_Log.Write("nsMailDotCom.js - loadPrefs - user found "+ i);
+                        bFound = true;
+                                                                                   
+                        //inbox
+                        oData.aszFolder.push("inbox"); 
+                        
+                        //get folders
+                        WebMailPrefAccess.Get("char","maildotcom.Account."+i+".szFolders",oPref);
+                        this.m_Log.Write("nsMailDotCom.js - loadPrefs - szFolders " + oPref.Value);
+                        if (oPref.Value)
+                        {
+                            var aszFolders = oPref.Value.split("\r");
+                            for (j=0; j<aszFolders.length; j++)
+                            {
+                                this.m_Log.Write("nsMailDotCom - loadPRefs - aszFolders[j] " + aszFolders[j]);
+                                oData.aszFolder.push(encodeURIComponent(aszFolders[j]));
+                            }
+                        }
+                        
+                        //get unread
+                        oPref.Value = null;
+                        WebMailPrefAccess.Get("bool","maildotcom.Account."+i+".bDownloadUnread",oPref);
+                        this.m_Log.Write("nsMailDotCom.js - loadPrefs - bDownloadUnread " + oPref.Value);
+                        if (oPref.Value) oData.bUnread=oPref.Value;  
+                    }
+                }
+            }
+            
+            if (!bFound) //get defaults
+            {
+                this.m_Log.Write("nsYahoo - loadPrefs - Default Folders");
+                
+                //unread only
+                oPref.Value = null;
+                WebMailPrefAccess.Get("bool","maildotcom.bDownloadUnread",oPref);
+                this.m_Log.Write("nsMailDotCom.js - loadPrefs - bDownloadUnread " + oPref.Value);
+                if (oPref.Value) oData.bUnread=oPref.Value;
+               
+                //inbox
+                this.m_Log.Write("nsMailDotCom - loadPrefs - Default Folders - inbox");
+                oData.aszFolder.push("inbox");
+            }
+            this.m_Log.Write("nsMailDotCom.js - loadPrefs - END");
+            return oData;
+        }
+        catch(e)
+        {
+             this.m_Log.DebugDump("nsMailDotCom.js: loadPrefs : Exception : " 
+                                              + e.name + 
+                                              ".\nError message: " 
+                                              + e.message+ "\n"
+                                              + e.lineNumber);
+            return null;
+        }
+    },
+
     /////////////////////    Comms Code /////////////////////////////////////////
-     
     serverComms : function (szMsg)
     {
         try

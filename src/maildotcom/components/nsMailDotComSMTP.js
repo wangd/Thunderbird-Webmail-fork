@@ -29,6 +29,7 @@ function nsMailDotComSMTP()
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Email.js");
+        scriptLoader.loadSubScript("chrome://maildotcom/content/MailDotCom-Prefs-Data.js");
         
         
         var date = new Date();
@@ -43,7 +44,7 @@ function nsMailDotComSMTP()
         this.m_szUserName = null;   
         this.m_szPassWord = null; 
         this.m_oResponseStream = null;  
-        this.m_HttpComms = new HttpComms();
+        this.m_HttpComms = new HttpComms(this.m_Log);
         this.m_aszTo = new Array;
         this.m_szFrom = null;
         
@@ -62,33 +63,7 @@ function nsMailDotComSMTP()
         
         this.m_bReEntry = false;
         
-        //do i reuse the session
-        var oPref = new Object();
-        oPref.Value = null;
-        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-        if (WebMailPrefAccess.Get("bool","maildotcom.bReUseSession",oPref))
-            this.m_bReUseSession=oPref.Value;
-        else
-            this.m_bReUseSession=true; 
-            
-        //do i save copy
-        var oPref = new Object();
-        oPref.Value = null;
-        var  PrefAccess = new WebMailCommonPrefAccess();
-        if (PrefAccess.Get("bool","maildotcom.bSaveCopy",oPref))
-            this.m_bSaveCopy=oPref.Value;
-        else
-            this.m_bSaveCopy=true;          
-        delete oPref;
-        
-        //what do i do with alternative parts
-        oPref = new Object();
-        oPref.Value = null;
-        if (PrefAccess.Get("bool","maildotcom.bSendHtml",oPref))
-            this.m_bSendHtml = oPref.Value;
-        else
-            this.m_bSendHtml = false;    
-        delete oPref;
+        this.m_prefData = null;
             
         this.m_Log.Write("nsMailDotComSMTP.js - Constructor - END");  
     }
@@ -134,14 +109,16 @@ nsMailDotComSMTP.prototype =
                                                    + " stream: " + this.m_oResponseStream);
             
             if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
-                 
+            
+            this.m_prefData = this.loadPrefs();   //get prefs
+                
             //get mail.com webpage
             this.m_iStage =0;
             this.m_HttpComms.setURI("http://www.mail.com");
             this.m_HttpComms.setRequestMethod("GET");
             this.m_HttpComms.setUserName(this.m_szUserName);           
             
-            if (this.m_bReUseSession)
+            if (this.m_prefData.bReUseSession)
             {
                 this.m_Log.Write("nsMailDotCom.js - logIN - Session Data found");
                 this.m_szLocation =  this.m_ComponentManager.findElement(this.m_szUserName, "szLocation");
@@ -190,7 +167,7 @@ nsMailDotComSMTP.prototype =
         try
         {
             mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - START"); 
-            mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler : \n" + szResponse);
+            //mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler : " +mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -404,7 +381,7 @@ nsMailDotComSMTP.prototype =
         try
         {
             mainObject.m_Log.Write("nsMailDotComSMTP.js - composerOnloadHandler - START"); 
-            mainObject.m_Log.Write("nsMailDotComSMTP.js - composerOnloadHandler : \n" + szResponse);
+            //mainObject.m_Log.Write("nsMailDotComSMTP.js - composerOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("nsMailDotComSMTP.js - composerOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -453,14 +430,14 @@ nsMailDotComSMTP.prototype =
                     if (mainObject.m_Email.htmlBody)
                         szHtmlBody = mainObject.m_Email.htmlBody.body.getBody();
                     
-                    if (szTxtBody && !mainObject.m_bSendHtml || !szHtmlBody)
+                    if (szTxtBody && !mainObject.m_prefData.bSendHtml || !szHtmlBody)
                     {
                         mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - plain");
                         mainObject.m_HttpComms.addValuePair("format","");
                         mainObject.m_HttpComms.addValuePair("body",mainObject.escapeStr(szTxtBody));
                         mainObject.m_HttpComms.addValuePair("advancededitor","");
                     }
-                    else if (szHtmlBody && mainObject.m_bSendHtml || !szTxtBody)
+                    else if (szHtmlBody && mainObject.m_prefData.bSendHtml || !szTxtBody)
                     {   
                         mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - html");
                         mainObject.m_HttpComms.addValuePair("emailcomposer","advanced");
@@ -520,7 +497,7 @@ nsMailDotComSMTP.prototype =
                             }
                             else if (szName.search(/savesent/i)!=-1)
                             {   
-                                var szSave = mainObject.m_bSaveCopy ? "yes" : "no";
+                                var szSave = mainObject.m_prefData.bSaveCopy ? "yes" : "no";
                                 mainObject.m_HttpComms.addValuePair(szName,szSave);
                             }
                             else
@@ -539,7 +516,7 @@ nsMailDotComSMTP.prototype =
                     mainObject.m_Log.Write("nsMailDotCom.js - composerOnloadHandler - message ok");
                     if (szResponse.search(/aftersent/igm)!=-1)
                     {
-                        if (mainObject.m_bReUseSession)
+                        if (mainObject.m_prefData.bReUseSession)
                         { 
                             mainObject.m_Log.Write("nsMailDotCom.js - Logout - Setting Session Data");           
                             mainObject.m_ComponentManager.addElement(mainObject.m_szUserName, "szLocation",mainObject.m_szLocation);   
@@ -834,7 +811,7 @@ nsMailDotComSMTP.prototype =
         try
         {
             mainObject.m_Log.Write("nsMailDotComSMTP.js - adsHandler - START");
-            mainObject.m_Log.Write("nsMailDotComSMTP.js - adsHandler : \n" + szResponse);
+            //mainObject.m_Log.Write("nsMailDotComSMTP.js - adsHandler : \n" + szResponse);
             var szMailBox = szResponse.match(patternMailDotComFrame)[1];
             if (!szMailBox) 
                 throw new Error("error parsing mail.com login web page");
@@ -864,6 +841,92 @@ nsMailDotComSMTP.prototype =
         szEncode = szEncode.replace(/%20/gm,"+"); //replace space
         return szEncode;
     },
+    
+    
+    
+    
+    
+    loadPrefs : function()
+    {
+        try
+        {
+            this.m_Log.Write("nsMailDotComSMTP.js - loadPrefs - START"); 
+           
+            //get user prefs
+            var oData = new PrefData();
+            var oPref = {Value:null};
+            
+            //do i reuse the session
+            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+            WebMailPrefAccess.Get("bool","maildotcom.bReUseSession",oPref);
+            this.m_Log.Write("nsMailDotComSMTP.js - loadPrefs - bReUseSession " + oPref.Value);
+            if (oPref.Value) oData.bReUseSession = oPref.Value;
+                        
+            var iCount = 0;
+            oPref.Value = null;
+            WebMailPrefAccess.Get("int","maildotcom.Account.Num",oPref);
+            this.m_Log.Write("nsMailDotComSMTP.js - loadPrefs - num " + oPref.Value);
+            if (oPref.Value) iCount = oPref.Value;
+                       
+            var bFound = false;
+            var regExp = new RegExp(this.m_szUserName,"i");
+            for (i=0; i<iCount; i++)
+            {
+                //get user name
+                oPref.Value = null;
+                WebMailPrefAccess.Get("char","maildotcom.Account."+i+".user",oPref);
+                this.m_Log.Write("nsMailDotComSMTP.js - loadPrefs - user " + oPref.Value);
+                if (oPref.Value)
+                {
+                    if (oPref.Value.search(regExp)!=-1)
+                    {
+                        this.m_Log.Write("nsMailDotComSMTP.js - loadPrefs - user found "+ i);
+                        bFound = true;
+                                                                                   
+                        //save copy in sent items
+                        oPref.Value = null;
+                        WebMailPrefAccess.Get("bool","maildotcom.Account."+i+".bSaveCopy",oPref);
+                        this.m_Log.Write("nsMailDotComSMTP.js - loadPrefs - bSaveCopy " + oPref.Value);
+                        if (oPref.Value) oData.bSaveCopy=oPref.Value;
+                                    
+                        //what do i do with alternative parts
+                        oPref.Value = null;
+                        WebMailPrefAccess.Get("bool","maildotcom.Account."+i+".bSendHtml",oPref);   
+                        this.m_Log.Write("nsMailDotComSMTP.js - getPrefs - bSendHtml " + oData.bSendHtml); 
+                        if (oPref.Value) oData.bSendHtml = oPref.Value;
+                    }
+                }
+            }
+            
+            if (!bFound) //use defaults
+            {
+                 //save copy in sent items
+                oPref.Value = null;
+                WebMailPrefAccess.Get("bool","maildotcom.bSaveCopy",oPref);
+                this.m_Log.Write("nsMailDotComSMTP.js - loadPrefs - bSaveCopy " + oPref.Value);
+                if (oPref.Value) oData.bSaveCopy=oPref.Value;
+                            
+                //what do i do with alternative parts
+                oPref.Value = null;
+                WebMailPrefAccess.Get("bool","maildotcom.bSendHtml",oPref);   
+                this.m_Log.Write("nsMailDotComSMTP.js - getPrefs - bSendHtml " + oData.bSendHtml); 
+                if (oPref.Value) oData.bSendHtml = oPref.Value;
+            }
+            
+            this.m_Log.Write("nsMailDotComSMTP.js - loadPrefs - END");
+            return oData;
+        }
+        catch(e)
+        {
+             this.m_Log.DebugDump("nsMailDotComSMTP.js: loadPrefs : Exception : " 
+                                              + e.name + 
+                                              ".\nError message: " 
+                                              + e.message+ "\n"
+                                              + e.lineNumber);
+            return null;
+        }
+    },
+    
     
     ////////////////////////////////////////////////////////////////////////////
     /////  Comms                  
