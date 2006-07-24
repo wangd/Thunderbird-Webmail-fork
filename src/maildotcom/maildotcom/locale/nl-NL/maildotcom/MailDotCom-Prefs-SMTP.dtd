@@ -1,8 +1,0 @@
-<!ENTITY SaveSentItems.Label "Kopie opslaan in Verzonden berichten.">
-<!ENTITY SaveSentItems.AccessKey "o">
-<!ENTITY AlternativeGroup.Label "Alternatieve\Multipart emails">
-<!ENTITY SendPlain.Label "Verzenden in platte tekst">
-<!ENTITY SendPlain.AccessKey "p">
-<!ENTITY SendHtml.Label "Verzenden in HTML-opmaak">
-<!ENTITY SendHtml.AccessKey "h">
-

@@ -1,5 +1,0 @@
-<!ENTITY MailServers.Label "POP">
-<!ENTITY EmptyTrash.Label "Tyhjennä roskakori">
-<!ENTITY EmptyTrash.AccessKey "T">
-<!ENTITY DownloadUnread.Label "Lataa vain lukemattomat viestit">
-<!ENTITY DownloadUnread.AccessKey "l">
