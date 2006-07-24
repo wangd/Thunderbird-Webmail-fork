@@ -1,0 +1,51 @@
+#listDomain
+{
+    width: 25em;
+    height: 27em;
+}
+
+#labelDomain
+{
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+
+.listItemDomain
+{
+    padding: 4px 4px 4px 4px;
+    min-height: 25px !important;
+    border-bottom: 1px dotted #C0C0C0;
+}
+
+.listItemDomain[selected="true"] 
+{
+    -moz-user-focus: normal;
+    background-image: url("chrome://mozapps/skin/shared/itemSelected.png");
+}
+
+#imageMailDotCom
+{
+    list-style-image: url("chrome://maildotcom/skin/MailDotCom-VerySmall.png");
+    margin-left: 5px;
+}
+
+
+.listError
+{
+    padding-top: 4px;
+}
+
+
+#imageError
+{
+    list-style-image: url("chrome://maildotcom/skin/error.png");
+}
+
+.errorMSG
+{
+    font-weight: bold;
+	font-size: medium;
+    letter-spacing: 0.3ex;
+    line-height: 2em;
+}

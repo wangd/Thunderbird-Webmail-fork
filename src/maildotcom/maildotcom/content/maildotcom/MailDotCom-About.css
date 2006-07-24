@@ -22,11 +22,14 @@
 }
 
 
-#MailDotComVersion
+.MailDotComVersion
 {
     color: #909090;
     margin-bottom: 3px;
+    margin-right: 5px;
 }
+
+
 
 #MailDotComDescription
 {

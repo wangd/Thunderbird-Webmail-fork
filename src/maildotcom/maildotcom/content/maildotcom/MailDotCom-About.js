@@ -8,6 +8,9 @@ var gMailDotComAbout =
 
     init : function()
     {
+        var hBoxVerNum = document.getElementById("MailDotComVersionNumber");
+        hBoxVerNum.setAttribute("value", this.getVersion());
+        
         var strBundle = document.getElementById("stringsMailDotComAbout");
         var szContributors = strBundle.getString("ExtContributorNames");
         var aszNames = szContributors.split(";");
@@ -24,6 +27,22 @@ var gMailDotComAbout =
     },
 
 
+
+    getVersion : function ()
+    {
+        try
+        {
+            var nsIExtensionManager = Components.classes["@mozilla.org/extensions/manager;1"]
+                                    .getService(Components.interfaces.nsIExtensionManager);
+            return nsIExtensionManager.getItemForID("{1ad5b3b0-b908-11d9-9669-0800200c9a66}").version;
+        }
+        catch(ex)
+        {
+            return "Unknown";
+        }
+    },
+    
+    
     createDeck : function(base, aszNames)
     {
         var deck = document.createElement("deck"); 

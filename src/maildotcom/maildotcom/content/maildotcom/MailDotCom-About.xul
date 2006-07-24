@@ -26,7 +26,10 @@
                 <image id="MailDotComImage"/>
                 <spacer flex="1"/>
             </hbox>
-            <text value="&MailDotComAbout.ExtVersion;" id = "MailDotComVersion"/>
+            <hbox>
+                <text value="&MailDotComAbout.ExtVersion;" id = "MailDotComVersionTitle" class="MailDotComVersion"/>
+                <text id = "MailDotComVersionNumber" class="MailDotComVersion"/>
+            </hbox>
             <text value="&MailDotComAbout.ExtDescription;" id = "MailDotComDescription"/>
             <text value="&MailDotComAbout.ExtCreaterTitle;" id = "MailDotComCreatorLabel"/>
             <hbox>
