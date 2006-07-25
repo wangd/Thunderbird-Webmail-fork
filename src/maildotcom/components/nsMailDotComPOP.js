@@ -127,8 +127,7 @@ nsMailDotCom.prototype =
             
             this.m_iStage =0;
             this.m_HttpComms.setURI("http://www.mail.com");
-            this.m_HttpComms.setRequestMethod("GET");
-            this.m_HttpComms.setUserName(this.m_szUserName);         
+            this.m_HttpComms.setRequestMethod("GET");         
                 
             if (this.m_prefData.bReUseSession)
             {
