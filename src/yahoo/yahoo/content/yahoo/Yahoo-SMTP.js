@@ -41,15 +41,14 @@ function YahooSMTP(oResponseStream, oLog, oPref)
         this.m_szImageVerForm = null;
         this.m_szLoginUserName = null;
         
-        this.m_ComponentManager = Components.classes["@mozilla.org/nsComponentData2;1"];
-        this.m_ComponentManager = this.m_ComponentManager.getService(Components.interfaces.nsIComponentData2);
+        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"]
+                                          .getService(Components.interfaces.nsISessionManager);
+        this.m_SessionData = null; 
         
         this.m_bReEntry = false;
         this.m_aLoginForm = null; 
         this.m_iLoginCount = 0;
-        
-        //do i reuse the session
-                             
+                            
         this.m_Log.Write("YahooSMTP.js - Constructor - END");  
     }
     catch(e)
@@ -93,33 +92,27 @@ YahooSMTP.prototype =
                 this.m_szYahooMail = "http://bt.yahoo.com/";
             }    
             
-            this.m_HttpComms.setUserName(this.m_szUserName);
             this.m_iStage = 0;
             this.m_HttpComms.setURI(this.m_szYahooMail);                    
             this.m_HttpComms.setRequestMethod("GET");
             
             if (this.m_bReUseSession)
-            {
-                this.m_Log.Write("YahooSMTP.js - logIN - Getting Session Data");           
-                this.m_szHomeURI = this.m_ComponentManager.findElement(this.m_szUserName, "szHomeURI");
-                this.m_Log.Write("YahooSMTP.js - logIN - szHomeURI " +this.m_szHomeURI);    
-                if (this.m_szHomeURI)
-                {
-                    this.m_Log.Write("YahooSMTP.js - logIN - Session Data Found"); 
-                    this.m_iStage =2;
-                    this.m_bReEntry = true;
-                    this.m_HttpComms.setURI(this.m_szHomeURI);
+            { 
+                this.m_Log.Write("YahooSMTPBETA.js - logIN - Getting Session Data");  
+                this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName); 
+                if (this.m_SessionData)  
+                {     
+                    this.m_Log.Write("YahooSMTPBETA.js - logIN - Session Data FOUND");
+                    this.m_szHomeURI = this.m_SessionData.oComponentData.findElement("szHomeURI");
+                    this.m_Log.Write("YahooSMTPBETA.js - logIN - szHomeURI " +this.m_szHomeURI);    
+                    if (this.m_szHomeURI)
+                    {
+                        this.m_Log.Write("YahooSMTPBETA.js - logIN - Session Data Found"); 
+                        this.m_iStage =2;
+                        this.m_bReEntry = true;
+                        this.m_HttpComms.setURI(this.m_szHomeURI);
+                    }
                 }
-                else
-                {
-                    this.m_HttpComms.deleteSessionData();
-                }
-            }
-            else
-            {
-                this.m_Log.Write("YahooSMTP.js - logIN - deleting Session Data");
-                this.m_HttpComms.deleteSessionData(); 
-                this.m_ComponentManager.deleteAllElements(this.m_szUserName);
             }
 
             var bResult = this.m_HttpComms.send(this.loginOnloadHandler,this);                             
@@ -348,13 +341,7 @@ YahooSMTP.prototype =
                                           + ".\nError message: " 
                                           + err.message+ "\n"
                                           + err.lineNumber);
-            //check if session data exists
-            var szSession = mainObject.m_ComponentManager.findElement(mainObject.m_szUserName, "szHomeURI");    
-            if (!szSession)
-            {
-                //Session data not found login has not been successful
-                mainObject.m_HttpComms.deleteSessionData();
-            }                                
+                             
             mainObject.serverComms("502 negative vibes from "+mainObject.m_szUserName+"\r\n");
         }
     },
@@ -509,17 +496,24 @@ YahooSMTP.prototype =
                     //check for add address to addressbook
                     if (szResponse.search(/AddAddresses/i)!=-1)
                     {
+                        mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - SEND OK");
                         if (mainObject.m_bReUseSession)
                         { 
-                            mainObject.m_Log.Write("nsYahoo.js - logIN - Setting Session Data");           
-                            mainObject.m_ComponentManager.addElement(this.m_szUserName, "szHomeURI", mainObject.m_szHomeURI);
-                            mainObject.m_Log.Write("nsYahoo.js - logIN - szHomeURI" + mainObject.m_szHomeURI);    
-                        }
-                        else
-                        {
-                            mainObject.m_Log.Write("nsYahoo.js - logIN - deleting Session Data");
-                            mainObject.m_HttpComms.deleteSessionData(); 
-                            mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
+                            mainObject.m_Log.Write("YahooPOPBETA.js - logOut - Setting Session Data");  
+                                
+                            if (!mainObject.m_SessionData)
+                            {
+                                mainObject.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
+                                mainObject.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
+                                mainObject.m_SessionData.szUserName = mainObject.m_szUserName;
+                                
+                                var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
+                                componentData.QueryInterface(Components.interfaces.nsIComponentData);
+                                mainObject.m_SessionData.oComponentData = componentData;
+                            }
+                            mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
+                            mainObject.m_SessionData.oComponentData.addElement("szHomeURI",mainObject.m_szHomeURI);
+                            mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);     
                         }
                         
                         mainObject.serverComms("250 OK\r\n");                      

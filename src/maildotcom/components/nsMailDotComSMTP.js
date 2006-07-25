@@ -58,8 +58,9 @@ function nsMailDotComSMTP()
         this.m_iAttCount = 0;
         this.m_iAttUploaded = 1;
 
-        this.m_ComponentManager = Components.classes["@mozilla.org/nsComponentData2;1"];
-        this.m_ComponentManager = this.m_ComponentManager.getService(Components.interfaces.nsIComponentData2);
+        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"]
+                                          .getService(Components.interfaces.nsISessionManager);
+        this.m_SessionData = null; 
         
         this.m_bReEntry = false;
         
@@ -120,27 +121,25 @@ nsMailDotComSMTP.prototype =
             
             if (this.m_prefData.bReUseSession)
             {
-                this.m_Log.Write("nsMailDotCom.js - logIN - Session Data found");
-                this.m_szLocation =  this.m_ComponentManager.findElement(this.m_szUserName, "szLocation");
-                this.m_Log.Write("nsMailDotCom.js - logIN - szLocation - " +this.m_szLocation);    
-                this.m_szFolderList =  this.m_ComponentManager.findElement(this.m_szUserName, "szFolderList");
-                this.m_Log.Write("nsMailDotCom.js - logIN - szFolderList - " +this.m_szFolderList);    
-                
-                if (this.m_szLocation)//get folder list
-                {
-                    this.m_iStage =3;
-                    this.m_bReEntry = true;
-                    this.m_HttpComms.setURI(this.m_szFolderList);
-                }
-                else
-                {
-                    this.m_HttpComms.deleteSessionData();
+                this.m_Log.Write("nsMailDotCom.js - logIN - Getting Session Data");  
+                this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName); 
+                if (this.m_SessionData)  
+                {     
+                    this.m_Log.Write("nsMailDotCom.js - logIN - Session Data FOUND"); 
+                    this.m_szLocation =  this.m_SessionData.oComponentData.findElement("szLocation");
+                    this.m_Log.Write("nsMailDotCom.js - logIN - szLocation - " +this.m_szLocation);    
+                    this.m_szFolderList = this.m_SessionData.oComponentData.findElement("szFolderList");
+                    this.m_Log.Write("nsMailDotCom.js - logIN - szFolderList - " +this.m_szFolderList);  
+                    if (this.m_szHomeURI)
+                    {
+                        this.m_Log.Write("nsMailDotCom.js - logIN - Session Data Found"); 
+                        this.m_iStage =3;
+                        this.m_bReEntry = true;
+                        this.m_HttpComms.setURI(this.m_szFolderList);
+                    }
                 }
             }
-            else
-            {
-                this.m_HttpComms.deleteSessionData();
-            }
+           
             var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);                             
             if (!bResult) throw new Error("httpConnection returned false");
             
@@ -334,7 +333,7 @@ nsMailDotComSMTP.prototype =
                                           + ".\nError message: " 
                                           + err.message+ "\n"
                                           + err.lineNumber);
-            mainObject.m_HttpComms.deleteSessionData();                                            
+                                                        
             mainObject.serverComms("502 negative vibes from "+mainObject.m_szUserName+"\r\n");
         }
     },
@@ -518,16 +517,24 @@ nsMailDotComSMTP.prototype =
                     {
                         if (mainObject.m_prefData.bReUseSession)
                         { 
-                            mainObject.m_Log.Write("nsMailDotCom.js - Logout - Setting Session Data");           
-                            mainObject.m_ComponentManager.addElement(mainObject.m_szUserName, "szLocation",mainObject.m_szLocation);   
-                            mainObject.m_ComponentManager.addElement(mainObject.m_szUserName, "szFolderList", mainObject.m_szFolderList); 
+                            mainObject.m_Log.Write("nsMailDotCom.js - composerOnloadHandler - Setting Session Data"); 
+                            
+                            if (!mainObject.m_SessionData)
+                            {
+                                mainObject.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
+                                mainObject.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
+                                mainObject.m_SessionData.szUserName = mainObject.m_szUserName;
+                                
+                                var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
+                                componentData.QueryInterface(Components.interfaces.nsIComponentData);
+                                mainObject.m_SessionData.oComponentData = componentData;
+                            }
+                            mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
+                            mainObject.m_SessionData.oComponentData.addElement("szLocation",mainObject.m_szLocation);
+                            mainObject.m_SessionData.oComponentData.addElement("szFolderList",mainObject.m_szFolderList);
+                            mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData); 
                         }
-                        else
-                        {
-                            mainObject.m_Log.Write("nsMailDotCom.js - logIN - deleting Session Data");
-                            mainObject.m_HttpComms.deleteSessionData(); 
-                            mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
-                        }
+                        
 
                         mainObject.serverComms("250 OK\r\n");
                     }

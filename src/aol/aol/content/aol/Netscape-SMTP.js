@@ -34,9 +34,9 @@ function NetscapeSMTP(oResponseStream, oLog)
         this.m_Email.decodeBody(true);
         this.m_iAttCount = 0;
          
-        this.m_ComponentManager = Components.classes["@mozilla.org/nsComponentData2;1"];
-        this.m_ComponentManager = this.m_ComponentManager.getService(Components.interfaces.nsIComponentData2);
- 
+        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"]
+                                          .getService(Components.interfaces.nsISessionManager);
+        this.m_SessionData = null;
         
         //do i reuse the session
         var oPref = {Value:null};
@@ -94,42 +94,40 @@ NetscapeSMTP.prototype =
                 
             this.m_szUserName = szUserName;
             this.m_szPassWord = szPassWord;
-            this.m_szAOLMail= "http://mail.netscape.com/";  
-            this.m_HttpComms.setUserName(this.m_szUserName);
+            this.m_szAOLMail= "http://mail.netscape.com/";
             this.m_iStage = 0;
             this.m_HttpComms.setURI(this.m_szAOLMail);
             this.m_HttpComms.setRequestMethod("GET");
         
+                        //get session data
             if (this.m_bReUseSession)
-            {
-                this.m_Log.Write("NetscapePOP.js - logIN - Session Data found");
-                this.m_szHomeURI = this.m_ComponentManager.findElement(this.m_szUserName, "szHomeURI");
-                this.m_Log.Write("NetscapePOP.js - logIN - m_szHomeURI " +this.m_szHomeURI);
-                this.m_szUserId = this.m_ComponentManager.findElement(this.m_szUserName,"szUserId");
-                this.m_Log.Write("NetscapePOP.js - logIN - m_szUserId " +this.m_szUserId);   
-                this.m_szVersion = this.m_ComponentManager.findElement(this.m_szUserName,"szVersion");
-                this.m_Log.Write("NetscapePOP.js - logIN - m_szVersion " +this.m_szVersion);      
-                this.m_SuccessPath = this.m_ComponentManager.findElement(this.m_szUserName,"szSuccessPath");
-                this.m_Log.Write("NetscapePOP.js - logIN - .m_SuccessPath " +this.m_SuccessPath); 
-                this.m_szHostURL = this.m_ComponentManager.findElement(this.m_szUserName,"szHostURL");
-                this.m_Log.Write("NetscapePOP.js - logIN - .m_szHostURL" +this.m_szHostURL); 
-                this.m_szLocation =this.m_ComponentManager.findElement(this.m_szUserName,"szLocation");
-                this.m_Log.Write("NetscapePOP.js - logIN - .m_szLocation" +this.m_szLocation);
+            { 
+                this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName.toLowerCase());
+                if (this.m_SessionData && this.m_bReUseSession)
+                {
+                    this.m_Log.Write("NetscapeSMTP.js - logIN - Session Data found");
+                    
+                    this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
+                    this.m_szHomeURI = this.m_SessionData.oComponentData.findElement("szHomeURI");
+                    this.m_Log.Write("NetscapeSMTP.js - logIN - m_szHomeURI " +this.m_szHomeURI);
+                    this.m_szUserId = this.m_SessionData.oComponentData.findElement("szUserId");
+                    this.m_Log.Write("NetscapeSMTP.js - logIN - m_szUserId " +this.m_szUserId);   
+                    this.m_szVersion = this.m_SessionData.oComponentData.findElement("szVersion");
+                    this.m_Log.Write("NetscapeSMTP.js - logIN - m_szVersion " +this.m_szVersion);      
+                    this.m_SuccessPath = this.m_SessionData.oComponentData.findElement("szSuccessPath");
+                    this.m_Log.Write("NetscapeSMTP.js - logIN - .m_SuccessPath " +this.m_SuccessPath); 
+                    this.m_szHostURL = this.m_SessionData.oComponentData.findElement("szHostURL");
+                    this.m_Log.Write("NetscapeSMTP.js - logIN - .m_szHostURL" +this.m_szHostURL); 
+                    this.m_szLocation = this.m_SessionData.oComponentData.findElement("szLocation");
+                    this.m_Log.Write("NetscapeSMTP.js - logIN - .m_szLocation" +this.m_szLocation);
                 
-                if (this.m_szHomeURI) //get home page
-                {
-                    this.m_iStage =6;
-                    this.m_bReEntry = true;
-                    this.m_HttpComms.setURI(this.m_szHomeURI);
+                    if (this.m_szHomeURI) //get home page
+                    {
+                        this.m_iStage = 6;
+                        this.m_bReEntry = true;
+                        this.m_HttpComms.setURI(this.m_szHomeURI);
+                    }
                 }
-                else
-                {
-                    this.m_HttpComms.deleteSessionData();
-                }
-            }
-            else
-            {
-                this.m_HttpComms.deleteSessionData();
             }
             
             var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);                             
@@ -329,7 +327,7 @@ NetscapeSMTP.prototype =
                                           + ".\nError message: " 
                                           + err.message +"\n" +
                                             err.lineNumber);
-            mainObject.m_HttpComms.deleteSessionData();
+                                            
             mainObject.serverComms("502 negative vibes from " +mainObject.m_szUserName +"\r\n");
         }
     },
@@ -502,22 +500,32 @@ NetscapeSMTP.prototype =
                         return; 
                     }
                     
+
                     if (mainObject.m_bReUseSession)
                     { 
-                        mainObject.m_Log.Write("NetscapeSMTP.js - Logout - Setting Session Data");           
-                        mainObject.m_ComponentManager.addElement(mainObject.m_szUserName, "szHomeURI", mainObject.m_szHomeURI);   
-                        mainObject.m_ComponentManager.addElement(mainObject.m_szUserName, "szUserId",mainObject.m_szUserId);
-                        mainObject.m_ComponentManager.addElement(mainObject.m_szUserName, "szVersion",mainObject.m_szVersion);
-                        mainObject.m_ComponentManager.addElement(mainObject.m_szUserName, "szSuccessPath", mainObject.m_SuccessPath);
-                        mainObject.m_ComponentManager.addElement(mainObject.m_szUserName, "szHostURL",mainObject.m_szHostURL);
-                        mainObject.m_ComponentManager.addElement(mainObject.m_szUserName, "szLocation",mainObject.m_szLocation);  
+                        mainObject.m_Log.Write("AOLPOP.js - Logout - Setting Session Data");
+                        if (!mainObject.m_SessionData)
+                        {
+                            mainObject.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
+                            mainObject.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
+                            mainObject.m_SessionData.szUserName = mainObject.m_szUserName.toLowerCase();
+                            
+                            var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
+                            componentData.QueryInterface(Components.interfaces.nsIComponentData);
+                            mainObject.m_SessionData.oComponentData = componentData;
+                        }
+                        mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
+                        mainObject.m_SessionData.oComponentData.addElement("szHomeURI",mainObject.m_szHomeURI);
+                        mainObject.m_SessionData.oComponentData.addElement("szUserId",mainObject.m_szUserId);
+                        mainObject.m_SessionData.oComponentData.addElement("szVersion",mainObject.m_szVersion);
+                        mainObject.m_SessionData.oComponentData.addElement("szSuccessPath", mainObject.m_SuccessPath);
+                        mainObject.m_SessionData.oComponentData.addElement("szHostURL",mainObject.m_szHostURL);
+                        mainObject.m_SessionData.oComponentData.addElement("szLocation",mainObject.m_szLocation);
+                        mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);  
                     }
-                    else
-                    {
-                        mainObject.m_Log.Write("NetscapeSMTP.js - logIN - deleting Session Data");
-                        mainObject.m_HttpComms.deleteSessionData(); 
-                        mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
-                    }
+                    
+                    
+                    
                     
                     mainObject.serverComms("250 OK\r\n");
                 break;

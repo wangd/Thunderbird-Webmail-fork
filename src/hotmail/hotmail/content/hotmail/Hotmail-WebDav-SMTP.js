@@ -23,7 +23,12 @@ function HotmailSMTPWebDav(oResponseStream, oLog, oPrefData)
        
         this.m_IOS = Components.classes["@mozilla.org/network/io-service;1"];
         this.m_IOS = this.m_IOS.getService(Components.interfaces.nsIIOService);
-              
+        
+        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"]
+                                          .getService(Components.interfaces.nsISessionManager);
+        this.m_SessionData = null;
+
+      
         this.m_bReUseSession = oPrefData.bReUseSession;    //do i reuse the session
         this.m_bSaveCopy= oPrefData.bSaveCopy;          //do i save copy
       
@@ -117,7 +122,6 @@ HotmailSMTPWebDav.prototype =
                                           + ".\nError message: " 
                                           + err.message+ "\n"
                                           + err.lineNumber);
-            mainObject.m_HttpComms.deleteSessionData();
             mainObject.serverComms("502 negative vibes from " + mainObject.m_szUserName + "\r\n");
         }
     },
@@ -190,8 +194,15 @@ HotmailSMTPWebDav.prototype =
             {
                 if (!mainObject.m_bReUseSession)
                 {
-                    mainObject.m_Log.Write("nsYahoo.js - logIN - deleting Session Data");
-                    mainObject.m_HttpComms.deleteSessionData();
+                    if (!mainObject.m_SessionData)
+                    {
+                        mainObject.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
+                        mainObject.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
+                        mainObject.m_SessionData.szUserName = mainObject.m_szUserName;    
+                    }
+                    mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
+                    mainObject.m_SessionData.oHttpAuthManager = mainObject.m_HttpComms.getHttpAuthManager();
+                    mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);  
                 }
                 
                 mainObject.serverComms("250 OK\r\n");       

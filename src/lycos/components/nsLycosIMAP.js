@@ -76,6 +76,10 @@ function nsLycosIMAP()
         this.m_Timer = Components.classes["@mozilla.org/timer;1"];
         this.m_Timer = this.m_Timer.createInstance(Components.interfaces.nsITimer);
 
+        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"]
+                                          .getService(Components.interfaces.nsISessionManager);
+        this.m_SessionData = null; 
+        
         var oPref = {Value:null};
         var  WebMailPrefAccess = new WebMailCommonPrefAccess();
         if (WebMailPrefAccess.Get("int","lycos.iProcessDelay",oPref))
@@ -197,13 +201,23 @@ nsLycosIMAP.prototype =
             mainObject.m_szFolderURI = szResponse.match(LycosIMAPFolderPattern)[1];
             mainObject.m_Log.Write("nsLycosIMAP.js - loginOnloadHandler - get folder url - " + mainObject.m_szFolderURI);
           
+            if (!mainObject.m_bReUseSession)
+            {
+                mainObject.m_Log.Write("Lycos.js - logOUT - deleting Session Data");
+                if (!mainObject.m_SessionData)
+                {
+                    mainObject.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
+                    mainObject.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
+                    mainObject.m_SessionData.szUserName = mainObject.m_szUserName;
+                }
+                mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
+                mainObject.m_SessionData.oHttpAuthManager = mainObject.m_HttpComms.getHttpAuthManager();
+                mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);
+            }
+            
             //server response
             mainObject.serverComms(mainObject.m_iTag +" OK Login Complete\r\n");
             mainObject.m_bAuthorised = true;
-                    
-            mainObject.m_Log.Write("nsLycosIMAP.js - loginOnloadHandler - get url - end");
-
-           
             mainObject.m_Log.Write("nsLycosIMAP.js - loginOnloadHandler - END");
         }
         catch(err)

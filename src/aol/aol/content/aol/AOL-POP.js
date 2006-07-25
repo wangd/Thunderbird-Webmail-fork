@@ -38,8 +38,10 @@ function AOLPOP(oResponseStream, oLog)
         this.m_szMSG = null;
         this.iID = -1;
         
-        this.m_ComponentManager = Components.classes["@mozilla.org/nsComponentData2;1"];
-        this.m_ComponentManager = this.m_ComponentManager.getService(Components.interfaces.nsIComponentData2);
+        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"]
+                                          .getService(Components.interfaces.nsISessionManager);
+        this.m_SessionData = null;  
+        
          
         //do i reuse the session
         var oPref = {Value:null};
@@ -101,39 +103,38 @@ AOLPOP.prototype =
             this.m_iStage = 0;
             this.m_HttpComms.setURI(this.m_szAOLMail);
             this.m_HttpComms.setRequestMethod("GET");
-            this.m_HttpComms.setUserName(this.m_szUserName);
+            
             //get session data
             if (this.m_bReUseSession)
             { 
-                this.m_Log.Write("AOLPOP.js - logIN - Session Data found");           
-                this.m_szHomeURI = this.m_ComponentManager.findElement(this.m_szUserName, "szHomeURI");
-                this.m_Log.Write("AOLPOP.js - logIN - szHomeURI " +this.m_szHomeURI);   
-                this.m_szUserId = this.m_ComponentManager.findElement(this.m_szUserName, "szUserId");
-                this.m_Log.Write("AOLPOP.js - logIN - m_szUserId " +this.m_szUserId);   
-                this.m_szVersion = this.m_ComponentManager.findElement(this.m_szUserName, "szVersion");
-                this.m_Log.Write("AOLPOP.js - logIN - m_szVersion " +this.m_szVersion);      
-                this.m_SuccessPath = this.m_ComponentManager.findElement(this.m_szUserName, "szSuccessPath");
-                this.m_Log.Write("AOLPOP.js - logIN - .m_SuccessPath " +this.m_SuccessPath); 
-                this.m_szHostURL = this.m_ComponentManager.findElement(this.m_szUserName, "szHostURL");
-                this.m_Log.Write("AOLPOP.js - logIN - .m_szHostURL" +this.m_szHostURL); 
-                this.m_szLocation = this.m_ComponentManager.findElement(this.m_szUserName, "szLocation");
-                this.m_Log.Write("AOLPOP.js - logIN - .m_szLocation" +this.m_szLocation);
-            
-                if (this.m_szHomeURI) //get home page
+                this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName.toLowerCase());
+                if (this.m_SessionData && this.m_bReUseSession)
                 {
-                    this.m_iStage =7;
-                    this.m_bReEntry = true;
-                    this.m_HttpComms.setURI(this.m_szHomeURI);
-                }
-                else
-                {
-                    this.m_HttpComms.deleteSessionData();
+                    this.m_Log.Write("AOLPOP.js - logIN - Session Data found");
+                    
+                    this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
+                    this.m_szHomeURI = this.m_SessionData.oComponentData.findElement("szHomeURI");
+                    this.m_Log.Write("AOLPOP.js - logIN - m_szHomeURI " +this.m_szHomeURI);
+                    this.m_szUserId = this.m_SessionData.oComponentData.findElement("szUserId");
+                    this.m_Log.Write("AOLPOP.js - logIN - m_szUserId " +this.m_szUserId);   
+                    this.m_szVersion = this.m_SessionData.oComponentData.findElement("szVersion");
+                    this.m_Log.Write("AOLPOP.js - logIN - m_szVersion " +this.m_szVersion);      
+                    this.m_SuccessPath = this.m_SessionData.oComponentData.findElement("szSuccessPath");
+                    this.m_Log.Write("AOLPOP.js - logIN - .m_SuccessPath " +this.m_SuccessPath); 
+                    this.m_szHostURL = this.m_SessionData.oComponentData.findElement("szHostURL");
+                    this.m_Log.Write("AOLPOP.js - logIN - .m_szHostURL" +this.m_szHostURL); 
+                    this.m_szLocation = this.m_SessionData.oComponentData.findElement("szLocation");
+                    this.m_Log.Write("AOLPOP.js - logIN - .m_szLocation" +this.m_szLocation);
+                
+                    if (this.m_szHomeURI) //get home page
+                    {
+                        this.m_iStage =7;
+                        this.m_bReEntry = true;
+                        this.m_HttpComms.setURI(this.m_szHomeURI);
+                    }
                 }
             }   
-            else
-            {
-                this.m_HttpComms.deleteSessionData();
-            }  
+
                 
             var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);                             
             if (!bResult) throw new Error("httpConnection returned false");        
@@ -349,8 +350,7 @@ AOLPOP.prototype =
                                           + err.name 
                                           + ".\nError message: " 
                                           + err.message+ "\n"
-                                          + err.lineNumber);
-            mainObject.m_HttpComms.deleteSessionData();                                  
+                                          + err.lineNumber);                                  
             mainObject.serverComms("-ERR Comms Error from "+ mainObject.m_szUserName+"\r\n");
         }
     },
@@ -829,21 +829,27 @@ AOLPOP.prototype =
             
             if (this.m_bReUseSession)
             { 
-                this.m_Log.Write("AOLPOP.js - Logout - Setting Session Data");           
-                this.m_ComponentManager.addElement(this.m_szUserName, "szHomeURI", this.m_szHomeURI);   
-                this.m_ComponentManager.addElement(this.m_szUserName, "szUserId",this.m_szUserId);
-                this.m_ComponentManager.addElement(this.m_szUserName, "szVersion",this.m_szVersion);
-                this.m_ComponentManager.addElement(this.m_szUserName, "szSuccessPath", this.m_SuccessPath);
-                this.m_ComponentManager.addElement(this.m_szUserName, "szHostURL",this.m_szHostURL);
-                this.m_ComponentManager.addElement(this.m_szUserName, "szLocation",this.m_szLocation);  
+                this.m_Log.Write("AOLPOP.js - Logout - Setting Session Data");
+                if (!this.m_SessionData)
+                {
+                    this.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
+                    this.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
+                    this.m_SessionData.szUserName = this.m_szUserName.toLowerCase();
+                    
+                    var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
+                    componentData.QueryInterface(Components.interfaces.nsIComponentData);
+                    this.m_SessionData.oComponentData = componentData;
+                }
+                this.m_SessionData.oCookieManager = this.m_HttpComms.getCookieManager();
+                this.m_SessionData.oComponentData.addElement("szHomeURI",this.m_szHomeURI);
+                this.m_SessionData.oComponentData.addElement("szUserId",this.m_szUserId);
+                this.m_SessionData.oComponentData.addElement("szVersion",this.m_szVersion);
+                this.m_SessionData.oComponentData.addElement("szSuccessPath", this.m_SuccessPath);
+                this.m_SessionData.oComponentData.addElement("szHostURL",this.m_szHostURL);
+                this.m_SessionData.oComponentData.addElement("szLocation",this.m_szLocation);
+                this.m_SessionManager.setSessionData(this.m_SessionData);  
             }
-            else
-            {
-                this.m_Log.Write("AOLPOP.js - logIN - deleting Session Data");
-                this.m_HttpComms.deleteSessionData(); 
-                this.m_ComponentManager.deleteAllElements(this.m_szUserName);
-            }
-           
+         
             this.m_bAuthorised = false;
             this.serverComms("+OK Your Out\r\n");        
             

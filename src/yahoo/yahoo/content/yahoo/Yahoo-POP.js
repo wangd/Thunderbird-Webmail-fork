@@ -50,9 +50,9 @@ function YahooPOP(oResponseStream, oLog, oPrefs)
         this.m_aDeleteData = new Array(); 
         this.m_aszFolderURLList = new Array();
         
-        this.m_ComponentManager = Components.classes["@mozilla.org/nsComponentData2;1"];
-        this.m_ComponentManager = this.m_ComponentManager.getService(Components.interfaces.nsIComponentData2);
-                                                        
+        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"]
+                                          .getService(Components.interfaces.nsISessionManager);
+        this.m_SessionData = null;                                                
         this.m_Log.Write("YahooPOP.js - Constructor - END");  
     }
     catch(e)
@@ -93,8 +93,7 @@ YahooPOP.prototype =
                 this.m_szYahooMail = "http://bt.yahoo.com/";
             }    
                        
-            this.m_HttpComms.setUserName(this.m_szUserName);
-            
+                           
             this.m_Log.Write("YahooPOP.js - logIN - default " +this.m_szYahooMail);
             this.m_iStage = 0;
             this.m_HttpComms.setURI(this.m_szYahooMail);  
@@ -102,27 +101,23 @@ YahooPOP.prototype =
             //get session data
             if (this.m_bReUseSession)
             { 
-                this.m_Log.Write("YahooPOP.js - logIN - Getting Session Data");           
-                this.m_szHomeURI = this.m_ComponentManager.findElement(this.m_szUserName, "szHomeURI");
-                this.m_Log.Write("YahooPOP.js - logIN - szHomeURI " +this.m_szHomeURI);    
-                if (this.m_szHomeURI)
-                {
-                    this.m_Log.Write("YahooPOP.js - logIN - Session Data Found"); 
-                    this.m_iStage =2;
-                    this.m_bReEntry = true;
-                    this.m_HttpComms.setURI(this.m_szHomeURI);
-                }
-                else
-                {
-                    this.m_HttpComms.deleteSessionData();
+                this.m_Log.Write("YahooPOP.js - logIN - Getting Session Data");  
+                this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName); 
+                if (this.m_SessionData)  
+                {     
+                    this.m_Log.Write("YahooPOP.js - logIN - Session Data FOUND");
+                    this.m_szHomeURI = this.m_SessionData.oComponentData.findElement("szHomeURI");
+                    this.m_Log.Write("YahooPOP.js - logIN - szHomeURI " +this.m_szHomeURI);    
+                    if (this.m_szHomeURI)
+                    {
+                        this.m_Log.Write("YahooPOP.js - logIN - Session Data Found"); 
+                        this.m_iStage =2;
+                        this.m_bReEntry = true;
+                        this.m_HttpComms.setURI(this.m_szHomeURI);
+                    }
                 }
             }
-            else
-            {
-                this.m_Log.Write("YahooPOP.js - logIN - deleting Session Data");
-                this.m_HttpComms.deleteSessionData(); 
-                this.m_ComponentManager.deleteAllElements(this.m_szUserName);
-            }
+            
             
             this.m_HttpComms.setRequestMethod("GET");
             var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);                             
@@ -378,13 +373,7 @@ YahooPOP.prototype =
                                           + ".\nError message: " 
                                           + err.message + "\n"
                                           + err.lineNumber);
-            //check if session data exists
-            var szSession = mainObject.m_ComponentManager.findElement(mainObject.m_szUserName, "szHomeURI");    
-            if (!szSession)
-            {
-                //Session data not found login has not been successful
-                mainObject.m_HttpComms.deleteSessionData();
-            }                                  
+                                        
             mainObject.serverComms("-ERR negative vibes from "+ mainObject.m_szUserName +"\r\n");
         }
     },
@@ -1070,17 +1059,23 @@ YahooPOP.prototype =
             
             if (this.m_bReUseSession)
             { 
-                this.m_Log.Write("YahooPOP.js - logOut - Setting Session Data");           
-                this.m_ComponentManager.addElement(this.m_szUserName, "szHomeURI", this.m_szHomeURI);
-                this.m_Log.Write("YahooPOP.js - logOut - szHomeURI" + this.m_szHomeURI);    
+                this.m_Log.Write("YahooPOP.js - logOut - Setting Session Data");  
+                    
+                if (!this.m_SessionData)
+                {
+                    this.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
+                    this.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
+                    this.m_SessionData.szUserName = this.m_szUserName;
+                    
+                    var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
+                    componentData.QueryInterface(Components.interfaces.nsIComponentData);
+                    this.m_SessionData.oComponentData = componentData;
+                }
+                this.m_SessionData.oCookieManager = this.m_HttpComms.getCookieManager();
+                this.m_SessionData.oComponentData.addElement("szHomeURI",this.m_szHomeURI);
+                this.m_SessionManager.setSessionData(this.m_SessionData);     
             }
-            else
-            {
-                this.m_Log.Write("YahooPOP.js - logOUT - deleting Session Data");
-                this.m_HttpComms.deleteSessionData(); 
-                this.m_ComponentManager.deleteAllElements(this.m_szUserName);
-            }
-                   
+                  
             this.m_bAuthorised = false;
             this.serverComms("+OK Your Out\r\n");             
                                            

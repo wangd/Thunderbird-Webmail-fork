@@ -65,7 +65,11 @@ function nsLycos()
         
         this.m_Timer = Components.classes["@mozilla.org/timer;1"];
         this.m_Timer = this.m_Timer.createInstance(Components.interfaces.nsITimer);
-
+        
+        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"]
+                                  .getService(Components.interfaces.nsISessionManager);
+        this.m_SessionData = null;  
+        
         var oPref = {Value:null};
         var  WebMailPrefAccess = new WebMailCommonPrefAccess();
         if (WebMailPrefAccess.Get("int","lycos.iProcessDelay",oPref))
@@ -170,6 +174,14 @@ nsLycos.prototype =
                 szLocation= "http://webdav.caramail.lycos.fr/httpmail.asp";   
             else
                 throw new Error("Unknown domain");
+            
+            this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
+            if (this.m_SessionData && this.m_bReUseSession)
+            {
+                this.m_Log.Write("nsLycos.js - logIN - Session Data found");
+                this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
+                this.m_HttpComms.setHttpAuthManager(this.m_SessionData.oHttpAuthManager); 
+            }
             
             this.m_HttpComms.setUserName(this.m_szUserName);
             this.m_HttpComms.setPassword(this.m_szPassWord);
@@ -848,18 +860,24 @@ nsLycos.prototype =
         try
         {
             this.m_Log.Write("nsLycos.js - logOUT - START"); 
-            
-            var oPref = new Object();
-            oPref.Value = null;
-            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-            WebMailPrefAccess.Get("bool","lycos.bEmptyTrash",oPref);
-        
+                    
             if (!this.m_bReUseSession)
             {
-                this.m_Log.Write("Lycos.js - logIN - deleting Session Data");
-                this.m_HttpComms.deleteSessionData();
+                this.m_Log.Write("Lycos.js - logOUT - deleting Session Data");
+                if (!this.m_SessionData)
+                {
+                    this.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
+                    this.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
+                    this.m_SessionData.szUserName = this.m_szUserName;
+                }
+                this.m_SessionData.oCookieManager = this.m_HttpComms.getCookieManager();
+                this.m_SessionData.oHttpAuthManager = this.m_HttpComms.getHttpAuthManager();
+                this.m_SessionManager.setSessionData(this.m_SessionData);
             }
             
+            var oPref = {Value:null};
+            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+            WebMailPrefAccess.Get("bool","lycos.bEmptyTrash",oPref)
             if (!oPref.Value)
             {
                 this.m_bAuthorised = false;

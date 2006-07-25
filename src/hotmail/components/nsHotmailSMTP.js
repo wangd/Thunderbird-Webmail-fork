@@ -217,29 +217,22 @@ nsHotmailSMTP.prototype =
             //load defaults
             ////////                          
             //do i reuse the session
-            if (WebMailPrefAccess.Get("bool","hotmail.bReUseSession",oPref))
-                oData.bReUseSession = oPref.Value;
-            else
-                oData.bReUseSession = true; 
-            this.m_Log.Write("nsHotmailSMTP.js - getPrefs - hotmail.bReUseSession " + oData.bReUseSession);
+            WebMailPrefAccess.Get("bool","hotmail.bReUseSession",oPref);
+            this.m_Log.Write("nsHotmailSMTP.js - getPrefs - hotmail.bReUseSession " + oPref.Value);
+            if (oPref.Value) oData.bReUseSession = oPref.Value;
                                         
             //save copy in sent items
             oPref.Value = null;
-            if (WebMailPrefAccess.Get("bool","hotmail.bSaveCopy",oPref))
-                oData.bSaveCopy=oPref.Value;
-            else
-                oData.bSaveCopy=true;            
-            this.m_Log.Write("nsHotmailSMTP.js - getPrefs - hotmail.bSaveCopy " + oData.bSaveCopy);
-                        
+            WebMailPrefAccess.Get("bool","hotmail.bSaveCopy",oPref);
+            this.m_Log.Write("nsHotmailSMTP.js - getPrefs - hotmail.bSaveCopy " + oPref.Value);
+            if (oPref.Value) oData.bSaveCopy=oPref.Value;
+                         
             //what do i do with alternative parts
             oPref.Value = null;
-            if (WebMailPrefAccess.Get("bool","hotmail.bSendHtml",oPref))    
-                oData.bSendHtml = oPref.Value;
-            else
-                oData.bSendHtml = false;     
-            this.m_Log.Write("nsHotmailSMTP.js - getPrefs - hotmail.bSendHtml " + oData.bSendHtml);
-            
-                
+            WebMailPrefAccess.Get("bool","hotmail.bSendHtml",oPref);
+            this.m_Log.Write("nsHotmailSMTP.js - getPrefs - hotmail.bSendHtml " + oPref.Value);
+            if (oPref.Value) oData.bSendHtml = oPref.Value;
+           
             //////
             //load User prefs
             //////

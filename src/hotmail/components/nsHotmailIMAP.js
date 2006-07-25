@@ -76,6 +76,11 @@ function nsHotmailIMAP()
         this.m_Timer = Components.classes["@mozilla.org/timer;1"];
         this.m_Timer = this.m_Timer.createInstance(Components.interfaces.nsITimer);
 
+        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"]
+                                          .getService(Components.interfaces.nsISessionManager);
+        this.m_SessionData = null;
+
+
         var oPref = {Value:null};
         var  WebMailPrefAccess = new WebMailCommonPrefAccess();
         if (WebMailPrefAccess.Get("int","hotmail.iProcessDelay",oPref))
@@ -142,7 +147,18 @@ nsHotmailIMAP.prototype =
             
             var szDomain = this.m_szUserName.split("@")[1];
             this.m_Log.Write("nsHotmailIMAP.js - logIN - doamain " + szDomain);
-        
+
+            this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
+            if (this.m_SessionData && this.m_bReUseSession)
+            {
+                this.m_Log.Write("nsHotmailIMAP.js - logIN - Session Data found");
+                if (this.m_SessionData.oCookieManager)
+                    this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
+                
+                if (this.m_SessionData.oHttpAuthManager)
+                    this.m_HttpComms.setHttpAuthManager(this.m_SessionData.oHttpAuthManager); 
+            }
+                    
             this.m_HttpComms.setUserName(this.m_szUserName);
             this.m_HttpComms.setPassword(this.m_szPassWord);
             this.m_HttpComms.setContentType("text/xml");
@@ -186,14 +202,24 @@ nsHotmailIMAP.prototype =
             mainObject.m_iAuth=0; //reset login counter
             mainObject.m_szFolderURI = szResponse.match(HotmailIMAPFolderPattern)[1];
             mainObject.m_Log.Write("nsHotmailIMAP.js - loginOnloadHandler - get folder url - " + mainObject.m_szFolderURI);
-          
+
+            if (mainObject.m_SessionData)
+            {
+                if (!mainObject.m_SessionData)
+                {
+                    mainObject.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
+                    mainObject.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
+                    mainObject.m_SessionData.szUserName = mainObject.m_szUserName;    
+                }
+                mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
+                mainObject.m_SessionData.oHttpAuthManager = mainObject.m_HttpComms.getHttpAuthManager();
+                mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);
+            }  
+                    
             //server response
             mainObject.serverComms(mainObject.m_iTag +" OK Login Complete\r\n");
             mainObject.m_bAuthorised = true;
-                    
-            mainObject.m_Log.Write("nsHotmailIMAP.js - loginOnloadHandler - get url - end");
 
-           
             mainObject.m_Log.Write("nsHotmailIMAP.js - loginOnloadHandler - END");
         }
         catch(err)
@@ -202,8 +228,7 @@ nsHotmailIMAP.prototype =
                                           + err.name 
                                           + ".\nError message: " 
                                           + err.message+ "\n"
-                                          + err.lineNumber);
-            mainObject.m_HttpComms.deleteSessionData();                                  
+                                          + err.lineNumber);                                  
             mainObject.serverComms(mainObject.m_iTag + " NO Comms Error\r\n");
             return false;
         }

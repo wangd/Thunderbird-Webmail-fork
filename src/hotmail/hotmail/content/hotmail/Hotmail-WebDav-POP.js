@@ -29,6 +29,10 @@ function HotmailWebDav(oResponseStream, oLog, oPrefData)
 
         this.m_Timer = Components.classes["@mozilla.org/timer;1"];
         this.m_Timer = this.m_Timer.createInstance(Components.interfaces.nsITimer);
+           
+        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"]
+                                          .getService(Components.interfaces.nsISessionManager);
+        this.m_SessionData = null;
              
         this.m_iTime = oPrefData.iProcessDelay;            //timer delay
         this.m_iProcessTrigger = oPrefData.iProcessTrigger;//delay process trigger
@@ -82,6 +86,19 @@ HotmailWebDav.prototype =
             this.m_szPassWord = szPassWord;
             
             if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
+            if (this.m_bReUseSession)
+            {
+                this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
+                if (this.m_SessionData)
+                {
+                    this.m_Log.Write("HotmailWebDav.js - logIN - Session Data found");
+                    if (this.m_SessionData.oCookieManager)
+                        this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
+                    
+                    if (this.m_SessionData.oHttpAuthManager)
+                        this.m_HttpComms.setHttpAuthManager(this.m_SessionData.oHttpAuthManager); 
+                }
+            }
             
             this.m_iStage=0;
             this.m_HttpComms.setUserName(this.m_szUserName);
@@ -180,7 +197,6 @@ HotmailWebDav.prototype =
                                           + ".\nError message: " 
                                           + err.message+ "\n"
                                           + err.lineNumber);
-            mainObject.m_HttpComms.deleteSessionData();
             mainObject.serverComms("-ERR negative vibes from " +mainObject.m_szUserName+ "\r\n");
         }
     },
@@ -754,8 +770,15 @@ HotmailWebDav.prototype =
             
             if (!this.m_bReUseSession)
             {
-                this.m_Log.Write("HotmailWebDav.js - logIN - deleting Session Data");
-                this.m_HttpComms.deleteSessionData(); 
+                if (!this.m_SessionData)
+                {
+                    this.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
+                    this.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
+                    this.m_SessionData.szUserName = this.m_szUserName;    
+                }
+                this.m_SessionData.oCookieManager = this.m_HttpComms.getCookieManager();
+                this.m_SessionData.oHttpAuthManager = this.m_HttpComms.getHttpAuthManager();
+                this.m_SessionManager.setSessionData(this.m_SessionData);  
             }
               
             this.m_bAuthorised = false;
