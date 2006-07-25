@@ -77,21 +77,20 @@ HotmailSMTPScreenRipper.prototype =
             //get session data
             if (this.m_bReUseSession)
             { 
-                this.m_Log.Write("Hotmail-SR-SMT - logIN - Getting Session Data");
+                this.m_Log.Write("Hotmail-SR - logIN - Getting Session Data");
                 this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
                 if (this.m_SessionData)
                 {
-                    this.m_Log.Write("Hotmail-SR-BETAR - logIN - Session Data found");                   
+                    this.m_Log.Write("Hotmail-SR - logIN - Session Data found");                   
                     if (this.m_SessionData.oComponentData)
                     {
                         this.m_szHomeURI = this.m_SessionData.oComponentData.findElement("szHomeURI");
-                        this.m_Log.Write("Hotmail-SR-BETAR - logIN - szHomeURI " +this.m_szHomeURI);
+                        this.m_Log.Write("Hotmail-SR - logIN - szHomeURI " +this.m_szHomeURI);
                     }
                 }
                                  
                 if (this.m_szHomeURI)
-                {
-                    this.m_Log.Write("Hotmail-SR - logIN - Session Data Found"); 
+                { 
                     this.m_iStage =3;
                     this.m_bReEntry = true;
                     this.m_HttpComms.setURI(this.m_szHomeURI);
@@ -473,6 +472,7 @@ HotmailSMTPScreenRipper.prototype =
                         
                         if (mainObject.m_bReUseSession)
                         { 
+                            mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - Saving Seasion data");
                             if (!mainObject.m_SessionData)
                             {
                                 mainObject.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();

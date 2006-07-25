@@ -86,8 +86,10 @@ HotmailWebDav.prototype =
             this.m_szPassWord = szPassWord;
             
             if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
+            
             if (this.m_bReUseSession)
             {
+                this.m_Log.Write("HotmailWebDav.js - logIN - Getting Seassion Data");
                 this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
                 if (this.m_SessionData)
                 {
@@ -768,8 +770,9 @@ HotmailWebDav.prototype =
         {
             this.m_Log.Write("HotmailWebDav.js - logOUT - START");   
             
-            if (!this.m_bReUseSession)
+            if (this.m_bReUseSession)
             {
+                this.m_Log.Write("nsHotmailIMAP.js - loginOnloadHandler - Save Session Data");
                 if (!this.m_SessionData)
                 {
                     this.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
