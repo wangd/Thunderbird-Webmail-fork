@@ -395,7 +395,7 @@ YahooSMTPBETA.prototype =
             szData = szData.replace(/TOADDRESS/,szMSGto);   //set TO Address
              
             //get cc 
-            var szCc = "comododragon2003@yahoo.com"//this.m_Email.headers.getCc();
+            var szCc = this.m_Email.headers.getCc();
             this.m_Log.Write("YahooSMTPBETA.js - rawMSG - szCc " + szCc);
             if (!szCc)                     
                 szData = szData.replace(/<cc>.*?<\/cc>/i,"");   //remove CC     
