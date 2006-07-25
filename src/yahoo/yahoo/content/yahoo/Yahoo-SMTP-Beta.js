@@ -411,7 +411,7 @@ YahooSMTPBETA.prototype =
             }   
                 
             //get bcc   
-            var szBCC = "comododragon2003@yahoo.com";//this.getBcc(aszTo, szTo, szCc);
+            var szBCC = this.getBcc(aszTo, szTo, szCc);
             this.m_Log.Write("YahooSMTPBETA.js - rawMSG - szBCC " + szBCC);
             if (!szBCC)    
                 szData = szData.replace(/<bcc>.*?<\/bcc>/i,"");   //remove BCC 
