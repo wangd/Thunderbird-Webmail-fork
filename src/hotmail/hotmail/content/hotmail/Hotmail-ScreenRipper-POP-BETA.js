@@ -27,6 +27,7 @@ function HotmailScreenRipperBETA(oResponseStream, oLog, oPrefData)
         this.m_iTotalSize = 0; 
         this.m_iStage = 0;  
         this.m_bJunkMail = false;
+        this.m_szMailBoxURI = null;
         
         this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"]
                                           .getService(Components.interfaces.nsISessionManager);
@@ -49,7 +50,7 @@ function HotmailScreenRipperBETA(oResponseStream, oLog, oPrefData)
             this.m_aszFolders.push(oPrefData.aszFolder[i]);
         }
         this.m_Log.Write("Hotmail-SR-BETAR.js - Constructor - m_aszFolders "+ this.m_aszFolders);
-        
+        this.m_bFoldersProcessed = false;
         this.m_aszFolderURLList = new Array();                 
         this.m_Log.Write("Hotmail-SR-BETAR.js - Constructor - END");  
     }
@@ -338,7 +339,8 @@ HotmailScreenRipperBETA.prototype =
                     mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler - inbox : "+oFolder.szURI);
                     oFolder.szFolderName = "INBOX";
                     mainObject.m_aszFolderURLList.push(oFolder);
-                     
+                    mainObject.m_szMailBoxURI = oFolder.szURI ;
+                    
                     // get trash folder uri      
                     if (mainObject.m_bUseJunkMail)
                     {
@@ -349,30 +351,7 @@ HotmailScreenRipperBETA.prototype =
                         mainObject.m_aszFolderURLList.push(oFolder);
                     }
                     
-                    var aszFolderList = szResponse.match(patternHotmailPOPFolderList);
-                    mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler - szFolderList : "+aszFolderList);
-                    for (var i=0 ; i<mainObject.m_aszFolders.length; i++ )
-                    {
-                        var regExp = new RegExp("^"+mainObject.m_aszFolders[i]+"$","i");
-                        mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler - regExp : "+regExp );
-  
-                        for (var j=0; j<aszFolderList.length; j++)
-                        {
-                            var szTitle = aszFolderList[j].match(patternHotmailPOPTitle)[1];   
-                            mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler - folder szTitle: " +szTitle); 
-                             
-                            if (szTitle.search(regExp)!=-1)
-                            {
-                                var szURI = mainObject.m_szLocationURI + aszFolderList[j].match(patternHotmailPOPFolderHref)[1];
-                                mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler - Found URI : " +szURI);
-                                var oFolder = new FolderData();
-                                oFolder.szFolderName = szTitle;
-                                oFolder.szURI = szURI;
-                                mainObject.m_aszFolderURLList.push(oFolder);   
-                            }
-                        }
-                    }
-                    
+                      
                     mainObject.m_szHomeURI = httpChannel.URI.spec;
                     mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler - m_szHomeURI : "+mainObject.m_szHomeURI );
                                        
@@ -453,7 +432,45 @@ HotmailScreenRipperBETA.prototype =
                 throw new Error("error status " + httpChannel.responseStatus);   
             
             mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);     
-                                            
+             
+             
+            //other folders
+            if (!mainObject.m_bFoldersProcessed && mainObject.m_aszFolders.length>0)
+            {
+                mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler - processing folders");
+                mainObject.m_bFoldersProcessed = true;
+                
+                var szFolderList = szResponse.match(patternHotmailPOPFolderList);
+                mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler - szFolderList : "+szFolderList);
+                var aszFolderList = szResponse.match(patternHotmailPOPFolderOption);
+                mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler - aszFolderList : "+aszFolderList);
+                if (aszFolderList)
+                {
+                    for (var i=0 ; i<mainObject.m_aszFolders.length; i++ )
+                    {
+                        var regExp = new RegExp("^"+mainObject.m_aszFolders[i]+"$","i");
+                        mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler - regExp : "+regExp );
+    
+                        for (var j=0; j<aszFolderList.length; j++)
+                        {
+                            var szTitle = aszFolderList[j].match(patternHotmailPOPTitle)[1];   
+                            mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler - folder szTitle: " +szTitle); 
+                             
+                            if (szTitle.search(regExp)!=-1)
+                            {
+                                var szID = aszFolderList[j].match(patternHotmailPOPFolderHref)[1];
+                                mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler - folder szID: " +szID);
+                                var szURI = mainObject.m_szMailBoxURI + "&FolderID=" + szID;
+                                mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler - Found URI : " +szURI);
+                                var oFolder = new FolderData();
+                                oFolder.szFolderName = szTitle;
+                                oFolder.szURI = szURI;
+                                mainObject.m_aszFolderURLList.push(oFolder);   
+                            }
+                        }
+                    }
+                }                                
+            }  
               
             //delete uri
             if (!mainObject.m_szDelete)

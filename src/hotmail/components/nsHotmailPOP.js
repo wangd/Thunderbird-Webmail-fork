@@ -52,9 +52,10 @@ const patternHotmailPOPViewState = /<input.*?id="__VIEWSTATE".*?value="(.*?)".*?
 const patternHotmailPOPFolderID = /FolderID=(.*?)$/i;
 const patternHotmailPOPInboxCotent = /<div id="inbox">/ig
 const patternHotmailPOPInboxNoContent =/<div.*?ContentNoMsg.*?>/ig
-const patternHotmailPOPFolderList =/<div class="dIndexListText">.*?Inbox&FolderID.*?<\/div>/igm;
-const patternHotmailPOPFolderHref = /<a href="(.*?)">/i;
-const patternHotmailPOPTitle = /<a href=".*?">(.*?)<\/a>/i;
+const patternHotmailPOPFolderList = /select name="InboxMoveMessage"[\s\S]*?option value.*?>.*?<\/option>[\s\S]*?<\/select>/img;
+const patternHotmailPOPFolderOption = /<option value=.*?>.*?<\/option>/ig;
+const patternHotmailPOPFolderHref = /<option value="(.*?)">.*?<\/option>/i;
+const patternHotmailPOPTitle = /<option value=.*?>(.*?)<\/option>/i;
 const kDisplayName = /<D:displayname>(.*?)<\/D:displayname>/;
 const kSpecial = /<hm:special>(.*?)<\/hm:special>/;
 /*******************************************************************************/
