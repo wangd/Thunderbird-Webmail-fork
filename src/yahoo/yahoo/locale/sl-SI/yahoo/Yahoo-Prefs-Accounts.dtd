@@ -1,11 +1,9 @@
 <!ENTITY POP.Panel.szTitle "POP">
 <!ENTITY SMTP.Panel.szTitle "SMTP">
-<!ENTITY Mode.Panel.szTitle "Mode">
-
-<!ENTITY Mode.label "Select website the extension will use">
-<!ENTITY ScreenScraper.label "Production Website">
-<!ENTITY Beta.label "BETA Website">
-
+<!ENTITY Mode.Panel.szTitle "Način">
+<!ENTITY Mode.label "Izberite spletno mesto, ki ga bo uporabljala razširitev">
+<!ENTITY ScreenScraper.label "Produkcijsko spletno mesto">
+<!ENTITY Beta.label "Spletno mesto BETA">
 <!ENTITY DownloadUnread.Label "Prenesi le neprebrano pošto">
 <!ENTITY DownloadUnread.AccessKey "n">
 <!ENTITY JunkMail.Label "Prenesi neželeno pošto">
@@ -15,9 +13,7 @@
 <!ENTITY Remove.Label "Odstrani">
 <!ENTITY Remove.AccessKey "O">
 <!ENTITY Folders.Label "Prenesi mape">
-
 <!ENTITY SaveSentItems.Label "Shrani kopijo med poslano.">
 <!ENTITY SaveSentItems.AccessKey "S">
-
 <!ENTITY error.Label "Ni najdenih računov Yahoo">
-<!ENTITY notNA.Label "No SMPT options for Yahoo BETA">
+<!ENTITY notNA.Label "Ni možnosti SMPT za Yahoo BETA">
