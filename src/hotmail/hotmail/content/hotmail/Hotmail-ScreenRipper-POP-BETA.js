@@ -279,8 +279,13 @@ HotmailScreenRipperBETA.prototype =
                         //action
                         var szAction = aRefresh[0].match(patternHotmailPOPAction)[1];
                         mainObject.m_Log.Write("Hotmail-SR-BETAR loginOnloadHandler "+ szAction);
-                        mainObject.m_HttpComms.setURI(szAction);
-                        
+                        if (!mainObject.m_HttpComms.setURI(szAction))
+                        {
+                            var szURL = httpChannel.URI.prePath +"/"+szAction;
+                            mainObject.m_Log.Write("Hotmail-SR-BETAR loginOnloadHandler  szURL"+ szURL);
+                            mainObject.m_HttpComms.setURI(szURL);
+                        }
+                         
                         //form data  
                         var aInput =  aRefresh[0].match(patternHotmailPOPInput);
                         mainObject.m_Log.Write("Hotmail-SR-BETAR loginOnloadHandler "+ aInput); 
