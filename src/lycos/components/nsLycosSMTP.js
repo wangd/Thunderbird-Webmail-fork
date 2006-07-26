@@ -29,7 +29,7 @@ function nsLycosSMTP()
         this.m_szUserName = null;   
         this.m_szPassWord = null; 
         this.m_oResponseStream = null;  
-        this.m_HttpComms = new HttpComms();
+        this.m_HttpComms = new HttpComms(this.m_Log);
         this.m_HttpComms.setHandleHttpAuth(true);
         this.m_aszTo = new Array;
         this.m_szFrom = null;
@@ -123,13 +123,18 @@ nsLycosSMTP.prototype =
             
             this.m_iStage = 0;
 
-            this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
-            if (this.m_SessionData && this.m_bReUseSession)
+            if (this.m_bReUseSession)
             {
-                this.m_Log.Write("nsLycos.js - logIN - Session Data found");
-                this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
-                this.m_HttpComms.setHttpAuthManager(this.m_SessionData.oHttpAuthManager); 
+                this.m_Log.Write("nsLycos.js - logIN - Looking for Session Data");
+                this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
+                if (this.m_SessionData && this.m_bReUseSession)
+                {
+                    this.m_Log.Write("nsLycos.js - logIN - Session Data found");
+                    this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
+                    this.m_HttpComms.setHttpAuthManager(this.m_SessionData.oHttpAuthManager); 
+                }
             }
+            
 
             this.m_HttpComms.setUserName(this.m_szUserName);
             this.m_HttpComms.setPassword(this.m_szPassWord);

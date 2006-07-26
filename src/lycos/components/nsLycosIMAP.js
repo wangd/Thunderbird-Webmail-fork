@@ -54,7 +54,7 @@ function nsLycosIMAP()
         this.m_oFolder = Components.classes["@mozilla.org/nsIMAPFolders;1"];
         this.m_oFolder = this.m_oFolder.getService(Components.interfaces.nsIIMAPFolders);
         
-        this.m_HttpComms = new HttpComms(); 
+        this.m_HttpComms = new HttpComms(this.m_Log); 
         this.m_HttpComms.setHandleHttpAuth(true);     
         this.m_bAuthorised = false;   
         this.m_iStage=0; 
@@ -86,14 +86,7 @@ function nsLycosIMAP()
             this.m_iTime=oPref.Value;
         else
             this.m_iTime=10; 
-        
-        //do i reuse the session
-        oPref.Value = null;
-        if (WebMailPrefAccess.Get("bool","lycos.bReUseSession",oPref))
-            this.m_bReUseSession=oPref.Value;
-        else
-            this.m_bReUseSession=true; 
-                
+          
         this.m_Log.Write("nsLycosIMAP.js - Constructor - END");
     }
     catch(e)
@@ -156,6 +149,15 @@ nsLycosIMAP.prototype =
                 szLocation= "http://webdav.caramail.lycos.fr/httpmail.asp";   
             else
                 throw new Error("Unknown domain");
+           
+            this.m_Log.Write("nsLycos.js - logIN - Looking for Session Data");
+            this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
+            if (this.m_SessionData && this.m_bReUseSession)
+            {
+                this.m_Log.Write("nsLycos.js - logIN - Session Data found");
+                this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
+                this.m_HttpComms.setHttpAuthManager(this.m_SessionData.oHttpAuthManager); 
+            }
             
             this.m_HttpComms.setUserName(this.m_szUserName);
             this.m_HttpComms.setPassword(this.m_szPassWord);
@@ -201,19 +203,15 @@ nsLycosIMAP.prototype =
             mainObject.m_szFolderURI = szResponse.match(LycosIMAPFolderPattern)[1];
             mainObject.m_Log.Write("nsLycosIMAP.js - loginOnloadHandler - get folder url - " + mainObject.m_szFolderURI);
           
-            if (!mainObject.m_bReUseSession)
+            if (!mainObject.m_SessionData)
             {
-                mainObject.m_Log.Write("Lycos.js - logOUT - deleting Session Data");
-                if (!mainObject.m_SessionData)
-                {
-                    mainObject.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
-                    mainObject.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
-                    mainObject.m_SessionData.szUserName = mainObject.m_szUserName;
-                }
-                mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
-                mainObject.m_SessionData.oHttpAuthManager = mainObject.m_HttpComms.getHttpAuthManager();
-                mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);
+                mainObject.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
+                mainObject.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
+                mainObject.m_SessionData.szUserName = mainObject.m_szUserName;
             }
+            mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
+            mainObject.m_SessionData.oHttpAuthManager = mainObject.m_HttpComms.getHttpAuthManager();
+            mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);
             
             //server response
             mainObject.serverComms(mainObject.m_iTag +" OK Login Complete\r\n");
