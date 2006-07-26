@@ -15,7 +15,7 @@ function AOLPOP(oResponseStream, oLog)
         this.m_szUserName = null;   
         this.m_szPassWord = null; 
   
-        this.m_HttpComms = new HttpComms(); 
+        this.m_HttpComms = new HttpComms(this.m_Log); 
         this.m_bAuthorised = false; 
         this.m_iStage=0; 
          

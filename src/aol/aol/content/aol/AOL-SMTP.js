@@ -410,7 +410,7 @@ AOLSMTP.prototype =
                         var szType = aszInput[i].match(patternAOLType)[1];
                         mainObject.m_Log.Write("nsAOLSMTP.js - composerOnloadHandler - szType " + szType);
                         
-                        if (szType.search(/button/i)==-1)
+                        if (szType.search(/button/i)==-1 && szType.search(/checkbox/i)==-1)
                         {
                             var szName = aszInput[i].match(patternAOLName)[1];
                             mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Name " + szName); 

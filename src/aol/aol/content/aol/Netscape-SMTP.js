@@ -16,7 +16,7 @@ function NetscapeSMTP(oResponseStream, oLog)
         this.m_bAuthorised = false;
         this.m_szUserName = null;   
         this.m_szPassWord = null;   
-        this.m_HttpComms = new HttpComms();
+        this.m_HttpComms = new HttpComms(this.m_Log);
         this.m_aszTo = new Array;
         this.m_szFrom = null;
         this.m_iStage = 0;
@@ -401,7 +401,7 @@ NetscapeSMTP.prototype =
                         var szType = aszInput[i].match(patternAOLType)[1];
                         mainObject.m_Log.Write("NetscapeSMTP.js - composerOnloadHandler - szType " + szType);
                         
-                        if (szType.search(/button/i)==-1)
+                        if (szType.search(/button/i)==-1 && szType.search(/checkbox/i)==-1)
                         {
                             var szName = aszInput[i].match(patternAOLName)[1];
                             mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Name " + szName); 
