@@ -117,6 +117,7 @@ YahooPOPBETA.prototype =
                 if (this.m_SessionData)  
                 {     
                     this.m_Log.Write("YahooPOPBETA.js - logIN - Session Data FOUND");
+                    this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
                     this.m_szHomeURI = this.m_SessionData.oComponentData.findElement("szHomeURI");
                     this.m_Log.Write("YahooPOPBETA.js - logIN - szHomeURI " +this.m_szHomeURI);    
                     if (this.m_szHomeURI)

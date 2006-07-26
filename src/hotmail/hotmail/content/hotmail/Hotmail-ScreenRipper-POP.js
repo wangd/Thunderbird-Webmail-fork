@@ -102,6 +102,7 @@ HotmailScreenRipper.prototype =
                     this.m_Log.Write("Hotmail-SR - logIN - Session Data found");                   
                     if (this.m_SessionData.oComponentData)
                     {
+                        this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
                         this.m_szHomeURI = this.m_SessionData.oComponentData.findElement("szHomeURI");
                         this.m_Log.Write("Hotmail-SR - logIN - szHomeURI " +this.m_szHomeURI);
                     }
