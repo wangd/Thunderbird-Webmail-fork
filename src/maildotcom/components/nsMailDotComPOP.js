@@ -136,6 +136,7 @@ nsMailDotCom.prototype =
                 if (this.m_SessionData)  
                 {     
                     this.m_Log.Write("nsMailDotCom.js - logIN - Session Data FOUND");
+                    this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
                     this.m_szLocation = this.m_SessionData.oComponentData.findElement("szLocation");
                     this.m_Log.Write("YahooPOPBETA.js - logIN - m_szLocation " +this.m_szLocation);    
                     this.m_szFolderList =  this.m_SessionData.oComponentData.findElement("szFolderList");
