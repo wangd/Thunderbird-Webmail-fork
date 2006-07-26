@@ -1,6 +1,6 @@
 <!ENTITY AOLAbout.Title "AOL / Netscape - Tietoja">
 <!ENTITY AOLAbout.ExtName "AOL / Netscape">
-<!ENTITY AOLAbout.ExtVersion "versio 0.3.0">
+<!ENTITY AOLAbout.ExtVersion "versio 0.3.1">
 <!ENTITY AOLAbout.ExtDescription "AOL / Netscape -komponetti WebMail laajennukseen.">
 <!ENTITY AOLAbout.ExtCreaterTitle "Tekijä:">
 <!ENTITY AOLAbout.ExtCreator "ComodoDragon">

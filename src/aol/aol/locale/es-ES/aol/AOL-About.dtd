@@ -1,6 +1,6 @@
 <!ENTITY AOLAbout.Title "AOL / Netscape - Acerca de">
 <!ENTITY AOLAbout.ExtName "AOL / Netscape">
-<!ENTITY AOLAbout.ExtVersion "versión 0.3.0">
+<!ENTITY AOLAbout.ExtVersion "versión 0.3.1">
 <!ENTITY AOLAbout.ExtDescription "Módulo AOL / Netscape para la extensión Web-Mail.">
 <!ENTITY AOLAbout.ExtCreaterTitle "Creada por:">
 <!ENTITY AOLAbout.ExtCreator "ComodoDragon">
