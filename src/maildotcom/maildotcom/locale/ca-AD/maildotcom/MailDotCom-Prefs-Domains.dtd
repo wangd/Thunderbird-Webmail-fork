@@ -1,6 +1,5 @@
-<!ENTITY Add.label "Add...">
+<!ENTITY Add.label "Afegeix">
 <!ENTITY Add.accessKey "A">
-<!ENTITY Remove.label "Remove">
+<!ENTITY Remove.label "Esborra">
 <!ENTITY Remove.accessKey "R">
-<!ENTITY domain.label "Domains supported by MailDotCom extension">
-
+<!ENTITY domain.label "Dominis que permet l&apos;extensió MailDotCom">

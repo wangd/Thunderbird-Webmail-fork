@@ -1,6 +1,5 @@
-<!ENTITY Add.label "Add...">
-<!ENTITY Add.accessKey "A">
-<!ENTITY Remove.label "Remove">
-<!ENTITY Remove.accessKey "R">
-<!ENTITY domain.label "Domains supported by MailDotCom extension">
-
+<!ENTITY Add.label "Lisää...">
+<!ENTITY Add.accessKey "L">
+<!ENTITY Remove.label "Poista">
+<!ENTITY Remove.accessKey "P">
+<!ENTITY domain.label "MailDotCom-laajennuksen tukemat verkkotunnukset">

@@ -1,22 +1,19 @@
 <!ENTITY POP.Panel.szTitle "POP">
 <!ENTITY SMTP.Panel.szTitle "SMTP">
-
-<!ENTITY DownloadUnread.Label "Download unread emails only">
+<!ENTITY DownloadUnread.Label "Descarrega només els missatges no llegits">
 <!ENTITY DownloadUnread.AccessKey "u">
-<!ENTITY EmptyTrash.Label "Empty Trash">
+<!ENTITY EmptyTrash.Label "Buida la paperera">
 <!ENTITY EmptyTrash.AccessKey "E">
-<!ENTITY Add.Label "Add...">
+<!ENTITY Add.Label "Afegeix">
 <!ENTITY Add.AccessKey "A">
-<!ENTITY Remove.Label "Remove">
+<!ENTITY Remove.Label "Esborra">
 <!ENTITY Remove.AccessKey "R">
-<!ENTITY Folders.Label "Download folders">
-
-<!ENTITY SaveSentItems.Label "Save copy in sent items.">
+<!ENTITY Folders.Label "Descarrega carpetes">
+<!ENTITY SaveSentItems.Label "Desa una còpia a missatges enviats.">
 <!ENTITY SaveSentItems.AccessKey "s">
-<!ENTITY AlternativeGroup.Label "When sending rich text emails which part should the extension send?">
-<!ENTITY SendPlain.Label "Send plain text">
+<!ENTITY AlternativeGroup.Label "Quan s&apos;estan enviant correus de text enriquit, quina part ha d&apos;enviar l&apos;extensió?">
+<!ENTITY SendPlain.Label "Envia el text pla">
 <!ENTITY SendPlain.AccessKey "p">
-<!ENTITY SendHtml.Label "Send html text">
+<!ENTITY SendHtml.Label "Envia el text html">
 <!ENTITY SendHtml.AccessKey "h">
-
-<!ENTITY error.Label "No MailDotCom Accounts Found"> 
+<!ENTITY error.Label "No s&apos;han trobat comptes de MailDotCom">

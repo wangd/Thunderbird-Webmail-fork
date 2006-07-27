@@ -1,8 +1,8 @@
-<!ENTITY TitleAdd "Add">
-<!ENTITY folderName.label "Folder Name">
+<!ENTITY TitleAdd "Afegeix">
+<!ENTITY folderName.label "Nom de la carpeta">
 <!ENTITY folderName.accessKey "F">
-<!ENTITY folders.label "Add download folder">
+<!ENTITY folders.label "Afegeix carpeta de descàrrega">
 <!ENTITY Ok.label "Ok">
 <!ENTITY Ok.accessKey "O">
-<!ENTITY Cancel.label "Cancel">
+<!ENTITY Cancel.label "Cancela">
 <!ENTITY Cancel.accessKey "C">

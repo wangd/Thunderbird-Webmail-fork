@@ -1,22 +1,19 @@
 <!ENTITY POP.Panel.szTitle "POP">
 <!ENTITY SMTP.Panel.szTitle "SMTP">
-
-<!ENTITY DownloadUnread.Label "Download unread emails only">
-<!ENTITY DownloadUnread.AccessKey "u">
-<!ENTITY EmptyTrash.Label "Empty Trash">
-<!ENTITY EmptyTrash.AccessKey "E">
-<!ENTITY Add.Label "Add...">
-<!ENTITY Add.AccessKey "A">
-<!ENTITY Remove.Label "Remove">
-<!ENTITY Remove.AccessKey "R">
-<!ENTITY Folders.Label "Download folders">
-
-<!ENTITY SaveSentItems.Label "Save copy in sent items.">
-<!ENTITY SaveSentItems.AccessKey "s">
-<!ENTITY AlternativeGroup.Label "When sending rich text emails which part should the extension send?">
-<!ENTITY SendPlain.Label "Send plain text">
+<!ENTITY DownloadUnread.Label "Lataa vain lukemattomat viestit">
+<!ENTITY DownloadUnread.AccessKey "a">
+<!ENTITY EmptyTrash.Label "Tyhjennä roskakori">
+<!ENTITY EmptyTrash.AccessKey "T">
+<!ENTITY Add.Label "Lisää...">
+<!ENTITY Add.AccessKey "L">
+<!ENTITY Remove.Label "Poista">
+<!ENTITY Remove.AccessKey "P">
+<!ENTITY Folders.Label "Latauskansiot">
+<!ENTITY SaveSentItems.Label "Tallenna kopio lähetettyihin.">
+<!ENTITY SaveSentItems.AccessKey "k">
+<!ENTITY AlternativeGroup.Label "Lähetettäessä erikoismuotoiltua viestiä, mikä osa lähetetään?">
+<!ENTITY SendPlain.Label "Lähetä pelkkä teksti">
 <!ENTITY SendPlain.AccessKey "p">
-<!ENTITY SendHtml.Label "Send html text">
-<!ENTITY SendHtml.AccessKey "h">
-
-<!ENTITY error.Label "No MailDotCom Accounts Found"> 
+<!ENTITY SendHtml.Label "Lähetä HTML">
+<!ENTITY SendHtml.AccessKey "H">
+<!ENTITY error.Label "MailDotCom-tilejä ei löytynyt">

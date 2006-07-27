@@ -1,22 +1,19 @@
 <!ENTITY POP.Panel.szTitle "POP">
 <!ENTITY SMTP.Panel.szTitle "SMTP">
-
-<!ENTITY DownloadUnread.Label "Download unread emails only">
-<!ENTITY DownloadUnread.AccessKey "u">
-<!ENTITY EmptyTrash.Label "Empty Trash">
-<!ENTITY EmptyTrash.AccessKey "E">
-<!ENTITY Add.Label "Add...">
+<!ENTITY DownloadUnread.Label "Descargar sólo los mensajes no leídos">
+<!ENTITY DownloadUnread.AccessKey "m">
+<!ENTITY EmptyTrash.Label "Vaciar papelera">
+<!ENTITY EmptyTrash.AccessKey "V">
+<!ENTITY Add.Label "Añadir...">
 <!ENTITY Add.AccessKey "A">
-<!ENTITY Remove.Label "Remove">
-<!ENTITY Remove.AccessKey "R">
-<!ENTITY Folders.Label "Download folders">
-
-<!ENTITY SaveSentItems.Label "Save copy in sent items.">
-<!ENTITY SaveSentItems.AccessKey "s">
-<!ENTITY AlternativeGroup.Label "When sending rich text emails which part should the extension send?">
-<!ENTITY SendPlain.Label "Send plain text">
+<!ENTITY Remove.Label "Borrar">
+<!ENTITY Remove.AccessKey "B">
+<!ENTITY Folders.Label "Descargar carpetas">
+<!ENTITY SaveSentItems.Label "Guardar una copia en la carpeta enviados">
+<!ENTITY SaveSentItems.AccessKey "G">
+<!ENTITY AlternativeGroup.Label "Al enviar correos con formato enriquecido, ¿qué parte debe enviarse?">
+<!ENTITY SendPlain.Label "Enviar como texto plano">
 <!ENTITY SendPlain.AccessKey "p">
-<!ENTITY SendHtml.Label "Send html text">
+<!ENTITY SendHtml.Label "Enviar como html">
 <!ENTITY SendHtml.AccessKey "h">
-
-<!ENTITY error.Label "No MailDotCom Accounts Found"> 
+<!ENTITY error.Label "No se han encontrado cuentas MailDotCom">
