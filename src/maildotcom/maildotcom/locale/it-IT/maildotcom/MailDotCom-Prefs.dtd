@@ -1,5 +1,5 @@
-<!ENTITY Window.szTitle "MailDotCom Options">
-<!ENTITY Accounts.Panel.szTitle "Accounts">
-<!ENTITY Domains.Panel.szTitle "Domains">
-<!ENTITY Ok.label "Ok">
-<!ENTITY Cancel.label "Cancel">
+<!ENTITY Window.szTitle "Opzioni del componente MailDotCom">
+<!ENTITY Accounts.Panel.szTitle "Account">
+<!ENTITY Domains.Panel.szTitle "Dominii">
+<!ENTITY Ok.label "OK">
+<!ENTITY Cancel.label "Annulla">
