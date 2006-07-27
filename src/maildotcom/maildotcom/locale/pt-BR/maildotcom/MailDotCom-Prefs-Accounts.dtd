@@ -1,22 +1,19 @@
 <!ENTITY POP.Panel.szTitle "POP">
 <!ENTITY SMTP.Panel.szTitle "SMTP">
-
-<!ENTITY DownloadUnread.Label "Download unread emails only">
-<!ENTITY DownloadUnread.AccessKey "u">
-<!ENTITY EmptyTrash.Label "Empty Trash">
+<!ENTITY DownloadUnread.Label "Baixar apenas emails não lidos">
+<!ENTITY DownloadUnread.AccessKey "n">
+<!ENTITY EmptyTrash.Label "Esvaziar lixeira">
 <!ENTITY EmptyTrash.AccessKey "E">
-<!ENTITY Add.Label "Add...">
+<!ENTITY Add.Label "Adicionar...">
 <!ENTITY Add.AccessKey "A">
-<!ENTITY Remove.Label "Remove">
+<!ENTITY Remove.Label "Remover">
 <!ENTITY Remove.AccessKey "R">
-<!ENTITY Folders.Label "Download folders">
-
-<!ENTITY SaveSentItems.Label "Save copy in sent items.">
+<!ENTITY Folders.Label "Pastas de download">
+<!ENTITY SaveSentItems.Label "Salvar cópia nos ítens enviados.">
 <!ENTITY SaveSentItems.AccessKey "s">
-<!ENTITY AlternativeGroup.Label "When sending rich text emails which part should the extension send?">
-<!ENTITY SendPlain.Label "Send plain text">
+<!ENTITY AlternativeGroup.Label "Ao enviar emails rich text como a extensão deve enviar?">
+<!ENTITY SendPlain.Label "Enviar texto plano">
 <!ENTITY SendPlain.AccessKey "p">
-<!ENTITY SendHtml.Label "Send html text">
+<!ENTITY SendHtml.Label "Enviar texto html">
 <!ENTITY SendHtml.AccessKey "h">
-
-<!ENTITY error.Label "No MailDotCom Accounts Found"> 
+<!ENTITY error.Label "Nenhuma conta do MailDotCom foi encontrada">
