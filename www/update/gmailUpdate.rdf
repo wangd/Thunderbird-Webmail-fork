@@ -5,21 +5,21 @@
     <RDF:Description about="urn:mozilla:extension:{860a7040-44a3-11da-8cd6-0800200c9a66}">
         <em:updates>
             <RDF:Seq>
-                <RDF:li resource="urn:mozilla:extension:{860a7040-44a3-11da-8cd6-0800200c9a66}:0.5.1"/>
+                <RDF:li resource="urn:mozilla:extension:{860a7040-44a3-11da-8cd6-0800200c9a66}:0.5.2"/>
             </RDF:Seq>
         </em:updates>
     </RDF:Description>
     
-    <RDF:Description about="urn:mozilla:extension:{860a7040-44a3-11da-8cd6-0800200c9a66}:0.5.1">
-        <em:version>0.5.1</em:version>
+    <RDF:Description about="urn:mozilla:extension:{860a7040-44a3-11da-8cd6-0800200c9a66}:0.5.2">
+        <em:version>0.5.2</em:version>
         <!-- Thunderbird updates -->
     	<em:targetApplication>
         	<Description>
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
             	<em:minVersion>1.4</em:minVersion>
             	<em:maxVersion>2.0a1</em:maxVersion>
-                <em:updateLink>http://download.mozdev.org/webmail/gmail-0-5-1.xpi</em:updateLink>
-                <em:updateHash>sha256:b2c06a1dc186ffa0b7dcdb9a908515da23672f0dae36d660b493a91da4550db8</em:updateHash>
+                <em:updateLink>http://download.mozdev.org/webmail/gmail-0-5-2.xpi</em:updateLink>
+                <em:updateHash>sha256:9186dbf52578c73a7292a0225470b5d7438c27383af90c563b2a023000a95681</em:updateHash>
           </Description>
         </em:targetApplication>
         
