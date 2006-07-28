@@ -3,8 +3,6 @@
 <!ENTITY HotmailAbout.ExtVersion "版本:">
 <!ENTITY HotmailAbout.ExtDescription "Web-Mail 扩展的 Hotmail 组件。">
 <!ENTITY HotmailAbout.ExtCreaterTitle "创建者:">
-<!ENTITY HotmailAbout.ExtCreator "ComodoDragon">
 <!ENTITY HotmailAbout.ExtHome "主页">
-<!ENTITY HotmailAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY HotmailAbout.ExtButton "关闭">
 <!ENTITY HotmailAbout.ExtContributorTitle "贡献者:">

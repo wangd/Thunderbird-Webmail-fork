@@ -1,10 +1,8 @@
 <!ENTITY HotmailAbout.Title "Informazioni su Hotmail">
 <!ENTITY HotmailAbout.ExtName "Hotmail">
-<!ENTITY HotmailAbout.ExtVersion "versione 1.0.2">
+<!ENTITY HotmailAbout.ExtVersion "versione">
 <!ENTITY HotmailAbout.ExtDescription "Componente per l&apos;estensione WebMail">
 <!ENTITY HotmailAbout.ExtCreaterTitle "Creato da:">
-<!ENTITY HotmailAbout.ExtCreator "ComodoDragon">
 <!ENTITY HotmailAbout.ExtHome "Sito web">
-<!ENTITY HotmailAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY HotmailAbout.ExtButton "Chiudi">
 <!ENTITY HotmailAbout.ExtContributorTitle "Collaboratori:">

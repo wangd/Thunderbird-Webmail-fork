@@ -13,11 +13,7 @@
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         id = "HotmailAboutDialog">
      
-    <stringbundleset>
-	   <stringbundle id="stringsHotmailAbout" src="chrome://Hotmail/locale/Hotmail-About.properties"/>
-	</stringbundleset>
-	
-    <script type="application/x-javascript" src="chrome://Hotmail/content/Hotmail-About.js"/>
+    <script type="application/x-javascript" src="chrome://hotmail/content/Hotmail-About.js"/>
         
     <groupbox align="center" orient="horizontal">
         <vbox>
@@ -26,7 +22,6 @@
                 <image id="HotmailImage"/>
                 <spacer flex="1"/>
             </hbox>
-            <!--<text value="&HotmailAbout.ExtName;" id = "HotmailName"/>-->
              <hbox>
                 <text value="&HotmailAbout.ExtVersion;" id = "HotmailVersionTitle" class="HotmailVersion"/>
                 <text id = "HotmailVersionNumber" class="HotmailVersion"/>
@@ -35,13 +30,12 @@
             <text value="&HotmailAbout.ExtCreaterTitle;" id = "HotmailCreatorLabel"/>
             <hbox>
                 <image id="LionImage"/>
-                <text value="&HotmailAbout.ExtCreator;" class = "HotmailCreatorText"/>
+                <text  id="HotmailCreator" class = "HotmailCreatorText"/>
             </hbox>
             <text value="&HotmailAbout.ExtContributorTitle;" id = "HotmailContributorLabel"/>
             <vbox flex="1" id="HotmailContributorBox"/>
-            <text value="&HotmailAbout.ExtHome;" 
-                  id = "HotmailHomePage"
-                  onclick="window.opener.openURL('&HotmailAbout.ExtHomeURL;');"/>
+            <text id = "HotmailHomePage" value ="&HotmailAbout.ExtHome;"/>
+            
         </vbox>
     </groupbox>
 

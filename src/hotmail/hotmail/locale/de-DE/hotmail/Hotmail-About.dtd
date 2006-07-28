@@ -3,8 +3,6 @@
 <!ENTITY HotmailAbout.ExtVersion "Version">
 <!ENTITY HotmailAbout.ExtDescription "Hotmail-Komponente der WebMail-Erweiterung.">
 <!ENTITY HotmailAbout.ExtCreaterTitle "Erstellt von:">
-<!ENTITY HotmailAbout.ExtCreator "ComodoDragon">
 <!ENTITY HotmailAbout.ExtHome "Homepage">
-<!ENTITY HotmailAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY HotmailAbout.ExtButton "Schließen">
 <!ENTITY HotmailAbout.ExtContributorTitle "Mitwirkende:">

@@ -3,8 +3,6 @@
 <!ENTITY HotmailAbout.ExtVersion "sürüm">
 <!ENTITY HotmailAbout.ExtDescription "Web-Mail eklentisi için Hotmail eklentisi">
 <!ENTITY HotmailAbout.ExtCreaterTitle "Hazırlayan:">
-<!ENTITY HotmailAbout.ExtCreator "ComodoDragon">
 <!ENTITY HotmailAbout.ExtHome "Ana Sayfa">
-<!ENTITY HotmailAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY HotmailAbout.ExtButton "Kapat">
 <!ENTITY HotmailAbout.ExtContributorTitle "Destekleyenler:">

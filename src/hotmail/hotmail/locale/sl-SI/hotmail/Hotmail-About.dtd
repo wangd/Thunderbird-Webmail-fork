@@ -3,8 +3,6 @@
 <!ENTITY HotmailAbout.ExtVersion "različica">
 <!ENTITY HotmailAbout.ExtDescription "Komponenta Hotmail za razširitev Web-Mail.">
 <!ENTITY HotmailAbout.ExtCreaterTitle "Avtor:">
-<!ENTITY HotmailAbout.ExtCreator "ComodoDragon">
 <!ENTITY HotmailAbout.ExtHome "Domača stran">
-<!ENTITY HotmailAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY HotmailAbout.ExtButton "Zapri">
 <!ENTITY HotmailAbout.ExtContributorTitle "Sodelavci:">

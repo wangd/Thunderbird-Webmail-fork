@@ -3,8 +3,6 @@
 <!ENTITY HotmailAbout.ExtVersion "versio">
 <!ENTITY HotmailAbout.ExtDescription "Hotmail-komponentti WebMail laajennukseen.">
 <!ENTITY HotmailAbout.ExtCreaterTitle "Tekijä:">
-<!ENTITY HotmailAbout.ExtCreator "ComodoDragon">
 <!ENTITY HotmailAbout.ExtHome "Kotisivu">
-<!ENTITY HotmailAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY HotmailAbout.ExtButton "Sulje">
 <!ENTITY HotmailAbout.ExtContributorTitle "Avustajat:">
