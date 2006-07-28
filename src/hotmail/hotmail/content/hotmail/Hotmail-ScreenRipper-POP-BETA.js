@@ -105,7 +105,7 @@ HotmailScreenRipperBETA.prototype =
                         if (this.m_szHomeURI)
                         {
                             this.m_Log.Write("Hotmail-SR-BETAR - logIN - Session Data Found"); 
-                            this.m_iStage =3;
+                            this.m_iStage =2;
                             this.m_bReEntry = true;
                             this.m_HttpComms.setURI(this.m_szHomeURI);
                         }
@@ -270,51 +270,8 @@ HotmailScreenRipperBETA.prototype =
                     mainObject.m_iStage++;
                 break;
                 
-                case 2: //JS bounce
-                    var aRefresh = szResponse.match(patternHotmailPOPForm);
-                    mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler - refresh "+ aRefresh); 
-                   
-                    if (aRefresh)
-                    {   
-                        //action
-                        var szAction = aRefresh[0].match(patternHotmailPOPAction)[1];
-                        mainObject.m_Log.Write("Hotmail-SR-BETAR loginOnloadHandler "+ szAction);
-                        if (!mainObject.m_HttpComms.setURI(szAction))
-                        {
-                            var szURL = httpChannel.URI.prePath +"/"+szAction;
-                            mainObject.m_Log.Write("Hotmail-SR-BETAR loginOnloadHandler  szURL"+ szURL);
-                            mainObject.m_HttpComms.setURI(szURL);
-                        }
-                         
-                        //form data  
-                        var aInput =  aRefresh[0].match(patternHotmailPOPInput);
-                        mainObject.m_Log.Write("Hotmail-SR-BETAR loginOnloadHandler "+ aInput); 
-                        var szName =  aInput[0].match(patternHotmailPOPName)[1];
-                        var szValue =  aInput[0].match(patternHotmailPOPValue)[1];
-                        szValue = encodeURIComponent(szValue);
-                        mainObject.m_HttpComms.addValuePair(szName,szValue);
-                        mainObject.m_HttpComms.setRequestMethod("POST");  
-                    }
-                    else
-                    {
-                        aRefresh = szResponse.match(patternHotmailPOPRefresh);
-                        
-                        if (!aRefresh)
-                            aRefresh = szResponse.match(patternHotmailPOPJavaRefresh);
-                            
-                        mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler refresh "+ aRefresh); 
-                        if (aRefresh == null) throw new Error("error parsing login page");    
-                        
-                        mainObject.m_HttpComms.setURI(aRefresh[1]);
-                        mainObject.m_HttpComms.setRequestMethod("GET");
-                    } 
-           
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);   
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
-                break;
-               
-                case 3://inbox 
+            
+                case 2://inbox 
 
                     //check for logout option 
                     var aszLogoutURL = szResponse.match(patternHotmailPOPLogOut);
