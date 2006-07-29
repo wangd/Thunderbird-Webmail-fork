@@ -1,5 +1,35 @@
-<!ENTITY Window.szTitle "Možnosti Yahoo">
-<!ENTITY Accounts.Panel.szTitle "Računi">
-<!ENTITY Domains.Panel.szTitle "Domene">
-<!ENTITY Ok.label "V redu">
-<!ENTITY Cancel.label "Prekliči">
+<!ENTITY YahooPref.Window.Title "Možnosti Yahoo">
+<!ENTITY YahooPref.Panel.Accounts.Title "Računi">
+<!ENTITY YahooPref.Panel.Domains.Title "Domene">
+<!ENTITY YahooPref.Button.Ok.Label "V redu">
+<!ENTITY YahooPref.Button.Cancel.Label "Prekliči">
+
+<!ENTITY YahooPref.Tab.Mode.Title "Način">
+<!ENTITY YahooPref.Tab.POP.Title "POP">
+<!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
+
+<!ENTITY YahooPref.Mode.Label "Izberite spletno mesto, ki ga bo uporabljala razširitev">
+<!ENTITY YahooPref.Mode.ScreenScraper.Label "Produkcijsko spletno mesto">
+<!ENTITY YahooPref.Mode.Beta.Label "Spletno mesto BETA">
+
+<!ENTITY YahooPref.POP.DownloadUnread.Label "Prenesi le neprebrano pošto">
+<!ENTITY YahooPref.POP.DownloadUnread.AccessKey "n">
+<!ENTITY YahooPref.POP.JunkMail.Label "Prenesi neželeno pošto">
+<!ENTITY YahooPref.POP.JunkMail.AccessKey "ž">
+<!ENTITY YahooPref.POP.Folders.Label "Prenesi mape">
+<!ENTITY YahooPref.POP.ButtonAdd.Label "Dodaj ...">
+<!ENTITY YahooPref.POP.ButtonAdd.AccessKey "D">
+<!ENTITY YahooPref.POP.ButtonRemove.Label "Odstrani">
+<!ENTITY YahooPref.POP.ButtonRemove.AccessKey "O">
+
+<!ENTITY YahooPref.SMTP.SaveSentItems.Label "Shrani kopijo med poslano.">
+<!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "S">
+
+<!ENTITY YahooPref.AccountError.Label "Ni najdenih računov Yahoo">
+<!ENTITY YahooPref.SMTP.NA.Label "Ni možnosti SMPT za Yahoo BETA">
+
+<!ENTITY YahooPref.Domain.Label "Domene, ki jih podpira razširitev Yahoo">
+<!ENTITY YahooPref.Domain.Button.AddDomain.Label "Dodaj ...">
+<!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "D">
+<!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Odstrani">
+<!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "O">

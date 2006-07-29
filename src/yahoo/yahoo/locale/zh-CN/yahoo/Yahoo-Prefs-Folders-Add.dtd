@@ -1,8 +1,8 @@
-<!ENTITY TitleAdd "Add">
-<!ENTITY folderName.label "Folder Name">
-<!ENTITY folderName.accessKey "F">
-<!ENTITY folders.label "Add download folder">
-<!ENTITY Ok.label "Ok">
-<!ENTITY Ok.accessKey "O">
-<!ENTITY Cancel.label "Cancel">
-<!ENTITY Cancel.accessKey "C">
+<!ENTITY YahooFolderAdd.Title "Add Folder">
+<!ENTITY YahooFolderName.Label "Folder Name">
+<!ENTITY YahooFolderName.AccessKey "F">
+<!ENTITY YahooFolders.Label "Add download folder">
+<!ENTITY YahooFolder.ButtonOk.Label "Ok">
+<!ENTITY YahooFolder.ButtonOk.AccessKey "O">
+<!ENTITY YahooFolder.ButtonCancel.Label "Cancel">
+<!ENTITY YahooFolder.ButtonCancel.AccessKey "C">

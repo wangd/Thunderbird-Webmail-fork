@@ -1,8 +1,8 @@
-<!ENTITY TitleAdd "Adicionar">
-<!ENTITY folderName.label "Nome da Pasta">
-<!ENTITY folderName.accessKey "P">
-<!ENTITY folders.label "Adicionar pasta de download">
-<!ENTITY Ok.label "Ok">
-<!ENTITY Ok.accessKey "O">
-<!ENTITY Cancel.label "Cancelar">
-<!ENTITY Cancel.accessKey "C">
+<!ENTITY YahooFolderAdd.Title "Adicionar">
+<!ENTITY YahooFolderName.Label "Nome da Pasta">
+<!ENTITY YahooFolderName.AccessKey "P">
+<!ENTITY YahooFolders.Label "Adicionar pasta de download">
+<!ENTITY YahooFolder.ButtonOk.Label "Ok">
+<!ENTITY YahooFolder.ButtonOk.AccessKey "O">
+<!ENTITY YahooFolder.ButtonCancel.Label "Cancelar">
+<!ENTITY YahooFolder.ButtonCancel.AccessKey "C">

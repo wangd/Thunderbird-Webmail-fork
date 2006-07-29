@@ -1,5 +1,35 @@
-<!ENTITY Window.szTitle "Options de Yahoo">
-<!ENTITY Accounts.Panel.szTitle "Comptes">
-<!ENTITY Domains.Panel.szTitle "Domaines">
-<!ENTITY Ok.label "Accepter">
-<!ENTITY Cancel.label "Annuler">
+<!ENTITY YahooPref.Window.Title "Options de Yahoo">
+<!ENTITY YahooPref.Panel.Accounts.Title "Comptes">
+<!ENTITY YahooPref.Panel.Domains.Title "Domaines">
+<!ENTITY YahooPref.Button.Ok.Label "Accepter">
+<!ENTITY YahooPref.Button.Cancel.Label "Annuler">
+
+<!ENTITY YahooPref.Tab.Mode.Title "Mode">
+<!ENTITY YahooPref.Tab.POP.Title "POP">
+<!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
+
+<!ENTITY YahooPref.Mode.Label "Sélectionner le site Web, que l&apos;extension va utiliser">
+<!ENTITY YahooPref.Mode.ScreenScraper.Label "Site Web de production">
+<!ENTITY YahooPref.Mode.Beta.Label "Site Web BETA">
+
+<!ENTITY YahooPref.POP.DownloadUnread.Label "Télécharger seulement les messages non lus">
+<!ENTITY YahooPref.POP.DownloadUnread.AccessKey "u">
+<!ENTITY YahooPref.POP.JunkMail.Label "Télécharger les indésirables">
+<!ENTITY YahooPref.POP.JunkMail.AccessKey "i">
+<!ENTITY YahooPref.POP.Folders.Label "Dossier de destination">
+<!ENTITY YahooPref.POP.ButtonAdd.Label "Ajouter ...">
+<!ENTITY YahooPref.POP.ButtonAdd.AccessKey "A">
+<!ENTITY YahooPref.POP.ButtonRemove.Label "Enlever">
+<!ENTITY YahooPref.POP.ButtonRemove.AccessKey "E">
+
+<!ENTITY YahooPref.SMTP.SaveSentItems.Label "Garder une copie dans la boîte d&apos;envoi">
+<!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "d">
+
+<!ENTITY YahooPref.AccountError.Label "Aucun compte Yahoo trouvé">
+<!ENTITY YahooPref.SMTP.NA.Label "Aucune option SMTP pour Yahoo BETA">
+
+<!ENTITY YahooPref.Domain.Label "Domaines acceptés par l&apos;extension Yahoo">
+<!ENTITY YahooPref.Domain.Button.AddDomain.Label "Ajouter ...">
+<!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "A">
+<!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Enlever">
+<!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "E">

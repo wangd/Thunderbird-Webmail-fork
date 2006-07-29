@@ -1,8 +1,8 @@
-<!ENTITY TitleAdd "Dodaj">
-<!ENTITY folderName.label "Ime mape">
-<!ENTITY folderName.accessKey "m">
-<!ENTITY folders.label "Dodaj mapo za prenos">
-<!ENTITY Ok.label "V redu">
-<!ENTITY Ok.accessKey "r">
-<!ENTITY Cancel.label "Prekliči">
-<!ENTITY Cancel.accessKey "k">
+<!ENTITY YahooFolderAdd.Title "Dodaj">
+<!ENTITY YahooFolderName.Label "Ime mape">
+<!ENTITY YahooFolderName.AccessKey "m">
+<!ENTITY YahooFolders.Label "Dodaj mapo za prenos">
+<!ENTITY YahooFolder.ButtonOk.Label "V redu">
+<!ENTITY YahooFolder.ButtonOk.AccessKey "r">
+<!ENTITY YahooFolder.ButtonCancel.Label "Prekliči">
+<!ENTITY YahooFolder.ButtonCancel.AccessKey "k">

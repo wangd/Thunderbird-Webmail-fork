@@ -1,8 +1,8 @@
-<!ENTITY TitleAdd "Ajouter">
-<!ENTITY folderName.label "Nom de dossier">
-<!ENTITY folderName.accessKey "d">
-<!ENTITY folders.label "Ajouter le dossier de destination">
-<!ENTITY Ok.label "Accepter">
-<!ENTITY Ok.accessKey "c">
-<!ENTITY Cancel.label "Annuler">
-<!ENTITY Cancel.accessKey "A">
+<!ENTITY YahooFolderAdd.Title "Ajouter">
+<!ENTITY YahooFolderName.Label "Nom de dossier">
+<!ENTITY YahooFolderName.AccessKey "d">
+<!ENTITY YahooFolders.Label "Ajouter le dossier de destination">
+<!ENTITY YahooFolder.ButtonOk.Label "Accepter">
+<!ENTITY YahooFolder.ButtonOk.AccessKey "c">
+<!ENTITY YahooFolder.ButtonCancel.Label "Annuler">
+<!ENTITY YahooFolder.ButtonCancel.AccessKey "A">

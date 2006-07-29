@@ -1,8 +1,8 @@
-<!ENTITY TitleAdd "Tilføj domæne">
-<!ENTITY domainName.label "Domæne">
-<!ENTITY domainName.accessKey "D">
-<!ENTITY domain.label "Tilføj Yahoo-domæne">
-<!ENTITY Ok.label "Ok">
-<!ENTITY Ok.accessKey "O">
-<!ENTITY Cancel.label "Annuller">
-<!ENTITY Cancel.accessKey "A">
+<!ENTITY YahooAddDomain.Title "Tilføj domæne">
+<!ENTITY YahooAddDomainName.Label "Domæne">
+<!ENTITY YahooAddDomainName.AccessKey "D">
+<!ENTITY YahooAddDomain.Label "Tilføj Yahoo-domæne">
+<!ENTITY YahooAddDomain.ButtonOk.Label "Ok">
+<!ENTITY YahooAddDomain.ButtonOk.AccessKey "O">
+<!ENTITY YahooAddDomain.ButtonCancel.Label "Annuller">
+<!ENTITY YahooAddDomain.ButtonCancel.AccessKey "A">

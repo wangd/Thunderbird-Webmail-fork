@@ -1,6 +1,5 @@
-<!ENTITY Window.size "width: 27em; height: 20em">
-<!ENTITY Window.title "Yahoo Gereksiz Posta Engelleyici Resmi">
-<!ENTITY Button.OK.label "Tamam">
-<!ENTITY YahooSpam.title "Yahoo">
-<!ENTITY YahooSpam.decription "Gereksiz Posta Engelleme Doğrulayıcısı">
-<!ENTITY YahooSpam.label "Yukarıdaki resimde gördüğünüzü yazınız.">
+<!ENTITY YahooSpam.Window.Title "Yahoo Gereksiz Posta Engelleyici Resmi">
+<!ENTITY YahooSpam.Button.OK.Label "Tamam">
+<!ENTITY YahooSpam.Title "Yahoo">
+<!ENTITY YahooSpam.Decription "Gereksiz Posta Engelleme Doğrulayıcısı">
+<!ENTITY YahooSpam.Label "Yukarıdaki resimde gördüğünüzü yazınız.">

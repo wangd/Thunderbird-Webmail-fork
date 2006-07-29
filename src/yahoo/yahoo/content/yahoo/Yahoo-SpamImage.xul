@@ -5,7 +5,7 @@
 <!DOCTYPE dialog SYSTEM "chrome://yahoo/locale/Yahoo-SpamImage.dtd">
 
 <window id="spamimage" 
-        title="&Window.title;"
+        title="&YahooSpam.Window.Title;"
         xmlns:html="http://www.w3.org/1999/xhtml"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         onload="return gYahooSpamImage.init(); sizeToContent();">
@@ -17,12 +17,12 @@
         <vbox>
             <hbox>
                 <spacer flex="1"/>
-                <label id="Yahoolabel" value="&YahooSpam.title;"/>
+                <label id="Yahoolabel" value="&YahooSpam.Title;"/>
                 <spacer flex="1"/>
             </hbox>
             <hbox>
                 <spacer flex="1"/>
-                <label id="YahooSpamDescri" value="&YahooSpam.decription;"/>
+                <label id="YahooSpamDescri" value="&YahooSpam.Decription;"/>
                 <spacer flex="1"/>
             </hbox>
         </vbox>
@@ -33,7 +33,7 @@
             <spacer flex="1"/>
         </hbox>      
         
-        <label id="labelSpamImage" value="&YahooSpam.label;" flex="1" control="txtSpamImage"/>
+        <label id="labelSpamImage" value="&YahooSpam.Label;" flex="1" control="txtSpamImage"/>
         
         <hbox>
             <spacer flex="1"/>
@@ -44,7 +44,7 @@
         <spacer flex="2" />
 
         <hbox align="end" pack="center">
-            <button label="&Button.OK.label;"
+            <button label="&YahooSpam.Button.OK.Label;"
                     default="true"
                     oncommand ="gYahooSpamImage.doOk();"/>
         </hbox>    

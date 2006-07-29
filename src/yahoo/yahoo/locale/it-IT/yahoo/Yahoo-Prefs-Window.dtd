@@ -1,5 +1,35 @@
-<!ENTITY Window.szTitle "Opzioni del componente Yahoo">
-<!ENTITY Accounts.Panel.szTitle "Account">
-<!ENTITY Domains.Panel.szTitle "Dominii">
-<!ENTITY Ok.label "OK">
-<!ENTITY Cancel.label "Annulla">
+<!ENTITY YahooPref.Window.Title "Opzioni del componente Yahoo">
+<!ENTITY YahooPref.Panel.Accounts.Title "Account">
+<!ENTITY YahooPref.Panel.Domains.Title "Dominii">
+<!ENTITY YahooPref.Button.Ok.Label "OK">
+<!ENTITY YahooPref.Button.Cancel.Label "Annulla">
+
+<!ENTITY YahooPref.Tab.Mode.Title "Modalità">
+<!ENTITY YahooPref.Tab.POP.Title "POP">
+<!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
+
+<!ENTITY YahooPref.Mode.Label "Selezionare come il componente Yahoo si collegherà ai server Yahoo">
+<!ENTITY YahooPref.Mode.ScreenScraper.Label "Sito web di produzione di Yahoo">
+<!ENTITY YahooPref.Mode.Beta.Label "Sito web di Yahoo BETA">
+
+<!ENTITY YahooPref.POP.DownloadUnread.Label "Scarica solo messaggi non letti">
+<!ENTITY YahooPref.POP.DownloadUnread.AccessKey "N">
+<!ENTITY YahooPref.POP.JunkMail.Label "Scarica posta indesiderata">
+<!ENTITY YahooPref.POP.JunkMail.AccessKey "I">
+<!ENTITY YahooPref.POP.Folders.Label "Cartelle da cui scaricare i messaggi:">
+<!ENTITY YahooPref.POP.ButtonAdd.Label "Aggiungi...">
+<!ENTITY YahooPref.POP.ButtonAdd.AccessKey "A">
+<!ENTITY YahooPref.POP.ButtonRemove.Label "Elimina">
+<!ENTITY YahooPref.POP.ButtonRemove.AccessKey "E">
+
+<!ENTITY YahooPref.SMTP.SaveSentItems.Label "Salva una copia del messaggio in &apos;Posta inviata&apos;">
+<!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "s">
+
+<!ENTITY YahooPref.AccountError.Label "Nessun account Yahoo trovato">
+<!ENTITY YahooPref.SMTP.NA.Label "Nessuna opzione SMPT per Yahoo BETA">
+
+<!ENTITY YahooPref.Domain.Label "Dominii supportati dal componente Yahoo:">
+<!ENTITY YahooPref.Domain.Button.AddDomain.Label "Aggiungi...">
+<!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "A">
+<!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Elimina">
+<!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "E">

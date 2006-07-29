@@ -1,8 +1,8 @@
-<!ENTITY TitleAdd "Adicionar domínio">
-<!ENTITY domainName.label "Domínio">
-<!ENTITY domainName.accessKey "D">
-<!ENTITY domain.label "Adicionar domínio do Yahoo">
-<!ENTITY Ok.label "Ok">
-<!ENTITY Ok.accessKey "O">
-<!ENTITY Cancel.label "Cancelar">
-<!ENTITY Cancel.accessKey "C">
+<!ENTITY YahooAddDomain.Title "Adicionar domínio">
+<!ENTITY YahooAddDomainName.Label "Domínio">
+<!ENTITY YahooAddDomainName.AccessKey "D">
+<!ENTITY YahooAddDomain.Label "Adicionar domínio do Yahoo">
+<!ENTITY YahooAddDomain.ButtonOk.Label "Ok">
+<!ENTITY YahooAddDomain.ButtonOk.AccessKey "O">
+<!ENTITY YahooAddDomain.ButtonCancel.Label "Cancelar">
+<!ENTITY YahooAddDomain.ButtonCancel.AccessKey "C">

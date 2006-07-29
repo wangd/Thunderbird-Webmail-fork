@@ -5,7 +5,7 @@
 <!DOCTYPE dialog SYSTEM "chrome://yahoo/locale/Yahoo-Prefs-Folders-Add.dtd">
 
 <window id="addWindow" 
-        title="&TitleAdd;"
+        title="&YahooFolderAdd.Title;"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         onload="return gYahooFoldersAdd.init();">
 
@@ -35,14 +35,14 @@
             
             <vbox>
                   <label id="labelFolder"
-                         value="&folders.label;"/>
+                         value="&YahooFolderName.Label;"/>
             </vbox>
         </hbox>   
     
         <hbox align="center">     
             <label id="labelFolderName"
-                   value="&folderName.label;" 
-                   accesskey="&folderName.accessKey;"
+                   value="&YahooFolderName.Label;" 
+                   accesskey="&YahooFolderName.AccessKey;"
                    control="txtDomain"/>           
             
             <textbox id="txtDomain" 
@@ -58,13 +58,13 @@
 
         <hbox align="end" pack="center">
             <button id="add" 
-                    label="&Ok.label;"
-                    accesskey="&Ok.accessKey;"
+                    label="&YahooFolder.ButtonOk.Label;"
+                    accesskey="&YahooFolder.ButtonOk.AccessKey;"
                     default="true"
                     oncommand ="gYahooFoldersAdd.doOk();"/>
             <button id="cancel" 
-                    label="&Cancel.label;" 
-                    accesskey="&Cancel.accessKey;"
+                    label="&YahooFolder.ButtonCancel.Label;" 
+                    accesskey="&YahooFolder.ButtonCancel.AccessKey;"
                     oncommand ="gYahooFoldersAdd.doCancel();"/>
         </hbox> 
     </vbox>

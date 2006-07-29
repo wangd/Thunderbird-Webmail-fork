@@ -1,5 +1,35 @@
-<!ENTITY Window.szTitle "Yahoo - Asetukset">
-<!ENTITY Accounts.Panel.szTitle "Tilit">
-<!ENTITY Domains.Panel.szTitle "Verkkotunnukset">
-<!ENTITY Ok.label "OK">
-<!ENTITY Cancel.label "Peruuta">
+<!ENTITY YahooPref.Window.Title "Yahoo - Asetukset">
+<!ENTITY YahooPref.Panel.Accounts.Title "Tilit">
+<!ENTITY YahooPref.Panel.Domains.Title "Verkkotunnukset">
+<!ENTITY YahooPref.Button.Ok.Label "OK">
+<!ENTITY YahooPref.Button.Cancel.Label "Peruuta">
+
+<!ENTITY YahooPref.Tab.Mode.Title "Menetelmä">
+<!ENTITY YahooPref.Tab.POP.Title "POP">
+<!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
+
+<!ENTITY YahooPref.Mode.Label "Valitse verkkosivu, jota laajennus käyttää">
+<!ENTITY YahooPref.Mode.ScreenScraper.Label "Tuotteen verkkosivu">
+<!ENTITY YahooPref.Mode.Beta.Label "BETA-verkkosivu">
+
+<!ENTITY YahooPref.POP.DownloadUnread.Label "Lataa vain lukemattomat viestit">
+<!ENTITY YahooPref.POP.DownloadUnread.AccessKey "u">
+<!ENTITY YahooPref.POP.JunkMail.Label "Lataa roskaposti">
+<!ENTITY YahooPref.POP.JunkMail.AccessKey "r">
+<!ENTITY YahooPref.POP.Folders.Label "Lataa kansioista">
+<!ENTITY YahooPref.POP.ButtonAdd.Label "Lisää...">
+<!ENTITY YahooPref.POP.ButtonAdd.AccessKey "L">
+<!ENTITY YahooPref.POP.ButtonRemove.Label "Poista">
+<!ENTITY YahooPref.POP.ButtonRemove.AccessKey "P">
+
+<!ENTITY YahooPref.SMTP.SaveSentItems.Label "Tallennna kopio lähettetyihin.">
+<!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "k">
+
+<!ENTITY YahooPref.AccountError.Label "Yahoo-tilejä ei löytynyt">
+<!ENTITY YahooPref.SMTP.NA.Label "Yahoo BETA:lle ei ole SMPT-asetuksia">
+
+<!ENTITY YahooPref.Domain.Label "Yahoo-laajennuksen tukemat verkkotunnukset">
+<!ENTITY YahooPref.Domain.Button.AddDomain.Label "Lisää...">
+<!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "L">
+<!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Poista">
+<!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "P">

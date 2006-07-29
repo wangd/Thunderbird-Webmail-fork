@@ -1,5 +1,5 @@
-<!ENTITY Window.title "Slika protizaščite Yahoo">
-<!ENTITY Button.OK.label "V redu">
-<!ENTITY YahooSpam.title "Yahoo">
-<!ENTITY YahooSpam.decription "Preverjanje lažnih prijav">
-<!ENTITY YahooSpam.label "Vnesite, kar vidite na gornji sliki.">
+<!ENTITY YahooSpam.Window.Title "Slika protizaščite Yahoo">
+<!ENTITY YahooSpam.Button.OK.Label "V redu">
+<!ENTITY YahooSpam.Title "Yahoo">
+<!ENTITY YahooSpam.Decription "Preverjanje lažnih prijav">
+<!ENTITY YahooSpam.Label "Vnesite, kar vidite na gornji sliki.">

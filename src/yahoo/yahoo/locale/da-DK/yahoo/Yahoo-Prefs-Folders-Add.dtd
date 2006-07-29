@@ -1,8 +1,8 @@
-<!ENTITY TitleAdd "Tilføj">
-<!ENTITY folderName.label "Mappenavn">
-<!ENTITY folderName.accessKey "M">
-<!ENTITY folders.label "Tilføj mappe der skal hentes fra">
-<!ENTITY Ok.label "OK">
-<!ENTITY Ok.accessKey "O">
-<!ENTITY Cancel.label "Annuller">
-<!ENTITY Cancel.accessKey "A">
+<!ENTITY YahooFolderAdd.Title "Tilføj">
+<!ENTITY YahooFolderName.Label "Mappenavn">
+<!ENTITY YahooFolderName.AccessKey "M">
+<!ENTITY YahooFolders.Label "Tilføj mappe der skal hentes fra">
+<!ENTITY YahooFolder.ButtonOk.Label "OK">
+<!ENTITY YahooFolder.ButtonOk.AccessKey "O">
+<!ENTITY YahooFolder.ButtonCancel.Label "Annuller">
+<!ENTITY YahooFolder.ButtonCancel.AccessKey "A">

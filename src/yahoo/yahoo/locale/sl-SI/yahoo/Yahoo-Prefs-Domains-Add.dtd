@@ -1,8 +1,8 @@
-<!ENTITY TitleAdd "Dodaj domeno">
-<!ENTITY domainName.label "Domena">
-<!ENTITY domainName.accessKey "D">
-<!ENTITY domain.label "Dodaj domeno Yahoo">
-<!ENTITY Ok.label "V redu">
-<!ENTITY Ok.accessKey "r">
-<!ENTITY Cancel.label "Prekliči">
-<!ENTITY Cancel.accessKey "P">
+<!ENTITY YahooAddDomain.Title "Dodaj domeno">
+<!ENTITY YahooAddDomainName.Label "Domena">
+<!ENTITY YahooAddDomainName.AccessKey "D">
+<!ENTITY YahooAddDomain.Label "Dodaj domeno Yahoo">
+<!ENTITY YahooAddDomain.ButtonOk.Label "V redu">
+<!ENTITY YahooAddDomain.ButtonOk.AccessKey "r">
+<!ENTITY YahooAddDomain.ButtonCancel.Label "Prekliči">
+<!ENTITY YahooAddDomain.ButtonCancel.AccessKey "P">

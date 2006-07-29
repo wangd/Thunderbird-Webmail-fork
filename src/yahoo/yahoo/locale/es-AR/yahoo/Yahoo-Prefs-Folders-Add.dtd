@@ -1,8 +1,8 @@
-<!ENTITY TitleAdd "Agregar">
-<!ENTITY folderName.label "Nombre de Carpeta">
-<!ENTITY folderName.accessKey "F">
-<!ENTITY folders.label "Agregar descargar carpeta">
-<!ENTITY Ok.label "Ok">
-<!ENTITY Ok.accessKey "O">
-<!ENTITY Cancel.label "Cancelar">
-<!ENTITY Cancel.accessKey "C">
+<!ENTITY YahooFolderAdd.Title "Agregar">
+<!ENTITY YahooFolderName.Label "Nombre de Carpeta">
+<!ENTITY YahooFolderName.AccessKey "F">
+<!ENTITY YahooFolders.Label "Agregar descargar carpeta">
+<!ENTITY YahooFolder.ButtonOk.Label "Ok">
+<!ENTITY YahooFolder.ButtonOk.AccessKey "O">
+<!ENTITY YahooFolder.ButtonCancel.Label "Cancelar">
+<!ENTITY YahooFolder.ButtonCancel.Label "C">

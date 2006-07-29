@@ -1,8 +1,8 @@
-<!ENTITY TitleAdd "Lisää">
-<!ENTITY folderName.label "Kansion nimi">
-<!ENTITY folderName.accessKey "K">
-<!ENTITY folders.label "Lisää latauskansio">
-<!ENTITY Ok.label "OK">
-<!ENTITY Ok.accessKey "O">
-<!ENTITY Cancel.label "Peruuta">
-<!ENTITY Cancel.accessKey "P">
+<!ENTITY YahooFolderAdd.Title "Lisää">
+<!ENTITY YahooFolderName.Label "Kansion nimi">
+<!ENTITY YahooFolderName.AccessKey "K">
+<!ENTITY YahooFolders.Label "Lisää latauskansio">
+<!ENTITY YahooFolder.ButtonOk.Label "OK">
+<!ENTITY YahooFolder.ButtonOk.AccessKey "O">
+<!ENTITY YahooFolder.ButtonCancel.Label "Peruuta">
+<!ENTITY YahooFolder.ButtonCancel.AccessKey "P">

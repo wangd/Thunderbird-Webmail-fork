@@ -1,8 +1,8 @@
-<!ENTITY TitleAdd "Lisää verkkotunnus">
-<!ENTITY domainName.label "Verkkotunnus">
-<!ENTITY domainName.accessKey "V">
-<!ENTITY domain.label "Lisää Yahoo-verkkotunnus">
-<!ENTITY Ok.label "OK">
-<!ENTITY Ok.accessKey "O">
-<!ENTITY Cancel.label "Peruuta">
-<!ENTITY Cancel.accessKey "P">
+<!ENTITY YahooAddDomain.Title "Lisää verkkotunnus">
+<!ENTITY YahooAddDomainName.Label "Verkkotunnus">
+<!ENTITY YahooAddDomainName.AccessKey "V">
+<!ENTITY YahooAddDomain.Label "Lisää Yahoo-verkkotunnus">
+<!ENTITY YahooAddDomain.ButtonOk.Label "OK">
+<!ENTITY YahooAddDomain.ButtonOk.AccessKey "O">
+<!ENTITY YahooAddDomain.ButtonCancel.Label "Peruuta">
+<!ENTITY YahooAddDomain.ButtonCancel.AccessKey "P">
