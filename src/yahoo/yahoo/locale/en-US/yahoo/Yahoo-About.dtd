@@ -3,9 +3,7 @@
 <!ENTITY YahooAbout.ExtVersion "version">
 <!ENTITY YahooAbout.ExtDescription "Yahoo component for the Web-Mail extension.">
 <!ENTITY YahooAbout.ExtCreaterTitle "Created By:">
-<!ENTITY YahooAbout.ExtCreator "ComodoDragon">
 <!ENTITY YahooAbout.ExtHome "Home Page">
-<!ENTITY YahooAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY YahooAbout.ExtButton "Close">
 <!ENTITY YahooAbout.ExtContributorTitle "Contributors:">
 

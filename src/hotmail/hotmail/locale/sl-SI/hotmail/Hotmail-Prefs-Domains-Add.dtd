@@ -1,8 +1,8 @@
-<!ENTITY TitleAdd "Dodaj domeno">
-<!ENTITY domainName.label "Domena">
-<!ENTITY domainName.accessKey "D">
-<!ENTITY domain.label "Dodaj domeno Hotmail">
-<!ENTITY Ok.label "V redu">
-<!ENTITY Ok.accessKey "r">
-<!ENTITY Cancel.label "Prekliči">
-<!ENTITY Cancel.accessKey "P">
+<!ENTITY HotmailAddDomain.Title "Dodaj domeno">
+<!ENTITY HotmailAddDomain.Label "Dodaj domeno Hotmail">
+<!ENTITY HotmailAddDomainName.Label "Domena">
+<!ENTITY HotmailAddDomainName.AccessKey "D">
+<!ENTITY HotmailAddDomain.ButtonOk.Label "V redu">
+<!ENTITY HotmailAddDomain.ButtonOk.AccessKey "r">
+<!ENTITY HotmailAddDomain.ButtonCancel.Label "Prekliči">
+<!ENTITY HotmailAddDomain.ButtonCancel.AccessKey "P">

@@ -1,6 +1,5 @@
-<!ENTITY Window.size "width: 27em; height: 20em">
-<!ENTITY Window.title "Slika Hotmail Anti Spam">
-<!ENTITY Button.OK.label "V redu">
-<!ENTITY HotmailSpam.title "Hotmail">
-<!ENTITY HotmailSpam.decription "Preverjanje lažnih prijav">
-<!ENTITY HotmailSpam.label "Vnesite, kar vidite na gornji sliki.">
+<!ENTITY HotmailSpam.Window.Title "Slika Hotmail Anti Spam">
+<!ENTITY HotmailSpam.Button.OK.Label "V redu">
+<!ENTITY HotmailSpam.Title "Hotmail">
+<!ENTITY HotmailSpam.Decription "Preverjanje lažnih prijav">
+<!ENTITY HotmailSpam.Label "Vnesite, kar vidite na gornji sliki.">

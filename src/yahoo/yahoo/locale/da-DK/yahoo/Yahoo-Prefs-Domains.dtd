@@ -1,0 +1,5 @@
+<!ENTITY Add.label "Tilføj...">
+<!ENTITY Add.accessKey "T">
+<!ENTITY Remove.label "Fjern">
+<!ENTITY Remove.accessKey "F">
+<!ENTITY domain.label "Domæner understøttet af Yahoo-udvidelsen">

@@ -3,8 +3,6 @@
 <!ENTITY YahooAbout.ExtVersion "version">
 <!ENTITY YahooAbout.ExtDescription "Module Yahoo pour l&apos;extension Web Mail.">
 <!ENTITY YahooAbout.ExtCreaterTitle "Créée par :">
-<!ENTITY YahooAbout.ExtCreator "ComodoDragon">
 <!ENTITY YahooAbout.ExtHome "Visiter la page d&apos;accueil">
-<!ENTITY YahooAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY YahooAbout.ExtButton "Fermer">
 <!ENTITY YahooAbout.ExtContributorTitle "Contributeurs :">

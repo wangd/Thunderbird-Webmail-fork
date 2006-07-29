@@ -3,9 +3,7 @@
 <!ENTITY YahooAbout.ExtVersion "versie">
 <!ENTITY YahooAbout.ExtDescription "Yahoo-module voor de Webmail extensie.">
 <!ENTITY YahooAbout.ExtCreaterTitle "Gemaakt door:">
-<!ENTITY YahooAbout.ExtCreator "ComodoDragon">
 <!ENTITY YahooAbout.ExtHome "Homepage">
-<!ENTITY YahooAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY YahooAbout.ExtButton "Afsluiten">
 <!ENTITY YahooAbout.ExtContributorTitle "Medewerk(st)ers:">
 

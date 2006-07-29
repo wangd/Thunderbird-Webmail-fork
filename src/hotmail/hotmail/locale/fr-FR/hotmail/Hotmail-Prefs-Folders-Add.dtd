@@ -1,8 +1,8 @@
-<!ENTITY TitleAdd "Ajouter">
-<!ENTITY folderName.label "Nom de dossier">
-<!ENTITY folderName.accessKey "d">
-<!ENTITY folders.label "Ajouter un nom de dossier">
-<!ENTITY Ok.label "Accepter">
-<!ENTITY Ok.accessKey "A">
-<!ENTITY Cancel.label "Annuler">
-<!ENTITY Cancel.accessKey "n">
+<!ENTITY HotmailFolderAdd.Title "Ajouter">
+<!ENTITY HotmailFolderName.Label "Nom de dossier">
+<!ENTITY HotmailFolderName.AccessKey "d">
+<!ENTITY HotmailFolders.Label "Ajouter un nom de dossier">
+<!ENTITY HotmailFolder.ButtonOk.Label "Accepter">
+<!ENTITY HotmailFolder.ButtonOk.AccessKey "A">
+<!ENTITY HotmailFolder.ButtonCancel.Label "Annuler">
+<!ENTITY HotmailFolder.ButtonCancel.AccessKey "n">

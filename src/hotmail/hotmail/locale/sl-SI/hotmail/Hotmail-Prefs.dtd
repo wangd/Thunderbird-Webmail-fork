@@ -1,5 +1,41 @@
-<!ENTITY Window.szTitle "Možnosti Hotmail">
-<!ENTITY Accounts.Panel.szTitle "Računi">
-<!ENTITY Domains.Panel.szTitle "Domene">
-<!ENTITY Ok.label "V redu">
-<!ENTITY Cancel.label "Prekliči">
+<!ENTITY HotmailPref.Window.Title "Možnosti Hotmail">
+<!ENTITY HotmailPref.Panel.Accounts.Title "Računi">
+<!ENTITY HotmailPref.Panel.Domains.Title "Domene">
+<!ENTITY HotmailPref.Button.Ok.Label "V redu">
+<!ENTITY HotmailPref.Button.Cancel.Label "Prekliči">
+
+<!ENTITY HotmailPref.Tab.Mode.Title "Način">
+<!ENTITY HotmailPref.Tab.POP.Title "POP">
+<!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
+
+<!ENTITY HotmailPref.Mode.label "Izberite metodo komunikacije, ki jo naj uporablja razširitev za povezovanje na strežnike Microsoft">
+<!ENTITY HotmailPref.Mode.ScreenScraper.label "Strani Hotmail (produkcija)">
+<!ENTITY HotmailPref.Mode.WebDav.label "WebDav">
+<!ENTITY HotmailPref.Mode.Beta.label "Strani Hotmail (BETA)">
+
+<!ENTITY HotmailPref.POP.DownloadUnread.Label "Prenesi le neprebrana sporočila">
+<!ENTITY HotmailPref.POP.DownloadUnread.AccessKey "n">
+<!ENTITY HotmailPref.POP.JunkMail.Label "Prenesi neželeno pošto">
+<!ENTITY HotmailPref.POP.JunkMail.AccessKey "ž">
+<!ENTITY HotmailPref.POP.Folders.Label "Prenesi mape">
+<!ENTITY HotmailPref.POP.ButtonAdd.Label "Dodaj ...">
+<!ENTITY HotmailPref.POP.ButtonAdd.AccessKey "D">
+<!ENTITY HotmailPref.POP.ButtonRemove.Label "Odstrani">
+<!ENTITY HotmailPref.POP.ButtonRemove.AccessKey "O">
+
+<!ENTITY HotmailPref.SMTP.SaveSentItems.Label "Shrani kopijo v odposlanem.">
+<!ENTITY HotmailPref.SMTP.SaveSentItems.AccessKey "s">
+<!ENTITY HotmailPref.SMTP.AlternativeGroup.Label "Pri pošiljanju e-sporočil z obogatenim besedilom naj kateri del pošlje razširitev?">
+<!ENTITY HotmailPref.SMTP.SendPlain.Label "Pošlji navadno besedilo">
+<!ENTITY HotmailPref.SMTP.SendPlain.AccessKey "b">
+<!ENTITY HotmailPref.SMTP.SendPlain.Label "Pošlji besedilo html">
+<!ENTITY HotmailPref.SMTP.SendPlain.AccessKey "h">
+
+<!ENTITY HotmailPref.AccountError.Label "Ni najdenih računov Hotmail">
+<!ENTITY HotmailPref.SMTP.NA.Label "Ni možnosti SMPT za Hotmail BETA">
+
+<!ENTITY HotmailPref.Domain.Label "Domene, ki jih podpira razširitev za Hotmail">
+<!ENTITY HotmailPref.Domain.Button.AddDomain.Label "Dodaj ...">
+<!ENTITY HotmailPref.Domain.Button.AddDomain.AccessKey "D">
+<!ENTITY HotmailPref.Domain.Button.RemoveDomain.Label "Odstrani">
+<!ENTITY HotmailPref.Domain.Button.RemoveDomain.AccessKey "O">

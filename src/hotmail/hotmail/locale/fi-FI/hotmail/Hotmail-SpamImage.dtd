@@ -1,6 +1,5 @@
-<!ENTITY Window.size "width: 27em; height: 20em">
-<!ENTITY Window.title "Hotmail Anti Spam -kuva">
-<!ENTITY Button.OK.label "OK">
-<!ENTITY HotmailSpam.title "Hotmail">
-<!ENTITY HotmailSpam.decription "Anti Spam -tunnistus">
-<!ENTITY HotmailSpam.label "Kirjoita mitä näet kuvassa yläpuolella.">
+<!ENTITY HotmailSpam.Window.Title "Hotmail Anti Spam -kuva">
+<!ENTITY HotmailSpam.Button.OK.Label "OK">
+<!ENTITY HotmailSpam.Title "Hotmail">
+<!ENTITY HotmailSpam.Decription "Anti Spam -tunnistus">
+<!ENTITY HotmailSpam.Label "Kirjoita mitä näet kuvassa yläpuolella.">

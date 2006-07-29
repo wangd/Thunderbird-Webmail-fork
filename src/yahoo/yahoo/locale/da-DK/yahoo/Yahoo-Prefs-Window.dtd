@@ -1,0 +1,5 @@
+<!ENTITY Window.szTitle "Yahoo indstillinger">
+<!ENTITY Accounts.Panel.szTitle "Konti">
+<!ENTITY Domains.Panel.szTitle "Domæner">
+<!ENTITY Ok.label "Ok">
+<!ENTITY Cancel.label "Annuller">

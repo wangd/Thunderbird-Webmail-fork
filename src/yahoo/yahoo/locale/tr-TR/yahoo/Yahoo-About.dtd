@@ -3,8 +3,6 @@
 <!ENTITY YahooAbout.ExtVersion "sürüm">
 <!ENTITY YahooAbout.ExtDescription "Web-Mail eklentisi için Yahoo bileşeni">
 <!ENTITY YahooAbout.ExtCreaterTitle "Hazırlayan:">
-<!ENTITY YahooAbout.ExtCreator "ComodoDragon">
 <!ENTITY YahooAbout.ExtHome "Anasayfa">
-<!ENTITY YahooAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY YahooAbout.ExtButton "Kapat">
 <!ENTITY YahooAbout.ExtContributorTitle "Destekleyenler:">

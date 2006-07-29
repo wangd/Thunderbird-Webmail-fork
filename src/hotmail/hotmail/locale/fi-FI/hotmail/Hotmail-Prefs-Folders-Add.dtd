@@ -1,8 +1,8 @@
-<!ENTITY TitleAdd "Lisää">
-<!ENTITY folderName.label "Kansion nimi">
-<!ENTITY folderName.accessKey "K">
-<!ENTITY folders.label "Lisää latauskansio">
-<!ENTITY Ok.label "Ok">
-<!ENTITY Ok.accessKey "O">
-<!ENTITY Cancel.label "Peruuta">
-<!ENTITY Cancel.accessKey "P">
+<!ENTITY HotmailFolderAdd.Title "Lisää">
+<!ENTITY HotmailFolderName.Label "Kansion nimi">
+<!ENTITY HotmailFolderName.AccessKey "K">
+<!ENTITY HotmailFolders.Label "Lisää latauskansio">
+<!ENTITY HotmailFolder.ButtonOk.Label "Ok">
+<!ENTITY HotmailFolder.ButtonOk.AccessKey "O">
+<!ENTITY HotmailFolder.ButtonCancel.Label "Peruuta">
+<!ENTITY HotmailFolder.ButtonCancel.AccessKey "P">

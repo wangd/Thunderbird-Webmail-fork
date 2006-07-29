@@ -12,11 +12,7 @@
         onunload ="gYahooAbout.stop()"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         id = "YahooAboutDialog">
-     
-     <stringbundleset>
-	   <stringbundle id="stringsYahooAbout" src="chrome://Yahoo/locale/Yahoo-About.properties"/>
-	</stringbundleset>
-	
+        	
     <script type="application/x-javascript" src="chrome://Yahoo/content/Yahoo-About.js"/>
         
     <groupbox align="center" orient="horizontal">
@@ -30,13 +26,11 @@
             <text value="&YahooAbout.ExtCreaterTitle;" id = "YahooCreatorLabel"/>
             <hbox>
                 <image id="LionImage"/>
-                <text value="&YahooAbout.ExtCreator;" class = "YahooCreatorText"/>
+                <text id="YahooCreator" class = "YahooCreatorText"/>
             </hbox>
             <text value="&YahooAbout.ExtContributorTitle;" id = "YahooContributorLabel"/>
             <vbox flex="1" id="YahooContributorBox"/>
-            <text value="&YahooAbout.ExtHome;" 
-                  id = "YahooHomePage"
-                  onclick="window.opener.openURL('&YahooAbout.ExtHomeURL;');"/>
+            <text value="&YahooAbout.ExtHome;" id = "YahooHomePage"/>
         </vbox>
        
     </groupbox>

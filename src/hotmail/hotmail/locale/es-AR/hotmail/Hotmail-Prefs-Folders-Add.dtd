@@ -1,8 +1,8 @@
-<!ENTITY TitleAdd "Agregar">
-<!ENTITY folderName.label "Nombre de la Carpeta">
-<!ENTITY folderName.accessKey "F">
-<!ENTITY folders.label "Agregar descarga de carpetas">
-<!ENTITY Ok.label "Ok">
-<!ENTITY Ok.accessKey "O">
-<!ENTITY Cancel.label "Cancelar">
-<!ENTITY Cancel.accessKey "C">
+<!ENTITY HotmailFolderAdd.Title "Agregar">
+<!ENTITY HotmailFolderName.Label "Nombre de la Carpeta">
+<!ENTITY HotmailFolderName.AccessKey "F">
+<!ENTITY HotmailFolders.Label "Agregar descarga de carpetas">
+<!ENTITY HotmailFolder.ButtonOk.Label "Ok">
+<!ENTITY HotmailFolder.ButtonOk.AccessKey "O">
+<!ENTITY HotmailFolder.ButtonCancel.Label "Cancelar">
+<!ENTITY HotmailFolder.ButtonCancel.AccessKey "C">

@@ -1,8 +1,8 @@
-<!ENTITY TitleAdd "Add">
-<!ENTITY folderName.label "Folder Name">
-<!ENTITY folderName.accessKey "F">
-<!ENTITY folders.label "Add download folder">
-<!ENTITY Ok.label "Ok">
-<!ENTITY Ok.accessKey "O">
-<!ENTITY Cancel.label "Cancel">
-<!ENTITY Cancel.accessKey "C">
+<!ENTITY HotmailFolderAdd.Title "Add Folder">
+<!ENTITY HotmailFolderName.Label "Folder Name">
+<!ENTITY HotmailFolderName.AccessKey "F">
+<!ENTITY HotmailFolders.Label "Add download folder">
+<!ENTITY HotmailFolder.ButtonOk.Label "Ok">
+<!ENTITY HotmailFolder.ButtonOk.AccessKey "O">
+<!ENTITY HotmailFolder.ButtonCancel.Label "Cancel">
+<!ENTITY HotmailFolder.ButtonCancel.AccessKey "C">

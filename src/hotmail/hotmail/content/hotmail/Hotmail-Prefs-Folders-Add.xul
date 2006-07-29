@@ -5,7 +5,7 @@
 <!DOCTYPE dialog SYSTEM "chrome://hotmail/locale/Hotmail-Prefs-Folders-Add.dtd">
 
 <window id="addWindow" 
-        title="&TitleAdd;"
+        title="&HotmailFolderAdd.Title;"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         onload="return gHotmailFoldersAdd.init();">
 
@@ -36,14 +36,14 @@
             
             <vbox>
                   <label id="labelFolder"
-                         value="&folders.label;"/>
+                         value="&HotmailFolderName.Label;"/>
             </vbox>
         </hbox>   
     
         <hbox align="center">     
             <label id="labelFolderName"
-                   value="&folderName.label;" 
-                   accesskey="&folderName.accessKey;"
+                   value="&HotmailFolderName.Label;" 
+                   accesskey="&HotmailFolderName.AccessKey;"
                    control="txtDomain"/>           
             
             <textbox id="txtDomain" 
@@ -59,13 +59,13 @@
 
         <hbox align="end" pack="center">
             <button id="add" 
-                    label="&Ok.label;"
-                    accesskey="&Ok.accessKey;"
+                    label="&HotmailFolder.ButtonOk.Label;"
+                    accesskey="&HotmailFolder.ButtonOk.AccessKey;"
                     default="true"
                     oncommand ="gHotmailFoldersAdd.doOk();"/>
             <button id="cancel" 
-                    label="&Cancel.label;" 
-                    accesskey="&Cancel.accessKey;"
+                    label="&HotmailFolder.ButtonCancel.Label;" 
+                    accesskey="&HotmailFolder.ButtonCancel.AccessKey;"
                     oncommand ="gHotmailFoldersAdd.doCancel();"/>
         </hbox> 
     </vbox>

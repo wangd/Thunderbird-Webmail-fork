@@ -3,9 +3,7 @@
 <!ENTITY YahooAbout.ExtVersion "版本:">
 <!ENTITY YahooAbout.ExtDescription "Web-Mail 扩展的 Yahoo 组件。">
 <!ENTITY YahooAbout.ExtCreaterTitle "创建者:">
-<!ENTITY YahooAbout.ExtCreator "ComodoDragon">
 <!ENTITY YahooAbout.ExtHome "主页">
-<!ENTITY YahooAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY YahooAbout.ExtButton "关闭">
 <!ENTITY YahooAbout.ExtContributorTitle "贡献者:">
 

@@ -19,6 +19,21 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 		<em:optionsURL>chrome://yahoo/content/Yahoo-Prefs-Window.xul</em:optionsURL>
 		<em:updateURL>http://webmail.mozdev.org/update/yahooUpdate.rdf</em:updateURL>
 		
+        <em:contributor>MatrixIsAllOver by BabelZilla.org (it-IT)|0</em:contributor>      
+        <em:contributor>Guillaume Perrin et Matthieu Durand (fr-FR)|2</em:contributor>
+        <em:contributor>Proyecto NAVE (es-ES)|1</em:contributor>
+        <em:contributor>Albert Feller (de-DE)|3</em:contributor>
+        <em:contributor>Softcatal&#195; (ca-AD)|4</em:contributor>
+        <em:contributor>Asterxx (RF) (nl-NL)|5</em:contributor>
+        <em:contributor>George C. Tsoi (zh-CN)|7</em:contributor>
+        <em:contributor>Akilles (fi-FI)|14</em:contributor>
+        <em:contributor>Martin Srebotnjak, Lugos.si (sl-SI)|17</em:contributor>
+        <em:contributor>Batuhan &#199;etin (tr-TR)|15</em:contributor>
+        <em:contributor>Jameka (sv-SE)|10</em:contributor>
+        <em:contributor>Rodrigo Bergmann Laurindo (pt-BR)|18</em:contributor>
+        <em:contributor>Alberto Jorge Cushnir (es-AR)|20</em:contributor>
+        <em:contributor>AlleyKat (da-DK)|21</em:contributor>
+        
         <em:targetApplication>
 			<Description>
 				<!-- Mozilla Thunderbird -->

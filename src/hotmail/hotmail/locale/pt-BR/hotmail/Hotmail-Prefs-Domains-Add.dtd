@@ -1,8 +1,8 @@
-<!ENTITY TitleAdd "Adicionar domínio">
-<!ENTITY domainName.label "Domínio">
-<!ENTITY domainName.accessKey "D">
-<!ENTITY domain.label "Adicionar domínio do Hotmail">
-<!ENTITY Ok.label "Ok">
-<!ENTITY Ok.accessKey "O">
-<!ENTITY Cancel.label "Cancelar">
-<!ENTITY Cancel.accessKey "C">
+<!ENTITY HotmailAddDomain.Title "Adicionar domínio">
+<!ENTITY HotmailAddDomain.Label "Adicionar domínio do Hotmail">
+<!ENTITY HotmailAddDomainName.Label "Domínio">
+<!ENTITY HotmailAddDomainName.AccessKey "D">
+<!ENTITY HotmailAddDomain.ButtonOk.Label "Ok">
+<!ENTITY HotmailAddDomain.ButtonOk.AccessKey "O">
+<!ENTITY HotmailAddDomain.ButtonCancel.Label "Cancelar">
+<!ENTITY HotmailAddDomain.ButtonCancel.AccessKey "C">

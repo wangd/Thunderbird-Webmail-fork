@@ -5,7 +5,7 @@
 <!DOCTYPE dialog SYSTEM "chrome://hotmail/locale/Hotmail-Prefs-Domains-Add.dtd">
 
 <window id="addWindow" 
-        title="&TitleAdd;"
+        title="&HotmailAddDomain.Title;"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         onload="return gHotmailDomainAdd.init();">
 
@@ -35,14 +35,14 @@
             
             <vbox>
                   <label id="labelDomain"
-                         value="&domain.label;"/>
+                         value="&HotmailAddDomain.Label;"/>
             </vbox>
         </hbox>   
     
         <hbox align="center">     
             <label id="labelDomainName"
-                   value="&domainName.label;" 
-                   accesskey="&domainName.accessKey;"
+                   value="&HotmailAddDomain.Label;" 
+                   accesskey="&HotmailAddDomainName.AccessKey;"
                    control="txtDomain"/>           
             
             <textbox id="txtDomain" 
@@ -58,12 +58,12 @@
         <hbox align="end" pack="center">
             <button id="add" 
                     default="true"
-                    label="&Ok.label;"
-                    accesskey="&Ok.accessKey;"
+                    label="&HotmailAddDomain.ButtonOk.Label;"
+                    accesskey="&HotmailAddDomain.ButtonOk.AccessKey;"
                     oncommand ="gHotmailDomainAdd.doOk();"/>
             <button id="cancel" 
-                    label="&Cancel.label;" 
-                    accesskey="&Cancel.accessKey;"
+                    label="&HotmailAddDomain.ButtonCancel.Label;" 
+                    accesskey="&HotmailAddDomain.ButtonCancel.AccessKey;"
                     oncommand ="gHotmailDomainAdd.doCancel();"/>
         </hbox>   
     </vbox>

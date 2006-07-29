@@ -1,8 +1,8 @@
-<!ENTITY TitleAdd "Lisää verkko-osoite">
-<!ENTITY domainName.label "Verkko-osoite">
-<!ENTITY domainName.accessKey "V">
-<!ENTITY domain.label "Lisää Hotmail -verkko-osoite">
-<!ENTITY Ok.label "Ok">
-<!ENTITY Ok.accessKey "O">
-<!ENTITY Cancel.label "Peruuta">
-<!ENTITY Cancel.accessKey "P">
+<!ENTITY HotmailAddDomain.Title "Lisää verkko-osoite">
+<!ENTITY HotmailAddDomain.Label "Lisää Hotmail -verkko-osoite">
+<!ENTITY HotmailAddDomainName.Label "Verkko-osoite">
+<!ENTITY HotmailAddDomainName.AccessKey "V">
+<!ENTITY HotmailAddDomain.ButtonOk.Label "Ok">
+<!ENTITY HotmailAddDomain.ButtonOk.AccessKey "O">
+<!ENTITY HotmailAddDomain.ButtonCancel.Label "Peruuta">
+<!ENTITY HotmailAddDomain.ButtonCancel.AccessKey "P">
