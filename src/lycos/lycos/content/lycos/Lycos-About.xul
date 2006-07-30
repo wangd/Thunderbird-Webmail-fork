@@ -12,11 +12,7 @@
         onunload ="gLycosAbout.stop()"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         id = "LycosAboutDialog">
-     
-    <stringbundleset>
-	   <stringbundle id="stringsLycosAbout" src="chrome://lycos/locale/Lycos-About.properties"/>
-	</stringbundleset>
-	
+
     <script type="application/x-javascript" src="chrome://lycos/content/Lycos-About.js"/>
         
     <groupbox align="center" orient="horizontal">
@@ -26,19 +22,19 @@
                 <image id="LycosImage"/>
                 <spacer flex="1"/>
             </hbox>
-            <!--<text value="&LycosAbout.ExtName;" id = "LycosName"/>-->
-            <text value="&LycosAbout.ExtVersion;" id = "LycosVersion"/>
+            <hbox>
+                <text value="&LycosAbout.ExtVersion;" id = "LycosVersionTitle" class="LycosVersion"/>
+                <text id = "LycosVersionNumber" class="LycosVersion"/>
+            </hbox>
             <text value="&LycosAbout.ExtDescription;" id = "LycosDescription"/>
             <text value="&LycosAbout.ExtCreaterTitle;" id = "LycosCreatorLabel"/>
             <hbox>
                 <image id="LionImage"/>
-                <text value="&LycosAbout.ExtCreator;" class = "LycosCreatorText"/>
+                <text id="LycosCreator" class = "LycosCreatorText"/>
             </hbox>
             <text value="&LycosAbout.ExtContributorTitle;" id = "LycosContributorLabel"/>
             <vbox flex="1" id="LycosContributorBox"/>
-            <text value="&LycosAbout.ExtHome;" 
-                  id = "LycosHomePage"
-                  onclick="window.opener.openURL('&LycosAbout.ExtHomeURL;');"/>
+            <text value="&LycosAbout.ExtHome;" id = "LycosHomePage"/>
         </vbox>
     </groupbox>
 

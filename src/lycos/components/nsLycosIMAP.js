@@ -45,7 +45,7 @@ function nsLycosIMAP()
                                   szLogFileName); 
         
         this.m_Log.Write("nsLycosIMAP.js - Constructor - START");
-       
+        
         this.m_szUserName = null;   
         this.m_szPassWord = null; 
         this.m_oResponseStream = null; 

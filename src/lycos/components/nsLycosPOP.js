@@ -11,11 +11,13 @@ const LycosReadSchema = "<?xml version=\"1.0\"?>\r\n<D:propertyupdate xmlns:D=\"
 
 const LycosResponse = /<D:response>[\S\d\s\r\n]*?<\/D:response>/gm;
 const LycosHref = /<D:href>(.*?)<\/D:href>/i;
+const LycsoHrefSearch = /<D:href>.*?<\/D:href>/ig;
 const LycosSize = /<D:getcontentlength>(.*?)<\/D:getcontentlength>/i;
 const LycosJunkPattern  = /<D:href>(.*?Courrier%20ind%26eacute;sirable.*?)<\/D:href>/i;
 const LycosJunkPatternAlt = /<D:href>(.*?junk.*?)<\/D:href>/i;
 const LycosInBoxPattern = /<D:href>(.*?inbox.*?)<\/D:href>/;
 const LycosFolderPattern = /<hm:msgfolderroot>(.*?)<\/hm:msgfolderroot>/;
+const LycosFolderName = /folders\/(.*?)\//i;
 const LycosTrashPattern = /<hm:deleteditems>(.*?)<\/hm:deleteditems>/;
 const LycosPOPRead = /<hm:read>(.*?)<\/hm:read>/i;
 const LycosPOPTo = /<m:to>(.*?)<\/m:to>/i;
@@ -35,7 +37,7 @@ function nsLycos()
         scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://lycos/content/Lycos-POPMSG.js");
-        
+        scriptLoader.loadSubScript("chrome://lycos/content/Lycos-Prefs-Data.js");
         
         var date = new Date();
         
@@ -46,6 +48,8 @@ function nsLycos()
         
         this.m_Log.Write("nsLycos.js - Constructor - START");   
        
+        this.m_prefData = null;
+        
         this.m_szUserName = null;   
         this.m_szPassWord = null; 
         this.m_oResponseStream = null;  
@@ -53,9 +57,7 @@ function nsLycos()
         this.m_HttpComms.setHandleHttpAuth(true);    
         this.m_bAuthorised = false; 
         this.m_iStage=0; 
-        this.m_szInBoxURI= null;
-        this.m_szJunkMailURI = null;
-        this.m_szFolderURI = null;
+        this.m_aszFolderURLList = new Array();
         this.m_szTrashURI=null;
         this.m_szMSG = null;
         this.m_aMsgDataStore = new Array();
@@ -70,49 +72,6 @@ function nsLycos()
                                   .getService(Components.interfaces.nsISessionManager);
         this.m_SessionData = null;  
         
-        var oPref = {Value:null};
-        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-        if (WebMailPrefAccess.Get("int","lycos.iProcessDelay",oPref))
-            this.m_iTime=oPref.Value;
-        else
-            this.m_iTime=10; 
-        
-        //do i reuse the session
-        oPref.Value = null;
-        if (WebMailPrefAccess.Get("bool","lycos.bReUseSession",oPref))
-            this.m_bReUseSession=oPref.Value;
-        else
-            this.m_bReUseSession=true; 
-        
-        //do i download junkmail
-        oPref.Value = null;
-        if (WebMailPrefAccess.Get("bool","lycos.bUseJunkMail",oPref))
-            this.m_bUseJunkMail=oPref.Value;
-        else
-            this.m_bUseJunkMail=false;
-         
-        //do i download unread only
-        oPref.Value = null;
-        if (WebMailPrefAccess.Get("bool","lycos.bDownloadUnread",oPref))
-            this.m_bDownloadUnread=oPref.Value;
-        else
-            this.m_bDownloadUnread=false;
-        
-        //delay process trigger
-        oPref.Value = null;
-        if (WebMailPrefAccess.Get("bool","lycos.iProcessTrigger",oPref))
-            this.m_iProcessTrigger = oPref.Value;
-        else
-            this.m_iProcessTrigger = 50; 
-        
-        //delay proccess amount
-        oPref.Value = null;
-        if (WebMailPrefAccess.Get("bool","lycos.iProcessAmount",oPref))
-            this.m_iProcessAmount = oPref.Value;
-        else
-            this.m_iProcessAmount = 25;
-            
-        delete WebMailPrefAccess;
         this.m_bStat = false;           
         this.m_Log.Write("nsLycos.js - Constructor - END");  
     }
@@ -175,7 +134,9 @@ nsLycos.prototype =
             else
                 throw new Error("Unknown domain");
             
-            if (this.m_bReUseSession)
+            this.m_prefData = this.loadPrefs();   //get prefs
+            
+            if (this.m_prefData.bReUseSession)
             {
                 this.m_Log.Write("nsLycos.js - logIN - Looking for Session Data");
                 this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
@@ -216,7 +177,6 @@ nsLycos.prototype =
         try
         {
             mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - START"); 
-            mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler : "+ mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -226,15 +186,69 @@ nsLycos.prototype =
             if (httpChannel.responseStatus != 200 && httpChannel.responseStatus != 207) 
                 throw new Error("return status " + httpChannel.responseStatus);
             
-            mainObject.m_szFolderURI = szResponse.match(LycosFolderPattern)[1];
-            mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - get folder url - " + mainObject.m_szFolderURI);
-            mainObject.m_szTrashURI = szResponse.match(LycosTrashPattern)[1];
-            mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - get trash url - " + mainObject.m_szTrashURI);
-            
-            //server response
-            mainObject.serverComms("+OK Your in\r\n");
-            mainObject.m_bAuthorised = true;
-                             
+             switch(mainObject.m_iStage)
+            {
+                case 0: //get baisc uri's
+                    var szFolderURI = szResponse.match(LycosFolderPattern)[1];
+                    mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - get folder url - " + szFolderURI);
+                    mainObject.m_szTrashURI = szResponse.match(LycosTrashPattern)[1];
+                    mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - get trash url - " + mainObject.m_szTrashURI);
+                    
+                    //download folder list;
+                    mainObject.m_iStage = 1;
+                    mainObject.m_HttpComms.setContentType("text/xml");
+                    mainObject.m_HttpComms.setURI(szFolderURI);
+                    mainObject.m_HttpComms.setRequestMethod("PROPFIND");
+                    mainObject.m_HttpComms.addData(LycosFolderSchema);
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);                             
+                    if (!bResult) throw new Error("httpConnection returned false");
+                break;
+                
+                 case 1: //process folder uri's
+                    var aszHrefList = szResponse.match(LycsoHrefSearch);
+                    mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - aszHrefList :" +aszHrefList);
+                    
+                    for (j=0; j<mainObject.m_prefData.aszFolder.length; j++)
+                    {
+                        var regExp = new RegExp("^"+mainObject.m_prefData.aszFolder[j]+"$","i");
+                        mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - regExp : "+regExp );
+                        
+                        for (var i=0; i<aszHrefList.length; i++)
+                        {
+                            var szFolderName = aszHrefList[i].match(LycosFolderName)[1];
+                            mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - szFolderName : "+szFolderName );
+                            
+                            if (szFolderName.search(regExp)!=-1)
+                            {
+                                var szURI = aszHrefList[i].match(LycosHref)[1];
+                                mainObject.m_aszFolderURLList.push(szURI);
+                                mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - URL found : "+szURI);
+                            }
+                        }
+                    }
+                    
+                    if (mainObject.m_prefData.bReUseSession)
+                    {
+                        try
+                        {   
+                            var szJunkMailURI = szResponse.match(LycosJunkPattern)[1];
+                            mainObject.m_aszFolderURLList.push(szJunkMailURI);
+                            mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - Junk URL found : "+szJunkMailURI);
+                        }
+                        catch(err)
+                        {
+                            var szJunkMailURI = szResponse.match(LycosJunkPatternAlt)[1]; 
+                            mainObject.m_aszFolderURLList.push(szJunkMailURI);
+                            mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - Junk URL found : "+szJunkMailURI);  
+                        }
+                    } 
+                    
+                    //server response
+                    mainObject.serverComms("+OK Your in\r\n");
+                    mainObject.m_bAuthorised = true;
+                break;
+            }
+
             mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - END");
         }
         catch(err)
@@ -250,6 +264,7 @@ nsLycos.prototype =
     },
     
     
+    
     //stat 
     //total size is in octets
     getNumMessages : function()
@@ -258,14 +273,15 @@ nsLycos.prototype =
         {
             this.m_Log.Write("nsLycos.js - getNumMessages - START"); 
             this.m_iStage=0;
-             
-            if (this.m_szFolderURI == null) return false;
-            this.m_Log.Write("nsLycos.js - getNumMessages - mail box url " + this.m_szFolderURI); 
-        
+                                      
+            if (this.m_aszFolderURLList.length==0) return false;
+            this.m_Log.Write("Lycos.js - getNumMessages - mail box url " + this.m_aszFolderURLList); 
+       
             this.m_HttpComms.setContentType("text/xml");
-            this.m_HttpComms.setURI(this.m_szFolderURI);
+            var szUri = this.m_aszFolderURLList.shift();
+            this.m_HttpComms.setURI(szUri);
             this.m_HttpComms.setRequestMethod("PROPFIND");
-            this.m_HttpComms.addData(LycosFolderSchema);
+            this.m_HttpComms.addData(LycosMailSchema);
             var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this);                             
             if (!bResult) throw new Error("httpConnection returned false");
             this.m_bStat = true;              
@@ -287,8 +303,7 @@ nsLycos.prototype =
     {
         try
         {
-            mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - START"); 
-            mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler : \n" + szResponse);
+            mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - START");
             mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -298,109 +313,36 @@ nsLycos.prototype =
             if (httpChannel.responseStatus != 200 && httpChannel.responseStatus != 207) 
                 throw new Error("return status " + httpChannel.responseStatus);
            
-                   
-            switch(mainObject.m_iStage)
+            var aszResponses = szResponse.match(LycosResponse);
+            mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - mailbox - \n" + aszResponses);
+            if (aszResponses)
             {
-                case 0:  //get inbox and junkmail uri
-                    mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - get folder list - START");         
-                    
-                    mainObject.m_szInBoxURI = szResponse.match(LycosInBoxPattern)[1]; 
-                    mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - inBox - " + mainObject.m_szInBoxURI); 
-                      
-                    try
-                    {   
-                        mainObject.m_szJunkMailURI = szResponse.match(LycosJunkPattern)[1];
-                    }
-                    catch(err)
-                    {
-                        mainObject.m_szJunkMailURI = szResponse.match(LycosJunkPatternAlt)[1];   
-                    }
-                    mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - junkmail - " + mainObject.m_szJunkMailURI);
-                  
-                    //load mailbox
-                    mainObject.m_HttpComms.setContentType("text/xml");
-                    mainObject.m_HttpComms.setURI(mainObject.m_szInBoxURI);
-                    mainObject.m_HttpComms.setRequestMethod("PROPFIND");
-                    mainObject.m_HttpComms.addData(LycosMailSchema);
-                    var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler, mainObject);                             
-                    if (!bResult) throw new Error("httpConnection returned false");
-                                        
-                    mainObject.m_iStage++;  
-                    mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - get folder list - end"); 
-                break;
-                    
-                    
-                case 1: //get inbox folder
-                    mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - inbox mail uri- start");
-                    
-                    var aszResponses = szResponse.match(LycosResponse);
-                    mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - inbox - \n" + aszResponses);
-                    if (aszResponses)
-                    {
-                        var aTemp = mainObject.m_aRawData.concat(aszResponses);
-                        delete mainObject.m_aRawData;
-                        mainObject.m_aRawData = aTemp;   
-                    }
-                    
-                    
-                    if (mainObject.m_bUseJunkMail && !mainObject.m_bJunkMail)
-                    {
-                        //load junkmail
-                        mainObject.m_HttpComms.setContentType("text/xml");
-                        mainObject.m_HttpComms.setURI(mainObject.m_szJunkMailURI);
-                        mainObject.m_HttpComms.setRequestMethod("PROPFIND");
-                        mainObject.m_HttpComms.addData(LycosMailSchema);
-                        var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler, mainObject);                             
-                        if (!bResult) throw new Error("httpConnection returned false");
-                        mainObject.m_bJunkMail = true;
-                    }
-                    else
-                    {   
-                        mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - download complete");
-                        if (mainObject.m_aRawData.length>mainObject.m_iProcessTrigger)
-                        {
-                            mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - starting delay");
-                            //start timer
-                            mainObject.m_Timer.initWithCallback(mainObject, 
-                                                                mainObject.m_iTime, 
-                                                  Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
-                            return;
-                        }
-                        else
-                        {   
-                            mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - starting to process");
-                           
-                            for (i=0; i< mainObject.m_aRawData.length; i++)
-                            {
-                                mainObject.processItem( mainObject.m_aRawData[i]);        
-                            }
-                            
-                            if (mainObject.m_bStat) //called by stat
-                            {
-                                mainObject.serverComms("+OK "+ mainObject.m_aMsgDataStore.length 
-                                                        + " " + mainObject.m_iTotalSize + "\r\n");
-                            }
-                            else //called by list
-                            {
-                                var szPOPResponse = "+OK " + mainObject.m_aMsgDataStore.length + " Messages\r\n"; 
-                                this.m_Log.Write("Lycos.js - getMessagesSizes - : " + mainObject.m_aMsgDataStore.length);
-                 
-                                for (i = 0; i <  mainObject.m_aMsgDataStore.length; i++)
-                                {
-                                    var iEmailSize = mainObject.m_aMsgDataStore[i].iSize;
-                                    szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";       
-                                }         
-                               
-                                szPOPResponse += ".\r\n";
-                                mainObject.serverComms(szPOPResponse);
-                            }
-                            
-                            delete  mainObject.m_aRawData;
-                        }
-                    }
-                    mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - inbox mail uri - end");
-                break;          
-            }       
+                var aTemp = mainObject.m_aRawData.concat(aszResponses);
+                delete mainObject.m_aRawData;
+                mainObject.m_aRawData = aTemp;   
+            }
+            
+            if (mainObject.m_aszFolderURLList.length>0)
+            {
+                var szUri = mainObject.m_aszFolderURLList.shift();
+                //load next folder
+                mainObject.m_HttpComms.setContentType("text/xml");
+                mainObject.m_HttpComms.setURI(szUri);
+                mainObject.m_HttpComms.setRequestMethod("PROPFIND");
+                mainObject.m_HttpComms.addData(LycosMailSchema);
+                var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler, mainObject);                             
+                if (!bResult) throw new Error("httpConnection returned false");
+            }
+            else
+            {   
+                mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - download complet e- starting delay");
+                //start timer
+                mainObject.m_Timer.initWithCallback(mainObject, 
+                                                    mainObject.m_iTime, 
+                                                    Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
+            }   
+            
+            mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - END"); 
         }
         catch(err)
         {
@@ -431,7 +373,6 @@ nsLycos.prototype =
                     iCount++;
                     this.m_Log.Write("nsLycos.js - notify - rawData icount " + iCount + " " + this.m_aRawData.length);
                 }while(iCount != this.m_iProcessAmount && this.m_aRawData.length!=0)
-
             }
             else
             {
@@ -484,7 +425,7 @@ nsLycos.prototype =
         this.m_Log.Write("nsLycos.js - processItem - rawData " +rawData);
             
         var bRead = true;
-        if (this.m_bDownloadUnread)
+        if (this.m_prefData.bDownloadUnread)
         {
             bRead = parseInt(rawData.match(LycosPOPRead)[1]) ? false : true;
             mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - bRead -" + bRead);
@@ -743,7 +684,7 @@ nsLycos.prototype =
             {   
                 case 0:  //email
                     mainObject.m_szMSG = "X-WebMail: true\r\n";
-                    mainObject.m_szMSG += "X-JunkFolder: " +(mainObject.m_bJunkMail? "true":"false")+ "\r\n";
+                    mainObject.m_szMSG += "X-JunkFolder: " +(mainObject.m_prefData.bJunkMail? "true":"false")+ "\r\n";
                     mainObject.m_szMSG +=szResponse;
                     mainObject.m_szMSG = mainObject.m_szMSG.replace(/^\./mg,"..");    //bit padding 
                     mainObject.m_szMSG += "\r\n.\r\n";//msg end 
@@ -984,6 +925,149 @@ nsLycos.prototype =
         }
     },
     
+
+
+    loadPrefs : function()
+    {
+        try
+        {
+            this.m_Log.Write("nsLycos.js - loadPrefs - START"); 
+           
+            //get user prefs
+            var oData = new PrefData();
+            var oPref = {Value:null};
+            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+            
+            //do i reuse the session
+            WebMailPrefAccess.Get("bool","lycos.bReUseSession",oPref);
+            this.m_Log.Write("nsLycos.js - loadPrefs - bReUseSession " + oPref.Value);
+            if (oPref.Value) oData.bReUseSession = oPref.Value;
+            
+            //get timer
+            oPref.Value = null;  
+            WebMailPrefAccess.Get("int","lycos.iProcessDelay",oPref);
+            if (oPref.Value) oData.iTime=oPref.Value;
+        
+            //delay process trigger
+            oPref.Value = null;
+            WebMailPrefAccess.Get("bool","lycos.iProcessTrigger",oPref);
+            if (oPref.Value) oData.iProcessTrigger = oPref.Value;
+    
+            //delay proccess amount
+            oPref.Value = null;
+            WebMailPrefAccess.Get("bool","lycos.iProcessAmount",oPref);
+            if (oPref.Value)  oData.iProcessAmount = oPref.Value;             
+                                    
+            var iCount = 0;
+            oPref.Value = null;
+            WebMailPrefAccess.Get("int","lycos.Account.Num",oPref);
+            this.m_Log.Write("nsLycos.js - loadPrefs - num " + oPref.Value);
+            if (oPref.Value) iCount = oPref.Value;
+                       
+            var bFound = false;
+            var regExp = new RegExp(this.m_szUserName,"i");
+            for (i=0; i<iCount; i++)
+            {
+                //get user name
+                oPref.Value = null;
+                WebMailPrefAccess.Get("char","lycos.Account."+i+".user",oPref);
+                this.m_Log.Write("nsLycos.js - loadPrefs - user " + oPref.Value);
+                if (oPref.Value)
+                {
+                    if (oPref.Value.search(regExp)!=-1)
+                    {
+                        this.m_Log.Write("nsLycos.js - loadPrefs - user found "+ i);
+                        bFound = true;
+                                                                                   
+                        //inbox
+                        oData.aszFolder.push("inbox"); 
+                        
+                        //get folders
+                        WebMailPrefAccess.Get("char","lycos.Account."+i+".szFolders",oPref);
+                        this.m_Log.Write("nsMailDotCom.js - loadPrefs - szFolders " + oPref.Value);
+                        if (oPref.Value)
+                        {
+                            var aszFolders = oPref.Value.split("\r");
+                            for (j=0; j<aszFolders.length; j++)
+                            {
+                                this.m_Log.Write("nsLycos - loadPRefs - aszFolders[j] " + aszFolders[j]);
+                                oData.aszFolder.push(encodeURIComponent(aszFolders[j]));
+                            }
+                        }
+                        
+                        //get unread
+                        oPref.Value = null;
+                        WebMailPrefAccess.Get("bool","lycos.Account."+i+".bDownloadUnread",oPref);
+                        this.m_Log.Write("nsLycos.js - loadPrefs - bDownloadUnread " + oPref.Value);
+                        if (oPref.Value) oData.bUnread=oPref.Value; 
+                                                                   
+                        //get junkmail
+                        oPref.Value = null;
+                        WebMailPrefAccess.Get("bool","lycos.Account."+i+".bUseJunkMail",oPref);
+                        this.m_Log.Write("nsLycos.js - loadPrefs - bUseJunkMail " + oPref.Value);
+                        if (oPref.Value) oData.bUseJunkMail = oPref.Value;
+                                              
+                        //get SaveSentItems
+                        oPref.Value = null;
+                        WebMailPrefAccess.Get("bool","lycos.Account."+i+".bSaveCopy",oPref);
+                        this.m_Log.Write("nsLycos.js - loadPrefs - bSaveCopy " + oPref.Value);
+                        if (oPref.Value) oData.bSaveCopy = oPref.Value;
+                        
+                        //get empty trash
+                        oPref.Value = null;
+                        WebMailPrefAccess.Get("bool","lycos.Account."+i+".bEmptyTrash",oPref);
+                        this.m_Log.Write("nsLycos.js - loadPrefs - bEmptyTrash " + oPref.Value);
+                        if (oPref.Value) oData.bEmptyTrash = oPref.Value; 
+                    }
+                }
+            }
+            
+            if (!bFound) //get defaults
+            {
+                this.m_Log.Write("nsLycos - loadPrefs - Default Folders");
+                
+                //unread only
+                oPref.Value = null;
+                WebMailPrefAccess.Get("bool","lycos.bDownloadUnread",oPref);
+                this.m_Log.Write("nsLycos.js - loadPrefs - bDownloadUnread " + oPref.Value);
+                if (oPref.Value) oData.bUnread=oPref.Value;
+               
+                //inbox
+                this.m_Log.Write("nsLycos - loadPrefs - Default Folders - inbox");
+                oData.aszFolder.push("inbox");
+                
+                //get junkmail
+                oPref.Value = null;
+                WebMailPrefAccess.Get("bool","lycos.Account."+i+".bUseJunkMail",oPref);
+                this.m_Log.Write("nsLycos.js - loadPrefs - bUseJunkMail " + oPref.Value);
+                if (oPref.Value) oData.bUseJunkMail = oPref.Value;
+                                      
+                //get SaveSentItems
+                oPref.Value = null;
+                WebMailPrefAccess.Get("bool","lycos.Account."+i+".bSaveCopy",oPref);
+                this.m_Log.Write("nsLycos.js - loadPrefs - bSaveCopy " + oPref.Value);
+                if (oPref.Value) oData.bSaveCopy = oPref.Value;
+                
+                //get empty trash
+                oPref.Value = null;
+                WebMailPrefAccess.Get("bool","lycos.Account."+i+".bEmptyTrash",oPref);
+                this.m_Log.Write("nsLycos.js - loadPrefs - bEmptyTrash " + oPref.Value);
+                if (oPref.Value) oData.bEmptyTrash = oPref.Value;
+            }
+            this.m_Log.Write("nsLycos.js - loadPrefs - END");
+            return oData;
+        }
+        catch(e)
+        {
+             this.m_Log.DebugDump("nsLycos.js: loadPrefs : Exception : " 
+                                              + e.name + 
+                                              ".\nError message: " 
+                                              + e.message+ "\n"
+                                              + e.lineNumber);
+            return null;
+        }
+    },
+
     
     
     serverComms : function (szMsg)

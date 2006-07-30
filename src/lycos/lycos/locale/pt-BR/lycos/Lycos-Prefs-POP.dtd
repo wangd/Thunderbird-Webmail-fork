@@ -1,7 +1,0 @@
-<!ENTITY MailServers.Label "POP">
-<!ENTITY JunkMail.Label "Baixar Lixo Eletrônico">
-<!ENTITY JunkMail.AccessKey "E">
-<!ENTITY EmptyTrash.Label "Limpar Lixeira">
-<!ENTITY EmptyTrash.AccessKey "L">
-<!ENTITY DownloadUnread.Label "Baixar apenas e-mails não lidos">
-<!ENTITY DownloadUnread.AccessKey "n">

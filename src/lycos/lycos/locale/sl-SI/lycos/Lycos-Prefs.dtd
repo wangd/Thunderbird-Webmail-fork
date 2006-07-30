@@ -1,5 +1,25 @@
-<!ENTITY Options.szTitle "Možnosti Lycos">
-<!ENTITY POP.Panel.szTitle "POP">
-<!ENTITY SMTP.Panel.szTitle "SMTP">
-<!ENTITY IMAP.Panel.szTitle "IMAP">
-<!ENTITY Window.size "width: 27em; height: 20em">
+<!ENTITY LycosPref.Window.Title "Lycos Options">
+<!ENTITY LycosPref.Panel.Accounts.Title "Accounts">
+<!ENTITY LycosPref.Panel.Domains.Title "Domains">
+<!ENTITY LycosPref.Button.Ok.Label "Ok">
+<!ENTITY LycosPref.Button.Cancel.Label "Cancel">
+
+<!ENTITY LycosPref.Tab.POP.Title "POP">
+<!ENTITY LycosPref.Tab.SMTP.Title "SMTP">
+
+<!ENTITY LycosPref.POP.DownloadUnread.Label "Download unread emails only">
+<!ENTITY LycosPref.POP.DownloadUnread.AccessKey "u">
+<!ENTITY LycosPref.POP.EmptyTrash.Label "Empty Trash">
+<!ENTITY LycosPref.POP.EmptyTrash.AccessKey "E">
+<!ENTITY LycosPref.POP.JunkMail.Label "Download JunkMail">
+<!ENTITY LycosPref.POP.JunkMail.AccessKey "J">
+<!ENTITY LycosPref.POP.Folders.Label "Download folders">
+<!ENTITY LycosPref.POP.ButtonAdd.Label "Add...">
+<!ENTITY LycosPref.POP.ButtonAdd.AccessKey "A">
+<!ENTITY LycosPref.POP.ButtonRemove.Label "Remove">
+<!ENTITY LycosPref.POP.ButtonRemove.AccessKey "R">
+
+<!ENTITY LycosPref.SMTP.SaveSentItems.Label "Save copy in sent items.">
+<!ENTITY LycosPref.SMTP.SaveSentItems.AccessKey "s">
+
+<!ENTITY LycosPref.AccountError.Label "No Lycos Accounts Found"> 

@@ -1,7 +1,0 @@
-<!ENTITY MailServers.Label "POP">
-<!ENTITY JunkMail.Label "Gereksiz postaları indir">
-<!ENTITY JunkMail.AccessKey "G">
-<!ENTITY EmptyTrash.Label "Çöpü Boşalt">
-<!ENTITY EmptyTrash.AccessKey "T">
-<!ENTITY DownloadUnread.Label "Sadece okunmayanları indir">
-<!ENTITY DownloadUnread.AccessKey "o">

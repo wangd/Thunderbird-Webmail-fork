@@ -1,7 +1,0 @@
-<!ENTITY MailServers.Label "POP">
-<!ENTITY JunkMail.Label "JunkMail herunterladen">
-<!ENTITY JunkMail.AccessKey "J">
-<!ENTITY EmptyTrash.Label "Papierkorb leeren">
-<!ENTITY EmptyTrash.AccessKey "P">
-<!ENTITY DownloadUnread.Label "Nur ungelesene E-Mails herunterladen">
-<!ENTITY DownloadUnread.AccessKey "u">

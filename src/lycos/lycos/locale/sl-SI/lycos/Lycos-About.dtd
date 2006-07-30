@@ -1,10 +1,8 @@
 <!ENTITY LycosAbout.Title "Lycos - O razširitvi">
 <!ENTITY LycosAbout.ExtName "Lycos">
-<!ENTITY LycosAbout.ExtVersion "različice 0.7.2">
+<!ENTITY LycosAbout.ExtVersion "različice">
 <!ENTITY LycosAbout.ExtDescription "Komponenta Lycos za razširitev Web-Mail.">
 <!ENTITY LycosAbout.ExtCreaterTitle "Avtor:">
-<!ENTITY LycosAbout.ExtCreator "ComodoDragon">
 <!ENTITY LycosAbout.ExtHome "Domača stran">
-<!ENTITY LycosAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY LycosAbout.ExtButton "Zapri">
 <!ENTITY LycosAbout.ExtContributorTitle "Avtorji prispevkov:">

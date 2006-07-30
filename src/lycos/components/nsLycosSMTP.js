@@ -16,6 +16,7 @@ function nsLycosSMTP()
         scriptLoader.loadSubScript("chrome://web-mail/content/common/base64.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
+        scriptLoader.loadSubScript("chrome://lycos/content/Lycos-Prefs-Data.js");
         
         var date = new Date();
         var  szLogFileName = "Lycos SMTP Log - " + date.getHours()
@@ -25,6 +26,8 @@ function nsLycosSMTP()
         
         this.m_Log.Write("nsLycosSMTP.js - Constructor - START");   
        
+        this.m_prefData = null;
+        
         this.m_bAuthorised = false;
         this.m_szUserName = null;   
         this.m_szPassWord = null; 
@@ -36,22 +39,6 @@ function nsLycosSMTP()
         this.m_iStage = 0;
         this.m_szSendUri = null;
            
-        //do i reuse the session
-        var oPref = {Value:null};
-        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-        if (WebMailPrefAccess.Get("bool","lycos.bReUseSession",oPref))
-            this.m_bReUseSession=oPref.Value;
-        else
-            this.m_bReUseSession=true; 
-                  
-        //do i save copy
-        oPref.Value = null;        
-        if (WebMailPrefAccess.Get("bool","lycos.bSaveCopy",oPref))
-            this.m_bSaveCopy=oPref.Value;
-        else
-            this.m_bSaveCopy=true;          
-        delete oPref;
-              
         this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"]
                                   .getService(Components.interfaces.nsISessionManager);
         this.m_SessionData = null;  
@@ -122,12 +109,13 @@ nsLycosSMTP.prototype =
                 throw new Error("Unknown domain");
             
             this.m_iStage = 0;
-
-            if (this.m_bReUseSession)
+            this.m_prefData = this.loadPrefs();   //get prefs
+            
+            if (this.m_prefData.bReUseSession)
             {
                 this.m_Log.Write("nsLycos.js - logIN - Looking for Session Data");
                 this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
-                if (this.m_SessionData && this.m_bReUseSession)
+                if (this.m_SessionData && this.m_prefData.bReUseSession)
                 {
                     this.m_Log.Write("nsLycos.js - logIN - Session Data found");
                     this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
@@ -221,7 +209,7 @@ nsLycosSMTP.prototype =
             this.m_HttpComms.setContentType("message/rfc821");
             this.m_HttpComms.setURI(this.m_szSendUri);
             this.m_HttpComms.setRequestMethod("POST");
-            this.m_HttpComms.addRequestHeader("SAVEINSENT", this.m_bSaveCopy?"t":"f", false); 
+            this.m_HttpComms.addRequestHeader("SAVEINSENT", this.m_prefData.bSaveCopy?"t":"f", false); 
             this.m_HttpComms.addData(szMsg);     
             var bResult = this.m_HttpComms.send(this.composerOnloadHandler, this);  
             if (!bResult) throw new Error("httpConnection returned false");
@@ -263,7 +251,7 @@ nsLycosSMTP.prototype =
             }
             else
             {
-                if (mainObject.m_bReUseSession)
+                if (mainObject.m_prefData.bReUseSession)
                 {
                     mainObject.m_Log.Write("Lycos.js - logIN - deleting Session Data"); 
                     if (!mainObject.m_SessionData)
@@ -293,6 +281,80 @@ nsLycosSMTP.prototype =
             mainObject.serverComms("502 negative vibes from " +mainObject.m_szUserName +"\r\n");
         }
     },
+    
+    
+    
+    
+    loadPrefs : function()
+    {
+        try
+        {
+            this.m_Log.Write("nsLycos.js - loadPrefs - START"); 
+           
+            //get user prefs
+            var oData = new PrefData();
+            var oPref = {Value:null};
+            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+            
+            //do i reuse the session
+            WebMailPrefAccess.Get("bool","lycos.bReUseSession",oPref);
+            this.m_Log.Write("nsLycos.js - loadPrefs - bReUseSession " + oPref.Value);
+            if (oPref.Value) oData.bReUseSession = oPref.Value;       
+                                    
+            var iCount = 0;
+            oPref.Value = null;
+            WebMailPrefAccess.Get("int","lycos.Account.Num",oPref);
+            this.m_Log.Write("nsLycos.js - loadPrefs - num " + oPref.Value);
+            if (oPref.Value) iCount = oPref.Value;
+                       
+            var bFound = false;
+            var regExp = new RegExp(this.m_szUserName,"i");
+            for (i=0; i<iCount; i++)
+            {
+                //get user name
+                oPref.Value = null;
+                WebMailPrefAccess.Get("char","lycos.Account."+i+".user",oPref);
+                this.m_Log.Write("nsLycos.js - loadPrefs - user " + oPref.Value);
+                if (oPref.Value)
+                {
+                    if (oPref.Value.search(regExp)!=-1)
+                    {
+                        this.m_Log.Write("nsLycos.js - loadPrefs - user found "+ i);
+                        bFound = true;
+                                                                                   
+                        //get SaveSentItems
+                        oPref.Value = null;
+                        WebMailPrefAccess.Get("bool","lycos.Account."+i+".bSaveCopy",oPref);
+                        oData.bSaveCopy = oPref.Value;
+                        this.m_Log.Write("lycos-Pref-Accounts.js - getAccountPrefs - oData.bSaveSentItem " + oData.bSaveCopy);
+                    }
+                }
+            }
+            
+            if (!bFound) //get defaults
+            {
+                this.m_Log.Write("nsLycos - loadPrefs - Default Folders");
+                
+                //save copy in sent items
+                oPref.Value = null;
+                WebMailPrefAccess.Get("bool","lycos.bSaveCopy",oPref);
+                this.m_Log.Write("nsMailDotComSMTP.js - loadPrefs - bSaveCopy " + oPref.Value);
+                if (oPref.Value) oData.bSaveCopy=oPref.Value;
+            }
+            this.m_Log.Write("nsLycos.js - loadPrefs - END");
+            return oData;
+        }
+        catch(e)
+        {
+             this.m_Log.DebugDump("nsLycos.js: loadPrefs : Exception : " 
+                                              + e.name + 
+                                              ".\nError message: " 
+                                              + e.message+ "\n"
+                                              + e.lineNumber);
+            return null;
+        }
+    },
+
     
     
     ////////////////////////////////////////////////////////////////////////////

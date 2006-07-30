@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://lycos/content/Lycos-Prefs-Folders-Add.css" type="text/css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://lycos/locale/Lycos-Prefs-Folders-Add.dtd">
+
+<window id="addWindow" 
+        title="&LycosFolderAdd.Title;"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        onload="return gFoldersAdd.init();">
+
+    <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
+    <script type="application/x-javascript" src="chrome://lycos/content/Lycos-Prefs-Folders-Add.js"/>
+    
+    
+    <stringbundleset>
+	   <stringbundle id="stringsFoldersAdd" src="chrome://lycos/locale/Lycos-Prefs-Folders-Add.properties"/>
+	</stringbundleset>
+    
+    <keyset>
+        <key id="key_close"  keycode="VK_ESCAPE" command="cmd_close"/>
+    </keyset>
+    
+    <commandset id="globalCommands">
+        <command id="cmd_close" oncommand="gFoldersAdd.doCancel();"/>
+    </commandset>
+    
+    
+    
+    <vbox flex="1">
+        <hbox>
+            <vbox>
+                <image id="folderImage" class="folder"/>
+                <spacer flex="1"/>
+            </vbox>
+            
+            <vbox>
+                  <label id="labelFolder"
+                         value="&LycosFolderName.Label;"/>
+            </vbox>
+        </hbox>   
+    
+        <hbox align="center">     
+            <label id="labelFolderName"
+                   value="&LycosFolderName.Label;" 
+                   accesskey="&LycosFolderName.AccessKey;"
+                   control="txtDomain"/>           
+            
+            <textbox id="txtDomain" 
+                     value="" 
+                     flex="2" 
+                     onchange = ""/>
+                     
+            <spacer flex="1"/> 
+        </hbox>
+
+        
+        <spacer flex="1" />
+
+        <hbox align="end" pack="center">
+            <button id="add" 
+                    label="&LycosFolderName.ButtonOk.Label;"
+                    accesskey="&LycosFolderName.ButtonOk.AccessKey;"
+                    default="true"
+                    oncommand ="gFoldersAdd.doOk();"/>
+            <button id="cancel" 
+                    label="&LycosFolderName.ButtonCancel.Label;" 
+                    accesskey="&LycosFolderName.ButtonCancel.AccessKey;"
+                    oncommand ="gFoldersAdd.doCancel();"/>
+        </hbox> 
+    </vbox>
+</window>

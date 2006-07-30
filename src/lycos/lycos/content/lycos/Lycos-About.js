@@ -8,9 +8,43 @@ var gLycosAbout =
 
     init : function()
     {
-        var strBundle = document.getElementById("stringsLycosAbout");
-        var szContributors = strBundle.getString("ExtContributorNames");
-        var aszNames = szContributors.split(";");
+        var extensionDS = Components.classes["@mozilla.org/extensions/manager;1"]
+                                    .getService(Components.interfaces.nsIExtensionManager)
+                                    .datasource;
+     
+        var rdfs = Components.classes["@mozilla.org/rdf/rdf-service;1"]
+                             .getService(Components.interfaces.nsIRDFService);
+        var extension = rdfs.GetResource("urn:mozilla:item:{10e6e940-8a9c-11d9-9669-0800200c9a66}");
+
+        // Version
+        var versionArc = rdfs.GetResource("http://www.mozilla.org/2004/em-rdf#version");
+        var version = extensionDS.GetTarget(extension, versionArc, true);
+        version = version.QueryInterface(Components.interfaces.nsIRDFLiteral).Value;   
+        document.getElementById("LycosVersionNumber").setAttribute("value", version);
+
+                //creator 
+        var creatorArc = rdfs.GetResource("http://www.mozilla.org/2004/em-rdf#creator");
+        var creator = extensionDS.GetTarget(extension, creatorArc, true);
+        creator = creator.QueryInterface(Components.interfaces.nsIRDFLiteral).Value;
+        document.getElementById("LycosCreator").setAttribute("value", creator);
+
+        //URL
+        var homepageArc = rdfs.GetResource("http://www.mozilla.org/2004/em-rdf#homepageURL");
+        var homepage = extensionDS.GetTarget(extension, homepageArc, true);
+        homepage = homepage.QueryInterface(Components.interfaces.nsIRDFLiteral).Value;
+        var szHomePage = "window.opener.openURL('" + homepage +"');";
+        document.getElementById("LycosHomePage").setAttribute("onclick", szHomePage);     
+        document.getElementById("LycosHomePage").setAttribute("tooltiptext", homepage); 
+
+         //Contributor
+        var contributorsArc = rdfs.GetResource("http://www.mozilla.org/2004/em-rdf#contributor");
+        var contributors = extensionDS.GetTargets(extension, contributorsArc, true);
+        var aszNames = new Array();
+        while (contributors.hasMoreElements()) 
+        {
+            var contributor = contributors.getNext().QueryInterface(Components.interfaces.nsIRDFLiteral).Value;
+            aszNames.push(contributor);
+        }
         var list = document.getElementById("LycosContributorBox");
         
         this.m_Timer = Components.classes["@mozilla.org/timer;1"];

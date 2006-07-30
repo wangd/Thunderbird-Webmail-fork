@@ -1,10 +1,8 @@
 <!ENTITY LycosAbout.Title "Informazioni su Lycos">
 <!ENTITY LycosAbout.ExtName "Lycos">
-<!ENTITY LycosAbout.ExtVersion "versione 0.7.3">
+<!ENTITY LycosAbout.ExtVersion "versione">
 <!ENTITY LycosAbout.ExtDescription "Componente per l&apos;estensione WebMail">
 <!ENTITY LycosAbout.ExtCreaterTitle "Creato da:">
-<!ENTITY LycosAbout.ExtCreator "ComodoDragon">
 <!ENTITY LycosAbout.ExtHome "Sito web">
-<!ENTITY LycosAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY LycosAbout.ExtButton "Chiudi">
 <!ENTITY LycosAbout.ExtContributorTitle "Collaboratori:">

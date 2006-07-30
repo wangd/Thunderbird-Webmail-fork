@@ -1,10 +1,8 @@
 <!ENTITY LycosAbout.Title "Lycos - Hakkında">
 <!ENTITY LycosAbout.ExtName "Lycos">
-<!ENTITY LycosAbout.ExtVersion "sürüm 0.7.3">
+<!ENTITY LycosAbout.ExtVersion "sürüm">
 <!ENTITY LycosAbout.ExtDescription "Web-Mail eklentisi için Lycos bileşeni">
 <!ENTITY LycosAbout.ExtCreaterTitle "Hazırlayan:">
-<!ENTITY LycosAbout.ExtCreator "ComodoDragon">
 <!ENTITY LycosAbout.ExtHome "Ana Sayfa">
-<!ENTITY LycosAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY LycosAbout.ExtButton "Kapat">
 <!ENTITY LycosAbout.ExtContributorTitle "Destekleyenler:">

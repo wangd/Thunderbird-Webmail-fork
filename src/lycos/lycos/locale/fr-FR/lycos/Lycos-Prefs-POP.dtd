@@ -1,6 +1,0 @@
-<!ENTITY JunkMail.Label "Télécharger les Indésirables">
-<!ENTITY JunkMail.AccessKey "I">
-<!ENTITY EmptyTrash.Label "vider la corbeille">
-<!ENTITY EmptyTrash.AccessKey "V">
-<!ENTITY DownloadUnread.Label "Ne relever que le courrier non lu">
-<!ENTITY DownloadUnread.AccessKey "u">

@@ -1,0 +1,84 @@
+#tabsAccount
+{
+    margin-top:10px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.radio
+{
+    margin-top: 5px;
+    margin-left: 25px; 
+}
+
+#labelAlt
+{
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+#labelFolders
+{
+    margin-top: 5px;
+    margin-left: 10px;
+}
+
+.emailAddress
+{
+   	font-size: medium; 
+}
+
+#boxFolders
+{
+    margin-top:5px;
+    margin-left: 75px;
+    margin-right: 75px; 
+    margin-bottom: 25px;
+}
+
+
+#listFolders
+{
+    height: 10em; 
+    width : 20em;
+}
+
+
+.listItem
+{
+    padding: 4px 8px 4px 4px;
+    min-height: 35px !important;
+    border-bottom: 1px dotted #C0C0C0;
+}
+
+
+.listItem[selected="true"] 
+{
+    -moz-user-focus: normal;
+    background-image: url("chrome://mozapps/skin/shared/itemSelected.png");
+}
+
+#customFolderImage
+{
+    list-style-image: url("chrome://lycos/skin/custom.png");
+    margin-left: 5px;
+}
+
+
+#folderName
+{
+    margin-left: 10px; 
+}
+
+#imageError
+{
+    list-style-image: url("chrome://lycos/skin/error.png");
+}
+
+#labelError
+{
+    font-weight: bold;
+	font-size: medium;
+    font-style: italic;
+    line-height: 2em;
+}

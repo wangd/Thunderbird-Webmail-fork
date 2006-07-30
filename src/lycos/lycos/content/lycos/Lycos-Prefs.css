@@ -1,20 +1,5 @@
-radio[pane] 
+#prefsWindow
 {
-    list-style-image: url("chrome://lycos/skin/Lycos-Prefs.png"); 
-}
-
-radio[pane=panePOP]
-{
-    -moz-image-region: rect(0px, 32px, 32px, 0px)
-}
-
-radio[pane=paneIMAP]
-{
-	-moz-image-region: rect(0px, 64px, 32px, 32px)
-}
-
-
-radio[pane=paneSMTP]
-{
-    -moz-image-region: rect(0px, 96px, 32px, 64px)
+    width: 45em; 
+    height: 38em;
 }
