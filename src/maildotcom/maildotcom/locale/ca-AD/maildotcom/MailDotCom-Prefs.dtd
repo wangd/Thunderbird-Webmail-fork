@@ -1,5 +1,34 @@
-<!ENTITY Window.szTitle "Opcions del MailDotCom">
-<!ENTITY Accounts.Panel.szTitle "Comptes">
-<!ENTITY Domains.Panel.szTitle "Dominis">
-<!ENTITY Ok.label "Ok">
-<!ENTITY Cancel.label "Cancela">
+<!ENTITY MailDotComPref.Window.Title "Opcions del MailDotCom">
+<!ENTITY MailDotComPref.Panel.Accounts.Title "Comptes">
+<!ENTITY MailDotComPref.Panel.Domains.Title "Dominis">
+<!ENTITY MailDotComPref.Button.Ok.Label "Ok">
+<!ENTITY MailDotComPref.Button.Cancel.Label "Cancela">
+
+<!ENTITY MailDotComPref.Tab.POP.Title "POP">
+<!ENTITY MailDotComPref.Tab.SMTP.Title "SMTP">
+
+<!ENTITY MailDotComPref.POP.DownloadUnread.Label "Descarrega només els missatges no llegits">
+<!ENTITY MailDotComPref.POP.DownloadUnread.AccessKey "u">
+<!ENTITY MailDotComPref.POP.EmptyTrash.Label "Buida la paperera">
+<!ENTITY MailDotComPref.POP.EmptyTrash.AccessKey "E">
+<!ENTITY MailDotComPref.POP.Folders.Label "Descarrega carpetes">
+<!ENTITY MailDotComPref.POP.ButtonAdd.Label "Afegeix">
+<!ENTITY MailDotComPref.POP.ButtonAdd.AccessKey "A">
+<!ENTITY MailDotComPref.POP.ButtonRemove.Label "Esborra">
+<!ENTITY MailDotComPref.POP.ButtonRemove.AccessKey "R">
+
+<!ENTITY MailDotComPref.SMTP.SaveSentItems.Label "Desa una còpia a missatges enviats.">
+<!ENTITY MailDotComPref.SMTP.SaveSentItems.AccessKey "s">
+<!ENTITY MailDotComPref.SMTP.AlternativeGroup.Label "Quan s&apos;estan enviant correus de text enriquit, quina part ha d&apos;enviar l&apos;extensió?">
+<!ENTITY MailDotComPref.SMTP.SendPlain.Label "Envia el text pla">
+<!ENTITY MailDotComPref.SMTP.SendPlain.AccessKey "p">
+<!ENTITY MailDotComPref.SMTP.SendHtml.Label "Envia el text html">
+<!ENTITY MailDotComPref.SMTP.SendHtml.AccessKey "h">
+
+<!ENTITY MailDotComPref.AccountError.Label "No s&apos;han trobat comptes de MailDotCom">
+
+<!ENTITY MailDotComPref.Domain.Label "Dominis que permet l&apos;extensió MailDotCom">
+<!ENTITY MailDotComPref.Domain.Button.AddDomain.Label "Afegeix">
+<!ENTITY MailDotComPref.Domain.Button.AddDomain.AccessKey "A">
+<!ENTITY MailDotComPref.Domain.Button.RemoveDomain.Label "Esborra">
+<!ENTITY MailDotComPref.Domain.Button.RemoveDomain.AccessKey "R">

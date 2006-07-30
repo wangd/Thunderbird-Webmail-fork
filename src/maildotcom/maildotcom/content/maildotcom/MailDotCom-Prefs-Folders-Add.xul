@@ -5,7 +5,7 @@
 <!DOCTYPE dialog SYSTEM "chrome://maildotcom/locale/MailDotCom-Prefs-Folders-Add.dtd">
 
 <window id="addWindow" 
-        title="&TitleAdd;"
+        title="&MailDotComFolderAdd.Title;"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         onload="return gFoldersAdd.init();">
 
@@ -36,14 +36,14 @@
             
             <vbox>
                   <label id="labelFolder"
-                         value="&folders.label;"/>
+                         value="&MailDotComFolderName.Label;"/>
             </vbox>
         </hbox>   
     
         <hbox align="center">     
             <label id="labelFolderName"
-                   value="&folderName.label;" 
-                   accesskey="&folderName.accessKey;"
+                   value="&MailDotComFolderName.Label;" 
+                   accesskey="&MailDotComFolderName.AccessKey;"
                    control="txtDomain"/>           
             
             <textbox id="txtDomain" 
@@ -59,13 +59,13 @@
 
         <hbox align="end" pack="center">
             <button id="add" 
-                    label="&Ok.label;"
-                    accesskey="&Ok.accessKey;"
+                    label="&MailDotComFolder.ButtonOk.Label;"
+                    accesskey="&MailDotComFolder.ButtonOk.AccessKey;"
                     default="true"
                     oncommand ="gFoldersAdd.doOk();"/>
             <button id="cancel" 
-                    label="&Cancel.label;" 
-                    accesskey="&Cancel.accessKey;"
+                    label="&MailDotComFolder.ButtonCancel.Label;" 
+                    accesskey="&MailDotComFolder.ButtonCancel.AccessKey;"
                     oncommand ="gFoldersAdd.doCancel();"/>
         </hbox> 
     </vbox>

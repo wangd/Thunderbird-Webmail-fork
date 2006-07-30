@@ -3,8 +3,6 @@
 <!ENTITY MailDotComAbout.ExtVersion "različica">
 <!ENTITY MailDotComAbout.ExtDescription "Komponenta MailDotCom za razširitev Web-Mail.">
 <!ENTITY MailDotComAbout.ExtCreaterTitle "Avtor:">
-<!ENTITY MailDotComAbout.ExtCreator "ComodoDragon">
 <!ENTITY MailDotComAbout.ExtHome "Domača stran">
-<!ENTITY MailDotComAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY MailDotComAbout.ExtButton "Zapri">
 <!ENTITY MailDotComAbout.ExtContributorTitle "Avtorji prispevkov:">

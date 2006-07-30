@@ -1,8 +1,8 @@
-<!ENTITY TitleAdd "Afegeix">
-<!ENTITY folderName.label "Nom de la carpeta">
-<!ENTITY folderName.accessKey "F">
-<!ENTITY folders.label "Afegeix carpeta de descàrrega">
-<!ENTITY Ok.label "Ok">
-<!ENTITY Ok.accessKey "O">
-<!ENTITY Cancel.label "Cancela">
-<!ENTITY Cancel.accessKey "C">
+<!ENTITY MailDotComFolderAdd.Title "Afegeix">
+<!ENTITY MailDotComFolderName.Label "Nom de la carpeta">
+<!ENTITY MailDotComFolderName.AccessKey "F">
+<!ENTITY MailDotComFolders.Label "Afegeix carpeta de descàrrega">
+<!ENTITY MailDotComFolder.ButtonOk.Label "Ok">
+<!ENTITY MailDotComFolder.ButtonOk.AccessKey "O">
+<!ENTITY MailDotComFolder.ButtonCancel.Label "Cancela">
+<!ENTITY MailDotComFolder.ButtonCancel.AccessKey "C">

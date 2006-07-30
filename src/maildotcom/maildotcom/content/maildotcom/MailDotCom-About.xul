@@ -12,11 +12,7 @@
         onunload ="gMailDotComAbout.stop()"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         id = "MailDotComAboutDialog">
-     
-    <stringbundleset>
-	   <stringbundle id="stringsMailDotComAbout" src="chrome://maildotcom/locale/MailDotCom-About.properties"/>
-	</stringbundleset>
-	
+
     <script type="application/x-javascript" src="chrome://maildotcom/content/MailDotCom-About.js"/>
         
     <groupbox align="center" orient="horizontal">
@@ -34,13 +30,11 @@
             <text value="&MailDotComAbout.ExtCreaterTitle;" id = "MailDotComCreatorLabel"/>
             <hbox>
                 <image id="LionImage"/>
-                <text value="&MailDotComAbout.ExtCreator;" class = "MailDotComCreatorText"/>
+                <text id="MailDotComCreator" class = "MailDotComCreatorText"/>
             </hbox>
             <text value="&MailDotComAbout.ExtContributorTitle;" id = "MailDotComContributorLabel"/>
             <vbox flex="1" id="MailDotComContributorBox"/>
-            <text value="&MailDotComAbout.ExtHome;" 
-                  id = "MailDotComHomePage"
-                  onclick="window.opener.openURL('&MailDotComAbout.ExtHomeURL;');"/>
+            <text value="&MailDotComAbout.ExtHome;" id = "MailDotComHomePage"/>
         </vbox>
        
     </groupbox>

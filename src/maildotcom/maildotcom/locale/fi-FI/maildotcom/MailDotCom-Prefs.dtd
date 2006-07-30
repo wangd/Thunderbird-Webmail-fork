@@ -1,5 +1,34 @@
-<!ENTITY Window.szTitle "MailDotCom - Asetukset">
-<!ENTITY Accounts.Panel.szTitle "Tilit">
-<!ENTITY Domains.Panel.szTitle "Verkkotunnukset">
-<!ENTITY Ok.label "Ok">
-<!ENTITY Cancel.label "Peruuta">
+<!ENTITY MailDotComPref.Window.Title "MailDotCom - Asetukset">
+<!ENTITY MailDotComPref.Panel.Accounts.Title "Tilit">
+<!ENTITY MailDotComPref.Panel.Domains.Title "Verkkotunnukset">
+<!ENTITY MailDotComPref.Button.Ok.Label "Ok">
+<!ENTITY MailDotComPref.Button.Cancel.Label "Peruuta">
+
+<!ENTITY POP.Panel.szTitle "POP">
+<!ENTITY SMTP.Panel.szTitle "SMTP">
+
+<!ENTITY MailDotComPref.POP.DownloadUnread.Label "Lataa vain lukemattomat viestit">
+<!ENTITY MailDotComPref.POP.DownloadUnread.AccessKey "a">
+<!ENTITY MailDotComPref.POP.EmptyTrash.Label "Tyhjennä roskakori">
+<!ENTITY MailDotComPref.POP.EmptyTrash.AccessKey "T">
+<!ENTITY MailDotComPref.POP.Folders.Label "Latauskansiot">
+<!ENTITY MailDotComPref.POP.ButtonAdd.Label "Lisää...">
+<!ENTITY MailDotComPref.POP.ButtonAdd.AccessKey "L">
+<!ENTITY MailDotComPref.POP.ButtonRemove.Label "Poista">
+<!ENTITY MailDotComPref.POP.ButtonRemove.AccessKey "P">
+
+<!ENTITY MailDotComPref.SMTP.SaveSentItems.Label "Tallenna kopio lähetettyihin.">
+<!ENTITY MailDotComPref.SMTP.SaveSentItems.AccessKey "k">
+<!ENTITY MailDotComPref.SMTP.AlternativeGroup.Label "Lähetettäessä erikoismuotoiltua viestiä, mikä osa lähetetään?">
+<!ENTITY MailDotComPref.SMTP.SendPlain.Label "Lähetä pelkkä teksti">
+<!ENTITY MailDotComPref.SMTP.SendPlain.AccessKey "p">
+<!ENTITY MailDotComPref.SMTP.SendHtml.Label "Lähetä HTML">
+<!ENTITY MailDotComPref.SMTP.SendHtml.AccessKey "H">
+
+<!ENTITY MailDotComPref.AccountError.Label "MailDotCom-tilejä ei löytynyt">
+
+<!ENTITY MailDotComPref.Domain.Label "MailDotCom-laajennuksen tukemat verkkotunnukset">
+<!ENTITY MailDotComPref.Domain.Button.AddDomain.Label "Lisää...">
+<!ENTITY MailDotComPref.Domain.Button.AddDomain.AccessKey "L">
+<!ENTITY MailDotComPref.Domain.Button.RemoveDomain.Label "Poista">
+<!ENTITY MailDotComPref.Domain.Button.RemoveDomain.AccessKey "P">

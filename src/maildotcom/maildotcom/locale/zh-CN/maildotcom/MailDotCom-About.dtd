@@ -3,9 +3,7 @@
 <!ENTITY MailDotComAbout.ExtVersion "版本:">
 <!ENTITY MailDotComAbout.ExtDescription "Web-Mail 扩展的 MailDotCom 组件。">
 <!ENTITY MailDotComAbout.ExtCreaterTitle "创建者:">
-<!ENTITY MailDotComAbout.ExtCreator "ComodoDragon">
 <!ENTITY MailDotComAbout.ExtHome "主页">
-<!ENTITY MailDotComAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY MailDotComAbout.ExtButton "关闭">
 <!ENTITY MailDotComAbout.ExtContributorTitle "贡献者:">
 

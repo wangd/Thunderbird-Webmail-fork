@@ -1,8 +1,8 @@
-<!ENTITY TitleAdd "Adicionar">
-<!ENTITY folderName.label "Nome da Pasta">
-<!ENTITY folderName.accessKey "P">
-<!ENTITY folders.label "Adicionar pasta de download">
-<!ENTITY Ok.label "Ok">
-<!ENTITY Ok.accessKey "O">
-<!ENTITY Cancel.label "Cancelar">
-<!ENTITY Cancel.accessKey "C">
+<!ENTITY MailDotComFolderAdd.Title "Adicionar">
+<!ENTITY MailDotComFolderName.Label "Nome da Pasta">
+<!ENTITY MailDotComFolderName.AccessKey "P">
+<!ENTITY MailDotComFolders.Label "Adicionar pasta de download">
+<!ENTITY MailDotComFolder.ButtonOk.Label "Ok">
+<!ENTITY MailDotComFolder.ButtonOk.AccessKey "O">
+<!ENTITY MailDotComFolder.ButtonCancel.Label "Cancelar">
+<!ENTITY MailDotComFolder.ButtonCancel.AccessKey "C">

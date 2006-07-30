@@ -3,8 +3,6 @@
 <!ENTITY MailDotComAbout.ExtVersion "versão">
 <!ENTITY MailDotComAbout.ExtDescription "Componente MailDotCom para a extensão Web-Mail">
 <!ENTITY MailDotComAbout.ExtCreaterTitle "Criado por:">
-<!ENTITY MailDotComAbout.ExtCreator "ComodoDragon">
 <!ENTITY MailDotComAbout.ExtHome "Home Page">
-<!ENTITY MailDotComAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY MailDotComAbout.ExtButton "Fechar">
 <!ENTITY MailDotComAbout.ExtContributorTitle "Colaboradores:">

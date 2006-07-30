@@ -6,19 +6,9 @@
 <?xml-stylesheet href="chrome://maildotcom/content/MailDotCom-Prefs-Domains.css"?>
 <?xml-stylesheet href="chrome://maildotcom/content/MailDotCom-Prefs-Accounts.css"?>
 
+<!DOCTYPE dialog SYSTEM "chrome://maildotcom/locale/MailDotCom-Prefs.dtd">
 
-<!DOCTYPE window [
-    <!ENTITY % prefsDTD SYSTEM "chrome://maildotcom/locale/MailDotCom-Prefs.dtd"> 
-    %prefsDTD;
-    <!ENTITY % domainsDTD SYSTEM "chrome://maildotcom/locale/MailDotCom-Prefs-Domains.dtd"> 
-    %domainsDTD;
-    <!ENTITY % accountsDTD SYSTEM "chrome://maildotcom/locale/MailDotCom-Prefs-Accounts.dtd"> 
-    %accountsDTD;
-]>
-
-
-
-<window title="&Window.szTitle;"
+<window title="&MailDotComPref.Window.Title;"
         id ="prefsWindow"
         onload="Startup();" 
         onclose="return onClose();"
@@ -72,8 +62,8 @@
     </commandset>
     
     <radiogroup id="viewGroup" class="viewSelector" orient="horizontal">
-        <radio id="rAccounts" label="&Accounts.Panel.szTitle;" oncommand="setDeck(0);" selected="true"/>
-        <radio id="rDomains"  label="&Domains.Panel.szTitle;"  oncommand="setDeck(1);"/>
+        <radio id="rAccounts" label="&MailDotComPref.Panel.Accounts.Title;" oncommand="setDeck(0);" selected="true"/>
+        <radio id="rDomains"  label="&MailDotComPref.Panel.Domains.Title;"  oncommand="setDeck(1);"/>
     </radiogroup>
     
     <deck id="deck"> 
@@ -84,7 +74,7 @@
                     <image id="imageError" />
                 </hbox>
                 <vbox align="center">
-                    <label id="labelError" flex="1" value="&error.Label;"/>
+                    <label id="labelError" flex="1" value="&MailDotComPref.AccountError.Label;"/>
                 </vbox>    
             </vbox>
                   
@@ -97,23 +87,23 @@
                 
                 <tabbox  flex="1" id="tabsAccount">
                     <tabs>
-                        <tab label="&POP.Panel.szTitle;"/>
-                        <tab label="&SMTP.Panel.szTitle;"/>
+                        <tab label="&MailDotComPref.Tab.POP.Title;"/>
+                        <tab label="&MailDotComPref.Tab.SMTP.Title;"/>
                     </tabs>
                     <tabpanels flex="1" >
                         <vbox id="popPanel" class="panel">
-                            <checkbox label="&DownloadUnread.Label;" 
-                                      accesskey="&DownloadUnread.AccessKey;"
+                            <checkbox label="&MailDotComPref.POP.DownloadUnread.Label;" 
+                                      accesskey="&MailDotComPref.POP.DownloadUnread.AccessKey;"
                                       id="chkDownloadUnread"
                                       onclick ="gPrefAccounts.chkDownloadUreadOnChange();"/> 
                                       
                              <!--empty trash-->
-                             <checkbox label="&EmptyTrash.Label;" 
-                                       accesskey="&EmptyTrash.AccessKey;"
+                             <checkbox label="&MailDotComPref.POP.EmptyTrash.Label;" 
+                                       accesskey="&MailDotComPref.POP.EmptyTrash.AccessKey;"
                                        id="chkEmptyTrash"
                                        onclick ="gPrefAccounts.chkEmptyTrashOnChange();"/>
                                
-                            <label value="&Folders.Label;" id="labelFolders"/>
+                            <label value="&MailDotComPref.POP.Folders.Label;" id="labelFolders"/>
                             <vbox id="boxFolders">     
                                 <hbox flex="1"> 
                                     <spacer flex="1"/>         
@@ -124,13 +114,13 @@
                                 </hbox>
                                 <hbox pack="center">    
                                         <button id="addFolderList" 
-                                                label="&Add.Label;" 
-                                                accesskey="&Add.AccessKey;"
+                                                label="&MailDotComPref.POP.ButtonAdd.Label;" 
+                                                accesskey="&MailDotComPref.POP.ButtonAdd.AccessKey;"
                                                 oncommand ="gPrefAccounts.folderListAdd();"/>
                                                 
                                         <button id="removeFolderList" 
-                                                label="&Remove.Label;" 
-                                                accesskey="&Remove.AccessKey;"
+                                                label="&MailDotComPref.POP.ButtonRemove.Label;" 
+                                                accesskey="&MailDotComPref.POP.ButtonRemove.AccessKey;"
                                                 oncommand ="gPrefAccounts.folderListRemove();"
                                                 disabled="true"/>
                                 </hbox>
@@ -139,20 +129,20 @@
                         
                         <vbox id="smptPanel" class="panel">
                             <vbox id="vboxSmtpItems">
-                                <checkbox label="&SaveSentItems.Label;"
-                                          accesskey="&SaveSentItems.AccessKey;" 
+                                <checkbox label="&MailDotComPref.SMTP.SaveSentItems.Label;"
+                                          accesskey="&MailDotComPref.SMTP.SaveSentItems.Label;" 
                                           id="chkSentItems"
                                           onclick ="gPrefAccounts.chkSentItemsOnChange();"/>
         
-                                <label value="&AlternativeGroup.Label;" id="labelAlt" flex="1"/>
+                                <label value="&MailDotComPref.SMTP.AlternativeGroup.Label;" id="labelAlt" flex="1"/>
                                 <radiogroup id="radiogroupAlt" onclick ="gPrefAccounts.rgAltOnChange();" class="radio">
-                                    <radio label="&SendPlain.Label;" 
-                                           accesskey="&SendPlain.AccessKey;"
+                                    <radio label="&MailDotComPref.SMTP.SendPlain.Label;" 
+                                           accesskey="&MailDotComPref.SMTP.SendPlain.AccessKey;"
                                            value = "0"
                                            id="rdSendPlain"/>
                                            
-                                    <radio label="&SendHtml.Label;" 
-                                           accesskey="&SendHtml.AccessKey;"
+                                    <radio label="&MailDotComPref.SMTP.SendHtml.Label;" 
+                                           accesskey="&MailDotComPref.SMTP.SendHtml.AccessKey;"
                                            value = "1"
                                            id="rdSendHtml"/>
                                 </radiogroup>
@@ -166,7 +156,7 @@
     
         <!--  DOMAINS -->
         <vbox id="vboxDomains" flex="1">
-            <label value="&domain.label;" id="labelDomain"/>
+            <label value="&MailDotComPref.Domain.Label;" id="labelDomain"/>
             <hbox align="center">     
                 <spacer flex="1"/>
                 <richlistbox  id="listDomain" 
@@ -175,12 +165,12 @@
            
                 <vbox align="center" pack="center">
                     <button id="add" 
-                            label="&Add.label;" 
-                            accesskey="&Add.accessKey;"
+                            label="&MailDotComPref.Domain.Button.AddDomain.Label;" 
+                            accesskey="&MailDotComPref.Domain.Button.AddDomain.AccessKey;"
                             oncommand ="gHotmailDomain.onAdd();"/>
                     <button id="remove" 
-                            label="&Remove.label;" 
-                            accesskey="&Remove.accessKey;"
+                            label="&MailDotComPref.Domain.Button.RemoveDomain.Label;" 
+                            accesskey="&MailDotComPref.Domain.Button.RemoveDomain.AccessKey;"
                             disabled = "true"
                             oncommand ="gHotmailDomain.onRemove();"/>
                 </vbox> 
@@ -194,8 +184,8 @@
     <!-- buttons>-->
     <vbox pack = "end">
         <hbox id="buttons" pack="end" align="end" flex="1">
-            <button id="OK"     label="&Ok.label;"     oncommand="onOK();"/>
-            <button id="Cancel" label="&Cancel.label;" oncommand="onClose();"/> 
+            <button id="OK"     label="&MailDotComPref.Button.Ok.Label;"     oncommand="onOK();"/>
+            <button id="Cancel" label="&MailDotComPref.Button.Cancel.Label;" oncommand="onClose();"/> 
         </hbox>
     </vbox>
 </window>

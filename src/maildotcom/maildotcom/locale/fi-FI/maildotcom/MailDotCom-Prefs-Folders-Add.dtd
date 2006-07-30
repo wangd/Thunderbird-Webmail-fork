@@ -1,8 +1,8 @@
-<!ENTITY TitleAdd "Lisää">
-<!ENTITY folderName.label "Kansion nimi">
-<!ENTITY folderName.accessKey "K">
-<!ENTITY folders.label "Lisää latauskansio">
-<!ENTITY Ok.label "Ok">
-<!ENTITY Ok.accessKey "O">
-<!ENTITY Cancel.label "Peruuta">
-<!ENTITY Cancel.accessKey "P">
+<!ENTITY MailDotComFolderAdd.Title "Lisää">
+<!ENTITY MailDotComFolderName.Label "Kansion nimi">
+<!ENTITY MailDotComFolderName.AccessKey "K">
+<!ENTITY MailDotComFolders.Label "Lisää latauskansio">
+<!ENTITY MailDotComFolder.ButtonOk.Label "Ok">
+<!ENTITY MailDotComFolder.ButtonOk.AccessKey "O">
+<!ENTITY MailDotComFolder.ButtonCancel.Label "Peruuta">
+<!ENTITY MailDotComFolder.ButtonCancel.AccessKey "P">

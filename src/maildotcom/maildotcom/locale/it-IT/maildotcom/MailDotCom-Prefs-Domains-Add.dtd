@@ -1,8 +1,8 @@
-<!ENTITY TitleAdd "Aggiungi un dominio">
-<!ENTITY domainName.label "Dominio:">
-<!ENTITY domainName.accessKey "D">
-<!ENTITY domain.label "Aggiungi un dominio di MailDotCom">
-<!ENTITY Ok.label "OK">
-<!ENTITY Ok.accessKey "O">
-<!ENTITY Cancel.label "Annulla">
-<!ENTITY Cancel.accessKey "A">
+<!ENTITY MailDotComAddDomain.Title "Aggiungi un dominio">
+<!ENTITY MailDotComAddDomainName.Label "Dominio:">
+<!ENTITY MailDotComAddDomainName.AccessKey "D">
+<!ENTITY MailDotComAddDomain.Label "Aggiungi un dominio di MailDotCom">
+<!ENTITY MailDotComAddDomain.ButtonOk.Label "OK">
+<!ENTITY MailDotComAddDomain.ButtonOk.AccessKey "O">
+<!ENTITY MailDotComAddDomain.ButtonCancel.Label "Annulla">
+<!ENTITY MailDotComAddDomain.ButtonCancel.AccessKey "A">

@@ -3,8 +3,6 @@
 <!ENTITY MailDotComAbout.ExtVersion "sürüm">
 <!ENTITY MailDotComAbout.ExtDescription "Web-Mail eklentisi için MailDotCom bileşeni">
 <!ENTITY MailDotComAbout.ExtCreaterTitle "Hazırlayan:">
-<!ENTITY MailDotComAbout.ExtCreator "ComodoDragon">
 <!ENTITY MailDotComAbout.ExtHome "Ana Sayfa">
-<!ENTITY MailDotComAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY MailDotComAbout.ExtButton "Kapat">
 <!ENTITY MailDotComAbout.ExtContributorTitle "Destekleyenler:">

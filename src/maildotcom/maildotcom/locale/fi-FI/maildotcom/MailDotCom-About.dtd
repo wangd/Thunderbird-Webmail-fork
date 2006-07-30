@@ -3,8 +3,6 @@
 <!ENTITY MailDotComAbout.ExtVersion "versio">
 <!ENTITY MailDotComAbout.ExtDescription "MailDotCom-komponentti WebMail-laajennukseen.">
 <!ENTITY MailDotComAbout.ExtCreaterTitle "Tekijä:">
-<!ENTITY MailDotComAbout.ExtCreator "ComodoDragon">
 <!ENTITY MailDotComAbout.ExtHome "Kotisivu">
-<!ENTITY MailDotComAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY MailDotComAbout.ExtButton "Sulje">
 <!ENTITY MailDotComAbout.ExtContributorTitle "Avustajat:">
