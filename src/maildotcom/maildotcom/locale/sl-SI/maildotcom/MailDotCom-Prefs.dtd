@@ -1,34 +1,35 @@
-<!ENTITY MailDotComPref.Window.Title "MailDotCom Options">
-<!ENTITY MailDotComPref.Panel.Accounts.Title "Accounts">
-<!ENTITY MailDotComPref.Panel.Domains.Title "Domains">
-<!ENTITY MailDotComPref.Button.Ok.Label "Ok">
-<!ENTITY MailDotComPref.Button.Cancel.Label "Cancel">
+<!ENTITY MailDotComPref.Window.Title "Možnosti MailDotCom"">
+<!ENTITY MailDotComPref.Panel.Accounts.Title "Računi">
+<!ENTITY MailDotComPref.Panel.Domains.Title "Domene">
+<!ENTITY MailDotComPref.Button.Ok.Label "V redu">
+<!ENTITY MailDotComPref.Button.Cancel.Label "Prekliči">
 
 <!ENTITY MailDotComPref.Tab.POP.Title "POP">
 <!ENTITY MailDotComPref.Tab.SMTP.Title "SMTP">
 
-<!ENTITY MailDotComPref.POP.DownloadUnread.Label "Download unread emails only">
-<!ENTITY MailDotComPref.POP.DownloadUnread.AccessKey "u">
-<!ENTITY MailDotComPref.POP.EmptyTrash.Label "Empty Trash">
-<!ENTITY MailDotComPref.POP.EmptyTrash.AccessKey "E">
-<!ENTITY MailDotComPref.POP.Folders.Label "Download folders">
-<!ENTITY MailDotComPref.POP.ButtonAdd.Label "Add...">
-<!ENTITY MailDotComPref.POP.ButtonAdd.AccessKey "A">
-<!ENTITY MailDotComPref.POP.ButtonRemove.Label "Remove">
-<!ENTITY MailDotComPref.POP.ButtonRemove.AccessKey "R">
+<!ENTITY MailDotComPref.POP.DownloadUnread.Label "Prenesi le neprebrana sporočila">
+<!ENTITY MailDotComPref.POP.DownloadUnread.AccessKey "n">
+<!ENTITY MailDotComPref.POP.EmptyTrash.Label ""Izprazni koš">
+<!ENTITY MailDotComPref.POP.EmptyTrash.AccessKey "I">
+<!ENTITY MailDotComPref.POP.Folders.Label "Prenesi mape">
+<!ENTITY MailDotComPref.POP.ButtonAdd.Label "Dodaj ...">
+<!ENTITY MailDotComPref.POP.ButtonAdd.AccessKey "D">
+<!ENTITY MailDotComPref.POP.ButtonRemove.Label "Odstrani">
+<!ENTITY MailDotComPref.POP.ButtonRemove.AccessKey "O">
 
-<!ENTITY MailDotComPref.SMTP.SaveSentItems.Label "Save copy in sent items.">
-<!ENTITY MailDotComPref.SMTP.SaveSentItems.AccessKey "s">
-<!ENTITY MailDotComPref.SMTP.AlternativeGroup.Label "When sending rich text emails which part should the extension send?">
-<!ENTITY MailDotComPref.SMTP.SendPlain.Label "Send plain text">
-<!ENTITY MailDotComPref.SMTP.SendPlain.AccessKey "p">
-<!ENTITY MailDotComPref.SMTP.SendHtml.Label "Send html text">
+<!ENTITY MailDotComPref.SMTP.SaveSentItems.Label "Shrani kopijo v Poslano.">
+<!ENTITY MailDotComPref.SMTP.SaveSentItems.AccessKey "P">
+<!ENTITY MailDotComPref.SMTP.AlternativeGroup.Label "Kateri del sporočila naj pri pošiljanju e-sporočil z obogatenim sporočilom pošlje razširitev?">
+<!ENTITY MailDotComPref.SMTP.SendPlain.Label "Pošlji navadno besedilo">
+<!ENTITY MailDotComPref.SMTP.SendPlain.AccessKey "b">
+<!ENTITY MailDotComPref.SMTP.SendHtml.Label "Pošlji besedilo html">
 <!ENTITY MailDotComPref.SMTP.SendHtml.AccessKey "h">
 
-<!ENTITY MailDotComPref.AccountError.Label "No MailDotCom Accounts Found"> 
+<!ENTITY MailDotComPref.AccountError.Label "Ni najdenih računov MailDotCom"> 
 
-<!ENTITY MailDotComPref.Domain.Label "Domains supported by MailDotCom extension">
-<!ENTITY MailDotComPref.Domain.Button.AddDomain.Label "Add...">
-<!ENTITY MailDotComPref.Domain.Button.AddDomain.AccessKey "A">
-<!ENTITY MailDotComPref.Domain.Button.RemoveDomain.Label "Remove">
-<!ENTITY MailDotComPref.Domain.Button.RemoveDomain.AccessKey "R">
+
+<!ENTITY MailDotComPref.Domain.Label "omene, ki jih podpira razširitev MailDotCom">
+<!ENTITY MailDotComPref.Domain.Button.AddDomain.Label "Dodaj ...">
+<!ENTITY MailDotComPref.Domain.Button.AddDomain.AccessKey "D">
+<!ENTITY MailDotComPref.Domain.Button.RemoveDomain.Label "Odstrani">
+<!ENTITY MailDotComPref.Domain.Button.RemoveDomain.AccessKey "O">

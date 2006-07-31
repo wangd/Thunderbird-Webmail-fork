@@ -1,8 +1,8 @@
-<!ENTITY MailDotComFolderAdd.Title "Add Folder">
-<!ENTITY MailDotComFolderName.Label "Folder Name">
-<!ENTITY MailDotComFolderName.AccessKey "F">
-<!ENTITY MailDotComFolders.Label "Add download folder">
-<!ENTITY MailDotComFolder.ButtonOk.Label "Ok">
-<!ENTITY MailDotComFolder.ButtonOk.AccessKey "O">
-<!ENTITY MailDotComFolder.ButtonCancel.Label "Cancel">
-<!ENTITY MailDotComFolder.ButtonCancel.AccessKey "C">
+<!ENTITY MailDotComFolderAdd.Title "Dodaj">
+<!ENTITY MailDotComFolderName.Label "Ime mape">
+<!ENTITY MailDotComFolderName.AccessKey "m">
+<!ENTITY MailDotComFolders.Label "Dodaj mapo za prenos">
+<!ENTITY MailDotComFolder.ButtonOk.Label "V redu">
+<!ENTITY MailDotComFolder.ButtonOk.AccessKey "r">
+<!ENTITY MailDotComFolder.ButtonCancel.Label "Prekliči">
+<!ENTITY MailDotComFolder.ButtonCancel.AccessKey "k">
