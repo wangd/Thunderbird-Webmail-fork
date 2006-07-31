@@ -1,8 +1,8 @@
-<!ENTITY HotmailFolderAdd.Title "Add Folder">
-<!ENTITY HotmailFolderName.Label "Folder Name">
+<!ENTITY HotmailFolderAdd.Title "添加文件夹">
+<!ENTITY HotmailFolderName.Label "文件夹名称">
 <!ENTITY HotmailFolderName.AccessKey "F">
-<!ENTITY HotmailFolders.Label "Add download folder">
-<!ENTITY HotmailFolder.ButtonOk.Label "Ok">
+<!ENTITY HotmailFolders.Label "添加下载文件夹">
+<!ENTITY HotmailFolder.ButtonOk.Label "确定">
 <!ENTITY HotmailFolder.ButtonOk.AccessKey "O">
-<!ENTITY HotmailFolder.ButtonCancel.Label "Cancel">
+<!ENTITY HotmailFolder.ButtonCancel.Label "取消">
 <!ENTITY HotmailFolder.ButtonCancel.AccessKey "C">
