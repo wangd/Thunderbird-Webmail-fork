@@ -477,7 +477,7 @@ AOLPOP.prototype =
                 var szNextPage = szLocation.replace(/page.*?&/,"page="+(iCurrentPage+1)+"&");
                 mainObject.m_HttpComms.setURI(szNextPage);
                 mainObject.m_HttpComms.setRequestMethod("GET");
-                var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler); 
+                var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler, mainObject); 
                 if (!bResult) throw new Error("httpConnection returned false");
             }
             else
