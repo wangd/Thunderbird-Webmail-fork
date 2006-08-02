@@ -12,11 +12,7 @@
         onunload ="gAOLAbout.stop()"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         id = "AOLAboutDialog">
-     
-    <stringbundleset>
-	   <stringbundle id="stringsAOLAbout" src="chrome://AOL/locale/AOL-About.properties"/>
-	</stringbundleset>
-	
+     	
     <script type="application/x-javascript" src="chrome://AOL/content/AOL-About.js"/>
         
     <groupbox align="center" orient="horizontal">
@@ -26,19 +22,19 @@
                 <image id="AOLImage"/>
                 <spacer flex="1"/>
             </hbox>
-            <!--<text value="&AOLAbout.ExtName;" id = "AOLName"/>-->
-            <text value="&AOLAbout.ExtVersion;" id = "AOLVersion"/>
+            <hbox>
+                <text value="&AOLAbout.ExtVersion;" id = "AOLVersionTitle" class="AOLVersion"/>
+                <text id = "AOLVersionNumber" class="AOLVersion"/>
+            </hbox>
             <text value="&AOLAbout.ExtDescription;" id = "AOLDescription"/>
             <text value="&AOLAbout.ExtCreaterTitle;" id = "AOLCreatorLabel"/>
             <hbox>
                 <image id="LionImage"/>
-                <text value="&AOLAbout.ExtCreator;" class = "AOLCreatorText"/>
+                <text id="AOLCreator" class = "AOLCreatorText"/>
             </hbox>
             <text value="&AOLAbout.ExtContributorTitle;" id = "AOLContributorLabel"/>
             <vbox flex="1" id="AOLContributorBox"/>
-            <text value="&AOLAbout.ExtHome;" 
-                  id = "AOLHomePage"
-                  onclick="window.opener.openURL('&AOLAbout.ExtHomeURL;');"/>
+            <text value="&AOLAbout.ExtHome;" id = "AOLHomePage"/>
         </vbox>
     </groupbox>
 

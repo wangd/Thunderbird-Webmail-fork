@@ -27,10 +27,11 @@
     margin-bottom: 9px;
 }
 
-#AOLVersion
+.AOLVersion
 {
     color: #909090;
     margin-bottom: 3px;
+    margin-right: 5px;
 }
 
 #AOLDescription

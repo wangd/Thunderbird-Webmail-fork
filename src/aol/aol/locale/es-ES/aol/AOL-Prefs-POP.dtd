@@ -1,5 +1,0 @@
-<!ENTITY MailServers.Label "POP">
-<!ENTITY JunkMail.Label "Descargar Correo Basura">
-<!ENTITY JunkMail.AccessKey "B">
-<!ENTITY DownloadUnread.Label "Descargar sólo los mensajes no leídos">
-<!ENTITY DownloadUnread.AccessKey "D">

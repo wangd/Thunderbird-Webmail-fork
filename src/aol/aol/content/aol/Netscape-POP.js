@@ -8,7 +8,8 @@ function NetscapePOP(oResponseStream, oLog)
         scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://aol/content/AOL-MSG.js");
-
+        scriptLoader.loadSubScript("chrome://aol/content/AOL-Prefs-Data.js");
+        
         this.m_Log = oLog;
         this.m_Log.Write("NetscapePOP.js - Constructor - START");   
         this.m_oResponseStream = oResponseStream;
@@ -18,9 +19,7 @@ function NetscapePOP(oResponseStream, oLog)
         this.m_HttpComms = new HttpComms(this.m_Log); 
         this.m_bAuthorised = false; 
         this.m_iStage=0; 
-         
-        this.m_szInboxURL = null;
-        this.m_szSpamURL = null;         
+        
         this.m_SuccessPath = null;
         this.m_szHostURL = null;
         this.m_szHomeURI = null;
@@ -31,41 +30,16 @@ function NetscapePOP(oResponseStream, oLog)
         this.m_szAOLMail = null;
         this.m_iPageNum = -1;
         this.m_iCurrentPage = 1;
-        this.m_bJunkMailDone = false;
-        this.m_bJunkMail = false;
+        this.m_szFolder = null;
         this.m_aMsgDataStore = new Array();
         this.m_iTotalSize = 0;
         this.m_szMSG = null;
         this.iID = -1;
+        this.m_aszFolderURLList = new Array();
         
         this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"]
                                           .getService(Components.interfaces.nsISessionManager);
         this.m_SessionData = null;
-                 
-        //do i reuse the session
-        var oPref = {Value:null};
-        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-        if (WebMailPrefAccess.Get("bool","aol.bReUseSession",oPref))
-            this.m_bReUseSession=oPref.Value;
-        else
-            this.m_bReUseSession=true; 
-        
-        //do i download junkmail
-        oPref.Value = null;
-        if (WebMailPrefAccess.Get("bool","aol.bUseJunkMail",oPref))
-            this.m_bUseJunkMail=oPref.Value;
-        else
-            this.m_bUseJunkMail=false;
-         
-        //do i download unread only
-        oPref.Value = null;
-        if (WebMailPrefAccess.Get("bool","aol.bDownloadUnread",oPref))
-            this.m_bDownloadUnread=oPref.Value;
-        else
-            this.m_bDownloadUnread=false;
-                   
-        delete WebMailPrefAccess;
-        
         this.m_bStat = false;
                    
         this.m_Log.Write("NetscapePOP.js - Constructor - END");  
@@ -100,15 +74,17 @@ NetscapePOP.prototype =
             this.m_szPassWord = szPassWord;
             this.m_szAOLMail= "http://mail.netscape.com/";  
             
+            this.m_prefData = this.loadPrefs();   //get prefs
+            
             this.m_iStage = 0;
             this.m_HttpComms.setURI(this.m_szAOLMail);
             this.m_HttpComms.setRequestMethod("GET");
             
             //get session data
-            if (this.m_bReUseSession)
+            if (this.m_prefData.bReUseSession)
             { 
                 this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName.toLowerCase());
-                if (this.m_SessionData && this.m_bReUseSession)
+                if (this.m_SessionData && this.m_prefData.bReUseSession)
                 {
                     this.m_Log.Write("AOLPOP.js - logIN - Session Data found");
                     
@@ -158,7 +134,7 @@ NetscapePOP.prototype =
         try
         {
             mainObject.m_Log.Write("NetscapePOP.js - loginOnloadHandler - START"); 
-            mainObject.m_Log.Write("NetscapePOP.js - loginOnloadHandler : \n" + szResponse);
+           // mainObject.m_Log.Write("NetscapePOP.js - loginOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("NetscapePOP.js - loginOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -314,17 +290,7 @@ NetscapePOP.prototype =
                     
                     var szDir = mainObject.m_SuccessPath.replace(/\/Mail\//i,"/rpc/");
                     mainObject.m_szLocation = "http://" + mainObject.m_szHostURL + szDir ;
-                    var szURL = mainObject.m_szLocation + "GetMessageList.aspx?page=1";
-                    var szData = "previousFolder=&stateToken=&newMailToken=&"
-                    szData += "version="+ mainObject.m_szVersion +"&user="+ mainObject.m_szUserId;
-                    
-                    //inbox
-                    mainObject.m_szInboxURL = szURL + "&folder=inbox&" + szData; ;
-                    mainObject.m_Log.Write("NetscapePOP.js - loginOnloadHandler - m_szInboxURL " + mainObject.m_szInboxURL);
-                    //spam   
-                    mainObject.m_szSpamURL = szURL + "&folder=Spam&" + szData;      
-                    mainObject.m_Log.Write("NetscapePOP.js - loginOnloadHandler - m_szSpamURL " + mainObject.m_szSpamURL);
-                    
+                   
                     //server response
                     mainObject.serverComms("+OK Your in\r\n");
                     mainObject.m_bAuthorised = true;
@@ -352,11 +318,15 @@ NetscapePOP.prototype =
         {
             this.m_Log.Write("NetscapePOP.js - getNumMessages - START"); 
             
-            if (this.m_szInboxURL== null) return false;
-            this.m_Log.Write("NetscapePOP.js - getNumMessages - mail box url " + this.m_szInboxURL); 
-            
+            //will always download from inbox 
+            var szURL = this.m_szLocation + "GetMessageList.aspx?page=1";
+            var szData = "previousFolder=&stateToken=&newMailToken=&"
+            szData += "version="+ this.m_szVersion +"&user="+ this.m_szUserId;
+            var szInbox = szURL + "&folder=inbox&" + szData;
+            this.m_Log.Write("NetscapePOP.js - getNumMessages - szInboxURL " + szInbox);
+           
             this.m_iStage = 0;
-            this.m_HttpComms.setURI(this.m_szInboxURL);
+            this.m_HttpComms.setURI(szInbox);
             this.m_HttpComms.setRequestMethod("GET");
             var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this); 
             if (!bResult) throw new Error("httpConnection returned false");
@@ -372,6 +342,7 @@ NetscapePOP.prototype =
                                           + ".\nError message: " 
                                           + e.message+ "\n"
                                           + e.lineNumber);
+            this.serverComms("-ERR Comms Error from "+ mainObject.m_szUserName+"\r\n");
             return false;
         }
     },
@@ -381,7 +352,7 @@ NetscapePOP.prototype =
         try
         {
             mainObject.m_Log.Write("NetscapePOP.js - mailBoxOnloadHandler - START"); 
-            mainObject.m_Log.Write("NetscapePOP.js - mailBoxOnloadHandler : \n" + szResponse);
+            //mainObject.m_Log.Write("NetscapePOP.js - mailBoxOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("NetscapePOP.js - mailBoxOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -390,14 +361,50 @@ NetscapePOP.prototype =
             mainObject.m_Log.Write("NetscapePOP.js - mailBoxOnloadHandler - status :" +httpChannel.responseStatus );
             if (httpChannel.responseStatus != 200)
                 throw new Error("return status " + httpChannel.responseStatus);
-             
+              
+            var szLocation = httpChannel.URI.spec;
+            mainObject.m_Log.Write("NetscapePOP - mailBoxOnloadHandler - url : " + szLocation);
+                       
+            //get folder list
+            if (mainObject.m_prefData.aszFolder)
+            {
+                var aszFolderList = szResponse.match(patternAOLFolders);
+                mainObject.m_Log.Write("NetscapePOP.js - mailBoxOnloadHandler - aszFolderList " + aszFolderList);
+                
+                var szURL = mainObject.m_szLocation + "GetMessageList.aspx?page=1";
+                var szData = "previousFolder=&stateToken=&newMailToken=&"
+                szData += "version="+ mainObject.m_szVersion +"&user="+ mainObject.m_szUserId;
+                
+                for (var i=0; i<mainObject.m_prefData.aszFolder.length; i++)
+                {
+                    var regExp = new RegExp("^"+mainObject.m_prefData.aszFolder[i]+"$","i");
+                    mainObject.m_Log.Write("NetscapePOP.js - mailBoxOnloadHandler - regExp : "+regExp );
+                       
+                    for (var j=0; j<aszFolderList.length; j++)
+                    {
+                        var szFolderName = aszFolderList[j].match(patternAOLFolderName)[1];
+                        mainObject.m_Log.Write("NetscapePOP.js - mailBoxOnloadHandler - szFolderName : "+szFolderName );
+                          
+                        if (szFolderName.search(regExp)!=-1)
+                        {
+                            var szURI = szURL + "&folder="+szFolderName+"&" + szData;
+                            mainObject.m_aszFolderURLList.push(szURI);
+                            mainObject.m_Log.Write("NetscapePOP.js - mailBoxOnloadHandler - URL found : "+szURI);
+                        } 
+                    }
+                }
+                
+                //got the need urls so deleting aszFolder stops reentering here
+                delete mainObject.m_prefData.aszFolder; 
+            }
+            
                            
             //process page
             var aszMSGDetails = szResponse.match(patternAOLMSGData);
-            mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - aszMSGDetails : " + aszMSGDetails);
+            mainObject.m_Log.Write("AOL - mailBoxOnloadHandler - aszMSGDetails : " + aszMSGDetails);
             
             var aszSenderAddress = szResponse.match(patternAOLMSGSender);
-            mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - aszSenderAddress : " + aszSenderAddress);
+            mainObject.m_Log.Write("AOL - mailBoxOnloadHandler - aszSenderAddress : " + aszSenderAddress);
             
             if (aszMSGDetails)    
             {
@@ -407,7 +414,7 @@ NetscapePOP.prototype =
                     mainObject.m_Log.Write("AOL - mailBoxOnloadHandler - aTempData : " + aTempData);
                     
                     var bRead = false;
-                    if (mainObject.m_bDownloadUnread)
+                    if (mainObject.m_prefData.bDownloadUnread)
                     {
                         bRead = parseInt(aTempData[5]); //unread
                         mainObject.m_Log.Write("AOL.js - mailBoxOnloadHandler - bRead -" + bRead);
@@ -427,7 +434,9 @@ NetscapePOP.prototype =
                         MSGData.szFrom = aTempData2[0].match(/"(.*?)"/)[1];
                         
                         MSGData.szTo = mainObject.m_szUserName;//me
-                        MSGData.bJunkFolder = mainObject.m_bJunkMailDone; //junkmail
+                        var szFolder = szLocation.match(patternAOLFolderNameURL)[1];
+                        mainObject.m_Log.Write("AOL - mailBoxOnloadHandler - szFolder : " + szFolder);
+                        MSGData.szFolder =  szFolder;
                         
                         mainObject.m_aMsgDataStore.push(MSGData);
                         mainObject.m_iTotalSize += MSGData.iSize;
@@ -445,8 +454,6 @@ NetscapePOP.prototype =
             }   
             
             //get current page number
-            var szLocation = httpChannel.URI.spec;
-            mainObject.m_Log.Write("NetscapePOP - mailBoxOnloadHandler - url : " + szLocation);
             var szCurrentPage = szLocation.match(patternAOLURLPageNum)[1];
             mainObject.m_Log.Write("NetscapePOP - mailBoxOnloadHandler - szCurrentPage : " + szCurrentPage);
             var iCurrentPage =  parseInt(szCurrentPage);
@@ -461,14 +468,14 @@ NetscapePOP.prototype =
             }
             else
             {
-                if (!mainObject.m_bJunkMailDone && mainObject.m_bUseJunkMail && mainObject.m_szSpamURL)
-                { //get junkmail
-                    mainObject.m_Log.Write("AOL - mailBoxOnloadHandler - junkmail: " + mainObject.m_bUseJunkMail); 
+                if (mainObject.m_aszFolderURLList.length>0)
+                { //get next folder
+                    var szFolderURL = mainObject.m_aszFolderURLList.shift();
+                    mainObject.m_Log.Write("NetscapePOP - mailBoxOnloadHandler - szFolderURL: " + szFolderURL); 
                     
-                    mainObject.m_bJunkMailDone = true;
                     mainObject.m_iPageNum = -1; //reset page count
                                        
-                    mainObject.m_HttpComms.setURI(mainObject.m_szSpamURL);
+                    mainObject.m_HttpComms.setURI(szFolderURL);
                     mainObject.m_HttpComms.setRequestMethod("GET");
                     var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler, mainObject); 
                     if (!bResult) throw new Error("httpConnection returned false");
@@ -483,7 +490,7 @@ NetscapePOP.prototype =
                     else //called by list
                     {
                         var szPOPResponse = "+OK " + mainObject.m_aMsgDataStore.length + " Messages\r\n"; 
-                        this.m_Log.Write("AOL.js - getMessagesSizes - : " + mainObject.m_aMsgDataStore.length);
+                        this.m_Log.Write("NetscapePOP.js - getMessagesSizes - : " + mainObject.m_aMsgDataStore.length);
          
                         for (i = 0; i <  mainObject.m_aMsgDataStore.length; i++)
                         {
@@ -535,12 +542,17 @@ NetscapePOP.prototype =
             }
             else
             { //download msg list
-                this.m_Log.Write("AOL - getMessageSizes - calling stat");
-                if (this.m_szInboxURL== null) return false;
-                this.m_Log.Write("NetscapePOP.js - getNumMessages - mail box url " + this.m_szInboxURL); 
-                
+                this.m_Log.Write("NetscapePOP - getMessageSizes - calling stat");
+               
+               //will always download from inbox 
+                var szURL = this.m_szLocation + "GetMessageList.aspx?page=1";
+                var szData = "previousFolder=&stateToken=&newMailToken=&"
+                szData += "version="+ this.m_szVersion +"&user="+ this.m_szUserId;
+                var szInbox = szURL + "&folder=inbox&" + szData;
+                this.m_Log.Write("NetscapePOP.js - getMessageSizes - szInboxURL " + szInbox);
+               
                 this.m_iStage = 0;
-                this.m_HttpComms.setURI(this.m_szInboxURL);
+                this.m_HttpComms.setURI(szInbox);
                 this.m_HttpComms.setRequestMethod("GET");
                 var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this); 
                 if (!bResult) throw new Error("httpConnection returned false");
@@ -556,6 +568,7 @@ NetscapePOP.prototype =
                                           + ".\nError message: " 
                                           + e.message+ "\n"
                                           + e.lineNumber);
+            this.serverComms("-ERR Comms Error from "+ mainObject.m_szUserName+"\r\n");
             return false;
         }
     },
@@ -610,7 +623,7 @@ NetscapePOP.prototype =
             var oMSG = this.m_aMsgDataStore[lID-1];
             
             var szHeaders = "X-WebMail: true\r\n";
-            szHeaders += "X-JunkFolder: " +(oMSG.bJunkFolder? "true":"false")+ "\r\n";
+            szHeaders += "X-Folder: " + oMSG.szFolder + "\r\n";
             szHeaders += "To: "+ oMSG.szTo +"\r\n";
             szHeaders += "From: "+ oMSG.szFrom +"\r\n";
             szHeaders += "Subject: "+ oMSG.szSubject +"\r\n";
@@ -649,10 +662,10 @@ NetscapePOP.prototype =
                                  
             //get msg id
             var oMSG = this.m_aMsgDataStore[lID-1];
-            this.m_bJunkMail = oMSG.bJunkFolder;
+            this.m_szFolder = oMSG.szFolder ;
             this.iID = oMSG.iID;
             var szURL = this.m_szLocation.replace(/rpc/,"Mail") + "rfc822.aspx?";
-            szURL += "folder=" + (this.m_bJunkMail?"Spam":"Inbox") +"&";
+            szURL += "folder=" + this.m_szFolder  +"&";
             szURL += "uid=" + oMSG.iID +"&";
             szURL += "user="+ this.m_szUserId;
             
@@ -682,7 +695,7 @@ NetscapePOP.prototype =
         try
         {
             mainObject.m_Log.Write("NetscapePOP.js - emailOnloadHandler - START"); 
-            mainObject.m_Log.Write("NetscapePOP.js - emailOnloadHandler : \n" + szResponse);
+            //mainObject.m_Log.Write("NetscapePOP.js - emailOnloadHandler : \n" + szResponse);
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             mainObject.m_Log.Write("NetscapePOP.js - emailOnloadHandler - msg :" + httpChannel.responseStatus);
@@ -695,7 +708,7 @@ NetscapePOP.prototype =
             {
                 case 0:
                     mainObject.m_szMSG = "X-WebMail: true\r\n";
-                    mainObject.m_szMSG += "X-JunkFolder: " + (mainObject.m_bJunkMail? "true":"false")+ "\r\n";
+                    mainObject.m_szMSG += "X-Folder: " + mainObject.m_szFolder+ "\r\n";
                     mainObject.m_szMSG += szResponse.replace(/^\./mg,"..");    //bit padding   
                     mainObject.m_szMSG += "\r\n.\r\n";       
                     
@@ -746,10 +759,10 @@ NetscapePOP.prototype =
             
             //get msg id
             var oMSG = this.m_aMsgDataStore[lID-1];
-            this.m_bJunkMail = oMSG.bJunkFolder;
+            this.m_szFolder  = oMSG.szFolder;
             this.iID = oMSG.iID;
             var szURL = this.m_szLocation + "MessageAction.aspx?";
-            szURL += "folder=" + (this.m_bJunkMail?"Spam":"Inbox") +"&";
+            szURL += "folder=" + this.m_szFolder  +"&";
             szURL += "action=delete&";
             szURL += "version="+ this.m_szVersion +"&";
             szURL += "uid=" + oMSG.iID +"&";
@@ -782,7 +795,7 @@ NetscapePOP.prototype =
         try
         {
             mainObject.m_Log.Write("NetscapePOP.js - deleteMessageOnloadHandler - START");
-            mainObject.m_Log.Write("NetscapePOP.js - deleteMessageOnloadHandler : \n" + szResponse);
+            //mainObject.m_Log.Write("NetscapePOP.js - deleteMessageOnloadHandler : \n" + szResponse);
                         
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             mainObject.m_Log.Write("NetscapePOP.js - emailOnloadHandler - msg :" + httpChannel.responseStatus);
@@ -815,7 +828,7 @@ NetscapePOP.prototype =
         {
             this.m_Log.Write("NetscapePOP.js - logOUT - START"); 
                            
-            if (this.m_bReUseSession)
+            if (this.m_prefData.bReUseSession)
             { 
                 this.m_Log.Write("NetscapePOP.js - Logout - Setting Session Data");
                 if (!this.m_SessionData)
@@ -862,5 +875,106 @@ NetscapePOP.prototype =
         this.m_Log.Write("NetscapePOP.js - serverComms msg " + szMsg);
         var iCount = this.m_oResponseStream.write(szMsg,szMsg.length);
         this.m_Log.Write("NetscapePOP.js - serverComms sent count: " + iCount +" msg length: " +szMsg.length); 
+    },
+    
+    
+    
+    
+    loadPrefs : function()
+    {
+        try
+        {
+            this.m_Log.Write("NetscapePOP.js - loadPrefs - START"); 
+           
+            //get user prefs
+            var oData = new PrefData();
+            var oPref = {Value:null};
+            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+            
+            //do i reuse the session
+            WebMailPrefAccess.Get("bool","aol.bReUseSession",oPref);
+            this.m_Log.Write("NetscapePOP.js - loadPrefs - bReUseSession " + oPref.Value);
+            if (oPref.Value) oData.bReUseSession = oPref.Value;
+            
+            var iCount = 0;
+            oPref.Value = null;
+            WebMailPrefAccess.Get("int","aol.Account.Num",oPref);
+            this.m_Log.Write("NetscapePOP.js - loadPrefs - num " + oPref.Value);
+            if (oPref.Value) iCount = oPref.Value;
+                       
+            var bFound = false;
+            var regExp = new RegExp(this.m_szUserName,"i");
+            for (i=0; i<iCount; i++)
+            {
+                //get user name
+                oPref.Value = null;
+                WebMailPrefAccess.Get("char","aol.Account."+i+".user",oPref);
+                this.m_Log.Write("NetscapePOP.js - loadPrefs - user " + oPref.Value);
+                if (oPref.Value)
+                {
+                    if (oPref.Value.search(regExp)!=-1)
+                    {
+                        this.m_Log.Write("NetscapePOP.js - loadPrefs - user found "+ i);
+                        bFound = true;
+
+                        //get folders
+                        WebMailPrefAccess.Get("char","aol.Account."+i+".szFolders",oPref);
+                        this.m_Log.Write("NetscapePOP.js - loadPrefs - szFolders " + oPref.Value);
+                        if (oPref.Value)
+                        {
+                            var aszFolders = oPref.Value.split("\r");
+                            for (j=0; j<aszFolders.length; j++)
+                            {
+                                this.m_Log.Write("NetscapePOP - loadPRefs - aszFolders[j] " + aszFolders[j]);
+                                oData.aszFolder.push(encodeURIComponent(aszFolders[j]));
+                            }
+                        }
+                        
+                        //get unread
+                        oPref.Value = null;
+                        WebMailPrefAccess.Get("bool","aol.Account."+i+".bDownloadUnread",oPref);
+                        this.m_Log.Write("NetscapePOP.js - loadPrefs - bDownloadUnread " + oPref.Value);
+                        if (oPref.Value) oData.bUnread=oPref.Value; 
+                                                                   
+                        //get junkmail
+                        oPref.Value = null;
+                        WebMailPrefAccess.Get("bool","aol.Account."+i+".bUseJunkMail",oPref);
+                        this.m_Log.Write("NetscapePOP.js - loadPrefs - bUseJunkMail " + oPref.Value);
+                        if (oPref.Value) oData.bUseJunkMail = oPref.Value; 
+                        if (oData.bUseJunkMail) oData.aszFolder.push("spam");
+                    }
+                }
+            }
+            
+            if (!bFound) //get defaults
+            {
+                this.m_Log.Write("NetscapePOP - loadPrefs - Default Folders");
+                
+                //unread only
+                oPref.Value = null;
+                WebMailPrefAccess.Get("bool","aol.bDownloadUnread",oPref);
+                this.m_Log.Write("NetscapePOP.js - loadPrefs - bDownloadUnread " + oPref.Value);
+                if (oPref.Value) oData.bUnread=oPref.Value;
+               
+                //get junkmail
+                oPref.Value = null;
+                WebMailPrefAccess.Get("bool","aol.bUseJunkMail",oPref);
+                this.m_Log.Write("NetscapePOP.js - loadPrefs - bUseJunkMail " + oPref.Value);
+                if (oPref.Value) oData.bUseJunkMail = oPref.Value;
+                if (oData.bUseJunkMail) oData.aszFolder.push("spam");
+                
+            }
+            this.m_Log.Write("NetscapePOP.js - loadPrefs - END");
+            return oData;
+        }
+        catch(e)
+        {
+             this.m_Log.DebugDump("NetscapePOP.js: loadPrefs : Exception : " 
+                                              + e.name + 
+                                              ".\nError message: " 
+                                              + e.message+ "\n"
+                                              + e.lineNumber);
+            return null;
+        }
     },
 }

@@ -1,10 +1,8 @@
 <!ENTITY AOLAbout.Title "AOL / Netscape - O komponenti">
 <!ENTITY AOLAbout.ExtName "AOL / Netscape">
-<!ENTITY AOLAbout.ExtVersion "različica 0.3.1">
+<!ENTITY AOLAbout.ExtVersion "različica">
 <!ENTITY AOLAbout.ExtDescription "Komponenta AOL / Netscape za razširitev Web-Mail.">
 <!ENTITY AOLAbout.ExtCreaterTitle "Avtor:">
-<!ENTITY AOLAbout.ExtCreator "ComodoDragon">
 <!ENTITY AOLAbout.ExtHome "Domača stran">
-<!ENTITY AOLAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY AOLAbout.ExtButton "Zapri">
 <!ENTITY AOLAbout.ExtContributorTitle "Avtorji prispevkov:">

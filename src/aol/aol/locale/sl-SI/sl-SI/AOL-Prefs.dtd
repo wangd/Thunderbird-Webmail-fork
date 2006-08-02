@@ -1,4 +1,18 @@
-<!ENTITY Options.szTitle "Možnosti AOL / Netscape">
-<!ENTITY POP.Panel.szTitle "POP">
-<!ENTITY SMTP.Panel.szTitle "SMTP">
-<!ENTITY Window.size "width: 27em; height: 20em">
+<!ENTITY AOLPref.Window.Title "AOL / Netscape Options">
+<!ENTITY AOLPref.Panel.Accounts.Title "Accounts">
+<!ENTITY AOLPref.Button.Ok.Label "Ok">
+<!ENTITY AOLPref.Button.Cancel.Label "Cancel">
+
+<!ENTITY AOLPref.Tab.POP.Title "POP">
+
+<!ENTITY AOLPref.POP.DownloadUnread.Label "Download unread emails only">
+<!ENTITY AOLPref.POP.DownloadUnread.AccessKey "u">
+<!ENTITY AOLPref.POP.JunkMail.Label "Download JunkMail">
+<!ENTITY AOLPref.POP.JunkMail.AccessKey "J">
+<!ENTITY AOLPref.POP.Folders.Label "Download folders">
+<!ENTITY AOLPref.POP.ButtonAdd.Label "Add...">
+<!ENTITY AOLPref.POP.ButtonAdd.AccessKey "A">
+<!ENTITY AOLPref.POP.ButtonRemove.Label "Remove">
+<!ENTITY AOLPref.POP.ButtonRemove.AccessKey "R">
+
+<!ENTITY AOLPref.AccountError.Label "No Lycos Accounts Found"> 

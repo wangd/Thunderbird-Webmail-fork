@@ -8,21 +8,54 @@ var gAOLAbout =
 
     init : function()
     {
-        var strBundle = document.getElementById("stringsAOLAbout");
-        var szContributors = strBundle.getString("ExtContributorNames");
-        var aszNames = szContributors.split(";");
-        var list = document.getElementById("AOLContributorBox");
-        
-        if (szContributors.length != 0)
+        var extensionDS = Components.classes["@mozilla.org/extensions/manager;1"]
+                                    .getService(Components.interfaces.nsIExtensionManager)
+                                    .datasource;
+     
+        var rdfs = Components.classes["@mozilla.org/rdf/rdf-service;1"]
+                             .getService(Components.interfaces.nsIRDFService);
+        var extension = rdfs.GetResource("urn:mozilla:item:{268d7420-9032-11da-a72b-0800200c9a66}");
+
+        // Version
+        var versionArc = rdfs.GetResource("http://www.mozilla.org/2004/em-rdf#version");
+        var version = extensionDS.GetTarget(extension, versionArc, true);
+        version = version.QueryInterface(Components.interfaces.nsIRDFLiteral).Value;   
+        document.getElementById("AOLVersionNumber").setAttribute("value", version);
+
+        //creator 
+        var creatorArc = rdfs.GetResource("http://www.mozilla.org/2004/em-rdf#creator");
+        var creator = extensionDS.GetTarget(extension, creatorArc, true);
+        creator = creator.QueryInterface(Components.interfaces.nsIRDFLiteral).Value;
+        document.getElementById("AOLCreator").setAttribute("value", creator);
+
+        //URL
+        var homepageArc = rdfs.GetResource("http://www.mozilla.org/2004/em-rdf#homepageURL");
+        var homepage = extensionDS.GetTarget(extension, homepageArc, true);
+        homepage = homepage.QueryInterface(Components.interfaces.nsIRDFLiteral).Value;
+        var szHomePage = "window.opener.openURL('" + homepage +"');";
+        document.getElementById("AOLHomePage").setAttribute("onclick", szHomePage);     
+        document.getElementById("AOLHomePage").setAttribute("tooltiptext", homepage); 
+
+         //Contributor
+        var contributorsArc = rdfs.GetResource("http://www.mozilla.org/2004/em-rdf#contributor");
+        var contributors = extensionDS.GetTargets(extension, contributorsArc, true);
+        var aszNames = new Array();
+        while (contributors.hasMoreElements()) 
         {
-            this.m_Timer = Components.classes["@mozilla.org/timer;1"];
-            this.m_Timer = this.m_Timer.createInstance(Components.interfaces.nsITimer); 
-    
-            if (aszNames.length > this.m_iElementCount)
-                this.createDeck(list, aszNames);
-            else
-                this.createList(list, aszNames);  
-        } 
+            var contributor = contributors.getNext().QueryInterface(Components.interfaces.nsIRDFLiteral).Value;
+            aszNames.push(contributor);
+        }
+        
+        var list = document.getElementById("AOLContributorBox");
+
+        this.m_Timer = Components.classes["@mozilla.org/timer;1"];
+        this.m_Timer = this.m_Timer.createInstance(Components.interfaces.nsITimer); 
+
+        if (aszNames.length > this.m_iElementCount)
+            this.createDeck(list, aszNames);
+        else
+            this.createList(list, aszNames);  
+         
     },
 
 

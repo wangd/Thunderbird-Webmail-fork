@@ -27,6 +27,9 @@ const patternAOLURLPageNum = /page=(.*?)&/i;
 const patternAOLLogout = /Logout\.aspx/i;
 const patternAOLLoginURL = /<div id="sns"><a.*?href="(.*?login.*?)".*?>.*?<\/div>/i;
 const patternAOLLogoutURL = /<div id="sns"><a.*?href="(.*?logout.*?)".*?>.*?<\/div>/i;
+const patternAOLFolders =/FN\(.*?\);/igm
+const patternAOLFolderName = /FN\("(.*?)",.*?\);/i
+const patternAOLFolderNameURL = /folder=(.*?)&/i;
 /***********************  AOL ********************************/
 
 

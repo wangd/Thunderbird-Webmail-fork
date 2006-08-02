@@ -4,7 +4,7 @@ function AOLMSG()
 
 AOLMSG.prototype.szMSGUri = null;
 
-AOLMSG.prototype.bJunkFolder = false;
+AOLMSG.prototype.szFolder = false;
 
 AOLMSG.prototype.iSize = 0;
 

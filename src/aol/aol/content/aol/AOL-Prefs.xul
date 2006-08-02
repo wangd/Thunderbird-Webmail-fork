@@ -1,25 +1,131 @@
-<?xml version="1.0"?> 
-
+<?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/global.css"?>
 <?xml-stylesheet href="chrome://messenger/skin/preferences/preferences.css"?>
 <?xml-stylesheet href="chrome://mozapps/content/preferences/preferences.css"?>
-
-<?xml-stylesheet href="chrome://aol/content/AOL-Prefs.css" type="text/css"?>
+<?xml-stylesheet href="chrome://aol/content/AOL-Prefs.css"?>
+<?xml-stylesheet href="chrome://aol/content/AOL-Prefs-Accounts.css"?>
 
 <!DOCTYPE dialog SYSTEM "chrome://aol/locale/AOL-Prefs.dtd">
 
 
-<prefwindow type="prefwindow"
-            id="WebMail-Prefs"
-            title="&Options.szTitle;"
-            xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-            style="&Window.size;"
-            lastSelected = "paneWebDav"
-            buttons="accept, cancel">
+<window title="&AOLPref.Window.Title;"
+        id ="prefsWindow"
+        onload="Startup();" 
+        onclose="return onClose();"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  
+    <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
+    <script type="application/x-javascript" src="chrome://web-mail/content/common/CommonPrefs.js"/>
+    <script type="application/x-javascript" src="chrome://aol/content/AOL-Prefs-Accounts.js"/>
+    <script type="application/x-javascript" src="chrome://aol/content/AOL-Prefs-Data.js"/>
+    <script>
+        <![CDATA[
+            function Startup() 
+            {
+                gPrefAccounts.init();
+            }
+            
+            function setDeck(index)
+            {
+                document.getElementById("deck").setAttribute("selectedIndex",index);
+            }
+        
+            function onClose() 
+            {
+                window.close();
+            }
+            
+            function onOK()
+            {
+                gPrefAccounts.save();
+                window.close();
+            }
+        ]]>
+    </script>  
     
-    <!-- pop --> 
-    <prefpane id="panePOP" 
-              label="&POP.Panel.szTitle;"
-              src="chrome://aol/content/AOL-Prefs-POP.xul"/>
-                             
-</prefwindow>
+    
+    <keyset>
+        <key id="key_close"  keycode="VK_ESCAPE" command="cmd_close"/>
+    </keyset>
+    
+    <commandset id="globalCommands">
+        <command id="cmd_close" oncommand="onClose();"/>
+    </commandset>
+    
+    
+    <!--  ACCOUNTS  -->
+    <vbox id="vboxAccounts" flex="1">    
+        <hbox  align="center" flex="1" pack="center">     
+            <vbox id="boxError" hidden="true">
+                <hbox pack="center">
+                    <image id="imageError" />
+                </hbox>
+                <vbox align="center">
+                    <label id="labelError" flex="1" value="&AOLPref.AccountError.Label;"/>
+                </vbox>    
+            </vbox>
+        </hbox>
+              
+        
+        <vbox flex="1" id="boxAccounts">
+            <menulist id="menuAccounts">
+                <menupopup id="popupAccounts">
+                </menupopup>
+            </menulist>
+            
+            <tabbox  flex="1" id="tabsAccount">
+                <tabs>
+                    <tab label="&AOLPref.Tab.POP.Title;"/>
+                </tabs>
+                <tabpanels flex="1" >
+                    <vbox id="popPanel" class="panel">
+                        <checkbox label="&AOLPref.POP.DownloadUnread.Label;" 
+                                  accesskey="&AOLPref.POP.DownloadUnread.AccessKey;"
+                                  id="chkDownloadUnread"
+                                  onclick ="gPrefAccounts.chkDownloadUreadOnChange();"/> 
+                                  
+                        <!--Junk Mail-->                                    
+                        <checkbox label="&AOLPref.POP.JunkMail.Label;" 
+                                  accesskey="&AOLPref.POP.JunkMail.AccessKey;"
+                                  id="chkJunkMail"
+                                  onclick ="gPrefAccounts.chkJunkMailOnChange();"/>
+                                     
+                        <label value="&AOLPref.POP.Folders.Label;" id="labelFolders"/>
+                        <vbox id="boxFolders">     
+                            <hbox flex="1"> 
+                                <spacer flex="1"/>         
+                                <richlistbox id="listFolders" 
+                                             class="listbox"
+                                             onselect="gPrefAccounts.folderListSelect();"/> 
+                                <spacer flex="1"/>
+                            </hbox>
+                            <hbox pack="center">    
+                                    <button id="addFolderList" 
+                                            label="&AOLPref.POP.ButtonAdd.Label;" 
+                                            accesskey="&AOLPref.POP.ButtonAdd.AccessKey;"
+                                            oncommand ="gPrefAccounts.folderListAdd();"/>
+                                            
+                                    <button id="removeFolderList" 
+                                            label="&AOLPref.POP.ButtonRemove.Label;" 
+                                            accesskey="&AOLPref.POP.ButtonRemove.AccessKey;"
+                                            oncommand ="gPrefAccounts.folderListRemove();"
+                                            disabled="true"/>
+                            </hbox>
+                        </vbox> 
+                    </vbox>
+                  
+                </tabpanels>
+            </tabbox>
+        </vbox>                    
+    </vbox> 
+                      
+    <spacer flex="1" />
+    
+    <!-- buttons>-->
+    <vbox pack = "end">
+        <hbox id="buttons" pack="end" align="end" flex="1">
+            <button id="OK"     label="&AOLPref.Button.Ok.Label;"     oncommand="onOK();"/>
+            <button id="Cancel" label="&AOLPref.Button.Cancel.Label;" oncommand="onClose();"/> 
+        </hbox>
+    </vbox>
+</window>

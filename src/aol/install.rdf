@@ -7,7 +7,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
 		<em:id>{268d7420-9032-11da-a72b-0800200c9a66}</em:id>
 		<em:type>2</em:type>
-		<em:version>0.3.1</em:version>
+		<em:version>1.0.0</em:version>
 		
 		<em:name>WebMail - AOL / Netscape </em:name>
 		<em:description>AOL / NetScape component for Web-Mail extension</em:description>
@@ -19,6 +19,13 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 		<em:optionsURL>chrome://aol/content/AOL-Prefs.xul</em:optionsURL>
 		<em:updateURL>http://webmail.mozdev.org/update/aolUpdate.rdf</em:updateURL>
 
+        <em:contributor>Dagobert_78 (fr-FR)|2</em:contributor>
+        <em:contributor>Akilles (fi-FI)|14</em:contributor>
+        <em:contributor>MatrixIsAllOver by BabelZilla.org (it-IT)|0</em:contributor> 
+        <em:contributor>Proyecto NAVE (es-ES)|1</em:contributor>
+        <em:contributor>Rodrigo Bergmann Laurindo (pt-BR)|18</em:contributor>
+        <em:contributor>Martin Srebotnjak, Lugos.si (sl-SI)|17</em:contributor>    
+        
         <em:targetApplication>
 			<Description>
 				<!-- Mozilla Thunderbird -->
