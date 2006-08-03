@@ -322,7 +322,7 @@ NetscapePOP.prototype =
             var szURL = this.m_szLocation + "GetMessageList.aspx?page=1";
             var szData = "previousFolder=&stateToken=&newMailToken=&"
             szData += "version="+ this.m_szVersion +"&user="+ this.m_szUserId;
-            var szInbox = szURL + "&folder=inbox&" + szData;
+            var szInbox = szURL + "&folder=Inbox&" + szData;
             this.m_Log.Write("NetscapePOP.js - getNumMessages - szInboxURL " + szInbox);
            
             this.m_iStage = 0;
@@ -548,7 +548,7 @@ NetscapePOP.prototype =
                 var szURL = this.m_szLocation + "GetMessageList.aspx?page=1";
                 var szData = "previousFolder=&stateToken=&newMailToken=&"
                 szData += "version="+ this.m_szVersion +"&user="+ this.m_szUserId;
-                var szInbox = szURL + "&folder=inbox&" + szData;
+                var szInbox = szURL + "&folder=Inbox&" + szData;
                 this.m_Log.Write("NetscapePOP.js - getMessageSizes - szInboxURL " + szInbox);
                
                 this.m_iStage = 0;
@@ -713,7 +713,7 @@ NetscapePOP.prototype =
                     mainObject.m_szMSG += "\r\n.\r\n";       
                     
                     var szURL = mainObject.m_szLocation + "MessageAction.aspx?";
-                    szURL += "folder=" + (mainObject.m_bJunkMail?"Spam":"Inbox") +"&";
+                    szURL += "folder=" + mainObject.m_szFolder +"&";
                     szURL += "action=seen&";
                     szURL += "version="+ mainObject.m_szVersion +"&";
                     szURL += "uid=" + mainObject.iID +"&";
