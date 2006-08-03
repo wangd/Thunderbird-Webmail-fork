@@ -3,8 +3,6 @@
 <!ENTITY WebmailAbout.ExtVersion "sürüm">
 <!ENTITY WebmailAbout.ExtDescription "Thunderbird ile web posta hesaplarınıza ulaşın">
 <!ENTITY WebmailAbout.ExtCreaterTitle "Hazırlayan:">
-<!ENTITY WebmailAbout.ExtCreator "ComodoDragon">
 <!ENTITY WebmailAbout.ExtHome "Anasayfa">
-<!ENTITY WebmailAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY WebmailAbout.ExtButton "Kapat">
 <!ENTITY WebmailAbout.ExtContributorTitle "Destekleyenler:">

@@ -3,8 +3,6 @@
 <!ENTITY WebmailAbout.ExtVersion "verze">
 <!ENTITY WebmailAbout.ExtDescription "Přistupujte web mailové účty pomocí Thunderbirdu.">
 <!ENTITY WebmailAbout.ExtCreaterTitle "Vytvořil:">
-<!ENTITY WebmailAbout.ExtCreator "ComodoDragon">
 <!ENTITY WebmailAbout.ExtHome "Domovská stránka">
-<!ENTITY WebmailAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY WebmailAbout.ExtButton "Zavřít">
 <!ENTITY WebmailAbout.ExtContributorTitle "Přispěvovatelé:">

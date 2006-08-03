@@ -3,8 +3,6 @@
 <!ENTITY WebmailAbout.ExtVersion "версия">
 <!ENTITY WebmailAbout.ExtDescription "Доступ к учётной записи WebMail через Thunderbird.">
 <!ENTITY WebmailAbout.ExtCreaterTitle "Автор:">
-<!ENTITY WebmailAbout.ExtCreator "ComodoDragon">
 <!ENTITY WebmailAbout.ExtHome "Сайт проекта">
-<!ENTITY WebmailAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY WebmailAbout.ExtButton "Закрыть">
 <!ENTITY WebmailAbout.ExtContributorTitle "Участники:">

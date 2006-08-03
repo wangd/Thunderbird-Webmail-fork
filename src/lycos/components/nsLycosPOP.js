@@ -1038,19 +1038,19 @@ nsLycos.prototype =
                 
                 //get junkmail
                 oPref.Value = null;
-                WebMailPrefAccess.Get("bool","lycos.Account."+i+".bUseJunkMail",oPref);
+                WebMailPrefAccess.Get("bool","lycos.bUseJunkMail",oPref);
                 this.m_Log.Write("nsLycos.js - loadPrefs - bUseJunkMail " + oPref.Value);
                 if (oPref.Value) oData.bUseJunkMail = oPref.Value;
                                       
                 //get SaveSentItems
                 oPref.Value = null;
-                WebMailPrefAccess.Get("bool","lycos.Account."+i+".bSaveCopy",oPref);
+                WebMailPrefAccess.Get("bool","lycos.Account.bSaveCopy",oPref);
                 this.m_Log.Write("nsLycos.js - loadPrefs - bSaveCopy " + oPref.Value);
                 if (oPref.Value) oData.bSaveCopy = oPref.Value;
                 
                 //get empty trash
                 oPref.Value = null;
-                WebMailPrefAccess.Get("bool","lycos.Account."+i+".bEmptyTrash",oPref);
+                WebMailPrefAccess.Get("bool","lycos.bEmptyTrash",oPref);
                 this.m_Log.Write("nsLycos.js - loadPrefs - bEmptyTrash " + oPref.Value);
                 if (oPref.Value) oData.bEmptyTrash = oPref.Value;
             }

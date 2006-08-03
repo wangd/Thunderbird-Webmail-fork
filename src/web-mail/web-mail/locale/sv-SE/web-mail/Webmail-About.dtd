@@ -3,8 +3,6 @@
 <!ENTITY WebmailAbout.ExtVersion "version">
 <!ENTITY WebmailAbout.ExtDescription "Använd Thunderbird för webmailkonton.">
 <!ENTITY WebmailAbout.ExtCreaterTitle "Skapad av:">
-<!ENTITY WebmailAbout.ExtCreator "ComodoDragon">
 <!ENTITY WebmailAbout.ExtHome "Webplats">
-<!ENTITY WebmailAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY WebmailAbout.ExtButton "Stäng">
 <!ENTITY WebmailAbout.ExtContributorTitle "Medarbetare:">

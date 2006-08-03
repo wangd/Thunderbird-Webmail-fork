@@ -3,8 +3,6 @@
 <!ENTITY WebmailAbout.ExtVersion "版本:">
 <!ENTITY WebmailAbout.ExtDescription "使用 Thunderbird 访问 Web 邮件账户。">
 <!ENTITY WebmailAbout.ExtCreaterTitle "创建者:">
-<!ENTITY WebmailAbout.ExtCreator "ComodoDragon">
 <!ENTITY WebmailAbout.ExtHome "主页">
-<!ENTITY WebmailAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY WebmailAbout.ExtButton "关闭">
 <!ENTITY WebmailAbout.ExtContributorTitle "贡献者:">

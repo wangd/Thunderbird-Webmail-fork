@@ -3,8 +3,6 @@
 <!ENTITY WebmailAbout.ExtVersion "versio">
 <!ENTITY WebmailAbout.ExtDescription "Mahdollistaa Thunderbirdin pääsyn webmailiin">
 <!ENTITY WebmailAbout.ExtCreaterTitle "Tekijä:">
-<!ENTITY WebmailAbout.ExtCreator "ComodoDragon">
 <!ENTITY WebmailAbout.ExtHome "Kotisivu">
-<!ENTITY WebmailAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY WebmailAbout.ExtButton "Sulje">
 <!ENTITY WebmailAbout.ExtContributorTitle "Avustajat:">

@@ -43,9 +43,7 @@
         ]]>
     </script>  
     
-    <stringbundleset>
-        <stringbundle id="stringsMailDotComDomainWindow" src="chrome://lycos/locale/Lycos-Prefs-Domains.properties"/>
-    </stringbundleset>  
+
     
     <keyset>
         <key id="key_close"  keycode="VK_ESCAPE" command="cmd_close"/>

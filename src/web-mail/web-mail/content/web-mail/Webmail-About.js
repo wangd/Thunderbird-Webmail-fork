@@ -8,12 +8,44 @@ var gWebMailAbout =
 
     init : function()
     {
-        var hBoxVerNum = document.getElementById("WebmailVersionNumber");
-        hBoxVerNum.setAttribute("value", this.getVersion());
+        var extensionDS = Components.classes["@mozilla.org/extensions/manager;1"]
+                                    .getService(Components.interfaces.nsIExtensionManager)
+                                    .datasource;
+     
+        var rdfs = Components.classes["@mozilla.org/rdf/rdf-service;1"]
+                             .getService(Components.interfaces.nsIRDFService);
+        var extension = rdfs.GetResource("urn:mozilla:item:{3c8e8390-2cf6-11d9-9669-0800200c9a66}");
         
-        var strBundle = document.getElementById("stringsWebmailAbout");
-        var szContributors = strBundle.getString("ExtContributorNames");
-        var aszNames = szContributors.split(";");
+        // Version
+        var versionArc = rdfs.GetResource("http://www.mozilla.org/2004/em-rdf#version");
+        var version = extensionDS.GetTarget(extension, versionArc, true);
+        version = version.QueryInterface(Components.interfaces.nsIRDFLiteral).Value;   
+        document.getElementById("WebmailVersionNumber").setAttribute("value", version);
+
+        //creator 
+        var creatorArc = rdfs.GetResource("http://www.mozilla.org/2004/em-rdf#creator");
+        var creator = extensionDS.GetTarget(extension, creatorArc, true);
+        creator = creator.QueryInterface(Components.interfaces.nsIRDFLiteral).Value;
+        document.getElementById("WebmailCreator").setAttribute("value", creator);
+
+        //URL
+        var homepageArc = rdfs.GetResource("http://www.mozilla.org/2004/em-rdf#homepageURL");
+        var homepage = extensionDS.GetTarget(extension, homepageArc, true);
+        homepage = homepage.QueryInterface(Components.interfaces.nsIRDFLiteral).Value;
+        var szHomePage = "window.opener.openURL('" + homepage +"');";
+        document.getElementById("WebmailHomePage").setAttribute("onclick", szHomePage);     
+        document.getElementById("WebmailHomePage").setAttribute("tooltiptext", homepage); 
+
+        //Contributor
+        var contributorsArc = rdfs.GetResource("http://www.mozilla.org/2004/em-rdf#contributor");
+        var contributors = extensionDS.GetTargets(extension, contributorsArc, true);
+        var aszNames = new Array();
+        while (contributors.hasMoreElements()) 
+        {
+            var contributor = contributors.getNext().QueryInterface(Components.interfaces.nsIRDFLiteral).Value;
+            aszNames.push(contributor);
+        }
+
         var list = document.getElementById("WebmailContributorBox");
         
         this.m_Timer = Components.classes["@mozilla.org/timer;1"];
@@ -22,24 +54,10 @@ var gWebMailAbout =
         if (aszNames.length > this.m_iElementCount)
             this.createDeck(list, aszNames);
         else
-            this.createList(list, aszNames);  
-        
+            this.createList(list, aszNames);
     },
 
 
-    getVersion : function ()
-    {
-        try
-        {
-            var nsIExtensionManager = Components.classes["@mozilla.org/extensions/manager;1"]
-                                    .getService(Components.interfaces.nsIExtensionManager);
-            return nsIExtensionManager.getItemForID("{3c8e8390-2cf6-11d9-9669-0800200c9a66}").version;
-        }
-        catch(ex)
-        {
-            return "Unknown";
-        }
-    },
 
     createDeck : function(base, aszNames)
     {

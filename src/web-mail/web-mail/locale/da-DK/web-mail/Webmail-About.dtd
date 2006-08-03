@@ -3,8 +3,6 @@
 <!ENTITY WebmailAbout.ExtVersion "version">
 <!ENTITY WebmailAbout.ExtDescription "Tilgå web mail konto ved hjælp af Thunderbird.">
 <!ENTITY WebmailAbout.ExtCreaterTitle "Skabt af">
-<!ENTITY WebmailAbout.ExtCreator "ComodoDragon">
 <!ENTITY WebmailAbout.ExtHome "Hjemmeside">
-<!ENTITY WebmailAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY WebmailAbout.ExtButton "Luk">
 <!ENTITY WebmailAbout.ExtContributorTitle "Bidragydere:">

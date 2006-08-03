@@ -3,8 +3,6 @@
 <!ENTITY WebmailAbout.ExtVersion "versione">
 <!ENTITY WebmailAbout.ExtDescription "Permette di consultare i propri account di posta 'solo web' tramite Thunderbird">
 <!ENTITY WebmailAbout.ExtCreaterTitle "Creata da:">
-<!ENTITY WebmailAbout.ExtCreator "ComodoDragon">
 <!ENTITY WebmailAbout.ExtHome "Sito web">
-<!ENTITY WebmailAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY WebmailAbout.ExtButton "Chiudi">
 <!ENTITY WebmailAbout.ExtContributorTitle "Collaboratori:">

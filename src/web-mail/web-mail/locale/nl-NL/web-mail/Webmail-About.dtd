@@ -3,8 +3,6 @@
 <!ENTITY WebmailAbout.ExtVersion "version">
 <!ENTITY WebmailAbout.ExtDescription "Toegang tot webmail-accounts met Thunderbird.">
 <!ENTITY WebmailAbout.ExtCreaterTitle "Gemaakt door:">
-<!ENTITY WebmailAbout.ExtCreator "ComodoDragon">
 <!ENTITY WebmailAbout.ExtHome "Homepage">
-<!ENTITY WebmailAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY WebmailAbout.ExtButton "Afsluiten">
 <!ENTITY WebmailAbout.ExtContributorTitle "Medewerk(st)ers:">
