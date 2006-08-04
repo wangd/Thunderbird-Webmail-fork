@@ -188,7 +188,7 @@ nsLycosIMAP.prototype =
         try
         {
             mainObject.m_Log.Write("nsLycosIMAP.js - loginOnloadHandler - START");
-            mainObject.m_Log.Write("nsLycosIMAP.js - loginOnloadHandler : \n" + szResponse);  
+            //mainObject.m_Log.Write("nsLycosIMAP.js - loginOnloadHandler : \n" + szResponse);  
             mainObject.m_Log.Write("nsLycosIMAP.js - loginOnloadHandler : "+ mainObject.m_iStage);           
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -589,7 +589,7 @@ nsLycosIMAP.prototype =
         try
         {
             mainObject.m_Log.Write("nsLycosIMAP.js - selectOnloadHandler - START");
-            mainObject.m_Log.Write("nsLycosIMAP.js - selectOnloadHandler : \n"+ szResponse);
+            //mainObject.m_Log.Write("nsLycosIMAP.js - selectOnloadHandler : \n"+ szResponse);
             mainObject.m_Log.Write("nsLycosIMAP.js - selectOnloadHandler : "+ mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -718,7 +718,7 @@ nsLycosIMAP.prototype =
         try
         {
             mainObject.m_Log.Write("nsLycosIMAP.js - noopOnloadHandler - START");
-            mainObject.m_Log.Write("nsLycosIMAP.js - noopOnloadHandler : \n"+ szResponse); 
+           // mainObject.m_Log.Write("nsLycosIMAP.js - noopOnloadHandler : \n"+ szResponse); 
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
 
@@ -922,7 +922,7 @@ nsLycosIMAP.prototype =
         try
         {
             mainObject.m_Log.Write("nsLycosIMAP.js - fetchOnloadHandler - START");
-            mainObject.m_Log.Write("nsLycosIMAP.js - fetchOnloadHandler : \n"+ szResponse); 
+            //mainObject.m_Log.Write("nsLycosIMAP.js - fetchOnloadHandler : \n"+ szResponse); 
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
 
@@ -1115,7 +1115,7 @@ nsLycosIMAP.prototype =
         {
             mainObject.m_Log.Write("nsLycosIMAP.js - fetchBodyOnloadHandler - START");
             mainObject.m_Log.Write("nsLycosIMAP.js - fetchBodyOnloadHandler : " + mainObject.m_iStage);  
-            mainObject.m_Log.Write("nsLycosIMAP.js - fetchBodyOnloadHandler : \n" + szResponse);
+            //mainObject.m_Log.Write("nsLycosIMAP.js - fetchBodyOnloadHandler : \n" + szResponse);
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             
@@ -1328,7 +1328,7 @@ nsLycosIMAP.prototype =
         {
             mainObject.m_Log.Write("nsLycosIMAP.js - storeOnloadHandler - START");
             mainObject.m_Log.Write("nsLycosIMAP.js - storeOnloadHandler : " + mainObject.m_iStage);
-            mainObject.m_Log.Write("nsLycosIMAP.js - storeOnloadHandler : \n" + szResponse);  
+            //mainObject.m_Log.Write("nsLycosIMAP.js - storeOnloadHandler : \n" + szResponse);  
             
             //if this fails we've gone somewhere new
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -1709,7 +1709,7 @@ nsLycosIMAP.prototype =
         try
         {
             mainObject.m_Log.Write("nsLycosIMAP.js - copyOnloadHandler - START");
-            mainObject.m_Log.Write("nsLycosIMAP.js - copyOnloadHandler : \n" + szResponse);
+            //mainObject.m_Log.Write("nsLycosIMAP.js - copyOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("nsLycosIMAP.js - copyOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -1843,7 +1843,7 @@ nsLycosIMAP.prototype =
         try
         {
             mainObject.m_Log.Write("nsLycosIMAP.js - createFolderOnloadHandler - START");
-            mainObject.m_Log.Write("nsLycosIMAP.js - createFolderOnloadHandler - " + szResponse);
+            //mainObject.m_Log.Write("nsLycosIMAP.js - createFolderOnloadHandler - " + szResponse);
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             
@@ -2047,7 +2047,7 @@ nsLycosIMAP.prototype =
         try
         {
             mainObject.m_Log.Write("nsLycosIMAP.js - renameFolderOnloadHandler - START");
-            mainObject.m_Log.Write("nsLycosIMAP.js - renameFolderOnloadHandler - \n" + szResponse);
+            //mainObject.m_Log.Write("nsLycosIMAP.js - renameFolderOnloadHandler - \n" + szResponse);
                        
             //if this fails we've gone somewhere new
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);

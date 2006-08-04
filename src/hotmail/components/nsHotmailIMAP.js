@@ -53,7 +53,7 @@ function nsHotmailIMAP()
         this.m_oFolder = Components.classes["@mozilla.org/nsIMAPFolders;1"];
         this.m_oFolder = this.m_oFolder.getService(Components.interfaces.nsIIMAPFolders);
         
-        this.m_HttpComms = new HttpComms(); 
+        this.m_HttpComms = new HttpComms(this.m_Log); 
         this.m_HttpComms.setHandleHttpAuth(true);     
         this.m_bAuthorised = false;   
         this.m_iStage=0; 
@@ -192,7 +192,7 @@ nsHotmailIMAP.prototype =
         try
         {
             mainObject.m_Log.Write("nsHotmailIMAP.js - loginOnloadHandler - START");
-            mainObject.m_Log.Write("nsHotmailIMAP.js - loginOnloadHandler : \n" + szResponse);  
+            //mainObject.m_Log.Write("nsHotmailIMAP.js - loginOnloadHandler : \n" + szResponse);  
             mainObject.m_Log.Write("nsHotmailIMAP.js - loginOnloadHandler : "+ mainObject.m_iStage);           
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -706,7 +706,7 @@ nsHotmailIMAP.prototype =
         try
         {
             mainObject.m_Log.Write("nsHotmailIMAP.js - refreshOnloadHandler - START");
-            mainObject.m_Log.Write("nsHotmailIMAP.js - refreshOnloadHandler : \n"+ szResponse); 
+           // mainObject.m_Log.Write("nsHotmailIMAP.js - refreshOnloadHandler : \n"+ szResponse); 
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
 
@@ -926,7 +926,7 @@ nsHotmailIMAP.prototype =
         try
         {
             mainObject.m_Log.Write("nsHotmailIMAP.js - fetchOnloadHandler - START");
-            mainObject.m_Log.Write("nsHotmailIMAP.js - fetchOnloadHandler : \n"+ szResponse); 
+            //mainObject.m_Log.Write("nsHotmailIMAP.js - fetchOnloadHandler : \n"+ szResponse); 
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
 
@@ -1121,7 +1121,7 @@ nsHotmailIMAP.prototype =
         {
             mainObject.m_Log.Write("nsHotmailIMAP.js - fetchBodyOnloadHandler - START");
             mainObject.m_Log.Write("nsHotmailIMAP.js - fetchBodyOnloadHandler : " + mainObject.m_iStage);  
-            mainObject.m_Log.Write("nsHotmailIMAP.js - fetchBodyOnloadHandler : \n" + szResponse);
+            //mainObject.m_Log.Write("nsHotmailIMAP.js - fetchBodyOnloadHandler : \n" + szResponse);
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             
@@ -1334,7 +1334,7 @@ nsHotmailIMAP.prototype =
         {
             mainObject.m_Log.Write("nsHotmailIMAP.js - storeOnloadHandler - START");
             mainObject.m_Log.Write("nsHotmailIMAP.js - storeOnloadHandler : " + mainObject.m_iStage);
-            mainObject.m_Log.Write("nsHotmailIMAP.js - storeOnloadHandler : \n" + szResponse);  
+            //mainObject.m_Log.Write("nsHotmailIMAP.js - storeOnloadHandler : \n" + szResponse);  
             
             //if this fails we've gone somewhere new
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -1714,7 +1714,7 @@ nsHotmailIMAP.prototype =
         try
         {
             mainObject.m_Log.Write("nsHotmailIMAP.js - copyOnloadHandler - START");
-            mainObject.m_Log.Write("nsHotmailIMAP.js - copyOnloadHandler : \n" + szResponse);
+            //mainObject.m_Log.Write("nsHotmailIMAP.js - copyOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("nsHotmailIMAP.js - copyOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -1848,7 +1848,7 @@ nsHotmailIMAP.prototype =
         try
         {
             mainObject.m_Log.Write("nsHotmailIMAP.js - createFolderOnloadHandler - START");
-            mainObject.m_Log.Write("nsHotmailIMAP.js - createFolderOnloadHandler - " + szResponse);
+            //mainObject.m_Log.Write("nsHotmailIMAP.js - createFolderOnloadHandler - " + szResponse);
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             
@@ -2052,7 +2052,7 @@ nsHotmailIMAP.prototype =
         try
         {
             mainObject.m_Log.Write("nsHotmailIMAP.js - renameFolderOnloadHandler - START");
-            mainObject.m_Log.Write("nsHotmailIMAP.js - renameFolderOnloadHandler - \n" + szResponse);
+            //mainObject.m_Log.Write("nsHotmailIMAP.js - renameFolderOnloadHandler - \n" + szResponse);
                        
             //if this fails we've gone somewhere new
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
