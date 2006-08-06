@@ -1,24 +1,25 @@
-    <!-- MAIN CONTENT -->
-    <div id="title">Source Code</div>
-    <div id="WebMailContent">
-        <p id="src-intro">
-          The webmail source code can be accessed in either of the following ways:
-        </p>
+    	<div id="mainContent">
+                
+            <h1>Source Code</h1>   
+         
+            <p id="src-intro">
+            The webmail source code can be accessed in either of the following ways:
+            </p>
         
-        <ul id="get-the-src">
-            <li>View the source using the CVS <a href="http://www.mozdev.org/source/browse/webmail/">web interface</a></li>
-            <li>Check out the source using anonymous CVS with the following commands (password is guest):
+            <ul id="get-the-src">
+                <li>View the source using the CVS <a href="http://www.mozdev.org/source/browse/webmail/">web interface</a></li>
+                <li>Check out the source using anonymous CVS with the following commands (password is guest):
+                
+                <pre>
+                cvs -d :pserver:guest@mozdev.org:/cvs login
+                cvs -z3 -d :pserver:guest@mozdev.org:/cvs co webmail
+                </pre>
+                
+                </li>
+            </ul>
             
-            <pre>
-            cvs -d :pserver:guest@mozdev.org:/cvs login
-            cvs -z3 -d :pserver:guest@mozdev.org:/cvs co webmail
-            </pre>
-            
-            </li>
-        </ul>
-        
-        <p id="cvs-doc">CVS clients and Help Documentation can be found at <a href="http://www.cvshome.org/">cvshome.org</a>.</p>
-    </div>
+            <p id="cvs-doc">CVS clients and Help Documentation can be found at <a href="http://www.cvshome.org/">cvshome.org</a>.</p>
+        </div>
     
     
     <?php include("footer.html"); ?>

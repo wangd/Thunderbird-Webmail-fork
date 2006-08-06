@@ -1,121 +1,83 @@
-    <!-- MAIN CONTENT -->
-        <script type="text/javascript">
-        function openWindow(szImage, iWidth, iHeight)
-        {
-            window.open(szImage ,
-                        "",
-                        "innerWidth="+ iWidth +" ,innerHeight= "+ iHeight+" ,menubar=no,location=no,resizable=yes,scrollbars=no,status=no");
-        }
-    </script>
-    
-        <div id="title">WebMail Manual</div>    
-        <div class="webmailList">
-            
-            <p class="text">Changes to the options don't take effect until after Thunderbird has been restarted.</p>
-            
-            <div><ol style="list-style-type: upper-roman;"><li>Servers</li></ol></div> 
-            <div class="webmailPic" style="width: 300px;">
-                <div class="pic">
-                    <img style="width: 96px; height: 82px; cursor: pointer;" 
-                         onclick='openWindow("images/screenshots/WebMailStatus.png",530,460)' 
-                         alt="WebMail Status" 
-                         title="WebMail Status" 
-                         src="images/screenshots/TBWebMailStatus.png">
-                </div>
-                <div class="pic">
-                    <img style="width: 96px; height: 82px; cursor: pointer;" 
-                         onclick='openWindow("images/screenshots/WebMailEnable.png",530,460)' 
-                         alt="WebMail Server Enable" 
-                         title="WebMail Server Enable" 
-                         src="images/screenshots/TBWebMailEnable.png">
-                </div>
+    	<div id="mainContent">
                 
-                 <div class="pic">
-                    <img style="width: 96px; height: 82px; cursor: pointer;" 
-                         onclick='openWindow("images/screenshots/WebMailPorts.png",530,460)' 
-                         alt="WebMail Server Ports" 
-                         title="WebMail Server Ports" 
-                         src="images/screenshots/TBWebMailPorts.png">
-                </div>
-            </div>
-           
-            <p class="text1">This panel controls the POP, SMTP, and IMAP servers</p>
-           
-            <div class="webmailList1">
-                <div><ul><li>Status</li></ul></div> 
-                <p class="text2">This tab shows the status of the three servers.  There&nbsp;are three possible values.</p>
-                <table style="text-align: left; width: 100px; margin-left: auto; margin-right: auto;" border="1" cellpadding="2" cellspacing="0">
-                    <tbody>
-                        <tr>
-                            <td>
-                                <img style="width: 20px; height: 20px;" alt="Running" title="Running" src="images/misc/running.png">
-                            </td>
-                            <td>Running</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <img style="width: 20px; height: 20px;" alt="Stopped" title="Stopped" src="images/misc/stop.png">
-                            </td>
-                            <td>Stopped</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <img style="width: 20px; height: 20px;" alt="Error" title="Error" src="images/misc/error.png">
-                            </td>
-                            <td>Error</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <script type="text/javascript">
+                function openWindow(szImage, iWidth, iHeight)
+                {
+                    window.open(szImage ,
+                                "",
+                                "innerWidth="+ iWidth +" ,innerHeight= "+ iHeight+" ,menubar=no,location=no,resizable=yes,scrollbars=no,status=no");
+                }
+            </script>
+            
+            <h1>WebMail Guide</h1>   
+     
+            <p>Changes to these options don't take effect until after Thunderbird has been restarted.</p>
+            
+            <div class="topic">
+                <h1>Servers</h1>              
+                <p>This panel controls the POP, SMTP, and IMAP servers</p>                        
+                <ul>
+                    <li>
+                        <p>Status<p>
+                        <p>This tab shows the status of the three servers.  There&nbsp;are three possible values Running, Stopped, Error.</p>
+                        <img style="width: 96px; height: 82px; cursor: pointer;" 
+                             onclick='openWindow("images/screenshots/WebMailStatus.png",530,460)' 
+                             alt="WebMail Status" 
+                             title="WebMail Status" 
+                             src="images/screenshots/TBWebMailStatus.png">
+                    </li>    
+                    <li>
+                        <p>Enable</p>
+                        <p>This tab is used to enable or disable the servers. By default the POP and SMTP servers are enabled.</p>
+                        <img style="width: 96px; height: 82px; cursor: pointer;" 
+                             onclick='openWindow("images/screenshots/WebMailEnable.png",530,460)' 
+                             alt="WebMail Server Enable" 
+                             title="WebMail Server Enable"
+                             src="images/screenshots/TBWebMailEnable.png">
+                    </li>
+                    <li>
+                        <p>Ports</p>
+                        <p>This tab is used to set the port numbers of the servers. By default POP=110, SMTP=25, IMAP=143.<br>
+                        Some operating systems block ports below 1024.</p>                               
+                        <img style="width: 96px; height: 82px; cursor: pointer;" 
+                             onclick='openWindow("images/screenshots/WebMailPorts.png",530,460)' 
+                             alt="WebMail Server Ports" 
+                             title="WebMail Server Ports" 
+                             src="images/screenshots/TBWebMailPorts.png">
+                    </li>
+                </ul>
+                    
+             
+                <h1>General</h1>
+                <p>The option &ldquo;Add WebMail to Account Wizard&rdquo; simplifies the POP account creation process by automatically setting the port number and server name in the account wizard.  This feature requires write access to the application folder so will be unavailable on some OS.</p>
+                <img style="width: 96px; height: 82px; cursor: pointer;" 
+                     onclick='openWindow("images/screenshots/WebMailGeneral.png",530,460)' 
+                     alt="WebMail General" 
+                     title="WebMail General" 
+                     src="images/screenshots/TBWebMailGeneral.png">
                 
-                <div><ul><li>Enable</li></ul></div>
-                <p class="text2">This tab is used to enable or disable servers.  By default the POP and SMTP servers are enabled.</p>
-                 
-                <div><ul><li>Ports</li></ul></div> 
-                <p class="text2">This tab is used to set the port numbers of the servers. By default POP=110, SMTP=25, IMAP=143.</p>
-                <br>
-                <p class="text2">Some operating systems block ports below 1024.</p>
-            </div>
-            <br>
-            
-            <div><ol style="list-style-type: upper-roman;" start="2"><li>General</li></ol></div> 
-            <div class="webmailPic" style="width: 98px;">
-                <div class="pic">
-                    <img style="width: 96px; height: 82px; cursor: pointer;" onclick='openWindow("images/screenshots/WebMailGeneral.png",530,460)' alt="WebMail General" title="WebMail General" src="images/screenshots/TBWebMailGeneral.png">
-                </div>
-            </div>
-            <p class="text1">The option &ldquo;Add WebMail to Account Wizard&rdquo; simplifies the POP account creation process by automatically setting the port number and server name in the account wizard.</p>
-            <br>
-            
-            <div><ol start="3" style="list-style-type: upper-roman;"><li>Domains</li></ol></div> 
-            <div class="webmailPic" style="width: 98px;">
-                <div class="pic">
-                    <img style="width: 96px; height: 82px; cursor: pointer;" 
-                         onclick='openWindow("images/screenshots/WebMailDomains.png",530,460)' 
-                         alt="WebMail Domains" 
-                         title="WebMail Domains" 
-                         src="images/screenshots/TBWebMailDomains.png">
-                </div>
-            </div>
-            <p class="text1">This panel displays the supported domains.</p>
-            <br>
-            
-            <div><ol start="4" style="list-style-type: upper-roman;"><li>Logging</li></ol></div> 
-            <div class="webmailPic" style="width: 98px;">
-                <div class="pic">
-                    <img style="width: 96px; height: 82px; cursor: pointer;" 
-                         onclick='openWindow("images/screenshots/WebMailLogging.png",530,460)' 
-                         alt="WebMail Logging" 
-                         title="WebMail Logging" 
-                         src="images/screenshots/TBWebMailLogging.png">
-                </div>
-            </div>
-            <p class="text1">This panel is used to enable/disable logging. By default logging is disabled.</p>
+                
+                <h1>Domains</h1> 
+                <p>This panel displays the supported domains.</p>
+                <img style="width: 96px; height: 82px; cursor: pointer;" 
+                     onclick='openWindow("images/screenshots/WebMailDomains.png",530,460)' 
+                     alt="WebMail Domains" 
+                     title="WebMail Domains" 
+                     src="images/screenshots/TBWebMailDomains.png">
+                        
+                             
+                <h1>Logging</h1>
+                <p>This panel is used to enable/disable logging. By default logging is disabled.</p>
+                <img style="width: 96px; height: 82px; cursor: pointer;" 
+                     onclick='openWindow("images/screenshots/WebMailLogging.png",530,460)' 
+                     alt="WebMail Logging" 
+                     title="WebMail Logging" 
+                     src="images/screenshots/TBWebMailLogging.png">
+                
+              </div>
+
+
         </div>
-    </div><!--content--> 
-
     
-   
-
-
     <?php include("footer.html"); ?>
 
