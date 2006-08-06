@@ -5,20 +5,20 @@
     <RDF:Description about="urn:mozilla:extension:{1ad5b3b0-b908-11d9-9669-0800200c9a66}">        
         <em:updates>
             <RDF:Seq>
-                <RDF:li resource="urn:mozilla:extension:{1ad5b3b0-b908-11d9-9669-0800200c9a66}:0.5.6"/>
+                <RDF:li resource="urn:mozilla:extension:{1ad5b3b0-b908-11d9-9669-0800200c9a66}:1.0.0"/>
             </RDF:Seq>
         </em:updates>
     </RDF:Description>
 
-    <RDF:Description about="urn:mozilla:extension:{1ad5b3b0-b908-11d9-9669-0800200c9a66}:0.5.6">
-        <em:version>0.5.6</em:version>
+    <RDF:Description about="urn:mozilla:extension:{1ad5b3b0-b908-11d9-9669-0800200c9a66}:1.0.0">
+        <em:version>1.0.0</em:version>
     	<em:targetApplication>
         	<Description>
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id> <!-- Thunderbird updates -->
             	<em:minVersion>1.4</em:minVersion>
             	<em:maxVersion>2.0a1</em:maxVersion>
-                <em:updateLink>http://download.mozdev.org/webmail/maildotcom-0-5-6.xpi</em:updateLink>
-                <em:updateHash>sha256:a1a977ebabf5ace4606fe53b2db5f56f16e3f5c2dab18d3fd933bfd96445b0a9</em:updateHash>
+                <em:updateLink>http://download.mozdev.org/webmail/maildotcom-1-0-0.xpi</em:updateLink>
+                <em:updateHash>sha256:cf74d7ecfa56f37637b218f3e258fe538a6000759be0177e7f6e1dc6a4e73dbe</em:updateHash>
           </Description>
         </em:targetApplication>
         
