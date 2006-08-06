@@ -443,6 +443,7 @@ HotmailScreenRipper.prototype =
             for (j = 1; j < szMsgRows.length-1; j++)
             {
                 var oMSG = mainObject.processMSG(szMsgRows[j]);
+                mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - oMSG: " +oMSG);
                 if (oMSG) mainObject.m_aMsgDataStore.push(oMSG);               
             }
     
@@ -596,16 +597,17 @@ HotmailScreenRipper.prototype =
         var oMSG = null;
         if (aEmailURL)
         {
-            oMSG = new HotmailMSG();
             var bRead = true;
             if (this.m_bDownloadUnread)
             {
                 bRead = (szMSGData.search(patternHotmailPOPSRRead)!=-1) ? false : true;
-                this.m_Log.Write("HotmailWebDav.js - processMSG - bRead -" + bRead);
+                this.m_Log.Write("Hotmail-SR.js - processMSG - bRead -" + bRead);
             }
              
             if (bRead)
-            {       
+            {        
+                oMSG = new HotmailMSG();
+                
                 var szPath = this.m_szLocationURI+aEmailURL[1]+"&"+this.m_szUM;
                 this.m_Log.Write("Hotmail-SR - processMSG - Email URL : " +szPath);
                 oMSG.szMSGUri = szPath;

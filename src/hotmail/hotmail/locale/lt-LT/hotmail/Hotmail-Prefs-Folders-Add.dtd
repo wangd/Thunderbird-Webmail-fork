@@ -1,0 +1,8 @@
+<!ENTITY HotmailFolderAdd.Title "Pridėti">
+<!ENTITY HotmailFolderName.Label "Aplanko pavadinimas">
+<!ENTITY HotmailFolderName.AccessKey "p">
+<!ENTITY HotmailFolders.Label "Pridėti aplanką parsiuntimui">
+<!ENTITY HotmailFolder.ButtonOk.Label "Gerai">
+<!ENTITY HotmailFolder.ButtonOk.AccessKey "G">
+<!ENTITY HotmailFolder.ButtonCancel.Label "Atšaukti">
+<!ENTITY HotmailFolder.ButtonCancel.AccessKey "A">

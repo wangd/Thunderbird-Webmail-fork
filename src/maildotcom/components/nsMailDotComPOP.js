@@ -738,9 +738,7 @@ nsMailDotCom.prototype =
             szMsgURI += "/scripts/mail/mesg.mail";
             szMsgURI += "?folder=" + this.m_szFolderName;
             szMsgURI += "&msg_uid=" + this.m_szMSGID+"&mhead=f&print=1";
-            
-            this.m_bJunkMail = oMSG.bJunkFolder;
-            
+                
             this.m_iStage = 0;   
             //get msg from MailDotCom
             this.m_HttpComms.setURI(szMsgURI);

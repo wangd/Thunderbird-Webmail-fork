@@ -1,0 +1,4 @@
+<!ENTITY AccountWizard.Label "Pridėti WebMail į paskyrų vedlį">
+<!ENTITY AccountWizard.AccessKey "W">
+<!ENTITY AccountWizardWarning.Label "Reikalingas priėjimas prie programos aplanko.">
+<!ENTITY Restart.Label "Reikalingas pakartotinis Thunderbird paleidimas tam, kad įsigaliotų pakeitimai.">

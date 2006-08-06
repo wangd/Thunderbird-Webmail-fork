@@ -207,6 +207,12 @@
 }
 
 
+.flag[value="22"]/*LT*/
+{
+     -moz-image-region: rect(0px, 768px, 32px,736px)
+}
+
+
 #HotmailHomePage
 {
     text-align: right;

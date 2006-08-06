@@ -223,3 +223,8 @@
 {
      -moz-image-region: rect(0px, 736px, 32px,704px)
 }
+
+.flag[value="22"]/*LT*/
+{
+     -moz-image-region: rect(0px, 768px, 32px,736px)
+}

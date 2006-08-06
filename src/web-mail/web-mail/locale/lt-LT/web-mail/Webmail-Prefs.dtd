@@ -1,0 +1,6 @@
+<!ENTITY Options.szTitle "WebMail nustatymai">
+<!ENTITY Servers.Panel.szTitle "Serveriai">
+<!ENTITY Domains.Panel.szTitle "Domenai">
+<!ENTITY Logging.Panel.szTitle "Registravimas">
+<!ENTITY General.Panel.szTitle "Bendra">
+<!ENTITY Window.size "width: 46em; height: 37em">
