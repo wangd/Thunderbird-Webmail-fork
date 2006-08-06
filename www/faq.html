@@ -1,40 +1,52 @@
         <!-- MAIN CONTENT -->
-        <div id="title">FAQ</div>
-        <div id="WebMailContent">
-            <BR>
-            <img src="http://webmail.mozdev.org/images/misc/question.png" alt="question" style="width: 32px; height: 32px;">
-            <div style="margin-left: 40px;">
-                Yahoo / Hotmail extension fails to download emails with large attachments.
-            </div>
-            <img style="width: 32px; height: 32px;" alt="answerer" src="http://webmail.mozdev.org/images/misc/answerer.png">
-            <div style="margin-left: 40px;">
-                Thunderbird is timing out before the extension has downloaded the
-                email.&nbsp; Thunderbird's POP timeout defaults to 45
-                seconds,&nbsp; to increase this time you need to add this 
-                "<span style="font-weight: bold;">user_pref("mail.pop3_response_timeout", 180);</span>"
-                to the prefs.js (the number is seconds).
-            </div>
-            <br>
-            <hr style="height: 2px; width: 30%;">
-            <br>
-            
-            <BR>
-            <img src="http://webmail.mozdev.org/images/misc/question.png" alt="question" style="width: 32px; height: 32px;">
-            <div style="margin-left: 40px;">
-                Extension fails to download any emails.
-            </div>
-            <img style="width: 32px; height: 32px;" alt="answerer" src="http://webmail.mozdev.org/images/misc/answerer.png">
-            <div style="margin-left: 40px;">
-               This extension require Thunderbird's cookie handling to be in it’s default 
-               state (ie disabled). To return the cookie state back to it’s default 
-               place the following in the prefs.js 
-               "<span style="font-weight: bold;">user_pref("network.cookie.cookieBehavior", 2);</span>".
-               You will also need to delete the <span style="font-weight: bold;">cookie.txt</span> file in your profile.
-    
-            </div>
-            <br>
-            <hr style="height: 2px; width: 30%;">
-            <br>
-        </div>
+        	<div id="mainContent">
+    			<h1>FAQs</h1>
+                <div class="question">
+                    <img src="images/misc/question.png" alt="question" style="width: 32px; height: 32px;">
+                    <p>How do I install these extensions</p>
+               
+                    <img style="width: 32px; height: 32px;" alt="answerer" src="images/misc/answerer.png">
+                    
+                        <ol>
+                            <li>Right-Click the extension link and choose "Save Link As..." to Download and save the file to your hard disk.</li> 
+                            <li>In Mozilla Thunderbird, open the extension manager (Tools Menu/Extensions).</li> 
+                            <li>Click the Install button, and locate/select the file you downloaded and click "OK".</li>
+                        </ol> 
+                    
+                    <hr>
+                </div>
+                
+                <div class="question">
+                    <img src="images/misc/question.png" alt="question" style="width: 32px; height: 32px;">
+                    <p>Why is the extension failing to download emails with large attachments.</p>
+                
+                    <img style="width: 32px; height: 32px;" alt="answerer" src="images/misc/answerer.png">
+                    <p>
+                        Thunderbird is timing out before the extension has downloaded the
+                        email. To increase the timeout delay Open Thunderbird's option panel, select Advanced -&gt;General, 
+                        now increase the value of connection timeout..
+                    </p>
+                    <hr>
+                </div>
+               
+                <div class="question">
+                    <img src="images/misc/question.png" alt="question" style="width: 32px; height: 32px;">
+                    <p>Why am I get the error "Sending of username did not succeed. Mailserver localhost responded: undefined is a unsupported domain"</p>
+               
+                    <img style="width: 32px; height: 32px;" alt="answerer" src="images/misc/answerer.png">
+                    <p>The username you entered in to Thunderbird when creating the account is missing a domain (ie @Hotmail.com, @Yahoo.co.uk)</p>
+                    <hr>
+                </div>
+                
+                <div class="question">
+                    <img src="images/misc/question.png" alt="question" style="width: 32px; height: 32px;">
+                    <p>The Webmail server status is "ERROR"</p>
+                    <img style="width: 32px; height: 32px;" alt="answerer" src="images/misc/answerer.png">
+                    <p>Check your firewall isn't blocking Thunderbird from opening a connection to localhost.</p>
+                    <br>
+                    <p>Some OS's block ports below 1024, set the ports used by Webmail to values higher then 1024</p>
+                    <hr>
+                </div>
+    	   </div>
 
         <?php include("footer.html"); ?>

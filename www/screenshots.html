@@ -1,51 +1,33 @@
-    <!-- MAIN CONTENT -->
-    <script type="text/javascript">
-        function openWindow(szImage, iWidth, iHeight)
-        {
-            window.open(szImage ,
-                        "",
-                        "innerWidth="+ iWidth +" ,innerHeight= "+ iHeight+" ,menubar=no,location=no,resizable=yes,scrollbars=no,status=no");
-        }
-    </script>
+
     
-    <div id="title">Screenshots</div>
-    
-    <div class="subTitle">WebMail</div>
-        <div>
-            <div class="pic">
-                <img style="width: 96px; height: 82px; cursor:pointer" onclick='openWindow("images/screenshots/WebMailStatus.png",530,460)' alt="WebMail Status" title="WebMail Status" src="images/screenshots/TBWebMailStatus.png">
-            </div>
-            <div class="pic">
-                <img style="width: 96px; height: 82px; cursor:pointer" onclick='openWindow("images/screenshots/WebMailEnable.png",530,460)' alt="WebMail Server Enable" title="WebMail Server Enable" src="images/screenshots/TBWebMailEnable.png">
-            </div>
-            
-             <div class="pic">
-                <img style="width: 96px; height: 82px; cursor:pointer" onclick='openWindow("images/screenshots/WebMailPorts.png",530,460)' alt="WebMail Server Ports" title="WebMail Server Ports" src="images/screenshots/TBWebMailPorts.png">
-            </div>
-             <div class="pic">
-                <img style="width: 96px; height: 82px; cursor:pointer" onclick='openWindow("images/screenshots/WebMailGeneral.png",530,460)' alt="WebMail General" title="WebMail General" src="images/screenshots/TBWebMailGeneral.png">
-            </div>
-             <div class="pic">
-                <img style="width: 96px; height: 82px; cursor:pointer" onclick='openWindow("images/screenshots/WebMailDomains.png",530,460)' alt="WebMail Domains" title="WebMail Domains" src="images/screenshots/TBWebMailDomains.png">
-            </div>
-             <div class="pic">
-                <img style="width: 96px; height: 82px; cursor:pointer" onclick='openWindow("images/screenshots/WebMailLogging.png",530,460)' alt="WebMail Logging" title="WebMail Logging" src="images/screenshots/TBWebMailLogging.png">
-            </div>
-        </div>
-      
-      <div class="subTitle">Components</div>
-      <div>
-            <div class="pic">
-                <img style="width: 96px; height: 82px; cursor:pointer" onclick='openWindow("images/screenshots/HotmailMode.png",460,400)' alt="Hotmail Mode" title="Hotmail Mode" src="images/screenshots/TBHotmailMode.png">
-            </div>
-            <div class="pic">
-                <img style="width: 96px; height: 82px; cursor:pointer" onclick='openWindow("images/screenshots/YahooPOP.png",530,400)' alt="POP" title="POP" src="images/screenshots/TBYahooPOP.png">
-            </div>
-             <div class="pic">
-                <img style="width: 96px; height: 82px; cursor:pointer" onclick='openWindow("images/screenshots/YahooSMTP.png",410,300)' alt="SMTP" title="SMTP" src="images/screenshots/TBYahooSMTP.png">
-            </div>
+    <div id="mainContent">
+    	 <script type="text/javascript">
+            function openWindow(szImage, iWidth, iHeight)
+            {
+                window.open(szImage ,
+                            "",
+                            "innerWidth="+ iWidth +" ,innerHeight= "+ iHeight+" ,menubar=no,location=no,resizable=yes,scrollbars=no,status=no");
+            }
+        </script>
+        <h1>ScreenShots</h1>
+        <div class="screenShots">
+    	    <h1>WebMail</h1>
+            <img style="cursor: pointer; width: 96px; height: 82px;" onclick='openWindow("images/screenshots/WebMailStatus.png",530,460)' alt="WebMail Status" title="WebMail Status" src="images/screenshots/TBWebMailStatus.png">
+            <img style="cursor: pointer; width: 96px; height: 82px;" onclick='openWindow("images/screenshots/WebMailEnable.png",530,460)' alt="WebMail Server Enable" title="WebMail Server Enable" src="images/screenshots/TBWebMailEnable.png">
+            <img style="cursor: pointer; width: 96px; height: 82px;" onclick='openWindow("images/screenshots/WebMailPorts.png",530,460)' alt="WebMail Server Ports" title="WebMail Server Ports" src="images/screenshots/TBWebMailPorts.png">
+            <img style="cursor: pointer; width: 96px; height: 82px;" onclick='openWindow("images/screenshots/WebMailGeneral.png",530,460)' alt="WebMail General" title="WebMail General" src="images/screenshots/TBWebMailGeneral.png">
+            <img style="cursor: pointer; width: 96px; height: 82px;" onclick='openWindow("images/screenshots/WebMailDomains.png",530,460)' alt="WebMail Domains" title="WebMail Domains" src="images/screenshots/TBWebMailDomains.png">
+            <img style="cursor: pointer; width: 96px; height: 82px;" onclick='openWindow("images/screenshots/WebMailLogging.png",530,460)' alt="WebMail Logging" title="WebMail Logging" src="images/screenshots/TBWebMailLogging.png">
         </div>
     
+        <div class="screenShots">
+            <h1>Component</h1>
+            <img style="cursor: pointer; width: 96px; height: 82px;" onclick='openWindow("images/screenshots/HotmailMode.png",530,460)' alt="Mode" title="Mode" src="images/screenshots/TBHotmailMode.png">
+            <img style="cursor: pointer; width: 96px; height: 82px;" onclick='openWindow("images/screenshots/HotmailPOP.png",530,460)' alt="POP" title="POP" src="images/screenshots/TBHotmailPOP.png">
+            <img style="cursor: pointer; width: 96px; height: 82px;" onclick='openWindow("images/screenshots/HotmailSMTP.png",530,460)' alt="SMTP" title="SMTP" src="images/screenshots/TBHotmailSMTP.png">
+            <img style="cursor: pointer; width: 96px; height: 82px;" onclick='openWindow("images/screenshots/HotmailDomains.png",530,460)' alt="Domains" title="Domains" src="images/screenshots/TBHotmailDomains.png">
+        </div>
+    </div>
     
     <?php include("footer.html"); ?>
     

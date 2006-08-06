@@ -1,129 +1,84 @@
-    <!-- MAIN CONTENT -->
-    <script type="text/javascript">
-    function openWindow(szImage, iWidth, iHeight)
-    {
-        window.open(szImage ,
-                    "",
-                    "innerWidth="+ iWidth +" ,innerHeight= "+ iHeight+" ,menubar=no,location=no,resizable=yes,scrollbars=no,status=no");
-    }
-    </script>
-    
-        <div id="title">Component Manual</div>  
-        <div class="webmailList">
-            <div>
+    <div id="mainContent">
+             <script type="text/javascript">
+                function openWindow(szImage, iWidth, iHeight)
+                {
+                    window.open(szImage ,
+                                "",
+                                "innerWidth="+ iWidth +" ,innerHeight= "+ iHeight+" ,menubar=no,location=no,resizable=yes,scrollbars=no,status=no");
+                }
+                </script>
+            <h1>Component Guide</h1>   
+            
+            <div class="topic">
+                <h1>Accounts</h1>
                 <ol style="list-style-type: upper-roman;">
-                    <li>Mode
-                         <img style="width: 32px; height: 32px;" alt="Hotmail" title="Hotmail" src="images/misc/Hotmail-SmallIcon.png">
+                    <li>
+                        <p>Mode</p> 
+                        <img style="width: 96px; height: 82px; cursor:pointer" 
+                             onclick='openWindow("images/screenshots/HotmailMode.png",510,450)' 
+                             alt="Hotmail WebDav" 
+                             title="Hotmail WebDav" 
+                             src="images/screenshots/TBHotmailMode.png"> 
+                        <p>Mode is used to select the method the extension uses to communicate with server.</p>
                     </li>
+                    
+                    <li>
+                        <p>POP</p>
+                        <img style="width: 96px; height: 82px; cursor:pointer" 
+                             onclick='openWindow("images/screenshots/HotmailPOP.png",510,450)' 
+                             alt="POP" 
+                             title="POP" 
+                             src="images/screenshots/TBHotmailPOP.png"> 
+                        <ul>
+                            <li>
+                                <p>Empty Trash</p>
+                                <p>The server trashcan to be emptied after every email check.</p>
+                            </li>
+                            <li>
+                                <p>Download Unread Mail Only</p>
+                                <p>Only emails marked as unread on the server will be download.  Once an email has been read Thunderbird WILL NOT access the server copy again.</p>
+                            </li>
+                            <li>
+                                <p>Download Junk Mail</p>
+                                <p>Email will be download from the Junkmail folder.</p>
+                            </li>
+                            <li>
+                                <p>Download Folders</p>
+                                <p>By default the extension downloads your Inbox, using this option you can add additional folders for the extension to download emails from.  The extension will not download from Draft, Trash, or SentItems folders.</p>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <p>SMTP</p>
+                        <img style="width: 96px; height: 82px; cursor:pointer" 
+                             onclick='openWindow("images/screenshots/HotmailSMTP.png",510,450)' 
+                             alt="SMTP" 
+                             title="SMTP" 
+                             src="images/screenshots/TBHotmailSMTP.png"> 
+                        <ul>
+                            <li>
+                                <p>Save Copy In Sent Items</p>
+                                <p class="text2">A copy will be saved in the servers Sent Items folder.</p>
+                            </li>
+                            
+                            <li>
+                                <p>Multipart Message</p>
+                                <p class="text2">A rich text email contains two parts a plain text and html part.</p>
+                            </li>
+                        </ul>
+                    </li> 
                 </ol>
-            </div> 
-            <div class="webmailPic" style="width: 96px;">
-                <div class="pic">
-                    <img style="width: 96px; height: 82px; cursor:pointer" 
-                         onclick='openWindow("images/screenshots/HotmailMode.png",460,400)' 
-                         alt="Hotmail WebDav" 
-                         title="Hotmail WebDav" 
-                         src="images/screenshots/TBHotmailMode.png">
-                </div>
-            </div>
-            <br>
-            <p class="text1">The Hotmail extension has three methods of communication with Microsoft's servers (ScreenScraper, WebDav, and Beta).  The screen scraper method parses the web page for the necessary information. Weddav is the same method Outlook and Outlook Express use to communication with Microsoft's. Beta is used to communicate with the Beta Hotmail site.</p>
-            <p class="text1">The Webdav method is faster and more reliable than the screen scraper methods but is restricted to old free accounts or paid accounts.</p>
-            <br>
-            <div>
-                <ol style="list-style-type: upper-roman;" start="2">
-                    <li>POP
-                </li>
-                </ol>
-            </div> 
-            <div class="webmailPic" style="width: 96px;">
-                <div class="pic">
-                    <img style="width: 96px; height: 82px; cursor:pointer" 
-                         onclick='openWindow("images/screenshots/YahooPOP.png",410,300)' 
-                         alt="POP" 
-                         title="POP" 
-                         src="images/screenshots/TBYahooPOP.png">
-                </div>
-            </div>
-            <br>
-            
-            <div class="webmailList1">
-                <div>
-                    <ul>
-                        <li>Empty Trash
-                        <img style="width: 32px; height: 32px;" alt="Lycos" title="Lycos" src="images/misc/Lycos-SmallIcon.png">
-                        <img style="width: 32px; height: 32px;" alt="MailDotCom" title="MailDotCom" src="images/misc/MailDotComSmall.png">
-                        </li>
-                    </ul>
-                </div> 
-                <p class="text2">Checking this option will cause the server trashcan to be emptied after every email check.</p>
                 <br>
-               
-                <div>
-                    <ul>
-                        <li>Download Junk Mail
-                            <img style="width: 32px; height: 32px;" alt="Hotmail" title="Hotmail" src="images/misc/Hotmail-SmallIcon.png">
-                            <img style="width: 32px; height: 32px;" alt="Yahoo" title="Yahoo" src="images/misc/Yahoo-SmallIcon.png">                       
-                            <img style="width: 32px; height: 32px;" alt="Lycos" title="Lycos" src="images/misc/Lycos-SmallIcon.png">
-                        </li>
-                    </ul>
-                </div> 
-                <p class="text2">Email will be download from the Inbox and the Junkmail folder.</p>
-                <br>
-               
-               <div>
-                    <ul>
-                        <li>Download Unread Mail Only
-                            <img style="width: 32px; height: 32px;" alt="Hotmail" title="Hotmail" src="images/misc/Hotmail-SmallIcon.png">
-                            <img style="width: 32px; height: 32px;" alt="Yahoo" title="Yahoo" src="images/misc/Yahoo-SmallIcon.png">                       
-                            <img style="width: 32px; height: 32px;" alt="Lycos" title="Lycos" src="images/misc/Lycos-SmallIcon.png">
-                            <img style="width: 32px; height: 32px;" alt="MailDotCom" title="MailDotCom" src="images/misc/MailDotComSmall.png">
-                        </li>
-                    </ul>
-                </div> 
-                <p class="text2">Only emails marked as unread on the server will be download.  Once an email has been read Thunderbird WILL NOT be able access the server copy again.</p>
-            </div>
-            <br>
-            
-            <div><ol style="list-style-type: upper-roman;" start="3"><li>SMTP</ol></div> 
-            <div class="webmailPic" style="width: 96px;">
-                 <div class="pic">
-                    <img style="width: 96px; height: 82px; cursor:pointer" 
-                         onclick='openWindow("images/screenshots/YahooSMTP.png",410,300)' 
-                         alt="SMTP" 
-                         title="SMTP" 
-                         src="images/screenshots/TBYahooSMTP.png">
-                </div>
-            </div>
-            <br>
-             <div class="webmailList1">
-                <div>
-                    <ul>
-                        <li>Save Copy In Sent Items
-                            <img style="width: 32px; height: 32px;" alt="Hotmail" title="Hotmail" src="images/misc/Hotmail-SmallIcon.png">
-                            <img style="width: 32px; height: 32px;" alt="Yahoo" title="Yahoo" src="images/misc/Yahoo-SmallIcon.png">                       
-                            <img style="width: 32px; height: 32px;" alt="Lycos" title="Lycos" src="images/misc/Lycos-SmallIcon.png">
-                            <img style="width: 32px; height: 32px;" alt="MailDotCom" title="MailDotCom" src="images/misc/MailDotComSmall.png">
-                        </li>
-                    </ul>
-                </div> 
-                <p class="text2">A copy will be saved in the servers Sent Items folder.</p>
-                <BR>
-                <div>
-                    <ul>
-                        <li>Multipart
-                            <img style="width: 32px; height: 32px;" alt="Yahoo" title="Yahoo" src="images/misc/Yahoo-SmallIcon.png">                       
-                            <img style="width: 32px; height: 32px;" alt="Lycos" title="Lycos" src="images/misc/Lycos-SmallIcon.png">
-                            <img style="width: 32px; height: 32px;" alt="MailDotCom" title="MailDotCom" src="images/misc/MailDotComSmall.png">
-                        </li>
-                    </ul>
-                </div> 
-                <p class="text2">A rich text email contains two parts a plain text and html part.</p>
-            </div>
+                <h1>Domains</h1>
+                <img style="width: 96px; height: 82px; cursor:pointer" 
+                             onclick='openWindow("images/screenshots/HotmailDomains.png",510,450)' 
+                             alt="SMTP" 
+                             title="SMTP" 
+                             src="images/screenshots/TBHotmailDomains.png"> 
+                <p>You can add additional emails domains that are compatible with the extension.</p>
+                
+            </div>              
         </div>
-       
-    </div><!--content-->  
-        
 
 
     <?php include("footer.html"); ?>
