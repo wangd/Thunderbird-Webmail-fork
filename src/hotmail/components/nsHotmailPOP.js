@@ -81,6 +81,7 @@ const patternHotmailPOPTo = /<m:to>(.*?)<\/m:to>/i;
 const patternHotmailPOPFrom = /<m:from>(.*?)<\/m:from>/i;
 const patternHotmailPOPSubject = /<m:subject>(.*?)<\/m:subject>/i;
 const patternHotmailPOPDate = /<m:date>(.*?)T(.*?)<\/m:date>/i;
+const patternHotmailPOPDisplayName = /<D:displayname>(.*?)<\/D:displayname>/i;
 /*******************************************************************************/
 
 const UserAgent = "1.1 on Mac OS X — Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-us) Gecko/20060516 SeaMonkey/1.1.0";
