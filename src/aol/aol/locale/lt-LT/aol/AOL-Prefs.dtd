@@ -1,0 +1,15 @@
+<!ENTITY AOLPref.Window.Title "AOL / Netscape nustatymai">
+<!ENTITY AOLPref.Panel.Accounts.Title "Paskyros">
+<!ENTITY AOLPref.Button.Ok.Label "Gerai">
+<!ENTITY AOLPref.Button.Cancel.Label "Atšaukti">
+<!ENTITY AOLPref.Tab.POP.Title "POP">
+<!ENTITY AOLPref.POP.DownloadUnread.Label "Parsiųsti tik neskaitytus laiškus">
+<!ENTITY AOLPref.POP.DownloadUnread.AccessKey "n">
+<!ENTITY AOLPref.POP.JunkMail.Label "Parsiųsti Šlamštą">
+<!ENTITY AOLPref.POP.JunkMail.AccessKey "Š">
+<!ENTITY AOLPref.POP.Folders.Label "Parsiųsti aplankus">
+<!ENTITY AOLPref.POP.ButtonAdd.Label "Pridėti...">
+<!ENTITY AOLPref.POP.ButtonAdd.AccessKey "P">
+<!ENTITY AOLPref.POP.ButtonRemove.Label "Pašalinti">
+<!ENTITY AOLPref.POP.ButtonRemove.AccessKey "š">
+<!ENTITY AOLPref.AccountError.Label "Nerasta jokių Lycos paskyrų">

@@ -1,0 +1,15 @@
+<!ENTITY AOLPref.Window.Title "AOL / Netscape Opties">
+<!ENTITY AOLPref.Panel.Accounts.Title "Accounts">
+<!ENTITY AOLPref.Button.Ok.Label "Ok">
+<!ENTITY AOLPref.Button.Cancel.Label "Annuleren">
+<!ENTITY AOLPref.Tab.POP.Title "POP">
+<!ENTITY AOLPref.POP.DownloadUnread.Label "Download alleen ongelezen emails">
+<!ENTITY AOLPref.POP.DownloadUnread.AccessKey "g">
+<!ENTITY AOLPref.POP.JunkMail.Label "Download JunkMail">
+<!ENTITY AOLPref.POP.JunkMail.AccessKey "J">
+<!ENTITY AOLPref.POP.Folders.Label "Download folders">
+<!ENTITY AOLPref.POP.ButtonAdd.Label "Toevoegen...">
+<!ENTITY AOLPref.POP.ButtonAdd.AccessKey "T">
+<!ENTITY AOLPref.POP.ButtonRemove.Label "Verwijderen">
+<!ENTITY AOLPref.POP.ButtonRemove.AccessKey "V">
+<!ENTITY AOLPref.AccountError.Label "Geen AOL / Netscape Accounts Gevonden">

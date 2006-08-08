@@ -1,8 +1,8 @@
-<!ENTITY AOLFolderAdd.Title "Add Folder">
-<!ENTITY AOLFolderName.Label "Folder Name">
-<!ENTITY AOLFolderName.AccessKey "F">
-<!ENTITY AOLFolders.Label "Add download folder">
+<!ENTITY AOLFolderAdd.Title "Añadir carpeta">
+<!ENTITY AOLFolderName.Label "Nombre de la carpeta">
+<!ENTITY AOLFolderName.AccessKey "c">
+<!ENTITY AOLFolders.Label "Añadir carpeta para descargar">
 <!ENTITY AOLFolderName.ButtonOk.Label "Ok">
 <!ENTITY AOLFolderName.ButtonOk.AccessKey "O">
-<!ENTITY AOLFolderName.ButtonCancel.Label "Cancel">
+<!ENTITY AOLFolderName.ButtonCancel.Label "Cancelar">
 <!ENTITY AOLFolderName.ButtonCancel.AccessKey "C">

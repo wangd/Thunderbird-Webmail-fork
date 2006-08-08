@@ -1,0 +1,8 @@
+<!ENTITY AOLFolderAdd.Title "Pridėti aplanką">
+<!ENTITY AOLFolderName.Label "Aplanko pavadinimas">
+<!ENTITY AOLFolderName.AccessKey "p">
+<!ENTITY AOLFolders.Label "Pridėti aplanką parsiuntimui">
+<!ENTITY AOLFolderName.ButtonOk.Label "Gerai">
+<!ENTITY AOLFolderName.ButtonOk.AccessKey "G">
+<!ENTITY AOLFolderName.ButtonCancel.Label "Atšaukti">
+<!ENTITY AOLFolderName.ButtonCancel.AccessKey "A">
