@@ -24,6 +24,7 @@ const LycosPOPTo = /<m:to>(.*?)<\/m:to>/i;
 const LycosPOPFrom = /<m:from>(.*?)<\/m:from>/i;
 const LycosPOPSubject = /<m:subject>\s(.*?)<\/m:subject>/i;
 const LycosPOPDate = /<m:date>(.*?)T(.*?)<\/m:date>/i;
+const LycosPOPDisplayName = /<D:displayname>(.*?)<\/D:displayname>/i;
 /***********************  Lycos ********************************/
 
 
@@ -193,7 +194,7 @@ nsLycos.prototype =
                     mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - get folder url - " + szFolderURI);
                     mainObject.m_szTrashURI = szResponse.match(LycosTrashPattern)[1];
                     mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - get trash url - " + mainObject.m_szTrashURI);
-                    
+                     
                     //download folder list;
                     mainObject.m_iStage = 1;
                     mainObject.m_HttpComms.setContentType("text/xml");
@@ -205,44 +206,35 @@ nsLycos.prototype =
                 break;
                 
                  case 1: //process folder uri's
-                    var aszHrefList = szResponse.match(LycsoHrefSearch);
-                    mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - aszHrefList :" +aszHrefList);
+                    
+                    var aszFolderList = szResponse.match(LycosResponse );
+                    mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - aszFolderList :" +aszFolderList);
                     
                     for (j=0; j<mainObject.m_prefData.aszFolder.length; j++)
                     {
                         var regExp = new RegExp("^"+mainObject.m_prefData.aszFolder[j]+"$","i");
                         mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - regExp : "+regExp );
                         
-                        for (var i=0; i<aszHrefList.length; i++)
+                        for (var i=0; i<aszFolderList.length; i++)
                         {
-                            var szFolderName = aszHrefList[i].match(LycosFolderName)[1];
+                            var szFolderURL = aszFolderList[i].match(LycosHref )[1];
+                            mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - szFolderURL : "+szFolderURL );
+                            var szFolderName = szFolderURL.match(LycosFolderName )[1];
                             mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - szFolderName : "+szFolderName );
+                            var szDisplayName = "";
+                            if (aszFolderList[i].search(LycosPOPDisplayName )!=-1)
+                                szDisplayName =aszFolderList[i].match(LycosPOPDisplayName)[1];
+                            mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - szDisplayName : "+szDisplayName );
                             
-                            if (szFolderName.search(regExp)!=-1)
+                            if (szFolderName.search(regExp)!=-1 || szDisplayName.search(regExp)!=-1)
                             {
-                                var szURI = aszHrefList[i].match(LycosHref)[1];
-                                mainObject.m_aszFolderURLList.push(szURI);
-                                mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - URL found : "+szURI);
+                                mainObject.m_aszFolderURLList.push(szFolderURL);
+                                mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - URL found : "+szFolderURL);
                             }
                         }
                     }
                     
-                    if (mainObject.m_prefData.bReUseSession)
-                    {
-                        try
-                        {   
-                            var szJunkMailURI = szResponse.match(LycosJunkPattern)[1];
-                            mainObject.m_aszFolderURLList.push(szJunkMailURI);
-                            mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - Junk URL found : "+szJunkMailURI);
-                        }
-                        catch(err)
-                        {
-                            var szJunkMailURI = szResponse.match(LycosJunkPatternAlt)[1]; 
-                            mainObject.m_aszFolderURLList.push(szJunkMailURI);
-                            mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - Junk URL found : "+szJunkMailURI);  
-                        }
-                    } 
-                    
+        
                     //server response
                     mainObject.serverComms("+OK Your in\r\n");
                     mainObject.m_bAuthorised = true;
@@ -806,7 +798,7 @@ nsLycos.prototype =
         {
             this.m_Log.Write("nsLycos.js - logOUT - START"); 
                     
-            if (this.m_bReUseSession)
+            if (this.m_prefData.bReUseSession)
             {
                 this.m_Log.Write("Lycos.js - logOUT - saving Session Data");
                 if (!this.m_SessionData)
@@ -820,10 +812,8 @@ nsLycos.prototype =
                 this.m_SessionManager.setSessionData(this.m_SessionData);
             }
             
-            var oPref = {Value:null};
-            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-            WebMailPrefAccess.Get("bool","lycos.bEmptyTrash",oPref)
-            if (!oPref.Value)
+
+            if (!this.m_prefData.bEmptyTrash)
             {
                 this.m_bAuthorised = false;
                 this.serverComms("+OK Your Out\r\n");
@@ -1006,7 +996,9 @@ nsLycos.prototype =
                         WebMailPrefAccess.Get("bool","lycos.Account."+i+".bUseJunkMail",oPref);
                         this.m_Log.Write("nsLycos.js - loadPrefs - bUseJunkMail " + oPref.Value);
                         if (oPref.Value) oData.bUseJunkMail = oPref.Value;
-                                              
+                        if (oData.bUseJunkMail)
+                            oData.aszFolder.push("Courrier%20ind%26eacute;sirable");                     
+                        
                         //get SaveSentItems
                         oPref.Value = null;
                         WebMailPrefAccess.Get("bool","lycos.Account."+i+".bSaveCopy",oPref);
@@ -1041,6 +1033,8 @@ nsLycos.prototype =
                 WebMailPrefAccess.Get("bool","lycos.bUseJunkMail",oPref);
                 this.m_Log.Write("nsLycos.js - loadPrefs - bUseJunkMail " + oPref.Value);
                 if (oPref.Value) oData.bUseJunkMail = oPref.Value;
+                if (oData.bUseJunkMail)
+                    oData.aszFolder.push("Courrier%20ind%26eacute;sirable");
                                       
                 //get SaveSentItems
                 oPref.Value = null;
