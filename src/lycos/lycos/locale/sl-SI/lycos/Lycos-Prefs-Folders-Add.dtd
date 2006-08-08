@@ -1,8 +1,8 @@
-<!ENTITY LycosFolderAdd.Title "Add Folder">
-<!ENTITY LycosFolderName.Label "Folder Name">
-<!ENTITY LycosFolderName.AccessKey "F">
-<!ENTITY LycosFolders.Label "Add download folder">
-<!ENTITY LycosFolderName.ButtonOk.Label "Ok">
-<!ENTITY LycosFolderName.ButtonOk.AccessKey "O">
-<!ENTITY LycosFolderName.ButtonCancel.Label "Cancel">
-<!ENTITY LycosFolderName.ButtonCancel.AccessKey "C">
+<!ENTITY LycosFolderAdd.Title "Dodaj mapo">
+<!ENTITY LycosFolderName.Label "Ime mape">
+<!ENTITY LycosFolderName.AccessKey "I">
+<!ENTITY LycosFolders.Label "Dodaj mapo za prenos">
+<!ENTITY LycosFolderName.ButtonOk.Label "V redu">
+<!ENTITY LycosFolderName.ButtonOk.AccessKey "r">
+<!ENTITY LycosFolderName.ButtonCancel.Label "Prekliči">
+<!ENTITY LycosFolderName.ButtonCancel.AccessKey "k">

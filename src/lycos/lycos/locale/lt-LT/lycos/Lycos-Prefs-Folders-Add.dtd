@@ -1,0 +1,8 @@
+<!ENTITY LycosFolderAdd.Title "Pridėti aplanką">
+<!ENTITY LycosFolderName.Label "Aplanko pavadinimas">
+<!ENTITY LycosFolderName.AccessKey "a">
+<!ENTITY LycosFolders.Label "Pridėti aplanką parsiuntimui">
+<!ENTITY LycosFolderName.ButtonOk.Label "Gerai">
+<!ENTITY LycosFolderName.ButtonOk.AccessKey "G">
+<!ENTITY LycosFolderName.ButtonCancel.Label "Atšaukti">
+<!ENTITY LycosFolderName.ButtonCancel.AccessKey "A">

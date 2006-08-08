@@ -1,25 +1,21 @@
-<!ENTITY LycosPref.Window.Title "Lycos Options">
-<!ENTITY LycosPref.Panel.Accounts.Title "Accounts">
-<!ENTITY LycosPref.Panel.Domains.Title "Domains">
-<!ENTITY LycosPref.Button.Ok.Label "Ok">
-<!ENTITY LycosPref.Button.Cancel.Label "Cancel">
-
+<!ENTITY LycosPref.Window.Title "Možnosti Lycos">
+<!ENTITY LycosPref.Panel.Accounts.Title "Računi">
+<!ENTITY LycosPref.Panel.Domains.Title "Domene">
+<!ENTITY LycosPref.Button.Ok.Label "V redu">
+<!ENTITY LycosPref.Button.Cancel.Label "Prekliči">
 <!ENTITY LycosPref.Tab.POP.Title "POP">
 <!ENTITY LycosPref.Tab.SMTP.Title "SMTP">
-
-<!ENTITY LycosPref.POP.DownloadUnread.Label "Download unread emails only">
-<!ENTITY LycosPref.POP.DownloadUnread.AccessKey "u">
-<!ENTITY LycosPref.POP.EmptyTrash.Label "Empty Trash">
-<!ENTITY LycosPref.POP.EmptyTrash.AccessKey "E">
-<!ENTITY LycosPref.POP.JunkMail.Label "Download JunkMail">
-<!ENTITY LycosPref.POP.JunkMail.AccessKey "J">
-<!ENTITY LycosPref.POP.Folders.Label "Download folders">
-<!ENTITY LycosPref.POP.ButtonAdd.Label "Add...">
-<!ENTITY LycosPref.POP.ButtonAdd.AccessKey "A">
-<!ENTITY LycosPref.POP.ButtonRemove.Label "Remove">
-<!ENTITY LycosPref.POP.ButtonRemove.AccessKey "R">
-
-<!ENTITY LycosPref.SMTP.SaveSentItems.Label "Save copy in sent items.">
-<!ENTITY LycosPref.SMTP.SaveSentItems.AccessKey "s">
-
-<!ENTITY LycosPref.AccountError.Label "No Lycos Accounts Found"> 
+<!ENTITY LycosPref.POP.DownloadUnread.Label "Prenesi le neprebrano pošto">
+<!ENTITY LycosPref.POP.DownloadUnread.AccessKey "n">
+<!ENTITY LycosPref.POP.EmptyTrash.Label "Izprazni koš">
+<!ENTITY LycosPref.POP.EmptyTrash.AccessKey "I">
+<!ENTITY LycosPref.POP.JunkMail.Label "Prenesi neželeno pošto">
+<!ENTITY LycosPref.POP.JunkMail.AccessKey "ž">
+<!ENTITY LycosPref.POP.Folders.Label "Prenesi mape">
+<!ENTITY LycosPref.POP.ButtonAdd.Label "Dodaj ...">
+<!ENTITY LycosPref.POP.ButtonAdd.AccessKey "D">
+<!ENTITY LycosPref.POP.ButtonRemove.Label "Odstrani">
+<!ENTITY LycosPref.POP.ButtonRemove.AccessKey "O">
+<!ENTITY LycosPref.SMTP.SaveSentItems.Label "Shrani kopijo v Odposlano.">
+<!ENTITY LycosPref.SMTP.SaveSentItems.AccessKey "S">
+<!ENTITY LycosPref.AccountError.Label "Ni najdenih računov Lycos">

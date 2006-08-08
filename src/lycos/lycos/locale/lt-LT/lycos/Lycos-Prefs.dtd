@@ -1,0 +1,21 @@
+<!ENTITY LycosPref.Window.Title "Lycos Nustatymai">
+<!ENTITY LycosPref.Panel.Accounts.Title "Paskyros">
+<!ENTITY LycosPref.Panel.Domains.Title "Domenai">
+<!ENTITY LycosPref.Button.Ok.Label "Gerai">
+<!ENTITY LycosPref.Button.Cancel.Label "Atšaukti">
+<!ENTITY LycosPref.Tab.POP.Title "POP">
+<!ENTITY LycosPref.Tab.SMTP.Title "SMTP">
+<!ENTITY LycosPref.POP.DownloadUnread.Label "Parsiųsti tik neskaitytus laiškus">
+<!ENTITY LycosPref.POP.DownloadUnread.AccessKey "n">
+<!ENTITY LycosPref.POP.EmptyTrash.Label "Išvalyti šiukšlinę">
+<!ENTITY LycosPref.POP.EmptyTrash.AccessKey "I">
+<!ENTITY LycosPref.POP.JunkMail.Label "Parsiųsti Šlamštą">
+<!ENTITY LycosPref.POP.JunkMail.AccessKey "Š">
+<!ENTITY LycosPref.POP.Folders.Label "Parsiųsti aplankus">
+<!ENTITY LycosPref.POP.ButtonAdd.Label "Pridėti...">
+<!ENTITY LycosPref.POP.ButtonAdd.AccessKey "P">
+<!ENTITY LycosPref.POP.ButtonRemove.Label "Pašalinti">
+<!ENTITY LycosPref.POP.ButtonRemove.AccessKey "P">
+<!ENTITY LycosPref.SMTP.SaveSentItems.Label "Saugoti kopiją išsiųstų laiškų aplanke">
+<!ENTITY LycosPref.SMTP.SaveSentItems.AccessKey "k">
+<!ENTITY LycosPref.AccountError.Label "Nerasta jokių Lycos paskyrų">

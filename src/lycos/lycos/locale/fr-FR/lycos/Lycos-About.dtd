@@ -1,7 +1,7 @@
 <!ENTITY LycosAbout.Title "Lycos - À propos">
 <!ENTITY LycosAbout.ExtName "Lycos">
 <!ENTITY LycosAbout.ExtVersion "version">
-<!ENTITY LycosAbout.ExtDescription "Module Lycos pour l'extension Webmail.">
+<!ENTITY LycosAbout.ExtDescription "Module Lycos pour l&apos;extension Webmail.">
 <!ENTITY LycosAbout.ExtCreaterTitle "Créée par :">
 <!ENTITY LycosAbout.ExtHome "Visiter la page Web">
 <!ENTITY LycosAbout.ExtButton "Fermer">
