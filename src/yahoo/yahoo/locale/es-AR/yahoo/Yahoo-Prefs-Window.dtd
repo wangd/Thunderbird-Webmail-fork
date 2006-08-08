@@ -3,15 +3,12 @@
 <!ENTITY YahooPref.Panel.Domains.Title "Dominios">
 <!ENTITY YahooPref.Button.Ok.Label "Ok">
 <!ENTITY YahooPref.Button.Cancel.Label "Cancelar">
-
-<!ENTITY YahooPref.Tab.Mode.Title "Mode">
+<!ENTITY YahooPref.Tab.Mode.Title "Modo">
 <!ENTITY YahooPref.Tab.POP.Title "POP">
 <!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
-
 <!ENTITY YahooPref.Mode.Label "Select website the extension will use">
-<!ENTITY YahooPref.Mode.ScreenScraper.Label "Production Website">
-<!ENTITY YahooPref.Mode.Beta.Label "BETA Website">
-
+<!ENTITY YahooPref.Mode.ScreenScraper.Label "Sitio Web de Producción">
+<!ENTITY YahooPref.Mode.Beta.Label "Sitio Web BETA">
 <!ENTITY YahooPref.POP.DownloadUnread.Label "Descargar solamente los correos no leídos">
 <!ENTITY YahooPref.POP.DownloadUnread.AccessKey "u">
 <!ENTITY YahooPref.POP.JunkMail.Label "Descargar JunkMail">
@@ -21,13 +18,10 @@
 <!ENTITY YahooPref.POP.ButtonAdd.AccessKey "A">
 <!ENTITY YahooPref.POP.ButtonRemove.Label "Eliminar">
 <!ENTITY YahooPref.POP.ButtonRemove.AccessKey "R">
-
 <!ENTITY YahooPref.SMTP.SaveSentItems.Label "Guardar una copia en elementos enviados.">
 <!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "s">
-
 <!ENTITY YahooPref.AccountError.Label "No se encontraron cuentas de Yahoo">
-<!ENTITY YahooPref.SMTP.NA.Label "No SMPT options for Yahoo BETA">
-
+<!ENTITY YahooPref.SMTP.NA.Label "No hay opciones SMTP para Yahoo BETA">
 <!ENTITY YahooPref.Domain.Label "Dominios soportados por la extension para Yahoo">
 <!ENTITY YahooPref.Domain.Button.AddDomain.Label "Agregar...">
 <!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "A">

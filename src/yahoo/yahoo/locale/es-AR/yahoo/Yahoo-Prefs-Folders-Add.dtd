@@ -5,4 +5,4 @@
 <!ENTITY YahooFolder.ButtonOk.Label "Ok">
 <!ENTITY YahooFolder.ButtonOk.AccessKey "O">
 <!ENTITY YahooFolder.ButtonCancel.Label "Cancelar">
-<!ENTITY YahooFolder.ButtonCancel.Label "C">
+<!ENTITY YahooFolder.ButtonCancel.AccessKey "C">
