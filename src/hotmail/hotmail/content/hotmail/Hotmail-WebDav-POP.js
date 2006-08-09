@@ -162,24 +162,29 @@ HotmailWebDav.prototype =
                 
                 case 1: //process folder uri's
 
-                    var aszHrefList = szResponse.match(patternHotmailPOPHrefList);
-                    mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - aszHrefList :" +aszHrefList);
+                    var aszFolderList = szResponse.match(patternHotmailPOPResponse);
+                    mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - aszFolderList :" +aszFolderList);
                     
                     for (j=0; j<mainObject.m_aszFolders.length; j++)
                     {
                         var regExp = new RegExp("^"+mainObject.m_aszFolders[j]+"$","i");
                         mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - regExp : "+regExp );
                         
-                        for (var i=0; i<aszHrefList.length; i++)
+                        for (var i=0; i<aszFolderList.length; i++)
                         {
-                            var szFolderName = aszHrefList[i].match(patternHotmailPOPFolderName)[1];
+                            var szFolderURL = aszFolderList[i].match(patternHotmailPOPHref)[1];
+                            mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - szFolderURL : "+szFolderURL );
+                            var szFolderName = szFolderURL.match(patternHotmailPOPFolderName)[1];
                             mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - szFolderName : "+szFolderName );
+                            var szDisplayName = "";
+                            if (aszFolderList[i].search(patternHotmailPOPDisplayName)!=-1)
+                                szDisplayName =aszFolderList[i].match(patternHotmailPOPDisplayName)[1];
+                            mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - szDisplayName : "+szDisplayName );
                             
-                            if (szFolderName.search(regExp)!=-1)
+                            if (szFolderName.search(regExp)!=-1 || szDisplayName.search(regExp)!=-1)
                             {
-                                var szURI = aszHrefList[i].match(patternHotmailPOPHref)[1];
-                                mainObject.m_aszFolderURLList.push(szURI);
-                                mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - URL found : "+szURI);
+                                mainObject.m_aszFolderURLList.push(szFolderURL);
+                                mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - URL found : "+szFolderURL);
                             }
                         }
                     }

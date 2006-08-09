@@ -1,5 +1,5 @@
 <!ENTITY LycosFolderAdd.Title "Ajouter un dossier">
-<!ENTITY LycosFolderName.Label "Nom de dossier">
+<!ENTITY LycosFolderName.Label "Nom du dossier">
 <!ENTITY LycosFolderName.AccessKey "d">
 <!ENTITY LycosFolders.Label "Ajouter un dossier de téléchargement">
 <!ENTITY LycosFolderName.ButtonOk.Label "Ok">

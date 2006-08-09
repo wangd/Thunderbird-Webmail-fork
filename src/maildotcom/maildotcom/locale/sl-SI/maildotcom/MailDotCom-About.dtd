@@ -1,7 +1,7 @@
-<!ENTITY MailDotComAbout.Title "MailDotCom - o komponenti">
-<!ENTITY MailDotComAbout.ExtName "MailDotCom">
+<!ENTITY MailDotComAbout.Title "MailPikaCom - o komponenti">
+<!ENTITY MailDotComAbout.ExtName "MailPikaCom">
 <!ENTITY MailDotComAbout.ExtVersion "različica">
-<!ENTITY MailDotComAbout.ExtDescription "Komponenta MailDotCom za razširitev Web-Mail.">
+<!ENTITY MailDotComAbout.ExtDescription "Komponenta MailPikaCom za razširitev WebMail.">
 <!ENTITY MailDotComAbout.ExtCreaterTitle "Avtor:">
 <!ENTITY MailDotComAbout.ExtHome "Domača stran">
 <!ENTITY MailDotComAbout.ExtButton "Zapri">

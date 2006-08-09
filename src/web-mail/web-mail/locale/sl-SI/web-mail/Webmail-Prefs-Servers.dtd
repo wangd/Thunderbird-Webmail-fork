@@ -4,7 +4,7 @@
 <!ENTITY Pop.Label "POP">
 <!ENTITY Pop.AccessKey "O">
 <!ENTITY POP.Default.Label "privzeto 110">
-<!ENTITY Note.Label "Vrata pod 1024 so lahko zaprta s strani OS">
+<!ENTITY Note.Label "Vrata pod 1024 lahko blokira op. sistem">
 <!ENTITY Restart.Label "Za uveljavitev sprememb je potreben ponoven zagon Thunderbirda.">
 <!ENTITY SMTP.Label "SMTP">
 <!ENTITY SMTP.AccessKey "S">

@@ -56,8 +56,6 @@ const patternHotmailPOPFolderList = /select name="InboxMoveMessage"[\s\S]*?optio
 const patternHotmailPOPFolderOption = /<option value=.*?>.*?<\/option>/ig;
 const patternHotmailPOPFolderHref = /<option value="(.*?)">.*?<\/option>/i;
 const patternHotmailPOPTitle = /<option value=.*?>(.*?)<\/option>/i;
-const kDisplayName = /<D:displayname>(.*?)<\/D:displayname>/;
-const kSpecial = /<hm:special>(.*?)<\/hm:special>/;
 /*******************************************************************************/
 
 
@@ -82,6 +80,7 @@ const patternHotmailPOPFrom = /<m:from>(.*?)<\/m:from>/i;
 const patternHotmailPOPSubject = /<m:subject>(.*?)<\/m:subject>/i;
 const patternHotmailPOPDate = /<m:date>(.*?)T(.*?)<\/m:date>/i;
 const patternHotmailPOPDisplayName = /<D:displayname>(.*?)<\/D:displayname>/i;
+const patternHotmailSpecial = /<hm:special>(.*?)<\/hm:special>/;
 /*******************************************************************************/
 
 const UserAgent = "1.1 on Mac OS X — Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-us) Gecko/20060516 SeaMonkey/1.1.0";

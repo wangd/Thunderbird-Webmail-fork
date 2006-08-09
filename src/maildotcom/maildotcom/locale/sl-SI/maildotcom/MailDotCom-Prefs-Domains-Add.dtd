@@ -1,7 +1,7 @@
 <!ENTITY MailDotComAddDomain.Title "Dodaj domeno">
 <!ENTITY MailDotComAddDomainName.Label "Domena">
 <!ENTITY MailDotComAddDomainName.AccessKey "D">
-<!ENTITY MailDotComAddDomain.Label "Dodaj domeno MailDotCom">
+<!ENTITY MailDotComAddDomain.Label "Dodaj domeno MailPikaCom">
 <!ENTITY MailDotComAddDomain.ButtonOk.Label "V redu">
 <!ENTITY MailDotComAddDomain.ButtonOk.AccessKey "r">
 <!ENTITY MailDotComAddDomain.ButtonCancel.Label "Prekliči">
