@@ -1,8 +1,8 @@
-<!ENTITY AOLFolderAdd.Title "Add Folder">
-<!ENTITY AOLFolderName.Label "Folder Name">
-<!ENTITY AOLFolderName.AccessKey "F">
-<!ENTITY AOLFolders.Label "Add download folder">
+<!ENTITY AOLFolderAdd.Title "Lisää kansio">
+<!ENTITY AOLFolderName.Label "Kansion nimi">
+<!ENTITY AOLFolderName.AccessKey "K">
+<!ENTITY AOLFolders.Label "Lisää latauskansio">
 <!ENTITY AOLFolderName.ButtonOk.Label "Ok">
 <!ENTITY AOLFolderName.ButtonOk.AccessKey "O">
-<!ENTITY AOLFolderName.ButtonCancel.Label "Cancel">
-<!ENTITY AOLFolderName.ButtonCancel.AccessKey "C">
+<!ENTITY AOLFolderName.ButtonCancel.Label "Peruuta">
+<!ENTITY AOLFolderName.ButtonCancel.AccessKey "P">

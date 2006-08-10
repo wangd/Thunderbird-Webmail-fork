@@ -1,7 +1,7 @@
 <!ENTITY LycosAbout.Title "Lycos - Tietoja">
 <!ENTITY LycosAbout.ExtName "Lycos">
 <!ENTITY LycosAbout.ExtVersion "versio">
-<!ENTITY LycosAbout.ExtDescription "Lycos-komponentti WebMail laajennukseen.">
+<!ENTITY LycosAbout.ExtDescription "Lycos-komponentti WebMail-laajennukseen.">
 <!ENTITY LycosAbout.ExtCreaterTitle "Tekijä:">
 <!ENTITY LycosAbout.ExtHome "Kotisivu">
 <!ENTITY LycosAbout.ExtButton "Sulje">

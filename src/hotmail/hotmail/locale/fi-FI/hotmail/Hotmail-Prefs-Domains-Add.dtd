@@ -1,6 +1,6 @@
-<!ENTITY HotmailAddDomain.Title "Lisää verkko-osoite">
-<!ENTITY HotmailAddDomain.Label "Lisää Hotmail -verkko-osoite">
-<!ENTITY HotmailAddDomainName.Label "Verkko-osoite">
+<!ENTITY HotmailAddDomain.Title "Lisää verkkotunnus">
+<!ENTITY HotmailAddDomain.Label "Lisää Hotmail -verkkotunnus">
+<!ENTITY HotmailAddDomainName.Label "Verkkotunnus">
 <!ENTITY HotmailAddDomainName.AccessKey "V">
 <!ENTITY HotmailAddDomain.ButtonOk.Label "Ok">
 <!ENTITY HotmailAddDomain.ButtonOk.AccessKey "O">

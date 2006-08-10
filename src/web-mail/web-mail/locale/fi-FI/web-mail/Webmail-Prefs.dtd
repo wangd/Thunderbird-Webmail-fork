@@ -1,4 +1,4 @@
-<!ENTITY Options.szTitle "WebMail-asetukset">
+<!ENTITY Options.szTitle "WebMail - Asetukset">
 <!ENTITY Servers.Panel.szTitle "Palvelimet">
 <!ENTITY Domains.Panel.szTitle "Verkkotunnukset">
 <!ENTITY Logging.Panel.szTitle "Kirjaaminen">
