@@ -1,7 +1,7 @@
 <!ENTITY YahooAbout.Title "Yahoo - Tietoja">
 <!ENTITY YahooAbout.ExtName "Yahoo">
 <!ENTITY YahooAbout.ExtVersion "versio">
-<!ENTITY YahooAbout.ExtDescription "Yahoo-komponetti WebMail laajennukseen.">
+<!ENTITY YahooAbout.ExtDescription "Yahoo-komponetti WebMail-laajennukseen.">
 <!ENTITY YahooAbout.ExtCreaterTitle "Tekijä:">
 <!ENTITY YahooAbout.ExtHome "Kotisivu">
 <!ENTITY YahooAbout.ExtButton "Sulje">

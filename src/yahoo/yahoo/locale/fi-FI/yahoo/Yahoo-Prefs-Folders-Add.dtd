@@ -2,7 +2,7 @@
 <!ENTITY YahooFolderName.Label "Kansion nimi">
 <!ENTITY YahooFolderName.AccessKey "K">
 <!ENTITY YahooFolders.Label "Lisää latauskansio">
-<!ENTITY YahooFolder.ButtonOk.Label "OK">
+<!ENTITY YahooFolder.ButtonOk.Label "Ok">
 <!ENTITY YahooFolder.ButtonOk.AccessKey "O">
 <!ENTITY YahooFolder.ButtonCancel.Label "Peruuta">
 <!ENTITY YahooFolder.ButtonCancel.AccessKey "P">

@@ -2,7 +2,7 @@
 <!ENTITY YahooAddDomainName.Label "Verkkotunnus">
 <!ENTITY YahooAddDomainName.AccessKey "V">
 <!ENTITY YahooAddDomain.Label "Lisää Yahoo-verkkotunnus">
-<!ENTITY YahooAddDomain.ButtonOk.Label "OK">
+<!ENTITY YahooAddDomain.ButtonOk.Label "Ok">
 <!ENTITY YahooAddDomain.ButtonOk.AccessKey "O">
 <!ENTITY YahooAddDomain.ButtonCancel.Label "Peruuta">
 <!ENTITY YahooAddDomain.ButtonCancel.AccessKey "P">
