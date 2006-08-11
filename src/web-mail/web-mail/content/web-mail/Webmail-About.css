@@ -228,3 +228,8 @@
 {
      -moz-image-region: rect(0px, 768px, 32px,736px)
 }
+
+.flag[value="23"]/*NO*/
+{
+     -moz-image-region: rect(0px, 800px, 32px,768px)
+}
