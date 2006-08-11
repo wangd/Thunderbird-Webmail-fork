@@ -1,0 +1,15 @@
+<!ENTITY AOLPref.Window.Title "AOL/Netscape-innstillinger">
+<!ENTITY AOLPref.Panel.Accounts.Title "Kontoer">
+<!ENTITY AOLPref.Button.Ok.Label "OK">
+<!ENTITY AOLPref.Button.Cancel.Label "Avbryt">
+<!ENTITY AOLPref.Tab.POP.Title "POP">
+<!ENTITY AOLPref.POP.DownloadUnread.Label "Last ned bare uleste mailer">
+<!ENTITY AOLPref.POP.DownloadUnread.AccessKey "u">
+<!ENTITY AOLPref.POP.JunkMail.Label "Last ned SøppelPost">
+<!ENTITY AOLPref.POP.JunkMail.AccessKey "J">
+<!ENTITY AOLPref.POP.Folders.Label "Nedlastingsmapper">
+<!ENTITY AOLPref.POP.ButtonAdd.Label "Legg til...">
+<!ENTITY AOLPref.POP.ButtonAdd.AccessKey "A">
+<!ENTITY AOLPref.POP.ButtonRemove.Label "Fjern">
+<!ENTITY AOLPref.POP.ButtonRemove.AccessKey "R">
+<!ENTITY AOLPref.AccountError.Label "Ingen Lycos-kontoer funnet">

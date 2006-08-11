@@ -1,0 +1,8 @@
+<!ENTITY AOLFolderAdd.Title "Legg til mappe">
+<!ENTITY AOLFolderName.Label "Mappenavn">
+<!ENTITY AOLFolderName.AccessKey "F">
+<!ENTITY AOLFolders.Label "Legg till nedlastingsmappe">
+<!ENTITY AOLFolderName.ButtonOk.Label "OK">
+<!ENTITY AOLFolderName.ButtonOk.AccessKey "O">
+<!ENTITY AOLFolderName.ButtonCancel.Label "Avbryt">
+<!ENTITY AOLFolderName.ButtonCancel.AccessKey "C">
