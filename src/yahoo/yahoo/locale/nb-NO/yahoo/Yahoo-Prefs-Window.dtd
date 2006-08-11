@@ -1,0 +1,29 @@
+<!ENTITY YahooPref.Window.Title "Yahoo-innstillinger">
+<!ENTITY YahooPref.Panel.Accounts.Title "Kontoer">
+<!ENTITY YahooPref.Panel.Domains.Title "Domener">
+<!ENTITY YahooPref.Button.Ok.Label "OK">
+<!ENTITY YahooPref.Button.Cancel.Label "Avbryt">
+<!ENTITY YahooPref.Tab.Mode.Title "Modus">
+<!ENTITY YahooPref.Tab.POP.Title "POP">
+<!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
+<!ENTITY YahooPref.Mode.Label "Velg nettside som utvidelsen vil bruke">
+<!ENTITY YahooPref.Mode.ScreenScraper.Label "Produksjonsnettside">
+<!ENTITY YahooPref.Mode.Beta.Label "BETA-nettside">
+<!ENTITY YahooPref.POP.DownloadUnread.Label "Last ned kun uleste mailer">
+<!ENTITY YahooPref.POP.DownloadUnread.AccessKey "u">
+<!ENTITY YahooPref.POP.JunkMail.Label "Last ned SøppelPost">
+<!ENTITY YahooPref.POP.JunkMail.AccessKey "J">
+<!ENTITY YahooPref.POP.Folders.Label "Nedlastingsmapper">
+<!ENTITY YahooPref.POP.ButtonAdd.Label "Legg til...">
+<!ENTITY YahooPref.POP.ButtonAdd.AccessKey "A">
+<!ENTITY YahooPref.POP.ButtonRemove.Label "Fjern">
+<!ENTITY YahooPref.POP.ButtonRemove.AccessKey "R">
+<!ENTITY YahooPref.SMTP.SaveSentItems.Label "Lagre kopi i sendte objekter">
+<!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "s">
+<!ENTITY YahooPref.AccountError.Label "Ingen Yahoo-kontoer funnet">
+<!ENTITY YahooPref.SMTP.NA.Label "Ingen SMTP-innstillinger for Yahoo BETA">
+<!ENTITY YahooPref.Domain.Label "Domener støttet av Yahoo-utvidelsen">
+<!ENTITY YahooPref.Domain.Button.AddDomain.Label "Legg til...">
+<!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "A">
+<!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Fjern">
+<!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "R">

@@ -1,0 +1,12 @@
+<!ENTITY GeneralLogging.Label "Muliggjør logging">
+<!ENTITY GeneralLogging.AccessKey "E">
+<!ENTITY JavaScriptConsole.Label "Bruk JavaScript-konsollen">
+<!ENTITY JavaScriptConsole.AccessKey "J">
+<!ENTITY LogFile.Label "Bruk logg-fil">
+<!ENTITY LogFile.AccessKey "I">
+<!ENTITY Location.Label "Sted">
+<!ENTITY Location.AccessKey "o">
+<!ENTITY Note.Label "Disse loggene vil innholde brukernavn og passord.">
+<!ENTITY Restart.Label "En restart av Thunderbird er obligatorisk før endringer vil virke.">
+<!ENTITY Button.Label "Bla gjennom...">
+<!ENTITY Button.AccessKey "B">

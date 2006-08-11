@@ -1,0 +1,4 @@
+<!ENTITY AccountWizard.Label "Legg til WebMail i AccountWizard">
+<!ENTITY AccountWizard.AccessKey "A">
+<!ENTITY AccountWizardWarning.Label "Behøver skrivetilgang til applikasjonsmappe.">
+<!ENTITY Restart.Label "En restart av Thunderbird er obligatorisk for at endringene vil virke.">

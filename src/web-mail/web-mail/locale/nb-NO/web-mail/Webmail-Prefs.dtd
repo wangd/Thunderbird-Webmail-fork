@@ -1,0 +1,6 @@
+<!ENTITY Options.szTitle "WebMail-innstillinger">
+<!ENTITY Servers.Panel.szTitle "Servere">
+<!ENTITY Domains.Panel.szTitle "Domener">
+<!ENTITY Logging.Panel.szTitle "Logging">
+<!ENTITY General.Panel.szTitle "Hoved">
+<!ENTITY Window.size "bredde: 46em; høyde: 37em">

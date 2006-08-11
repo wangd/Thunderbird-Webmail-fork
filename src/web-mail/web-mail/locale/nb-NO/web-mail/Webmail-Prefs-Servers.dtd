@@ -1,0 +1,25 @@
+<!ENTITY ServerStatus.Label "Serverstatus">
+<!ENTITY Ports.Label "Porter">
+<!ENTITY Ports.AccessKey "r">
+<!ENTITY Pop.Label "POP">
+<!ENTITY Pop.AccessKey "O">
+<!ENTITY POP.Default.Label "default 110">
+<!ENTITY Note.Label "Porter lavere enn 1024 kan bli blokkert av OS">
+<!ENTITY Restart.Label "En restart av Thuderbird er obligatorisk før endringene vil virke.">
+<!ENTITY SMTP.Label "SMTP">
+<!ENTITY SMTP.AccessKey "S">
+<!ENTITY SMTP.Default.Label "default 25">
+<!ENTITY IMAP.Label "IMAP">
+<!ENTITY IMAP.AccessKey "I">
+<!ENTITY IMAP.Default.Label "default 143">
+<!ENTITY Enable.POP.Label "Muliggjør POP-server.">
+<!ENTITY Enable.POP.AccessKey "P">
+<!ENTITY Enable.SMTP.Label "Muliggjør SMTP-server.">
+<!ENTITY Enable.SMTP.AccessKey "T">
+<!ENTITY Enable.IMAP.Label "Muliggjør IMAP-server.">
+<!ENTITY Enable.IMAP.AccessKey "M">
+<!ENTITY Enable.Label "Muliggjør">
+<!ENTITY Enable.AccessKey "E">
+<!ENTITY Status.Label "Status">
+<!ENTITY Status.AccessKey "u">
+<!ENTITY StatusBox.size "bredde: 6em;">

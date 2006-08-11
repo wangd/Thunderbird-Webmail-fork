@@ -1,0 +1,8 @@
+<!ENTITY YahooFolderAdd.Title "Legg til mappe">
+<!ENTITY YahooFolderName.Label "Mappenavn">
+<!ENTITY YahooFolderName.AccessKey "F">
+<!ENTITY YahooFolders.Label "Legg til nedlastingsmappe">
+<!ENTITY YahooFolder.ButtonOk.Label "OK">
+<!ENTITY YahooFolder.ButtonOk.AccessKey "O">
+<!ENTITY YahooFolder.ButtonCancel.Label "Avbryt">
+<!ENTITY YahooFolder.ButtonCancel.AccessKey "C">
