@@ -36,7 +36,7 @@
             
             <vbox>
                   <label id="labelFolder"
-                         value="&HotmailFolderName.Label;"/>
+                         value="&HotmailFolders.Label;"/>
             </vbox>
         </hbox>   
     

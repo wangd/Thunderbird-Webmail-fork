@@ -35,7 +35,7 @@
             
             <vbox>
                   <label id="labelFolder"
-                         value="&YahooFolderName.Label;"/>
+                         value="&YahooFolders.Label;"/>
             </vbox>
         </hbox>   
     

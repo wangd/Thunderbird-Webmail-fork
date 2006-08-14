@@ -36,7 +36,7 @@
             
             <vbox>
                   <label id="labelFolder"
-                         value="&AOLFolderName.Label;"/>
+                         value="&AOLFolders.Label;"/>
             </vbox>
         </hbox>   
     

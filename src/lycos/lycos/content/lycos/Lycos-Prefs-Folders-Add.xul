@@ -36,7 +36,7 @@
             
             <vbox>
                   <label id="labelFolder"
-                         value="&LycosFolderName.Label;"/>
+                         value="&LycosFolders.Label;"/>
             </vbox>
         </hbox>   
     
