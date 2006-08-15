@@ -41,7 +41,7 @@
     
         <hbox align="center">     
             <label id="labelDomainName"
-                   value="&YahooAddDomain.Label;" 
+                   value="&YahooAddDomainName.Label;" 
                    accesskey="&YahooAddDomainName.AccessKey;"
                    control="txtDomain"/>           
             

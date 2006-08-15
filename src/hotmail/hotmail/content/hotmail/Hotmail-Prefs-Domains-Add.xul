@@ -41,7 +41,7 @@
     
         <hbox align="center">     
             <label id="labelDomainName"
-                   value="&HotmailAddDomain.Label;" 
+                   value="&HotmailAddDomainName.Label;" 
                    accesskey="&HotmailAddDomainName.AccessKey;"
                    control="txtDomain"/>           
             
