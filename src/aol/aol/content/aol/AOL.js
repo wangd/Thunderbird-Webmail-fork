@@ -37,7 +37,7 @@ var gAOLStartUp =
             }
             catch(err)
             {
-                window.removeEventListener("load", function() {gYahooStartUp.init();} , false);
+                window.removeEventListener("load", function() {gAOLStartUp.init();} , false);
                 throw new Error("Domain Manager Not Found");
             } 
            
