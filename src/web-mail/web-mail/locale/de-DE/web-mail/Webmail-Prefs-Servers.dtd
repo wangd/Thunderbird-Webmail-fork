@@ -1,7 +1,7 @@
 <!ENTITY ServerStatus.Label "Server-Status">
 <!ENTITY Ports.Label "Port">
 <!ENTITY Ports.AccessKey "r">
-<!ENTITY Pop.Label "POP">
+<!ENTITY Pop.Label "POP3">
 <!ENTITY Pop.AccessKey "o">
 <!ENTITY POP.Default.Label "Standard: 110">
 <!ENTITY Note.Label "Ports unter 1024 könnten vom Betriebssystem blockiert werden.">

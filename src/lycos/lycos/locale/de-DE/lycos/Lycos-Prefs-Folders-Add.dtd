@@ -1,8 +1,8 @@
-<!ENTITY LycosFolderAdd.Title "Add Folder">
-<!ENTITY LycosFolderName.Label "Folder Name">
-<!ENTITY LycosFolderName.AccessKey "F">
-<!ENTITY LycosFolders.Label "Add download folder">
-<!ENTITY LycosFolderName.ButtonOk.Label "Ok">
+<!ENTITY LycosFolderAdd.Title "Ordner hinzufügen">
+<!ENTITY LycosFolderName.Label "Ordnername">
+<!ENTITY LycosFolderName.AccessKey "N">
+<!ENTITY LycosFolders.Label "Download-Ordner hinzufügen">
+<!ENTITY LycosFolderName.ButtonOk.Label "OK">
 <!ENTITY LycosFolderName.ButtonOk.AccessKey "O">
-<!ENTITY LycosFolderName.ButtonCancel.Label "Cancel">
-<!ENTITY LycosFolderName.ButtonCancel.AccessKey "C">
+<!ENTITY LycosFolderName.ButtonCancel.Label "Abbrechen">
+<!ENTITY LycosFolderName.ButtonCancel.AccessKey "A">

@@ -1,25 +1,21 @@
-<!ENTITY LycosPref.Window.Title "Lycos Options">
-<!ENTITY LycosPref.Panel.Accounts.Title "Accounts">
-<!ENTITY LycosPref.Panel.Domains.Title "Domains">
-<!ENTITY LycosPref.Button.Ok.Label "Ok">
-<!ENTITY LycosPref.Button.Cancel.Label "Cancel">
-
-<!ENTITY LycosPref.Tab.POP.Title "POP">
+<!ENTITY LycosPref.Window.Title "Lycos Einstellung">
+<!ENTITY LycosPref.Panel.Accounts.Title "Konten">
+<!ENTITY LycosPref.Panel.Domains.Title "Websites">
+<!ENTITY LycosPref.Button.Ok.Label "OK">
+<!ENTITY LycosPref.Button.Cancel.Label "Abbrechen">
+<!ENTITY LycosPref.Tab.POP.Title "POP3">
 <!ENTITY LycosPref.Tab.SMTP.Title "SMTP">
-
-<!ENTITY LycosPref.POP.DownloadUnread.Label "Download unread emails only">
+<!ENTITY LycosPref.POP.DownloadUnread.Label "Nur ungelesene Nachrichten herunterladen">
 <!ENTITY LycosPref.POP.DownloadUnread.AccessKey "u">
-<!ENTITY LycosPref.POP.EmptyTrash.Label "Empty Trash">
-<!ENTITY LycosPref.POP.EmptyTrash.AccessKey "E">
-<!ENTITY LycosPref.POP.JunkMail.Label "Download JunkMail">
+<!ENTITY LycosPref.POP.EmptyTrash.Label "Papierkorb leeren">
+<!ENTITY LycosPref.POP.EmptyTrash.AccessKey "l">
+<!ENTITY LycosPref.POP.JunkMail.Label "JunkMail herunterladen">
 <!ENTITY LycosPref.POP.JunkMail.AccessKey "J">
-<!ENTITY LycosPref.POP.Folders.Label "Download folders">
-<!ENTITY LycosPref.POP.ButtonAdd.Label "Add...">
-<!ENTITY LycosPref.POP.ButtonAdd.AccessKey "A">
-<!ENTITY LycosPref.POP.ButtonRemove.Label "Remove">
-<!ENTITY LycosPref.POP.ButtonRemove.AccessKey "R">
-
-<!ENTITY LycosPref.SMTP.SaveSentItems.Label "Save copy in sent items.">
-<!ENTITY LycosPref.SMTP.SaveSentItems.AccessKey "s">
-
-<!ENTITY LycosPref.AccountError.Label "No Lycos Accounts Found"> 
+<!ENTITY LycosPref.POP.Folders.Label "Ordner herunterladen">
+<!ENTITY LycosPref.POP.ButtonAdd.Label "Hinzufügen...">
+<!ENTITY LycosPref.POP.ButtonAdd.AccessKey "H">
+<!ENTITY LycosPref.POP.ButtonRemove.Label "Entfernen">
+<!ENTITY LycosPref.POP.ButtonRemove.AccessKey "E">
+<!ENTITY LycosPref.SMTP.SaveSentItems.Label "Eine Kopie im &quot;Gesendet&quot;-Ordner speichern.">
+<!ENTITY LycosPref.SMTP.SaveSentItems.AccessKey "K">
+<!ENTITY LycosPref.AccountError.Label "Keine Lycos-Konten gefunden">

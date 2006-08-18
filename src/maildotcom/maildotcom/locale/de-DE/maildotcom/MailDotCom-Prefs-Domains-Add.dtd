@@ -1,8 +1,8 @@
-<!ENTITY MailDotComAddDomain.Title "Afegeix un domini">
-<!ENTITY MailDotComAddDomainName.Label "Domini">
-<!ENTITY MailDotComAddDomainName.AccessKey "D">
-<!ENTITY MailDotComAddDomain.Label "Afegeix un domini MailDotCom">
-<!ENTITY MailDotComAddDomain.ButtonOk.Label "Ok">
+<!ENTITY MailDotComAddDomain.Title "Website hinzufügen">
+<!ENTITY MailDotComAddDomainName.Label "Website">
+<!ENTITY MailDotComAddDomainName.AccessKey "W">
+<!ENTITY MailDotComAddDomain.Label "Yahoo-Website hinzufügen">
+<!ENTITY MailDotComAddDomain.ButtonOk.Label "OK">
 <!ENTITY MailDotComAddDomain.ButtonOk.AccessKey "O">
-<!ENTITY MailDotComAddDomain.ButtonCancel.Label "Cancela">
-<!ENTITY MailDotComAddDomain.ButtonCancel.AccessKey "C">
+<!ENTITY MailDotComAddDomain.ButtonCancel.Label "Abbrechen">
+<!ENTITY MailDotComAddDomain.ButtonCancel.AccessKey "A">

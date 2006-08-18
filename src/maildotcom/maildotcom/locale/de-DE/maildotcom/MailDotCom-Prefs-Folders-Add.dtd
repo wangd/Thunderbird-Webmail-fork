@@ -1,8 +1,8 @@
-<!ENTITY MailDotComFolderAdd.Title "Add Folder">
-<!ENTITY MailDotComFolderName.Label "Folder Name">
-<!ENTITY MailDotComFolderName.AccessKey "F">
-<!ENTITY MailDotComFolders.Label "Add download folder">
-<!ENTITY MailDotComFolder.ButtonOk.Label "Ok">
+<!ENTITY MailDotComFolderAdd.Title "Ordner hinzufügen">
+<!ENTITY MailDotComFolderName.Label "Ordnername">
+<!ENTITY MailDotComFolderName.AccessKey "N">
+<!ENTITY MailDotComFolders.Label "Download-Ordner hinzufügen">
+<!ENTITY MailDotComFolder.ButtonOk.Label "OK">
 <!ENTITY MailDotComFolder.ButtonOk.AccessKey "O">
-<!ENTITY MailDotComFolder.ButtonCancel.Label "Cancel">
-<!ENTITY MailDotComFolder.ButtonCancel.AccessKey "C">
+<!ENTITY MailDotComFolder.ButtonCancel.Label "Abbrechen">
+<!ENTITY MailDotComFolder.ButtonCancel.AccessKey "A">
