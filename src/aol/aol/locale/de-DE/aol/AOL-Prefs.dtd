@@ -1,0 +1,15 @@
+<!ENTITY AOLPref.Window.Title "AOL/Netscape-Einstellungen">
+<!ENTITY AOLPref.Panel.Accounts.Title "Konten">
+<!ENTITY AOLPref.Button.Ok.Label "OK">
+<!ENTITY AOLPref.Button.Cancel.Label "Abbrechen">
+<!ENTITY AOLPref.Tab.POP.Title "POP3">
+<!ENTITY AOLPref.POP.DownloadUnread.Label "Nur ungelesene Nachrichten herunterladen">
+<!ENTITY AOLPref.POP.DownloadUnread.AccessKey "u">
+<!ENTITY AOLPref.POP.JunkMail.Label "JunkMail herunterladen">
+<!ENTITY AOLPref.POP.JunkMail.AccessKey "J">
+<!ENTITY AOLPref.POP.Folders.Label "Ordner herunterladen">
+<!ENTITY AOLPref.POP.ButtonAdd.Label "Hinzufügen...">
+<!ENTITY AOLPref.POP.ButtonAdd.AccessKey "H">
+<!ENTITY AOLPref.POP.ButtonRemove.Label "Entfernen">
+<!ENTITY AOLPref.POP.ButtonRemove.AccessKey "E">
+<!ENTITY AOLPref.AccountError.Label "Keine AOL/Netscape-Konten gefunden">

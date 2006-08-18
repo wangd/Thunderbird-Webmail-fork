@@ -1,0 +1,8 @@
+<!ENTITY AOLFolderAdd.Title "Ordner hinzufügen">
+<!ENTITY AOLFolderName.Label "Ordnername">
+<!ENTITY AOLFolderName.AccessKey "N">
+<!ENTITY AOLFolders.Label "Download-Ordner hinzufügen">
+<!ENTITY AOLFolderName.ButtonOk.Label "OK">
+<!ENTITY AOLFolderName.ButtonOk.AccessKey "O">
+<!ENTITY AOLFolderName.ButtonCancel.Label "Abbrechen">
+<!ENTITY AOLFolderName.ButtonCancel.AccessKey "A">
