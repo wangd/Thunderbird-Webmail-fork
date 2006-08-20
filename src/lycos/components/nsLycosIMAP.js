@@ -2,30 +2,6 @@
 const nsLycosIMAPClassID = Components.ID("{98ceff20-9cb0-11d9-9669-0800200c9a66}"); 
 const nsLycosIMAPContactID = "@mozilla.org/LycosIMAP;1";
 
-
-const LycosSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:h=\"http://schemas.microsoft.com/hotmail/\" xmlns:hm=\"urn:sc hemas:httpmail:\">\r\n<D:prop>\r\n<h:adbar/>\r\n<hm:contacts/>\r\n<hm:inbox/>\r\n<hm:outbox/>\r\n<hm:sendmsg/>\r\n<hm:sentitems/>\r\n<hm:deleteditems/>\r\n<hm:drafts/>\r\n<hm:msgfolderroot/>\r\n<h:maxpoll/>\r\n<h:sig/>\r\n</D:prop>\r\n</D:propfind>";
-const LycosFolderIMAPSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:hm=\"urn:schemas:httpmail:\">\r\n<D:prop>\r\n<D:isfolder/>\r\n<D:displayname/>\r\n<hm:special/>\r\n<D:hassubs/>\r\n<D:nosubs/>\r\n<hm:unreadcount/>\r\n<D:visiblecount/>\r\n<hm:special/>\r\n</D:prop>\r\n</D:propfind>";
-const LycosMailIMAPSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:hm=\"urn:schemas:httpmail:\" xmlns:m=\"urn:schemas:mailheader:\">\r\n<D:prop>\r\n<D:isfolder/>\r\n<hm:read/>\r\n<m:hasattachment/>\r\n<m:to/>\r\n<m:from/>\r\n<m:subject/>\r\n<m:date/>\r\n<D:getcontentlength/>\r\n</D:prop>\r\n</D:propfind>";
-const LycosPROPReadSchema = "<?xml version=\"1.0\"?>\r\n<D:propertyupdate xmlns:D=\"DAV:\" xmlns:hm=\"urn:schemas:httpmail:\">\r\n<D:set>\r\n<D:prop>\r\n<hm:read>0</hm:read>\r\n</D:prop>\r\n</D:set>\r\n</D:propertyupdate>";
-const LycosPROPUnReadSchema = "<?xml version=\"1.0\"?>\r\n<D:propertyupdate xmlns:D=\"DAV:\" xmlns:hm=\"urn:schemas:httpmail:\">\r\n<D:set>\r\n<D:prop>\r\n<hm:read>0</hm:read>\r\n</D:prop>\r\n</D:set>\r\n</D:propertyupdate>";
-
-const LycosIMAPMSGIDPattern = /[^\/]+$/;
-const LycosIMAPResponse = /<D:response>[\S\d\s\r\n]*?<\/D:response>/gm;
-const LycosIMAPID = /<D:id>(.*?)<\/D:id>/i;
-const LycosIMAPHref = /<D:href>(.*?)<\/D:href>/i;
-const LycosIMAPRead = /<hm:read>(.*?)<\/hm:read>/i;
-const LycosIMAPSize = /<D:getcontentlength>(.*?)<\/D:getcontentlength>/i;
-const LycosIMAPAttachment = /<m:hasattachment>(.*?)<\/m:hasattachment>/i;
-const LycosIMAPTo = /<m:to>(.*?)<\/m:to>/i;
-const LycosIMAPFrom = /<m:from>(.*?)<\/m:from>/i;
-const LycosIMAPSubject = /<m:subject>(.*?)<\/m:subject>/i;
-const LycosIMAPDate = /<m:date>(.*?)T(.*?)<\/m:date>/i;
-
-const LycosIMAPFolderPattern = /<hm:msgfolderroot>(.*?)<\/hm:msgfolderroot>/;
-const LycosIMAPUnreadCount = /<hm:unreadcount>(.*?)<\/hm:unreadcount>/;
-const LycosIMAPMsgCount = /<D:visiblecount>(.*?)<\/D:visiblecount>/;
-const LycosIMAPDisplayName = /<D:displayname>(.*?)<\/D:displayname>/;
-const LycosIMAPSpecial = /<hm:special>(.*?)<\/hm:special>/;
 /***********************  Lycos ********************************/
 
 function nsLycosIMAP()
@@ -45,6 +21,13 @@ function nsLycosIMAP()
                                   szLogFileName); 
         
         this.m_Log.Write("nsLycosIMAP.js - Constructor - START");
+        
+        if (typeof kLycosConstants == "undefined")
+        {
+            this.m_Log.Write("nsLycosIMAP.js - Constructor - loading constants");
+            scriptLoader.loadSubScript("chrome://lycos/content/Lycos-Constants.js");
+        }   
+        
         
         this.m_szUserName = null;   
         this.m_szPassWord = null; 
@@ -164,7 +147,7 @@ nsLycosIMAP.prototype =
             this.m_HttpComms.setContentType("text/xml");
             this.m_HttpComms.setURI(szLocation);
             this.m_HttpComms.setRequestMethod("PROPFIND");
-            this.m_HttpComms.addData(LycosSchema);
+            this.m_HttpComms.addData(kLycosSchema);
             var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);                             
             if (!bResult) throw new Error("httpConnection returned false");      
             
@@ -200,7 +183,7 @@ nsLycosIMAP.prototype =
         
             mainObject.m_Log.Write("nsLycosIMAP.js - loginOnloadHandler - get url - start");
             mainObject.m_iAuth=0; //reset login counter
-            mainObject.m_szFolderURI = szResponse.match(LycosIMAPFolderPattern)[1];
+            mainObject.m_szFolderURI = szResponse.match(kLycosFolder)[1];
             mainObject.m_Log.Write("nsLycosIMAP.js - loginOnloadHandler - get folder url - " + mainObject.m_szFolderURI);
           
             if (!mainObject.m_SessionData)
@@ -349,7 +332,7 @@ nsLycosIMAP.prototype =
             {//donwload folder list
                 this.m_HttpComms.setContentType("text/xml");
                 this.m_HttpComms.setRequestMethod("PROPFIND");
-                this.m_HttpComms.addData(LycosFolderIMAPSchema);
+                this.m_HttpComms.addData(kLycosFolderSchema);
                 this.m_HttpComms.setURI(this.m_szFolderURI);
                 var bResult = this.m_HttpComms.send(this.listOnloadHandler, this);                             
                 if (!bResult) throw new Error("httpConnection returned false");
@@ -393,7 +376,7 @@ nsLycosIMAP.prototype =
             //get root folders
             mainObject.m_Log.Write("nsLycosIMAP.js - listOnloadHandler - get root folder list - START");
             
-            var aszResponses = szResponse.match(LycosIMAPResponse);
+            var aszResponses = szResponse.match(kLycosResponse);
             mainObject.m_Log.Write("nsLycosIMAP.js - listOnloadHandler - folders - \n" + aszResponses);
             
             var szResponse = "";
@@ -430,16 +413,16 @@ nsLycosIMAP.prototype =
             this.m_Log.Write("nsLycosIMAP.js - processFolder - START");
             this.m_Log.Write("nsLycosIMAP.js - processFolder - szFolder " +szFolder);
             
-            var szHref = szFolder.match(LycosIMAPHref)[1];
+            var szHref = szFolder.match(kLycosHref)[1];
                     
             var szDisplayName = null;
             try
             {
-                szDisplayName = szFolder.match(LycosIMAPDisplayName)[1];
+                szDisplayName = szFolder.match(kLycosDisplayName)[1];
             }
             catch(e)
             {
-                szDisplayName = szFolder.match(LycosIMAPSpecial)[1];
+                szDisplayName = szFolder.match(kLycosSpecial)[1];
             }
                           
             var szHiererchy = null;
@@ -456,9 +439,9 @@ nsLycosIMAP.prototype =
                 szHiererchy = "INBOX." + szDisplayName;
             } 
             
-            var iUnreadCount = parseInt(szFolder.match(LycosIMAPUnreadCount)[1]);
-            var iMsgCount =  parseInt(szFolder.match(LycosIMAPMsgCount)[1]);
-            var szUID =  szFolder.match(LycosIMAPID)[1];
+            var iUnreadCount = parseInt(szFolder.match(kLycosUnreadCount)[1]);
+            var iMsgCount =  parseInt(szFolder.match(kLycosMsgCount)[1]);
+            var szUID =  szFolder.match(kLycosID)[1];
             
             this.m_oFolder.addFolder(this.m_szUserName, szHiererchy, szHref, szUID, 0, 0);
             this.m_Log.Write("nsLycosIMAP.js - processFolder - END");
@@ -541,7 +524,7 @@ nsLycosIMAP.prototype =
                 this.m_HttpComms.setURI(this.m_szFolderURI);
                 this.m_HttpComms.setRequestMethod("PROPFIND");
                 this.m_HttpComms.setContentType("text/xml");
-                this.m_HttpComms.addData(LycosFolderIMAPSchema);
+                this.m_HttpComms.addData(kLycosFolderSchema);
                 var bResult = this.m_HttpComms.send(this.selectOnloadHandler, this);                             
                 if (!bResult) throw new Error("httpConnection returned false");
             }
@@ -561,7 +544,7 @@ nsLycosIMAP.prototype =
                 this.m_HttpComms.setURI(oHref.value);
                 this.m_HttpComms.setContentType("text/xml");
                 this.m_HttpComms.setRequestMethod("PROPFIND");
-                this.m_HttpComms.addData(LycosMailIMAPSchema);
+                this.m_HttpComms.addData(kLycosMailSchema);
                 var bResult = this.m_HttpComms.send(this.selectOnloadHandler, this);                             
                 if (!bResult) throw new Error("httpConnection returned false"); 
             }
@@ -605,7 +588,7 @@ nsLycosIMAP.prototype =
                 case 0:   //folder list
                     mainObject.m_Log.Write("nsLycosIMAP.js - selectOnloadHandler - get folder list - START");
                     
-                    var aszResponses = szResponse.match(LycosIMAPResponse);
+                    var aszResponses = szResponse.match(kLycosResponse);
                     mainObject.m_Log.Write("nsLycosIMAP.js - selectOnloadHandler - folders - \n" + aszResponses);
                     for (i=0; i<aszResponses.length; i++)
                     {
@@ -626,7 +609,7 @@ nsLycosIMAP.prototype =
                     mainObject.m_HttpComms.setContentType("text/xml");
                     mainObject.m_HttpComms.setURI(oHref.value);
                     mainObject.m_HttpComms.setRequestMethod("PROPFIND");
-                    mainObject.m_HttpComms.addData(LycosMailIMAPSchema);
+                    mainObject.m_HttpComms.addData(kLycosMailSchema);
                     var bResult = mainObject.m_HttpComms.send(mainObject.selectOnloadHandler, this);                             
                     if (!bResult) throw new Error("httpConnection returned false"); 
                 
@@ -637,7 +620,7 @@ nsLycosIMAP.prototype =
                     mainObject.m_Log.Write("nsLycosIMAP.js - selectOnloadHandler - get msg list - START");
                     
                     //get uid list
-                    var aszResponses = szResponse.match(LycosIMAPResponse);
+                    var aszResponses = szResponse.match(kLycosResponse);
                     mainObject.m_Log.Write("nsLycosIMAP.js - selectOnloadHandler - \n" + aszResponses);
                     delete mainObject.m_aRawData;
                     if (aszResponses)
@@ -694,7 +677,7 @@ nsLycosIMAP.prototype =
             this.m_HttpComms.setURI(oHref.value);
             this.m_HttpComms.setContentType("text/xml");
             this.m_HttpComms.setRequestMethod("PROPFIND");
-            this.m_HttpComms.addData(LycosMailIMAPSchema);
+            this.m_HttpComms.addData(kLycosMailSchema);
             var bResult = this.m_HttpComms.send(this.noopOnloadHandler, this);                             
             if (!bResult) throw new Error("httpConnection returned false"); 
             this.m_Log.Write("nsLycosIMAP.js - noop - END");   
@@ -728,7 +711,7 @@ nsLycosIMAP.prototype =
                 throw new Error("return status " + httpChannel.responseStatus);
             
             //get uid list
-            var aszResponses = szResponse.match(LycosIMAPResponse);
+            var aszResponses = szResponse.match(kLycosResponse);
             mainObject.m_Log.Write("nsLycosIMAP.js - noopOnloadHandler - \n" + aszResponses);
             delete mainObject.m_aRawData;
             if (aszResponses)
@@ -767,44 +750,44 @@ nsLycosIMAP.prototype =
         
         this.m_Log.Write("nsLycosIMAP.js - processMSG - handling data");
         
-        var bRead = parseInt(Item.match(LycosIMAPRead)[1]) ? true : false;
+        var bRead = parseInt(Item.match(kLycosRead)[1]) ? true : false;
         this.m_Log.Write("nsLycosIMAP.js - processMSG - bRead -" + bRead);
 
-        var szMSGUri = Item.match(LycosIMAPHref)[1]; //uri
+        var szMSGUri = Item.match(kLycosHref)[1]; //uri
         this.m_Log.Write("nsLycosIMAP.js - processMSG - szMSGUri -" + szMSGUri);
         
         var szID = szMSGUri.match(/MSG(.*?)$/)[1];
         this.m_Log.Write("nsLycosIMAP.js - processMSG - szID -" + szID);
                                 
-        var iSize = parseInt(Item.match(LycosIMAPSize)[1]);//size 
+        var iSize = parseInt(Item.match(kLycosSize)[1]);//size 
         this.m_Log.Write("nsLycosIMAP.js - processMSG - iSize -" + iSize);
                    
         var szTO="";
         try
         {                   
-            szTO = Item.match(LycosIMAPTo)[1].match(/[\S\d]*@[\S\d]*/);  
+            szTO = Item.match(kLycosTo)[1].match(/[\S\d]*@[\S\d]*/);  
         }
         catch(err)
         {
-            szTO = Item.match(LycosIMAPTo)[1];
+            szTO = Item.match(kLycosTo)[1];
         }
         this.m_Log.Write("nsLycosIMAP.js - processMSG - szTO -" + szTO);
         
         var szFrom = "";
         try
         {
-            szFrom = Item.match(LycosIMAPFrom)[1].match(/[\S\d]*@[\S\d]*/);
+            szFrom = Item.match(kLycosFrom)[1].match(/[\S\d]*@[\S\d]*/);
         }
         catch(err)
         {
-            szFrom = Item.match(LycosIMAPFrom)[1];    
+            szFrom = Item.match(kLycosFrom)[1];    
         }
         this.m_Log.Write("nsLycosIMAP.js - processMSG - szFrom -" + szFrom);
         
         var szSubject= "";
         try
         {
-            szSubject= Item.match(LycosIMAPSubject)[1];
+            szSubject= Item.match(kLycosSubject)[1];
         }
         catch(err){}
         this.m_Log.Write("nsLycosIMAP.js - processMSG - szSubject -" + szSubject);
@@ -812,7 +795,7 @@ nsLycosIMAP.prototype =
         var szDate = "";
         try
         {
-            var aszDateTime = Item.match(LycosIMAPDate);
+            var aszDateTime = Item.match(kLycosDate);
             var aszDate = aszDateTime[1].split("-");
             var aszTime = aszDateTime[2].split(":");
 
@@ -861,7 +844,7 @@ nsLycosIMAP.prototype =
                 this.m_HttpComms.setURI(oHref.value);
                 this.m_HttpComms.setContentType("text/xml");
                 this.m_HttpComms.setRequestMethod("PROPFIND");
-                this.m_HttpComms.addData(LycosMailIMAPSchema);
+                this.m_HttpComms.addData(kLycosMailSchema);
                 var bResult = this.m_HttpComms.send(this.fetchOnloadHandler, this);                             
                 if (!bResult) throw new Error("httpConnection returned false"); 
             }
@@ -932,7 +915,7 @@ nsLycosIMAP.prototype =
                 throw new Error("return status " + httpChannel.responseStatus);
             
             //get uid list
-            var aszResponses = szResponse.match(LycosIMAPResponse);
+            var aszResponses = szResponse.match(kLycosResponse);
             mainObject.m_Log.Write("nsLycosIMAP.js - fetchOnloadHandler - \n" + aszResponses);
             delete mainObject.m_aRawData;
             if (aszResponses)
@@ -1224,14 +1207,14 @@ nsLycosIMAP.prototype =
                 {
                     this.m_Log.Write("nsLycosIMAP.js - store - Unseen");
                     this.m_bStoreStatus = false;
-                    this.m_HttpComms.addData(LycosPROPUnReadSchema);
+                    this.m_HttpComms.addData(kLycosUnReadSchema);
                 }
                 
                 if (szDataItem.search(/\/seen/i)!=-1)
                 {
                     this.m_Log.Write("nsLycosIMAP.js - store - seen");
                     this.m_bStoreStatus = true;
-                    this.m_HttpComms.addData(LycosPROPReadSchema);
+                    this.m_HttpComms.addData(kLycosReadSchema);
                 }
                 
                 if (szDataItem.search(/\/delete/i)!=-1)
@@ -1381,9 +1364,9 @@ nsLycosIMAP.prototype =
                 mainObject.m_HttpComms.setRequestMethod("PROPPATCH");
                 
                 if (mainObject.m_bStoreStatus)
-                    mainObject.m_HttpComms.addData(LycosPROPUnReadSchema)
+                    mainObject.m_HttpComms.addData(kLycosUnReadSchema)
                 else
-                    mainObject.m_HttpComms.addData(LycosPROPUnReadSchema);
+                    mainObject.m_HttpComms.addData(kLycosReadSchema);
                     
                 var bResult = mainObject.m_HttpComms.send(mainObject.storeOnloadHandler, mainObject);                             
                 if (!bResult) throw new Error("httpConnection returned false");
@@ -1858,7 +1841,7 @@ nsLycosIMAP.prototype =
                     mainObject.m_Log.Write("nsLycosIMAP.js - createFolderOnloadHandler - get folder list - START");
                     mainObject.m_HttpComms.setContentType("text/xml");
                     mainObject.m_HttpComms.setRequestMethod("PROPFIND");
-                    mainObject.m_HttpComms.addData(LycosFolderIMAPSchema);
+                    mainObject.m_HttpComms.addData(kLycosFolderSchema);
                     mainObject.m_HttpComms.setURI(mainObject.m_szFolderURI);
                     var bResult = mainObject.m_HttpComms.send(mainObject.listOnloadHandler, mainObject);                             
                     if (!bResult) throw new Error("httpConnection returned false");
@@ -1869,7 +1852,7 @@ nsLycosIMAP.prototype =
                 case 1:  //add new folder details
                     mainObject.m_Log.Write("nsLycosIMAP.js - createFolderOnloadHandler - new folder details - START");
                 
-                    var aszResponses = szResponse.match(LycosIMAPResponse);
+                    var aszResponses = szResponse.match(kLycosResponse);
                     mainObject.m_Log.Write("nsLycosIMAP.js - createFolderOnloadHandler - folders - \n" + aszResponses);
                     for (i=0; i<aszResponses.length; i++)
                     {

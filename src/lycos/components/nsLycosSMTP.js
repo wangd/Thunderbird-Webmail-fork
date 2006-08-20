@@ -3,8 +3,6 @@ const nsLycosSMTPClassID = Components.ID("{840fbdf0-103b-11da-8cd6-0800200c9a66}
 const nsLycosSMTPContactID = "@mozilla.org/LycosSMTP;1";
 const ExtLycosGuid = "{10e6e940-8a9c-11d9-9669-0800200c9a66}";
 
-const LycosSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:h=\"http://schemas.microsoft.com/hotmail/\" xmlns:hm=\"urn:schemas:httpmail:\">\r\n<D:prop>\r\n<h:adbar/>\r\n<hm:contacts/>\r\n<hm:inbox/>\r\n<hm:outbox/>\r\n<hm:sendmsg/>\r\n<hm:sentitems/>\r\n<hm:deleteditems/>\r\n<hm:drafts/>\r\n<hm:msgfolderroot/>\r\n<h:maxpoll/>\r\n<h:sig/>\r\n</D:prop>\r\n</D:propfind>\r\n";
-const LycosSendMsgPattern = /<hm:sendmsg>(.*?)<\/hm:sendmsg>/;
 /******************************  Lycos ***************************************/
 function nsLycosSMTP()
 {
@@ -26,6 +24,13 @@ function nsLycosSMTP()
         
         this.m_Log.Write("nsLycosSMTP.js - Constructor - START");   
        
+       
+        if (typeof kLycosConstants == "undefined")
+        {
+            this.m_Log.Write("nsLycosSMTP.js - Constructor - loading constants");
+            scriptLoader.loadSubScript("chrome://lycos/content/Lycos-Constants.js");
+        }   
+        
         this.m_prefData = null;
         
         this.m_bAuthorised = false;
@@ -129,7 +134,7 @@ nsLycosSMTP.prototype =
             this.m_HttpComms.setContentType("text/xml");
             this.m_HttpComms.setURI(szLocation);
             this.m_HttpComms.setRequestMethod("PROPFIND");
-            this.m_HttpComms.addData(LycosSchema);
+            this.m_HttpComms.addData(kLycosSchema);
             var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);                             
             if (!bResult) throw new Error("httpConnection returned false");
             
@@ -166,7 +171,7 @@ nsLycosSMTP.prototype =
             if (httpChannel.responseStatus != 200 && httpChannel.responseStatus != 207) 
                 throw new Error("return status " + httpChannel.responseStatus);
             
-            mainObject.m_szSendUri = szResponse.match(LycosSendMsgPattern)[1];
+            mainObject.m_szSendUri = szResponse.match(kLycosSendMsg)[1];
             mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - Send URi - " +mainObject.m_szSendUri);
             //server response
             mainObject.serverComms("235 Your In\r\n");

@@ -2,29 +2,7 @@
 const nsLycosClassID = Components.ID("{222b6e70-8a87-11d9-9669-0800200c9a66}"); 
 const nsLycosContactID = "@mozilla.org/LycosPOP;1";
 
-const LycosMSGIDPattern = /[^\/]+$/;
 
-const LycosSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:h=\"http://schemas.microsoft.com/hotmail/\" xmlns:hm=\"urn:schemas:httpmail:\">\r\n<D:prop>\r\n<h:adbar/>\r\n<hm:contacts/>\r\n<hm:inbox/>\r\n<hm:outbox/>\r\n<hm:sendmsg/>\r\n<hm:sentitems/>\r\n<hm:deleteditems/>\r\n<hm:drafts/>\r\n<hm:msgfolderroot/>\r\n<h:maxpoll/>\r\n<h:sig/>\r\n</D:prop>\r\n</D:propfind>\r\n";
-const LycosFolderSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:hm=\"urn:schemas:httpmail:\">\r\n<D:prop>\r\n<D:isfolder/>\r\n<D:displayname/>\r\n<hm:special/>\r\n<D:hassubs/>\r\n<D:nosubs/>\r\n<hm:unreadcount/>\r\n<D:visiblecount/>\r\n<hm:special/>\r\n</D:prop>\r\n</D:propfind>\r\n";
-const LycosMailSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:hm=\"urn:schemas:httpmail:\" xmlns:m=\"urn:schemas:mailheader:\">\r\n<D:prop>\r\n<D:isfolder/>\r\n<hm:read/>\r\n<m:hasattachment/>\r\n<m:to/>\r\n<m:from/>\r\n<m:subject/>\r\n<m:date/>\r\n<D:getcontentlength/>\r\n</D:prop>\r\n</D:propfind>\r\n";
-const LycosReadSchema = "<?xml version=\"1.0\"?>\r\n<D:propertyupdate xmlns:D=\"DAV:\" xmlns:hm=\"urn:schemas:httpmail:\">\r\n<D:set>\r\n<D:prop>\r\n<hm:read>1</hm:read>\r\n</D:prop>\r\n</D:set>\r\n</D:propertyupdate>";                   
-
-const LycosResponse = /<D:response>[\S\d\s\r\n]*?<\/D:response>/gm;
-const LycosHref = /<D:href>(.*?)<\/D:href>/i;
-const LycsoHrefSearch = /<D:href>.*?<\/D:href>/ig;
-const LycosSize = /<D:getcontentlength>(.*?)<\/D:getcontentlength>/i;
-const LycosJunkPattern  = /<D:href>(.*?Courrier%20ind%26eacute;sirable.*?)<\/D:href>/i;
-const LycosJunkPatternAlt = /<D:href>(.*?junk.*?)<\/D:href>/i;
-const LycosInBoxPattern = /<D:href>(.*?inbox.*?)<\/D:href>/;
-const LycosFolderPattern = /<hm:msgfolderroot>(.*?)<\/hm:msgfolderroot>/;
-const LycosFolderName = /folders\/(.*?)\//i;
-const LycosTrashPattern = /<hm:deleteditems>(.*?)<\/hm:deleteditems>/;
-const LycosPOPRead = /<hm:read>(.*?)<\/hm:read>/i;
-const LycosPOPTo = /<m:to>(.*?)<\/m:to>/i;
-const LycosPOPFrom = /<m:from>(.*?)<\/m:from>/i;
-const LycosPOPSubject = /<m:subject>\s(.*?)<\/m:subject>/i;
-const LycosPOPDate = /<m:date>(.*?)T(.*?)<\/m:date>/i;
-const LycosPOPDisplayName = /<D:displayname>(.*?)<\/D:displayname>/i;
 /***********************  Lycos ********************************/
 
 
@@ -41,14 +19,21 @@ function nsLycos()
         scriptLoader.loadSubScript("chrome://lycos/content/Lycos-Prefs-Data.js");
         
         var date = new Date();
-        
         var  szLogFileName = "Lycos Log - " + date.getHours()+ "-" + date.getMinutes() + "-"+ date.getUTCMilliseconds() +" -";
         this.m_Log = new DebugLog("webmail.logging.comms", 
-                                       "{3c8e8390-2cf6-11d9-9669-0800200c9a66}" ,
-                                       szLogFileName); 
+                                  "{3c8e8390-2cf6-11d9-9669-0800200c9a66}" ,
+                                  szLogFileName); 
         
         this.m_Log.Write("nsLycos.js - Constructor - START");   
-       
+        
+        
+        if (typeof kLycosConstants == "undefined")
+        {
+            this.m_Log.Write("nsLycos.js - Constructor - loading constants");
+            scriptLoader.loadSubScript("chrome://lycos/content/Lycos-Constants.js");
+        }            
+
+        
         this.m_prefData = null;
         
         this.m_szUserName = null;   
@@ -154,7 +139,7 @@ nsLycos.prototype =
             this.m_HttpComms.setContentType("text/xml");
             this.m_HttpComms.setURI(szLocation);
             this.m_HttpComms.setRequestMethod("PROPFIND");
-            this.m_HttpComms.addData(LycosSchema);
+            this.m_HttpComms.addData(kLycosSchema);
             var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);                             
             if (!bResult) throw new Error("httpConnection returned false");
             
@@ -190,9 +175,9 @@ nsLycos.prototype =
              switch(mainObject.m_iStage)
             {
                 case 0: //get baisc uri's
-                    var szFolderURI = szResponse.match(LycosFolderPattern)[1];
+                    var szFolderURI = szResponse.match(kLycosFolder)[1];
                     mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - get folder url - " + szFolderURI);
-                    mainObject.m_szTrashURI = szResponse.match(LycosTrashPattern)[1];
+                    mainObject.m_szTrashURI = szResponse.match(kLycosTrash)[1];
                     mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - get trash url - " + mainObject.m_szTrashURI);
                      
                     //download folder list;
@@ -200,14 +185,14 @@ nsLycos.prototype =
                     mainObject.m_HttpComms.setContentType("text/xml");
                     mainObject.m_HttpComms.setURI(szFolderURI);
                     mainObject.m_HttpComms.setRequestMethod("PROPFIND");
-                    mainObject.m_HttpComms.addData(LycosFolderSchema);
+                    mainObject.m_HttpComms.addData(kLycosFolderSchema);
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);                             
                     if (!bResult) throw new Error("httpConnection returned false");
                 break;
                 
                  case 1: //process folder uri's
                     
-                    var aszFolderList = szResponse.match(LycosResponse );
+                    var aszFolderList = szResponse.match(kLycosResponse );
                     mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - aszFolderList :" +aszFolderList);
                     
                     for (j=0; j<mainObject.m_prefData.aszFolder.length; j++)
@@ -217,13 +202,13 @@ nsLycos.prototype =
                         
                         for (var i=0; i<aszFolderList.length; i++)
                         {
-                            var szFolderURL = aszFolderList[i].match(LycosHref )[1];
+                            var szFolderURL = aszFolderList[i].match(kLycosHref )[1];
                             mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - szFolderURL : "+szFolderURL );
-                            var szFolderName = szFolderURL.match(LycosFolderName )[1];
+                            var szFolderName = szFolderURL.match(kLycosFolderName )[1];
                             mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - szFolderName : "+szFolderName );
                             var szDisplayName = "";
-                            if (aszFolderList[i].search(LycosPOPDisplayName )!=-1)
-                                szDisplayName =aszFolderList[i].match(LycosPOPDisplayName)[1];
+                            if (aszFolderList[i].search(kLycosDisplayName )!=-1)
+                                szDisplayName =aszFolderList[i].match(kLycosDisplayName)[1];
                             mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - szDisplayName : "+szDisplayName );
                             
                             if (szFolderName.search(regExp)!=-1 || szDisplayName.search(regExp)!=-1)
@@ -273,7 +258,7 @@ nsLycos.prototype =
             var szUri = this.m_aszFolderURLList.shift();
             this.m_HttpComms.setURI(szUri);
             this.m_HttpComms.setRequestMethod("PROPFIND");
-            this.m_HttpComms.addData(LycosMailSchema);
+            this.m_HttpComms.addData(kLycosMailSchema);
             var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this);                             
             if (!bResult) throw new Error("httpConnection returned false");
             this.m_bStat = true;              
@@ -305,7 +290,7 @@ nsLycos.prototype =
             if (httpChannel.responseStatus != 200 && httpChannel.responseStatus != 207) 
                 throw new Error("return status " + httpChannel.responseStatus);
            
-            var aszResponses = szResponse.match(LycosResponse);
+            var aszResponses = szResponse.match(kLycosResponse);
             mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - mailbox - \n" + aszResponses);
             if (aszResponses)
             {
@@ -321,7 +306,7 @@ nsLycos.prototype =
                 mainObject.m_HttpComms.setContentType("text/xml");
                 mainObject.m_HttpComms.setURI(szUri);
                 mainObject.m_HttpComms.setRequestMethod("PROPFIND");
-                mainObject.m_HttpComms.addData(LycosMailSchema);
+                mainObject.m_HttpComms.addData(kLycosMailSchema);
                 var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler, mainObject);                             
                 if (!bResult) throw new Error("httpConnection returned false");
             }
@@ -419,15 +404,15 @@ nsLycos.prototype =
         var bRead = true;
         if (this.m_prefData.bDownloadUnread)
         {
-            bRead = parseInt(rawData.match(LycosPOPRead)[1]) ? false : true;
+            bRead = parseInt(rawData.match(kLycosRead)[1]) ? false : true;
             mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - bRead -" + bRead);
         }
         
         if (bRead)
         {
             var data = new LycosPOPMSG();
-            data.szMSGUri = rawData.match(LycosHref)[1]; //uri
-            data.iSize = parseInt(rawData.match(LycosSize)[1]);//size 
+            data.szMSGUri = rawData.match(kLycosHref)[1]; //uri
+            data.iSize = parseInt(rawData.match(kLycosSize)[1]);//size 
             this.m_iTotalSize += data.iSize;
             
             //set junk mail status
@@ -440,36 +425,36 @@ nsLycos.prototype =
             var szTO="";
             try
             {                   
-                szTO = rawData.match(LycosPOPTo)[1].match(/[\S\d]*@[\S\d]*/);  
+                szTO = rawData.match(kLycosTo)[1].match(/[\S\d]*@[\S\d]*/);  
             }
             catch(err)
             {
-                szTO = rawData.match(LycosPOPTo)[1];
+                szTO = rawData.match(kLycosTo)[1];
             }
             data.szTo = szTO;
             
             var szFrom = "";
             try
             {
-                szFrom = rawData.match(LycosPOPFrom)[1].match(/[\S\d]*@[\S\d]*/);
+                szFrom = rawData.match(kLycosFrom)[1].match(/[\S\d]*@[\S\d]*/);
             }
             catch(err)
             {
-                szFrom = rawData.match(LycosPOPFrom)[1];    
+                szFrom = rawData.match(kLycosFrom)[1];    
             }
             data.szFrom = szFrom;
             
             var szSubject= "";
             try
             {
-                szSubject= rawData.match(LycosPOPSubject)[1];
+                szSubject= rawData.match(kLycosSubject)[1];
             }
             catch(err){}
             data.szSubject = szSubject;
             
             try
             {
-                var aszDateTime = rawData.match(LycosPOPDate);
+                var aszDateTime = rawData.match(kLycosDate);
                 var aszDate = aszDateTime[1].split("-");
                 var aszTime = aszDateTime[2].split(":");
     
@@ -520,7 +505,7 @@ nsLycos.prototype =
                 this.m_HttpComms.setContentType("text/xml");
                 this.m_HttpComms.setURI(this.m_szFolderURI);
                 this.m_HttpComms.setRequestMethod("PROPFIND");
-                this.m_HttpComms.addData(LycosFolderSchema);
+                this.m_HttpComms.addData(kLycosFolderSchema);
                 var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this);                             
                 if (!bResult) throw new Error("httpConnection returned false");
             }
@@ -556,7 +541,7 @@ nsLycos.prototype =
                 var szEmailURL = this.m_aMsgDataStore[i].szMSGUri;
                 this.m_Log.Write("nsLycos.js - getMessageIDs - Email URL : " +szEmailURL);
                
-                var szEmailID = szEmailURL.match(LycosMSGIDPattern);
+                var szEmailID = szEmailURL.match(kLycosMSGID);
                                     
                 this.m_Log.Write("nsLycos.js - getMessageIDs - IDS : " +szEmailID);    
                 szPOPResponse+=(i+1) + " " + szEmailID + "\r\n"; 
@@ -686,7 +671,7 @@ nsLycos.prototype =
                     var szUri = httpChannel.URI.spec;
                     mainObject.m_HttpComms.setURI(szUri);
                     mainObject.m_HttpComms.setRequestMethod("PROPPATCH");
-                    mainObject.m_HttpComms.addData(LycosReadSchema);
+                    mainObject.m_HttpComms.addData(kLycosReadSchema);
                     var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);          
                     mainObject.m_iStage++;          
                 break;
@@ -728,7 +713,7 @@ nsLycos.prototype =
             
             var szStart = "<?xml version=\"1.0\"?>\r\n<D:move xmlns:D=\"DAV:\">\r\n<D:target>\r\n";
             var szEnd = "</D:target>\r\n</D:move>";
-            var szMsgID =  szPath.match(LycosMSGIDPattern); 
+            var szMsgID =  szPath.match(kLycosMSGID); 
             var sztemp ="<D:href>"+szMsgID+"</D:href>\r\n"
             var szData = szStart + sztemp + szEnd;
             
@@ -824,7 +809,7 @@ nsLycos.prototype =
             this.m_HttpComms.setContentType("text/xml");
             this.m_HttpComms.setURI(this.m_szTrashURI);
             this.m_HttpComms.setRequestMethod("PROPFIND");
-            this.m_HttpComms.addData(LycosMailSchema);
+            this.m_HttpComms.addData(kLycosMailSchema);
             var bResult = this.m_HttpComms.send(this.logoutOnloadHandler, this);                             
             if (!bResult) throw new Error("httpConnection returned false");           
             this.m_iStage=0;
@@ -863,7 +848,7 @@ nsLycos.prototype =
             {
               
                 case 0:
-                    var aszResponses = szResponse.match(LycosResponse);
+                    var aszResponses = szResponse.match(kLycosResponse);
                     mainObject.m_Log.Write("nsLycos.js - logoutOnloadHandler - trash - \n" + aszResponses);
                     if (aszResponses)
                     {
@@ -873,8 +858,8 @@ nsLycos.prototype =
                         var szDeleteMsg= szStart;
                         for (i=0; i<aszResponses.length; i++)
                         {
-                            var szMSGUri = aszResponses[i].match(LycosHref)[1]; //uri
-                            var szMsgID =  szMSGUri.match(LycosMSGIDPattern); //id
+                            var szMSGUri = aszResponses[i].match(kLycosHref)[1]; //uri
+                            var szMsgID =  szMSGUri.match(kLycosMSGID); //id
                             var temp ="<D:href>"+szMsgID+"</D:href>\r\n"
                             szDeleteMsg+=temp;
                         }
