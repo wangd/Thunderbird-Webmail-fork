@@ -3,37 +3,6 @@ const nsYahooSMTPClassID = Components.ID("{958266e0-e2a6-11d9-8cd6-0800200c9a66}
 const nsYahooSMTPContactID = "@mozilla.org/YahooSMTP;1";
 const ExtYahooGuid = "{d7103710-6112-11d9-9669-0800200c9a66}";
 
-const patternYahooSecure = /<a href="(.*?https.*?login.*?)".*?>/;
-const patternYahooLoginForm = /<form.*?name="login_form".*?>[\S\s]*?<\/form>/gm;
-const patternYahooAction = /<form.*?action="(.*?)".*?>/;
-const patternYahooInput = /<input.*?type=['|"]*hidden['|"]*.*?name=.*?value=[\s\S]*?>/igm;
-const patternYahooLogInSpam = /<input type="hidden" name=".secdata" value=".*?">/igm;
-const patternYahooSpanURI =/<td colspan="2">[\s\S]*?<img src="(https.*?)".*?>[\s\S]*?<img src=".*?error.gif.*?".*?>[\s\S]*?<\/td>/im;
-const patternYahooFile = /<input.*?type="*file"*.*?name=.*?>/igm;
-const patternYahooNameAlt = /name=['|"]*([\S]*)['|"]*/;
-const patternYahooAltValue = /value=['|"]*([\S\s]*)['|"]*[\s]*>/;
-const patternYahooRedirect = /<a href=['|"]*(.*?)['|"]*>/;
-const patternYahooCompose = /location="*(http:\/\/.*?Compose\?YY=.*?)"*/i;
-const patternYahooComposeForm = /<form.*?name="*Compose"*.*?>[\S\s]*?<\/form>/igm;
-const patternYahooAttachmentForm = /<form.*?name="*Attachments"*.*?>[\S\s]*?<\/form>/igm;
-const patternYahooAttachCheck = /javascript\:VirusScanResults\(0\)/igm;
-const patternYahooImageVerifiaction = /<form.*?name=ImgVerification[\S\s]*?>[\s\S]*?<\/form>/igm;
-const patternYahooImage = /<input.*?name="IMG".*?value="(.*?)">/i;
-const patternYahooImageAction = /<form.*?name=ImgVerification.*?action="([\S\s]*?)">/i;
-const PatternYahooLogout = /Logout/im;
-
-
-/******************************  BETA ***************************************/
-const kSendMessge = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><m:SendMessage xmlns:m=\"urn:yahoo:ymws\"><param1><greq gve=\"8\"><gid>cg</gid></greq><message><to>TOADDRESS</to><bcc>BCCEMAILADDRESS</bcc><cc>-CCEMAILADDRESS</cc><from><addr>FROMADDRESS</addr></from><reply-to><addr>FROMADDRESS</addr></reply-to><body>EMAILBODY</body><subject>EMAILSUBJECT</subject></message></param1></m:SendMessage></SOAP-ENV:Body></SOAP-ENV:Envelope>";
-const kPatternSendMSGResponse = "<ymws:SendMessageResponse.*?>([\s\S]*?)<\/ymws:SendMessageResponse>";
-const kPatternWssid = /wssid.*?'(.*?)',/i;
-const kPatternWebserviceUrl = /webserviceUrl.*?'(.*?)',/i;
-const kPatternLogOut = /exit/ig;
-const kPatternAttchUploadForm = /<form.*?id="upload_form".*?>([\s\S]*?)<\/form>/i;
-const kPatternInput = /<input.*?type="hidden".*?>/igm;
-const kPatternSpamImageURL = /<detail>(.*?)<\/detail>/i;
-const kPatternGreq = /<greq.*?>(.*?)<\/greq>/i;
-
 /******************************  Yahoo ***************************************/
 function nsYahooSMTP()
 {
@@ -53,6 +22,12 @@ function nsYahooSMTP()
         this.m_Log = new DebugLog("webmail.logging.comms", ExtYahooGuid, szLogFileName); 
         
         this.m_Log.Write("nsYahooSMTP.js - Constructor - START");   
+       
+        if (typeof kYahooConstants == "undefined")
+        {
+            this.m_Log.Write("nsYahooSMTP.js - Constructor - loading constants");
+            scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-Constants.js");
+        } 
        
         this.m_bAuthorised = false;
         this.m_szUserName = null;   

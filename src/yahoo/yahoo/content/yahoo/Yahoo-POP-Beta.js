@@ -165,7 +165,7 @@ YahooPOPBETA.prototype =
                 throw new Error("return status " + httpChannel.responseStatus);
              
              
-            if (szResponse.search(patternYahooForm)!=-1) 
+            if (szResponse.search(patternYahooLoginForm)!=-1) 
             {
                 if ( mainObject.m_iLoginCount<=3)
                 {                    
@@ -190,7 +190,7 @@ YahooPOPBETA.prototype =
             switch (mainObject.m_iStage)
             {
                 case 0: // login page               
-                    var aLoginForm = szResponse.match(patternYahooForm);
+                    var aLoginForm = szResponse.match(patternYahooLoginForm);
                     if (aLoginForm == null)
                          throw new Error("error parsing yahoo login web page");
                     mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - loginForm " + aLoginForm);
@@ -199,7 +199,7 @@ YahooPOPBETA.prototype =
                     var szLoginURL = aLoginForm[0].match(patternYahooAction)[1];
                     mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - loginURL " + szLoginURL);
                     
-                    var aLoginData = aLoginForm[0].match(patternYahooLogIn);
+                    var aLoginData = aLoginForm[0].match(patternYahooInput);
                     mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - loginData " + aLoginData);
                    
                     for (i=0; i<aLoginData.length; i++)
@@ -324,7 +324,7 @@ YahooPOPBETA.prototype =
                 
                 
                 case 4: //download spam image
-                    mainObject.m_aLoginForm = szResponse.match(patternYahooForm);
+                    mainObject.m_aLoginForm = szResponse.match(patternYahooLoginForm);
                     if ( mainObject.m_aLoginForm  == null)
                          throw new Error("error parsing yahoo login web page");
                     mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - loginForm Spam " +  mainObject.m_aLoginForm ); 
@@ -352,7 +352,7 @@ YahooPOPBETA.prototype =
                     var szLoginURL = mainObject.m_aLoginForm[0].match(patternYahooAction)[1];
                     mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - loginURL " + szLoginURL);
                     
-                    var aLoginData = mainObject.m_aLoginForm[0].match(patternYahooLogIn);
+                    var aLoginData = mainObject.m_aLoginForm[0].match(patternYahooInput);
                     mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - loginData " + aLoginData);
                    
                     for (i=0; i<aLoginData.length; i++)

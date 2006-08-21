@@ -3,72 +3,7 @@ const nsYahooClassID = Components.ID("{bfacf8a0-6447-11d9-9669-0800200c9a66}");
 const nsYahooContactID = "@mozilla.org/YahooPOP;1";
 const ExtYahooGuid = "{d7103710-6112-11d9-9669-0800200c9a66}";
 
-const patternYahooSecure = /<a href="(.*?https.*?login.*?)".*?>/;
-const patternYahooForm = /<form.*?name="login_form".*?>[\S\s]*?<\/form>/gm;
-const patternYahooAction = /<form.*?action="(.*?)".*?>/;
-const patternYahooLogIn = /<input.*?type=['|"]*hidden['|"]*.*?name=.*?value=.*?>/igm;
-const patternYahooLogInSpam = /<input type="hidden" name=".secdata" value=".*?">/igm;
-const patternYahooSpanURI =/<td colspan="2">[\s\S]*?<img src="(https.*?)".*?>[\s\S]*?<img src=".*?error.gif.*?".*?>[\s\S]*?<\/td>/im;
-const patternYahooNameAlt = /name=['|"]*([\S]*)['|"]*/;
-const patternYahooAltValue = /value=['|"]*([\S\s]*)['|"]*[\s]*>/;
-const patternYahooRedirect = /<a href=['|"]*(.*?)['|"]*>/; 
-const patternYahooMSGIdTable = /<table id="datatable".*?>[\S\s]*?<\/table>/m;
-const patternYahooMsgRow = /<tr.*?>[\S\s]*?<\/tr>/gm;
-const patternYahooMsgID = /href="(.*?MsgId.*?)"/;
-const patternYahooMsgSize = /<td.*?>.*?<\/td>/gm;
-const patternYahooNextPage = /<a href=".*?next=1.*?">/m;
-const patternYahooNextURI = /<a href=["|']*(.*?)["|']*>/
-const PatternYahooID =/MsgId=(.*?)&/;
-const PatternYahooDeleteForm = /<form name=messageList.*?>[\S\s]*?<\/form>/;
-const PatternYahooDeleteURL = /action="(.*?)"/;
-const PatternYahooDeleteInput = /<input.*?hidden.*?>/gm;
-const PatternYahooBox =/(box=.*?)#/;
-const PatternYahooBoxAlt =/(box=.*?)$/;
-const PatternYahooUnRead = /msgnew/;
-const PatternYahooFolders = /".*?ShowFolder\?box=.*?"/gim;
-const PatternYahooFoldersPart = /"(.*?ShowFolder\?box=.*?)"/gim;
-const PatternYahooFolderURL =/'(.*?Folders\?YY.*?)'"/i;
-const PatternYahooFolderBox = /box=(.*?)&/i;
-const PatternYahooFolderBoxAlt = /box=(.*?)$/i;
-const PatternYahooLogout = /Logout/im;
-
-
-//***************** BETA  **********************************//
-const kLstMsgs = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><m:LstMsgs xmlns:m=\"urn:yahoo:ymws\"><param1 startMid=\"0\" numMid=\"300\" startInfo=\"0\" numInfo=\"65\" startBody=\"0\" numBody=\"0\"><greq gve=\"8\" getUserData=\"true\" getMetaData=\"true\"><gid>cg</gid></greq><sortKey>date</sortKey><sortOrder>down</sortOrder><fi fname=\"folderName\"/></param1></m:LstMsgs></SOAP-ENV:Body></SOAP-ENV:Envelope>";
-const kListFolders = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><m:ListFolders xmlns:m=\"urn:yahoo:ymws\"><param1><greq gve=\"8\" ListFolders=\"true\" resetUnseen=\"true\"><gid>cg</gid></greq></param1></m:ListFolders></SOAP-ENV:Body></SOAP-ENV:Envelope>";
-const kMSG = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><m:GetMessageBodyPart xmlns:m=\"urn:yahoo:ymws\"><param1><greq gve=\"8\" gdk=\"1\"><gid>cg</gid></greq><fi fname=\"FOLDERNAME\"/><mid>MSGID</mid><truncateAt>102400000</truncateAt></param1></m:GetMessageBodyPart></SOAP-ENV:Body></SOAP-ENV:Envelope>";
-const kMSGHeaders ="<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><m:GetMessageRawHeader xmlns:m=\"urn:yahoo:ymws\"><param1><greq gve=\"8\"><gid>cg</gid></greq><fi fname=\"FOLDERNAME\"/><mid>MSGID</mid></param1></m:GetMessageRawHeader></SOAP-ENV:Body></SOAP-ENV:Envelope>";
-const kDelete = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><m:MoveMsgs xmlns:m=\"urn:yahoo:ymws\"><param1><greq gve=\"8\"><gid>cg</gid></greq><fi fname=\"FOLDERNAME\"/><tofi fname=\"Trash\"/><mid>MSGID</mid></param1></m:MoveMsgs></SOAP-ENV:Body></SOAP-ENV:Envelope>";
-const kSeen = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><m:SetMessageFlag xmlns:m=\"urn:yahoo:ymws\"><param1><greq gve=\"8\"><gid>cg</gid></greq><fi fname=\"FOLDERNAME\"/><mid>MSGID</mid><flag seen=\"1\"></flag></param1></m:SetMessageFlag></SOAP-ENV:Body></SOAP-ENV:Envelope>";
-const kPatternFolderResponse = /<ymws:ListFoldersResponse.*?>([\s\S]*?)<\/ymws:ListFoldersResponse>/i;
-const kPatternLstMsgsResponse = /<ymws:LstMsgsResponse.*?>([\s\S]*?)<\/ymws:LstMsgsResponse>/i;
-const kPatternLstHeadersResponse = /<ymws:GetMessageRawHeaderResponse.*?>([\s\S]*?)<\/ymws:GetMessageRawHeaderResponse>/i;
-const kPatternLstBodyPartResponse = /<ymws:GetMessageBodyPartResponse.*?>([\s\S]*?)<\/ymws:GetMessageBodyPartResponse>/i;
-const kPatternDeleteMSGResponse = /<ymws:MoveMsgsResponse.*?>([\s\S]*?)<\/ymws:MoveMsgsResponse.*?>/i;
-const kPatternSeenMSGResponse = /<ymws:SetMessageFlagResponse.*?>([\s\S]*?)<\/ymws:SetMessageFlagResponse.*?>/i;
-const kPatternWssid = /wssid.*?'(.*?)',/i;
-const kPatternWebserviceUrl = /webserviceUrl.*?'(.*?)',/i;
-const kPatternLogOut = /exit/ig;
-const kPatternInfo = /<minfo.*?>[\s\S]*?<\/minfo>/ig;
-const kPatternData =/<fdata.*?>/igm;
-const kPatternFolderName =/\sfname="(.*?)"/i;
-const kPatternSeen = /seen="(.*?)"/i;
-const kPatternID = /<mid>(.*?)<\/mid>/i;
-const kPatternSize = /msize="(.*?)"/i;
-const kPatternFolder = /mfolder="(.*?)"/i;
-const kPatternHeader = /<mhd>(.*?)<\/mhd>/i;
-const kPatternPart = /<part.*?>[\s\S]*?<\/part>/img;
-const kPatternPartID = /partId="(.*?)"/i;
-const kPatternPartText = /<text>(.*?)<\/text>/i;
-const kPatternPartType =/ type="(.*?)"/i;
-const kPatternPartTypeParams =/typeParams="(.*?)"/i;
-const kPatternPartSubType =/subType="(.*?)"/i;
-const kPatternPartDispParam =/dispParams="(.*?)"/i;
-const kPatternPartId = /partId="(.*?)"/i;
-const kPatternFileName = /filename=(.*?)$/i
-
 /******************************  Yahoo ***************************************/
-
 function nsYahoo()
 {
     try
@@ -84,8 +19,13 @@ function nsYahoo()
         var date = new Date();
         var  szLogFileName = "Yahoo Log - " + date.getHours()+ "-" + date.getMinutes() + "-"+ date.getUTCMilliseconds() +" -";
         this.m_Log = new DebugLog("webmail.logging.comms", ExtYahooGuid, szLogFileName); 
-        
         this.m_Log.Write("nsYahoo.js - Constructor - START");   
+       
+        if (typeof kYahooConstants == "undefined")
+        {
+            this.m_Log.Write("nsYahoo.js - Constructor - loading constants");
+            scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-Constants.js");
+        } 
        
         this.m_bAuthorised = false;
         this.m_szUserName = null;   
