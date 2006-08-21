@@ -3,21 +3,6 @@ const nsMailDotComSMTPClassID = Components.ID("{ab03f970-22cf-11da-8cd6-0800200c
 const nsMailDotComSMTPContactID = "@mozilla.org/MailDotComSMTP;1";
 const ExtMailDotComGuid = "{1ad5b3b0-b908-11d9-9669-0800200c9a66}";
 
-const patternMailRefresh = /<head>[\s]<meta http-equiv="Refresh" content="0;URL=(.*?)">[\s\S]*<\/head>/i;
-const patternMailDotComLoginForm =/<form.*?>[\S\s]*?<\/form>/igm;
-const patternMailDotComLoginURI = /action="(.*?)"/;
-const patternMailDotComLoginInput = /<input type=(?!"submit").*?>/igm;
-const patternMailDotComType = /type="(.*?)"/i;
-const patternMailDotComValue = /value=\s?['??|"??](\S*)['??|"??]/i;
-const patternMailDotComName = /name=\s?["??|'??](\S*)["??|'??]/i;
-const patternMailDotComFrame = /<frame.*?src="(.*?)".*?name="mailcomframe".*?>/i;
-const patternMailDotComComposeButtonForm = /<form.*?>[\s\S]*?<input type="button".*?compose.*?>[\s\S]*?<\/form>/igm;
-const patternMailDotComComposerURI = /'(.*?compose.*?)'/i
-const patternMailDotComComposeForm = /<form.*?composeForm.*?>[\s\S]*<\/form>/igm;
-const patternMailDotComAddURI = /document.location.href="(.*?)"/;
-const patternMailDotComAttachForm = /<form.*?attachmentForm.*?>[\s\S]*<\/form>/igm;
-const patternMailDotComFolders = /'(.*?folders.mail)'/i;
-const patternMailDotComSMTPInput = /<input.*?>/igm;
 /******************************  MailDotCom ***************************************/
 function nsMailDotComSMTP()
 {
@@ -37,8 +22,13 @@ function nsMailDotComSMTP()
                                            + "-" + date.getMinutes() 
                                            + "-"+ date.getUTCMilliseconds() +" -";
         this.m_Log = new DebugLog("webmail.logging.comms", ExtMailDotComGuid, szLogFileName); 
-        
         this.m_Log.Write("nsMailDotComSMTP.js - Constructor - START");   
+ 
+        if (typeof kMailDotComConstants == "undefined")
+        {
+            this.m_Log.Write("nsMailDotCom.js - Constructor - loading constants");
+            scriptLoader.loadSubScript("chrome://maildotcom/content/MailDotCom-Constants.js");
+        } 
        
         this.m_bAuthorised = false;
         this.m_szUserName = null;   
@@ -294,7 +284,7 @@ nsMailDotComSMTP.prototype =
                     
                     var aszComposerForm = szResponse.match(patternMailDotComComposeButtonForm);
                     mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - aszComposerForm "+ aszComposerForm);
-                    var aInputs = aszComposerForm[0].match(patternMailDotComSMTPInput);
+                    var aInputs = aszComposerForm[0].match(patternMailDotComInput);
                     mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - aInputs "+ aInputs);
                     var szComposer = null;
                     for (i=0; i<aInputs.length; i++)

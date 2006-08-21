@@ -3,37 +3,7 @@ const nsMailDotComClassID = Components.ID("{304bef20-b908-11d9-9669-0800200c9a66
 const nsMailDotComContactID = "@mozilla.org/MailDotComPOP;1";
 const ExtMailDotComGuid = "{1ad5b3b0-b908-11d9-9669-0800200c9a66}";
 
-const patternMailRefresh = /<head>[\s]<meta http-equiv="Refresh" content="0;URL=(.*?)">[\s\S]*<\/head>/i;
-const patternMailDotComLoginForm =/<form.*?>[\S\s]*?<\/form>/igm;
-const patternMailDotComLoginURI = /action="(.*?)"/;
-const patternMailDotComLoginInput = /<input type=(?!"submit").*?>/igm;
-const patternMailDotComType = /type="(.*?)"/i;
-const patternMailDotComValue = /value=\s?['??|"??](\S*)['??|"??]/i;
-const patternMailDotComName = /name=\s?["??|'??](\S*)["??|'??]/i;
-const patternMailDotComFrame = /<frame.*?src="(.*?)".*?name="mailcomframe".*?>/i;
-const patternMailDotComFolders = /href="(.*?folders.mail.*?)"/;
-const patternMailDotComFolderList = /href=".*?".*?class="fb"/gm;
-const patternMailDotComFolderURI= /href="(.*?)"/;
-const patternMailDotComFolderName=/folder=(.*?)&/i;
-const patternMailDotComAddURI = /document.location.href="(.*?)"/;
-const patternMailDotComMsgTable = /<tbody>[\S\s]*<\/tbody>/igm;
-const patternMailDotComNext = /<a href="(.*?mailbox.mail.*?)" class="fl">Next<\/a>/;
-const patternMailDotComDelete = /<form action="(\/scripts\/mail\/mailbox.mail\?.ob=.*?)" method="POST" name="inBoxMessages">/;
-const patternMailDotComMsgRows = /<tr.*?>[[\S\s\n]*?<\/tr>/igm;
-const patternMailDotComMsgData = /<td.*?>[\S\s\n]*?<\/td>/igm;
-const patternMailDotComHref = /href="(.*?)"/i;
-const patternMailDotComSize = />(.*?)</;
-const patternMailDotComMsgId = /msg_uid=(.*?)&/;
-const patternMailDotComMSG =/<body bgcolor="#ffffff">([\s\S]*)<div id="pbl">/;
-const patternMailDotComHeaders = /<p>([\s\S]*?)<\/p>/;
-const patternMailDotComOtherHeaderData = /<B>(.*?)<\/B>([\s\S]*?)$/i;
-const patternMailDotComUnRead = /ib_unread/;
-
 /******************************  MailDotCom ***************************************/
-
-
-
-
 function nsMailDotCom()
 {
     try
@@ -51,6 +21,13 @@ function nsMailDotCom()
                                     + date.getMinutes() + "-"+ date.getUTCMilliseconds() +" -";
         this.m_Log = new DebugLog("webmail.logging.comms", ExtMailDotComGuid, szLogFileName); 
         this.m_Log.Write("nsMailDotCom.js - Constructor - START");   
+       
+        if (typeof kMailDotComConstants == "undefined")
+        {
+            this.m_Log.Write("nsMailDotCom.js - Constructor - loading constants");
+            scriptLoader.loadSubScript("chrome://maildotcom/content/MailDotCom-Constants.js");
+        } 
+       
        
         //login data
         this.m_bAuthorised = false;
