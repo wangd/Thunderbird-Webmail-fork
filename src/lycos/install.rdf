@@ -7,7 +7,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
 		<em:id>{10e6e940-8a9c-11d9-9669-0800200c9a66}</em:id>
 		<em:type>2</em:type>
-		<em:version>0.7.3</em:version>
+		<em:version>1.0.0</em:version>
 		
         <em:name>WebMail - Lycos</em:name>
 		<em:description>Lycos component for Web-Mail extension</em:description>
