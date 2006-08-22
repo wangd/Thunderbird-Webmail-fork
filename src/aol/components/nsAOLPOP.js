@@ -2,37 +2,8 @@
 const nsAOLClassID = Components.ID("{e977c180-9103-11da-a72b-0800200c9a66}"); 
 const nsAOLContactID = "@mozilla.org/AOLPOP;1";
 
-const patternAOLReplace = /parent\.location\.replace\("(.*?)"\);/i;
-const patternAOLRedirect = /goToLoginUrl[\s\S]*snsRedir\("(.*?)"\)/i;
-const patternAOLLoginForm = /<form.*?loginForm.*?>[\s\S]*<\/form>/igm;
-const patternAOLAction = /<form.*?action="(.*?)".*?>/;
-const patternAOLInput = /<input.*?>/igm;
-const patternAOLType = /type="(.*?)"/i;
-const patternAOLName = /name="(.*?)"/i;
-const patternAOLValue = /value="(.*?)"/i;
-const patternAOLVerify = /<body onLoad=".*?'(http.*?)'.*>/i;
-const patternAOLHost = /gPreferredHost.*?"(.*?)";/i;
-const patternAOLPath = /gSuccessPath.*?"(.*?)";/i;
-const patternAOLSucessPath = /^(.*?\/)suite.aspx$/i;
-const patternAOLHostCheck = /gHostCheckPath.*?"(.*?)"/i;
-const patternAOLTarget = /gTargetHost.*?"(.*?)"/i;
-const patternAOLMSGList = /gMessageButtonVisibility/i;
-const patternAOLVersion =/var VERSION="(.*?)"/i;
-const patternAOLUserID =/uid:(.*?)&/i;
-const patternAOLPageNum = /info.pageCount\s=\s(.*?);/i;
-const patternAOLMSGSender = /^fa[\s\S].*$/gmi;
-const patternAOLMSGData = /MI\(.*?\);/igm;
-const patternAOLMSGDataProcess =/MI\("(.*?)",.*?,"([\s\S]*)",(.*?),(.*?),.*?,.*?,(.*?),.*?\);/i;
-const patternAOLURLPageNum = /page=(.*?)&/i;
-const patternAOLLogout = /Logout\.aspx/i;
-const patternAOLLoginURL = /<div id="sns"><a.*?href="(.*?login.*?)".*?>.*?<\/div>/i;
-const patternAOLLogoutURL = /<div id="sns"><a.*?href="(.*?logout.*?)".*?>.*?<\/div>/i;
-const patternAOLFolders =/FN\(.*?\);/igm
-const patternAOLFolderName = /FN\("(.*?)",.*?\);/i
-const patternAOLFolderNameURL = /folder=(.*?)&/i;
+
 /***********************  AOL ********************************/
-
-
 function nsAOL()
 {
     try
@@ -48,9 +19,15 @@ function nsAOL()
         this.m_Log = new DebugLog("webmail.logging.comms", 
                                   "{3c8e8390-2cf6-11d9-9669-0800200c9a66}" ,
                                   szLogFileName); 
-        
         this.m_Log.Write("nsAOL.js - Constructor - START");   
        
+         
+        if (typeof kAOLConstants == "undefined")
+        {
+            this.m_Log.Write("nsLycos.js - Constructor - loading constants");
+            scriptLoader.loadSubScript("chrome://aol/content/AOL-Constants.js");
+        }            
+
         this.m_szUserName = null;   
         this.m_szPassWord = null; 
         this.m_oResponseStream = null;   
