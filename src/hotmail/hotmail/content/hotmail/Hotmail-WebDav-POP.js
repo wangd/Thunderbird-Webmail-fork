@@ -108,7 +108,7 @@ HotmailWebDav.prototype =
             this.m_HttpComms.setURI("http://oe.hotmail.com/svcs/hotmail/httpmail.asp");
             this.m_HttpComms.setRequestMethod("PROPFIND");
             this.m_HttpComms.setContentType("text/xml");
-            this.m_HttpComms.addData(HotmailPOPSchema);
+            this.m_HttpComms.addData(HotmailSchema);
             var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);                             
             if (!bResult) throw new Error("httpConnection returned false");
                   
@@ -145,9 +145,9 @@ HotmailWebDav.prototype =
             switch(mainObject.m_iStage)
             {
                 case 0: //get baisc uri's
-                    var szFolderURI = szResponse.match(patternHotmailPOPFolder)[1];
+                    var szFolderURI = szResponse.match(patternHotmailFolder)[1];
                     mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - get folder url - " + szFolderURI);
-                    mainObject.m_szTrashURI = szResponse.match(patternHotmailPOPTrash)[1];
+                    mainObject.m_szTrashURI = szResponse.match(patternHotmailTrash)[1];
                     mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - get trash url - " + mainObject.m_szTrashURI);
                     
                     //download folder list;
@@ -155,14 +155,14 @@ HotmailWebDav.prototype =
                     mainObject.m_HttpComms.setContentType("text/xml");
                     mainObject.m_HttpComms.setURI(szFolderURI);
                     mainObject.m_HttpComms.setRequestMethod("PROPFIND");
-                    mainObject.m_HttpComms.addData(HotmailPOPFolderSchema);
+                    mainObject.m_HttpComms.addData(HotmailFolderSchema);
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);                             
                     if (!bResult) throw new Error("httpConnection returned false");
                 break;
                 
                 case 1: //process folder uri's
 
-                    var aszFolderList = szResponse.match(patternHotmailPOPResponse);
+                    var aszFolderList = szResponse.match(patternHotmailResponse);
                     mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - aszFolderList :" +aszFolderList);
                     
                     for (j=0; j<mainObject.m_aszFolders.length; j++)
@@ -172,13 +172,13 @@ HotmailWebDav.prototype =
                         
                         for (var i=0; i<aszFolderList.length; i++)
                         {
-                            var szFolderURL = aszFolderList[i].match(patternHotmailPOPHref)[1];
+                            var szFolderURL = aszFolderList[i].match(patternHotmailHref)[1];
                             mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - szFolderURL : "+szFolderURL );
-                            var szFolderName = szFolderURL.match(patternHotmailPOPFolderName)[1];
+                            var szFolderName = szFolderURL.match(patternHotmailFolderName)[1];
                             mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - szFolderName : "+szFolderName );
                             var szDisplayName = "";
-                            if (aszFolderList[i].search(patternHotmailPOPDisplayName)!=-1)
-                                szDisplayName =aszFolderList[i].match(patternHotmailPOPDisplayName)[1];
+                            if (aszFolderList[i].search(patternHotmailDisplayName)!=-1)
+                                szDisplayName =aszFolderList[i].match(patternHotmailDisplayName)[1];
                             mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - szDisplayName : "+szDisplayName );
                             
                             if (szFolderName.search(regExp)!=-1 || szDisplayName.search(regExp)!=-1)
@@ -228,7 +228,7 @@ HotmailWebDav.prototype =
             var szUri = this.m_aszFolderURLList.shift(); 
             this.m_HttpComms.setURI(szUri);
             this.m_HttpComms.setRequestMethod("PROPFIND");
-            this.m_HttpComms.addData(HotmailPOPMailSchema);
+            this.m_HttpComms.addData(HotmailMailSchema);
             var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this);                             
             if (!bResult) throw new Error("httpConnection returned false");
             this.m_bStat = true;
@@ -263,7 +263,7 @@ HotmailWebDav.prototype =
             if (httpChannel.responseStatus != 200 && httpChannel.responseStatus != 207) 
                 throw new Error("return status " + httpChannel.responseStatus);
                              
-            var aszResponses = szResponse.match(patternHotmailPOPResponse);
+            var aszResponses = szResponse.match(patternHotmailResponse);
             mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - inbox - \n" + aszResponses);
             if (aszResponses)
             {
@@ -279,7 +279,7 @@ HotmailWebDav.prototype =
                 mainObject.m_HttpComms.setContentType("text/xml");
                 mainObject.m_HttpComms.setURI(szUri);
                 mainObject.m_HttpComms.setRequestMethod("PROPFIND");
-                mainObject.m_HttpComms.addData(HotmailPOPMailSchema);
+                mainObject.m_HttpComms.addData(HotmailMailSchema);
                 var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler, mainObject);                             
                 if (!bResult) throw new Error("httpConnection returned false");
             }
@@ -378,7 +378,7 @@ HotmailWebDav.prototype =
         var bRead = true;
         if (this.m_bDownloadUnread)
         {
-            bRead = parseInt(rawData.match(patternHotmailPOPRead)[1]) ? false : true;
+            bRead = parseInt(rawData.match(patternHotmailRead)[1]) ? false : true;
             this.m_Log.Write("HotmailWebDav.js - processItem - bRead -" + bRead);
         }
         
@@ -386,12 +386,12 @@ HotmailWebDav.prototype =
         {
             //mail url   
             var oMSG = new HotmailMSG();
-            var szHref = rawData.match(patternHotmailPOPHref)[1];
+            var szHref = rawData.match(patternHotmailHref)[1];
             this.m_Log.Write("HotmailWebDav.js - processItem - href - "+ szHref);
             oMSG.szMSGUri = szHref;
             
             //size 
-            var iSize = parseInt(rawData.match(patternHotmailPOPSize)[1]);
+            var iSize = parseInt(rawData.match(patternHotmailSize)[1]);
             this.m_Log.Write("HotmailWebDav.js - processItem - size - "+ iSize);
             this.m_iTotalSize += iSize;
             oMSG.iSize = iSize;
@@ -399,7 +399,7 @@ HotmailWebDav.prototype =
             var szTO="";
             try
             {                   
-                szTO = rawData.match(patternHotmailPOPTo)[1].match(/[\S\d]*@[\S\d]*/);  
+                szTO = rawData.match(patternHotmailTo)[1].match(/[\S\d]*@[\S\d]*/);  
             }
             catch(err)
             {
@@ -411,12 +411,12 @@ HotmailWebDav.prototype =
             var szFrom = "";
             try
             {
-                szFrom = rawData.match(patternHotmailPOPFrom)[1].match(/[\S]*@[\S]*/);
+                szFrom = rawData.match(patternHotmailFrom)[1].match(/[\S]*@[\S]*/);
                 if (!szFrom) throw new Error("no sender");
             }
             catch(err)
             {
-                szFrom = rawData.match(patternHotmailPOPFrom)[1];    
+                szFrom = rawData.match(patternHotmailFrom)[1];    
             }
             oMSG.szFrom = szFrom;
             
@@ -424,14 +424,14 @@ HotmailWebDav.prototype =
             var szSubject= "";
             try
             {
-                szSubject= rawData.match(patternHotmailPOPSubject)[1];
+                szSubject= rawData.match(patternHotmailSubject)[1];
             }
             catch(err){}
             oMSG.szSubject = szSubject;
             
             try
             {
-                var aszDateTime = rawData.match(patternHotmailPOPDate);
+                var aszDateTime = rawData.match(patternHotmailDate);
                 var aszDate = aszDateTime[1].split("-");
                 var aszTime = aszDateTime[2].split(":");
                 this.m_Log.Write("HotmailWebDav.js - processItem - "+aszDate+" "+aszTime);
@@ -487,7 +487,7 @@ HotmailWebDav.prototype =
                 this.m_HttpComms.setContentType("text/xml");
                 this.m_HttpComms.setURI(this.m_szFolderURI);
                 this.m_HttpComms.setRequestMethod("PROPFIND");
-                this.m_HttpComms.addData(HotmailPOPFolderSchema);
+                this.m_HttpComms.addData(HotmailFolderSchema);
                 var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this);                             
                 if (!bResult) throw new Error("httpConnection returned false");
             }
@@ -521,7 +521,7 @@ HotmailWebDav.prototype =
                 var szURL = this.m_aMsgDataStore[i].szMSGUri;
                 this.m_Log.Write("HotmailWebDav.js - getMessageIDs - Email URL : " +szURL);
                
-                var szID = szURL.match(patternHotmailPOPMSGID);
+                var szID = szURL.match(patternHotmailMSGID);
                 this.m_Log.Write("HotmailWebDav.js - getMessageIDs - IDS : " +szID);    
                 this.serverComms((i+1) + " " + szID + "\r\n"); 
             }         
@@ -555,7 +555,7 @@ HotmailWebDav.prototype =
             var oMSG = this.m_aMsgDataStore[lID-1];
             
             var szHeaders = "X-WebMail: true\r\n";
-            var szFolderURI = oMSG.szMSGUri.match(patternHotmailPOPFolderName)[1];
+            var szFolderURI = oMSG.szMSGUri.match(patternHotmailFolderName)[1];
             this.m_Log.Write("HotmailWebDav.js - getHeaders - get folder url - " + szFolderURI);
             
             var szCleanName = szFolderURI;
@@ -647,7 +647,7 @@ HotmailWebDav.prototype =
                     var szUri = httpChannel.URI.spec;
                     mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - szUri - " + szUri);
                     
-                    var szFolderName= szUri.match(patternHotmailPOPFolderName)[1];
+                    var szFolderName= szUri.match(patternHotmailFolderName)[1];
                     mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - szFolderName - " + szFolderName);
                     
                     var szCleanName = szFolderName;
@@ -664,7 +664,7 @@ HotmailWebDav.prototype =
                     mainObject.m_HttpComms.setContentType("text/xml");
                     mainObject.m_HttpComms.setURI(szUri);
                     mainObject.m_HttpComms.setRequestMethod("PROPPATCH");
-                    mainObject.m_HttpComms.addData(HotmailPOPReadSchema);
+                    mainObject.m_HttpComms.addData(HotmailReadSchema);
                     var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);          
                     mainObject.m_iStage++;          
                 break;
@@ -706,10 +706,10 @@ HotmailWebDav.prototype =
             var szPath = this.m_aMsgDataStore[lID-1].szMSGUri;
             this.m_Log.Write("HotmailWebDav.js - deleteMessage - id " + szPath );
             
-            var szMsgID =  szPath.match(patternHotmailPOPMSGID);  
+            var szMsgID =  szPath.match(patternHotmailMSGID);  
             var szStart = "<?xml version=\"1.0\"?>\r\n<D:move xmlns:D=\"DAV:\">\r\n<D:target>\r\n";
             var szEnd = "</D:target>\r\n</D:move>";
-            var szMsgID =  szPath.match(patternHotmailPOPMSGID); 
+            var szMsgID =  szPath.match(patternHotmailMSGID); 
             var sztemp ="<D:href>"+szMsgID+"</D:href>\r\n"
             var szData = szStart + sztemp + szEnd;  
               

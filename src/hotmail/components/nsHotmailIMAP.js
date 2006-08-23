@@ -2,31 +2,7 @@
 const nsHotmailIMAPClassID = Components.ID("{8cad2a80-056b-11db-9cd8-0800200c9a66}"); 
 const nsHotmailIMAPContactID = "@mozilla.org/HotmailIMAP;1";
 
-
-const HotmailSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:h=\"http://schemas.microsoft.com/hotmail/\" xmlns:hm=\"urn:sc hemas:httpmail:\">\r\n<D:prop>\r\n<h:adbar/>\r\n<hm:contacts/>\r\n<hm:inbox/>\r\n<hm:outbox/>\r\n<hm:sendmsg/>\r\n<hm:sentitems/>\r\n<hm:deleteditems/>\r\n<hm:drafts/>\r\n<hm:msgfolderroot/>\r\n<h:maxpoll/>\r\n<h:sig/>\r\n</D:prop>\r\n</D:propfind>";
-const HotmailFolderIMAPSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:hm=\"urn:schemas:httpmail:\">\r\n<D:prop>\r\n<D:isfolder/>\r\n<D:displayname/>\r\n<hm:special/>\r\n<D:hassubs/>\r\n<D:nosubs/>\r\n<hm:unreadcount/>\r\n<D:visiblecount/>\r\n<hm:special/>\r\n</D:prop>\r\n</D:propfind>";
-const HotmailMailIMAPSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:hm=\"urn:schemas:httpmail:\" xmlns:m=\"urn:schemas:mailheader:\">\r\n<D:prop>\r\n<D:isfolder/>\r\n<hm:read/>\r\n<m:hasattachment/>\r\n<m:to/>\r\n<m:from/>\r\n<m:subject/>\r\n<m:date/>\r\n<D:getcontentlength/>\r\n</D:prop>\r\n</D:propfind>";
-const HotmailPROPReadSchema = "<?xml version=\"1.0\"?>\r\n<D:propertyupdate xmlns:D=\"DAV:\" xmlns:hm=\"urn:schemas:httpmail:\">\r\n<D:set>\r\n<D:prop>\r\n<hm:read>0</hm:read>\r\n</D:prop>\r\n</D:set>\r\n</D:propertyupdate>";
-const HotmailPROPUnReadSchema = "<?xml version=\"1.0\"?>\r\n<D:propertyupdate xmlns:D=\"DAV:\" xmlns:hm=\"urn:schemas:httpmail:\">\r\n<D:set>\r\n<D:prop>\r\n<hm:read>0</hm:read>\r\n</D:prop>\r\n</D:set>\r\n</D:propertyupdate>";
-
-const HotmailIMAPMSGIDPattern = /[^\/]+$/;
-const HotmailIMAPResponse = /<D:response>[\S\d\s\r\n]*?<\/D:response>/gm;
-const HotmailIMAPHref = /<D:href>(.*?)<\/D:href>/i;
-const HotmailIMAPRead = /<hm:read>(.*?)<\/hm:read>/i;
-const HotmailIMAPSize = /<D:getcontentlength>(.*?)<\/D:getcontentlength>/i;
-const HotmailIMAPAttachment = /<m:hasattachment>(.*?)<\/m:hasattachment>/i;
-const HotmailIMAPTo = /<m:to>(.*?)<\/m:to>/i;
-const HotmailIMAPFrom = /<m:from>(.*?)<\/m:from>/i;
-const HotmailIMAPSubject = /<m:subject>(.*?)<\/m:subject>/i;
-const HotmailIMAPDate = /<m:date>(.*?)T(.*?)<\/m:date>/i;
-
-const HotmailIMAPFolderPattern = /<hm:msgfolderroot>(.*?)<\/hm:msgfolderroot>/;
-const HotmailIMAPUnreadCount = /<hm:unreadcount>(.*?)<\/hm:unreadcount>/;
-const HotmailIMAPMsgCount = /<D:visiblecount>(.*?)<\/D:visiblecount>/;
-const HotmailIMAPDisplayName = /<D:displayname>(.*?)<\/D:displayname>/;
-const HotmailIMAPSpecial = /<hm:special>(.*?)<\/hm:special>/;
 /***********************  Hotmail ********************************/
-
 function nsHotmailIMAP()
 {
     try
@@ -41,10 +17,16 @@ function nsHotmailIMAP()
         var  szLogFileName = "HotmailIMAP Log - " + date.getHours()+ "-" + date.getMinutes() + "-"+ date.getUTCMilliseconds() +" -";
         this.m_Log = new DebugLog("webmail.logging.comms", 
                                   "{3c8e8390-2cf6-11d9-9669-0800200c9a66}" ,
-                                  szLogFileName); 
-        
+                                  szLogFileName);        
         this.m_Log.Write("nsHotmailIMAP.js - Constructor - START");
        
+        if (typeof kHotmailConstants == "undefined")
+        {
+            this.m_Log.Write("nsLycos.js - Constructor - loading constants");
+            scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-Constants.js");
+        }   
+        
+        
         this.m_szUserName = null;   
         this.m_szPassWord = null; 
         this.m_oResponseStream = null; 
@@ -204,7 +186,7 @@ nsHotmailIMAP.prototype =
         
             mainObject.m_Log.Write("nsHotmailIMAP.js - loginOnloadHandler - get url - start");
             mainObject.m_iAuth=0; //reset login counter
-            mainObject.m_szFolderURI = szResponse.match(HotmailIMAPFolderPattern)[1];
+            mainObject.m_szFolderURI = szResponse.match(patternHotmailFolder)[1];
             mainObject.m_Log.Write("nsHotmailIMAP.js - loginOnloadHandler - get folder url - " + mainObject.m_szFolderURI);
 
             if (mainObject.m_SessionData)
@@ -366,7 +348,7 @@ nsHotmailIMAP.prototype =
             {//donwload folder list
                 this.m_HttpComms.setContentType("text/xml");
                 this.m_HttpComms.setRequestMethod("PROPFIND");
-                this.m_HttpComms.addData(HotmailFolderIMAPSchema);
+                this.m_HttpComms.addData(HotmailFolderSchema);
                 this.m_HttpComms.setURI(this.m_szFolderURI);
                 var bResult = this.m_HttpComms.send(this.listOnloadHandler, this);                             
                 if (!bResult) throw new Error("httpConnection returned false");
@@ -410,7 +392,7 @@ nsHotmailIMAP.prototype =
             //get root folders
             mainObject.m_Log.Write("nsHotmailIMAP.js - listOnloadHandler - get root folder list - START");
             
-            var aszResponses = szResponse.match(HotmailIMAPResponse);
+            var aszResponses = szResponse.match(patternHotmailResponse);
             mainObject.m_Log.Write("nsHotmailIMAP.js - listOnloadHandler - folders - \n" + aszResponses);
             
             var szResponse = "";
@@ -447,17 +429,17 @@ nsHotmailIMAP.prototype =
             this.m_Log.Write("nsHotmailIMAP.js - processFolder - START");
             this.m_Log.Write("nsHotmailIMAP.js - processFolder - szFolder " +szFolder);
             
-            var szHref = szFolder.match(HotmailIMAPHref)[1];
+            var szHref = szFolder.match(patternHotmailHref)[1];
             this.m_Log.Write("nsHotmailIMAP.js - processFolder - szHref " +szHref);        
             
             var szDisplayName = null;
             try
             {
-                szDisplayName = szFolder.match(HotmailIMAPDisplayName)[1];
+                szDisplayName = szFolder.match(patternHotmailDisplayName)[1];
             }
             catch(e)
             {
-                szDisplayName = szFolder.match(HotmailIMAPSpecial)[1];
+                szDisplayName = szFolder.match(patternHotmailSpecial)[1];
             }
             this.m_Log.Write("nsHotmailIMAP.js - processFolder - szDisplayName " +szDisplayName);
                           
@@ -492,8 +474,8 @@ nsHotmailIMAP.prototype =
             szIndex += iDNvalue;    
             this.m_Log.Write("nsHotmailIMAP.js - processFolder - szIndex " +szIndex);
              
-            var iUnreadCount = parseInt(szFolder.match(HotmailIMAPUnreadCount)[1]);
-            var iMsgCount =  parseInt(szFolder.match(HotmailIMAPMsgCount)[1]);
+            var iUnreadCount = parseInt(szFolder.match(patternHotmailUnreadCount)[1]);
+            var iMsgCount =  parseInt(szFolder.match(patternHotmailMsgCount)[1]);
             
             this.m_oFolder.addFolder(this.m_szUserName, szHiererchy, szHref, szIndex, 0, 0);
             this.m_Log.Write("nsHotmailIMAP.js - processFolder - END");
@@ -680,7 +662,7 @@ nsHotmailIMAP.prototype =
             this.m_HttpComms.setURI(oHref.value);
             this.m_HttpComms.setContentType("text/xml");
             this.m_HttpComms.setRequestMethod("PROPFIND");
-            this.m_HttpComms.addData(HotmailMailIMAPSchema);
+            this.m_HttpComms.addData(HotmailMailSchema);
             var bResult = this.m_HttpComms.send(this.refreshOnloadHandler, this);                             
             if (!bResult) throw new Error("httpConnection returned false");
              
@@ -716,7 +698,7 @@ nsHotmailIMAP.prototype =
                 throw new Error("return status " + httpChannel.responseStatus);
             
             //get uid list
-            var aszResponses = szResponse.match(HotmailIMAPResponse);
+            var aszResponses = szResponse.match(patternHotmailResponse);
             mainObject.m_Log.Write("nsHotmailIMAP.js - refreshOnloadHandler - \n" + aszResponses);
             delete mainObject.m_aRawData;
             if (aszResponses)
@@ -756,26 +738,26 @@ nsHotmailIMAP.prototype =
         
         this.m_Log.Write("nsHotmailIMAP.js - processMSG - handling data");
         
-        var bRead = parseInt(Item.match(HotmailIMAPRead)[1]) ? true : false;
+        var bRead = parseInt(Item.match(patternHotmailRead)[1]) ? true : false;
         this.m_Log.Write("nsHotmailIMAP.js - processMSG - bRead -" + bRead);
 
-        var szMSGUri = Item.match(HotmailIMAPHref)[1]; //uri
+        var szMSGUri = Item.match(patternHotmailHref)[1]; //uri
         this.m_Log.Write("nsHotmailIMAP.js - processMSG - szMSGUri -" + szMSGUri);
                                         
-        var iSize = parseInt(Item.match(HotmailIMAPSize)[1]);//size 
+        var iSize = parseInt(Item.match(patternHotmailSize)[1]);//size 
         this.m_Log.Write("nsHotmailIMAP.js - processMSG - iSize -" + iSize);
                    
         var szTO = "";
         try
         {
-            szTO = rawData.match(HotmailIMAPTo)[1].match(/[\S]*@[\S]*/);
+            szTO = rawData.match(patternHotmailTo)[1].match(/[\S]*@[\S]*/);
             if (!szTO) throw new Error("no sender");
         }
         catch(err)
         {
             try
             {
-                szTO = Item.match(HotmailIMAPTo)[1];
+                szTO = Item.match(patternHotmailTo)[1];
             }
             catch(e) 
             {
@@ -789,14 +771,14 @@ nsHotmailIMAP.prototype =
         var szFrom = "";
         try
         {
-            szFrom = rawData.match(patternHotmailIMAPFrom)[1].match(/[\S]*@[\S]*/);
+            szFrom = rawData.match(patternHotmailFrom)[1].match(/[\S]*@[\S]*/);
             if (!szFrom) throw new Error("no sender");
         }
         catch(err)
         {
             try
             {
-                szFrom = Item.match(HotmailIMAPFrom)[1];
+                szFrom = Item.match(patternHotmailFrom)[1];
             }
             catch(e)
             {
@@ -808,7 +790,7 @@ nsHotmailIMAP.prototype =
         var szSubject= "";
         try
         {
-            szSubject= Item.match(HotmailIMAPSubject)[1];
+            szSubject= Item.match(patternHotmailSubject)[1];
         }
         catch(err){}
         this.m_Log.Write("nsHotmailIMAP.js - processMSG - szSubject -" + szSubject);
@@ -816,7 +798,7 @@ nsHotmailIMAP.prototype =
         var szDate = "";
         try
         {
-            var aszDateTime = Item.match(HotmailIMAPDate);
+            var aszDateTime = Item.match(patternHotmailDate);
             var aszDate = aszDateTime[1].split("-");
             var aszTime = aszDateTime[2].split(":");
 
@@ -865,7 +847,7 @@ nsHotmailIMAP.prototype =
                 this.m_HttpComms.setURI(oHref.value);
                 this.m_HttpComms.setContentType("text/xml");
                 this.m_HttpComms.setRequestMethod("PROPFIND");
-                this.m_HttpComms.addData(HotmailMailIMAPSchema);
+                this.m_HttpComms.addData(HotmailMailSchema);
                 var bResult = this.m_HttpComms.send(this.fetchOnloadHandler, this);                             
                 if (!bResult) throw new Error("httpConnection returned false"); 
             }
@@ -936,7 +918,7 @@ nsHotmailIMAP.prototype =
                 throw new Error("return status " + httpChannel.responseStatus);
             
             //get uid list
-            var aszResponses = szResponse.match(HotmailIMAPResponse);
+            var aszResponses = szResponse.match(patternHotmailResponse);
             mainObject.m_Log.Write("nsHotmailIMAP.js - fetchOnloadHandler - \n" + aszResponses);
             delete mainObject.m_aRawData;
             if (aszResponses)
@@ -1230,14 +1212,14 @@ nsHotmailIMAP.prototype =
                 {
                     this.m_Log.Write("nsHotmailIMAP.js - store - Unseen");
                     this.m_bStoreStatus = false;
-                    this.m_HttpComms.addData(HotmailPROPUnReadSchema);
+                    this.m_HttpComms.addData(HotmailUnReadSchema);
                 }
                 
                 if (szDataItem.search(/\/seen/i)!=-1)
                 {
                     this.m_Log.Write("nsHotmailIMAP.js - store - seen");
                     this.m_bStoreStatus = true;
-                    this.m_HttpComms.addData(HotmailPROPReadSchema);
+                    this.m_HttpComms.addData(HotmailReadSchema);
                 }
                 
                 if (szDataItem.search(/\/delete/i)!=-1)
@@ -1387,9 +1369,9 @@ nsHotmailIMAP.prototype =
                 mainObject.m_HttpComms.setRequestMethod("PROPPATCH");
                 
                 if (mainObject.m_bStoreStatus)
-                    mainObject.m_HttpComms.addData(HotmailPROPUnReadSchema)
+                    mainObject.m_HttpComms.addData(HotmailUnReadSchema)
                 else
-                    mainObject.m_HttpComms.addData(HotmailPROPUnReadSchema);
+                    mainObject.m_HttpComms.addData(HotmailUnReadSchema);
                     
                 var bResult = mainObject.m_HttpComms.send(mainObject.storeOnloadHandler, mainObject);                             
                 if (!bResult) throw new Error("httpConnection returned false");
@@ -1863,7 +1845,7 @@ nsHotmailIMAP.prototype =
                     mainObject.m_Log.Write("nsHotmailIMAP.js - createFolderOnloadHandler - get folder list - START");
                     mainObject.m_HttpComms.setContentType("text/xml");
                     mainObject.m_HttpComms.setRequestMethod("PROPFIND");
-                    mainObject.m_HttpComms.addData(HotmailFolderIMAPSchema);
+                    mainObject.m_HttpComms.addData(HotmailFolderSchema);
                     mainObject.m_HttpComms.setURI(mainObject.m_szFolderURI);
                     var bResult = mainObject.m_HttpComms.send(mainObject.listOnloadHandler, mainObject);                             
                     if (!bResult) throw new Error("httpConnection returned false");
@@ -1874,7 +1856,7 @@ nsHotmailIMAP.prototype =
                 case 1:  //add new folder details
                     mainObject.m_Log.Write("nsHotmailIMAP.js - createFolderOnloadHandler - new folder details - START");
                 
-                    var aszResponses = szResponse.match(HotmailIMAPResponse);
+                    var aszResponses = szResponse.match(patternHotmailResponse);
                     mainObject.m_Log.Write("nsHotmailIMAP.js - createFolderOnloadHandler - folders - \n" + aszResponses);
                     for (i=0; i<aszResponses.length; i++)
                     {

@@ -137,23 +137,23 @@ HotmailSMTPScreenRipper.prototype =
             switch (mainObject.m_iStage)
             {
                 case 0: // redirect destination
-                    var aForm = szResponse.match(patternHotmailSMTPForm);
+                    var aForm = szResponse.match(patternHotmailForm);
                     if (!aForm) throw new Error("error parsing login page");
                     mainObject.m_Log.Write("Hotmail-SR-SMTP - loginOnloadHandler "+ aForm);
                     
                     //action
-                    var szAction = aForm[0].match(patternHotmailSMTPAction)[1];
+                    var szAction = aForm[0].match(patternHotmailAction)[1];
                     mainObject.m_Log.Write("Hotmail-SR-SMTP - loginOnloadHandler "+ szAction);
                     mainObject.m_HttpComms.setURI(szAction);
                     
                     //name value
-                    var aInput = aForm[0].match(patternHotmailSMTPInput);
+                    var aInput = aForm[0].match(patternHotmailInput);
                     mainObject.m_Log.Write("Hotmail-SR-SMTP - loginOnloadHandler "+ aInput);
                     for (i=0; i<aInput.length ; i++)
                     {
-                        var szName =  aInput[i].match(patternHotmailSMTPName)[1];
+                        var szName =  aInput[i].match(patternHotmailName)[1];
                         mainObject.m_Log.Write("Hotmail-SR-SMTP - loginOnloadHandler "+ szName);  
-                        var szValue =  aInput[i].match(patternHotmailSMTPValue)[1];
+                        var szValue =  aInput[i].match(patternHotmailValue)[1];
                         mainObject.m_Log.Write("Hotmail-SR-SMTP - loginOnloadHandler "+ szValue);
                         szValue = encodeURIComponent(szValue);
                         mainObject.m_HttpComms.addValuePair(szName, szValue);
@@ -167,20 +167,20 @@ HotmailSMTPScreenRipper.prototype =
                 
                 
                 case 1: //login
-                    var aForm = szResponse.match(patternHotmailSMTPForm);
+                    var aForm = szResponse.match(patternHotmailForm);
                     if (!aForm) throw new Error("error parsing login page");
                         
                     //get form data
-                    var aInput =  aForm[0].match(patternHotmailSMTPInput); 
+                    var aInput =  aForm[0].match(patternHotmailInput); 
                     mainObject.m_Log.Write("nsHotmail.js - loginOnloadHandler - form data " + aInput);
                     
                     for (i=0; i<aInput.length; i++)
                     {
-                        var szType = aInput[i].match(patternHotmailSMTPType)[1]; 
+                        var szType = aInput[i].match(patternHotmailType)[1]; 
                         mainObject.m_Log.Write("nsHotmail.js - loginOnloadHandler - form type " + szType);
-                        var szName = aInput[i].match(patternHotmailSMTPName)[1]; 
+                        var szName = aInput[i].match(patternHotmailName)[1]; 
                         mainObject.m_Log.Write("nsHotmail.js - loginOnloadHandler - form name " + szName);
-                        var szValue = aInput[i].match(patternHotmailSMTPValue)[1]; 
+                        var szValue = aInput[i].match(patternHotmailValue)[1]; 
                         mainObject.m_Log.Write("nsHotmail.js - loginOnloadHandler - form value " + szValue);
                         
                         if (szType.search(/submit/i)==-1)
@@ -211,7 +211,7 @@ HotmailSMTPScreenRipper.prototype =
                         }
                     }
                     
-                    var szAction = aForm[0].match(patternHotmailSMTPAction)[1];
+                    var szAction = aForm[0].match(patternHotmailAction)[1];
                     mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler "+ szAction);
                     var szDomain = mainObject.m_szUserName.split("@")[1];
                     var szRegExp = "g_DO\\[\""+szDomain+"\"\\]=\"(.*?)\"";
@@ -226,7 +226,7 @@ HotmailSMTPScreenRipper.prototype =
                     }
                     else
                     {
-                        var szQS =  szResponse.match(patternHotmailSMTPQS)[1];    
+                        var szQS =  szResponse.match(patternHotmailQS)[1];    
                         mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler szQuery "+ szQS); 
                         szURI = aszURI[1] + "?" + szQS; 
                     }
@@ -239,31 +239,31 @@ HotmailSMTPScreenRipper.prototype =
                 break;
                
                 case 2: //refresh
-                   var aRefresh = szResponse.match(patternHotmailSMTPForm);
+                   var aRefresh = szResponse.match(patternHotmailForm);
                     mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler - refresh "+ aRefresh); 
                    
                     if (aRefresh)
                     {   
                         //action
-                        var szAction = aRefresh[0].match(patternHotmailSMTPAction)[1];
+                        var szAction = aRefresh[0].match(patternHotmailAction)[1];
                         mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler "+ szAction);
                         mainObject.m_HttpComms.setURI(szAction);
                         
                         //form data  
-                        var aInput =  aRefresh[0].match(patternHotmailSMTPInput);
+                        var aInput =  aRefresh[0].match(patternHotmailInput);
                         mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler "+ aInput); 
-                        var szName =  aInput[0].match(patternHotmailSMTPName)[1];
-                        var szValue =  aInput[0].match(patternHotmailSMTPValue)[1];
+                        var szName =  aInput[0].match(patternHotmailName)[1];
+                        var szValue =  aInput[0].match(patternHotmailValue)[1];
                         szValue = encodeURIComponent(szValue);
                         mainObject.m_HttpComms.addValuePair(szName,szValue);
                         mainObject.m_HttpComms.setRequestMethod("POST");  
                     }
                     else
                     {
-                        aRefresh = szResponse.match(patternHotmailSMTPRefresh);
+                        aRefresh = szResponse.match(patternHotmailRefresh);
                         
                         if (!aRefresh)
-                            aRefresh = szResponse.match(patternHotmailSMTPJavaRefresh);
+                            aRefresh = szResponse.match(patternHotmailJavaRefresh);
                             
                         mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler refresh "+ aRefresh); 
                         if (aRefresh == null) throw new Error("error parsing login page");    
@@ -278,7 +278,7 @@ HotmailSMTPScreenRipper.prototype =
                 break;
                
                 case 3:
-                    if (szResponse.search(patternHotmailSMTPMailbox) == -1)
+                    if (szResponse.search(patternHotmailMailbox) == -1)
                     {
                         if (mainObject.m_bReEntry)
                         {
@@ -297,13 +297,13 @@ HotmailSMTPScreenRipper.prototype =
                     mainObject.m_Log.Write("Hotmail-SR-SMTP - loginOnloadHandler - m_szHomeURI : " + mainObject.m_szHomeURI);
                     
                     //get urls for later use
-                    mainObject.m_szUM = szResponse.match(patternHotmailSMTP_UM)[1];
+                    mainObject.m_szUM = szResponse.match(patternHotmailUM)[1];
                     mainObject.m_Log.Write("Hotmail-SR-SMTP - loginOnloadHandler - UM : "+mainObject.m_szUM );
                     
                     mainObject.m_szLocationURI = httpChannel.URI.prePath ;
                     mainObject.m_Log.Write("Hotmail-SR-SMTP - loginOnloadHandler - m_szLocationURI : "+mainObject.m_szLocationURI );
                    
-                    mainObject.m_szComposer = szResponse.match(patternHotmailSMTPComposer)[1];
+                    mainObject.m_szComposer = szResponse.match(patternHotmailComposer)[1];
                     mainObject.m_Log.Write("Hotmail-SR-SMTP - loginOnloadHandler - m_szComposer : "+mainObject.m_szComposer );
                     
                     //server response
@@ -390,23 +390,23 @@ HotmailSMTPScreenRipper.prototype =
                 case 0:  //MSG handler
                     mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - Send MSG"); 
                     
-                    var szForm = szResponse.match(patternHotmailSMTPCompForm)[0];
+                    var szForm = szResponse.match(patternHotmailCompForm)[0];
                     mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - Form " + szForm);
                     
-                    var szAction = szForm.match(patternHotmailSMTPAction)[1];
+                    var szAction = szForm.match(patternHotmailAction)[1];
                     mainObject.m_HttpComms.setURI(szAction);
                                       
-                    var aInput = szForm.match(patternHotmailSMTPInput);
+                    var aInput = szForm.match(patternHotmailInput);
                     mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - INPUT " + aInput);
                     
                     for (i=0; i<aInput.length; i++)
                     {   
-                        var szName = aInput[i].match(patternHotmailSMTPName)[1]; 
+                        var szName = aInput[i].match(patternHotmailName)[1]; 
                         
                         var szValue = null;
                         try
                         {
-                            szValue = aInput[i].match(patternHotmailSMTPValue)[1]; 
+                            szValue = aInput[i].match(patternHotmailValue)[1]; 
                         }
                         catch(err)
                         {
@@ -520,24 +520,24 @@ HotmailSMTPScreenRipper.prototype =
                 case 2: //Add Attachment Request
                     mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - Attach Request");
                     
-                    var szForm = szResponse.match(patternHotmailSMTPCompForm)[0];
+                    var szForm = szResponse.match(patternHotmailCompForm)[0];
                     mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - Form " + szForm);
                     
-                    var szAction = szForm.match(patternHotmailSMTPAction)[1];
+                    var szAction = szForm.match(patternHotmailAction)[1];
                     mainObject.m_HttpComms.setURI(szAction);
                     mainObject.m_HttpComms.setRequestMethod("POST");
                     
-                    var aInput = szForm.match(patternHotmailSMTPInput);
+                    var aInput = szForm.match(patternHotmailInput);
                     mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - INPUT " + aInput);
                     
                     for (i=0; i<aInput.length; i++)
                     {   
-                        var szName = aInput[i].match(patternHotmailSMTPName)[1]; 
+                        var szName = aInput[i].match(patternHotmailName)[1]; 
                         
                         var szValue = null;
                         try
                         {
-                            szValue = aInput[i].match(patternHotmailSMTPValue)[1]; 
+                            szValue = aInput[i].match(patternHotmailValue)[1]; 
                         }
                         catch(err)
                         {
@@ -566,7 +566,7 @@ HotmailSMTPScreenRipper.prototype =
                     mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - upload " +mainObject.m_iAttUploaded
                                                         + " " + mainObject.m_iAttCount );
                      
-                    var szForm = szForm = szResponse.match(patternHotmailSMTPAttForm)[0];
+                    var szForm = szForm = szResponse.match(patternHotmailAttForm)[0];
                     mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - Form " + szForm);
                     
                     if (mainObject.m_iAttUploaded == mainObject.m_iAttCount)
@@ -574,21 +574,21 @@ HotmailSMTPScreenRipper.prototype =
                     else
                         mainObject.m_iStage = 3;  
                                  
-                    var szAction = szForm.match(patternHotmailSMTPAction)[1];
+                    var szAction = szForm.match(patternHotmailAction)[1];
                     mainObject.m_HttpComms.setURI(szAction);
                     mainObject.m_HttpComms.setRequestMethod("POST");
 
-                    var aInput = szForm.match(patternHotmailSMTPInput);
+                    var aInput = szForm.match(patternHotmailInput);
                     mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - INPUT " + aInput);
                     
                                              
                     for (i=0; i<aInput.length ; i++)
                     {
-                        var szName = aInput[i].match(patternHotmailSMTPName)[1]; 
+                        var szName = aInput[i].match(patternHotmailName)[1]; 
                         var szValue = "";
                         try
                         {
-                            szValue = aInput[i].match(patternHotmailSMTPValue)[1]; 
+                            szValue = aInput[i].match(patternHotmailValue)[1]; 
                         }
                         catch(err){}
                 
@@ -637,10 +637,10 @@ HotmailSMTPScreenRipper.prototype =
                     }
                     
                     //construct form 
-                    var aszInput = mainObject.m_szImageVerForm.match(patternHotmailSMTPInput);
+                    var aszInput = mainObject.m_szImageVerForm.match(patternHotmailInput);
                     for (i=0; i< aszInput.length; i++)
                     {
-                        var szName = aszInput[i].match(patternHotmailSMTPName)[1];
+                        var szName = aszInput[i].match(patternHotmailName)[1];
                         mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - Name " + szName); 
                                               
                         var szValue = "";
@@ -650,7 +650,7 @@ HotmailSMTPScreenRipper.prototype =
                         }
                         else
                         {
-                            szValue = aszInput[i].match(patternHotmailSMTPValue)[1]
+                            szValue = aszInput[i].match(patternHotmailValue)[1]
                         }
                         szValue = encodeURIComponent(szValue);
                         mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - value " + szValue);
@@ -658,7 +658,7 @@ HotmailSMTPScreenRipper.prototype =
                         mainObject.m_HttpComms.addValuePair(szName,(szValue.length>0)? szValue : "");
                     }
 
-                    var szActionUrl = mainObject.m_szImageVerForm.match(patternHotmailSMTPAction)[1];
+                    var szActionUrl = mainObject.m_szImageVerForm.match(patternHotmailAction)[1];
                     mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - szFormAction " + szActionUrl);
                     
                     //send data

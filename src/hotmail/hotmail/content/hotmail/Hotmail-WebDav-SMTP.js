@@ -82,7 +82,7 @@ HotmailSMTPWebDav.prototype =
             this.m_HttpComms.setContentType("text/xml");
             this.m_HttpComms.setURI("http://oe.hotmail.com/svcs/hotmail/httpmail.asp");
             this.m_HttpComms.setRequestMethod("PROPFIND");
-            this.m_HttpComms.addData(HotmailSMTPSchema);
+            this.m_HttpComms.addData(HotmailSchema);
             var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);                             
             if (!bResult) throw new Error("httpConnection returned false");
                         
@@ -121,7 +121,7 @@ HotmailSMTPWebDav.prototype =
             mainObject.m_Log.Write("HotmailWD-SMTP.js - loginOnloadHandler - get url - start");
             mainObject.m_iAuth=0; //reset login counter
            
-            mainObject.m_szSendUri = szResponse.match(HotmailSendMsgPattern)[1];
+            mainObject.m_szSendUri = szResponse.match(patternHotmailSendMsg)[1];
             mainObject.m_Log.Write("HotmailWD-SMTP.js - loginOnloadHandler - Send URi - " +mainObject.m_szSendUri);
             
             //server response

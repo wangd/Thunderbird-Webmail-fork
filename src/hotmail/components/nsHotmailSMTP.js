@@ -3,44 +3,6 @@ const nsHotmailSMTPClassID = Components.ID("{8b9baa40-1296-11da-8cd6-0800200c9a6
 const nsHotmailSMTPContactID = "@mozilla.org/HotmailSMTP;1";
 const ExtHotmailGuid = "{3c8e8390-2cf6-11d9-9669-0800200c9a66}";
 
-/************************Screen Rippper constants******************************/
-const patternHotmailSMTPSRuri =/[^\.\/]+\.[^\.\/]+$/;
-const UserAgent = "1.1 on Mac OS X — Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-us) Gecko/20060516 SeaMonkey/1.1.0";
-
-/************************Webdav constants *************************************/
-const HotmailSMTPSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:h=\"http://schemas.microsoft.com/hotmail/\" xmlns:hm=\"urn:schemas:httpmail:\">\r\n<D:prop>\r\n<h:adbar/>\r\n<hm:contacts/>\r\n<hm:inbox/>\r\n<hm:outbox/>\r\n<hm:sendmsg/>\r\n<hm:sentitems/>\r\n<hm:deleteditems/>\r\n<hm:drafts/>\r\n<hm:msgfolderroot/>\r\n<h:maxpoll/>\r\n<h:sig/>\r\n</D:prop>\r\n</D:propfind>";
-const HotmailSMTPFolderSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:hm=\"urn:schemas:httpmail:\">\r\n<D:prop>\r\n<D:isfolder/>\r\n<D:displayname/>\r\n<hm:special/>\r\n<D:hassubs/>\r\n<D:nosubs/>\r\n<hm:unreadcount/>\r\n<D:visiblecount/>\r\n<hm:special/>\r\n</D:prop>\r\n</D:propfind>";
-const HotmailSMTPMailSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:hm=\"urn:schemas:httpmail:\" xmlns:m=\"urn:schemas:mailheader:\">\r\n<D:prop>\r\n<D:isfolder/>\r\n<hm:read/>\r\n<m:hasattachment/>\r\n<m:to/>\r\n<m:from/>\r\n<m:subject/>\r\n<m:date/>\r\n<D:getcontentlength/>\r\n</D:prop>\r\n</D:propfind>";
-const HotmailSendMsgPattern = /<hm:sendmsg>(.*?)<\/hm:sendmsg>/;
-
-/*************************Screen Ripper Constants *****************************/
-const patternHotmailSMTPForm = /<form[\S\s]*?<\/form>/;
-const patternHotmailSMTPAction = /<form.*?action="(.*?)".*?>/;
-const patternHotmailSMTPInput = /<input[\s\S]*?>/igm;
-const patternHotmailSMTPType = /type="(.*?)"/i;
-const patternHotmailSMTPName = /name="(.*?)"/i;
-const patternHotmailSMTPValue = /value="(.*?)"/i;
-const patternHotmailSMTPRefresh =/<META.*?HTTP-EQUIV="REFRESH".*?URL=(.*?)".*?>/i;
-const patternHotmailSMTPJavaRefresh = /location\.replace\("(.*?)"\);/i
-const patternHotmailSMTP_UM = /_UM="(.*?)"/;
-const patternHotmailSMTPComposer = /onclick="G\('(.*?compose\?.*?)'\);"/i;
-const patternHotmailSMTPCompForm = /<form\s+name="composeform".*?>[\S\s]*?<\/form>/igm;
-const patternHotmailSMTPAttForm = /<form\s+name="doattach".*?>[\S\s]*?<\/form>/igm
-const patternHotmailAD = /<form.*?name="addtoAB".*?>/igm;
-const patternHotmailSpamForm = /<form.*?forcehip.srf.*>/igm;
-const patternHotmailSpamImage =/<img.*?src="(.*?hip\.srf.*?)".*?name="hipImage"\/>/i;
-const patternHotmailBase = /<base href="(.*?)"\/>/i;
-const patternHotmailSMTPQS = /g_QS="(.*?)"/i;
-
-/*********BETA**********/
-const patternHotmailSMTPJSRefresh = /<html><head><script.*?>.*?\.location\.replace.*?\("(.*?)"\).*?<\/script>.*?<\/html>/i;
-const patternHotmailSMTPLogOut = /<.*?"(.*?logout.aspx.*?)".*?>/gi;
-const patternHotmailSMTPViewState = /<input.*?id="__VIEWSTATE".*?value="(.*?)".*?\/>/i;
-const patternHotmailSMTPMailBoxTable = /<div id="inbox">/ig;
-const patternHotmailSMTPEvent = /<input.*?id="__EVENTVALIDATION".*?value="(.*?)".*?\/>/i;
-const patternHotmailSMTPCompose =/NewMessageGo[\s\S]*?document.location.href="(.*?)"/i;
-const patternHotmailSMTPMailbox = /<a href="(\/cgi-bin\/HoTMaiL.*?)".*?tabindex=121.*?class="E">/;
-
 /******************************  Hotmail ***************************************/
 function nsHotmailSMTP()
 {
@@ -60,9 +22,14 @@ function nsHotmailSMTP()
                                            + "-" + date.getMinutes() 
                                            + "-"+ date.getUTCMilliseconds() +" -";
         this.m_Log = new DebugLog("webmail.logging.comms", ExtHotmailGuid, szLogFileName); 
-        
         this.m_Log.Write("nsHotmailSMTP.js - Constructor - START");   
        
+        if (typeof kHotmailConstants == "undefined")
+        {
+            this.m_Log.Write("nsLycos.js - Constructor - loading constants");
+            scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-Constants.js");
+        }   
+        
         this.m_szUserName = null;   
         this.m_szPassWord = null; 
         this.m_oResponseStream = null;  
