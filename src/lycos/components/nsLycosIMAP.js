@@ -592,7 +592,7 @@ nsLycosIMAP.prototype =
                     mainObject.m_Log.Write("nsLycosIMAP.js - selectOnloadHandler - folders - \n" + aszResponses);
                     for (i=0; i<aszResponses.length; i++)
                     {
-                        this.processFolder(aszResponses[i]);    
+                        mainObject.processFolder(aszResponses[i]);    
                     }
                    
                     var oHref = {value:null};
