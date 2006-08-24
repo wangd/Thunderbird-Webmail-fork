@@ -1002,12 +1002,15 @@ YahooPOPBETA.prototype =
                     mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szPart : " + szPart);
  
                     //headers
-                    var szName = szPart.match(kPatternPartTypeParams)[1];
+                    var szName = null;
+                    if (szPart.search(kPatternPartTypeParams)!=-1)
+                        szName = szPart.match(kPatternPartTypeParams)[1];
                     var szDispParam = szPart.match(kPatternPartDispParam)[1];                
                     var szFileName = szDispParam.match(kPatternFileName)[1];
                                  
-                    var szHeader = "Content-Type: application/octet-stream; " +szName + "\r\n";
-                    szHeader += "Content-Transfer-Encoding: base64\r\n";
+                    var szHeader = "Content-Type: application/octet-stream; ";
+                    szHeader +=  szName?szName:"";
+                    szHeader += "\r\nContent-Transfer-Encoding: base64\r\n";
                     szHeader += "Content-Disposition: attachment; fileName=\"" +szFileName + "\"\r\n\r\n";
                     mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szHeader : " + szHeader);
                     
