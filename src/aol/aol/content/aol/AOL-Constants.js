@@ -23,10 +23,12 @@ const patternAOLMSGData = /MI\(.*?\);/igm;
 const patternAOLMSGDataProcess =/MI\("(.*?)",.*?,"([\s\S]*)",(.*?),(.*?),.*?,.*?,(.*?),.*?\);/i;
 const patternAOLURLPageNum = /page=(.*?)&/i;
 const patternAOLLogout = /Logout\.aspx/i;
-const patternAOLLoginURL = /<div id="sns"><a.*?href="(.*?login.*?)".*?>.*?<\/div>/i;
 const patternAOLLogoutURL = /<div id="sns"><a.*?href="(.*?logout.*?)".*?>.*?<\/div>/i;
 const patternAOLFolders =/FN\(.*?\);/igm
 const patternAOLFolderName = /FN\("(.*?)",.*?\);/i
 const patternAOLFolderNameURL = /folder=(.*?)&/i;
 const patternAOLSend =/<form.*?name="SendForm".*?>[\s\S]*?<\/form>/igm;
 const patternAOLSendCheck = /parent.HandleSendSaveResponse/igm;
+const patternAOLSitedomain = /sitedomain.*?"(.*?)";/i;
+const patternAOLSiteState = /siteState.*?"(.*?)";/i;
+const patternAOLSeamless = /seamless.*?"(.*?)";/i;
