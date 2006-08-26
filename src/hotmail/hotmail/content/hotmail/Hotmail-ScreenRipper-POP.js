@@ -947,7 +947,7 @@ HotmailScreenRipper.prototype =
             this.m_Log.Write("Hotmail-SR - deleteMessage - MSGid " + szID );    
                 
             //folder id
-            var szFolderID = szTempID.match(patternHotmailFolderID)[1];
+            var szFolderID = szTempID.match(patternHotmailCurmbox)[1];
             this.m_Log.Write("Hotmail-SR - deleteMessage - FolderId " + szFolderID );
                
             //construct data
