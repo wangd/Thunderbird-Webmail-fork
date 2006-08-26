@@ -764,6 +764,7 @@ HotmailScreenRipper.prototype =
                                           + ".\nError message: " 
                                           + e.message+ "\n"
                                           + e.lineNumber);
+            mainObject.serverComms("-ERR negative vibes from " +mainObject.m_szUserName+ "\r\n");
             return false;
         }
     },
@@ -801,6 +802,7 @@ HotmailScreenRipper.prototype =
                                           ".\nError message: " 
                                           + e.message+ "\n"
                                           + e.lineNumber);
+            mainObject.serverComms("-ERR negative vibes from " +mainObject.m_szUserName+ "\r\n");
             return false;
         }
     },
@@ -841,6 +843,7 @@ HotmailScreenRipper.prototype =
                                           ".\nError message: " 
                                           + e.message+ "\n"
                                           + e.lineNumber);
+            mainObject.serverComms("-ERR negative vibes from " +mainObject.m_szUserName+ "\r\n");
             return false;
         }
     },    
@@ -980,6 +983,7 @@ HotmailScreenRipper.prototype =
                                           ".\nError message: " 
                                           + e.message+ "\n"
                                           + e.lineNumber);
+            mainObject.serverComms("-ERR negative vibes from " +mainObject.m_szUserName+ "\r\n");
             return false;
         } 
     },
