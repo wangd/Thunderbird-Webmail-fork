@@ -19,7 +19,8 @@ function YahooPOP(oResponseStream, oLog, oPrefs)
         this.m_bReUseSession = oPrefs.bReUseSession;
         this.m_bDownloadUnread= oPrefs.bUnread;
         this.m_aszFolderList = oPrefs.aszFolder;         
-
+        this.m_bUseShortID = oPrefs.bUseShortID;
+        
         //login data
         this.m_bAuthorised = false;
         this.m_szUserName = null; 
@@ -673,9 +674,19 @@ YahooPOP.prototype =
                 var oMSGData = this.m_aMsgDataStore[i];
                 var szEmailURL = oMSGData.szMSGUri;
                 this.m_Log.Write("YahooPOP.js - getMessageIDs - Email URL : " +szEmailURL);
-               
-                var szEmailID = szEmailURL.match(PatternYahooID)[1];
-                                    
+                
+                 var szEmailID = szEmailURL.match(PatternYahooID)[1];
+                //use short id    
+                if (this.m_bUseShortID) 
+                {       
+                    var aszIDParts = szEmailID.split(/_/);
+                    szEmailID ="";
+                    for (var j=0; j<aszIDParts.length; j++)
+                    {
+                        if (j!=1 && j!=2) szEmailID += aszIDParts[j]+"_";
+                    } 
+                }              
+                      
                 this.m_Log.Write("YahooPOP.js - getMessageIDs - IDS : " +szEmailID);    
                 szPOPResponse+=(i+1) + " " +szEmailID + "\r\n";  
             }         

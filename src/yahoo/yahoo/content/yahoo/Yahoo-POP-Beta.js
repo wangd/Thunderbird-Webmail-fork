@@ -22,7 +22,6 @@ function YahooPOPBETA(oResponseStream, oLog, oPrefs)
         this.m_bDownloadUnread= oPrefs.bUnread;         //download unread
         this.m_aszPrefFolderList = oPrefs.aszFolder;    // download folder
         this.m_iTime = oPrefs.iProcessDelay;            //timer delay
-        this.m_iProcessTrigger = oPrefs.iProcessTrigger;//delay process trigger
         this.m_iProcessAmount =  oPrefs.iProcessAmount; //delay proccess amount
 
         //login data
