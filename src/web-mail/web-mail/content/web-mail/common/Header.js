@@ -176,8 +176,16 @@ headers.prototype =
                 break;
                 
                 case 4://name
-                    var szName= szContentType.match(/name="(.*?)"/i)[1];
-                    szContent = this.decode(szName);
+                    if (szContentType.search(/name="(.*?)"/i)!=-1)
+                    {
+                        var szName= szContentType.match(/name="(.*?)"/i)[1];
+                        szContent = this.decodeEncodedWord(szName);
+                    }
+                    else if (szContentType.search(/name\*=(.*?)$/i)!=-1) 
+                    {
+                        var szName= szContentType.match(/name\*=(.*?)$/i)[1];
+                        szContent = this.decodeEncodedWordExt(szName);
+                    }
                 break;
             };
             
@@ -205,10 +213,10 @@ headers.prototype =
         try
         {
             this.m_Log.Write("Header.js - getContentDisposition - START " + iField); 
-            var szContentDispo =  this.getHeader("Content-Disposition");
-            var szContent= null;
+            var szContent =  this.getHeader("Content-Disposition");
+            var szResult= null;
             
-            if (szContentDispo)
+            if (szContent)
             {
                 switch(iField)
                 {
@@ -217,17 +225,44 @@ headers.prototype =
                     break;
                     
                     case 1: // filename
-                        var aszFilename= szContentDispo.match(/filename="(.*?)"/i);
-                        if (!aszFilename)  
-                            aszFilename= szContentDispo.match(/name="(.*?)"/i);                         
-                        
-                        if (aszFilename)
-                            szContent = this.decode(aszFilename[1]);
+                    
+                        if (szContent.search(/filename=/i)!=-1 || szContent.search(/name=/i)!=-1)
+                        {
+                            var aszFilename= szContent.match(/filename="(.*?)"/i);
+                            if (!aszFilename)  
+                                aszFilename= szContent.match(/name="(.*?)"/i);                         
+                            
+                            this.m_Log.Write("Header.js - getContentDisposition - aszFilename " + aszFilename);
+                            
+                            if (aszFilename)
+                            {
+                                if (aszFilename[1].search(/^=\?.*?\?=$/)!=-1)
+                                    szResult = this.decodeEncodedWord(aszFilename[1]);
+                                else
+                                    szResult = aszFilename[1];
+                            }
+                        }
+                        else if (szContent.search(/filename\*=/i)!=-1 || szContent.search(/name\*=/i)!=-1)
+                        {
+                            var aszFilename= szContent.match(/filename\*=(.*?)$/i);
+                            if (!aszFilename)  
+                                aszFilename= szContent.match(/name\*=(.*?)$/i);                         
+                            
+                            this.m_Log.Write("Header.js - getContentDisposition - aszFilename " + aszFilename);
+                            
+                            if (aszFilename)
+                            {
+                                if (aszFilename[1].search(/^.*?'.*?'.*?$/)!=-1)
+                                    szResult = this.decodeEncodedWordExt(aszFilename[1]);
+                                else
+                                    szResult = aszFilename[1];
+                            }
+                        }
                     break;
                 };
             }
-            this.m_Log.Write("Header.js - getContentDisposition - END " + szContent);
-            return szContent;  
+            this.m_Log.Write("Header.js - getContentDisposition - END " + szResult);
+            return szResult;  
         }
         catch(e)
         {
@@ -305,7 +340,7 @@ headers.prototype =
     },
     
 
-    decode : function (szValue)
+    decodeEncodedWord : function (szValue)
     {
         //szValue = "=?ISO-2022-JP?B?GyRCPCs4Sj5SMnAhSjcvRWchSxsoQi50eHQ=?=";
         //szValue = "=?Shift_JIS?B?w73ELnR4dA==?=";
@@ -357,8 +392,69 @@ headers.prototype =
                 }
             }
         }
-        
+
         this.m_Log.Write("Header.js - decode - END ");
         return szDecoded;       
     },
+    
+    
+    
+    
+    decodeEncodedWordExt : function (szValue)
+    {
+        //szValue = ISO-8859-1''r%E9sum%E9.txt;
+        this.m_Log.Write("Header.js - decodeEncodedWordExt - START " + szValue);
+        
+        var szDecoded = szValue;
+        
+        //check for encoding
+        if (szValue.search(/^.*?'.*?'.*?$/)!=-1)
+        {
+            var aszEncoding = szValue.match(/^(.*?)'(.*?)'(.*?)$/);
+            this.m_Log.Write("Header.js - decodeEncodedWordExt - aszEncoding " + aszEncoding);
+        
+            if (aszEncoding[1].search(/ISO-8859-1/i)!=-1)
+            {
+                try
+                {                    
+                     //find used quoted printable hex codes
+                    var szDecoded = aszEncoding[3];
+                    var aszHexCodes = szDecoded.match(/%[A-Z0-9]{2}/gm);
+                    this.m_Log.Write("Header.js - decodeEncodedWordExt - aszHexCodes " + aszHexCodes);
+                    aszHexCodes.sort();
+                    
+                    //remove duplicates
+                    for (var i=0; i<aszHexCodes.length; i)
+                    {
+                        if (aszHexCodes[i] == aszHexCodes[i+1])
+                            aszHexCodes.splice(i+1,1);
+                        else
+                           i++
+                    }
+                    
+                    //removed quoted printable codes
+                    for (var j=0; j<aszHexCodes.length; j++)
+                    {
+                        var hex = aszHexCodes[j].replace(/%/,"");
+                        this.m_Log.Write("Header.js - decodeEncodedWordExt - hex " + hex);
+                        var decimal = parseInt(hex,16); //convert hex to decimal
+                        this.m_Log.Write("Header.js - decodeEncodedWordExt - decimal " + decimal);
+                        var regexp = new RegExp(aszHexCodes[j], "gm");
+                        //replace hex 
+                        szDecoded = szDecoded.replace(regexp,String.fromCharCode(decimal));
+                    }
+                }
+                catch (ex)
+                {
+                    this.m_Log.Write("Header.js - decodeEncodedWordExt - unicode err");
+                
+                }
+            }
+        }
+        
+        this.m_Log.Write("Header.js - decodeEncodedWordExt - END " + szDecoded);
+        return szDecoded;       
+    },
 }
+
+

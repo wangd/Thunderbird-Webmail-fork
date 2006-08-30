@@ -40,7 +40,7 @@ email.prototype.parse = function (szRawEmail)
     {
         this.m_Log.Write("email.js - parse - START"); 
         
-        var szEmail = szRawEmail.match(/(^[\s\S]*)\r?\n\./)[1]; //remove pop terminator
+        var szEmail = szRawEmail.replace(/^\.$/,""); //remove pop terminator
         szEmail = szEmail.replace(/^\.\./gm,"."); //remove pop padding
         
         //split header and body
@@ -67,7 +67,7 @@ email.prototype.parse = function (szRawEmail)
 email.prototype.splitHeaderBody = function (szRaw)
 {
     this.m_Log.Write("email.js - splitHeaderBody START");
-    var aRaw = szRaw.match(/(^[\s\S]*?)\r?\n\r?\n([\s\S]*?)\r?\n?\r?\n?$/);
+    var aRaw = szRaw.split(/(^[\s\S]*?)\r?\n\r?\n([\s\S]*?)\r?\n?\r?\n?$/);
     aRaw[1] = aRaw[1].replace(/;\r\n/gm,"; "); //remove folding for headers
     this.m_Log.Write("email.js - splitHeaderBody Headers\n"+ aRaw[1]);
     this.m_Log.Write("email.js - splitHeaderBody Body\n"+ aRaw[2]);

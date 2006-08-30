@@ -33,7 +33,7 @@ QuotedPrintable.prototype.decode = function(rawMSG)
         //removed quoted printable codes
         for (var j=0; j<aszHexCodes.length; j++)
         {
-            var hex = aszHexCodes[j];
+            var hex = aszHexCodes[j].replace(/=/,"");
             var decimal = parseInt(hex,16); //convert hex to decimal
             var regexp = new RegExp(aszHexCodes[j], "gm");
             //replace hex 
