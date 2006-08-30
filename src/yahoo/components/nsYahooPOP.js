@@ -301,11 +301,12 @@ nsYahoo.prototype =
             WebMailPrefAccess.Get("int","yahoo.iProcessDelay",oPref);
             if (oPref.Value) oData.iProcessDelay = oPref.Value;
             
-            //delay process trigger
+            //use short id
             oPref.Value = null;
-            WebMailPrefAccess.Get("bool","yahoo.iProcessTrigger",oPref);
-            if (oPref.Value) oData.iProcessTrigger = oPref.Value;
-          
+            WebMailPrefAccess.Get("bool","yahoo.bUseShortID",oPref);
+            if (oPref.Value) oData.bUseShortID = oPref.Value;
+            this.m_Log.Write("nsYahoo.js - loadPrefs - bUseShortID " + oPref.Value);
+            
             //delay proccess amount
             oPref.Value = null;
             WebMailPrefAccess.Get("bool","yahoo.iProcessAmount",oPref);
