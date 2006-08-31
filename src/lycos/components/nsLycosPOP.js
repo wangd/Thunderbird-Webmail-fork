@@ -234,8 +234,7 @@ nsLycos.prototype =
                                           + err.name 
                                           + ".\nError message: " 
                                           + err.message+ "\n"
-                                          + err.lineNumber);
-            mainObject.m_HttpComms.deleteSessionData();                                           
+                                          + err.lineNumber);                                           
             mainObject.serverComms("-ERR Comms Error from "+ mainObject.m_szUserName+"\r\n");
         }
     },

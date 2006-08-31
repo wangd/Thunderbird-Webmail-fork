@@ -207,8 +207,7 @@ nsLycosIMAP.prototype =
                                           + err.name 
                                           + ".\nError message: " 
                                           + err.message+ "\n"
-                                          + err.lineNumber);
-            mainObject.m_HttpComms.deleteSessionData();                                  
+                                          + err.lineNumber);                                  
             mainObject.serverComms(mainObject.m_iTag + " NO Comms Error\r\n");
             return false;
         }
