@@ -40,7 +40,7 @@ email.prototype.parse = function (szRawEmail)
     {
         this.m_Log.Write("email.js - parse - START"); 
         
-        var szEmail = szRawEmail.replace(/^\.$/,""); //remove pop terminator
+        var szEmail = szRawEmail.replace(/^\.$/gm,""); //remove pop terminator
         szEmail = szEmail.replace(/^\.\./gm,"."); //remove pop padding
         
         //split header and body
