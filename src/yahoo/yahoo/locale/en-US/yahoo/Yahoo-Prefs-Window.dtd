@@ -1,6 +1,7 @@
 <!ENTITY YahooPref.Window.Title "Yahoo Options">
 <!ENTITY YahooPref.Panel.Accounts.Title "Accounts">
 <!ENTITY YahooPref.Panel.Domains.Title "Domains">
+<!ENTITY YahooPref.Panel.Globals.Title "Globals">
 <!ENTITY YahooPref.Button.Ok.Label "Ok">
 <!ENTITY YahooPref.Button.Cancel.Label "Cancel">
 
@@ -33,3 +34,10 @@
 <!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "A">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Remove">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "R">
+
+
+
+<!ENTITY YahooPref.Globals.ShortID.Label "Use Short ID">
+<!ENTITY YahooPref.Globals.ShortID.AccessKey "I">
+<!ENTITY YahooPref.Globals.ReUseSession.Label "Reuse http session data.">
+<!ENTITY YahooPref.Globals.ReUseSession.AccessKey "S">
