@@ -23,6 +23,7 @@ function YahooPOPBETA(oResponseStream, oLog, oPrefs)
         this.m_aszPrefFolderList = oPrefs.aszFolder;    // download folder
         this.m_iTime = oPrefs.iProcessDelay;            //timer delay
         this.m_iProcessAmount =  oPrefs.iProcessAmount; //delay proccess amount
+        this.m_bUseShortID = oPrefs.bUseShortID;
 
         //login data
         this.m_bAuthorised = false;
@@ -674,9 +675,22 @@ YahooPOPBETA.prototype =
                                                 
             for (i = 0; i <  this.m_aMsgDataStore.length; i++)
             {
-                var szID = this.m_aMsgDataStore[i].szID;
-                this.m_Log.Write("YahooPOPBETA.js - getMessageIDs - IDS : " +szID);    
-                szPOPResponse+=(i+1) + " " +szID + "\r\n";  
+                var szEmailID = this.m_aMsgDataStore[i].szID;;
+               
+                //use short id    1_8571_AJSySdEAAREkRPe9dgtLa1BshJg
+                if (this.m_bUseShortID) 
+                {       
+                    var aszIDParts = szEmailID.split(/_/);
+                    szEmailID ="";
+                    for (var j=0; j<aszIDParts.length; j++)
+                    {
+                        if (j!=1) szEmailID += aszIDParts[j];
+                        if (j!=aszIDParts.length-1) szEmailID += "_";
+                    } 
+                }      
+
+                this.m_Log.Write("YahooPOPBETA.js - getMessageIDs - IDS : " +szEmailID);    
+                szPOPResponse+=(i+1) + " " +szEmailID + "\r\n";  
             }         
                
             szPOPResponse += ".\r\n";

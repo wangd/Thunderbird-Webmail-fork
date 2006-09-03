@@ -683,7 +683,8 @@ YahooPOP.prototype =
                     szEmailID ="";
                     for (var j=0; j<aszIDParts.length; j++)
                     {
-                        if (j!=1 && j!=2) szEmailID += aszIDParts[j]+"_";
+                        if (j!=1 && j!=2) szEmailID += aszIDParts[j];
+                        if (j!=aszIDParts.length-1) szEmailID += "_";
                     } 
                 }              
                       
