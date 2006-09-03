@@ -71,7 +71,8 @@ const patternHotmailJSRefresh = /<html><head><script.*?>.*?\.location\.replace.*
 const patternHotmailLogOut = /<.*?"(.*?logout.aspx.*?)".*?>/gi;
 const patternHotmailViewState = /<input.*?id="__VIEWSTATE".*?value="(.*?)".*?\/>/i;
 const patternHotmailInbox = /<a href="(.*?mail.aspx\?Control=Inbox)".*?>/i;
-const patternHotmailInboxCotent = /<div id="inbox">/ig
+const patternHotmailInboxContent = /<div id="inbox">/ig;
+const patternHotmailInboxTable =/<table class="dItemListContentTable".*?>[\s\S]*?<\/table>/im;
 const patternHotmailInboxNoContent =/<div.*?ContentNoMsg.*?>/ig
 const patternHotmailCompose =/NewMessageGo[\s\S]*?document.location.href="(.*?)"/i;
 const patternHotmailJunkFolderID = /<a href="(.*?mail.aspx\?Control=Inbox&FolderID.*?5)">/i;

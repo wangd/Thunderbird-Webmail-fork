@@ -444,24 +444,27 @@ HotmailScreenRipperBETA.prototype =
                 mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler - m_szDeleteURI : " +mainObject.m_szDelete);
             }
                            
-            //search for inbox content
-            if (szResponse.search(patternHotmailInboxCotent)==-1)
+            if (szResponse.search(patternHotmailInboxContent)==-1)
                 throw new Error("Error Parsing Web Page");
                 
-            //get msg urls
-            var aMsgTable = szResponse.match(patternHotmailInboxCotent);
-            mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler -msg table : " +aMsgTable);
-            if (aMsgTable) 
+                
+            if (szResponse.search(patternHotmailInboxNoContent)==-1) //search for inbox content
             {
+                mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler - content found");
+                
                 //get view state
                 var szStatView = szResponse.match(patternHotmailViewState)[1];
                 mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler - szViewState : " +szStatView);
-      
+                
+                //get msg urls
+                var aMsgTable = szResponse.match(patternHotmailInboxTable);
+                mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler -msg table : " +aMsgTable);
+                
                 var szMsgRows = aMsgTable[0].match(patternHotmailMailBoxTableRow);  //split on rows
                 mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler -split msg table : " +szMsgRows);
                 if (szMsgRows) 
                 {
-                    for (j = 0; j < szMsgRows.length; j++)
+                    for (j=0; j<szMsgRows.length; j++)
                     {
                         mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler - row  : " +szMsgRows[j]);
                         var oMSG = mainObject.processMSG(szMsgRows[j],szStatView); 
@@ -469,13 +472,6 @@ HotmailScreenRipperBETA.prototype =
                     } 
                 } 
             }
-            else
-            {
-                mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler - check for empty mail box");                
-                if (szResponse.search(patternHotmailInboxNoContent)==-1)
-                    throw new Error("Error Parsing Web Page");
-            }               
-            
             
             //get pages uri
             var aszNextPage = szResponse.match(patternHotmailNextPage);
@@ -674,6 +670,7 @@ HotmailScreenRipperBETA.prototype =
                                           + ".\nError message: " 
                                           + e.message+ "\n"
                                           + e.lineNumber);
+            this.serverComms("-ERR negative vibes from " +this.m_szUserName+ "\r\n");
             return false;
         }
     },
@@ -713,6 +710,7 @@ HotmailScreenRipperBETA.prototype =
                                           + ".\nError message: " 
                                           + e.message+ "\n"
                                           + e.lineNumber);
+            this.serverComms("-ERR negative vibes from " +this.m_szUserName+ "\r\n");
             return false;
         }
     },
@@ -750,6 +748,7 @@ HotmailScreenRipperBETA.prototype =
                                           ".\nError message: " 
                                           + err.message+ "\n"
                                           + err.lineNumber);
+            this.serverComms("-ERR negative vibes from " +this.m_szUserName+ "\r\n");
             return false;
         }
     },
@@ -767,7 +766,7 @@ HotmailScreenRipperBETA.prototype =
             //get msg id
             var oMSG = this.m_aMsgDataStore[lID-1];
             this.m_szMSGURI = oMSG.szMSGUri;
-            var szMSGID = this.m_szMSGURI.match(patternHotmailPOPEMailID)[1];
+            var szMSGID = this.m_szMSGURI.match(patternHotmailEMailID)[1];
             
             var IOService = Components.classes["@mozilla.org/network/io-service;1"];
             IOService = IOService.getService(Components.interfaces.nsIIOService);
@@ -802,6 +801,7 @@ HotmailScreenRipperBETA.prototype =
                                           ".\nError message: " 
                                           + e.message+ "\n"
                                           + e.lineNumber);
+            this.serverComms("-ERR negative vibes from " +this.m_szUserName+ "\r\n");
             return false;
         }
     },    
@@ -881,7 +881,7 @@ HotmailScreenRipperBETA.prototype =
             this.m_Log.Write("Hotmail-SR-BETAR - deleteMessage - id " + lID ); 
                  
             var oMSG = this.m_aMsgDataStore[lID-1];
-            var szID = oMSG.szMSGUri.match(patternHotmailPOPEMailID)[1]; //msg id
+            var szID = oMSG.szMSGUri.match(patternHotmailEMailID)[1]; //msg id
             this.m_Log.Write("Hotmail-SR-BETAR - deleteMessage - MSGid " + szID );    
                 
             this.m_HttpComms.setContentType("multipart/form-data");
@@ -919,6 +919,7 @@ HotmailScreenRipperBETA.prototype =
                                           ".\nError message: " 
                                           + e.message+ "\n"
                                           + e.lineNumber);
+            this.serverComms("-ERR negative vibes from " +this.m_szUserName+ "\r\n");
             return false;
         } 
     },
@@ -994,6 +995,7 @@ HotmailScreenRipperBETA.prototype =
                                       + ".\nError message: " 
                                       + e.message+ "\n"
                                       + e.lineNumber);
+            this.serverComms("-ERR negative vibes from " +this.m_szUserName+ "\r\n");
             return false;
         }
     },  
