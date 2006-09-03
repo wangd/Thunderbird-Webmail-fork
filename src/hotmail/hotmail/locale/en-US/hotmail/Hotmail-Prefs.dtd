@@ -32,7 +32,7 @@
 <!ENTITY HotmailPref.SMTP.SendHtml.AccessKey "h">
 
 <!ENTITY HotmailPref.AccountError.Label "No Hotmail Accounts Found"> 
-<!ENTITY HotmailPref.SMTP.NA.Label "No SMPT options for Hotmail BETA">
+<!ENTITY HotmailPref.SMTP.NA.Label "No SMTP options for Hotmail BETA">
 
 <!ENTITY HotmailPref.Domain.Label "Domains supported by Hotmail extension">
 <!ENTITY HotmailPref.Domain.Button.AddDomain.Label "Add...">
