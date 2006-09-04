@@ -684,8 +684,11 @@ YahooPOPBETA.prototype =
                     szEmailID ="";
                     for (var j=0; j<aszIDParts.length; j++)
                     {
-                        if (j!=1) szEmailID += aszIDParts[j];
-                        if (j!=aszIDParts.length-1) szEmailID += "_";
+                        if (j!=1)
+                        {
+                            szEmailID += aszIDParts[j];
+                            if (j!=aszIDParts.length-1) szEmailID += "_";
+                        }
                     } 
                 }      
 

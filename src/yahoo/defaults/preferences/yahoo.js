@@ -4,6 +4,6 @@ pref("yahoo.iAccountNum", 0);
 pref("yahoo.bUseJunkMail", false);
 pref("yahoo.bDownloadUnread", false);
 pref("yahoo.bSaveCopy", false);
-pref("yahoo.iProcessTrigger", 50);
 pref("yahoo.iProcessAmount", 25);
 pref("yahoo.iProcessDelay", 10);
+pref("yahoo.bUseShortID", false);

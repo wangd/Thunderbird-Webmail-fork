@@ -27,7 +27,7 @@
 <!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "s">
 
 <!ENTITY YahooPref.AccountError.Label "No Yahoo Accounts Found"> 
-<!ENTITY YahooPref.SMTP.NA.Label "No SMPT options for Yahoo BETA">
+<!ENTITY YahooPref.SMTP.NA.Label "No SMTP options for Yahoo BETA">
 
 <!ENTITY YahooPref.Domain.Label "Domains supported by Yahoo extension">
 <!ENTITY YahooPref.Domain.Button.AddDomain.Label "Add...">
@@ -36,8 +36,8 @@
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "R">
 
 
-
 <!ENTITY YahooPref.Globals.ShortID.Label "Use Short ID">
 <!ENTITY YahooPref.Globals.ShortID.AccessKey "I">
 <!ENTITY YahooPref.Globals.ReUseSession.Label "Reuse http session data.">
 <!ENTITY YahooPref.Globals.ReUseSession.AccessKey "S">
+<!ENTITY YahooPref.GlobalsInfo.Label "Changing the Short Id option will result in your entire mailbox being downloaded">

@@ -5,6 +5,7 @@
 <?xml-stylesheet href="chrome://yahoo/content/Yahoo-Prefs-Window.css"?>
 <?xml-stylesheet href="chrome://yahoo/content/Yahoo-Prefs-Domains.css"?>
 <?xml-stylesheet href="chrome://yahoo/content/Yahoo-Prefs-Accounts.css"?>
+<?xml-stylesheet href="chrome://yahoo/content/Yahoo-Prefs-Globals.css"?>
 
 <!DOCTYPE dialog SYSTEM "chrome://yahoo/locale/Yahoo-Prefs-Window.dtd">
 
@@ -17,6 +18,7 @@
     <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
     <script type="application/x-javascript" src="chrome://web-mail/content/common/CommonPrefs.js"/>
     <script type="application/x-javascript" src="chrome://yahoo/content/Yahoo-Prefs-Domains.js"/>
+    <script type="application/x-javascript" src="chrome://yahoo/content/Yahoo-Prefs-Globals.js"/>
     <script type="application/x-javascript" src="chrome://yahoo/content/Yahoo-Prefs-Accounts.js"/>
     <script type="application/x-javascript" src="chrome://yahoo/content/Yahoo-Prefs-Accounts-Data.js"/>
     <script>
@@ -25,6 +27,7 @@
             {
                 gPrefAccounts.init();
                 gYahooDomain.init();
+                gPrefGlobals.init();
             }
             
         
@@ -41,6 +44,7 @@
             function onOK()
             {
                 gPrefAccounts.save();
+                gPrefGlobals.save();
                 window.close();
             }
         ]]>
@@ -63,6 +67,7 @@
     <radiogroup id="viewGroup" class="viewSelector" orient="horizontal">
         <radio id="rAccounts" label="&YahooPref.Panel.Accounts.Title;" oncommand="setDeck(0);" selected="true"/>
         <radio id="rDomains"  label="&YahooPref.Panel.Domains.Title;"  oncommand="setDeck(1);"/>
+        <radio id="rGlobals"  label="&YahooPref.Panel.Globals.Title;"  oncommand="setDeck(2);"/>      
     </radiogroup>
     
     <deck id="deck"> 
@@ -182,6 +187,29 @@
                 </vbox> 
                 <spacer flex="1"/>
             </hbox>
+        </vbox>
+        
+        
+        <!-- Globals -->
+        <vbox id="vboxGlobals" flex="1">
+            <checkbox label= "&YahooPref.Globals.ShortID.Label;" 
+                      accesskey= "&YahooPref.Globals.ShortID.AccessKey;" 
+                      id="chkShortID"/>
+            <vbox id="ShortIDInfo">   
+                <hbox>
+                    <image id ="iconMessage"/> 
+                </hbox>
+                <hbox >
+                    <vbox flex="1" >
+                        <description style="margin-left: 25px"> 
+                            &YahooPref.GlobalsInfo.Label;
+                        </description> 
+                    </vbox> 
+                </hbox>
+            </vbox>      
+            <checkbox label="&YahooPref.Globals.ReUseSession.Label;" 
+                      accesskey="&YahooPref.Globals.ReUseSession.AccessKey;" 
+                      id="chkReUseSession"/>
         </vbox>
     </deck>
     
