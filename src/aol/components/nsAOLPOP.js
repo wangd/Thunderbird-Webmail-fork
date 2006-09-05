@@ -764,6 +764,11 @@ nsAOL.prototype =
             switch(mainObject.m_iStage)
             {
                 case 0:
+                    var szContentType =  httpChannel.getResponseHeader("Content-Type");
+                    mainObject.m_Log.Write("AOLPOP.js - emailOnloadHandler - szContentType "+szContentType);  
+                    if (szContentType.search(/text\/plain/i)==-1)
+                         throw new Error("error downloadind email");
+                         
                     mainObject.m_szMSG = "X-WebMail: true\r\n";
                     mainObject.m_szMSG += "X-szFolder: " + mainObject.m_szFolder+ "\r\n";
                     mainObject.m_szMSG += szResponse.replace(/^\./mg,"..");    //bit padding   
