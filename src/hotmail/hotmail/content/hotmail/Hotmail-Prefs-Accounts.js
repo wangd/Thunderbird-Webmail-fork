@@ -372,7 +372,7 @@ var gPrefAccounts =
                     newItem.setAttribute("id", szUserName);
                     newItem.setAttribute("label", szUserName);
                     newItem.setAttribute("class", "menuitem-iconic"); 
-                    newItem.setAttribute("src","chrome://Hotmail/skin/person.png");
+                    newItem.setAttribute("src","chrome://hotmail/skin/person.png");
                     newItem.setAttribute("oncommand","gPrefAccounts.userClick()"); 
                     list.appendChild(newItem);
                 }
