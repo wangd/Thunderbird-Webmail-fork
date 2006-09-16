@@ -1,17 +1,15 @@
 <!ENTITY YahooPref.Window.Title "Yahoo indstillinger">
 <!ENTITY YahooPref.Panel.Accounts.Title "Konti">
 <!ENTITY YahooPref.Panel.Domains.Title "Domæner">
+<!ENTITY YahooPref.Panel.Globals.Title "Globale">
 <!ENTITY YahooPref.Button.Ok.Label "Ok">
 <!ENTITY YahooPref.Button.Cancel.Label "Annuller">
-
 <!ENTITY YahooPref.Tab.Mode.Title "POP">
 <!ENTITY YahooPref.Tab.POP.Title "SMTP">
 <!ENTITY YahooPref.Tab.SMTP.Title "Modus">
-
 <!ENTITY YahooPref.Mode.Label "Vælg website som udvidelsen skal bruge">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Produktionswebsite">
 <!ENTITY YahooPref.Mode.Beta.Label "BETA-website">
-
 <!ENTITY YahooPref.POP.DownloadUnread.Label "Hent kun ulæste emails">
 <!ENTITY YahooPref.POP.DownloadUnread.AccessKey "u">
 <!ENTITY YahooPref.POP.JunkMail.Label "Hent JunkMail">
@@ -21,15 +19,17 @@
 <!ENTITY YahooPref.POP.ButtonAdd.AccessKey "T">
 <!ENTITY YahooPref.POP.ButtonRemove.Label "Fjern">
 <!ENTITY YahooPref.POP.ButtonRemove.AccessKey "F">
-
 <!ENTITY YahooPref.SMTP.SaveSentItems.Label "Gem kopi i sendte emner">
 <!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "s">
-
 <!ENTITY YahooPref.AccountError.Label "Ingen Yahoo-konti fundet">
 <!ENTITY YahooPref.SMTP.NA.Label "Ingen SMTP-indstillinger for Yahoo BETA">
-
 <!ENTITY YahooPref.Domain.Label "Domæner understøttet af Yahoo-udvidelsen">
 <!ENTITY YahooPref.Domain.Button.AddDomain.Label "Tilføj...">
 <!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "T">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Fjern">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "F">
+<!ENTITY YahooPref.Globals.ShortID.Label "Brug ShortID">
+<!ENTITY YahooPref.Globals.ShortID.AccessKey "I">
+<!ENTITY YahooPref.Globals.ReUseSession.Label "Genbrug http sessionsdata.">
+<!ENTITY YahooPref.Globals.ReUseSession.AccessKey "S">
+<!ENTITY YahooPref.GlobalsInfo.Label "Ændring af ShortID-indstillingen vil resultere i at hele din mailboks downloades">

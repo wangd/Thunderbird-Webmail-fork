@@ -1,8 +1,8 @@
-<!ENTITY YahooFolderAdd.Title "Add Folder">
-<!ENTITY YahooFolderName.Label "Folder Name">
+<!ENTITY YahooFolderAdd.Title "Afegeix carpeta">
+<!ENTITY YahooFolderName.Label "Nom de la carpeta">
 <!ENTITY YahooFolderName.AccessKey "F">
-<!ENTITY YahooFolders.Label "Add download folder">
+<!ENTITY YahooFolders.Label "Afegeix carpeta de descàrrega">
 <!ENTITY YahooFolder.ButtonOk.Label "Ok">
 <!ENTITY YahooFolder.ButtonOk.AccessKey "O">
-<!ENTITY YahooFolder.ButtonCancel.Label "Cancel">
+<!ENTITY YahooFolder.ButtonCancel.Label "Cancela">
 <!ENTITY YahooFolder.ButtonCancel.AccessKey "C">

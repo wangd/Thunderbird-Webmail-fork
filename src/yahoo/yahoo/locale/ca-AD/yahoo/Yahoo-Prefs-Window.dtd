@@ -1,35 +1,35 @@
-<!ENTITY YahooPref.Window.Title "Yahoo Options">
-<!ENTITY YahooPref.Panel.Accounts.Title "Accounts">
-<!ENTITY YahooPref.Panel.Domains.Title "Domains">
+<!ENTITY YahooPref.Window.Title "Opcions del Yahoo">
+<!ENTITY YahooPref.Panel.Accounts.Title "Comptes">
+<!ENTITY YahooPref.Panel.Domains.Title "Dominis">
+<!ENTITY YahooPref.Panel.Globals.Title "Globals">
 <!ENTITY YahooPref.Button.Ok.Label "Ok">
-<!ENTITY YahooPref.Button.Cancel.Label "Cancel">
-
+<!ENTITY YahooPref.Button.Cancel.Label "Cancela">
 <!ENTITY YahooPref.Tab.Mode.Title "Mode">
 <!ENTITY YahooPref.Tab.POP.Title "POP">
 <!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
-
-<!ENTITY YahooPref.Mode.Label "Select website the extension will use">
-<!ENTITY YahooPref.Mode.ScreenScraper.Label "Production Website">
+<!ENTITY YahooPref.Mode.Label "Seleccioneu el lloc web que utilitzarà l&apos;extensió">
+<!ENTITY YahooPref.Mode.ScreenScraper.Label "Lloc web en producció">
 <!ENTITY YahooPref.Mode.Beta.Label "BETA Website">
-
-<!ENTITY YahooPref.POP.DownloadUnread.Label "Download unread emails only">
+<!ENTITY YahooPref.POP.DownloadUnread.Label "Descarrega només correus no llegits">
 <!ENTITY YahooPref.POP.DownloadUnread.AccessKey "u">
-<!ENTITY YahooPref.POP.JunkMail.Label "Download JunkMail">
+<!ENTITY YahooPref.POP.JunkMail.Label "Descarrega el correu brossa">
 <!ENTITY YahooPref.POP.JunkMail.AccessKey "J">
-<!ENTITY YahooPref.POP.Folders.Label "Download folders">
-<!ENTITY YahooPref.POP.ButtonAdd.Label "Add...">
+<!ENTITY YahooPref.POP.Folders.Label "Descarrega les carpetes">
+<!ENTITY YahooPref.POP.ButtonAdd.Label "Afegeix">
 <!ENTITY YahooPref.POP.ButtonAdd.AccessKey "A">
-<!ENTITY YahooPref.POP.ButtonRemove.Label "Remove">
+<!ENTITY YahooPref.POP.ButtonRemove.Label "Esborra">
 <!ENTITY YahooPref.POP.ButtonRemove.AccessKey "R">
-
-<!ENTITY YahooPref.SMTP.SaveSentItems.Label "Save copy in sent items.">
+<!ENTITY YahooPref.SMTP.SaveSentItems.Label "Desa una còpia a elements enviats.">
 <!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "s">
-
-<!ENTITY YahooPref.AccountError.Label "No Yahoo Accounts Found"> 
-<!ENTITY YahooPref.SMTP.NA.Label "No SMPT options for Yahoo BETA">
-
-<!ENTITY YahooPref.Domain.Label "Domains supported by Yahoo extension">
-<!ENTITY YahooPref.Domain.Button.AddDomain.Label "Add...">
+<!ENTITY YahooPref.AccountError.Label "No s&apos;han trobat comptes de Yahoo.">
+<!ENTITY YahooPref.SMTP.NA.Label "No hi ha opcions SMPT per a Yahoo BETA">
+<!ENTITY YahooPref.Domain.Label "Dominis suportats per l&apos;estensió de Yahoo">
+<!ENTITY YahooPref.Domain.Button.AddDomain.Label "Afegeix...">
 <!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "A">
-<!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Remove">
+<!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Esborra">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "R">
+<!ENTITY YahooPref.Globals.ShortID.Label "Utilitza un ID curt">
+<!ENTITY YahooPref.Globals.ShortID.AccessKey "I">
+<!ENTITY YahooPref.Globals.ReUseSession.Label "Reutilitza les dades de sessió http">
+<!ENTITY YahooPref.Globals.ReUseSession.AccessKey "S">
+<!ENTITY YahooPref.GlobalsInfo.Label "Si canvieu la opció d&apos;ID curt es descarregarà tot el correu">

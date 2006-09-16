@@ -7,6 +7,6 @@
 <!ENTITY Location.Label "Placering">
 <!ENTITY Location.AccessKey "P">
 <!ENTITY Note.Label "Disse logs vil indeholde brugernavne og kodeord.">
-<!ENTITY Restart.Label "En genstart af Thunderbird er påkræevet før ændringerne træder i kraft.">
+<!ENTITY Restart.Label "En genstart af Thunderbird er påkrævet før ændringerne træder i kraft.">
 <!ENTITY Button.Label "Gennemse...">
 <!ENTITY Button.AccessKey "G">

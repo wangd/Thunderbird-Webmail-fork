@@ -1,6 +1,7 @@
 <!ENTITY YahooPref.Window.Title "Yahoo-innstillinger">
 <!ENTITY YahooPref.Panel.Accounts.Title "Kontoer">
 <!ENTITY YahooPref.Panel.Domains.Title "Domener">
+<!ENTITY YahooPref.Panel.Globals.Title "Globaler">
 <!ENTITY YahooPref.Button.Ok.Label "OK">
 <!ENTITY YahooPref.Button.Cancel.Label "Avbryt">
 <!ENTITY YahooPref.Tab.Mode.Title "Modus">
@@ -27,3 +28,8 @@
 <!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "A">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Fjern">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "R">
+<!ENTITY YahooPref.Globals.ShortID.Label "Bruk kort-ID">
+<!ENTITY YahooPref.Globals.ShortID.AccessKey "I">
+<!ENTITY YahooPref.Globals.ReUseSession.Label "Gjenbruk http-sesjon-data">
+<!ENTITY YahooPref.Globals.ReUseSession.AccessKey "S">
+<!ENTITY YahooPref.GlobalsInfo.Label "Å bytte kort-ID-innstillingen vil bety at din fulle innboks blir lastet ned">

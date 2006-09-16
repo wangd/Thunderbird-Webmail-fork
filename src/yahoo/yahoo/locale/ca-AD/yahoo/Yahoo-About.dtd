@@ -1,8 +1,8 @@
 <!ENTITY YahooAbout.Title "Quant al Yahoo">
 <!ENTITY YahooAbout.ExtName "Yahoo">
 <!ENTITY YahooAbout.ExtVersion "versió">
-<!ENTITY YahooAbout.ExtDescription "Component de Yahoo per a l'extensió WebMail.">
+<!ENTITY YahooAbout.ExtDescription "Component de Yahoo per a l&apos;extensió WebMail.">
 <!ENTITY YahooAbout.ExtCreaterTitle "Creat per:">
-<!ENTITY YahooAbout.ExtHome "Pàgina d'inici">
+<!ENTITY YahooAbout.ExtHome "Pàgina d&apos;inici">
 <!ENTITY YahooAbout.ExtButton "Tanca">
 <!ENTITY YahooAbout.ExtContributorTitle "Col·laboradors:">

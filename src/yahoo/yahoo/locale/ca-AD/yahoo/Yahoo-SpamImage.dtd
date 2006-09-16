@@ -1,5 +1,5 @@
-<!ENTITY YahooSpam.Window.Title "Yahoo Anti Spam Image">
+<!ENTITY YahooSpam.Window.Title "Missatge antispam de Yahoo">
 <!ENTITY YahooSpam.Button.OK.Label "OK">
 <!ENTITY YahooSpam.Title "Yahoo">
-<!ENTITY YahooSpam.Decription "Anti Spam Verification">
-<!ENTITY YahooSpam.Label "Type what you see in the image above.">
+<!ENTITY YahooSpam.Decription "Verificació antispam">
+<!ENTITY YahooSpam.Label "Teclejeu el que hi ha a la imatge">

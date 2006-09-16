@@ -1,6 +1,7 @@
 <!ENTITY YahooPref.Window.Title "Opciones para Yahoo">
 <!ENTITY YahooPref.Panel.Accounts.Title "Cuentas">
 <!ENTITY YahooPref.Panel.Domains.Title "Dominios">
+<!ENTITY YahooPref.Panel.Globals.Title "Globales">
 <!ENTITY YahooPref.Button.Ok.Label "Ok">
 <!ENTITY YahooPref.Button.Cancel.Label "Cancelar">
 <!ENTITY YahooPref.Tab.Mode.Title "Modo">
@@ -27,3 +28,8 @@
 <!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "A">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Eliminar">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "R">
+<!ENTITY YahooPref.Globals.ShortID.Label "Utilizar ID Corta">
+<!ENTITY YahooPref.Globals.ShortID.AccessKey "I">
+<!ENTITY YahooPref.Globals.ReUseSession.Label "Reutilizar datos de sesión http.">
+<!ENTITY YahooPref.Globals.ReUseSession.AccessKey "S">
+<!ENTITY YahooPref.GlobalsInfo.Label "Cambiar la ID corta provocará la descarga  completa de su buzón de mensajes">

@@ -27,3 +27,10 @@
 <!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "H">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Entfernen">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "E">
+
+<!ENTITY YahooPref.Panel.Globals.Title "Globals">
+<!ENTITY YahooPref.Globals.ShortID.Label "Use Short ID">
+<!ENTITY YahooPref.Globals.ShortID.AccessKey "I">
+<!ENTITY YahooPref.Globals.ReUseSession.Label "Reuse http session data.">
+<!ENTITY YahooPref.Globals.ReUseSession.AccessKey "S">
+<!ENTITY YahooPref.GlobalsInfo.Label "Changing the Short Id option will result in your entire mailbox being downloaded">

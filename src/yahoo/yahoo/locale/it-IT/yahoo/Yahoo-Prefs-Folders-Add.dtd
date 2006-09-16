@@ -1,7 +1,7 @@
-<!ENTITY YahooFolderAdd.Title "Aggiungi">
+<!ENTITY YahooFolderAdd.Title "Aggiunta di una cartella">
 <!ENTITY YahooFolderName.Label "Nome della cartella:">
 <!ENTITY YahooFolderName.AccessKey "c">
-<!ENTITY YahooFolders.Label "Aggiungi cartella dalla quale scaricare i messaggi">
+<!ENTITY YahooFolders.Label "Aggiungere cartella dalla quale scaricare i messaggi">
 <!ENTITY YahooFolder.ButtonOk.Label "OK">
 <!ENTITY YahooFolder.ButtonOk.AccessKey "O">
 <!ENTITY YahooFolder.ButtonCancel.Label "Annulla">
