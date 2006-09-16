@@ -33,7 +33,7 @@ nsMailDotComDomains.prototype =
         {   
             this.m_Log.Write("nsMailDotComDomains.js - addDomain - START " + szDomain);
             
-            if ( szDomain.search(/[^a-zA-Z0-9\.]+/i)!=-1 || 
+            if ( szDomain.search(/[^a-zA-Z0-9\.\-]+/i)!=-1 || 
                  szDomain.search(/\s/)!=-1 ||
                  szDomain.search(/\./)==-1 ||
                  szDomain.search(/^\./)!=-1 || 

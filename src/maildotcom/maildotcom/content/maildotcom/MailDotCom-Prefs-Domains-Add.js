@@ -52,7 +52,7 @@ var gDomainAdd =
             
             document.getElementById("labelDomainsName").click();
         }
-        else if ( szValue.search(/[^a-zA-Z0-9\.]+/i)!=-1 || 
+        else if ( szValue.search(/[^a-zA-Z0-9\.\-]+/i)!=-1 || 
                   szValue.search(/\s/)!=-1 ||
                   szValue.search(/\./)==-1 ||
                   szValue.search(/^\./)!=-1 || 
