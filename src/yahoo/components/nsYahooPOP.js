@@ -364,6 +364,12 @@ nsYahoo.prototype =
                         this.m_Log.Write("nsYahoo.js - loadPrefs - bDownloadUnread " + oPref.Value);
                         if (oPref.Value) oData.bUnread=oPref.Value;
                         
+                        //get unread
+                        oPref.Value = null;
+                        WebMailPrefAccess.Get("bool","yahoo.Account."+i+".bMarkAsRead",oPref);
+                        this.m_Log.Write("nsYahoo.js - loadPrefs - bMarkAsRead " + oPref.Value);
+                        if (oPref.Value) oData.bUnread=oPref.Value;
+                        
                         //use yahoo beta site
                         oPref.Value = null;
                         WebMailPrefAccess.Get("bool","yahoo.Account."+i+".bBeta",oPref);

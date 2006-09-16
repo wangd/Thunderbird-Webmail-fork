@@ -9,6 +9,8 @@ PrefData.prototype.bJunkMail = false;
 
 PrefData.prototype.bUnread = false;
 
+PrefData.prototype.bMarkAsRead = true;
+
 PrefData.prototype.bSaveSentItem = false;
 
 PrefData.prototype.aszFolder = null;
