@@ -169,19 +169,19 @@ var gPrefAccounts =
                         //get email address
                         oPref.Value = null;
                         WebMailPrefAccess.Get("char","hotmail.Account."+i+".user",oPref);
-                        if (oPref.Value) oData.szUser = oPref.Value;
+                        if (oPref.Value !=null) oData.szUser = oPref.Value;
                         this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - getAccountPrefs - oData.szUser " + oData.szUser);
                         
                         //get unread
                         oPref.Value = null;
                         WebMailPrefAccess.Get("bool","hotmail.Account."+i+".bDownloadUnread",oPref);
-                        if (oPref.Value) oData.bDownloadUnread = oPref.Value;
+                        if (oPref.Value !=null) oData.bDownloadUnread = oPref.Value;
                         this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - getAccountPrefs - oData.bDownloadUnread " + oData.bDownloadUnread);
                                                 
                         //get Mark As read
                         oPref.Value = null;
                         WebMailPrefAccess.Get("bool","hotmail.Account."+i+".bMarkAsRead",oPref);
-                        if (oPref.Value!=null) oData.bMarkAsRead = oPref.Value;
+                        if (oPref.Value !=null) oData.bMarkAsRead = oPref.Value;
                         this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - getAccountPrefs - oData.bMarkAsRead " + oData.bMarkAsRead);
                                                                                                
                         //get junkmail
