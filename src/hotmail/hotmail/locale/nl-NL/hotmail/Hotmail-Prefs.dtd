@@ -1,41 +1,35 @@
-<!ENTITY HotmailPref.Window.Title "Hotmail Options">
+<!ENTITY HotmailPref.Window.Title "Hotmail Opties">
 <!ENTITY HotmailPref.Panel.Accounts.Title "Accounts">
-<!ENTITY HotmailPref.Panel.Domains.Title "Domains">
+<!ENTITY HotmailPref.Panel.Domains.Title "Domeinen">
 <!ENTITY HotmailPref.Button.Ok.Label "Ok">
-<!ENTITY HotmailPref.Button.Cancel.Label "Cancel">
-
+<!ENTITY HotmailPref.Button.Cancel.Label "Annuleren">
 <!ENTITY HotmailPref.Tab.Mode.Title "Mode">
 <!ENTITY HotmailPref.Tab.POP.Title "POP">
 <!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
-
-<!ENTITY HotmailPref.Mode.Label "Select the communications method the extension will use to connect to Microsoft's servers">
-<!ENTITY HotmailPref.Mode.ScreenScraper.Label "Hotmail Website (production)">
+<!ENTITY HotmailPref.Mode.Label "Selecteer de communicatiemethode die de extensie moet gebruiken om met de Microsoft&apos;s servers te communiceren">
+<!ENTITY HotmailPref.Mode.ScreenScraper.Label "Hotmail Website (productie)">
 <!ENTITY HotmailPref.Mode.WebDav.Label "WebDav">
 <!ENTITY HotmailPref.Mode.Beta.Label "Hotmail Website (BETA)">
-
-<!ENTITY HotmailPref.POP.DownloadUnread.Label "Download unread emails only">
+<!ENTITY HotmailPref.POP.DownloadUnread.Label "Download alleen ongelezen emails">
 <!ENTITY HotmailPref.POP.DownloadUnread.AccessKey "u">
 <!ENTITY HotmailPref.POP.JunkMail.Label "Download JunkMail">
 <!ENTITY HotmailPref.POP.JunkMail.AccessKey "J">
-<!ENTITY HotmailPref.POP.Folders.Label "Download folders">
-<!ENTITY HotmailPref.POP.ButtonAdd.Label "Add...">
-<!ENTITY HotmailPref.POP.ButtonAdd.AccessKey "A">
-<!ENTITY HotmailPref.POP.ButtonRemove.Label "Remove">
-<!ENTITY HotmailPref.POP.ButtonRemove.AccessKey "R">
-
-<!ENTITY HotmailPref.SMTP.SaveSentItems.Label "Save copy in sent items.">
-<!ENTITY HotmailPref.SMTP.SaveSentItems.AccessKey "s">
-<!ENTITY HotmailPref.SMTP.AlternativeGroup.Label "When sending rich text emails which part should the extension send?">
-<!ENTITY HotmailPref.SMTP.SendPlain.Label "Send plain text">
+<!ENTITY HotmailPref.POP.Folders.Label "Download mappen">
+<!ENTITY HotmailPref.POP.ButtonAdd.Label "Toevoegen...">
+<!ENTITY HotmailPref.POP.ButtonAdd.AccessKey "T">
+<!ENTITY HotmailPref.POP.ButtonRemove.Label "Verwijderen">
+<!ENTITY HotmailPref.POP.ButtonRemove.AccessKey "V">
+<!ENTITY HotmailPref.SMTP.SaveSentItems.Label "Bewaar kopie in verzonden items.">
+<!ENTITY HotmailPref.SMTP.SaveSentItems.AccessKey "B">
+<!ENTITY HotmailPref.SMTP.AlternativeGroup.Label "Indien u &quot;rich-text&quot; verstuurt, welk deel moet de extensie verzenden?">
+<!ENTITY HotmailPref.SMTP.SendPlain.Label "Verzend platte tekst">
 <!ENTITY HotmailPref.SMTP.SendPlain.AccessKey "p">
-<!ENTITY HotmailPref.SMTP.SendHtml.Label "Send html text">
+<!ENTITY HotmailPref.SMTP.SendHtml.Label "Verzend html tekst">
 <!ENTITY HotmailPref.SMTP.SendHtml.AccessKey "h">
-
-<!ENTITY HotmailPref.AccountError.Label "No Hotmail Accounts Found"> 
-<!ENTITY HotmailPref.SMTP.NA.Label "No SMPT options for Hotmail BETA">
-
-<!ENTITY HotmailPref.Domain.Label "Domains supported by Hotmail extension">
-<!ENTITY HotmailPref.Domain.Button.AddDomain.Label "Add...">
-<!ENTITY HotmailPref.Domain.Button.AddDomain.AccessKey "A">
-<!ENTITY HotmailPref.Domain.Button.RemoveDomain.Label "Remove">
-<!ENTITY HotmailPref.Domain.Button.RemoveDomain.AccessKey "R">
+<!ENTITY HotmailPref.AccountError.Label "Geen Hotmail Accounts gevonden">
+<!ENTITY HotmailPref.SMTP.NA.Label "Geen SMPT opties voor Hotmail BETA">
+<!ENTITY HotmailPref.Domain.Label "Ondersteunde domeinen door Hotmail extensie">
+<!ENTITY HotmailPref.Domain.Button.AddDomain.Label "Toevoegen...">
+<!ENTITY HotmailPref.Domain.Button.AddDomain.AccessKey "T">
+<!ENTITY HotmailPref.Domain.Button.RemoveDomain.Label "Verwijderen">
+<!ENTITY HotmailPref.Domain.Button.RemoveDomain.AccessKey "V">

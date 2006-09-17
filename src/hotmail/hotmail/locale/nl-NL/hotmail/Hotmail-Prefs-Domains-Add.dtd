@@ -1,8 +1,8 @@
-<!ENTITY HotmailAddDomain.Title "Add Domain">
-<!ENTITY HotmailAddDomain.Label "Add Hotmail domain">
-<!ENTITY HotmailAddDomainName.Label "Domain">
+<!ENTITY HotmailAddDomain.Title "Domein toevoegen">
+<!ENTITY HotmailAddDomain.Label "Voeg Hotmail domein toe">
+<!ENTITY HotmailAddDomainName.Label "Domein">
 <!ENTITY HotmailAddDomainName.AccessKey "D">
 <!ENTITY HotmailAddDomain.ButtonOk.Label "Ok">
 <!ENTITY HotmailAddDomain.ButtonOk.AccessKey "O">
-<!ENTITY HotmailAddDomain.ButtonCancel.Label "Cancel">
-<!ENTITY HotmailAddDomain.ButtonCancel.AccessKey "C">
+<!ENTITY HotmailAddDomain.ButtonCancel.Label "Annuleren">
+<!ENTITY HotmailAddDomain.ButtonCancel.AccessKey "A">

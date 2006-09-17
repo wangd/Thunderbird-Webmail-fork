@@ -3,16 +3,13 @@
 <!ENTITY HotmailPref.Panel.Domains.Title "Domaines">
 <!ENTITY HotmailPref.Button.Ok.Label "Accepter">
 <!ENTITY HotmailPref.Button.Cancel.Label "Annuler">
-
 <!ENTITY HotmailPref.Tab.Mode.Title "Mode">
 <!ENTITY HotmailPref.Tab.POP.Title "POP">
 <!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
-
 <!ENTITY HotmailPref.Mode.Label "Sélectionner la méthode de communication utilisée par l&apos;extension pour se connecter sur les serveurs de Microsoft">
 <!ENTITY HotmailPref.Mode.ScreenScraper.Label "Site Web de Hotmail (production)">
 <!ENTITY HotmailPref.Mode.WebDav.Label "WebDav">
 <!ENTITY HotmailPref.Mode.Beta.Label "Site Web de Hotmail (BETA)">
-
 <!ENTITY HotmailPref.POP.DownloadUnread.Label "Télécharger seulement les mails non lus">
 <!ENTITY HotmailPref.POP.DownloadUnread.AccessKey "T">
 <!ENTITY HotmailPref.POP.JunkMail.Label "Télécharger les indésirables">
@@ -22,7 +19,6 @@
 <!ENTITY HotmailPref.POP.ButtonAdd.AccessKey "A">
 <!ENTITY HotmailPref.POP.ButtonRemove.Label "Enlever">
 <!ENTITY HotmailPref.POP.ButtonRemove.AccessKey "E">
-
 <!ENTITY HotmailPref.SMTP.SaveSentItems.Label "Sauver une copie dans &apos;Éléments envoyés&apos;.">
 <!ENTITY HotmailPref.SMTP.SaveSentItems.AccessKey "s">
 <!ENTITY HotmailPref.SMTP.AlternativeGroup.Label "Lors de l&apos;envoi de courriels en format &apos;texte riche&apos;, quelle partie l&apos;extension doit-elle envoyer ?">
@@ -30,10 +26,8 @@
 <!ENTITY HotmailPref.SMTP.SendPlain.AccessKey "y">
 <!ENTITY HotmailPref.SMTP.SendHtml.Label "Envoyer en texte html">
 <!ENTITY HotmailPref.SMTP.SendHtml.AccessKey "h">
-
 <!ENTITY HotmailPref.AccountError.Label "Aucun compte Hotmail trouvé">
-<!ENTITY HotmailPref.SMTP.NA.Label "No SMPT options for Hotmail BETA">
-
+<!ENTITY HotmailPref.SMTP.NA.Label "Aucune option SMTP pour Hotmail BETA">
 <!ENTITY HotmailPref.Domain.Label "Domaines supportés par l&apos;extension Hotmail">
 <!ENTITY HotmailPref.Domain.Button.AddDomain.Label "Ajouter ...">
 <!ENTITY HotmailPref.Domain.Button.AddDomain.AccessKey "A">
