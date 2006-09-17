@@ -79,11 +79,18 @@
                 </tabs>
                 <tabpanels flex="1" >
                     <vbox id="popPanel" class="panel">
+                        <!-- download unread-->
                         <checkbox label="&AOLPref.POP.DownloadUnread.Label;" 
                                   accesskey="&AOLPref.POP.DownloadUnread.AccessKey;"
                                   id="chkDownloadUnread"
                                   onclick ="gPrefAccounts.chkDownloadUreadOnChange();"/> 
-                                  
+                         
+                        <!-- Mark as read-->           
+                        <checkbox label="&AOLPref.POP.MarkAsRead.Label;" 
+                                      accesskey="&AOLPref.POP.MarkAsRead.AccessKey;"
+                                      id="chkMarkAsRead"
+                                      onclick ="gPrefAccounts.chkMarkAsReadOnChange();"/>
+                                                
                         <!--Junk Mail-->                                    
                         <checkbox label="&AOLPref.POP.JunkMail.Label;" 
                                   accesskey="&AOLPref.POP.JunkMail.AccessKey;"
@@ -96,20 +103,20 @@
                                 <spacer flex="1"/>         
                                 <richlistbox id="listFolders" 
                                              class="listbox"
-                                             onselect="gPrefAccounts.folderListSelect();"/> 
+                                             onselect="gPrefAccounts.folderListSelect();"/>
+                                <vbox pack="center">    
+                                        <button id="addFolderList" 
+                                                label="&AOLPref.POP.ButtonAdd.Label;" 
+                                                accesskey="&AOLPref.POP.ButtonAdd.AccessKey;"
+                                                oncommand ="gPrefAccounts.folderListAdd();"/>
+                                                
+                                        <button id="removeFolderList" 
+                                                label="&AOLPref.POP.ButtonRemove.Label;" 
+                                                accesskey="&AOLPref.POP.ButtonRemove.AccessKey;"
+                                                oncommand ="gPrefAccounts.folderListRemove();"
+                                                disabled="true"/>
+                                </vbox>
                                 <spacer flex="1"/>
-                            </hbox>
-                            <hbox pack="center">    
-                                    <button id="addFolderList" 
-                                            label="&AOLPref.POP.ButtonAdd.Label;" 
-                                            accesskey="&AOLPref.POP.ButtonAdd.AccessKey;"
-                                            oncommand ="gPrefAccounts.folderListAdd();"/>
-                                            
-                                    <button id="removeFolderList" 
-                                            label="&AOLPref.POP.ButtonRemove.Label;" 
-                                            accesskey="&AOLPref.POP.ButtonRemove.AccessKey;"
-                                            oncommand ="gPrefAccounts.folderListRemove();"
-                                            disabled="true"/>
                             </hbox>
                         </vbox> 
                     </vbox>

@@ -16,3 +16,7 @@
 <!ENTITY AOLPref.POP.ButtonRemove.AccessKey "R">
 
 <!ENTITY AOLPref.AccountError.Label "No AOL Accounts Found"> 
+
+
+<!ENTITY AOLPref.POP.MarkAsRead.Label "Mark emails as read on server">
+<!ENTITY AOLPref.POP.MarkAsRead.AccessKey "k">

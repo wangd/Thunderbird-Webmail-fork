@@ -761,25 +761,33 @@ nsAOL.prototype =
                     mainObject.m_szMSG += szResponse.replace(/^\./mg,"..");    //bit padding   
                     mainObject.m_szMSG += "\r\n.\r\n";       
                     
-                    var szURL = mainObject.m_szLocation + "MessageAction.aspx?";
-                    szURL += "folder=" +  mainObject.m_szFolder +"&";
-                    szURL += "action=seen&";
-                    szURL += "version="+ mainObject.m_szVersion +"&";
-                    szURL += "uid=" + mainObject.iID +"&";
-                    szURL += "version="+ mainObject.m_szVersion +"&";
-                    szURL += "user="+ mainObject.m_szUserId;
-                                       
-                    mainObject.m_HttpComms.setURI(szURL);
-                    mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject); 
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
+                    if (mainObject.m_prefData.bMarkAsRead)
+                    {
+                        var szURL = mainObject.m_szLocation + "MessageAction.aspx?";
+                        szURL += "folder=" +  mainObject.m_szFolder +"&";
+                        szURL += "action=seen&";
+                        szURL += "version="+ mainObject.m_szVersion +"&";
+                        szURL += "uid=" + mainObject.iID +"&";
+                        szURL += "version="+ mainObject.m_szVersion +"&";
+                        szURL += "user="+ mainObject.m_szUserId;
+                                           
+                        mainObject.m_HttpComms.setURI(szURL);
+                        mainObject.m_HttpComms.setRequestMethod("GET");
+                        var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject); 
+                        if (!bResult) throw new Error("httpConnection returned false");
+                        mainObject.m_iStage++;
+                    }
+                    else
+                    {
+                        var szPOPResponse = "+OK " +  mainObject.m_szMSG.length + "\r\n";                  
+                        szPOPResponse += mainObject.m_szMSG;            
+                        mainObject.serverComms(szPOPResponse);
+                    }
                 break;
                
-                case 1:
+                case 1: //mark as read
                     var szPOPResponse = "+OK " +  mainObject.m_szMSG.length + "\r\n";                  
-                    szPOPResponse += mainObject.m_szMSG;
-            
+                    szPOPResponse += mainObject.m_szMSG;            
                     mainObject.serverComms(szPOPResponse);
                 break;
             }
@@ -1003,6 +1011,12 @@ nsAOL.prototype =
                         WebMailPrefAccess.Get("bool","aol.Account."+i+".bDownloadUnread",oPref);
                         this.m_Log.Write("nsAOL.js - loadPrefs - bDownloadUnread " + oPref.Value);
                         if (oPref.Value) oData.bUnread=oPref.Value; 
+                        
+                         //mark as read
+                        oPref.Value = null;
+                        WebMailPrefAccess.Get("bool","aol.Account."+i+".bMarkAsRead",oPref);
+                        this.m_Log.Write("nsAOL.js - loadPrefs - bMarkAsRead " + oPref.Value);
+                        if (oPref.Value) oData.bMarkAsRead=oPref.Value; 
                                                                    
                         //get junkmail
                         oPref.Value = null;

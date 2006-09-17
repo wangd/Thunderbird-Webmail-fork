@@ -87,6 +87,9 @@ var gPrefAccounts =
                     WebMailPrefAccess.Set("bool","aol.Account."+i+".bDownloadUnread",this.m_aszUserList[i].bDownloadUnread);
                     this.m_DebugLog.Write("AOL-Pref-Accounts.js - save - bDownloadUnread " + this.m_aszUserList[i].bDownloadUnread); 
                     
+                    WebMailPrefAccess.Set("bool","aol.Account."+i+".bMarkAsRead",this.m_aszUserList[i].bMarkAsRead);
+                    this.m_DebugLog.Write("AOL-Pref-Accounts.js - save - bMarkAsRead " + this.m_aszUserList[i].bMarkAsRead); 
+                    
                     WebMailPrefAccess.Set("bool","aol.Account."+i+".bUseJunkMail",this.m_aszUserList[i].bUseJunkMail);
                     this.m_DebugLog.Write("AOL-Pref-Accounts.js - save - bUseJunkMail " + this.m_aszUserList[i].bUseJunkMail);     
                     
@@ -146,19 +149,25 @@ var gPrefAccounts =
                         //get email address
                         oPref.Value = null;
                         WebMailPrefAccess.Get("char","aol.Account."+i+".user",oPref);
-                        oData.szUser = oPref.Value;
+                        if (oPref.Value !=null) oData.szUser = oPref.Value;
                         this.m_DebugLog.Write("AOL-Pref-Accounts.js - getAccountPrefs - oData.szUser " + oData.szUser);
                         
                         //get unread
                         oPref.Value = null;
                         WebMailPrefAccess.Get("bool","aol.Account."+i+".bDownloadUnread",oPref);
-                        oData.bDownloadUnread = oPref.Value;
+                        if (oPref.Value !=null) oData.bDownloadUnread = oPref.Value;
                         this.m_DebugLog.Write("AOL-Pref-Accounts.js - getAccountPrefs - oData.bDownloadUnread " + oData.bDownloadUnread);
                                                 
+                        //get mark as read
+                        oPref.Value = null;
+                        WebMailPrefAccess.Get("bool","aol.Account."+i+".bMarkAsRead",oPref);
+                        if (oPref.Value !=null) oData.bMarkAsRead = oPref.Value;
+                        this.m_DebugLog.Write("AOL-Pref-Accounts.js - getAccountPrefs - oData.bMarkAsRead " + oData.bMarkAsRead);
+    
                         //get junkmail
                         oPref.Value = null;
                         WebMailPrefAccess.Get("bool","aol.Account."+i+".bUseJunkMail",oPref);
-                        oData.bUseJunkMail = oPref.Value;
+                        if (oPref.Value !=null) oData.bUseJunkMail = oPref.Value;
                         this.m_DebugLog.Write("AOL-Pref-Accounts.js - getAccountPrefs - oData.bJunkMail " + oData.bUseJunkMail);
                                               
                         //get szFolders
@@ -259,6 +268,9 @@ var gPrefAccounts =
                                               
                                                 data.bDownloadUnread = this.m_aszPrefsList[j].bDownloadUnread;
                                                 this.m_DebugLog.Write("AOL-Pref-Accounts : getUserNameList - bUnread " + data.bDownloadUnread);
+                                                
+                                                data.bMarkAsRead = this.m_aszPrefsList[j].bMarkAsRead;
+                                                this.m_DebugLog.Write("AOL-Pref-Accounts : getUserNameList - bMarkAsRead " + data.bMarkAsRead);
                                               
                                                 bFound= true;
                                             }
@@ -349,6 +361,15 @@ var gPrefAccounts =
                 
                 this.m_DebugLog.Write("AOL-Pref-Accounts : userClick -  data.bUnread "+ data.bDownloadUnread);
                 document.getElementById("chkDownloadUnread").checked = data.bDownloadUnread;
+                
+                this.m_DebugLog.Write("AOL-Pref-Accounts : userClick -  data.bMarkAsRead "+ data.bMarkAsRead);
+                document.getElementById("chkMarkAsRead").checked = data.bMarkAsRead;
+                
+                if (data.bDownloadUnread)
+                {
+                    document.getElementById("chkMarkAsRead").checked = true;
+                    document.getElementById("chkMarkAsRead").setAttribute("disabled", true);
+                }  
                                
                 this.m_DebugLog.Write("AOL-Pref-Accounts : userClick -  data.bJunkFolder "+ data.bUseJunkMail);
                 document.getElementById("chkJunkMail").checked = data.bUseJunkMail;
@@ -575,9 +596,34 @@ var gPrefAccounts =
         this.m_DebugLog.Write("AOL-Pref-Accounts : chkDownloadUreadOnChange -  bUnread "+ !bUnread);
         this.m_aszUserList[this.m_iIndex].bDownloadUnread = !bUnread;
         
-        this.m_DebugLog.Write("YAOL-Pref-Accounts : chkDownloadUreadOnChange - END");
+        if (this.m_aszUserList[this.m_iIndex].bDownloadUnread)
+        {
+            document.getElementById("chkMarkAsRead").checked = true;
+            this.m_aszUserList[this.m_iIndex].bMarkAsRead = true;
+            document.getElementById("chkMarkAsRead").setAttribute("disabled", true); 
+        }
+        else
+        {
+            document.getElementById("chkMarkAsRead").setAttribute("disabled", false);
+        }
+        
+        this.m_DebugLog.Write("AOL-Pref-Accounts : chkDownloadUreadOnChange - END");
     },
  
+    
+    
+    chkMarkAsReadOnChange : function ()
+    {
+        this.m_DebugLog.Write("AOL-Pref-Accounts : chkMaskAsReadOnChange - START");
+        
+        var bMarkAsRead = document.getElementById("chkMarkAsRead").checked;
+        this.m_DebugLog.Write("AOL-Pref-Accounts : chkMaskAsReadOnChange -  bMarkAsRead "+ !bMarkAsRead);
+        this.m_aszUserList[this.m_iIndex].bMarkAsRead = !bMarkAsRead;
+        
+        this.m_DebugLog.Write("AOL-Pref-Accounts : chkMaskAsReadOnChange - END");
+    },
+    
+    
     
     chkJunkMailOnChange : function ()
     {
