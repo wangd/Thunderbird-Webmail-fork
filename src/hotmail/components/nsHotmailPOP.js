@@ -314,43 +314,26 @@ nsHotmail.prototype =
             //delay processing time delay
             if (WebMailPrefAccess.Get("int","hotmail.iProcessDelay",oPref))
                 oData.iProcessDelay = oPref.Value;
-            else
-                oData.iProcessDelay = 10; 
-            
-            //delay process trigger
-            oPref.Value = null;
-            if (WebMailPrefAccess.Get("bool","hotmail.iProcessTrigger",oPref))
-                oData.iProcessTrigger = oPref.Value;
-            else
-                oData.iProcessTrigger = 50; 
-        
+   
             //delay proccess amount
             oPref.Value = null;
             if (WebMailPrefAccess.Get("bool","hotmail.iProcessAmount",oPref))
                 oData.iProcessAmount = oPref.Value;
-            else
-                oData.iProcessAmount = 25;    
-                                     
+
             //do i reuse the session
             oPref.Value = null;
             if (WebMailPrefAccess.Get("bool","hotmail.bReUseSession",oPref))
                 oData.bReUseSession = oPref.Value;
-            else
-                oData.bReUseSession = true; 
         
             //do i download junkmail
             oPref.Value = null;
             if (WebMailPrefAccess.Get("bool","hotmail.bUseJunkMail",oPref))
                 oData.bUseJunkMail=oPref.Value;
-            else
-                oData.bUseJunkMail=false;
                                           
             //do i download unread only
             oPref.Value = null;
             if (WebMailPrefAccess.Get("bool","hotmail.bDownloadUnread",oPref))
                 oData.bDownloadUnread = oPref.Value;
-            else
-                oData.bDownloadUnread = false; 
 
             //////
             //load User prefs
@@ -391,6 +374,12 @@ nsHotmail.prototype =
                         WebMailPrefAccess.Get("bool","hotmail.Account."+i+".bDownloadUnread",oPref);
                         this.m_HotmailLog.Write("nsHotmail.js - getPrefs - bDownloadUnread " + oPref.Value);
                         if (oPref.Value) oData.bDownloadUnread = oPref.Value;
+                        
+                        //mark as read
+                        oPref.Value = null;
+                        WebMailPrefAccess.Get("bool","hotmail.Account."+i+".bMarkAsRead",oPref);
+                        this.m_HotmailLog.Write("nsHotmail.js - getPrefs - bMarkAsRead " + oPref.Value);
+                        if (oPref.Value) oData.bMarkAsRead = oPref.Value;
                         
                          //get folders
                         oPref.Value = null;

@@ -7,10 +7,9 @@ var gPrefAccounts =
     m_aszUserList : null,
     m_aszPrefsList : null,
     m_bDefaultUnread : false,
-    m_bDefaultSentItems : false,
     m_bDefaultSpam : false,
     m_bDefaultSendHtml : false, 
-    m_bDefaultSaveCopy :true,    
+    m_bDefaultSaveCopy :true, 
     m_iIndex : -1,
       
       
@@ -29,28 +28,23 @@ var gPrefAccounts =
             
             //save copy in sent items
             WebMailPrefAccess.Get("bool","hotmail.bSaveCopy",oPref);
-            this.m_bDefaultSaveCopy=oPref.Value;
+            if (oPref.Value) this.m_bDefaultSaveCopy=oPref.Value;
             this.m_DebugLog.Write("Hotmail-Pref-Accounts : Init - this.m_bDefaultSaveCopy "+this.m_bDefaultSaveCopy );
             
             //what do i do with alternative parts
             oPref.Value = null;
             WebMailPrefAccess.Get("bool","hotmail.bSendHtml",oPref);  
-            this.m_bDefaultSendHtml = oPref.Value;
+            if (oPref.Value) this.m_bDefaultSendHtml = oPref.Value;
             this.m_DebugLog.Write("Hotmail-Pref-Accounts : Init - this.m_bDefaultSendHtml "+this.m_bDefaultSendHtml );
             
             oPref.Value = null;
             WebMailPrefAccess.Get("bool","hotmail.bDownloadUnread",oPref);
-            this.m_bDefaultUnread = oPref.Value;
+            if (oPref.Value) this.m_bDefaultUnread = oPref.Value;
             this.m_DebugLog.Write("Hotmail-Pref-Accounts : Init - this.m_bDefaultUnread "+this.m_bDefaultUnread );
-            
-            oPref.Value = null;
-            WebMailPrefAccess.Get("bool","hotmail.bSaveCopy",oPref);
-            this.m_bDefaultSentItems = oPref.Value;
-            this.m_DebugLog.Write("Hotmail-Pref-Accounts : Init - this.m_bDefaultSentItems "+this.m_bDefaultSentItems );
-            
+                        
             oPref.Value = null;
             WebMailPrefAccess.Get("bool","hotmail.bUseJunkMail",oPref);
-            this.m_bDefaultSpam = oPref.Value;
+            if (oPref.Value) this.m_bDefaultSpam = oPref.Value;
             this.m_DebugLog.Write("Hotmail-Pref-Accounts : Init - this.m_bDefaultSpam "+this.m_bDefaultSpam );
             
             //load data
@@ -106,6 +100,9 @@ var gPrefAccounts =
                     
                     WebMailPrefAccess.Set("bool","hotmail.Account."+i+".bUseJunkMail",this.m_aszUserList[i].bUseJunkMail);
                     this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - save - bUseJunkMail " + this.m_aszUserList[i].bUseJunkMail);
+                    
+                    WebMailPrefAccess.Set("bool","hotmail.Account."+i+".bMarkAsRead",this.m_aszUserList[i].bMarkAsRead);
+                    this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - save - bMarkAsRead " + this.m_aszUserList[i].bMarkAsRead);
                     
                     WebMailPrefAccess.Set("bool","hotmail.Account."+i+".bSendHtml",this.m_aszUserList[i].bSendHtml);
                     this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - save - bSendHtml " + this.m_aszUserList[i].bSendHtml);
@@ -172,37 +169,43 @@ var gPrefAccounts =
                         //get email address
                         oPref.Value = null;
                         WebMailPrefAccess.Get("char","hotmail.Account."+i+".user",oPref);
-                        oData.szUser = oPref.Value;
+                        if (oPref.Value) oData.szUser = oPref.Value;
                         this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - getAccountPrefs - oData.szUser " + oData.szUser);
                         
                         //get unread
                         oPref.Value = null;
                         WebMailPrefAccess.Get("bool","hotmail.Account."+i+".bDownloadUnread",oPref);
-                        oData.bDownloadUnread = oPref.Value;
+                        if (oPref.Value) oData.bDownloadUnread = oPref.Value;
                         this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - getAccountPrefs - oData.bDownloadUnread " + oData.bDownloadUnread);
                                                 
+                        //get Mark As read
+                        oPref.Value = null;
+                        WebMailPrefAccess.Get("bool","hotmail.Account."+i+".bMarkAsRead",oPref);
+                        if (oPref.Value!=null) oData.bMarkAsRead = oPref.Value;
+                        this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - getAccountPrefs - oData.bMarkAsRead " + oData.bMarkAsRead);
+                                                                                               
                         //get junkmail
                         oPref.Value = null;
                         WebMailPrefAccess.Get("bool","hotmail.Account."+i+".bUseJunkMail",oPref);
-                        oData.bUseJunkMail = oPref.Value;
+                        if (oPref.Value!=null) oData.bUseJunkMail = oPref.Value;
                         this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - getAccountPrefs - oData.bJunkMail " + oData.bUseJunkMail);
                                               
                         //get SaveSentItems
                         oPref.Value = null;
                         WebMailPrefAccess.Get("bool","hotmail.Account."+i+".bSaveCopy",oPref);
-                        oData.bSaveCopy = oPref.Value;
+                        if (oPref.Value!=null) oData.bSaveCopy = oPref.Value;
                         this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - getAccountPrefs - oData.bSaveSentItem " + oData.bSaveCopy);
                         
                         //get SendHtml
                         oPref.Value = null;
                         WebMailPrefAccess.Get("bool","hotmail.Account."+i+".bSendHtml",oPref);
-                        oData.bSendHtml = oPref.Value;
+                        if (oPref.Value!=null) oData.bSendHtml = oPref.Value;
                         this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - getAccountPrefs - oData.bSendHtml " + oData.bSendHtml);
 
                         //get iMode
                         oPref.Value = null;
                         WebMailPrefAccess.Get("int","hotmail.Account."+i+".iMode",oPref);
-                        oData.iMode = oPref.Value;
+                        if (oPref.Value!=null) oData.iMode = oPref.Value;
                         this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - getAccountPrefs - oData.iMode " + oData.iMode);
 
                         //get szFolders
@@ -303,6 +306,9 @@ var gPrefAccounts =
                                               
                                                 data.bDownloadUnread = this.m_aszPrefsList[j].bDownloadUnread;
                                                 this.m_DebugLog.Write("Hotmail-Pref-Accounts : getUserNameList - bUnread " + data.bDownloadUnread);
+                                              
+                                                data.bMarkAsRead = this.m_aszPrefsList[j].bMarkAsRead;
+                                                this.m_DebugLog.Write("Hotmail-Pref-Accounts : getUserNameList - bMarkAsRead " + data.bMarkAsRead);
                                               
                                                 data.bSaveCopy = this.m_aszPrefsList[j].bSaveCopy;
                                                 this.m_DebugLog.Write("Hotmail-Pref-Accounts : getUserNameList - bSaveSentItem " + data.bSaveCopy);
@@ -408,6 +414,15 @@ var gPrefAccounts =
                 
                 this.m_DebugLog.Write("Hotmail-Pref-Accounts : userClick -  data.bUnread "+ data.bDownloadUnread);
                 document.getElementById("chkDownloadUnread").checked = data.bDownloadUnread;
+                
+                this.m_DebugLog.Write("Hotmail-Pref-Accounts : userClick -  data.bMarkAsRead "+ data.bMarkAsRead);
+                document.getElementById("chkMarkAsRead").checked = data.bMarkAsRead;
+                
+                if (data.bDownloadUnread)
+                {
+                    document.getElementById("chkMarkAsRead").checked = true;
+                    document.getElementById("chkMarkAsRead").setAttribute("disabled", true);
+                }
             
                 this.m_DebugLog.Write("Hotmail-Pref-Accounts : userClick -  data.iMode "+ data.iMode);
                 document.getElementById("radiogroupMode").selectedIndex = data.iMode;
@@ -710,9 +725,31 @@ var gPrefAccounts =
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : chkDownloadUreadOnChange -  bUnread "+ !bUnread);
         this.m_aszUserList[this.m_iIndex].bDownloadUnread = !bUnread;
         
+        if (this.m_aszUserList[this.m_iIndex].bDownloadUnread)
+        {
+            document.getElementById("chkMarkAsRead").checked = true;
+            this.m_aszUserList[this.m_iIndex].bMarkAsRead = true;
+            document.getElementById("chkMarkAsRead").setAttribute("disabled", true); 
+        }
+        else
+        {
+            document.getElementById("chkMarkAsRead").setAttribute("disabled", false);
+        }
+        
         this.m_DebugLog.Write("YHotmail-Pref-Accounts : chkDownloadUreadOnChange - END");
     },
  
+    
+    chkMarkAsReadOnChange : function ()
+    {
+        this.m_DebugLog.Write("YHotmail-Pref-Accounts : chkMaskAsReadOnChange - START");
+        
+        var bMarkAsRead = document.getElementById("chkMarkAsRead").checked;
+        this.m_DebugLog.Write("Hotmail-Pref-Accounts : chkMaskAsReadOnChange -  bMarkAsRead "+ !bMarkAsRead);
+        this.m_aszUserList[this.m_iIndex].bMarkAsRead = !bMarkAsRead;
+        
+        this.m_DebugLog.Write("YHotmail-Pref-Accounts : chkMaskAsReadOnChange - END");
+    },
     
     chkJunkMailOnChange : function ()
     {

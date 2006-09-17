@@ -44,6 +44,7 @@ function HotmailScreenRipper(oResponseStream, oLog, oPrefData)
         this.m_bReUseSession = oPrefData.bReUseSession;    //do i reuse the session
         this.m_bUseJunkMail= oPrefData.bUseJunkMail;       //do i download junkmail
         this.m_bDownloadUnread = oPrefData.bDownloadUnread; //do i download unread only
+        this.m_bMarkAsRead = oPrefData.bMarkAsRead;         //do i mark email as read
         
         this.m_bJunkMail = false;
         this.m_aszFolderURLList = new Array();
@@ -881,15 +882,6 @@ HotmailScreenRipper.prototype =
                     
                     //clean up msg
                     mainObject.m_szMSG = mainObject.removeHTML(mainObject.m_szMSG);
-
-                    mainObject.m_iStage =1;
-                    mainObject.m_HttpComms.setURI(mainObject.m_szMSGUri);
-                    mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject); 
-                    if (!bResult) throw new Error("httpConnection returned false");                                        
-                break;
-            
-                case 1:  //marked as read
                     //split body headers
                     var oEmail = new email("");
                     var aEmail = oEmail.splitHeaderBody(mainObject.m_szMSG);
@@ -900,10 +892,26 @@ HotmailScreenRipper.prototype =
                     mainObject.m_szMSG = szHeaders + aEmail[2];
                     mainObject.m_szMSG =  mainObject.m_szMSG.replace(/^\./mg,"..");    //bit padding
                     mainObject.m_szMSG += "\r\n.\r\n";
-                  
+                    
+                    if (mainObject.m_bMarkAsRead)
+                    {
+                        mainObject.m_iStage =1;
+                        mainObject.m_HttpComms.setURI(mainObject.m_szMSGUri);
+                        mainObject.m_HttpComms.setRequestMethod("GET");
+                        var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject); 
+                        if (!bResult) throw new Error("httpConnection returned false");
+                    }
+                    else
+                    {  
+                        var szPOPResponse = "+OK " +  mainObject.m_szMSG.length + "\r\n";                  
+                        szPOPResponse +=  mainObject.m_szMSG;        
+                        mainObject.serverComms(szPOPResponse);
+                    }                                        
+                break;
+            
+                case 1:  //marked as read        
                     var szPOPResponse = "+OK " +  mainObject.m_szMSG.length + "\r\n";                  
-                    szPOPResponse +=  mainObject.m_szMSG;
-        
+                    szPOPResponse +=  mainObject.m_szMSG;   
                     mainObject.serverComms(szPOPResponse);
                 break;
             }

@@ -35,11 +35,11 @@ function HotmailWebDav(oResponseStream, oLog, oPrefData)
         this.m_SessionData = null;
              
         this.m_iTime = oPrefData.iProcessDelay;            //timer delay
-        this.m_iProcessTrigger = oPrefData.iProcessTrigger;//delay process trigger
         this.m_iProcessAmount =  oPrefData.iProcessAmount; //delay proccess amount
         this.m_bReUseSession = oPrefData.bReUseSession;    //do i reuse the session
         this.m_bUseJunkMail= oPrefData.bUseJunkMail;       //do i download junkmail
         this.m_bDownloadUnread = oPrefData.bDownloadUnread; //do i download unread only
+        this.m_bMarkAsRead = oPrefData.bMarkAsRead;         //do i mark email as read
          
         this.m_szTrashURI=null;
         this.m_aszFolderURLList = new Array();
@@ -660,13 +660,22 @@ HotmailWebDav.prototype =
                     mainObject.m_szMSG = mainObject.m_szMSG.replace(/^\./mg,"..");    //bit padding 
                     mainObject.m_szMSG += "\r\n.\r\n";//msg end 
                     
-                    //mark email as read        
-                    mainObject.m_HttpComms.setContentType("text/xml");
-                    mainObject.m_HttpComms.setURI(szUri);
-                    mainObject.m_HttpComms.setRequestMethod("PROPPATCH");
-                    mainObject.m_HttpComms.addData(HotmailReadSchema);
-                    var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);          
-                    mainObject.m_iStage++;          
+                    if (mainObject.m_bMarkAsRead)
+                    {
+                        //mark email as read        
+                        mainObject.m_HttpComms.setContentType("text/xml");
+                        mainObject.m_HttpComms.setURI(szUri);
+                        mainObject.m_HttpComms.setRequestMethod("PROPPATCH");
+                        mainObject.m_HttpComms.addData(HotmailReadSchema);
+                        var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);          
+                        mainObject.m_iStage++;
+                    }
+                    else
+                    {
+                        var szPOPResponse = "+OK " +mainObject.m_szMSG.length + "\r\n";                     
+                        szPOPResponse += mainObject.m_szMSG;
+                        mainObject.serverComms(szPOPResponse);
+                    }          
                 break;
                 
                 case 1:// mark msg as read                                                                                                   

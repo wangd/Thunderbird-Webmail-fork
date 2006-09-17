@@ -40,7 +40,8 @@ function HotmailScreenRipperBETA(oResponseStream, oLog, oPrefData)
         this.m_bReUseSession = oPrefData.bReUseSession;    //do i reuse the session
         this.m_bUseJunkMail= oPrefData.bUseJunkMail;       //do i download junkmail
         this.m_bDownloadUnread = oPrefData.bDownloadUnread; //do i download unread only
-             
+        this.m_bMarkAsRead = oPrefData.bMarkAsRead;         //do i mark email as read
+        
         this.m_bStat = false;
           
         //process folders
@@ -839,12 +840,21 @@ HotmailScreenRipperBETA.prototype =
                     mainObject.m_szMSG = mainObject.removeHTML(mainObject.m_szMSG);
                     mainObject.m_szMSG = mainObject.m_szMSG.replace(/^\./mg,"..");    //bit padding   
                     mainObject.m_szMSG += "\r\n.\r\n";
-                    
-                    mainObject.m_iStage++;
-                    mainObject.m_HttpComms.setURI(mainObject.m_szMSGURI);
-                    mainObject.m_HttpComms.setRequestMethod("GET");      
-                    var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject); 
-                    if (!bResult) throw new Error("httpConnection returned false");                          
+                        
+                    if (mainObject.m_bMarkAsRead)
+                    {   
+                        mainObject.m_iStage++;
+                        mainObject.m_HttpComms.setURI(mainObject.m_szMSGURI);
+                        mainObject.m_HttpComms.setRequestMethod("GET");      
+                        var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject); 
+                        if (!bResult) throw new Error("httpConnection returned false");
+                    }
+                    else
+                    {
+                        var szPOPResponse = "+OK " +  mainObject.m_szMSG.length + "\r\n";                  
+                        szPOPResponse +=  mainObject.m_szMSG;
+                        mainObject.serverComms(szPOPResponse);
+                    }                     
                 break;
                 
                 case 1: //mark as read 

@@ -91,7 +91,7 @@
                         <tab label="&HotmailPref.Tab.SMTP.Title;"/>
                     </tabs>
                     <tabpanels flex="1" >
-                        <vbox id="modePanel" class="panel">
+                        <vbox id="modePanel" class="panel" flex="1">
                             <vbox>
                                 <label value="&HotmailPref.Mode.Label;" id="labelMode" flex="1"/>
                                 <radiogroup id="radiogroupMode" onclick ="gPrefAccounts.rgModeOnChange();"  class="radio">
@@ -102,42 +102,48 @@
                              </vbox>   
                         </vbox>
                         
-                        <vbox id="popPanel" class="panel">
+                        <vbox id="popPanel" class="panel" flex="1">
                             <checkbox label="&HotmailPref.POP.DownloadUnread.Label;" 
                                       accesskey="&HotmailPref.POP.DownloadUnread.AccessKey;"
                                       id="chkDownloadUnread"
                                       onclick ="gPrefAccounts.chkDownloadUreadOnChange();"/> 
                                       
+                            <checkbox label="&HotmailPref.POP.MarkAsRead.Label;" 
+                                      accesskey="&HotmailPref.POP.MarkAsRead.AccessKey;"
+                                      id="chkMarkAsRead"
+                                      onclick ="gPrefAccounts.chkMarkAsReadOnChange();"/>
+                                      
                             <checkbox label="&HotmailPref.POP.JunkMail.Label;" 
                                       accesskey="&HotmailPref.POP.JunkMail.AccessKey;"
                                       id="chkJunkMail"
                                       onclick ="gPrefAccounts.chkJunkMailOnChange();"/>
-    
+                                      
                             <label value="&HotmailPref.POP.Folders.Label;" id="labelFolders"/>
-                            <vbox id="boxFolders">     
+                            <vbox id="boxFolders" flex="1">     
                                 <hbox flex="1"> 
                                     <spacer flex="1"/>         
                                     <richlistbox id="listFolders" 
                                                  class="listbox"
                                                  onselect="gPrefAccounts.folderListSelect();"/> 
+
+                                    <vbox pack="center">    
+                                            <button id="addFolderList" 
+                                                    label="&HotmailPref.POP.ButtonAdd.Label;" 
+                                                    accesskey="&HotmailPref.POP.ButtonAdd.AccessKey;"
+                                                    oncommand ="gPrefAccounts.folderListAdd();"/>
+                                                    
+                                            <button id="removeFolderList" 
+                                                    label="&HotmailPref.POP.ButtonRemove.Label;" 
+                                                    accesskey="&HotmailPref.POP.ButtonRemove.AccessKey;"
+                                                    oncommand ="gPrefAccounts.folderListRemove();"
+                                                    disabled="true"/>
+                                    </vbox>
                                     <spacer flex="1"/>
-                                </hbox>
-                                <hbox pack="center">    
-                                        <button id="addFolderList" 
-                                                label="&HotmailPref.POP.ButtonAdd.Label;" 
-                                                accesskey="&HotmailPref.POP.ButtonAdd.AccessKey;"
-                                                oncommand ="gPrefAccounts.folderListAdd();"/>
-                                                
-                                        <button id="removeFolderList" 
-                                                label="&HotmailPref.POP.ButtonRemove.Label;" 
-                                                accesskey="&HotmailPref.POP.ButtonRemove.AccessKey;"
-                                                oncommand ="gPrefAccounts.folderListRemove();"
-                                                disabled="true"/>
                                 </hbox>
                             </vbox> 
                         </vbox>
                         
-                        <vbox id="smptPanel" class="panel">
+                        <vbox id="smptPanel" class="panel" flex="1">
                             <vbox id="vboxSmtpItems">
                                 <checkbox label="&HotmailPref.SMTP.SaveSentItems.Label;"
                                           accesskey="&HotmailPref.SMTP.SaveSentItems.AccessKey;" 
