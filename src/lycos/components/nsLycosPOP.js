@@ -665,14 +665,23 @@ nsLycos.prototype =
                     mainObject.m_szMSG = mainObject.m_szMSG.replace(/^\./mg,"..");    //bit padding 
                     mainObject.m_szMSG += "\r\n.\r\n";//msg end 
                     
-                    //mark email as read        
-                    mainObject.m_HttpComms.setContentType("text/xml");
-                    var szUri = httpChannel.URI.spec;
-                    mainObject.m_HttpComms.setURI(szUri);
-                    mainObject.m_HttpComms.setRequestMethod("PROPPATCH");
-                    mainObject.m_HttpComms.addData(kLycosReadSchema);
-                    var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);          
-                    mainObject.m_iStage++;          
+                    if (mainObject.m_prefData.bMarkAsRead)
+                    {
+                        //mark email as read        
+                        mainObject.m_HttpComms.setContentType("text/xml");
+                        var szUri = httpChannel.URI.spec;
+                        mainObject.m_HttpComms.setURI(szUri);
+                        mainObject.m_HttpComms.setRequestMethod("PROPPATCH");
+                        mainObject.m_HttpComms.addData(kLycosReadSchema);
+                        var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);          
+                        mainObject.m_iStage++;     
+                     }
+                     else
+                     {
+                        var szPOPResponse = "+OK " +mainObject.m_szMSG.length + "\r\n";                     
+                        szPOPResponse += mainObject.m_szMSG;
+                        mainObject.serverComms(szPOPResponse);
+                     }     
                 break;
                 
                 case 1: //mark as read
@@ -975,6 +984,12 @@ nsLycos.prototype =
                         this.m_Log.Write("nsLycos.js - loadPrefs - bDownloadUnread " + oPref.Value);
                         if (oPref.Value) oData.bUnread=oPref.Value; 
                                                                    
+                        //get unread
+                        oPref.Value = null;
+                        WebMailPrefAccess.Get("bool","lycos.Account."+i+".bMarkAsRead",oPref);
+                        this.m_Log.Write("nsLycos.js - loadPrefs - bMarkAsRead " + oPref.Value);
+                        if (oPref.Value) oData.bMarkAsRead=oPref.Value; 
+                        
                         //get junkmail
                         oPref.Value = null;
                         WebMailPrefAccess.Get("bool","lycos.Account."+i+".bUseJunkMail",oPref);

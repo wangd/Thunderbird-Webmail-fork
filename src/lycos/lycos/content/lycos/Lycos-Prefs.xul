@@ -81,11 +81,17 @@
                 </tabs>
                 <tabpanels flex="1" >
                     <vbox id="popPanel" class="panel">
+                        <!-- download unread-->
                         <checkbox label="&LycosPref.POP.DownloadUnread.Label;" 
                                   accesskey="&LycosPref.POP.DownloadUnread.AccessKey;"
                                   id="chkDownloadUnread"
                                   onclick ="gPrefAccounts.chkDownloadUreadOnChange();"/> 
-                                  
+                        <!-- mark as read -->
+                        <checkbox label="&LycosPref.POP.MarkAsRead.Label;" 
+                                      accesskey="&LycosPref.POP.MarkAsRead.AccessKey;"
+                                      id="chkMarkAsRead"
+                                      onclick ="gPrefAccounts.chkMarkAsReadOnChange();"/>
+                              
                          <!--empty trash-->
                          <checkbox label="&LycosPref.POP.EmptyTrash.Label;" 
                                    accesskey="&LycosPref.POP.EmptyTrash.AccessKey;"
@@ -104,20 +110,20 @@
                                 <spacer flex="1"/>         
                                 <richlistbox id="listFolders" 
                                              class="listbox"
-                                             onselect="gPrefAccounts.folderListSelect();"/> 
+                                             onselect="gPrefAccounts.folderListSelect();"/>                            
+                                <vbox pack="center">    
+                                        <button id="addFolderList" 
+                                                label="&LycosPref.POP.ButtonAdd.Label;" 
+                                                accesskey="&LycosPref.POP.ButtonAdd.AccessKey;"
+                                                oncommand ="gPrefAccounts.folderListAdd();"/>
+                                                
+                                        <button id="removeFolderList" 
+                                                label="&LycosPref.POP.ButtonRemove.Label;" 
+                                                accesskey="&LycosPref.POP.ButtonRemove.AccessKey;"
+                                                oncommand ="gPrefAccounts.folderListRemove();"
+                                                disabled="true"/>
+                                </vbox>
                                 <spacer flex="1"/>
-                            </hbox>
-                            <hbox pack="center">    
-                                    <button id="addFolderList" 
-                                            label="&LycosPref.POP.ButtonAdd.Label;" 
-                                            accesskey="&LycosPref.POP.ButtonAdd.AccessKey;"
-                                            oncommand ="gPrefAccounts.folderListAdd();"/>
-                                            
-                                    <button id="removeFolderList" 
-                                            label="&LycosPref.POP.ButtonRemove.Label;" 
-                                            accesskey="&LycosPref.POP.ButtonRemove.AccessKey;"
-                                            oncommand ="gPrefAccounts.folderListRemove();"
-                                            disabled="true"/>
                             </hbox>
                         </vbox> 
                     </vbox>

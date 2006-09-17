@@ -1,8 +1,8 @@
-<!ENTITY LycosFolderAdd.Title "Add Folder">
-<!ENTITY LycosFolderName.Label "Folder Name">
-<!ENTITY LycosFolderName.AccessKey "F">
-<!ENTITY LycosFolders.Label "Add download folder">
-<!ENTITY LycosFolderName.ButtonOk.Label "Ok">
+<!ENTITY LycosFolderAdd.Title "Map toevoegen">
+<!ENTITY LycosFolderName.Label "Map naam">
+<!ENTITY LycosFolderName.AccessKey "M">
+<!ENTITY LycosFolders.Label "Downloadmap toevoegen">
+<!ENTITY LycosFolderName.ButtonOk.Label "OK">
 <!ENTITY LycosFolderName.ButtonOk.AccessKey "O">
-<!ENTITY LycosFolderName.ButtonCancel.Label "Cancel">
-<!ENTITY LycosFolderName.ButtonCancel.AccessKey "C">
+<!ENTITY LycosFolderName.ButtonCancel.Label "Annuleren">
+<!ENTITY LycosFolderName.ButtonCancel.AccessKey "A">

@@ -7,7 +7,6 @@ var gPrefAccounts =
     m_aszUserList : null,
     m_aszPrefsList : null,
     m_bDefaultUnread : false,
-    m_bDefaultSentItems : false,
     m_bDefaultSpam : false,
     m_bDefaultEmptyTrash : false, 
     m_bDefaultSaveCopy :true,    
@@ -100,6 +99,9 @@ var gPrefAccounts =
                     WebMailPrefAccess.Set("bool","lycos.Account."+i+".bDownloadUnread",this.m_aszUserList[i].bDownloadUnread);
                     this.m_DebugLog.Write("lycos-Pref-Accounts.js - save - bDownloadUnread " + this.m_aszUserList[i].bDownloadUnread); 
                     
+                    WebMailPrefAccess.Set("bool","lycos.Account."+i+".bMarkAsRead",this.m_aszUserList[i].bMarkAsRead);
+                    this.m_DebugLog.Write("lycos-Pref-Accounts.js - save - bMarkAsRead " + this.m_aszUserList[i].bMarkAsRead); 
+                    
                     WebMailPrefAccess.Set("bool","lycos.Account."+i+".bEmptyTrash",this.m_aszUserList[i].bEmptyTrash);
                     this.m_DebugLog.Write("lycos-Pref-Accounts.js - save - bEmptyTrash " + this.m_aszUserList[i].bEmptyTrash);
 
@@ -166,31 +168,37 @@ var gPrefAccounts =
                         //get email address
                         oPref.Value = null;
                         WebMailPrefAccess.Get("char","lycos.Account."+i+".user",oPref);
-                        oData.szUser = oPref.Value;
+                        if (oPref.Value!=null) oData.szUser = oPref.Value;
                         this.m_DebugLog.Write("lycos-Pref-Accounts.js - getAccountPrefs - oData.szUser " + oData.szUser);
                         
                         //get unread
                         oPref.Value = null;
                         WebMailPrefAccess.Get("bool","lycos.Account."+i+".bDownloadUnread",oPref);
-                        oData.bDownloadUnread = oPref.Value;
+                        if (oPref.Value!=null) oData.bDownloadUnread = oPref.Value;
                         this.m_DebugLog.Write("lycos-Pref-Accounts.js - getAccountPrefs - oData.bDownloadUnread " + oData.bDownloadUnread);
                                                 
+                        //get mark as read
+                        oPref.Value = null;
+                        WebMailPrefAccess.Get("bool","lycos.Account."+i+".bMarkAsRead",oPref);
+                        if (oPref.Value!=null) oData.bMarkAsRead = oPref.Value;
+                        this.m_DebugLog.Write("lycos-Pref-Accounts.js - getAccountPrefs - oData.bMarkAsRead " + oData.bMarkAsRead);
+
                         //get junkmail
                         oPref.Value = null;
                         WebMailPrefAccess.Get("bool","lycos.Account."+i+".bUseJunkMail",oPref);
-                        oData.bUseJunkMail = oPref.Value;
+                        if (oPref.Value!=null) oData.bUseJunkMail = oPref.Value;
                         this.m_DebugLog.Write("lycos-Pref-Accounts.js - getAccountPrefs - oData.bJunkMail " + oData.bUseJunkMail);
                                               
                         //get SaveSentItems
                         oPref.Value = null;
                         WebMailPrefAccess.Get("bool","lycos.Account."+i+".bSaveCopy",oPref);
-                        oData.bSaveCopy = oPref.Value;
+                        if (oPref.Value!=null) oData.bSaveCopy = oPref.Value;
                         this.m_DebugLog.Write("lycos-Pref-Accounts.js - getAccountPrefs - oData.bSaveSentItem " + oData.bSaveCopy);
                         
                         //get empty trash
                         oPref.Value = null;
                         WebMailPrefAccess.Get("bool","lycos.Account."+i+".bEmptyTrash",oPref);
-                        oData.bEmptyTrash = oPref.Value;
+                        if (oPref.Value!=null) oData.bEmptyTrash = oPref.Value;
                         this.m_DebugLog.Write("lycos-Pref-Accounts.js - getAccountPrefs - oData.bEmptyTrash " + oData.bEmptyTrash);
 
                         //get szFolders
@@ -291,6 +299,9 @@ var gPrefAccounts =
                                               
                                                 data.bDownloadUnread = this.m_aszPrefsList[j].bDownloadUnread;
                                                 this.m_DebugLog.Write("lycos-Pref-Accounts : getUserNameList - bUnread " + data.bDownloadUnread);
+                                                
+                                                data.bMarkAsRead = this.m_aszPrefsList[j].bMarkAsRead;
+                                                this.m_DebugLog.Write("lycos-Pref-Accounts : getUserNameList - bMarkAsRead " + data.bMarkAsRead);
                                               
                                                 data.bSaveCopy = this.m_aszPrefsList[j].bSaveCopy;
                                                 this.m_DebugLog.Write("lycos-Pref-Accounts : getUserNameList - bSaveSentItem " + data.bSaveCopy);
@@ -393,6 +404,15 @@ var gPrefAccounts =
                 
                 this.m_DebugLog.Write("lycos-Pref-Accounts : userClick -  data.bUnread "+ data.bDownloadUnread);
                 document.getElementById("chkDownloadUnread").checked = data.bDownloadUnread;
+                
+                this.m_DebugLog.Write("lycos-Pref-Accounts : userClick -  data.bMarkAsRead "+ data.bMarkAsRead);
+                document.getElementById("chkMarkAsRead").checked = data.bMarkAsRead;
+                
+                if (data.bDownloadUnread)
+                {
+                    document.getElementById("chkMarkAsRead").checked = true;
+                    document.getElementById("chkMarkAsRead").setAttribute("disabled", true);
+                }
                 
                 this.m_DebugLog.Write("lycos-Pref-Accounts : userClick -  data.bEmptyTrash "+ data.bEmptyTrash );
                 document.getElementById("chkEmptyTrash").checked = data.bEmptyTrash;
@@ -619,15 +639,38 @@ var gPrefAccounts =
         
     chkDownloadUreadOnChange : function ()
     {
-        this.m_DebugLog.Write("Ylycos-Pref-Accounts : chkDownloadUreadOnChange - START");
+        this.m_DebugLog.Write("lycos-Pref-Accounts : chkDownloadUreadOnChange - START");
         
         var bUnread = document.getElementById("chkDownloadUnread").checked;
         this.m_DebugLog.Write("lycos-Pref-Accounts : chkDownloadUreadOnChange -  bUnread "+ !bUnread);
         this.m_aszUserList[this.m_iIndex].bDownloadUnread = !bUnread;
         
-        this.m_DebugLog.Write("Ylycos-Pref-Accounts : chkDownloadUreadOnChange - END");
+        if (this.m_aszUserList[this.m_iIndex].bDownloadUnread)
+        {
+            document.getElementById("chkMarkAsRead").checked = true;
+            this.m_aszUserList[this.m_iIndex].bMarkAsRead = true;
+            document.getElementById("chkMarkAsRead").setAttribute("disabled", true); 
+        }
+        else
+        {
+            document.getElementById("chkMarkAsRead").setAttribute("disabled", false);
+        }
+                
+        this.m_DebugLog.Write("lycos-Pref-Accounts : chkDownloadUreadOnChange - END");
     },
  
+    
+    chkMarkAsReadOnChange : function ()
+    {
+        this.m_DebugLog.Write("lycos-Pref-Accounts : chkMaskAsReadOnChange - START");
+        
+        var bMarkAsRead = document.getElementById("chkMarkAsRead").checked;
+        this.m_DebugLog.Write("lycos-Pref-Accounts : chkMaskAsReadOnChange -  bMarkAsRead "+ !bMarkAsRead);
+        this.m_aszUserList[this.m_iIndex].bMarkAsRead = !bMarkAsRead;
+        
+        this.m_DebugLog.Write("lycos-Pref-Accounts : chkMaskAsReadOnChange - END");
+    },
+    
     
     chkJunkMailOnChange : function ()
     {

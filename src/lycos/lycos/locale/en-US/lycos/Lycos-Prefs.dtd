@@ -23,3 +23,7 @@
 <!ENTITY LycosPref.SMTP.SaveSentItems.AccessKey "s">
 
 <!ENTITY LycosPref.AccountError.Label "No Lycos Accounts Found"> 
+
+
+<!ENTITY LycosPref.POP.MarkAsRead.Label "Mark emails as read on server">
+<!ENTITY LycosPref.POP.MarkAsRead.AccessKey "k">
