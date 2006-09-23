@@ -81,10 +81,9 @@ const kPatternSeenMSGResponse = /<ymws:SetMessageFlagResponse.*?>([\s\S]*?)<\/ym
 const kDelete = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><m:MoveMessages xmlns:m=\"urn:yahoo:ymws\"><sourceFid>FOLDERNAME</sourceFid><destinationFid>Trash</destinationFid><mid>MSGID</mid></m:MoveMessages></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 const kPatternDeleteMSGResponse = /<MoveMessagesResponse.*?>([\s\S]*?)<\/MoveMessagesResponse.*?>/i;
 
-const kSendMessge = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><m:SendMessage xmlns:m=\"urn:yahoo:ymws\"><message><to>TOADDRESS</to><bcc>BCCEMAILADDRESS</bcc><cc>-CCEMAILADDRESS</cc><from><addr>FROMADDRESS</addr></from><reply-to><addr>FROMADDRESS</addr></reply-to><body>EMAILBODY</body><subject>EMAILSUBJECT</subject></message></m:SendMessage></SOAP-ENV:Body></SOAP-ENV:Envelope>";
+const kSendMessge = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><m:SendMessage xmlns:m=\"urn:yahoo:ymws\"><message>TOADDRESS-BCCEMAILADDRESS-CCEMAILADDRESS<from><email>FROMADDRESS</email></from><simplebody>EMAILBODY</simplebody><subject>EMAILSUBJECT</subject></message></m:SendMessage></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 const kPatternSendMSGResponse = "<SendMessageResponse.*?>([\s\S]*?)<\/SendMessageResponse>";
-const kPatternInput = /<input.*?type="hidden".*?>/igm;
-const kPatternAttchUploadForm = /<form.*?id="upload_form".*?>([\s\S]*?)<\/form>/i;
+const kPatternDiskFileName =/diskfilename=(.*?)&/i;
 
-const kPatternSpamImageURL = /<detail>(.*?)<\/detail>/i;
+const kPatternSpamImageURL = /<imageurl>(.*?)<\/imageurl>/i;
 const kPatternGreq = /<greq.*?>(.*?)<\/greq>/i;

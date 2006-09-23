@@ -928,7 +928,7 @@ YahooPOPBETA.prototype =
                         var szType = szData.match(kPatternPartType)[1];
                         mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szType : " + szType);
                        
-                        if (szType.search(/header/i)!=-1 || szPartID.search(/^\D/i)!=-1)
+                        if (szType.search(/header/i)!=-1)
                         {
                             //do nothing
                         }

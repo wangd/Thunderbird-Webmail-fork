@@ -39,6 +39,7 @@ function YahooSMTPBETA(oResponseStream, oLog, oPref)
         this.m_Email = new email("");
         this.m_Email.decodeBody(true);
         this.m_szData = null;
+        this.m_aszFileIDs = new Array();
         this.m_iAttachCount = 0;
 
         this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"]
@@ -156,8 +157,7 @@ YahooSMTPBETA.prototype =
     {
         try
         {
-            mainObject.m_Log.Write("YahooSMTPBETA.js - loginOnloadHandler - START"); 
-            //mainObject.m_Log.Write("YahooSMTPBETA.js - loginOnloadHandler : \n" + szResponse);            
+            mainObject.m_Log.Write("YahooSMTPBETA.js - loginOnloadHandler - START");             
             mainObject.m_Log.Write("YahooSMTPBETA.js - loginOnloadHandler : " + mainObject.m_iStage );  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -275,10 +275,6 @@ YahooSMTPBETA.prototype =
                     mainObject.m_szWssid = szResponse.match(kPatternWssid)[1];
                     mainObject.m_Log.Write("YahooSMTPBETA.js - loginOnloadHandler - m_szWssid : "+mainObject.m_szWssid );                   
                     
-                    //get webserviceUrl
-                    mainObject.m_szWebserviceUrl = szResponse.match(kPatternWebserviceUrl)[1];                
-                    mainObject.m_Log.Write("YahooSMTPBETA.js - loginOnloadHandler - m_szWebserviceUrl : "+mainObject.m_szWebserviceUrl );              
-        
                     //server response
                     mainObject.serverComms("235 Your In\r\n");
                     mainObject.m_bAuthorised = true;
@@ -377,7 +373,7 @@ YahooSMTPBETA.prototype =
             
             //construct email
             var szData = kSendMessge;
-            szData = szData.replace(/FROMADDRESS/g,szFrom);   //set from address
+            szData = szData.replace(/FROMADDRESS/g,szFrom.toLowerCase());   //set from address
             
             //get subject
             var szSubject = this.m_Email.headers.getSubject();
@@ -391,7 +387,7 @@ YahooSMTPBETA.prototype =
             var szMSGto = "";
             for (var i=0; i<aszTempTo.length; i++)
             {
-                szMSGto += "<recipient><addr>" + aszTempTo[i] + "</addr></recipient>";
+                szMSGto += "<to><email>" + aszTempTo[i] + "</email></to>";
             }
             szData = szData.replace(/TOADDRESS/,szMSGto);   //set TO Address
              
@@ -399,14 +395,14 @@ YahooSMTPBETA.prototype =
             var szCc = this.m_Email.headers.getCc();
             this.m_Log.Write("YahooSMTPBETA.js - rawMSG - szCc " + szCc);
             if (!szCc)                     
-                szData = szData.replace(/<cc>.*?<\/cc>/i,"");   //remove CC     
+                szData = szData.replace(/-CCEMAILADDRESS/i,"");   //remove CC     
             else
             {
                 var aszTempCC = szCc.split(",");
                 var szMSGCC = "";
                 for (var i=0; i<aszTempCC.length; i++)
                 {
-                    szMSGCC += "<recipient><addr>" + aszTempCC[i].replace(/\s*/g,"") + "</addr></recipient>";
+                    szMSGCC += "<cc><email>" + aszTempCC[i].replace(/\s*/g,"") + "</email></cc>";
                 }
                 szData = szData.replace(/-CCEMAILADDRESS/,szMSGCC);   //set CC Address
             }   
@@ -415,30 +411,25 @@ YahooSMTPBETA.prototype =
             var szBCC = this.getBcc(aszTo, szTo, szCc);
             this.m_Log.Write("YahooSMTPBETA.js - rawMSG - szBCC " + szBCC);
             if (!szBCC)    
-                szData = szData.replace(/<bcc>.*?<\/bcc>/i,"");   //remove BCC 
+                szData = szData.replace(/-BCCEMAILADDRESS/i,"");   //remove BCC 
             else
             {
                 var aszTempBCC = szBCC.split(",");
                 var szMSGBCC = "";
                 for (var i=0; i<aszTempBCC.length-1; i++)
                 {
-                    szMSGBCC += "<recipient><addr>" + aszTempBCC[i].replace(/\s*/g,"") + "</addr></recipient>";
+                    szMSGBCC += "<bcc><email>" + aszTempBCC[i].replace(/\s*/g,"") + "</email></bcc>";
                 }
-                szData = szData.replace(/BCCEMAILADDRESS/,szMSGBCC);   //set BCC Address
+                szData = szData.replace(/-BCCEMAILADDRESS/,szMSGBCC);   //set BCC Address
             }   
-            
-            
+                       
             //get body
             var szMSGBody = "";
-            if (this.m_Email.attachments.length>0)                      //add mixed header
-                szMSGBody += "<part type=\"multipart\" subtype=\"mixed\">";
-            if (this.m_Email.txtBody && this.m_Email.htmlBody)          //add alternative header
-                szMSGBody += "<part type=\"multipart\" subtype=\"alternative\">";
             if (this.m_Email.txtBody)                                   //add plain text part
             {
                 var szTXTBody = this.m_Email.txtBody.body.getBody(); 
                 if (szTXTBody.length==0) szTXTBody = " "                     
-                szMSGBody += "<part type=\"text\" subtype=\"plain\"><data>"+szTXTBody+"</data></part>";
+                szMSGBody += "<text>"+szTXTBody+"\r\n\r\n</text>";
             }
             if (this.m_Email.htmlBody)                                  //add HTML part
             {
@@ -446,22 +437,23 @@ YahooSMTPBETA.prototype =
                 szMsg = szMsg.replace(/&/g, "&amp;");
                 szMsg = szMsg.replace(/</g,"&lt;");
                 szMsg = szMsg.replace(/>/g,"&gt;");
-                szMsg = szMsg.replace(/\"/g, "&quot;");              
-                szMsg = szMsg.replace(/\s/g, "&nbsp;");
+              //  szMsg = szMsg.replace(/\"/g, "&quot;");              
+                //szMsg = szMsg.replace(/\s/g, "&nbsp;");
                 szMsg = szMsg.replace(/\r/g, "");
                 szMsg = szMsg.replace(/\n/g, "");
-                szMSGBody += "<part type=\"text\" subtype=\"html\"><data>"+szMsg+"</data></part>";
-            }
-            if (this.m_Email.txtBody && this.m_Email.htmlBody)
-                szMSGBody += "</part>";                         //end of alternative part
-            if (this.m_Email.attachments.length>0)
-                szMSGBody += "EMAILATTCHMENTS</part>";                 //add attachment place holder
+                szMSGBody += "<html>"+szMsg+"</html>";
+                 
+            } 
+            
+            //add attachment place holder
+            if (this.m_Email.attachments.length>0)szMSGBody += "EMAILATTCHMENTS";  
+                              
             szData = szData.replace(/EMAILBODY/,szMSGBody);    //set BODY      
             this.m_Log.Write("YahooSMTPBETA.js - rawMSG - szData " + szData);
                 
             if (this.m_Email.attachments.length==0) //no attchments
             {
-                var szURI = this.m_szLocationURI + "/" + this.m_szWebserviceUrl + "?m=SendMessage&wssid="+this.m_szWssid;
+                var szURI = this.m_szLocationURI + "/ws/mail/v1/soap?&appid=YahooMailRC&m=SendMessage&wssid="+this.m_szWssid;
                 this.m_iStage = 0 ;
                 this.m_HttpComms.setURI(szURI);
                 this.m_HttpComms.setRequestMethod("POST");
@@ -473,13 +465,26 @@ YahooSMTPBETA.prototype =
             else
             {   //get attachment download form
                 this.m_szData = szData;
-                var q=Math.floor(new Date().getTime()/4);
-                var E=Math.floor(Math.random()*4);
-                this.m_szID = q.toString()+"_"+E.toString();
-                var szURI = this.m_szLocationURI +"/ym/cgattachments?YY=" + Math.floor( Math.random() * 100000000 )+"&id="+this.m_szID;
-                this.m_iStage = 1 ;
+              
+                var iID = this.m_iAttachCount + 1;
+                var szURI = this.m_szLocationURI +"/ya/upload?resulturl=%2Fdc%2Fattach.html%3FattachId%3Dattach_id"+iID;
                 this.m_HttpComms.setURI(szURI);
-                this.m_HttpComms.setRequestMethod("GET");       
+                this.m_iStage = 1 ;
+                
+                this.m_HttpComms.addValuePair("_charset_","UTF-8");    //charset
+                this.m_HttpComms.addValuePair("resulturl","/dc/attach.html?attachId=attach_id" +iID);
+
+                //First file
+                var oAttach = this.m_Email.attachments[this.m_iAttachCount];
+                var szFileName = oAttach.headers.getContentType(4);
+                if (!szFileName) szFileName = ""; 
+                var szBody = oAttach.body.getBody();   
+                this.m_HttpComms.addFile("uploadfile", szFileName, szBody); 
+                                                          
+                this.m_iAttachCount++;
+           
+                this.m_HttpComms.setContentType("multipart/form-data");
+                this.m_HttpComms.setRequestMethod("POST");       
                 var bResult = this.m_HttpComms.send(this.composerOnloadHandler, this);  
                 if (!bResult) throw new Error("httpConnection returned false");
             }
@@ -503,8 +508,7 @@ YahooSMTPBETA.prototype =
     {
         try
         {
-            mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - START"); 
-           // mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler : \n" + szResponse);
+            mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - START");
             mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler : " + mainObject.m_iStage);  
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -541,7 +545,7 @@ YahooSMTPBETA.prototype =
                         
                         mainObject.serverComms("250 OK\r\n"); 
                     }
-                    else if (szResponse.search(/ymwsHumanVerification:TestRequired/)!=-1)
+                    else if (szResponse.search(/Client.HumanVerificationRequired/)!=-1)
                     {   
                         mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - Spam Image");
                         
@@ -553,7 +557,7 @@ YahooSMTPBETA.prototype =
                         mainObject.m_HttpComms.setRequestMethod("GET");
                         var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler, mainObject);      
                         if (!bResult) throw new Error("httpConnection returned false");
-                        mainObject.m_iStage = 3;
+                        mainObject.m_iStage = 2;
                     }
                     else
                     {   //have no idea whats gone wrong
@@ -563,84 +567,62 @@ YahooSMTPBETA.prototype =
                 
                 case 1: //attachment upload form
                     mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - upload attchement");
-                    if (szResponse.search(kPatternAttchUploadForm)==-1)
-                        throw new Error("Attchement upload error");
+                    var szFullURL = httpChannel.URI.spec;
+                    mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - szFullURL " + szFullURL);
+                    var szDiskName = szFullURL.match(kPatternDiskFileName)[1];
+                    mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - szDiskName " + szDiskName);
+                    if (szDiskName.length==0)throw new Error("Attchement upload error");
+                  
+                    var szUpload = "<attachment attachment=\"upload://"+szDiskName+"\"/>";
+                    mainObject.m_aszFileIDs.push(szUpload);
+                    
+                    mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - attachments.length " + mainObject.m_Email.attachments.length);
                     mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - mainObject.m_iAttachCount " +mainObject.m_iAttachCount);
                     
-                    var szAction = mainObject.m_szLocationURI + "/ym/cgattachments?YY=" + Math.floor( Math.random() * 100000000 );
-                    mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - szAction " + szAction);  
-                    
-                    mainObject.m_HttpComms.addValuePair("_charset_","UTF-8");    //charset
-                    
-                    //file
-                    var oAttach = mainObject.m_Email.attachments[mainObject.m_iAttachCount];
-                    var szFileName = oAttach.headers.getContentType(4);
-                    if (!szFileName) szFileName = ""; 
-                    var szBody = oAttach.body.getBody();
-                    mainObject.m_HttpComms.addFile("file", szFileName, szBody); 
-                    mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - szFileName " +szFileName);
-                   
-                    mainObject.m_HttpComms.addValuePair("file_count",mainObject.m_iAttachCount+1);   //file count
-                      
-                    if (mainObject.m_iAttachCount>0)
-                    {
-                        mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - ADD previous uploads ");
+                    if (mainObject.m_Email.attachments.length > mainObject.m_iAttachCount)
+                    {  
+                        var iID = mainObject.m_iAttachCount + 1;
+                        var szURI = mainObject.m_szLocationURI +"/ya/upload?resulturl=%2Fdc%2Fattach.html%3FattachId%3Dattach_id"+iID;
+                        mainObject.m_HttpComms.addValuePair("_charset_","UTF-8");    //charset
+                        mainObject.m_HttpComms.addValuePair("resulturl","/dc/attach.html?attachId=attach_id" +iID);
                         
-                        for (var j=0; j<mainObject.m_iAttachCount;j++)
-                        {
-                            var oAttach = mainObject.m_Email.attachments[j];
-                            var szFileName = oAttach.headers.getContentType(4);
-                            if (!szFileName) szFileName = ""; 
-                            mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - szFileName " +szFileName);
-                            var szBody = oAttach.body.getBody();
-                            
-                            mainObject.m_HttpComms.addValuePair("filename_"+j, szFileName ); 
-                            mainObject.m_HttpComms.addValuePair("mime_type_"+j, "application/octet-stream");
-                            mainObject.m_HttpComms.addValuePair("byte_size_"+j, szBody.length);
-                            mainObject.m_HttpComms.addValuePair("partId_"+j, "");
-                            mainObject.m_HttpComms.addValuePair("mid_"+j, "");
-                        }
-                    }
-                    
-                    mainObject.m_HttpComms.setContentType("multipart/form-data");
-                    mainObject.m_HttpComms.setURI(szAction);                  
-                    mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler,mainObject); 
-                    
-                    mainObject.m_iAttachCount++;
-                    if (mainObject.m_iAttachCount >= mainObject.m_Email.attachments.length)
-                        mainObject.m_iStage ++;
-
-                    if (!bResult) throw new Error("httpConnection returned false");
-                break;
-                
-                case 2: //last attchement uploaded  
-                    mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - Send MSG");
-                    
-                    var szMSGBody = "";
-                    for (var i=0; i<mainObject.m_Email.attachments.length; i++)
-                    {
-                        var oAttach = mainObject.m_Email.attachments[i];
+                        //file
+                        var oAttach = mainObject.m_Email.attachments[mainObject.m_iAttachCount];
                         var szFileName = oAttach.headers.getContentType(4);
-                        szFileName = escape(szFileName);
-                        szMSGBody += "<part attachment=\"upload://"+szFileName+"\" disposition=\"attachment\"/>";
+                        if (!szFileName) szFileName = ""; 
+                        var szBody = oAttach.body.getBody();   
+                        mainObject.m_HttpComms.addFile("uploadfile", szFileName, szBody); 
+                                                                                         
+                        mainObject.m_HttpComms.setContentType("multipart/form-data");
+                        mainObject.m_HttpComms.setURI(szURI);                  
+                        mainObject.m_HttpComms.setRequestMethod("POST");
+                        var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler,mainObject);     
+                        mainObject.m_iAttachCount++;
+                        if (!bResult) throw new Error("httpConnection returned false");
                     }
-                    
-                    mainObject.m_szData = mainObject.m_szData.replace(/EMAILATTCHMENTS/,szMSGBody);
-                    mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - mainObject.m_szData "+ mainObject.m_szData);
-                    
-                    var szURI = mainObject.m_szLocationURI + "/" + mainObject.m_szWebserviceUrl + "?m=SendMessage&wssid="+mainObject.m_szWssid;
-                    mainObject.m_iStage = 0 ;
-                    mainObject.m_HttpComms.setURI(szURI);
-                    mainObject.m_HttpComms.setRequestMethod("POST");
-                    mainObject.m_HttpComms.setContentType("application/xml");
-                    mainObject.m_HttpComms.addData(mainObject.m_szData);       
-                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler, mainObject);  
-                    if (!bResult) throw new Error("httpConnection returned false");
+                    else
+                    {   
+                        var szMSGBody = "";
+                        for (var i=0; i<mainObject.m_aszFileIDs.length; i++)
+                        {
+                            szMSGBody += mainObject.m_aszFileIDs[i];
+                        }
+                        
+                        mainObject.m_szData = mainObject.m_szData.replace(/EMAILATTCHMENTS/,szMSGBody);
+                        mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - mainObject.m_szData "+ mainObject.m_szData);
+                        var szURI = mainObject.m_szLocationURI + "/ws/mail/v1/soap?&appid=YahooMailRC&m=SendMessage&wssid="+mainObject.m_szWssid;
+                        mainObject.m_iStage = 0 ;
+                        mainObject.m_HttpComms.setURI(szURI);
+                        mainObject.m_HttpComms.setRequestMethod("POST");
+                        mainObject.m_HttpComms.setContentType("application/xml");
+                        mainObject.m_HttpComms.addData(mainObject.m_szData);       
+                        var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler, mainObject);  
+                        if (!bResult) throw new Error("httpConnection returned false");
+                    }
                 break;
                 
-                
-                case 3: //spam image download
+                                
+                case 2: //spam image download
                     mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - image download");
                     var szPath = mainObject.writeImageFile(szResponse);
                     mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - imageFile " + szPath);
@@ -654,7 +636,7 @@ YahooSMTPBETA.prototype =
                     szGreq += "<gha>"+szResult+"</gha>";
                     mainObject.m_szData = mainObject.m_szData.replace(kPatternGreq,szGreq);
                     
-                    var szURI = mainObject.m_szLocationURI + "/" + mainObject.m_szWebserviceUrl + "?m=SendMessage&wssid="+mainObject.m_szWssid;
+                    var szURI = mainObject.m_szLocationURI + "/ws/mail/v1/soap?&appid=YahooMailRC&m=SendMessage&wssid="+mainObject.m_szWssid;
                     mainObject.m_iStage = 0 ;
                     mainObject.m_HttpComms.setURI(szURI);
                     mainObject.m_HttpComms.setRequestMethod("POST");
