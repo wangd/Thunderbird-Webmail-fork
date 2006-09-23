@@ -44,8 +44,7 @@ function YahooPOPBETA(oResponseStream, oLog, oPrefs)
         this.m_iStage = 0; 
         this.m_iLoginCount = 0;
         this.m_szLocationURI = null;
-        this.m_szWssid = null;
-        this.m_szWebserviceUrl = null;    
+        this.m_szWssid = null;    
         this.m_aszFolderList= new Array();
         this.m_aRawData = new Array();
         this.m_aMsgDataStore = new Array();
@@ -54,7 +53,7 @@ function YahooPOPBETA(oResponseStream, oLog, oPrefs)
         this.m_iTotalSize = 0;
         this.m_iMSGCount = 0;
         this.m_szHeader = null;        
-        this.m_szMsgID = null;  
+        this.m_szMsgID = null; 
         this.m_szBox = null;
         this.m_iID =0; 
         this.m_oEmail = null;
@@ -156,8 +155,7 @@ YahooPOPBETA.prototype =
     {
         try
         {
-            mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - START"); 
-           // mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler : \n" + szResponse);
+            mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - START");
             mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler : Stage" + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);     
@@ -274,16 +272,12 @@ YahooPOPBETA.prototype =
                     //get wssid
                     mainObject.m_szWssid = szResponse.match(kPatternWssid)[1];
                     mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - m_szWssid : "+mainObject.m_szWssid );                   
-                    
-                    //get webserviceUrl
-                    mainObject.m_szWebserviceUrl = szResponse.match(kPatternWebserviceUrl)[1];                
-                    mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - m_szWebserviceUrl : "+mainObject.m_szWebserviceUrl );              
         
                     mainObject.m_szLocationURI = httpChannel.URI.prePath ;
                     mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - m_szLocationURI : "+mainObject.m_szLocationURI );
                     
                     mainObject.m_iStage++;
-                    var szURI = mainObject.m_szLocationURI + "/" + mainObject.m_szWebserviceUrl + "?m=ListFolders&wssid="+mainObject.m_szWssid; 
+                    var szURI = mainObject.m_szLocationURI + "/ws/mail/v1/soap?&appid=YahooMailRC&m=ListFolders&wssid="+mainObject.m_szWssid; 
                     mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - szURI " + szURI);
                     mainObject.m_HttpComms.setURI(szURI);
                     mainObject.m_HttpComms.setRequestMethod("POST");
@@ -297,7 +291,7 @@ YahooPOPBETA.prototype =
                     var szFolderResponse = szResponse.match(kPatternFolderResponse)[1];
                     mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - szFolderResponse : "+szFolderResponse);
                     
-                    var aszFolders = szFolderResponse.match(kPatternData);
+                    var aszFolders = szFolderResponse.match(kPatternFolderData);
                     mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - aszFolders : "+aszFolders);
                     
                     for (var i=0; i<mainObject.m_aszPrefFolderList.length; i++)
@@ -307,7 +301,7 @@ YahooPOPBETA.prototype =
                         
                         for (var j=0; j<aszFolders.length; j++)
                         {
-                            var szBox = aszFolders[j].match(kPatternFolderName)[1];
+                            var szBox = aszFolders[j].match(kPatternFolderID)[1];
                             mainObject.m_Log.Write("YahooPOP.js - loginOnloadHandler - szBox : "+szBox );
                             
                             if (szBox.search(regExp)!=-1)
@@ -440,7 +434,7 @@ YahooPOPBETA.prototype =
         this.m_Log.Write("YahooPOPBETA.js - mailBox - szFolderName " + szFolderName); 
         var szData = kLstMsgs.replace(/folderName/,szFolderName);
          
-        var szURI = this.m_szLocationURI + "/" + this.m_szWebserviceUrl + "?m=LstMsgs&wssid="+this.m_szWssid; 
+        var szURI = this.m_szLocationURI + "/ws/mail/v1/soap?&appid=YahooMailRC&m=ListMessages&wssid="+this.m_szWssid; 
         this.m_Log.Write("YahooPOPBETA.js - mailBox - szURI " + szURI);
         
         this.m_HttpComms.setURI(szURI);
@@ -455,12 +449,13 @@ YahooPOPBETA.prototype =
     },
     
     
+    
+    
     mailBoxOnloadHandler : function (szResponse ,event , mainObject)
     {
         try
         {
             mainObject.m_Log.Write("YahooPOPBETA.js - mailBoxOnloadHandler - START"); 
-            //mainObject.m_Log.Write("YahooPOPBETA.js - mailBoxOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("YahooPOPBETA.js - mailBoxOnloadHandler : " + mainObject.m_iStage);  
             
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -469,11 +464,15 @@ YahooPOPBETA.prototype =
             mainObject.m_Log.Write("YahooPOPBETA.js - mailBoxOnloadHandler - Mailbox :" + httpChannel.responseStatus);
             if (httpChannel.responseStatus != 200 ) 
                 throw new Error("error status " + httpChannel.responseStatus);
-            
+                   
             var aszResponses = szResponse.match(kPatternInfo);
             mainObject.m_Log.Write("YahooPOPBETA.js - mailBoxOnloadHandler - mailbox - " + aszResponses);
             if (aszResponses)
-            {
+            {             
+                var szFolderInfo = szResponse.match(kPatternFolderInfo)[0];
+                mainObject.m_Log.Write("YahooPOPBETA.js - mailBoxOnloadHandler - szFolderInfo - " + szFolderInfo);
+                
+                mainObject.m_aRawData.push (szFolderInfo);
                 var aTemp = mainObject.m_aRawData.concat(aszResponses);
                 delete mainObject.m_aRawData;
                 mainObject.m_aRawData = aTemp;   
@@ -485,7 +484,7 @@ YahooPOPBETA.prototype =
                 this.m_Log.Write("YahooPOPBETA.js - mailBoxOnloadHandler - szFolderName " + szFolderName); 
                 var szData = kLstMsgs.replace(/folderName/,szFolderName);
                  
-                var szURI = mainObject.m_szLocationURI + "/" + mainObject.m_szWebserviceUrl + "?m=LstMsgs&wssid="+mainObject.m_szWssid;
+                var szURI = mainObject.m_szLocationURI + "/ws/mail/v1/soap?&appid=YahooMailRC&m=ListMessages&wssid="+mainObject.m_szWssid;
                 mainObject.m_HttpComms.setURI(szURI);
                 mainObject.m_HttpComms.setRequestMethod("POST");
                 mainObject.m_HttpComms.setContentType("application/xml");
@@ -586,34 +585,41 @@ YahooPOPBETA.prototype =
         this.m_Log.Write("YahooPOPBETA.js - processItem - START");
         this.m_Log.Write("YahooPOPBETA.js - processItem - rawData " +rawData);
         
-        var bRead = true;
-        if (this.m_bDownloadUnread)
+        if (rawData.search(/folderInfo/)!=-1)  //folder info
         {
-            bRead = parseInt(rawData.match(kPatternSeen)[1]) ? false : true;
-            this.m_Log.Write("YahooPOPBETA.js - processItem - bRead -" + bRead);
+            this.m_szBox = rawData.match(kPatternFolderID)[1];
+            this.m_Log.Write("YahooPOPBETA.js - processItem - rawData " +this.m_szBox );
         }
-        
-        if (bRead)
+        else  //message info
         {
-            //mail url   
-            var oMSG = new YahooMSG();
+            var bRead = true;
+            if (this.m_bDownloadUnread)
+            {
+                bRead = parseInt(rawData.match(kPatternSeen)[1]) ? false : true;
+                this.m_Log.Write("YahooPOPBETA.js - processItem - bRead -" + bRead);
+            }
             
-            //ID
-            oMSG.szID =  rawData.match(kPatternID)[1];
-            this.m_Log.Write("YahooPOPBETA.js - processItem - oMSG.szID -" + oMSG.szID);
-            
-            //size 
-            oMSG.iSize = parseInt(rawData.match(kPatternSize)[1]);
-            this.m_Log.Write("YahooPOPBETA.js - processItem - oMSG.iSize - "+ oMSG.iSize);
-            this.m_iTotalSize += oMSG.iSize;
-           
-            //Folder 
-            oMSG.szFolder = rawData.match(kPatternFolder)[1];
-            this.m_Log.Write("YahooPOPBETA.js - processItem - oMSG.szFolder - "+ oMSG.szFolder);
-                        
-            this.m_aMsgDataStore.push(oMSG); 
-        }
-        
+            if (bRead)
+            {
+                //mail url   
+                var oMSG = new YahooMSG();
+                
+                //ID
+                oMSG.szID =  rawData.match(kPatternID)[1];
+                this.m_Log.Write("YahooPOPBETA.js - processItem - oMSG.szID -" + oMSG.szID);
+                
+                //size 
+                oMSG.iSize = parseInt(rawData.match(kPatternSize)[1]);
+                this.m_Log.Write("YahooPOPBETA.js - processItem - oMSG.iSize - "+ oMSG.iSize);
+                this.m_iTotalSize += oMSG.iSize;
+               
+                //Folder 
+                oMSG.szFolder = this.m_szBox;
+                this.m_Log.Write("YahooPOPBETA.js - processItem - oMSG.szFolder - "+ oMSG.szFolder);
+                            
+                this.m_aMsgDataStore.push(oMSG); 
+            }
+        }    
         this.m_Log.Write("YahooPOPBETA.js - processItem - END");
     },   
     
@@ -734,7 +740,7 @@ YahooPOPBETA.prototype =
             var szData = kMSGHeaders.replace(/MSGID/,oMSGData.szID).replace(/FOLDERNAME/,oMSGData.szFolder);
             this.m_Log.Write("YahooPOPBETA.js - getHeaders - szData " + szData);
              
-            var szURI = this.m_szLocationURI + "/" + this.m_szWebserviceUrl + "?m=GetMessageRawHeader&wssid="+this.m_szWssid; 
+            var szURI = this.m_szLocationURI + "/ws/mail/v1/soap?&appid=YahooMailRC&m=GetMessageRawHeader&wssid="+this.m_szWssid; 
             this.m_Log.Write("YahooPOPBETA.js - getHeaders - szURI " + szURI);
             
             this.m_HttpComms.setURI(szURI);
@@ -765,8 +771,7 @@ YahooPOPBETA.prototype =
     {
         try
         {
-            mainObject.m_Log.Write("YahooPOPBETA.js - headerOnloadHandler - START");
-            //mainObject.m_Log.Write("YahooPOPBETA.js - headerOnloadHandler - msg :\n" + szResponse); 
+            mainObject.m_Log.Write("YahooPOPBETA.js - headerOnloadHandler - START"); 
            
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
                       
@@ -829,7 +834,7 @@ YahooPOPBETA.prototype =
             var szData = kMSGHeaders.replace(/MSGID/,oMSGData.szID).replace(/FOLDERNAME/,oMSGData.szFolder);
             this.m_Log.Write("YahooPOPBETA.js - getMessage - szData " + szData);
              
-            var szURI = this.m_szLocationURI + "/" + this.m_szWebserviceUrl + "?m=GetMessageRawHeader&wssid="+this.m_szWssid; 
+            var szURI = this.m_szLocationURI + "/ws/mail/v1/soap?&appid=YahooMailRC&m=GetMessageRawHeader&wssid="+this.m_szWssid; 
             this.m_Log.Write("YahooPOPBETA.js - getMessage - szURI " + szURI);
             
             this.m_HttpComms.setURI(szURI);
@@ -859,8 +864,7 @@ YahooPOPBETA.prototype =
     {
         try
         {
-            mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - START");
-           // mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler : \n" + szResponse);          
+            mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - START");          
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
                       
             //check status should be 200.
@@ -886,7 +890,7 @@ YahooPOPBETA.prototype =
                     szHeaderTemp += szHeader; 
                     mainObject.m_oEmail.setEnvolpeHeaders(szHeaderTemp);
                     
-                    var szURI = mainObject.m_szLocationURI + "/" + mainObject.m_szWebserviceUrl + "?m=GetMessageBodyPart&wssid="+mainObject.m_szWssid;
+                    var szURI = mainObject.m_szLocationURI + "/ws/mail/v1/soap?&appid=YahooMailRC&m=GetMessageBodyPart&wssid="+mainObject.m_szWssid;
                     mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szURI "+szURI);
                     
                     mainObject.m_HttpComms.setURI(szURI);
@@ -905,12 +909,15 @@ YahooPOPBETA.prototype =
                     if (szResponse.search(kPatternLstBodyPartResponse)==-1)
                         throw new Error("Error Parsing Body");
                     
-                    var aszParts = szResponse.match(kPatternPart);
-                    mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - aszParts : " + aszParts);
-                      
-                    //remove the first item this is the headers and they have already been downloaded
-                    var aszHeaderPart = aszParts.shift();
-                    delete aszHeaderPart;
+                    var aszShortParts = szResponse.match(kPatterShortPart);
+                    mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - aszShortParts : " + aszShortParts);
+                    var szCleanedParts = szResponse.replace(kPatterShortPart,"");
+                    var aszComplexParts = szCleanedParts.match(kPatternPart);
+                    mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - aszComplexParts : " + aszComplexParts);
+                    var aszParts = aszShortParts.concat(aszComplexParts);
+                    delete aszShortParts;
+                    delete aszComplexParts;
+                    
                     var i=0;
                     var iLength = aszParts.length;               
                     do{
@@ -921,8 +928,11 @@ YahooPOPBETA.prototype =
                         var szType = szData.match(kPatternPartType)[1];
                         mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szType : " + szType);
                        
-                        
-                        if(szType.search(/text/i)!=-1)
+                        if (szType.search(/header/i)!=-1 || szPartID.search(/^\D/i)!=-1)
+                        {
+                            //do nothing
+                        }
+                        else if(szType.search(/text/i)!=-1)
                         {  //process text/htlm message part 
                             mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler -  Text part");
                             //proces headers
@@ -971,7 +981,7 @@ YahooPOPBETA.prototype =
                     
                     if (mainObject.m_aDownloadFiles.length==0 && mainObject.m_bMarkAsRead) //no files
                     {
-                        var szURI = mainObject.m_szLocationURI + "/" + mainObject.m_szWebserviceUrl + "?m=SetMessageFlag&wssid=" + mainObject.m_szWssid;
+                        var szURI = mainObject.m_szLocationURI + "/ws/mail/v1/soap?&appid=YahooMailRC&m=FlagMessages&wssid=" + mainObject.m_szWssid;
                         mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szURI " +szURI);
                         
                         mainObject.m_HttpComms.setURI(szURI);
@@ -1050,7 +1060,7 @@ YahooPOPBETA.prototype =
                     
                     if (mainObject.m_aDownloadFiles.length==0 && mainObject.m_bMarkAsRead) //no files
                     {
-                        var szURI = mainObject.m_szLocationURI + "/" + mainObject.m_szWebserviceUrl + "?m=SetMessageFlag&wssid=" + mainObject.m_szWssid;
+                        var szURI = mainObject.m_szLocationURI + "/ws/mail/v1/soap?&appid=YahooMailRC&m=FlagMessages&wssid=" + mainObject.m_szWssid;
                         mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szURI " +szURI);
                         
                         mainObject.m_HttpComms.setURI(szURI);
@@ -1119,8 +1129,8 @@ YahooPOPBETA.prototype =
             //create URL
             var oMSGData = this.m_aMsgDataStore[lID-1];
        
-            var szURI = this.m_szLocationURI + "/" + this.m_szWebserviceUrl;
-            szURI += "?m=MoveMsgs&src="+oMSGData.szFolder+"&dst=Trash&count=1&wssid="+this.m_szWssid;
+            var szURI = this.m_szLocationURI + "/ws/mail/v1/soap?&appid=YahooMailRC&";
+            szURI += "m=MoveMessages&src="+oMSGData.szFolder+"&dst=Trash&count=1&wssid="+this.m_szWssid;
             this.m_Log.Write("YahooPOPBETA.js - deleteMessage - szURI " +szURI);
             
             this.m_HttpComms.setURI(szURI);
@@ -1352,8 +1362,10 @@ YahooPOPBETA.prototype =
         szMsg = szMsg.replace(/&quot;/g, "\"");
         szMsg = szMsg.replace(/&amp;/g, "&");
         szMsg = szMsg.replace(/&nbsp;/g, " ");   
-        szMsg = szMsg.replace(/&#xA;/g,"\n");  
+        szMsg = szMsg.replace(/&#xA;/g,"\n");
+        szMsg = szMsg.replace(/&#10;/g,"\n");  
         szMsg = szMsg.replace(/&#xD;/g,"\r");
+        szMsg = szMsg.replace(/&#13;/g,"\r");      
         return szMsg;
     },
 }
