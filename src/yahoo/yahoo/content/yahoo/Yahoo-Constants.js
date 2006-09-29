@@ -1,5 +1,7 @@
 const kYahooConstants = true;
 
+const UserAgent = "1.5.7 on Mac OS X — Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-us) Gecko/20060516 Firefox/1.5.7";
+
 const patternYahooSecure = /<a href="(.*?https.*?login.*?)".*?>/;
 const patternYahooLoginForm = /<form.*?name="login_form".*?>[\S\s]*?<\/form>/gm;
 const patternYahooAction = /<form.*?action="(.*?)".*?>/;
@@ -73,7 +75,8 @@ const kPatternPartTypeParams =/typeParams="(.*?)"/i;
 const kPatternPartSubType =/subType="(.*?)"/i;
 const kPatternPartDispParam =/dispParams="(.*?)"/i;
 const kPatternPartId = /partId="(.*?)"/i;
-const kPatternFileName = /filename=(.*?)$/i
+const kPatternFileName = /filename=(.*?)$/i;
+const kPatternContentId = /contentId="(.*?)"/i;
 
 const kSeen = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><m:FlagMessages xmlns:m=\"urn:yahoo:ymws\"><fid>FOLDERNAME<\/fid><mid>MSGID</mid><setFlags read=\"1\"></setFlags></m:FlagMessages></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 const kPatternSeenMSGResponse = /<ymws:SetMessageFlagResponse.*?>([\s\S]*?)<\/ymws:SetMessageFlagResponse.*?>/i;

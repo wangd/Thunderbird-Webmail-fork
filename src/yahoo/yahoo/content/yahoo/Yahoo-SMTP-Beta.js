@@ -95,6 +95,7 @@ YahooSMTPBETA.prototype =
             this.m_szYahooMail = "http://mail.yahoo.com";
             this.m_szLoginUserName = this.m_szUserName;       
             
+            
             if (this.m_szUserName.search(/yahoo/i)!=-1)   
             { //remove domain from user name  
                 this.m_szLoginUserName = this.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
@@ -110,6 +111,7 @@ YahooSMTPBETA.prototype =
             this.m_iStage = 0;
             this.m_HttpComms.setURI(this.m_szYahooMail);                    
             this.m_HttpComms.setRequestMethod("GET");
+            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             
             if (this.m_bReUseSession)
             { 
@@ -167,7 +169,7 @@ YahooSMTPBETA.prototype =
             if (httpChannel.responseStatus != 200) 
                 throw new Error("return status " + httpChannel.responseStatus);
             
-            
+            mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             if (szResponse.search(patternYahooLoginForm)!=-1) 
             {
                 if ( mainObject.m_iLoginCount<=3)
@@ -371,6 +373,8 @@ YahooSMTPBETA.prototype =
 
             if (!this.m_Email.parse(szEmail)) throw new Error ("Parse Failed")
             
+            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
+            
             //construct email
             var szData = kSendMessge;
             szData = szData.replace(/FROMADDRESS/g,szFrom.toLowerCase());   //set from address
@@ -518,6 +522,7 @@ YahooSMTPBETA.prototype =
             if (httpChannel.responseStatus != 200) 
                 throw new Error("return status " + httpChannel.responseStatus);
 
+            mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             switch(mainObject.m_iStage)
             {
                 case 0:  //MSG sent

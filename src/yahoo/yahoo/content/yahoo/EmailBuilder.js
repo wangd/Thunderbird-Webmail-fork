@@ -121,13 +121,29 @@ emailBuilder.prototype.build = function ()
             if (szSubType.search(/alternative/,i)!=-1)
             {
                 this.m_Log.Write("emailBuilder.js - build - plain and html part");
-                
+                var bMultiPart = false;
+                var sz2ndStartBoundary = null;
+                var sz2ndEndBoundary = null
                 for (var i=0; i<this.m_aoBodyPart.length; i++)
                 {
-                    szEmail += szStartBoundary;
-                    szEmail += this.m_aoBodyPart[i].headers.getAllHeaders();
+                    szEmail += sz2ndStartBoundary? sz2ndStartBoundary : szStartBoundary;
+                    var szHeaders = this.m_aoBodyPart[i].headers.getAllHeaders();
+                    if (szHeaders.search(/html/i)!=-1 && this.m_aoBodyPart.length>2)
+                    {
+                        if (!sz2ndStartBoundary)
+                        {
+                            var sz2ndBoundary = szBaseBoundary+"ALTBoundary";
+                            sz2ndStartBoundary = "\r\n--" + sz2ndBoundary + "\r\n";
+                            sz2ndEndBoundary =  "\r\n--" + sz2ndBoundary + "--\r\n\r\n";
+                        }
+                        szEmail += "Content-Type: multipart/related; boundary=\""+sz2ndBoundary+"\"\r\n\r\n";  
+                        szEmail += sz2ndStartBoundary;  
+                        bMultiPart = true;
+                    }
+                    szEmail += szHeaders;
                     szEmail += this.m_aoBodyPart[i].body.getBody();
                 }  
+                if (bMultiPart) szEmail += sz2ndEndBoundary;
                 szEmail += szEndBoundary;
             }
             else //mixed 

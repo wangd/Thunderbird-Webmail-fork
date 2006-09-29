@@ -109,7 +109,7 @@ YahooPOPBETA.prototype =
             this.m_Log.Write("YahooPOPBETA.js - logIN - default " +this.m_szYahooMail);
             this.m_iStage = 0;
             this.m_HttpComms.setURI(this.m_szYahooMail);  
-            
+            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             //get session data
             if (this.m_bReUseSession)
             { 
@@ -164,7 +164,8 @@ YahooPOPBETA.prototype =
             if (httpChannel.responseStatus != 200) 
                 throw new Error("return status " + httpChannel.responseStatus);
              
-             
+            mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
+           
             if (szResponse.search(patternYahooLoginForm)!=-1) 
             {
                 if ( mainObject.m_iLoginCount<=3)
@@ -436,7 +437,7 @@ YahooPOPBETA.prototype =
          
         var szURI = this.m_szLocationURI + "/ws/mail/v1/soap?&appid=YahooMailRC&m=ListMessages&wssid="+this.m_szWssid; 
         this.m_Log.Write("YahooPOPBETA.js - mailBox - szURI " + szURI);
-        
+        this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
         this.m_HttpComms.setURI(szURI);
         this.m_HttpComms.setRequestMethod("POST");
         this.m_HttpComms.setContentType("application/xml");
@@ -464,7 +465,8 @@ YahooPOPBETA.prototype =
             mainObject.m_Log.Write("YahooPOPBETA.js - mailBoxOnloadHandler - Mailbox :" + httpChannel.responseStatus);
             if (httpChannel.responseStatus != 200 ) 
                 throw new Error("error status " + httpChannel.responseStatus);
-                   
+            
+            mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);   
             var aszResponses = szResponse.match(kPatternInfo);
             mainObject.m_Log.Write("YahooPOPBETA.js - mailBoxOnloadHandler - mailbox - " + aszResponses);
             if (aszResponses)
@@ -836,7 +838,7 @@ YahooPOPBETA.prototype =
              
             var szURI = this.m_szLocationURI + "/ws/mail/v1/soap?&appid=YahooMailRC&m=GetMessageRawHeader&wssid="+this.m_szWssid; 
             this.m_Log.Write("YahooPOPBETA.js - getMessage - szURI " + szURI);
-            
+            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             this.m_HttpComms.setURI(szURI);
             this.m_HttpComms.setRequestMethod("POST");
             this.m_HttpComms.setContentType("application/xml");
@@ -870,8 +872,9 @@ YahooPOPBETA.prototype =
             //check status should be 200.
             mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - msg :" + httpChannel.responseStatus);
             if (httpChannel.responseStatus != 200) 
-                throw new Error("error status " + httpChannel.responseStatus);   
-            
+                throw new Error("error status " + httpChannel.responseStatus);
+                   
+            mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             var szUri = httpChannel.URI.spec;
             mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - uri : " + szUri);
             
@@ -1006,14 +1009,13 @@ YahooPOPBETA.prototype =
                     } 
                     else
                     {   //download first file
-                        //Borrowed this URI from freepops
-                        var szURI = mainObject.m_szLocationURI + "/ym/cgdownload/?"
-                        szURI += "box=" + mainObject.m_szBox;
-                        szURI += "&MsgId=" + mainObject.m_szMsgID;
-                        szURI += "&bodyPart=" +mainObject.m_aDownloadFiles[0].match(kPatternPartId)[1];
-                        szURI += "&download=1"
-                        mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szURI " +szURI);
+                        var szURI = mainObject.m_szLocationURI + "/ya/download?";
+                        szURI += "fid=" + mainObject.m_szBox;
+                        szURI += "&mid=" + encodeURIComponent(mainObject.m_szMsgID);
+                        szURI += "&pid=" +mainObject.m_aDownloadFiles[0].match(kPatternPartId)[1];
                         
+                        
+                        mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szURI " +szURI);
                         mainObject.m_HttpComms.setURI(szURI);
                         mainObject.m_HttpComms.setRequestMethod("GET");                        
                         var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject); 
@@ -1045,11 +1047,22 @@ YahooPOPBETA.prototype =
                         szName = szPart.match(kPatternPartTypeParams)[1];
                     var szDispParam = szPart.match(kPatternPartDispParam)[1];                
                     var szFileName = szDispParam.match(kPatternFileName)[1];
-                                 
-                    var szHeader = "Content-Type: application/octet-stream; ";
+                    var szContentID = null;
+                    if (szPart.search(kPatternContentId)!=-1)
+                    {
+                        szContentID = szPart.match(kPatternContentId)[1];
+                        szContentID = mainObject.cleanHTML(szContentID);
+                    }           
+                    var szType = "application/octet-stream";
+                    if (szPart.search(kPatternPartType)!=-1 && szPart.search(kPatternPartSubType)!=-1)
+                        szType = szPart.match(kPatternPartType)[1] +"/" + szPart.match(kPatternPartSubType)[1];
+                    var szHeader = "Content-Type: "+szType+"; ";
                     szHeader +=  szName?szName:"";
                     szHeader += "\r\nContent-Transfer-Encoding: base64\r\n";
-                    szHeader += "Content-Disposition: attachment; fileName=\"" +szFileName + "\"\r\n\r\n";
+                    if (szContentID) szHeader += "Content-ID: "+ szContentID + "\r\n";
+                    var szFileType = "attachment";
+                    if (szPart.search(/disposition="inline"/i)!=-1) szFileType = "inline";
+                    szHeader += "Content-Disposition: " + szFileType +"; fileName=\"" +szFileName + "\"\r\n\r\n";
                     mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szHeader : " + szHeader);
                     
                     //base64 file
@@ -1085,12 +1098,10 @@ YahooPOPBETA.prototype =
                     }
                     else
                     {   //download first file
-                        //Borrowed this URI from freepops
-                        var szURI = mainObject.m_szLocationURI + "/ym/cgdownload/?"
-                        szURI += "box=" + mainObject.m_szBox;
-                        szURI += "&MsgId=" + mainObject.m_szMsgID;
-                        szURI += "&bodyPart=" +mainObject.m_aDownloadFiles[0].match(kPatternPartId)[1];
-                        szURI += "&download=1"
+                        var szURI = mainObject.m_szLocationURI + "/ya/download?";
+                        szURI += "fid=" + mainObject.m_szBox;
+                        szURI += "&mid=" + encodeURIComponent(mainObject.m_szMsgID);
+                        szURI += "&pid=" +mainObject.m_aDownloadFiles[0].match(kPatternPartId)[1];
                         mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szURI " +szURI);
                         
                         mainObject.m_HttpComms.setURI(szURI);
@@ -1132,7 +1143,7 @@ YahooPOPBETA.prototype =
             var szURI = this.m_szLocationURI + "/ws/mail/v1/soap?&appid=YahooMailRC&";
             szURI += "m=MoveMessages&src="+oMSGData.szFolder+"&dst=Trash&count=1&wssid="+this.m_szWssid;
             this.m_Log.Write("YahooPOPBETA.js - deleteMessage - szURI " +szURI);
-            
+            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             this.m_HttpComms.setURI(szURI);
             this.m_HttpComms.setRequestMethod("POST");
             this.m_HttpComms.setContentType("application/xml");
