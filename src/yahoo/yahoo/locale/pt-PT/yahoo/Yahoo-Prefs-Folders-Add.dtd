@@ -1,0 +1,8 @@
+<!ENTITY YahooFolderAdd.Title "Adicionar pasta">
+<!ENTITY YahooFolderName.Label "Nome da Pasta">
+<!ENTITY YahooFolderName.AccessKey "P">
+<!ENTITY YahooFolders.Label "Adicionar pasta para transferências">
+<!ENTITY YahooFolder.ButtonOk.Label "Ok">
+<!ENTITY YahooFolder.ButtonOk.AccessKey "O">
+<!ENTITY YahooFolder.ButtonCancel.Label "Cancelar">
+<!ENTITY YahooFolder.ButtonCancel.AccessKey "C">

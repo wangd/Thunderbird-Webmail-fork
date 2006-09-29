@@ -1,0 +1,35 @@
+<!ENTITY YahooPref.Window.Title "Opções do Yahoo">
+<!ENTITY YahooPref.Panel.Accounts.Title "Contas">
+<!ENTITY YahooPref.Panel.Domains.Title "Domínios">
+<!ENTITY YahooPref.Panel.Globals.Title "Globais">
+<!ENTITY YahooPref.Button.Ok.Label "Ok">
+<!ENTITY YahooPref.Button.Cancel.Label "Cancelar">
+<!ENTITY YahooPref.Tab.Mode.Title "Modo">
+<!ENTITY YahooPref.Tab.POP.Title "POP">
+<!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
+<!ENTITY YahooPref.Mode.Label "Seleccione o site web que a extensão irá utilizar">
+<!ENTITY YahooPref.Mode.ScreenScraper.Label "Página WebProducção">
+<!ENTITY YahooPref.Mode.Beta.Label "BETA Website">
+<!ENTITY YahooPref.POP.DownloadUnread.Label "Transferir correio não lido apenas">
+<!ENTITY YahooPref.POP.DownloadUnread.AccessKey "T">
+<!ENTITY YahooPref.POP.JunkMail.Label "Transferir JunkMail">
+<!ENTITY YahooPref.POP.JunkMail.AccessKey "J">
+<!ENTITY YahooPref.POP.Folders.Label "Transferir pastas">
+<!ENTITY YahooPref.POP.ButtonAdd.Label "Adicionar...">
+<!ENTITY YahooPref.POP.ButtonAdd.AccessKey "A">
+<!ENTITY YahooPref.POP.ButtonRemove.Label "Remover">
+<!ENTITY YahooPref.POP.ButtonRemove.AccessKey "R">
+<!ENTITY YahooPref.SMTP.SaveSentItems.Label "Guardar cópia nos itens enviados.">
+<!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "s">
+<!ENTITY YahooPref.AccountError.Label "Nenhuma conta do Yahoo Encontrada">
+<!ENTITY YahooPref.SMTP.NA.Label "Nenhuma opção SMTP para o Yahoo BETA">
+<!ENTITY YahooPref.Domain.Label "Domínios suportados pela extensão Yahoo">
+<!ENTITY YahooPref.Domain.Button.AddDomain.Label "Adicionar...">
+<!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "A">
+<!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Remover">
+<!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "R">
+<!ENTITY YahooPref.Globals.ShortID.Label "Utilizar ID curto">
+<!ENTITY YahooPref.Globals.ShortID.AccessKey "I">
+<!ENTITY YahooPref.Globals.ReUseSession.Label "Reutilizar dasos da sessão http.">
+<!ENTITY YahooPref.Globals.ReUseSession.AccessKey "S">
+<!ENTITY YahooPref.GlobalsInfo.Label "Alterar a opção de ID curta pode resultar em toda a sua caixa de correio ser transferida">
