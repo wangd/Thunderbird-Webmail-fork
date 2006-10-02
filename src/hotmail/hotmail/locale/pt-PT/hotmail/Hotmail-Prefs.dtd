@@ -1,0 +1,37 @@
+<!ENTITY HotmailPref.Window.Title "Opções do Hotmail">
+<!ENTITY HotmailPref.Panel.Accounts.Title "Contas">
+<!ENTITY HotmailPref.Panel.Domains.Title "Domínios">
+<!ENTITY HotmailPref.Button.Ok.Label "Ok">
+<!ENTITY HotmailPref.Button.Cancel.Label "Cancelar">
+<!ENTITY HotmailPref.Tab.Mode.Title "Modo">
+<!ENTITY HotmailPref.Tab.POP.Title "POP">
+<!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
+<!ENTITY HotmailPref.Mode.Label "Seleccione o método de comunicações que a extensão utilizará ao ligar-se aos servidores da Microsoft">
+<!ENTITY HotmailPref.Mode.ScreenScraper.Label "Página do Hotmail (produção)">
+<!ENTITY HotmailPref.Mode.WebDav.Label "WebDav">
+<!ENTITY HotmailPref.Mode.Beta.Label "Página do Hotmail (BETA)">
+<!ENTITY HotmailPref.POP.DownloadUnread.Label "Transferir apenas correio não lido">
+<!ENTITY HotmailPref.POP.DownloadUnread.AccessKey "i">
+<!ENTITY HotmailPref.POP.JunkMail.Label "Transferir JunkMail">
+<!ENTITY HotmailPref.POP.JunkMail.AccessKey "J">
+<!ENTITY HotmailPref.POP.Folders.Label "transferir pastas">
+<!ENTITY HotmailPref.POP.ButtonAdd.Label "Adicionar...">
+<!ENTITY HotmailPref.POP.ButtonAdd.AccessKey "A">
+<!ENTITY HotmailPref.POP.ButtonRemove.Label "Remover">
+<!ENTITY HotmailPref.POP.ButtonRemove.AccessKey "R">
+<!ENTITY HotmailPref.SMTP.SaveSentItems.Label "Guardar cópia nos itens enviados.">
+<!ENTITY HotmailPref.SMTP.SaveSentItems.AccessKey "G">
+<!ENTITY HotmailPref.SMTP.AlternativeGroup.Label "Quando envia correio formatado que parte deve a extensão enviar?">
+<!ENTITY HotmailPref.SMTP.SendPlain.Label "Enviar formato texto">
+<!ENTITY HotmailPref.SMTP.SendPlain.AccessKey "x">
+<!ENTITY HotmailPref.SMTP.SendHtml.Label "Enviar em html">
+<!ENTITY HotmailPref.SMTP.SendHtml.AccessKey "h">
+<!ENTITY HotmailPref.AccountError.Label "Não foi encontrada nenhuma conta do Hotmail">
+<!ENTITY HotmailPref.SMTP.NA.Label "não existem opções SMTP para o Hotmail BETA">
+<!ENTITY HotmailPref.Domain.Label "Domínios suportados pela extensão Hotmail">
+<!ENTITY HotmailPref.Domain.Button.AddDomain.Label "Adicionar...">
+<!ENTITY HotmailPref.Domain.Button.AddDomain.AccessKey "A">
+<!ENTITY HotmailPref.Domain.Button.RemoveDomain.Label "Remover">
+<!ENTITY HotmailPref.Domain.Button.RemoveDomain.AccessKey "R">
+<!ENTITY HotmailPref.POP.MarkAsRead.Label "Marcar no servidor o correio como lido">
+<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "c">

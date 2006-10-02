@@ -41,3 +41,5 @@
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.AccessKey "R">
 <!ENTITY HotmailPref.Domain.Label "Hotmail 扩展支持的域: ">
 
+<!ENTITY HotmailPref.POP.MarkAsRead.Label "Mark emails as read on server">
+<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "k">

@@ -158,7 +158,7 @@ HotmailSMTPWebDav.prototype =
                 szMsg +="RCPT TO:<"+aszTo[i]+">\r\n";
             }
             szMsg +="\r\n";
-            szMsg += szEmail.replace(/^.$/,"");//removes SMTP termiator
+            szMsg += szEmail.replace(/^\.$/,"");//removes SMTP termiator
             szMsg +="\r\n";
             
             this.m_HttpComms.setContentType("message/rfc821");

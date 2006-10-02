@@ -3,16 +3,13 @@
 <!ENTITY HotmailPref.Panel.Domains.Title "Dominii">
 <!ENTITY HotmailPref.Button.Ok.Label "OK">
 <!ENTITY HotmailPref.Button.Cancel.Label "Annulla">
-
 <!ENTITY HotmailPref.Tab.Mode.Title "Modalità">
 <!ENTITY HotmailPref.Tab.POP.Title "POP">
 <!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
-
 <!ENTITY HotmailPref.Mode.Label "Selezionare come il componente Hotmail si collegherà ai server Microsoft">
 <!ENTITY HotmailPref.Mode.ScreenScraper.Label "Sito web di produzione di Hotmail">
 <!ENTITY HotmailPref.Mode.WebDav.Label "WebDav">
 <!ENTITY HotmailPref.Mode.Beta.Label "Sito web di Hotmail BETA">
-
 <!ENTITY HotmailPref.POP.DownloadUnread.Label "Scarica solo messaggi non letti">
 <!ENTITY HotmailPref.POP.DownloadUnread.AccessKey "N">
 <!ENTITY HotmailPref.POP.JunkMail.Label "Scarica posta indesiderata">
@@ -22,7 +19,6 @@
 <!ENTITY HotmailPref.POP.ButtonAdd.AccessKey "A">
 <!ENTITY HotmailPref.POP.ButtonRemove.Label "Elimina">
 <!ENTITY HotmailPref.POP.ButtonRemove.AccessKey "E">
-
 <!ENTITY HotmailPref.SMTP.SaveSentItems.Label "Salva una copia del messaggio in &apos;Posta inviata&apos;">
 <!ENTITY HotmailPref.SMTP.SaveSentItems.AccessKey "s">
 <!ENTITY HotmailPref.SMTP.AlternativeGroup.Label "Quando si inviano messaggi sia in testo semplice che in HTML, il componente Hotmail:">
@@ -30,12 +26,12 @@
 <!ENTITY HotmailPref.SMTP.SendPlain.AccessKey "p">
 <!ENTITY HotmailPref.SMTP.SendHtml.Label "invia in HTML">
 <!ENTITY HotmailPref.SMTP.SendHtml.AccessKey "h">
-
 <!ENTITY HotmailPref.AccountError.Label "Nessun account Hotmail trovato">
-<!ENTITY HotmailPref.SMTP.NA.Label "Nessuna opzione SMPT per Hotmail BETA">
-
+<!ENTITY HotmailPref.SMTP.NA.Label "Nessuna opzione SMTP per Hotmail BETA">
 <!ENTITY HotmailPref.Domain.Label "Dominii supportati dal componente Hotmail:">
 <!ENTITY HotmailPref.Domain.Button.AddDomain.Label "Aggiungi...">
 <!ENTITY HotmailPref.Domain.Button.AddDomain.AccessKey "A">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.Label "Elimina">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.AccessKey "E">
+<!ENTITY HotmailPref.POP.MarkAsRead.Label "Segna i messaggi come letti sul server">
+<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "S">

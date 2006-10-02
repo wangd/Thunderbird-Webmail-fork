@@ -1,7 +1,7 @@
-<!ENTITY HotmailFolderAdd.Title "Aggiungi">
+<!ENTITY HotmailFolderAdd.Title "Aggiunta di una cartella">
 <!ENTITY HotmailFolderName.Label "Nome della cartella:">
 <!ENTITY HotmailFolderName.AccessKey "c">
-<!ENTITY HotmailFolders.Label "Aggiungi cartella dalla quale scaricare i messaggi">
+<!ENTITY HotmailFolders.Label "Aggiungere cartella dalla quale scaricare i messaggi">
 <!ENTITY HotmailFolder.ButtonOk.Label "OK">
 <!ENTITY HotmailFolder.ButtonOk.AccessKey "O">
 <!ENTITY HotmailFolder.ButtonCancel.Label "Annulla">

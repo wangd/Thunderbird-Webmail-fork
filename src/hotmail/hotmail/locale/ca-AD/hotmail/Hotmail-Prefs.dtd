@@ -1,41 +1,37 @@
-<!ENTITY HotmailPref.Window.Title "Hotmail Options">
-<!ENTITY HotmailPref.Panel.Accounts.Title "Accounts">
-<!ENTITY HotmailPref.Panel.Domains.Title "Domains">
-<!ENTITY HotmailPref.Button.Ok.Label "Ok">
-<!ENTITY HotmailPref.Button.Cancel.Label "Cancel">
-
+<!ENTITY HotmailPref.Window.Title "Opcions de Hotmail">
+<!ENTITY HotmailPref.Panel.Accounts.Title "Comptes">
+<!ENTITY HotmailPref.Panel.Domains.Title "Dominis">
+<!ENTITY HotmailPref.Button.Ok.Label "D&apos;acord">
+<!ENTITY HotmailPref.Button.Cancel.Label "Cancel·la">
 <!ENTITY HotmailPref.Tab.Mode.Title "Mode">
 <!ENTITY HotmailPref.Tab.POP.Title "POP">
 <!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
-
-<!ENTITY HotmailPref.Mode.Label "Select the communications method the extension will use to connect to Microsoft's servers">
-<!ENTITY HotmailPref.Mode.ScreenScraper.Label "Hotmail Website (production)">
+<!ENTITY HotmailPref.Mode.Label "Escolliu el mètode de comunicació que utilitzarà l&apos;extensió per connectar-se als servidors de Microsoft">
+<!ENTITY HotmailPref.Mode.ScreenScraper.Label "Lloc web de Hotmail (producció)">
 <!ENTITY HotmailPref.Mode.WebDav.Label "WebDav">
-<!ENTITY HotmailPref.Mode.Beta.Label "Hotmail Website (BETA)">
-
-<!ENTITY HotmailPref.POP.DownloadUnread.Label "Download unread emails only">
+<!ENTITY HotmailPref.Mode.Beta.Label "Lloc web de Hotmail (BETA)">
+<!ENTITY HotmailPref.POP.DownloadUnread.Label "Descarrega només els correus no llegits">
 <!ENTITY HotmailPref.POP.DownloadUnread.AccessKey "u">
-<!ENTITY HotmailPref.POP.JunkMail.Label "Download JunkMail">
+<!ENTITY HotmailPref.POP.JunkMail.Label "Descarrega el correu brossa">
 <!ENTITY HotmailPref.POP.JunkMail.AccessKey "J">
-<!ENTITY HotmailPref.POP.Folders.Label "Download folders">
-<!ENTITY HotmailPref.POP.ButtonAdd.Label "Add...">
+<!ENTITY HotmailPref.POP.Folders.Label "Descarrega les carpetes">
+<!ENTITY HotmailPref.POP.ButtonAdd.Label "Afegeix...">
 <!ENTITY HotmailPref.POP.ButtonAdd.AccessKey "A">
-<!ENTITY HotmailPref.POP.ButtonRemove.Label "Remove">
+<!ENTITY HotmailPref.POP.ButtonRemove.Label "Suprimeix...">
 <!ENTITY HotmailPref.POP.ButtonRemove.AccessKey "R">
-
-<!ENTITY HotmailPref.SMTP.SaveSentItems.Label "Save copy in sent items.">
+<!ENTITY HotmailPref.SMTP.SaveSentItems.Label "Desa una còpia als elements enviats.">
 <!ENTITY HotmailPref.SMTP.SaveSentItems.AccessKey "s">
-<!ENTITY HotmailPref.SMTP.AlternativeGroup.Label "When sending rich text emails which part should the extension send?">
-<!ENTITY HotmailPref.SMTP.SendPlain.Label "Send plain text">
+<!ENTITY HotmailPref.SMTP.AlternativeGroup.Label "Quina part dels correus amb text enriquit ha d&apos;enviar l&apos;extensió?">
+<!ENTITY HotmailPref.SMTP.SendPlain.Label "Envia text pla">
 <!ENTITY HotmailPref.SMTP.SendPlain.AccessKey "p">
-<!ENTITY HotmailPref.SMTP.SendHtml.Label "Send html text">
+<!ENTITY HotmailPref.SMTP.SendHtml.Label "Envia text html">
 <!ENTITY HotmailPref.SMTP.SendHtml.AccessKey "h">
-
-<!ENTITY HotmailPref.AccountError.Label "No Hotmail Accounts Found"> 
-<!ENTITY HotmailPref.SMTP.NA.Label "No SMPT options for Hotmail BETA">
-
-<!ENTITY HotmailPref.Domain.Label "Domains supported by Hotmail extension">
-<!ENTITY HotmailPref.Domain.Button.AddDomain.Label "Add...">
+<!ENTITY HotmailPref.AccountError.Label "No s&apos;han trobat comptes de Hotmail">
+<!ENTITY HotmailPref.SMTP.NA.Label "No hi ha opcions SMPT per a Hotmail BETA">
+<!ENTITY HotmailPref.Domain.Label "Dominis suportats per l&apos;extensió Hotmail">
+<!ENTITY HotmailPref.Domain.Button.AddDomain.Label "Afegeix...">
 <!ENTITY HotmailPref.Domain.Button.AddDomain.AccessKey "A">
-<!ENTITY HotmailPref.Domain.Button.RemoveDomain.Label "Remove">
+<!ENTITY HotmailPref.Domain.Button.RemoveDomain.Label "Suprimeix">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.AccessKey "R">
+<!ENTITY HotmailPref.POP.MarkAsRead.Label "Marca els correus com a llegits al servidor">
+<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "k">

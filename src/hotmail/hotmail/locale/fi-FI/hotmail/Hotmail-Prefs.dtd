@@ -33,3 +33,5 @@
 <!ENTITY HotmailPref.Domain.Button.AddDomain.AccessKey "L">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.Label "Poista">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.AccessKey "P">
+<!ENTITY HotmailPref.POP.MarkAsRead.Label "Merkitse viestit luetuksi palvelimella">
+<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "M">

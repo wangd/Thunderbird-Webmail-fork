@@ -3,16 +3,13 @@
 <!ENTITY HotmailPref.Panel.Domains.Title "Domenai">
 <!ENTITY HotmailPref.Button.Ok.Label "Gerai">
 <!ENTITY HotmailPref.Button.Cancel.Label "Atšaukti">
-
 <!ENTITY HotmailPref.Tab.Mode.Title "Režimas">
 <!ENTITY HotmailPref.Tab.POP.Title "POP">
 <!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
-
 <!ENTITY HotmailPref.Mode.Label "Pasirinkite susisiekimo metodą, kurį priedas naudos prisijungiant prie Microsoft serverių">
 <!ENTITY HotmailPref.Mode.ScreenScraper.Label "Hotmail svetainė (produkcija)">
 <!ENTITY HotmailPref.Mode.WebDav.Label "WebDav">
 <!ENTITY HotmailPref.Mode.Beta.Label "Hotmail svetainė (BETA)">
-
 <!ENTITY HotmailPref.POP.DownloadUnread.Label "Parsiųsti tik neskaitytus laiškus">
 <!ENTITY HotmailPref.POP.DownloadUnread.AccessKey "n">
 <!ENTITY HotmailPref.POP.JunkMail.Label "Parsiųsti Šlamštą">
@@ -22,7 +19,6 @@
 <!ENTITY HotmailPref.POP.ButtonAdd.AccessKey "P">
 <!ENTITY HotmailPref.POP.ButtonRemove.Label "Pašalinti">
 <!ENTITY HotmailPref.POP.ButtonRemove.AccessKey "š">
-
 <!ENTITY HotmailPref.SMTP.SaveSentItems.Label "Saugoti kopiją išsiųstų laiškų aplanke">
 <!ENTITY HotmailPref.SMTP.SaveSentItems.AccessKey "k">
 <!ENTITY HotmailPref.SMTP.AlternativeGroup.Label "Siunčiant raiškiojo teksto laiškus, kurią dalį priedas turėtų siųsti?">
@@ -30,12 +26,12 @@
 <!ENTITY HotmailPref.SMTP.SendPlain.AccessKey "p">
 <!ENTITY HotmailPref.SMTP.SendHtml.Label "Siųsti HTML tekstą">
 <!ENTITY HotmailPref.SMTP.SendHtml.AccessKey "H">
-
-<!ENTITY HotmailPref.AccountError.Label "Nerasta jokių Hotmail paskyrų"> 
+<!ENTITY HotmailPref.AccountError.Label "Nerasta jokių Hotmail paskyrų">
 <!ENTITY HotmailPref.SMTP.NA.Label "Jokių SMTP nustatymų skirtų  Hotmail BETA">
-
 <!ENTITY HotmailPref.Domain.Label "Domenai palaikomi Hotmail priedo">
 <!ENTITY HotmailPref.Domain.Button.AddDomain.Label "Pridėti...">
 <!ENTITY HotmailPref.Domain.Button.AddDomain.AccessKey "P">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.Label "Pašalinti">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.AccessKey "š">
+<!ENTITY HotmailPref.POP.MarkAsRead.Label "Pažymėti laiškus serveryje kaip perskaitytus">
+<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "m">

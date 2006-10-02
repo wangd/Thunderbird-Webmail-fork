@@ -33,3 +33,6 @@
 <!ENTITY HotmailPref.Domain.Button.AddDomain.AccessKey "T">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.Label "Verwijderen">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.AccessKey "V">
+
+<!ENTITY HotmailPref.POP.MarkAsRead.Label "Mark emails as read on server">
+<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "k">

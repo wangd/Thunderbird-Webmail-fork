@@ -1,0 +1,8 @@
+<!ENTITY HotmailFolderAdd.Title "Adicionar Pasta">
+<!ENTITY HotmailFolderName.Label "Nome da pasta">
+<!ENTITY HotmailFolderName.AccessKey "N">
+<!ENTITY HotmailFolders.Label "Adicionar pasta de transferência">
+<!ENTITY HotmailFolder.ButtonOk.Label "OK">
+<!ENTITY HotmailFolder.ButtonOk.AccessKey "O">
+<!ENTITY HotmailFolder.ButtonCancel.Label "Cancelar">
+<!ENTITY HotmailFolder.ButtonCancel.AccessKey "C">
