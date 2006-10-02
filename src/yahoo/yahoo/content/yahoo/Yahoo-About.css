@@ -219,6 +219,18 @@
      -moz-image-region: rect(0px, 800px, 32px,768px)
 }
 
+.flag[value="24"]/*pl*/
+{
+     -moz-image-region: rect(0px, 832px, 32px,800px)
+}
+
+
+.flag[value="25"]/*za*/
+{
+     -moz-image-region: rect(0px, 864px, 32px, 832px)
+}
+
+
 #YahooHomePage
 {
     text-align: right;
