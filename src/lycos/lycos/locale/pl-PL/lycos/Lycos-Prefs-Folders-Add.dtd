@@ -1,0 +1,8 @@
+<!ENTITY LycosFolderAdd.Title "Dodaj Folder">
+<!ENTITY LycosFolderName.Label "Nazwa Folderu">
+<!ENTITY LycosFolderName.AccessKey "F">
+<!ENTITY LycosFolders.Label "Dodaj folder ściągania">
+<!ENTITY LycosFolderName.ButtonOk.Label "Ok">
+<!ENTITY LycosFolderName.ButtonOk.AccessKey "O">
+<!ENTITY LycosFolderName.ButtonCancel.Label "Anuluj">
+<!ENTITY LycosFolderName.ButtonCancel.AccessKey "A">

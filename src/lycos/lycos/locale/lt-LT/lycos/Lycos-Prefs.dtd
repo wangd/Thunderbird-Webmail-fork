@@ -19,3 +19,5 @@
 <!ENTITY LycosPref.SMTP.SaveSentItems.Label "Saugoti kopiją išsiųstų laiškų aplanke">
 <!ENTITY LycosPref.SMTP.SaveSentItems.AccessKey "k">
 <!ENTITY LycosPref.AccountError.Label "Nerasta jokių Lycos paskyrų">
+<!ENTITY LycosPref.POP.MarkAsRead.Label "Pažymėti laiškus serveryje kaip perskaitytus">
+<!ENTITY LycosPref.POP.MarkAsRead.AccessKey "m">

@@ -19,3 +19,6 @@
 <!ENTITY LycosPref.SMTP.SaveSentItems.Label "Bewaar kopie in verzonden items">
 <!ENTITY LycosPref.SMTP.SaveSentItems.AccessKey "b">
 <!ENTITY LycosPref.AccountError.Label "Geen Lycos account gevonden">
+
+<!ENTITY LycosPref.POP.MarkAsRead.Label "Mark emails as read on server">
+<!ENTITY LycosPref.POP.MarkAsRead.AccessKey "k">

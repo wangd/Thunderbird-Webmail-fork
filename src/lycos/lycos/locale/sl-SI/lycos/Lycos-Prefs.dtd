@@ -19,3 +19,5 @@
 <!ENTITY LycosPref.SMTP.SaveSentItems.Label "Shrani kopijo v Odposlano.">
 <!ENTITY LycosPref.SMTP.SaveSentItems.AccessKey "S">
 <!ENTITY LycosPref.AccountError.Label "Ni najdenih računov Lycos">
+<!ENTITY LycosPref.POP.MarkAsRead.Label "Na strežniku označi sporočila prebrana">
+<!ENTITY LycosPref.POP.MarkAsRead.AccessKey "p">

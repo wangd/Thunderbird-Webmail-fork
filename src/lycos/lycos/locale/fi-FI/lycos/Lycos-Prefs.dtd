@@ -19,3 +19,5 @@
 <!ENTITY LycosPref.SMTP.SaveSentItems.Label "Tallenna kopio lähetettyihin.">
 <!ENTITY LycosPref.SMTP.SaveSentItems.AccessKey "k">
 <!ENTITY LycosPref.AccountError.Label "Lycos-tilejä ei löytynyt">
+<!ENTITY LycosPref.POP.MarkAsRead.Label "Merkitse viestit luetuksi palvelimella">
+<!ENTITY LycosPref.POP.MarkAsRead.AccessKey "M">

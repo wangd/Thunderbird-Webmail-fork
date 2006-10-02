@@ -19,3 +19,7 @@
 <!ENTITY LycosPref.SMTP.SaveSentItems.Label "Salvar cópia nos ítens enviados.">
 <!ENTITY LycosPref.SMTP.SaveSentItems.AccessKey "s">
 <!ENTITY LycosPref.AccountError.Label "Nenhuma conta do Lycos foi encontrada">
+
+
+<!ENTITY LycosPref.POP.MarkAsRead.Label "Mark emails as read on server">
+<!ENTITY LycosPref.POP.MarkAsRead.AccessKey "k">

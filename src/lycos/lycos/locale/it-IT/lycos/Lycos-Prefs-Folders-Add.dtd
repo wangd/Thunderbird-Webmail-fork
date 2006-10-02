@@ -1,7 +1,7 @@
-<!ENTITY LycosFolderAdd.Title "Aggiungi">
+<!ENTITY LycosFolderAdd.Title "Aggiunta di una cartella">
 <!ENTITY LycosFolderName.Label "Nome della cartella:">
 <!ENTITY LycosFolderName.AccessKey "c">
-<!ENTITY LycosFolders.Label "Aggiungi cartella dalla quale scaricare i messaggi">
+<!ENTITY LycosFolders.Label "Aggiungere cartella dalla quale scaricare i messaggi">
 <!ENTITY LycosFolderName.ButtonOk.Label "OK">
 <!ENTITY LycosFolderName.ButtonOk.AccessKey "O">
 <!ENTITY LycosFolderName.ButtonCancel.Label "Annulla">
