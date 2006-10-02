@@ -1,7 +1,7 @@
-<!ENTITY AOLFolderAdd.Title "Folder Toevoegen">
-<!ENTITY AOLFolderName.Label "Folder Naam">
-<!ENTITY AOLFolderName.AccessKey "F">
-<!ENTITY AOLFolders.Label "Download folder toevoegen">
+<!ENTITY AOLFolderAdd.Title "Map Toevoegen">
+<!ENTITY AOLFolderName.Label "Map Naam">
+<!ENTITY AOLFolderName.AccessKey "M">
+<!ENTITY AOLFolders.Label "Download map toevoegen">
 <!ENTITY AOLFolderName.ButtonOk.Label "Ok">
 <!ENTITY AOLFolderName.ButtonOk.AccessKey "O">
 <!ENTITY AOLFolderName.ButtonCancel.Label "Annuleren">

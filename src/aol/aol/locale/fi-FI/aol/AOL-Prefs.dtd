@@ -13,3 +13,5 @@
 <!ENTITY AOLPref.POP.ButtonRemove.Label "Poista">
 <!ENTITY AOLPref.POP.ButtonRemove.AccessKey "P">
 <!ENTITY AOLPref.AccountError.Label "AOL-tilejä ei löytynyt">
+<!ENTITY AOLPref.POP.MarkAsRead.Label "Merkitse viestit luetuksi palvelimella">
+<!ENTITY AOLPref.POP.MarkAsRead.AccessKey "M">

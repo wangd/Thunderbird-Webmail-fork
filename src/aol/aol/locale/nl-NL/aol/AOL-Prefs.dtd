@@ -4,12 +4,14 @@
 <!ENTITY AOLPref.Button.Cancel.Label "Annuleren">
 <!ENTITY AOLPref.Tab.POP.Title "POP">
 <!ENTITY AOLPref.POP.DownloadUnread.Label "Download alleen ongelezen emails">
-<!ENTITY AOLPref.POP.DownloadUnread.AccessKey "g">
+<!ENTITY AOLPref.POP.DownloadUnread.AccessKey "o">
 <!ENTITY AOLPref.POP.JunkMail.Label "Download JunkMail">
 <!ENTITY AOLPref.POP.JunkMail.AccessKey "J">
-<!ENTITY AOLPref.POP.Folders.Label "Download folders">
+<!ENTITY AOLPref.POP.Folders.Label "Download mappen">
 <!ENTITY AOLPref.POP.ButtonAdd.Label "Toevoegen...">
 <!ENTITY AOLPref.POP.ButtonAdd.AccessKey "T">
 <!ENTITY AOLPref.POP.ButtonRemove.Label "Verwijderen">
 <!ENTITY AOLPref.POP.ButtonRemove.AccessKey "V">
 <!ENTITY AOLPref.AccountError.Label "Geen AOL / Netscape Accounts Gevonden">
+<!ENTITY AOLPref.POP.MarkAsRead.Label "Markeer emails als gelezen op server">
+<!ENTITY AOLPref.POP.MarkAsRead.AccessKey "k">

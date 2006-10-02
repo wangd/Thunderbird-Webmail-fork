@@ -1,7 +1,7 @@
-<!ENTITY AOLFolderAdd.Title "Aggiungi">
+<!ENTITY AOLFolderAdd.Title "Aggiunta di una cartella">
 <!ENTITY AOLFolderName.Label "Nome della cartella:">
 <!ENTITY AOLFolderName.AccessKey "c">
-<!ENTITY AOLFolders.Label "Aggiungi cartella dalla quale scaricare i messaggi">
+<!ENTITY AOLFolders.Label "Aggiungere cartella dalla quale scaricare i messaggi">
 <!ENTITY AOLFolderName.ButtonOk.Label "Ok">
 <!ENTITY AOLFolderName.ButtonOk.AccessKey "O">
 <!ENTITY AOLFolderName.ButtonCancel.Label "Annulla">

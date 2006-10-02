@@ -13,3 +13,5 @@
 <!ENTITY AOLPref.POP.ButtonRemove.Label "Pašalinti">
 <!ENTITY AOLPref.POP.ButtonRemove.AccessKey "š">
 <!ENTITY AOLPref.AccountError.Label "Nerasta jokių AOL paskyrų">
+<!ENTITY AOLPref.POP.MarkAsRead.Label "Pažymėti laiškus serveryje kaip perskaitytus">
+<!ENTITY AOLPref.POP.MarkAsRead.AccessKey "m">

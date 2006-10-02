@@ -1,0 +1,17 @@
+<!ENTITY AOLPref.Window.Title "Možnosti za AOL / Netscape">
+<!ENTITY AOLPref.Panel.Accounts.Title "Računi">
+<!ENTITY AOLPref.Button.Ok.Label "V redu">
+<!ENTITY AOLPref.Button.Cancel.Label "Prekliči">
+<!ENTITY AOLPref.Tab.POP.Title "POP">
+<!ENTITY AOLPref.POP.DownloadUnread.Label "Prenesi le neprebrana sporočila">
+<!ENTITY AOLPref.POP.DownloadUnread.AccessKey "n">
+<!ENTITY AOLPref.POP.JunkMail.Label "Prenesi neželeno pošto">
+<!ENTITY AOLPref.POP.JunkMail.AccessKey "ž">
+<!ENTITY AOLPref.POP.Folders.Label "Prenesi mape">
+<!ENTITY AOLPref.POP.ButtonAdd.Label "Dodaj ...">
+<!ENTITY AOLPref.POP.ButtonAdd.AccessKey "D">
+<!ENTITY AOLPref.POP.ButtonRemove.Label "Odstrani">
+<!ENTITY AOLPref.POP.ButtonRemove.AccessKey "O">
+<!ENTITY AOLPref.AccountError.Label "Ni najdenih računov AOL">
+<!ENTITY AOLPref.POP.MarkAsRead.Label "Na strežniku označi sporočila prebrana">
+<!ENTITY AOLPref.POP.MarkAsRead.AccessKey "p">

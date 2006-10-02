@@ -1,0 +1,8 @@
+<!ENTITY AOLFolderAdd.Title "Dodaj mapo">
+<!ENTITY AOLFolderName.Label "Ime mape">
+<!ENTITY AOLFolderName.AccessKey "m">
+<!ENTITY AOLFolders.Label "Dodaj mapo za prenos">
+<!ENTITY AOLFolderName.ButtonOk.Label "V redu">
+<!ENTITY AOLFolderName.ButtonOk.AccessKey "r">
+<!ENTITY AOLFolderName.ButtonCancel.Label "Prekliči">
+<!ENTITY AOLFolderName.ButtonCancel.AccessKey "k">

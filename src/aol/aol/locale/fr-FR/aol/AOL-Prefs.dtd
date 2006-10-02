@@ -6,10 +6,12 @@
 <!ENTITY AOLPref.POP.DownloadUnread.Label "Ne relever que le courrier non lu">
 <!ENTITY AOLPref.POP.DownloadUnread.AccessKey "N">
 <!ENTITY AOLPref.POP.JunkMail.Label "Récupérer les indésirables">
-<!ENTITY AOLPref.POP.JunkMail.AccessKey "J">
+<!ENTITY AOLPref.POP.JunkMail.AccessKey "I">
 <!ENTITY AOLPref.POP.Folders.Label "Dossiers de téléchargement">
 <!ENTITY AOLPref.POP.ButtonAdd.Label "Ajouter...">
 <!ENTITY AOLPref.POP.ButtonAdd.AccessKey "A">
 <!ENTITY AOLPref.POP.ButtonRemove.Label "Retirer">
 <!ENTITY AOLPref.POP.ButtonRemove.AccessKey "R">
 <!ENTITY AOLPref.AccountError.Label "Aucun compte AOL trouvé">
+<!ENTITY AOLPref.POP.MarkAsRead.Label "Marqué le courrier du serveur comme étant lu">
+<!ENTITY AOLPref.POP.MarkAsRead.AccessKey "S">

@@ -13,3 +13,5 @@
 <!ENTITY AOLPref.POP.ButtonRemove.Label "Elimina">
 <!ENTITY AOLPref.POP.ButtonRemove.AccessKey "E">
 <!ENTITY AOLPref.AccountError.Label "Nessun account AOL / Netscape trovato">
+<!ENTITY AOLPref.POP.MarkAsRead.Label "Segna i messaggi come letti sul server">
+<!ENTITY AOLPref.POP.MarkAsRead.AccessKey "S">
