@@ -1,0 +1,6 @@
+<!ENTITY Options.szTitle "Opções do WebMail">
+<!ENTITY Servers.Panel.szTitle "Servidores">
+<!ENTITY Domains.Panel.szTitle "Domínios">
+<!ENTITY Logging.Panel.szTitle "Logging">
+<!ENTITY General.Panel.szTitle "Geral">
+<!ENTITY Window.size "width: 60em;height: 40em">
