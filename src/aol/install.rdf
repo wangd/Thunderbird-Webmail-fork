@@ -8,12 +8,12 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 		<em:id>{268d7420-9032-11da-a72b-0800200c9a66}</em:id>
 		<em:type>2</em:type>
 		<em:version>1.0.2</em:version>
-		
+
 		<em:name>WebMail - AOL / Netscape </em:name>
 		<em:description>AOL / NetScape component for Web-Mail extension</em:description>
 		<em:creator>ComodoDragon</em:creator>
 		<em:homepageURL>http://webmail.mozdev.org</em:homepageURL>
-		
+
         <em:iconURL>chrome://aol/skin/AOL-Icon.png</em:iconURL>
 		<em:aboutURL>chrome://aol/content/AOL-About.xul</em:aboutURL>
 		<em:optionsURL>chrome://aol/content/AOL-Prefs.xul</em:optionsURL>
@@ -21,15 +21,16 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
         <em:contributor>Dagobert_78 (fr-FR)|2</em:contributor>
         <em:contributor>Akilles (fi-FI)|14</em:contributor>
-        <em:contributor>MatrixIsAllOver by BabelZilla.org (it-IT)|0</em:contributor> 
+        <em:contributor>MatrixIsAllOver by BabelZilla.org (it-IT)|0</em:contributor>
         <em:contributor>Proyecto NAVE (es-ES)|1</em:contributor>
         <em:contributor>Rodrigo Bergmann Laurindo (pt-BR)|18</em:contributor>
-        <em:contributor>Martin Srebotnjak, Lugos.si (sl-SI)|17</em:contributor>    
+        <em:contributor>Martin Srebotnjak, Lugos.si (sl-SI)|17</em:contributor>
         <em:contributor>Garas (lt-LT)|22</em:contributor>
         <em:contributor>BudsieBuds (nl-NL)|5</em:contributor>
         <em:contributor>Ivers (nb-NO)|22</em:contributor>
         <em:contributor>Albert Feller (de-DE)|3</em:contributor>
-         	
+        <em:contributor>Alberto Jorge Cushnir (es-AR)|20</em:contributor>
+
         <em:targetApplication>
 			<Description>
 				<!-- Mozilla Thunderbird -->
@@ -38,13 +39,13 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 				<em:maxVersion>2.0a1</em:maxVersion>
 			</Description>
 		</em:targetApplication>
-        
+
         <em:requires>
             <Description>
                 <!-- requires web-mail extension-->
                 <em:id>{3c8e8390-2cf6-11d9-9669-0800200c9a66}</em:id>
                 <em:minVersion>0.9</em:minVersion>
-                <em:maxVersion>1.0.*</em:maxVersion> 
+                <em:maxVersion>1.0.*</em:maxVersion>
                 <em:name>WebMail</em:name>
                 <em:homepageURL>http://webmail.mozdev.org/</em:homepageURL>
                 <em:updateURL>http://webmail.mozdev.org/update/webmailUpdate.rdf</em:updateURL>
