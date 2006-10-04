@@ -8,21 +8,21 @@
 		<em:id>{3c8e8390-2cf6-11d9-9669-0800200c9a66}</em:id>
 		<em:type>2</em:type>
 		<em:version>1.0.12</em:version>
-		
+
 		<em:name>WebMail</em:name>
 		<em:description>Lets Thunderbird access web mail</em:description>
 		<em:creator>ComodoDragon</em:creator>
 		<em:homepageURL>http://webmail.mozdev.org</em:homepageURL>
-		
+
 		<em:iconURL>chrome://web-mail/skin/Webmail-SmallIcon.png</em:iconURL>
 		<em:aboutURL>chrome://web-mail/content/Webmail-About.xul</em:aboutURL>
 		<em:optionsURL>chrome://web-mail/content/prefs/Webmail-Prefs.xul</em:optionsURL>
-		
+
         <em:updateURL>http://webmail.mozdev.org/update/webmailUpdate.rdf</em:updateURL>
 
-        <em:contributor>MatrixIsAllOver by BabelZilla.org (it-IT)|0</em:contributor> 
-        <em:contributor>Dagobert_78 (fr-FR)|2</em:contributor>     
-        <em:contributor>Guillaume Perrin (fr-FR)|2</em:contributor> 
+        <em:contributor>MatrixIsAllOver by BabelZilla.org (it-IT)|0</em:contributor>
+        <em:contributor>Dagobert_78 (fr-FR)|2</em:contributor>
+        <em:contributor>Guillaume Perrin (fr-FR)|2</em:contributor>
         <em:contributor>Matthieu Durand (fr-FR)|2</em:contributor>
         <em:contributor>Proyecto NAVE (es-ES)|1</em:contributor>
         <em:contributor>Albert Feller (de-DE)|3</em:contributor>
@@ -34,7 +34,7 @@
         <em:contributor>Martin Srebotnjak, Lugos.si (sl-SI)|17</em:contributor>
         <em:contributor>Batuhan &#199;etin (tr-TR)|15</em:contributor>
         <em:contributor>Jameka (sv-SE)|10</em:contributor>
-        <em:contributor>Pavel Kurc (cs-CZ)|6</em:contributor>     
+        <em:contributor>Pavel Kurc (cs-CZ)|6</em:contributor>
         <em:contributor>Rodrigo Bergmann Laurindo (pt-BR)|18</em:contributor>
         <em:contributor>Alberto Jorge Cushnir (es-AR)|20</em:contributor>
         <em:contributor>AlleyKat (da-DK)|21</em:contributor>
@@ -42,8 +42,8 @@
         <em:contributor>stalker48 (ru-RU)|12</em:contributor>
         <em:contributor>Garas (lt-LT)|22</em:contributor>
         <em:contributor>Ivers (nb-NO)|22</em:contributor>
-        
-        
+        <em:contributor>lloco (pt-PT)|16</em:contributor>
+
         <em:targetApplication>
 			<Description>
 				<!-- Mozilla Thunderbird -->
