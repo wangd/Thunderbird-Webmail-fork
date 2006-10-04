@@ -1,0 +1,17 @@
+<!ENTITY AOLPref.Window.Title "Opciones AOL / Netscape">
+<!ENTITY AOLPref.Panel.Accounts.Title "Cuentas">
+<!ENTITY AOLPref.Button.Ok.Label "Ok">
+<!ENTITY AOLPref.Button.Cancel.Label "Cancelar">
+<!ENTITY AOLPref.Tab.POP.Title "POP">
+<!ENTITY AOLPref.POP.DownloadUnread.Label "Descargar solamente los correos no leídos">
+<!ENTITY AOLPref.POP.DownloadUnread.AccessKey "u">
+<!ENTITY AOLPref.POP.JunkMail.Label "Descargar JunkMail">
+<!ENTITY AOLPref.POP.JunkMail.AccessKey "J">
+<!ENTITY AOLPref.POP.Folders.Label "Descargar carpetas">
+<!ENTITY AOLPref.POP.ButtonAdd.Label "Agregar...">
+<!ENTITY AOLPref.POP.ButtonAdd.AccessKey "A">
+<!ENTITY AOLPref.POP.ButtonRemove.Label "Remover">
+<!ENTITY AOLPref.POP.ButtonRemove.AccessKey "R">
+<!ENTITY AOLPref.AccountError.Label "No se encontraron cuentas AOL">
+<!ENTITY AOLPref.POP.MarkAsRead.Label "Marcar como leídos los correos en el servidor">
+<!ENTITY AOLPref.POP.MarkAsRead.AccessKey "k">
