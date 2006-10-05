@@ -1,29 +1,23 @@
-<!ENTITY LycosPref.Window.Title "Lycos Options">
-<!ENTITY LycosPref.Panel.Accounts.Title "Accounts">
-<!ENTITY LycosPref.Panel.Domains.Title "Domains">
-<!ENTITY LycosPref.Button.Ok.Label "Ok">
-<!ENTITY LycosPref.Button.Cancel.Label "Cancel">
-
+<!ENTITY LycosPref.Window.Title "Opcions de Lycos">
+<!ENTITY LycosPref.Panel.Accounts.Title "Comptes">
+<!ENTITY LycosPref.Panel.Domains.Title "Dominis">
+<!ENTITY LycosPref.Button.Ok.Label "D&apos;acord">
+<!ENTITY LycosPref.Button.Cancel.Label "Cancela">
 <!ENTITY LycosPref.Tab.POP.Title "POP">
 <!ENTITY LycosPref.Tab.SMTP.Title "SMTP">
-
-<!ENTITY LycosPref.POP.DownloadUnread.Label "Download unread emails only">
+<!ENTITY LycosPref.POP.DownloadUnread.Label "Descarrega només els correus no llegits">
 <!ENTITY LycosPref.POP.DownloadUnread.AccessKey "u">
-<!ENTITY LycosPref.POP.EmptyTrash.Label "Empty Trash">
+<!ENTITY LycosPref.POP.EmptyTrash.Label "Buida la paperera">
 <!ENTITY LycosPref.POP.EmptyTrash.AccessKey "E">
-<!ENTITY LycosPref.POP.JunkMail.Label "Download JunkMail">
+<!ENTITY LycosPref.POP.JunkMail.Label "Descarrega el correu brossa">
 <!ENTITY LycosPref.POP.JunkMail.AccessKey "J">
-<!ENTITY LycosPref.POP.Folders.Label "Download folders">
-<!ENTITY LycosPref.POP.ButtonAdd.Label "Add...">
+<!ENTITY LycosPref.POP.Folders.Label "Descarrega les carpetes">
+<!ENTITY LycosPref.POP.ButtonAdd.Label "Afegeix...">
 <!ENTITY LycosPref.POP.ButtonAdd.AccessKey "A">
-<!ENTITY LycosPref.POP.ButtonRemove.Label "Remove">
+<!ENTITY LycosPref.POP.ButtonRemove.Label "Suprimeix">
 <!ENTITY LycosPref.POP.ButtonRemove.AccessKey "R">
-
-<!ENTITY LycosPref.SMTP.SaveSentItems.Label "Save copy in sent items.">
+<!ENTITY LycosPref.SMTP.SaveSentItems.Label "Desa una còpia als elements enviats.">
 <!ENTITY LycosPref.SMTP.SaveSentItems.AccessKey "s">
-
-<!ENTITY LycosPref.AccountError.Label "No Lycos Accounts Found"> 
-
-
-<!ENTITY LycosPref.POP.MarkAsRead.Label "Mark emails as read on server">
+<!ENTITY LycosPref.AccountError.Label "No s&apos;han trobat comptes de Lycos">
+<!ENTITY LycosPref.POP.MarkAsRead.Label "Marca els correus com a llegits al servidor.">
 <!ENTITY LycosPref.POP.MarkAsRead.AccessKey "k">
