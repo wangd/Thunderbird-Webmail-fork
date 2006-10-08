@@ -206,7 +206,7 @@ nsLycosSMTP.prototype =
                 szMsg +="RCPT TO:<"+this.m_aszTo[i]+">\r\n";
             }
             szMsg +="\r\n";
-            szMsg += szEmail.replace(/^\.\r?\n/,"");//removes SMTP termiator;
+            szMsg += szEmail.replace(/^\.\r?\n/igm,"");//removes SMTP termiator;
             szMsg +="\r\n\r\n";
 
             this.m_HttpComms.setContentType("message/rfc821");
