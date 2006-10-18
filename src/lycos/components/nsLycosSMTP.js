@@ -110,6 +110,10 @@ nsLycosSMTP.prototype =
                 szLocation= "http://webdav.lycos.at/httpmail.asp";
             else if (szDomain.search(/lycos.nl/i)!=-1)
                 szLocation= "http://webdav.lycos.nl/httpmail.asp";
+            else if (szDomain.search(/lycos.fr/i)!=-1)
+                szLocation= "http://webdav.caramail.lycos.fr/httpmail.asp";
+            else if (szDomain.search(/caramail.com/i)!=-1)
+                szLocation= "http://webdav.caramail.lycos.fr/httpmail.asp";
             else
                 throw new Error("Unknown domain");
 
@@ -391,7 +395,7 @@ nsLycosSMTP.prototype =
     QueryInterface : function (iid)
     {
         if (!iid.equals(Components.interfaces.nsISMTPDomainHandler)
-        	                && !iid.equals(Components.interfaces.nsISupports))
+                            && !iid.equals(Components.interfaces.nsISupports))
             throw Components.results.NS_ERROR_NO_INTERFACE;
 
         return this;
