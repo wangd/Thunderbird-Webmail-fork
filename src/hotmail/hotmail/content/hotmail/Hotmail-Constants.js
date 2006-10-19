@@ -25,7 +25,7 @@ const patternHotmailMsgCount = /<D:visiblecount>(.*?)<\/D:visiblecount>/;
 const patternHotmailTrash = /<hm:deleteditems>(.*?)<\/hm:deleteditems>/;
 const patternHotmailFolderName = /folders\/(.*?)\//i;
 
-const UserAgent = "1.1 on Mac OS X — Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-us) Gecko/20060516 SeaMonkey/1.1.0";
+const UserAgent = "1.5.0 on Mac OS X ? Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.0.4) Gecko/20060613 Camino/1.0.2";
 
 /************************Screen Rippper constants******************************/
 const patternHotmailForm = /<form.*?>[\S\s]*?<\/form>/;
@@ -48,7 +48,7 @@ const patternHotmailBase = /<base href="(.*?)"\/>/i;
 const patternHotmailCurmbox = /curmbox=(.*?)&/;
 const patternHotmailLogout = /<td><a.*?href="(.*?\/cgi-bin\/logout\?curmbox=.*?").*?>/m;
 const patternHotmailMailbox = /<a href="(\/cgi-bin\/HoTMaiL.*?)".*?tabindex=121.*?class="E">/;
-const patternHotmailFolderBase = /document.location = "(.*?)"\+f/; 
+const patternHotmailFolderBase = /document.location = "(.*?)"\+f/;
 const patternHotmailSRFolderList =/href="javascript:G\('\/cgi-bin\/folders\?'\)"(.*?)<a href="javascript:G\('\/cgi-bin\/folders\?'\)"/;
 const patternHotmailFolderLinks =/<a.*?>/g;
 const patternHotmailTabindex =/tabindex="(.*?)"/i;
@@ -57,7 +57,7 @@ const patternHotmailHMFO =/HMFO\('(.*?)'\)/;
 const patternHotmailMsgTable = /MsgTable.*?>(.*?)<\/table>/m;
 const patternHotmailMultPageNum = /<select name="MultPageNum" onChange="window\.location\.href='(.*?)'\+_UM\+'(.*?)'.*?>(.*?)<\/select>/;
 const patternHotmailPages = /<option value="(.*?)".*?>/g;
-const patternHotmailEmailURL = /<a.*?href="javascript:G\('(.*?)'\)">/; 
+const patternHotmailEmailURL = /<a.*?href="javascript:G\('(.*?)'\)">/;
 const patternHotmailEmailLength = /len=(.*?)&/;
 const patternHotmailEmailID = /msg=(.*?)&/;
 const patternHotmailSRRead = /msgread=1/gi;
@@ -81,7 +81,7 @@ const patternHotmailMailBoxTable = /<table.*?ContentTable".*?>[\s\S]*?<\/table>/
 const patternHotmailMailBoxTableRow = /<tr>[\s\S]*?<\/tr>/ig;
 const patternHotmailEMailURL = /<td.*?dInboxContentTableTitleCol.*>.*?<a href="(.*?)".*?>/i;
 const patternHotmailEmailRead = /<td.*?class="dInboxContentTableFromCol"><strong>.*?<\/strong><\/td>/gi;
-const patternHotmailEmailSender = /<td.*?dInboxContentTableFromCol.*?>(.*?)<\/td>/i; 
+const patternHotmailEmailSender = /<td.*?dInboxContentTableFromCol.*?>(.*?)<\/td>/i;
 const patternHotmailEmailSubject = /<td.*?dInboxContentTableTitleCol.*?>.*?<a href=.*?>(.*?)<\/a>.*?<\/td>/i;
 const patternHotmailEmailDate = /<td.*?dInboxContentTableDateCol.*?>(.*?)<\/td>/i;
 const patternHotmailEMailID =/ReadMessageID=(.*?)&/i;
