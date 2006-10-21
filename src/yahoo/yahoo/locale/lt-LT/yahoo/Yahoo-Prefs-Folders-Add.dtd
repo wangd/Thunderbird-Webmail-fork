@@ -1,0 +1,8 @@
+<!ENTITY YahooFolderAdd.Title "Pridėti aplanką">
+<!ENTITY YahooFolderName.Label "Aplanko pavadinimas">
+<!ENTITY YahooFolderName.AccessKey "p">
+<!ENTITY YahooFolders.Label "Pridėti aplanką parsiuntimui">
+<!ENTITY YahooFolder.ButtonOk.Label "Gerai">
+<!ENTITY YahooFolder.ButtonOk.AccessKey "G">
+<!ENTITY YahooFolder.ButtonCancel.Label "Atšaukti">
+<!ENTITY YahooFolder.ButtonCancel.AccessKey "A">

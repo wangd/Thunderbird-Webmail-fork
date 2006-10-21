@@ -1,0 +1,35 @@
+<!ENTITY YahooPref.Window.Title "Yahoo nustatymai">
+<!ENTITY YahooPref.Panel.Accounts.Title "Paskyros">
+<!ENTITY YahooPref.Panel.Domains.Title "Domenai">
+<!ENTITY YahooPref.Panel.Globals.Title "Bendrieji">
+<!ENTITY YahooPref.Button.Ok.Label "Gerai">
+<!ENTITY YahooPref.Button.Cancel.Label "Atšaukti">
+<!ENTITY YahooPref.Tab.Mode.Title "Režimas">
+<!ENTITY YahooPref.Tab.POP.Title "POP">
+<!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
+<!ENTITY YahooPref.Mode.Label "Pasirinkite svetainę, kurią naudos priedas">
+<!ENTITY YahooPref.Mode.ScreenScraper.Label "Produkcijos svetainė">
+<!ENTITY YahooPref.Mode.Beta.Label "BETA svetainė">
+<!ENTITY YahooPref.POP.DownloadUnread.Label "Parsiųsti tik neskaitytus laiškus">
+<!ENTITY YahooPref.POP.DownloadUnread.AccessKey "n">
+<!ENTITY YahooPref.POP.JunkMail.Label "Parsiųsti Šlamštą">
+<!ENTITY YahooPref.POP.JunkMail.AccessKey "Š">
+<!ENTITY YahooPref.POP.Folders.Label "Parsiųsti aplankus">
+<!ENTITY YahooPref.POP.ButtonAdd.Label "Pridėti...">
+<!ENTITY YahooPref.POP.ButtonAdd.AccessKey "P">
+<!ENTITY YahooPref.POP.ButtonRemove.Label "Pašalinti">
+<!ENTITY YahooPref.POP.ButtonRemove.AccessKey "P">
+<!ENTITY YahooPref.SMTP.SaveSentItems.Label "Saugoti kopiją išsiųstų laiškų aplanke">
+<!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "k">
+<!ENTITY YahooPref.AccountError.Label "Nerasta jokių Yahoo paskyrų">
+<!ENTITY YahooPref.SMTP.NA.Label "Jokių SMTP nustatymų skirtų Yahoo BETA">
+<!ENTITY YahooPref.Domain.Label "Domenai palaikomi Yahoo priedo">
+<!ENTITY YahooPref.Domain.Button.AddDomain.Label "Pridėti...">
+<!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "P">
+<!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Pašalinti">
+<!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "P">
+<!ENTITY YahooPref.Globals.ShortID.Label "Naudoti trumpąjį ID">
+<!ENTITY YahooPref.Globals.ShortID.AccessKey "I">
+<!ENTITY YahooPref.Globals.ReUseSession.Label "Pakartotinai panaudoti HTTP sesijos duomenis.">
+<!ENTITY YahooPref.Globals.ReUseSession.AccessKey "H">
+<!ENTITY YahooPref.GlobalsInfo.Label "Pakeitus trumpąjį ID nustatymą, bus atsiųsta visa jūsų pašto dėžutė">

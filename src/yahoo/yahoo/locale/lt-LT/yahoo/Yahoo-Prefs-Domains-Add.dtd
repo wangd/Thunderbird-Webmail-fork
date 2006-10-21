@@ -1,0 +1,8 @@
+<!ENTITY YahooAddDomain.Title "Pridėti domeną">
+<!ENTITY YahooAddDomainName.Label "Domenas">
+<!ENTITY YahooAddDomainName.AccessKey "D">
+<!ENTITY YahooAddDomain.Label "Pridėti Yahoo domeną">
+<!ENTITY YahooAddDomain.ButtonOk.Label "Gerai">
+<!ENTITY YahooAddDomain.ButtonOk.AccessKey "G">
+<!ENTITY YahooAddDomain.ButtonCancel.Label "Atšaukti">
+<!ENTITY YahooAddDomain.ButtonCancel.AccessKey "A">
