@@ -17,7 +17,7 @@ function HotmailSMTPWebDav(oResponseStream, oLog, oPrefData)
         this.m_oResponseStream = oResponseStream;
         this.m_HttpComms = new HttpComms(this.m_Log);
         this.m_HttpComms.setHandleHttpAuth(true);
-
+        this.m_iRetries = 2;
         this.m_iStage=0;
         this.m_szSendUri = null;
 
@@ -96,6 +96,7 @@ HotmailSMTPWebDav.prototype =
                                               ".\nError message: "
                                               + e.message+ "\n"
                                               + e.lineNumber);
+
             return false;
         }
     },
@@ -132,12 +133,28 @@ HotmailSMTPWebDav.prototype =
         }
         catch(err)
         {
-            mainObject.m_Log.DebugDump("HotmailWD-SMTP.js: loginHandler : Exception : "
+            //check for retries
+            if (mainObject.m_iRetries > 0)
+            {
+                mainObject.m_iRetries --;
+                mainObject.m_Log.Write("HotmailWD-SMTP.js - loginOnloadHandler - having another go " +mainObject.m_iRetries);
+                mainObject.m_HttpComms.setUserName(mainObject.m_szUserName);
+                mainObject.m_HttpComms.setPassword(mainObject.m_szPassWord);
+                mainObject.m_HttpComms.setURI("http://oe.hotmail.com/svcs/hotmail/httpmail.asp");
+                mainObject.m_HttpComms.setRequestMethod("PROPFIND");
+                mainObject.m_HttpComms.setContentType("text/xml");
+                mainObject.m_HttpComms.addData(HotmailSchema);
+                mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
+            }
+            else
+            {
+                mainObject.m_Log.DebugDump("HotmailWD-SMTP.js: loginHandler : Exception : "
                                           + err.name
                                           + ".\nError message: "
                                           + err.message+ "\n"
                                           + err.lineNumber);
-            mainObject.serverComms("502 negative vibes from " + mainObject.m_szUserName + "\r\n");
+                mainObject.serverComms("502 negative vibes from " + mainObject.m_szUserName + "\r\n");
+            }
         }
     },
 
