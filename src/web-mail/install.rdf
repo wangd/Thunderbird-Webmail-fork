@@ -3,20 +3,20 @@
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
-	<Description about="urn:mozilla:install-manifest">
+    <Description about="urn:mozilla:install-manifest">
 
-		<em:id>{3c8e8390-2cf6-11d9-9669-0800200c9a66}</em:id>
-		<em:type>2</em:type>
-		<em:version>1.0.12</em:version>
+        <em:id>{3c8e8390-2cf6-11d9-9669-0800200c9a66}</em:id>
+        <em:type>2</em:type>
+        <em:version>1.0.12</em:version>
 
-		<em:name>WebMail</em:name>
-		<em:description>Lets Thunderbird access web mail</em:description>
-		<em:creator>ComodoDragon</em:creator>
-		<em:homepageURL>http://webmail.mozdev.org</em:homepageURL>
+        <em:name>WebMail</em:name>
+        <em:description>Lets Thunderbird access web mail</em:description>
+        <em:creator>ComodoDragon</em:creator>
+        <em:homepageURL>http://webmail.mozdev.org</em:homepageURL>
 
-		<em:iconURL>chrome://web-mail/skin/Webmail-SmallIcon.png</em:iconURL>
-		<em:aboutURL>chrome://web-mail/content/Webmail-About.xul</em:aboutURL>
-		<em:optionsURL>chrome://web-mail/content/prefs/Webmail-Prefs.xul</em:optionsURL>
+        <em:iconURL>chrome://web-mail/skin/Webmail-SmallIcon.png</em:iconURL>
+        <em:aboutURL>chrome://web-mail/content/Webmail-About.xul</em:aboutURL>
+        <em:optionsURL>chrome://web-mail/content/prefs/Webmail-Prefs.xul</em:optionsURL>
 
         <em:updateURL>http://webmail.mozdev.org/update/webmailUpdate.rdf</em:updateURL>
 
@@ -41,18 +41,18 @@
         <em:contributor>Jacen (sk-SK)|19</em:contributor>
         <em:contributor>stalker48 (ru-RU)|12</em:contributor>
         <em:contributor>Garas (lt-LT)|22</em:contributor>
-        <em:contributor>Ivers (nb-NO)|22</em:contributor>
+        <em:contributor>Ivers (nb-NO)|23</em:contributor>
         <em:contributor>lloco (pt-PT)|16</em:contributor>
 
         <em:targetApplication>
-			<Description>
-				<!-- Mozilla Thunderbird -->
-				<em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
-				<em:minVersion>1.4.0</em:minVersion>
-				<em:maxVersion>2.0a2</em:maxVersion>
-			</Description>
-		</em:targetApplication>
+            <Description>
+                <!-- Mozilla Thunderbird -->
+                <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
+                <em:minVersion>1.4.0</em:minVersion>
+                <em:maxVersion>2.0a2</em:maxVersion>
+            </Description>
+        </em:targetApplication>
 
-	</Description>
+    </Description>
 
 </RDF>
