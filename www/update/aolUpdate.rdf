@@ -1,27 +1,27 @@
 <?xml version="1.0"?>
 <RDF:RDF xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
          xmlns:em="http://www.mozilla.org/2004/em-rdf#">
-    
+
      <RDF:Description about="urn:mozilla:extension:268d7420-9032-11da-a72b-0800200c9a66}">
         <em:updates>
             <RDF:Seq>
-                <RDF:li resource="urn:mozilla:extension:{268d7420-9032-11da-a72b-0800200c9a66}:1.0.1"/>
+                <RDF:li resource="urn:mozilla:extension:{268d7420-9032-11da-a72b-0800200c9a66}:1.0.2"/>
             </RDF:Seq>
         </em:updates>
     </RDF:Description>
 
-    <RDF:Description about="urn:mozilla:extension:{268d7420-9032-11da-a72b-0800200c9a66}:1.0.1">
-        <em:version>1.0.1</em:version>
-    	<em:targetApplication>
-        	<Description>
+    <RDF:Description about="urn:mozilla:extension:{268d7420-9032-11da-a72b-0800200c9a66}:1.0.2">
+        <em:version>1.0.2</em:version>
+        <em:targetApplication>
+            <Description>
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id> <!-- Thunderbird updates -->
-            	<em:minVersion>1.4</em:minVersion>
-            	<em:maxVersion>2.0a2</em:maxVersion>
-                <em:updateLink>http://download.mozdev.org/webmail/aol-1-0-0.xpi</em:updateLink>
-                <em:updateHash>sha256:a0565b20806da4cd0b2246f0dc4d3f5b4644516c902ef4011b0d799494f723cf</em:updateHash>
+                <em:minVersion>1.4</em:minVersion>
+                <em:maxVersion>2.0a2</em:maxVersion>
+                <em:updateLink>http://download.mozdev.org/webmail/aol-1-0-2.xpi</em:updateLink>
+                <em:updateHash>sha256:fd7f03ea2fae83547356da624331e71a0344c3b0b6920ec131ddc33d6edb8d9f</em:updateHash>
           </Description>
         </em:targetApplication>
-    
+
         <em:requires>
             <Description>
                 <!-- requires web-mail extension-->
@@ -33,5 +33,5 @@
                 <em:updateURL>http://webmail.mozdev.org/update/webmailUpdate.rdf</em:updateURL>
             </Description>
         </em:requires>
-    </RDF:Description>  
+    </RDF:Description>
 </RDF:RDF>
