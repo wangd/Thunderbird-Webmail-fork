@@ -3,21 +3,21 @@
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
-	<Description about="urn:mozilla:install-manifest">
+    <Description about="urn:mozilla:install-manifest">
 
-		<em:id>{268d7420-9032-11da-a72b-0800200c9a66}</em:id>
-		<em:type>2</em:type>
-		<em:version>1.0.2</em:version>
+        <em:id>{268d7420-9032-11da-a72b-0800200c9a66}</em:id>
+        <em:type>2</em:type>
+        <em:version>1.0.2</em:version>
 
-		<em:name>WebMail - AOL / Netscape </em:name>
-		<em:description>AOL / NetScape component for Web-Mail extension</em:description>
-		<em:creator>ComodoDragon</em:creator>
-		<em:homepageURL>http://webmail.mozdev.org</em:homepageURL>
+        <em:name>WebMail - AOL / Netscape </em:name>
+        <em:description>AOL / NetScape component for Web-Mail extension</em:description>
+        <em:creator>ComodoDragon</em:creator>
+        <em:homepageURL>http://webmail.mozdev.org</em:homepageURL>
 
         <em:iconURL>chrome://aol/skin/AOL-Icon.png</em:iconURL>
-		<em:aboutURL>chrome://aol/content/AOL-About.xul</em:aboutURL>
-		<em:optionsURL>chrome://aol/content/AOL-Prefs.xul</em:optionsURL>
-		<em:updateURL>http://webmail.mozdev.org/update/aolUpdate.rdf</em:updateURL>
+        <em:aboutURL>chrome://aol/content/AOL-About.xul</em:aboutURL>
+        <em:optionsURL>chrome://aol/content/AOL-Prefs.xul</em:optionsURL>
+        <em:updateURL>http://webmail.mozdev.org/update/aolUpdate.rdf</em:updateURL>
 
         <em:contributor>Dagobert_78 (fr-FR)|2</em:contributor>
         <em:contributor>Akilles (fi-FI)|14</em:contributor>
@@ -27,18 +27,18 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
         <em:contributor>Martin Srebotnjak, Lugos.si (sl-SI)|17</em:contributor>
         <em:contributor>Garas (lt-LT)|22</em:contributor>
         <em:contributor>BudsieBuds (nl-NL)|5</em:contributor>
-        <em:contributor>Ivers (nb-NO)|22</em:contributor>
+        <em:contributor>Ivers (nb-NO)|23</em:contributor>
         <em:contributor>Albert Feller (de-DE)|3</em:contributor>
         <em:contributor>Alberto Jorge Cushnir (es-AR)|20</em:contributor>
 
         <em:targetApplication>
-			<Description>
-				<!-- Mozilla Thunderbird -->
-				<em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
-				<em:minVersion>1.4.0</em:minVersion>
-				<em:maxVersion>2.0a1</em:maxVersion>
-			</Description>
-		</em:targetApplication>
+            <Description>
+                <!-- Mozilla Thunderbird -->
+                <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
+                <em:minVersion>1.4.0</em:minVersion>
+                <em:maxVersion>2.0a1</em:maxVersion>
+            </Description>
+        </em:targetApplication>
 
         <em:requires>
             <Description>
@@ -51,6 +51,6 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
                 <em:updateURL>http://webmail.mozdev.org/update/webmailUpdate.rdf</em:updateURL>
             </Description>
         </em:requires>
-	</Description>
+    </Description>
 
 </RDF>
