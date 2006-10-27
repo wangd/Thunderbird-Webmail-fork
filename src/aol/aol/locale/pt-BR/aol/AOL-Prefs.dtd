@@ -1,21 +1,17 @@
-<!ENTITY AOLPref.Window.Title "AOL / Netscape Options">
-<!ENTITY AOLPref.Panel.Accounts.Title "Accounts">
+<!ENTITY AOLPref.Window.Title "Opções do AOL / Netscape">
+<!ENTITY AOLPref.Panel.Accounts.Title "Contas">
 <!ENTITY AOLPref.Button.Ok.Label "Ok">
-<!ENTITY AOLPref.Button.Cancel.Label "Cancel">
-
+<!ENTITY AOLPref.Button.Cancel.Label "Cancelar">
 <!ENTITY AOLPref.Tab.POP.Title "POP">
-
-<!ENTITY AOLPref.POP.DownloadUnread.Label "Download unread emails only">
-<!ENTITY AOLPref.POP.DownloadUnread.AccessKey "u">
-<!ENTITY AOLPref.POP.JunkMail.Label "Download JunkMail">
-<!ENTITY AOLPref.POP.JunkMail.AccessKey "J">
-<!ENTITY AOLPref.POP.Folders.Label "Download folders">
-<!ENTITY AOLPref.POP.ButtonAdd.Label "Add...">
+<!ENTITY AOLPref.POP.DownloadUnread.Label "Baixar apenas e-mails não lidos">
+<!ENTITY AOLPref.POP.DownloadUnread.AccessKey "n">
+<!ENTITY AOLPref.POP.JunkMail.Label "Baixar lixo eletrônico">
+<!ENTITY AOLPref.POP.JunkMail.AccessKey "l">
+<!ENTITY AOLPref.POP.Folders.Label "Baixar pastas">
+<!ENTITY AOLPref.POP.ButtonAdd.Label "Adicionar...">
 <!ENTITY AOLPref.POP.ButtonAdd.AccessKey "A">
-<!ENTITY AOLPref.POP.ButtonRemove.Label "Remove">
+<!ENTITY AOLPref.POP.ButtonRemove.Label "Remover">
 <!ENTITY AOLPref.POP.ButtonRemove.AccessKey "R">
-
-<!ENTITY AOLPref.AccountError.Label "No AOL Accounts Found"> 
-
-<!ENTITY AOLPref.POP.MarkAsRead.Label "Mark emails as read on server">
-<!ENTITY AOLPref.POP.MarkAsRead.AccessKey "k">
+<!ENTITY AOLPref.AccountError.Label "Nenhuma conta do AOL encontrada">
+<!ENTITY AOLPref.POP.MarkAsRead.Label "Marcar e-mails como lidos no servidor">
+<!ENTITY AOLPref.POP.MarkAsRead.AccessKey "c">
