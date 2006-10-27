@@ -15,15 +15,15 @@
 }
 
 #LionImage
-{   
+{
     margin-left: 20px;
     list-style-image: url("chrome://AOL/skin/Dragon.png");
-    
+
 }
 
 #AOLImage
 {
-    list-style-image: url("chrome://AOL/skin/AOL.png");
+    list-style-image: url("chrome://AOL/skin/aol.png");
     margin-bottom: 9px;
 }
 
@@ -57,7 +57,7 @@
 
 .AOLCreatorText
 {
-    margin-top: 10px; 
+    margin-top: 10px;
     margin-left: 5px;
 }
 
