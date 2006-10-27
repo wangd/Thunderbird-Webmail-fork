@@ -907,33 +907,26 @@ YahooPOP.prototype =
             mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - uri : " + szUri);
 
             //Content-Type: text/html  == very bad
-            try
+            var szContetnType =  httpChannel.getResponseHeader("Content-Type");
+            mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - szContetnType "+szContetnType);
+            if (szContetnType.search(/text\/html/i)!=-1)
             {
-                var szContetnType =  httpChannel.getResponseHeader("Content-Type");
-                mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - szContetnType "+szContetnType);
-                if (szContetnType.search(/text\/html/i)!=-1)
+                mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - error download msg");
+                if (mainObject.m_iMSGCount == 2)
                 {
-                    mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - error download msg");
-                    if (mainObject.m_iMSGCount == 2)
-                    {
-                        throw new Error("download failed");
-                    }
-                    else//try again
-                    {
-                        mainObject.m_iMSGCount++;
-                        mainObject.m_HttpComms.setURI(szUri);
-                        mainObject.m_HttpComms.setRequestMethod("GET");
-                        var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);
-                        if (!bResult) throw new Error("httpConnection returned false");
-                        return;
-                    }
+                    throw new Error("download failed");
                 }
-                mainObject.m_iMSGCount = 0;
+                else//try again
+                {
+                    mainObject.m_iMSGCount++;
+                    mainObject.m_HttpComms.setURI(szUri);
+                    mainObject.m_HttpComms.setRequestMethod("GET");
+                    var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);
+                    if (!bResult) throw new Error("httpConnection returned false");
+                    return;
+                }
             }
-            catch(err)
-            {
-                mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - szContetnType error");
-            }
+            mainObject.m_iMSGCount = 0;
 
 
             switch(mainObject.m_iStage)
