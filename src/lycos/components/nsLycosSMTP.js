@@ -306,13 +306,13 @@ nsLycosSMTP.prototype =
             //do i reuse the session
             WebMailPrefAccess.Get("bool","lycos.bReUseSession",oPref);
             this.m_Log.Write("nsLycos.js - loadPrefs - bReUseSession " + oPref.Value);
-            if (oPref.Value) oData.bReUseSession = oPref.Value;
+            if (oPref.Value != null) oData.bReUseSession = oPref.Value;
 
             var iCount = 0;
             oPref.Value = null;
             WebMailPrefAccess.Get("int","lycos.Account.Num",oPref);
             this.m_Log.Write("nsLycos.js - loadPrefs - num " + oPref.Value);
-            if (oPref.Value) iCount = oPref.Value;
+            if (oPref.Value != null) iCount = oPref.Value;
 
             var bFound = false;
             var regExp = new RegExp(this.m_szUserName,"i");
@@ -322,7 +322,7 @@ nsLycosSMTP.prototype =
                 oPref.Value = null;
                 WebMailPrefAccess.Get("char","lycos.Account."+i+".user",oPref);
                 this.m_Log.Write("nsLycos.js - loadPrefs - user " + oPref.Value);
-                if (oPref.Value)
+                if (oPref.Value != null)
                 {
                     if (oPref.Value.search(regExp)!=-1)
                     {
@@ -346,7 +346,7 @@ nsLycosSMTP.prototype =
                 oPref.Value = null;
                 WebMailPrefAccess.Get("bool","lycos.bSaveCopy",oPref);
                 this.m_Log.Write("nsMailDotComSMTP.js - loadPrefs - bSaveCopy " + oPref.Value);
-                if (oPref.Value) oData.bSaveCopy=oPref.Value;
+                if (oPref.Value != null) oData.bSaveCopy=oPref.Value;
             }
             this.m_Log.Write("nsLycos.js - loadPrefs - END");
             return oData;

@@ -202,8 +202,9 @@ nsLycos.prototype =
                         var regExp = new RegExp("^"+mainObject.m_prefData.aszFolder[j]+"$","i");
                         mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - regExp : "+regExp );
 
-                        for (var i=0; i<aszFolderList.length; i++)
-                        {
+                        var i =0;
+                        var bFound = false;
+                        do{
                             var szFolderURL = aszFolderList[i].match(kLycosHref )[1];
                             mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - szFolderURL : "+szFolderURL );
                             var szFolderName = szFolderURL.match(kLycosFolderName )[1];
@@ -213,12 +214,14 @@ nsLycos.prototype =
                                 szDisplayName =aszFolderList[i].match(kLycosDisplayName)[1];
                             mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - szDisplayName : "+szDisplayName );
 
-                            if (szFolderName.search(regExp)!=-1 || szDisplayName.search(regExp)!=-1)
+                            if (szFolderName.search(regExp)>=0 || szDisplayName.search(regExp) >=0)
                             {
+                                bFound = true;
                                 mainObject.m_aszFolderURLList.push(szFolderURL);
                                 mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - URL found : "+szFolderURL);
                             }
-                        }
+                            i++;
+                        }while (i<aszFolderList.length && !bFound)
                     }
 
 
@@ -926,28 +929,28 @@ nsLycos.prototype =
             //do i reuse the session
             WebMailPrefAccess.Get("bool","lycos.bReUseSession",oPref);
             this.m_Log.Write("nsLycos.js - loadPrefs - bReUseSession " + oPref.Value);
-            if (oPref.Value) oData.bReUseSession = oPref.Value;
+            if (oPref.Value != null) oData.bReUseSession = oPref.Value;
 
             //get timer
             oPref.Value = null;
             WebMailPrefAccess.Get("int","lycos.iProcessDelay",oPref);
-            if (oPref.Value) oData.iTime=oPref.Value;
+            if (oPref.Value != null) oData.iTime=oPref.Value;
 
             //delay process trigger
             oPref.Value = null;
             WebMailPrefAccess.Get("bool","lycos.iProcessTrigger",oPref);
-            if (oPref.Value) oData.iProcessTrigger = oPref.Value;
+            if (oPref.Value != null) oData.iProcessTrigger = oPref.Value;
 
             //delay proccess amount
             oPref.Value = null;
             WebMailPrefAccess.Get("bool","lycos.iProcessAmount",oPref);
-            if (oPref.Value)  oData.iProcessAmount = oPref.Value;
+            if (oPref.Value != null)  oData.iProcessAmount = oPref.Value;
 
             var iCount = 0;
             oPref.Value = null;
             WebMailPrefAccess.Get("int","lycos.Account.Num",oPref);
             this.m_Log.Write("nsLycos.js - loadPrefs - num " + oPref.Value);
-            if (oPref.Value) iCount = oPref.Value;
+            if (oPref.Value != null) iCount = oPref.Value;
 
             var bFound = false;
             var regExp = new RegExp(this.m_szUserName,"i");
@@ -957,7 +960,7 @@ nsLycos.prototype =
                 oPref.Value = null;
                 WebMailPrefAccess.Get("char","lycos.Account."+i+".user",oPref);
                 this.m_Log.Write("nsLycos.js - loadPrefs - user " + oPref.Value);
-                if (oPref.Value)
+                if (oPref.Value != null)
                 {
                     if (oPref.Value.search(regExp)!=-1)
                     {
@@ -973,10 +976,13 @@ nsLycos.prototype =
                         if (oPref.Value)
                         {
                             var aszFolders = oPref.Value.split("\r");
-                            for (j=0; j<aszFolders.length; j++)
+                            if (aszFolders.length>0)
                             {
-                                this.m_Log.Write("nsLycos - loadPRefs - aszFolders[j] " + aszFolders[j]);
-                                oData.aszFolder.push(encodeURIComponent(aszFolders[j]));
+                                for (j=0; j<aszFolders.length; j++)
+                                {
+                                    this.m_Log.Write("nsLycos - loadPRefs - aszFolders[j] " + aszFolders[j]);
+                                    oData.aszFolder.push(encodeURIComponent(aszFolders[j]));
+                                }
                             }
                         }
 
@@ -984,19 +990,19 @@ nsLycos.prototype =
                         oPref.Value = null;
                         WebMailPrefAccess.Get("bool","lycos.Account."+i+".bDownloadUnread",oPref);
                         this.m_Log.Write("nsLycos.js - loadPrefs - bDownloadUnread " + oPref.Value);
-                        if (oPref.Value) oData.bUnread=oPref.Value;
+                        if (oPref.Value != null) oData.bUnread=oPref.Value;
 
                         //get unread
                         oPref.Value = null;
                         WebMailPrefAccess.Get("bool","lycos.Account."+i+".bMarkAsRead",oPref);
                         this.m_Log.Write("nsLycos.js - loadPrefs - bMarkAsRead " + oPref.Value);
-                        if (oPref.Value) oData.bMarkAsRead=oPref.Value;
+                        if (oPref.Value != null) oData.bMarkAsRead=oPref.Value;
 
                         //get junkmail
                         oPref.Value = null;
                         WebMailPrefAccess.Get("bool","lycos.Account."+i+".bUseJunkMail",oPref);
                         this.m_Log.Write("nsLycos.js - loadPrefs - bUseJunkMail " + oPref.Value);
-                        if (oPref.Value) oData.bUseJunkMail = oPref.Value;
+                        if (oPref.Value != null) oData.bUseJunkMail = oPref.Value;
                         if (oData.bUseJunkMail)
                             oData.aszFolder.push("Courrier%20ind%26eacute;sirable");
 
@@ -1004,13 +1010,13 @@ nsLycos.prototype =
                         oPref.Value = null;
                         WebMailPrefAccess.Get("bool","lycos.Account."+i+".bSaveCopy",oPref);
                         this.m_Log.Write("nsLycos.js - loadPrefs - bSaveCopy " + oPref.Value);
-                        if (oPref.Value) oData.bSaveCopy = oPref.Value;
+                        if (oPref.Value != null) oData.bSaveCopy = oPref.Value;
 
                         //get empty trash
                         oPref.Value = null;
                         WebMailPrefAccess.Get("bool","lycos.Account."+i+".bEmptyTrash",oPref);
                         this.m_Log.Write("nsLycos.js - loadPrefs - bEmptyTrash " + oPref.Value);
-                        if (oPref.Value) oData.bEmptyTrash = oPref.Value;
+                        if (oPref.Value != null) oData.bEmptyTrash = oPref.Value;
                     }
                 }
             }
@@ -1023,7 +1029,7 @@ nsLycos.prototype =
                 oPref.Value = null;
                 WebMailPrefAccess.Get("bool","lycos.bDownloadUnread",oPref);
                 this.m_Log.Write("nsLycos.js - loadPrefs - bDownloadUnread " + oPref.Value);
-                if (oPref.Value) oData.bUnread=oPref.Value;
+                if (oPref.Value != null) oData.bUnread=oPref.Value;
 
                 //inbox
                 this.m_Log.Write("nsLycos - loadPrefs - Default Folders - inbox");
@@ -1033,7 +1039,7 @@ nsLycos.prototype =
                 oPref.Value = null;
                 WebMailPrefAccess.Get("bool","lycos.bUseJunkMail",oPref);
                 this.m_Log.Write("nsLycos.js - loadPrefs - bUseJunkMail " + oPref.Value);
-                if (oPref.Value) oData.bUseJunkMail = oPref.Value;
+                if (oPref.Value != null) oData.bUseJunkMail = oPref.Value;
                 if (oData.bUseJunkMail)
                     oData.aszFolder.push("Courrier%20ind%26eacute;sirable");
 
@@ -1041,13 +1047,13 @@ nsLycos.prototype =
                 oPref.Value = null;
                 WebMailPrefAccess.Get("bool","lycos.Account.bSaveCopy",oPref);
                 this.m_Log.Write("nsLycos.js - loadPrefs - bSaveCopy " + oPref.Value);
-                if (oPref.Value) oData.bSaveCopy = oPref.Value;
+                if (oPref.Value != null) oData.bSaveCopy = oPref.Value;
 
                 //get empty trash
                 oPref.Value = null;
                 WebMailPrefAccess.Get("bool","lycos.bEmptyTrash",oPref);
                 this.m_Log.Write("nsLycos.js - loadPrefs - bEmptyTrash " + oPref.Value);
-                if (oPref.Value) oData.bEmptyTrash = oPref.Value;
+                if (oPref.Value != null) oData.bEmptyTrash = oPref.Value;
             }
             this.m_Log.Write("nsLycos.js - loadPrefs - END");
             return oData;

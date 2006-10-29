@@ -1,4 +1,4 @@
-/*****************************  Globals   *************************************/                 
+/*****************************  Globals   *************************************/
 const nsYahooClassID = Components.ID("{bfacf8a0-6447-11d9-9669-0800200c9a66}");
 const nsYahooContactID = "@mozilla.org/YahooPOP;1";
 const ExtYahooGuid = "{d7103710-6112-11d9-9669-0800200c9a66}";
@@ -7,39 +7,39 @@ const ExtYahooGuid = "{d7103710-6112-11d9-9669-0800200c9a66}";
 function nsYahoo()
 {
     try
-    {       
+    {
         var scriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
-        scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-POP.js"); 
-        scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-POP-Beta.js");  
+        scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-POP.js");
+        scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-POP-Beta.js");
         scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-Prefs-Accounts-Data.js");
-            
+
         var date = new Date();
         var  szLogFileName = "Yahoo Log - " + date.getHours()+ "-" + date.getMinutes() + "-"+ date.getUTCMilliseconds() +" -";
-        this.m_Log = new DebugLog("webmail.logging.comms", ExtYahooGuid, szLogFileName); 
-        this.m_Log.Write("nsYahoo.js - Constructor - START");   
-       
+        this.m_Log = new DebugLog("webmail.logging.comms", ExtYahooGuid, szLogFileName);
+        this.m_Log.Write("nsYahoo.js - Constructor - START");
+
         if (typeof kYahooConstants == "undefined")
         {
             this.m_Log.Write("nsYahoo.js - Constructor - loading constants");
             scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-Constants.js");
-        } 
-       
+        }
+
         this.m_bAuthorised = false;
-        this.m_szUserName = null;   
-        this.m_szPassWord = null; 
-        this.m_oResponseStream = null;  
+        this.m_szUserName = null;
+        this.m_szPassWord = null;
+        this.m_oResponseStream = null;
         this.m_CommMethod = null;
-               
-        this.m_Log.Write("nsYahoo.js - Constructor - END");  
+
+        this.m_Log.Write("nsYahoo.js - Constructor - END");
     }
     catch(e)
     {
-        DebugDump("nsYahoo.js: Constructor : Exception : " 
-                                      + e.name 
-                                      + ".\nError message: " 
+        DebugDump("nsYahoo.js: Constructor : Exception : "
+                                      + e.name
+                                      + ".\nError message: "
                                       + e.message+ "\n"
                                       + e.lineNumber);
     }
@@ -51,49 +51,49 @@ nsYahoo.prototype =
 {
     get userName() {return this.m_szUserName;},
     set userName(userName) {return this.m_szUserName = userName;},
-  
+
     get passWord() {return this.m_szPassWord;},
     set passWord(passWord) {return this.m_szPassWord = passWord;},
-    
+
     get bAuthorised()
     {
         return (this.m_CommMethod)? this.m_CommMethod.m_bAuthorised: false;
     },
-  
+
     get ResponseStream() {return this.m_oResponseStream;},
     set ResponseStream(responseStream) {return this.m_oResponseStream = responseStream;},
-    
-      
+
+
     logIn : function()
     {
         try
         {
-            this.m_Log.Write("nsYahoo.js - logIN - START");   
-            this.m_Log.Write("nsYahoo.js - logIN - Username: " + this.m_szUserName 
-                                               + " Password: " + this.m_szPassWord 
+            this.m_Log.Write("nsYahoo.js - logIN - START");
+            this.m_Log.Write("nsYahoo.js - logIN - Username: " + this.m_szUserName
+                                               + " Password: " + this.m_szPassWord
                                                + " stream: "   + this.m_oResponseStream);
-            
-            if (!this.m_szUserName || !this.m_oResponseStream  || !this.m_szPassWord) return false;        
-                       
+
+            if (!this.m_szUserName || !this.m_oResponseStream  || !this.m_szPassWord) return false;
+
             //get prefs
             var oData = this.loadPrefs();
-             
+
             if (oData.bBeta) //use beta site
                 this.m_CommMethod = new YahooPOPBETA(this.m_oResponseStream, this.m_Log, oData);
-        
+
             if (!this.m_CommMethod) //use standard site
                 this.m_CommMethod = new YahooPOP(this.m_oResponseStream, this.m_Log, oData);
 
-            var bResult = this.m_CommMethod.logIn(this.m_szUserName, this.m_szPassWord); 
+            var bResult = this.m_CommMethod.logIn(this.m_szUserName, this.m_szPassWord);
 
-            this.m_Log.Write("nsYahoo.js - logIN - END");    
+            this.m_Log.Write("nsYahoo.js - logIN - END");
             return true;
         }
         catch(e)
         {
-            this.m_Log.DebugDump("nsYahoo.js: logIN : Exception : " 
-                                              + e.name + 
-                                              ".\nError message: " 
+            this.m_Log.DebugDump("nsYahoo.js: logIN : Exception : "
+                                              + e.name +
+                                              ".\nError message: "
                                               + e.message+ "\n"
                                               + e.lineNumber);
             return false;
@@ -101,99 +101,99 @@ nsYahoo.prototype =
     },
 
 
-    
+
     //stat
     getNumMessages : function()
     {
         try
         {
-            this.m_Log.Write("nsYahoo.js - getNumMessages - START"); 
-           
+            this.m_Log.Write("nsYahoo.js - getNumMessages - START");
+
             this.m_CommMethod.getNumMessages();
-            
-            this.m_Log.Write("nsYAhoo.js - getNumMessages - END"); 
+
+            this.m_Log.Write("nsYAhoo.js - getNumMessages - END");
             return true;
         }
         catch(e)
         {
-            this.m_Log.DebugDump("nsYahoo.js: getNumMessages : Exception : " 
-                                          + e.name 
-                                          + ".\nError message: " 
+            this.m_Log.DebugDump("nsYahoo.js: getNumMessages : Exception : "
+                                          + e.name
+                                          + ".\nError message: "
                                           + e.message+ "\n"
                                           + e.lineNumber);
             return false;
         }
     },
-    
-    
-                     
-    //list 
-    getMessageSizes : function() 
+
+
+
+    //list
+    getMessageSizes : function()
     {
         try
         {
-            this.m_Log.Write("nsYahoo.js - getMessageSizes - START"); 
-            
+            this.m_Log.Write("nsYahoo.js - getMessageSizes - START");
+
             this.m_CommMethod.getMessageSizes();
 
-            this.m_Log.Write("nsYahoo.js - getMessageSizes - END"); 
+            this.m_Log.Write("nsYahoo.js - getMessageSizes - END");
             return true;
         }
         catch(e)
         {
-            this.m_Log.DebugDump("nsYahoo.js: getMessageSizes : Exception : " 
-                                          + e.name 
-                                          + ".\nError message: " 
+            this.m_Log.DebugDump("nsYahoo.js: getMessageSizes : Exception : "
+                                          + e.name
+                                          + ".\nError message: "
                                           + e.message);
             return false;
         }
     },
-    
-    
-    
+
+
+
     //IUDL
     getMessageIDs : function()
     {
         try
         {
-            this.m_Log.Write("nsYahoo.js - getMessageIDs - START"); 
-            
-            this.m_CommMethod.getMessageIDs(); 
-          
-            this.m_Log.Write("nsYahoo.js - getMessageIDs - END"); 
+            this.m_Log.Write("nsYahoo.js - getMessageIDs - START");
+
+            this.m_CommMethod.getMessageIDs();
+
+            this.m_Log.Write("nsYahoo.js - getMessageIDs - END");
             return true;
         }
         catch(e)
         {
-            this.m_Log.DebugDump("nsYahoo.js: getMessageIDs : Exception : " 
-                                          + e.name 
-                                          + ".\nError message: " 
+            this.m_Log.DebugDump("nsYahoo.js: getMessageIDs : Exception : "
+                                          + e.name
+                                          + ".\nError message: "
                                           + e.message+ "\n"
                                           + e.lineNumber);
             return false;
         }
     },
-      
+
 
     //top
     getMessageHeaders : function(lID)
     {
         try
         {
-            this.m_Log.Write("nsYahoo.js - getHeaders - START");  
-            this.m_Log.Write("nsYahoo.js - getHeaders - id " + lID ); 
-           
+            this.m_Log.Write("nsYahoo.js - getHeaders - START");
+            this.m_Log.Write("nsYahoo.js - getHeaders - id " + lID );
+
             this.m_CommMethod.getMessageHeaders(lID);
-            
+
             this.m_Log.Write("nsYahoo.js - getHeaders - END");
-            return true; 
+            return true;
         }
         catch(e)
         {
-            
-            this.m_Log.DebugDump("nsYahoo.js: getHeaders : Exception : " 
-                                          + e.name + 
-                                          ".\nError message: " 
+
+            this.m_Log.DebugDump("nsYahoo.js: getHeaders : Exception : "
+                                          + e.name +
+                                          ".\nError message: "
                                           + e.message+ "\n"
                                           + e.lineNumber);
             return false;
@@ -208,85 +208,85 @@ nsYahoo.prototype =
     {
         try
         {
-            this.m_Log.Write("nsYahoo.js - getMessage - START"); 
-            this.m_Log.Write("nsYahoo.js - getMessage - msg num" + lID); 
-                     
+            this.m_Log.Write("nsYahoo.js - getMessage - START");
+            this.m_Log.Write("nsYahoo.js - getMessage - msg num" + lID);
+
             this.m_CommMethod.getMessage(lID);
-            
-            this.m_Log.Write("m_YahooLog.js - getMessage - END"); 
+
+            this.m_Log.Write("m_YahooLog.js - getMessage - END");
             return true;
         }
         catch(e)
         {
-             this.m_Log.DebugDump("m_YahooLog.js: getMessage : Exception : " 
-                                          + e.name + 
-                                          ".\nError message: " 
+             this.m_Log.DebugDump("m_YahooLog.js: getMessage : Exception : "
+                                          + e.name +
+                                          ".\nError message: "
                                           + e.message+ "\n"
                                           + e.lineNumber);
             return false;
         }
-    },    
-    
-    
+    },
 
-             
+
+
+
     //dele
     deleteMessage : function(lID)
     {
         try
         {
-            this.m_Log.Write("nsYahoo.js - deleteMessage - START");  
-            this.m_Log.Write("nsYahoo.js - deleteMessage - id " + lID ); 
-                  
+            this.m_Log.Write("nsYahoo.js - deleteMessage - START");
+            this.m_Log.Write("nsYahoo.js - deleteMessage - id " + lID );
+
             this.m_CommMethod.deleteMessage(lID);
-            
-            this.m_Log.Write("nsYahoo.js - deleteMessage - END");     
+
+            this.m_Log.Write("nsYahoo.js - deleteMessage - END");
             return true;
         }
         catch(e)
         {
-            this.m_Log.DebugDump("nsYahoo.js: deleteMessage : Exception : " 
-                                          + e.name + 
-                                          ".\nError message: " 
+            this.m_Log.DebugDump("nsYahoo.js: deleteMessage : Exception : "
+                                          + e.name +
+                                          ".\nError message: "
                                           + e.message+ "\n"
                                           + e.lineNumber);
             return false;
-        } 
+        }
     },
 
-    
-    
+
+
     logOut : function()
     {
         try
         {
-            this.m_Log.Write("nsYahoo.js - logOUT - START"); 
-            
+            this.m_Log.Write("nsYahoo.js - logOUT - START");
+
             this.m_CommMethod.logOut();
-            
-            this.m_Log.Write("nsYahoo.js - logOUT - END");  
+
+            this.m_Log.Write("nsYahoo.js - logOUT - END");
             return true;
         }
         catch(e)
         {
-            this.m_Log.DebugDump("nsYahoo.js: logOUT : Exception : " 
-                                      + e.name 
-                                      + ".\nError message: " 
+            this.m_Log.DebugDump("nsYahoo.js: logOUT : Exception : "
+                                      + e.name
+                                      + ".\nError message: "
                                       + e.message+ "\n"
                                       + e.lineNumber);
             return false;
         }
-    },  
-    
+    },
 
-       
-    
+
+
+
     loadPrefs : function()
     {
         try
         {
-            this.m_Log.Write("nsYahoo.js - loadPrefs - START"); 
-           
+            this.m_Log.Write("nsYahoo.js - loadPrefs - START");
+
             //get user prefs
             var oData = new PrefData();
             var oPref = {Value:null};
@@ -294,32 +294,32 @@ nsYahoo.prototype =
             var  WebMailPrefAccess = new WebMailCommonPrefAccess();
             WebMailPrefAccess.Get("bool","yahoo.bReUseSession",oPref);
             this.m_Log.Write("nsYahoo.js - loadPrefs - bReUseSession " + oPref.Value);
-            if (oPref.Value) oData.bReUseSession = oPref.Value;
-            
+            if (oPref.Value != null) oData.bReUseSession = oPref.Value;
+
             //delay processing time delay
             oPref.Value = null;
             WebMailPrefAccess.Get("int","yahoo.iProcessDelay",oPref);
-            if (oPref.Value) oData.iProcessDelay = oPref.Value;
-            
+            if (oPref.Value != null) oData.iProcessDelay = oPref.Value;
+
             //use short id
             oPref.Value = null;
             WebMailPrefAccess.Get("bool","yahoo.bUseShortID",oPref);
-            if (oPref.Value) oData.bUseShortID = oPref.Value;
+            if (oPref.Value != null) oData.bUseShortID = oPref.Value;
             this.m_Log.Write("nsYahoo.js - loadPrefs - bUseShortID " + oPref.Value);
-            
+
             //delay proccess amount
             oPref.Value = null;
             WebMailPrefAccess.Get("bool","yahoo.iProcessAmount",oPref);
-            if (oPref.Value) oData.iProcessAmount = oPref.Value;
-          
-            
+            if (oPref.Value != null) oData.iProcessAmount = oPref.Value;
+
+
             var iCount = 0;
             oPref.Value = null;
             WebMailPrefAccess.Get("int","yahoo.Account.Num",oPref);
             this.m_Log.Write("nsYahoo.js - loadPrefs - num " + oPref.Value);
-            if (oPref.Value) iCount = oPref.Value;
-            
-            
+            if (oPref.Value != null) iCount = oPref.Value;
+
+
             var bFound = false;
             var regExp = new RegExp(this.m_szUserName,"i");
             for (i=0; i<iCount; i++)
@@ -328,23 +328,23 @@ nsYahoo.prototype =
                 oPref.Value = null;
                 WebMailPrefAccess.Get("char","yahoo.Account."+i+".user",oPref);
                 this.m_Log.Write("nsYahoo.js - loadPrefs - user " + oPref.Value);
-                if (oPref.Value)
+                if (oPref.Value != null)
                 {
                     if (oPref.Value.search(regExp)!=-1)
                     {
                         this.m_Log.Write("nsYahoo.js - loadPrefs - user found "+ i);
                         bFound = true;
-                                                                                   
+
                         //inbox
-                        oData.aszFolder.push("inbox"); 
-                        
+                        oData.aszFolder.push("inbox");
+
                         //get spam
                         oPref.Value = null;
                         WebMailPrefAccess.Get("bool","yahoo.Account."+i+".bUseJunkMail",oPref);
                         this.m_Log.Write("nsYahoo.js - loadPrefs - bUseJunkMail " + oPref.Value);
-                        if (oPref.Value)  oData.aszFolder.push("%40B%40Bulk");
-    
-                        
+                        if (oPref.Value != null)  oData.aszFolder.push("%40B%40Bulk");
+
+
                         //get folders
                         WebMailPrefAccess.Get("char","yahoo.Account."+i+".szFolders",oPref);
                         this.m_Log.Write("nsYahoo.js - loadPrefs - szFolders " + oPref.Value);
@@ -357,45 +357,45 @@ nsYahoo.prototype =
                                 oData.aszFolder.push(encodeURIComponent(aszFolders[j]));
                             }
                         }
-                        
+
                         //get unread
                         oPref.Value = null;
                         WebMailPrefAccess.Get("bool","yahoo.Account."+i+".bDownloadUnread",oPref);
                         this.m_Log.Write("nsYahoo.js - loadPrefs - bDownloadUnread " + oPref.Value);
-                        if (oPref.Value) oData.bUnread=oPref.Value;
-                        
+                        if (oPref.Value != null) oData.bUnread=oPref.Value;
+
                         //get unread
                         oPref.Value = null;
                         WebMailPrefAccess.Get("bool","yahoo.Account."+i+".bMarkAsRead",oPref);
                         this.m_Log.Write("nsYahoo.js - loadPrefs - bMarkAsRead " + oPref.Value);
-                        if (oPref.Value) oData.bUnread=oPref.Value;
-                        
+                        if (oPref.Value != null) oData.bUnread=oPref.Value;
+
                         //use yahoo beta site
                         oPref.Value = null;
                         WebMailPrefAccess.Get("bool","yahoo.Account."+i+".bBeta",oPref);
-                        if (oPref.Value) oData.bBeta=oPref.Value;       
+                        if (oPref.Value != null) oData.bBeta=oPref.Value;
                     }
                 }
             }
-            
+
             if (!bFound) //get defaults
             {
                 this.m_Log.Write("nsYahoo - loadPrefs - Default Folders");
-                
+
                 //unread only
                 oPref.Value = null;
                 WebMailPrefAccess.Get("bool","yahoo.bDownloadUnread",oPref);
                 this.m_Log.Write("nsYahoo.js - loadPrefs - bDownloadUnread " + oPref.Value);
-                if (oPref.Value) oData.bUnread=oPref.Value;
-               
+                if (oPref.Value != null) oData.bUnread=oPref.Value;
+
                 //inbox
                 this.m_Log.Write("nsYahoo - loadPrefs - Default Folders - inbox");
                 oData.aszFolder.push("inbox");
-                
+
                 //spam
                 oPref.Value = null;
-                WebMailPrefAccess.Get("bool","yahoo.bUseJunkMail",oPref);    
-                if (oPref.Value)
+                WebMailPrefAccess.Get("bool","yahoo.bUseJunkMail",oPref);
+                if (oPref.Value != null)
                 {
                     this.m_Log.Write("nsYahoo - loadPrefs - Default Folders - spam");
                     oData.aszFolder.push("%40B%40Bulk");
@@ -406,28 +406,28 @@ nsYahoo.prototype =
         }
         catch(e)
         {
-             this.m_Log.DebugDump("nsYahoo.js: loadPrefs : Exception : " 
-                                              + e.name + 
-                                              ".\nError message: " 
+             this.m_Log.DebugDump("nsYahoo.js: loadPrefs : Exception : "
+                                              + e.name +
+                                              ".\nError message: "
                                               + e.message+ "\n"
                                               + e.lineNumber);
             return null;
         }
     },
-   
+
 /******************************************************************************/
 /***************** XPCOM  stuff ***********************************************/
 /******************************************************************************/
     QueryInterface : function (iid)
     {
-        if (!iid.equals(Components.interfaces.nsIPOPDomainHandler) 
-        	                      	&& !iid.equals(Components.interfaces.nsISupports))
+        if (!iid.equals(Components.interfaces.nsIPOPDomainHandler)
+                                      && !iid.equals(Components.interfaces.nsISupports))
             throw Components.results.NS_ERROR_NO_INTERFACE;
-            
+
         return this;
     }
 }
- 
+
 
 /******************************************************************************/
 /* FACTORY*/
@@ -436,10 +436,10 @@ var nsYahooFactory = new Object();
 nsYahooFactory.createInstance = function (outer, iid)
 {
     if (outer != null) throw Components.results.NS_ERROR_NO_AGGREGATION;
-    
+
     if (!iid.equals(nsYahooClassID) && !iid.equals(Components.interfaces.nsISupports))
         throw Components.results.NS_ERROR_INVALID_ARG;
-    
+
     return new nsYahoo();
 }
 
@@ -453,9 +453,9 @@ nsYahooModule.registerSelf = function(compMgr, fileSpec, location, type)
     compMgr = compMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
     compMgr.registerFactoryLocation(nsYahooClassID,
                                     "YahooComponent",
-                                    nsYahooContactID, 
+                                    nsYahooContactID,
                                     fileSpec,
-                                    location, 
+                                    location,
                                     type);
 }
 
@@ -466,7 +466,7 @@ nsYahooModule.unregisterSelf = function(aCompMgr, aFileSpec, aLocation)
     aCompMgr.unregisterFactoryLocation(nsYahooClassID, aFileSpec);
 }
 
- 
+
 nsYahooModule.getClassObject = function(compMgr, cid, iid)
 {
     if (!cid.equals(nsYahooClassID))
@@ -488,5 +488,5 @@ nsYahooModule.canUnload = function(compMgr)
 
 function NSGetModule(compMgr, fileSpec)
 {
-    return nsYahooModule; 
+    return nsYahooModule;
 }

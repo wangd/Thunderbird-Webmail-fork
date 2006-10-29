@@ -53,6 +53,7 @@ function HotmailWebDav(oResponseStream, oLog, oPrefData)
         {
             this.m_aszFolders.push(oPrefData.aszFolder[i]);
         }
+
         this.m_Log.Write("HotmailWebDav.js - Constructor - this.m_aszFolders "+ this.m_aszFolders);
 
         this.m_bStat = false;
@@ -171,8 +172,9 @@ HotmailWebDav.prototype =
                         var regExp = new RegExp("^"+mainObject.m_aszFolders[j]+"$","i");
                         mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - regExp : "+regExp );
 
-                        for (var i=0; i<aszFolderList.length; i++)
-                        {
+                        var i =0;
+                        var bFound = false;
+                        do{
                             var szFolderURL = aszFolderList[i].match(patternHotmailHref)[1];
                             mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - szFolderURL : "+szFolderURL );
                             var szFolderName = szFolderURL.match(patternHotmailFolderName)[1];
@@ -182,12 +184,14 @@ HotmailWebDav.prototype =
                                 szDisplayName =aszFolderList[i].match(patternHotmailDisplayName)[1];
                             mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - szDisplayName : "+szDisplayName );
 
-                            if (szFolderName.search(regExp)!=-1 || szDisplayName.search(regExp)!=-1)
+                            if (szFolderName.search(regExp)>=0 || szDisplayName.search(regExp)>=0)
                             {
+                                bFound = true;
                                 mainObject.m_aszFolderURLList.push(szFolderURL);
                                 mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - URL found : "+szFolderURL);
                             }
-                        }
+                            i++;
+                        }while (i<aszFolderList.length && !bFound)
                     }
 
                     //server response
@@ -434,7 +438,15 @@ HotmailWebDav.prototype =
             }
             catch(err)
             {
-                szFrom = rawData.match(patternHotmailFrom)[1];
+                var aFrom = rawData.match(patternHotmailFrom);
+                if (aFrom == null)
+                {
+                    szFrom ="";
+                }
+                else
+                {
+                    szFrom = rawData.match(patternHotmailFrom)[1];
+                }
             }
             oMSG.szFrom = szFrom;
 
