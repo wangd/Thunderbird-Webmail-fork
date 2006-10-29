@@ -843,6 +843,7 @@ HotmailScreenRipperBETA.prototype =
                     if (mainObject.m_bMarkAsRead)
                     {
                         mainObject.m_iStage++;
+                        mainObject.m_szMSGURI = mainObject.m_szMSGURI.replace(/mail.aspx/i,"ApplicationMainReach.aspx")
                         mainObject.m_HttpComms.setURI(mainObject.m_szMSGURI);
                         mainObject.m_HttpComms.setRequestMethod("GET");
                         var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);

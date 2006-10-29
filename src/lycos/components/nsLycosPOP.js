@@ -670,14 +670,14 @@ nsLycos.prototype =
                     mainObject.m_szMSG = mainObject.m_szMSG.replace(/^\./mg,"..");    //bit padding
                     mainObject.m_szMSG += "\r\n.\r\n";//msg end
 
-                    if (mainObject.m_prefData.bMarkAsRead)
+                    if (!mainObject.m_prefData.bMarkAsRead)
                     {
                         //mark email as read
                         mainObject.m_HttpComms.setContentType("text/xml");
                         var szUri = httpChannel.URI.spec;
                         mainObject.m_HttpComms.setURI(szUri);
                         mainObject.m_HttpComms.setRequestMethod("PROPPATCH");
-                        mainObject.m_HttpComms.addData(kLycosReadSchema);
+                        mainObject.m_HttpComms.addData(kLycosUnReadSchema);
                         var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);
                         mainObject.m_iStage++;
                      }
@@ -976,13 +976,10 @@ nsLycos.prototype =
                         if (oPref.Value)
                         {
                             var aszFolders = oPref.Value.split("\r");
-                            if (aszFolders.length>0)
+                            for (j=0; j<aszFolders.length; j++)
                             {
-                                for (j=0; j<aszFolders.length; j++)
-                                {
-                                    this.m_Log.Write("nsLycos - loadPRefs - aszFolders[j] " + aszFolders[j]);
-                                    oData.aszFolder.push(encodeURIComponent(aszFolders[j]));
-                                }
+                                this.m_Log.Write("nsLycos - loadPRefs - aszFolders[j] " + aszFolders[j]);
+                                oData.aszFolder.push(encodeURIComponent(aszFolders[j]));
                             }
                         }
 
