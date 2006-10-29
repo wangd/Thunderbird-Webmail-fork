@@ -5,20 +5,20 @@
     <RDF:Description about="urn:mozilla:extension:{10e6e940-8a9c-11d9-9669-0800200c9a66}">
         <em:updates>
             <RDF:Seq>
-                <RDF:li resource="urn:mozilla:extension:{10e6e940-8a9c-11d9-9669-0800200c9a66}:1.0.1"/>
+                <RDF:li resource="urn:mozilla:extension:{10e6e940-8a9c-11d9-9669-0800200c9a66}:1.0.2"/>
             </RDF:Seq>
         </em:updates>
     </RDF:Description>
 
-    <RDF:Description about="urn:mozilla:extension:{10e6e940-8a9c-11d9-9669-0800200c9a66}:1.0.1">
-        <em:version>1.0.1</em:version>
+    <RDF:Description about="urn:mozilla:extension:{10e6e940-8a9c-11d9-9669-0800200c9a66}:1.0.2">
+        <em:version>1.0.2</em:version>
         <em:targetApplication>
             <Description>
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id><!-- Thunderbird updates -->
                 <em:minVersion>1.4</em:minVersion>
-                <em:maxVersion>2.0a1</em:maxVersion>
-                <em:updateLink>http://download.mozdev.org/webmail/lycos-1-0-1.xpi</em:updateLink>
-                <em:updateHash>sha256:92f1812f8d2a1fda3851ca48e727f33fef11aa356d90426c27938457e13b7cd1</em:updateHash>
+                <em:maxVersion>2.0</em:maxVersion>
+                <em:updateLink>http://download.mozdev.org/webmail/lycos-1-0-2.xpi</em:updateLink>
+                <em:updateHash>sha256:d6e44c33554e3c3dd35d050c99bc46f4309444f8135362d7bacaa0b27a1eb836</em:updateHash>
           </Description>
         </em:targetApplication>
 
