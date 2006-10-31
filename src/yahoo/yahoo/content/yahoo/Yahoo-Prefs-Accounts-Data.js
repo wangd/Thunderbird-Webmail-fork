@@ -19,8 +19,8 @@ PrefData.prototype.bBeta = false;
 
 PrefData.prototype.bReUseSession = true;
 
-PrefData.prototype.iProcessDelay = 10; 
-                
+PrefData.prototype.iProcessDelay = 10;
+
 PrefData.prototype.iProcessAmount = 25;
 
 PrefData.prototype.bUseShortID = false;

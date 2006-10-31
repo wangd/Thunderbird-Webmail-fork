@@ -342,7 +342,7 @@ nsYahoo.prototype =
                         oPref.Value = null;
                         WebMailPrefAccess.Get("bool","yahoo.Account."+i+".bUseJunkMail",oPref);
                         this.m_Log.Write("nsYahoo.js - loadPrefs - bUseJunkMail " + oPref.Value);
-                        if (oPref.Value != null)  oData.aszFolder.push("%40B%40Bulk");
+                        if (oPref.Value == true)  oData.aszFolder.push("%40B%40Bulk");
 
 
                         //get folders
@@ -368,7 +368,7 @@ nsYahoo.prototype =
                         oPref.Value = null;
                         WebMailPrefAccess.Get("bool","yahoo.Account."+i+".bMarkAsRead",oPref);
                         this.m_Log.Write("nsYahoo.js - loadPrefs - bMarkAsRead " + oPref.Value);
-                        if (oPref.Value != null) oData.bUnread=oPref.Value;
+                        if (oPref.Value != null) oData.bMarkAsRead=oPref.Value;
 
                         //use yahoo beta site
                         oPref.Value = null;
@@ -395,7 +395,7 @@ nsYahoo.prototype =
                 //spam
                 oPref.Value = null;
                 WebMailPrefAccess.Get("bool","yahoo.bUseJunkMail",oPref);
-                if (oPref.Value != null)
+                if (oPref.Value == true)
                 {
                     this.m_Log.Write("nsYahoo - loadPrefs - Default Folders - spam");
                     oData.aszFolder.push("%40B%40Bulk");
