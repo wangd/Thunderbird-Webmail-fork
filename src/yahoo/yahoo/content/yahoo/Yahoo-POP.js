@@ -907,24 +907,37 @@ YahooPOP.prototype =
             mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - uri : " + szUri);
 
             //Content-Type: text/html  == very bad
-            var szContetnType =  httpChannel.getResponseHeader("Content-Type");
-            mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - szContetnType "+szContetnType);
-            if (szContetnType.search(/text\/html/i)!=-1)
+            try
             {
-                mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - error download msg");
-                if (mainObject.m_iMSGCount == 2)
+                var szContetnType =  httpChannel.getResponseHeader("Content-Type");
+                mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - szContetnType "+szContetnType);
+                if (szContetnType.search(/text\/html/i)!=-1)
                 {
-                    throw new Error("download failed");
+                    mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - error download msg ");
+                    if (mainObject.m_iMSGCount == 2)
+                    {
+                        throw new Error("download failed");
+                    }
+                    else//try again
+                    {
+                        mainObject.m_iMSGCount++;
+                        mainObject.m_HttpComms.setURI(szUri);
+                        mainObject.m_HttpComms.setRequestMethod("GET");
+                        var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);
+                        if (!bResult) throw new Error("httpConnection returned false");
+                        return;
+                    }
                 }
-                else//try again
-                {
-                    mainObject.m_iMSGCount++;
-                    mainObject.m_HttpComms.setURI(szUri);
-                    mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    return;
-                }
+            }
+            catch(e)
+            {
+                mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - download : Exception : "
+                                          + err.name
+                                          + ".\nError message: "
+                                          + err.message+ "\n"
+                                          + err.lineNumber);
+
+                if ( mainObject.m_iMSGCount == 2) throw new Error("download error ran out of retries")
             }
             mainObject.m_iMSGCount = 0;
 
