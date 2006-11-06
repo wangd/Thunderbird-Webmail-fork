@@ -22,4 +22,4 @@
 <!ENTITY Enable.AccessKey "E">
 <!ENTITY Status.Label "状态">
 <!ENTITY Status.AccessKey "u">
-<!ENTITY StatusBox.size "宽度: 6em;">
+<!ENTITY StatusBox.size "width: 6em;">

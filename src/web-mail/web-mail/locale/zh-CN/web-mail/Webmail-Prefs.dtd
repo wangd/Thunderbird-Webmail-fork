@@ -3,4 +3,4 @@
 <!ENTITY Domains.Panel.szTitle "域名">
 <!ENTITY Logging.Panel.szTitle "日志">
 <!ENTITY General.Panel.szTitle "常规">
-<!ENTITY Window.size "宽度: 46em; 高度: 37em">
+<!ENTITY Window.size "width: 46em; height: 37em">
