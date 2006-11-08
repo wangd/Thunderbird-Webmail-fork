@@ -929,7 +929,7 @@ YahooPOP.prototype =
                     }
                 }
             }
-            catch(e)
+            catch(err)
             {
                 mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - download : Exception : "
                                           + err.name
