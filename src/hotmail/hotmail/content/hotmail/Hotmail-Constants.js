@@ -25,7 +25,7 @@ const patternHotmailMsgCount = /<D:visiblecount>(.*?)<\/D:visiblecount>/;
 const patternHotmailTrash = /<hm:deleteditems>(.*?)<\/hm:deleteditems>/;
 const patternHotmailFolderName = /folders\/(.*?)\//i;
 
-const UserAgent = "1.5.0 on Mac OS X ? Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.0.4) Gecko/20060613 Camino/1.0.2";
+const UserAgent = "1.5.0 on Mac OS X Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.0.4) Gecko/20061213 Camino/1.0.2";
 
 /************************Screen Rippper constants******************************/
 const patternHotmailForm = /<form.*?>[\S\s]*?<\/form>/;
@@ -70,12 +70,17 @@ const patternHotmailSRFrom =/<tr[\S\s]*name="(.*?)"><td>/i;
 const patternHotmailJSRefresh = /<html><head><script.*?>.*?\.location\.replace.*?\("(.*?)"\).*?<\/script>.*?<\/html>/i;
 const patternHotmailLogOut = /<.*?"(.*?logout.aspx.*?)".*?>/gi;
 const patternHotmailViewState = /<input.*?id="__VIEWSTATE".*?value="(.*?)".*?\/>/i;
-const patternHotmailInbox = /<a href="(.*?mail.aspx\?Control=Inbox)".*?>/i;
+const patternHotmailInboxFolderID = /<a href="(.*?Control=Inbox&FolderID.*?1)">/i;
+const patternHotmailJunkFolderID = /<a href="(.*?Control=Inbox&FolderID.*?5)">/i;
+const patternHotmailFolderManager = /<a href="(.*?Control=ManageFolders.*?)">/i;
+const patternHotmailFolderList = /<td class="dManageFoldersFolderNameCol"><a.*?><\/td>/img;
+const patternHotmailFolderTitle = /<a.*?>(.*?)<\/a>/i;
+const patternHotmailFolderURL = /<a.*?"(.*?)">.*?<\/a>/i;
+const patternHotmailFolderOption = /<option value=.*?>.*?<\/option>/ig;
 const patternHotmailInboxContent = /<div id="inbox">/ig;
 const patternHotmailInboxTable =/<table class="dItemListContentTable".*?>[\s\S]*?<\/table>/im;
-const patternHotmailInboxNoContent =/<div.*?ContentNoMsg.*?>/ig
-const patternHotmailCompose =/NewMessageGo[\s\S]*?document.location.href="(.*?)"/i;
-const patternHotmailJunkFolderID = /<a href="(.*?mail.aspx\?Control=Inbox&FolderID.*?5)">/i;
+const patternHotmailInboxNoContent =/<div.*?ContentNoMsg.*?>/ig;
+const patternHotmailCompose = /NewMessageGo[\s\S]*?document.location.href="(.*?)"/i;
 const patternHotmailNextPage = /<div class="dItemListHeaderNav">[\s\S]*?<a href="(.*?InboxPage=next&Page=[\d]*?)">/i;
 const patternHotmailMailBoxTable = /<table.*?ContentTable".*?>[\s\S]*?<\/table>/ig;
 const patternHotmailMailBoxTableRow = /<tr>[\s\S]*?<\/tr>/ig;
@@ -86,7 +91,3 @@ const patternHotmailEmailSubject = /<td.*?dInboxContentTableTitleCol.*?>.*?<a hr
 const patternHotmailEmailDate = /<td.*?dInboxContentTableDateCol.*?>(.*?)<\/td>/i;
 const patternHotmailEMailID =/ReadMessageID=(.*?)&/i;
 const patternHotmailFolderID = /FolderID=(.*?)$/i;
-const patternHotmailFolderList = /select name="InboxMoveMessage"[\s\S]*?option value.*?>.*?<\/option>[\s\S]*?<\/select>/img;
-const patternHotmailFolderOption = /<option value=.*?>.*?<\/option>/ig;
-const patternHotmailFolderHref = /<option value="(.*?)">.*?<\/option>/i;
-const patternHotmailTitle = /<option value=.*?>(.*?)<\/option>/i;

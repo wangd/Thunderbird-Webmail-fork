@@ -28,7 +28,7 @@ function nsHotmail()
 
         if (typeof kHotmailConstants == "undefined")
         {
-            this.m_HotmailLog.Write("nsLycos.js - Constructor - loading constants");
+            this.m_HotmailLog.Write("nsHotmail.js - Constructor - loading constants");
             scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-Constants.js");
         }
 
