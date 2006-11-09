@@ -42,7 +42,6 @@ function YahooPOP(oResponseStream, oLog, oPrefs)
         this.m_iMSGCount = 0;
         this.m_szMsgID = null;
         this.m_szBox = null;
-        this.m_bJunkFolder = false;
         this.m_iID =0;
         this.m_aLoginForm = null;
         this.m_bReEntry = false;
@@ -50,6 +49,7 @@ function YahooPOP(oResponseStream, oLog, oPrefs)
         this.m_aMsgDataStore = new Array();
         this.m_aDeleteData = new Array();
         this.m_aszFolderURLList = new Array();
+        this.m_bUnread = true;
 
         this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"]
                                           .getService(Components.interfaces.nsISessionManager);
@@ -500,13 +500,15 @@ YahooPOP.prototype =
                         {
                             var data = new YahooMSG();
 
+                            data.bUnread = (aMsgRows[i].search(PatternYahooUnRead)!=-1) ? true : false;
+                            mainObject.m_Log.Write("YahooPOP.js - mailBoxOnloadHandler -  data.bUnread -" +  data.bUnread);
+
                             //get msg info
                             var szMsgID =  aMsgRows[i].match(patternYahooMsgID)[1];
                             mainObject.m_Log.Write("YahooPOP.js - mailBoxOnloadHandler - msg id :" + i + " " +szMsgID);
                             data.szMSGUri = szMsgID;
                             data.szDeleteUri = mainObject.m_szDeleteURL;
                             data.aData = mainObject.m_aDeleteData;
-                            data.bJunkFolder = mainObject.m_bJunkChecked;
 
                             //get msg size
                             var aMsgSize = aMsgRows[i].match(patternYahooMsgSize);
@@ -736,10 +738,12 @@ YahooPOP.prototype =
             }
             this.m_Log.Write("YahooPOP.js - getHeaders - msg box" + this.m_szBox);
 
+            this.m_bUnread = oMSGData.bUnread;
+            this.m_Log.Write("YahooPOP.js - getHeaders - msg box" + this.m_bUnread);
+
             //get headers
             var szDest = this.m_szLocationURI + this.m_szMsgID.match(/.*?&/) + this.m_szBox +"&bodyPart=HEADER";
             this.m_Log.Write("YahooPOP.js - getHeaders - url - "+ szDest);
-            this.m_bJunkFolder = oMSGData.bJunkFolder;
             this.m_iStage = 0;
 
             //get msg from yahoo
@@ -791,31 +795,40 @@ YahooPOP.prototype =
                     mainObject.m_szHeader = mainObject.m_szHeader.replace(/^\./mg,"..");    //bit padding
                     mainObject.m_szHeader += ".\r\n";//msg end
 
-                    var oMSGData = mainObject.m_aMsgDataStore[ mainObject.m_iID];
-                    mainObject.m_szMsgID = oMSGData.szMSGUri;
-                    var szPath = mainObject.m_szLocationURI + oMSGData.szDeleteUri;
-                    mainObject.m_Log.Write("YahooPOP.js - headerOnloadHandler - url - "+ szPath);
-
-                    for(i=0; i<oMSGData.aData.length; i++ )
+                    if (mainObject.m_bUnread)
                     {
-                        var oData = oMSGData.aData[i];
-                        if (oData.szName.search(/^DEL$/i)!=-1)
-                            oData.szValue = "";
-                        else if (oData.szName.search(/FLG/i)!=-1)
-                            oData.szValue = 1;
-                        else if (oData.szName.search(/flags/i)!=-1)
-                            oData.szValue ="unread";
+                        var oMSGData = mainObject.m_aMsgDataStore[ mainObject.m_iID];
+                        mainObject.m_szMsgID = oMSGData.szMSGUri;
+                        var szPath = mainObject.m_szLocationURI + oMSGData.szDeleteUri;
+                        mainObject.m_Log.Write("YahooPOP.js - headerOnloadHandler - url - "+ szPath);
 
-                        mainObject.m_HttpComms.addValuePair(oData.szName, oData.szValue);
+                        for(i=0; i<oMSGData.aData.length; i++ )
+                        {
+                            var oData = oMSGData.aData[i];
+                            if (oData.szName.search(/^DEL$/i)!=-1)
+                                oData.szValue = "";
+                            else if (oData.szName.search(/FLG/i)!=-1)
+                                oData.szValue = 1;
+                            else if (oData.szName.search(/flags/i)!=-1)
+                                oData.szValue ="unread";
+
+                            mainObject.m_HttpComms.addValuePair(oData.szName, oData.szValue);
+                        }
+                        mainObject.m_HttpComms.addValuePair("Mid", oMSGData.szMSGUri.match(PatternYahooID)[1]);
+
+                        //send request
+                        mainObject.m_HttpComms.setURI(szPath);
+                        mainObject.m_HttpComms.setRequestMethod("POST");
+                        var bResult = mainObject.m_HttpComms.send(mainObject.headerOnloadHandler, mainObject);
+                        mainObject.m_iStage ++;
+                        if (!bResult) throw new Error("httpConnection returned false");
                     }
-                    mainObject.m_HttpComms.addValuePair("Mid", oMSGData.szMSGUri.match(PatternYahooID)[1]);
-
-                    //send request
-                    mainObject.m_HttpComms.setURI(szPath);
-                    mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.headerOnloadHandler, mainObject);
-                    mainObject.m_iStage ++;
-                    if (!bResult) throw new Error("httpConnection returned false");
+                    else
+                    {
+                        var  szServerResponse = "+OK " +mainObject.m_szHeader.length + "\r\n";
+                        szServerResponse += mainObject.m_szHeader
+                        mainObject.serverComms(szServerResponse);
+                    }
                 break;
 
                 case 1: //marked as unread
@@ -867,7 +880,6 @@ YahooPOP.prototype =
             //get headers
             var szDest = this.m_szLocationURI + this.m_szMsgID.match(/.*?&/) + this.m_szBox +"&bodyPart=HEADER";
             this.m_Log.Write("YahooPOP.js - getMessage - url - "+ szDest);
-            this.m_bJunkFolder = oMSGData.bJunkFolder;
             this.m_iStage = 0;
 
             //get msg from yahoo

@@ -16,7 +16,7 @@ YahooMSG.prototype.szFolder = null;
 
 YahooMSG.prototype.szID = null;
 
-
+YahooMSG.prototype.bUnread = true;
 
 
 function YahooData()
