@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<project name="yahoo" default="createxpi">
+    <property name="VERSION" value="1-1-9"/>
+
+    <delete file="yahoo-${VERSION}.xpi"/>
+    <delete file="yahoo.jar"/>
+
+    <target name="createjar">
+        <zip destfile="yahoo.jar" compress="false">
+            <fileset dir="yahoo">
+                <include name="locale/**" />
+                <include name="skin/**"/>
+                <include name="content/**"/>
+                <exclude name="**/*.db"/>
+            </fileset>
+        </zip>
+    </target>
+
+    <target name="createxpi" depends="createjar">
+        <zip destfile="yahoo-${VERSION}.xpi" >
+            <zipfileset dir="." includes="yahoo.jar" prefix="chrome"/>
+            <zipfileset dir="components" prefix="components" includes="**" excludes="*.idl *.bat"/>
+            <zipfileset dir="defaults" prefix="defaults" includes="**"/>
+            <zipfileset dir="." includes="install.rdf"/>
+            <zipfileset dir="." includes="chrome.manifest"/>
+            <zipfileset dir="." includes="domains.txt"/>
+        </zip>
+    </target>
+
+</project>
