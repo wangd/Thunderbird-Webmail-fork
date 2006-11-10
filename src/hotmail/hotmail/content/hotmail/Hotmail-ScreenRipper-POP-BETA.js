@@ -403,8 +403,8 @@ HotmailScreenRipperBETA.prototype =
 
             this.m_iStage = 0;
             var oFolder = this.m_aszFolderURLList.shift();
-            this.szFolderName = oFolder.szFolderName;
-            this.m_Log.Write("Hotmail-SR-BETAR - getNumMessages - mail box url " + oFolder.szURI);
+            this.m_szFolderName = oFolder.szFolderName;
+            this.m_Log.Write("Hotmail-SR-BETAR - getNumMessages - mail box "+this.m_szFolderName + "  url " + oFolder.szURI);
             this.m_HttpComms.setURI(oFolder.szURI);
             this.m_HttpComms.setRequestMethod("GET");
 
@@ -500,7 +500,7 @@ HotmailScreenRipperBETA.prototype =
                 {
                     var oFolder = mainObject.m_aszFolderURLList.shift();
                     mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler - :" + oFolder.szURI);
-                    mainObject.m_szFolderName = oFolder.szName;
+                    mainObject.m_szFolderName = oFolder.szFolderName;
                     mainObject.m_iPageCount = 0; //reset array
                     mainObject.m_aszPageURLS = new Array;
 
@@ -735,7 +735,7 @@ HotmailScreenRipperBETA.prototype =
             var oMSG = this.m_aMsgDataStore[lID-1];
 
             var szHeaders = "X-WebMail: true\r\n";
-            szHeaders += "X-Folder: " +oMSG.szFolder + "\r\n";
+            szHeaders += "X-Folder: " +oMSG.szFolderName + "\r\n";
             szHeaders += "To: "+ oMSG.szTo +"\r\n";
             szHeaders += "From: "+ oMSG.szFrom +"\r\n";
             szHeaders += "Subject: "+ oMSG.szSubject +"\r\n";
@@ -787,7 +787,7 @@ HotmailScreenRipperBETA.prototype =
             var szMsgURI = szURL + "GetMessageSource.aspx?msgid=" + szMSGID;
             this.m_Log.Write("Hotmail-SR-BETAR - getMessage - msg uri" + szMsgURI);
 
-            this.m_szFolderName = oMSG.szFolder;
+            this.m_szFolderName = oMSG.szFolderName;
             this.m_iStage = 0;
 
             this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
