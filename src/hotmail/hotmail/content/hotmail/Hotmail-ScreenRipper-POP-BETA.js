@@ -20,7 +20,6 @@ function HotmailScreenRipperBETA(oResponseStream, oLog, oPrefData)
         this.m_szMailboxURI = null;
         this.m_szLocationURI = null;
         this.m_szJunkFolderURI = null;
-        this.m_szDelete = null;
         this.m_aMsgDataStore = new Array();
         this.m_szHomeURI = null;
         this.m_iTotalSize = 0;
@@ -444,14 +443,6 @@ HotmailScreenRipperBETA.prototype =
 
             mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
 
-            //delete uri
-            if (!mainObject.m_szDelete)
-            {
-                mainObject.m_szDelete = szResponse.match(patternHotmailAction)[1];
-                mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler - m_szDeleteURI : " +mainObject.m_szDelete);
-            }
-
-
             if (szResponse.search(patternHotmailInboxContent)==-1)
                 throw new Error("Error Parsing Web Page");
 
@@ -850,7 +841,7 @@ HotmailScreenRipperBETA.prototype =
                     if (mainObject.m_bMarkAsRead)
                     {
                         mainObject.m_iStage++;
-                        mainObject.m_szMSGURI = mainObject.m_szMSGURI.replace(/mail.aspx/i,"ApplicationMainReach.aspx")
+                      //  mainObject.m_szMSGURI = mainObject.m_szMSGURI.replace(/mail.aspx/i,"ApplicationMainReach.aspx")
                         mainObject.m_HttpComms.setURI(mainObject.m_szMSGURI);
                         mainObject.m_HttpComms.setRequestMethod("GET");
                         var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);
@@ -905,15 +896,18 @@ HotmailScreenRipperBETA.prototype =
             this.m_HttpComms.setRequestMethod("POST");
 
 
-            var IOService = Components.classes["@mozilla.org/network/io-service;1"];
-            IOService = IOService.getService(Components.interfaces.nsIIOService);
-            var nsIURI = IOService.newURI(oMSG.szMSGUri, null, null);
-            var szDirectory = nsIURI.QueryInterface(Components.interfaces.nsIURL).directory;
-            this.m_Log.Write("Hotmail-SR-POP-BETA - loginOnloadHandler - directory : " +szDirectory);
+//            var IOService = Components.classes["@mozilla.org/network/io-service;1"];
+//            IOService = IOService.getService(Components.interfaces.nsIIOService);
+//            var nsIURI = IOService.newURI(oMSG.szMSGUri, null, null);
+//            var szDirectory = nsIURI.QueryInterface(Components.interfaces.nsIURL).directory;
+//            this.m_Log.Write("Hotmail-SR-POP-BETA - deleteMessage - directory : " +szDirectory);
             var szFolderID = oMSG.szMSGUri.match(patternHotmailFolderID)[1];
-            var szURL = this.removeHTML(this.m_szLocationURI+szDirectory+this.m_szDelete+"&FolderID="+szFolderID);
-            this.m_Log.Write("Hotmail-SR-POP-BETA - loginOnloadHandler - szURL : " +szURL);
-            this.m_HttpComms.setURI(szURL);
+            var szBaseURL = oMSG.szMSGUri.match(/^(.*?\?)/)[1];
+            this.m_Log.Write("Hotmail-SR-POP-BETA - deleteMessage - szBaseURL : " +szBaseURL);
+            szBaseURL = szBaseURL+"Control=Inbox&FolderID="+szFolderID;
+            this.m_Log.Write("Hotmail-SR-POP-BETA - deleteMessage - szURL : " +szBaseURL);
+
+            this.m_HttpComms.setURI(szBaseURL);
             this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             this.m_HttpComms.addValuePair("__VIEWSTATE",oMSG.szStatView);
             this.m_HttpComms.addValuePair("InboxDeleteMessages","Delete");
