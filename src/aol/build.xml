@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<project name="aol" default="createxpi">
+    <property name="VERSION" value="1-0-3"/>
+
+    <delete file="hotmail-${VERSION}.xpi"/>
+    <delete file="hotmail.jar"/>
+
+    <target name="createjar">
+        <zip destfile="aol.jar" compress="false">
+            <fileset dir="aol">
+                <include name="locale/**" />
+                <include name="skin/**"/>
+                <include name="content/**"/>
+                <exclude name="**/*.db"/>
+            </fileset>
+        </zip>
+    </target>
+
+    <target name="createxpi" depends="createjar">
+        <zip destfile="aol-${VERSION}.xpi" >
+            <zipfileset dir="." includes="aol.jar" prefix="chrome"/>
+            <zipfileset dir="components" prefix="components" includes="**" excludes="*.idl *.bat"/>
+            <zipfileset dir="defaults" prefix="defaults" includes="**"/>
+            <zipfileset dir="." includes="install.rdf"/>
+            <zipfileset dir="." includes="chrome.manifest"/>
+        </zip>
+    </target>
+
+</project>
