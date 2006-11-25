@@ -119,10 +119,10 @@ nsYahooSMTP.prototype =
     {
         try
         {
-            this.m_Log.Write("nsHotmailSMTP.js - rawMSG - START");
-            this.m_Log.Write("nsHotmailSMTP.js - rawMSG from " +this.m_szFrom );
-            this.m_Log.Write("nsHotmailSMTP.js - rawMSG to " +this.m_aszTo );
-            this.m_Log.Write("nsHotmailSMTP.js - rawMSG " + szEmail);
+            this.m_Log.Write("nsYahooSMTP.js - rawMSG - START");
+            this.m_Log.Write("nsYahooSMTP.js - rawMSG from " +this.m_szFrom );
+            this.m_Log.Write("nsYahooSMTP.js - rawMSG to " +this.m_aszTo );
+            this.m_Log.Write("nsYahooSMTP.js - rawMSG " + szEmail);
 
             var bResult = this.m_CommMethod.rawMSG(this.m_szFrom, this.m_aszTo, szEmail);
 
