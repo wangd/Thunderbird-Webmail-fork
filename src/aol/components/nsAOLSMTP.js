@@ -146,7 +146,7 @@ nsAOLSMTP.prototype =
 
                     if (this.m_szHomeURI) //get home page
                     {
-                        this.m_iStage =5;
+                        this.m_iStage =4;
                         this.m_bReEntry = true;
                         this.m_HttpComms.setURI(this.m_szHomeURI);
                     }
@@ -187,7 +187,7 @@ nsAOLSMTP.prototype =
             mainObject.m_Log.Write("AOLSMTP.js - loginOnloadHandler - status :" +httpChannel.responseStatus );
             if (httpChannel.responseStatus != 200)
             {
-                if (mainObject.m_iStage!=5)
+                if (mainObject.m_iStage!=4)
                     throw new Error("return status " + httpChannel.responseStatus);
             }
 
@@ -275,33 +275,21 @@ nsAOLSMTP.prototype =
                     mainObject.m_szHostURL = szResponse.match(patternAOLHost)[1];
                     if (mainObject.m_szHostURL == null)
                         throw new Error("error parsing AOL login web page");
+
+                    try
+                    {
+                        var szCookies =  httpChannel.getResponseHeader("Set-Cookie");
+                        mainObject.m_szUserId = szCookies.match(patternAOLUserID)[1];
+                        mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - m_szUserId " +mainObject.m_szUserId);
+                    }
+                    catch(e){}
+
                     mainObject.m_SuccessPath = szResponse.match(patternAOLPath)[1];
-                    mainObject.m_Log.Write("AOLSMTP.js - loginOnloadHandler - m_SuccessPath " +mainObject.m_SuccessPath);
-                    var szCheck = szResponse.match(patternAOLHostCheck)[1];
-                    var szURL = "http://" + mainObject.m_szHostURL + szCheck;
-
-                    mainObject.m_HttpComms.setURI(szURL);
-                    mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
-                break;
-
-
-                case 4://get mail box
-                    mainObject.m_szHostURL = szResponse.match(patternAOLTarget)[1];
-                    mainObject.m_Log.Write("AOLSMTP.js - loginOnloadHandler - m_szHostURL " +mainObject.m_szHostURL);
-                    if (mainObject.m_szHostURL == null)
-                        throw new Error("error parsing AOL login web page");
-
+                    mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - m_SuccessPath " +mainObject.m_SuccessPath);
                     var szURL = "http://" + mainObject.m_szHostURL + mainObject.m_SuccessPath;
                     mainObject.m_szHomeURI = szURL;
 
-                    var szCookies =  httpChannel.getResponseHeader("Set-Cookie");
-                    mainObject.m_szUserId = szCookies.match(patternAOLUserID)[1];
-                    mainObject.m_Log.Write("AOLSMTP.js - loginOnloadHandler - m_szUserId " +mainObject.m_szUserId);
-
-                    mainObject.m_HttpComms.setURI(szURL);
+                    mainObject.m_HttpComms.setURI(mainObject.m_szHomeURI);
                     mainObject.m_HttpComms.setRequestMethod("GET");
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
                     if (!bResult) throw new Error("httpConnection returned false");
@@ -309,7 +297,8 @@ nsAOLSMTP.prototype =
                 break;
 
 
-                case 5://get urls
+
+                case 4://get urls
                     if(szResponse.search(patternAOLLogout)==-1)
                     {
                         if (mainObject.m_bReEntry)
@@ -326,8 +315,17 @@ nsAOLSMTP.prototype =
                             throw new Error("error logging in");
                     }
 
+                    try
+                    {
+                        var szCookies =  httpChannel.getResponseHeader("Set-Cookie");
+                        mainObject.m_szUserId = szCookies.match(patternAOLUserID)[1];
+                        mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - m_szUserId " +mainObject.m_szUserId);
+                    }
+                    catch(e){}
+
                     mainObject.m_szVersion = szResponse.match(patternAOLVersion)[1];
                     mainObject.m_Log.Write("AOLSMTP.js - loginOnloadHandler - szVersion " +mainObject.m_szVersion);
+
                     var szDir = mainObject.m_SuccessPath.match(patternAOLSucessPath)[1];
                     mainObject.m_Log.Write("AOLSMTP.js - loginOnloadHandler - szDir " +szDir);
                     mainObject.m_szLocation = "http://" + mainObject.m_szHostURL + szDir + "rpc/" ;

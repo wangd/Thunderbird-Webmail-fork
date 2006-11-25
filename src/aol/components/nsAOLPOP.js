@@ -137,7 +137,7 @@ nsAOL.prototype =
 
                     if (this.m_szHomeURI) //get home page
                     {
-                        this.m_iStage =5;
+                        this.m_iStage =4;
                         this.m_bReEntry = true;
                         this.m_HttpComms.setURI(this.m_szHomeURI);
                     }
@@ -265,44 +265,34 @@ nsAOL.prototype =
                     mainObject.m_iStage++;
                 break;
 
+
                 case 3://get host
                     mainObject.m_szHostURL = szResponse.match(patternAOLHost)[1];
                     if (mainObject.m_szHostURL == null)
                         throw new Error("error parsing AOL login web page");
+
+                    try
+                    {
+                        var szCookies =  httpChannel.getResponseHeader("Set-Cookie");
+                        mainObject.m_szUserId = szCookies.match(patternAOLUserID)[1];
+                        mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - m_szUserId " +mainObject.m_szUserId);
+                    }
+                    catch(e){}
+
                     mainObject.m_SuccessPath = szResponse.match(patternAOLPath)[1];
                     mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - m_SuccessPath " +mainObject.m_SuccessPath);
-                    var szCheck = szResponse.match(patternAOLHostCheck)[1];
-                    var szURL = "http://" + mainObject.m_szHostURL + szCheck;
-
-                    mainObject.m_HttpComms.setURI(szURL);
-                    mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
-                break;
-
-
-                case 4://get mail box
-                    mainObject.m_szHostURL = szResponse.match(patternAOLTarget)[1];
-                    mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - m_szHostURL " +mainObject.m_szHostURL);
-                    if (mainObject.m_szHostURL == null)
-                        throw new Error("error parsing AOL login web page");
-
                     var szURL = "http://" + mainObject.m_szHostURL + mainObject.m_SuccessPath;
                     mainObject.m_szHomeURI = szURL;
 
-                    var szCookies =  httpChannel.getResponseHeader("Set-Cookie");
-                    mainObject.m_szUserId = szCookies.match(patternAOLUserID)[1];
-                    mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - m_szUserId " +mainObject.m_szUserId);
-
-                    mainObject.m_HttpComms.setURI(szURL);
+                    mainObject.m_HttpComms.setURI(mainObject.m_szHomeURI);
                     mainObject.m_HttpComms.setRequestMethod("GET");
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
 
-                case 5://get urls
+
+                case 4://get urls
                     if(szResponse.search(patternAOLLogout)==-1)
                     {
                         if (mainObject.m_bReEntry)
@@ -318,6 +308,14 @@ nsAOL.prototype =
                         else
                             throw new Error("error logging in");
                     }
+
+                    try
+                    {
+                        var szCookies =  httpChannel.getResponseHeader("Set-Cookie");
+                        mainObject.m_szUserId = szCookies.match(patternAOLUserID)[1];
+                        mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - m_szUserId " +mainObject.m_szUserId);
+                    }
+                    catch(e){}
 
                     mainObject.m_szVersion = szResponse.match(patternAOLVersion)[1];
                     mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - szVersion " +mainObject.m_szVersion);
@@ -358,7 +356,8 @@ nsAOL.prototype =
             //will always download from inbox
             var szURL = this.m_szLocation + "GetMessageList.aspx?page=1";
             var szData = "previousFolder=&stateToken=&newMailToken=&"
-            szData += "version="+ this.m_szVersion +"&user="+ this.m_szUserId;
+            szData += "version="+ this.m_szVersion;
+            szData += "&user=" + this.m_szUserId;
             var szInbox = szURL + "&folder=Inbox&" + szData;
             this.m_Log.Write("AOLPOP.js - getNumMessages - szInboxURL " + szInbox);
 
@@ -411,7 +410,8 @@ nsAOL.prototype =
 
                 var szURL = mainObject.m_szLocation + "GetMessageList.aspx?page=1";
                 var szData = "previousFolder=&stateToken=&newMailToken=&"
-                szData += "version="+ mainObject.m_szVersion +"&user="+ mainObject.m_szUserId;
+                szData += "version="+ mainObject.m_szVersion;
+                szData += "&user="+ mainObject.m_szUserId;
 
                 for (var i=0; i<mainObject.m_prefData.aszFolder.length; i++)
                 {
@@ -587,7 +587,8 @@ nsAOL.prototype =
                 //will always download from inbox
                 var szURL = this.m_szLocation + "GetMessageList.aspx?page=1";
                 var szData = "previousFolder=&stateToken=&newMailToken=&"
-                szData += "version="+ this.m_szVersion +"&user="+ this.m_szUserId;
+                szData += "version="+ this.m_szVersion;
+                szData += "&user="+ this.m_szUserId;
                 var szInbox = szURL + "&folder=Inbox&" + szData;
                 this.m_Log.Write("AOL.js - getMessageSizes - szInboxURL " + szInbox);
 
@@ -707,8 +708,8 @@ nsAOL.prototype =
             this.iID = oMSG.iID;
             var szURL = this.m_szLocation.replace(/rpc/,"Mail") + "rfc822.aspx?";
             szURL += "folder=" + this.m_szFolder +"&";
-            szURL += "uid=" + oMSG.iID +"&";
-            szURL += "user="+ this.m_szUserId;
+            szURL += "uid=" + oMSG.iID;
+            szURL += "&user="+ this.m_szUserId;
 
             this.m_iStage = 0;
             this.m_HttpComms.setURI(szURL);
@@ -768,8 +769,8 @@ nsAOL.prototype =
                         szURL += "action=unseen&";
                         szURL += "version="+ mainObject.m_szVersion +"&";
                         szURL += "uid=" + mainObject.iID +"&";
-                        szURL += "version="+ mainObject.m_szVersion +"&";
-                        szURL += "user="+ mainObject.m_szUserId;
+                        szURL += "version="+ mainObject.m_szVersion;
+                        szURL += "&user="+ mainObject.m_szUserId;
 
                         mainObject.m_HttpComms.setURI(szURL);
                         mainObject.m_HttpComms.setRequestMethod("GET");
@@ -824,8 +825,8 @@ nsAOL.prototype =
             szURL += "folder=" + this.m_szFolder  +"&";
             szURL += "action=delete&";
             szURL += "version="+ this.m_szVersion +"&";
-            szURL += "uid=" + oMSG.iID +"&";
-            szURL += "user="+ this.m_szUserId;
+            szURL += "uid=" + oMSG.iID;
+            szURL += "&user="+ this.m_szUserId;
 
             this.m_iStage = 0;
             this.m_HttpComms.setURI(szURL);
