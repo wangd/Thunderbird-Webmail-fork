@@ -71,9 +71,6 @@ email.prototype.parse = function (szRawEmail)
 email.prototype.splitHeaderBody = function (szRaw, oHeader, oBody)
 {
     this.m_Log.Write("email.js - splitHeaderBody START");
-   // var aRaw = szRaw.split(/(^[\s\S]*?)\r?\n\r?\n([\s\S]*?)\r?\n?\r?\n?$/);
-   // aRaw[1] = aRaw[1].replace(/;\r\n/gm,"; "); //remove folding for headers
-   // this.m_Log.Write("email.js - splitHeaderBody Headers\n"+ aRaw[1]);
     var iEndHeaders = szRaw.search("\r\n\r\n")
     oHeader.value= szRaw.substring(0,iEndHeaders );
     var istartBody = iEndHeaders +4
