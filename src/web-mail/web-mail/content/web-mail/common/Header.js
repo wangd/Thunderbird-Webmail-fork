@@ -5,21 +5,21 @@ function headers(szRawHeaders)
     scriptLoader.loadSubScript("chrome://web-mail/content/common/base64.js");
     scriptLoader.loadSubScript("chrome://web-mail/content/common/Quoted-Printable.js");
     scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-    scriptLoader.loadSubScript("chrome://web-mail/content/common/HeaderData.js");  
-    
-    this.m_Log = new DebugLog("webmail.logging.comms", 
+    scriptLoader.loadSubScript("chrome://web-mail/content/common/HeaderData.js");
+
+    this.m_Log = new DebugLog("webmail.logging.comms",
                               "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
                               "Header Parser"),
-    
-    this.m_Log.Write("Header.js - raw - \n" +szRawHeaders);    
 
-    
+    this.m_Log.Write("Header.js - raw - \n" +szRawHeaders);
+
+
     //remove folding
     var szHeaders = szRawHeaders.replace(/\r?\n\s/gm," ");
     this.m_Log.Write("Header.js - unfold - \n" +szHeaders);
-    
+
     this.m_aszHeaders = new Array();
-    
+
     //remove bad headers
     var aHeaders =  szHeaders.split("\n");
     for (var i =0; i<aHeaders.length; i++)
@@ -35,7 +35,7 @@ function headers(szRawHeaders)
             oData.szValue = aszHeader[2].replace(/\r|\n/,"");
             this.m_Log.Write("Header.js - header - value " + oData.szValue);
             this.m_aszHeaders.push(oData);
-        }        
+        }
     }
 }
 
@@ -47,16 +47,16 @@ headers.prototype =
         this.m_Log.Write("Header.js - getAllHeadersArray");
         return this.m_aszHeaders;
     },
-    
-    
+
+
     getAllHeaders : function ()
     {
         try
         {
             this.m_Log.Write("Header.js - getAllHeaders - START");
-                  
+
             var szHeaders = "";
-            
+
             for (var i=0; i<this.m_aszHeaders.length; i++)
             {
                 var szName = this.m_aszHeaders[i].szName;
@@ -68,30 +68,30 @@ headers.prototype =
                 szHeaders += szValue;
                 szHeaders += "\r\n";
             }
-            
+
             szHeaders +="\r\n";
-            
+
             this.m_Log.Write("Header.js - getAllHeaders - END");
             return szHeaders;
         }
         catch(e)
         {
-            this.m_Log.DebugDump("Header.js: getAllHeaders : Exception : " 
-                                              + e.name + 
-                                              ".\nError message: " 
+            this.m_Log.DebugDump("Header.js: getAllHeaders : Exception : "
+                                              + e.name +
+                                              ".\nError message: "
                                               + e.message+ "\n"
                                               + e.lineNumber);
         }
     },
-    
-    
+
+
     getHeader : function (szName)
     {
         try
         {
             this.m_Log.Write("Header.js - getHeader - Start " + szName);
             var szValue = null;
-            
+
             if (this.m_aszHeaders.length>0)
             {
                 var regexp =  new RegExp("^"+szName+"$", "i");
@@ -111,111 +111,119 @@ headers.prototype =
             return szValue;
         }
         catch(e)
-        {   
-            this.m_Log.DebugDump("Header.js: getHeader : Exception : " 
-                                              + e.name + 
-                                              ".\nError message: " 
+        {
+            this.m_Log.DebugDump("Header.js: getHeader : Exception : "
+                                              + e.name +
+                                              ".\nError message: "
                                               + e.message+ "\n"
                                               + e.lineNumber);
             return null;
         }
     },
-    
-    
+
+
     getTo : function ()
     {
         this.m_Log.Write("Header.js - getto");
         return this.emailAddress(this.getHeader("to"));
     },
-       
-    
+
+
     getCc : function ()
     {
         this.m_Log.Write("Header.js - getCC");
         return this.emailAddress(this.getHeader("cc"));
     },
-    
-    
+
+
     getSubject : function ()
     {
         this.m_Log.Write("Header.js - Subject");
         return this.getHeader("subject");
     },
-   
-   
+
+
     //0 : All
     //1 : type
     //2 : subtype
+    //3 : boundary
+    //4 : filename
     getContentType: function(iField)
     {
         try
-        {   
-            this.m_Log.Write("Header.js - getContentType - START " + iField); 
+        {
+            this.m_Log.Write("Header.js - getContentType - START " + iField);
             var szContentType =  this.getHeader("Content-Type");
             var szContent= null;
-            
+
             switch(iField)
             {
                 case 0:  //all
                     szContent = szContentType;
                 break;
-                
+
                 case 1: // type
                     szContent= szContentType.match(/(.*?)\/.*?;?$/)[1];
                     szContent = szContent.replace(/\s/,"");
                 break;
-                
+
                 case 2://subtype
                     szContent= szContentType.match(/.*?\/(.*?);?$/)[1];
                     szContent = szContent.replace(/\s/,"");
                 break;
-                
+
                 case 3://boundary
                     szContent= szContentType.match(/boundary="(.*?)"/)[1];
                     szContent = szContent.replace(/\s/,"");
                 break;
-                
+
                 case 4://name
                     if (szContentType.search(/name="(.*?)"/i)!=-1)
                     {
                         var szName= szContentType.match(/name="(.*?)"/i)[1];
                         szContent = this.decodeEncodedWord(szName);
                     }
-                    else if (szContentType.search(/name\*=(.*?)$/i)!=-1) 
+                    else if (szContentType.search(/name\*=(.*?)$/i)!=-1)
                     {
                         var szName= szContentType.match(/name\*=(.*?)$/i)[1];
                         szContent = this.decodeEncodedWordExt(szName);
                     }
+                    else
+                    {
+                        var szType = this.getContentType(1);
+                        var szSubtype = this.getContentType(2);
+                        szContent = szType + "." + szSubtype;
+                    }
                 break;
             };
-            
+
             this.m_Log.Write("Header.js - getContentType - END " + szContent);
-            return szContent;  
+            return szContent;
         }
         catch(e)
         {
-           this.m_Log.DebugDump("Headers.js: getContentType : Exception : " 
-                                  + e.name + 
-                                  ".\nError message: " 
+           this.m_Log.DebugDump("Headers.js: getContentType : Exception : "
+                                  + e.name +
+                                  ".\nError message: "
                                   + e.message+ "\n"
                                   + e.lineNumber);
             return null;
         }
     },
-    
-    
-    
-    
+
+
+
+
     //0 : All
     //1 : filename
     getContentDisposition: function(iField)
     {
         try
         {
-            this.m_Log.Write("Header.js - getContentDisposition - START " + iField); 
+            this.m_Log.Write("Header.js - getContentDisposition - START " + iField);
             var szContent =  this.getHeader("Content-Disposition");
             var szResult= null;
-            
+
             if (szContent)
             {
                 switch(iField)
@@ -223,17 +231,17 @@ headers.prototype =
                     case 0:  //all
                         szContent = szContentDispo;
                     break;
-                    
+
                     case 1: // filename
-                    
+
                         if (szContent.search(/filename=/i)!=-1 || szContent.search(/name=/i)!=-1)
                         {
                             var aszFilename= szContent.match(/filename="(.*?)"/i);
-                            if (!aszFilename)  
-                                aszFilename= szContent.match(/name="(.*?)"/i);                         
-                            
+                            if (!aszFilename)
+                                aszFilename= szContent.match(/name="(.*?)"/i);
+
                             this.m_Log.Write("Header.js - getContentDisposition - aszFilename " + aszFilename);
-                            
+
                             if (aszFilename)
                             {
                                 if (aszFilename[1].search(/^=\?.*?\?=$/)!=-1)
@@ -245,11 +253,11 @@ headers.prototype =
                         else if (szContent.search(/filename\*=/i)!=-1 || szContent.search(/name\*=/i)!=-1)
                         {
                             var aszFilename= szContent.match(/filename\*=(.*?)$/i);
-                            if (!aszFilename)  
-                                aszFilename= szContent.match(/name\*=(.*?)$/i);                         
-                            
+                            if (!aszFilename)
+                                aszFilename= szContent.match(/name\*=(.*?)$/i);
+
                             this.m_Log.Write("Header.js - getContentDisposition - aszFilename " + aszFilename);
-                            
+
                             if (aszFilename)
                             {
                                 if (aszFilename[1].search(/^.*?'.*?'.*?$/)!=-1)
@@ -261,21 +269,33 @@ headers.prototype =
                     break;
                 };
             }
+            else
+            {
+                if (iField == 1)  //filename
+                {
+                    if (this.getHeader("Content-Type") && this.getHeader("Content-ID") )
+                    {
+                        var szType = this.getContentType(1);
+                        var szSubtype = this.getContentType(2);
+                        szResult = szType + "." + szSubtype;
+                    }
+                }
+            }
             this.m_Log.Write("Header.js - getContentDisposition - END " + szResult);
-            return szResult;  
+            return szResult;
         }
         catch(e)
         {
-           this.m_Log.DebugDump("Headers.js: getContentDisposition : Exception : " 
-                      + e.name + 
-                      ".\nError message: " 
+           this.m_Log.DebugDump("Headers.js: getContentDisposition : Exception : "
+                      + e.name +
+                      ".\nError message: "
                       + e.message+ "\n"
                       + e.lineNumber);
             return null;
         }
     },
-    
-    
+
+
     getEncoderType : function ()
     {
         this.m_Log.Write("Header.js - getEncoderType - START");
@@ -283,71 +303,71 @@ headers.prototype =
         szContentType = szContentType.replace(/\s/,"");
         return szContentType;
     },
-    
-    
-    
+
+
+
     emailAddress :function (szAddress)
     {
         try
         {
             this.m_Log.Write("Header.js - emailAddress - START " + szAddress);
-            
+
             if (!szAddress) return null;
             szAddress = szAddress.replace(/".*?"/, ""); //remove name
             var aszAddress = szAddress.split(",");
-            
+
             var szList =null;
             for (iListCount=0; iListCount<aszAddress.length; iListCount++)
             {
                 var szTemp = "";
                 try
-                {  
-                    szTemp = aszAddress[iListCount].match(/<(.*?@.*?)>/)[1];   
+                {
+                    szTemp = aszAddress[iListCount].match(/<(.*?@.*?)>/)[1];
                 }
                 catch(e)
                 {
-                    szTemp = aszAddress[iListCount].match(/(.*?@.*?)$/)[1];  
+                    szTemp = aszAddress[iListCount].match(/(.*?@.*?)$/)[1];
                 }
-                
+
                 if (iListCount!=aszAddress.length-1) szTemp+=", ";
-                
+
                 szList? szList+=szTemp: szList=szTemp;
-            } 
-             
+            }
+
             this.m_Log.Write("Header.js - emailAddress - END " + szList);
-            return szList;  
+            return szList;
         }
         catch(e)
         {
-           this.m_Log.DebugDump("Headers.js: emailAddress : Exception : " 
-                                              + e.name + 
-                                              ".\nError message: " 
+           this.m_Log.DebugDump("Headers.js: emailAddress : Exception : "
+                                              + e.name +
+                                              ".\nError message: "
                                               + e.message+ "\n"
                                               + e.lineNumber);
             return null;
         }
     },
-    
-    
-    
+
+
+
     addressClean : function(szAddress)
     {
         szAddress = szAddress.replace("<","");
         szAddress = szAddress.replace(">","");
-        szAddress = szAddress.replace(/\s/gm,""); 
-        
-        return szAddress;  
+        szAddress = szAddress.replace(/\s/gm,"");
+
+        return szAddress;
     },
-    
+
 
     decodeEncodedWord : function (szValue)
     {
         //szValue = "=?ISO-2022-JP?B?GyRCPCs4Sj5SMnAhSjcvRWchSxsoQi50eHQ=?=";
         //szValue = "=?Shift_JIS?B?w73ELnR4dA==?=";
         this.m_Log.Write("Header.js - decode - START " + szValue);
-        
+
         var szDecoded = szValue;
-        
+
         //check for encoding
         if (szValue.search(/^=\?.*?\?=$/)!=-1)
         {
@@ -365,8 +385,8 @@ headers.prototype =
                 this.m_Log.Write("Header.js - decode - Q ");
                 var oQP = new QuotedPrintable();
                 szDecoded = oQP.decode(aszEncoding[3]);
-            }  
-            
+            }
+
             this.m_Log.Write("Header.js - decode - " + szDecoded);
 
             if (aszEncoding[1].search(/ISO-2022-JP/i)!=-1)
@@ -376,11 +396,11 @@ headers.prototype =
                     //convert coding
                     var Converter = Components.classes["@mozilla.org/intl/scriptableunicodeconverter"].
                                         getService(Components.interfaces.nsIScriptableUnicodeConverter);
-    
+
                     Converter.charset =  aszEncoding[1];
                     var unicode =  Converter.ConvertToUnicode(szDecoded);
                     this.m_Log.Write("Header.js - decode - unicode " + unicode);
-                
+
                     Converter.charset = "Shift-JIS";
                     szDecoded = Converter.ConvertFromUnicode(unicode);
                     this.m_Log.Write("Header.js - decode - Shift-JIS "+szDecoded);
@@ -388,41 +408,41 @@ headers.prototype =
                 catch (ex)
                 {
                     this.m_Log.Write("Header.js - decode - unicode err");
-                
+
                 }
             }
         }
 
         this.m_Log.Write("Header.js - decode - END ");
-        return szDecoded;       
+        return szDecoded;
     },
-    
-    
-    
-    
+
+
+
+
     decodeEncodedWordExt : function (szValue)
     {
         //szValue = ISO-8859-1''r%E9sum%E9.txt;
         this.m_Log.Write("Header.js - decodeEncodedWordExt - START " + szValue);
-        
+
         var szDecoded = szValue;
-        
+
         //check for encoding
         if (szValue.search(/^.*?'.*?'.*?$/)!=-1)
         {
             var aszEncoding = szValue.match(/^(.*?)'(.*?)'(.*?)$/);
             this.m_Log.Write("Header.js - decodeEncodedWordExt - aszEncoding " + aszEncoding);
-        
+
             if (aszEncoding[1].search(/ISO-8859-1/i)!=-1)
             {
                 try
-                {                    
+                {
                      //find used quoted printable hex codes
                     var szDecoded = aszEncoding[3];
                     var aszHexCodes = szDecoded.match(/%[A-Z0-9]{2}/gm);
                     this.m_Log.Write("Header.js - decodeEncodedWordExt - aszHexCodes " + aszHexCodes);
                     aszHexCodes.sort();
-                    
+
                     //remove duplicates
                     for (var i=0; i<aszHexCodes.length; i)
                     {
@@ -431,7 +451,7 @@ headers.prototype =
                         else
                            i++
                     }
-                    
+
                     //removed quoted printable codes
                     for (var j=0; j<aszHexCodes.length; j++)
                     {
@@ -440,20 +460,20 @@ headers.prototype =
                         var decimal = parseInt(hex,16); //convert hex to decimal
                         this.m_Log.Write("Header.js - decodeEncodedWordExt - decimal " + decimal);
                         var regexp = new RegExp(aszHexCodes[j], "gm");
-                        //replace hex 
+                        //replace hex
                         szDecoded = szDecoded.replace(regexp,String.fromCharCode(decimal));
                     }
                 }
                 catch (ex)
                 {
                     this.m_Log.Write("Header.js - decodeEncodedWordExt - unicode err");
-                
+
                 }
             }
         }
-        
+
         this.m_Log.Write("Header.js - decodeEncodedWordExt - END " + szDecoded);
-        return szDecoded;       
+        return szDecoded;
     },
 }
 

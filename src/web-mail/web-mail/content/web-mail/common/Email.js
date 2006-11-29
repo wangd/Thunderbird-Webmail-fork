@@ -71,9 +71,12 @@ email.prototype.parse = function (szRawEmail)
 email.prototype.splitHeaderBody = function (szRaw, oHeader, oBody)
 {
     this.m_Log.Write("email.js - splitHeaderBody START");
-    var iEndHeaders = szRaw.search("\r\n\r\n")
+    this.m_Log.Write("email.js - splitHeaderBody szRaw\n"+ szRaw);
+    var iEndHeaders = szRaw.search(/\r?\n\r?\n/gm);
+    this.m_Log.Write("email.js - splitHeaderBody iEndHeaders "+ iEndHeaders);
     oHeader.value= szRaw.substring(0,iEndHeaders );
-    var istartBody = iEndHeaders +4
+    var istartBody = iEndHeaders +4;
+    this.m_Log.Write("email.js - splitHeaderBody istartBody "+ istartBody);
     oBody.value = szRaw.substring(istartBody)
 
     oHeader.value = oHeader.value.replace(/;\r\n/gm,"; "); //remove folding for headers
@@ -171,6 +174,9 @@ email.prototype.process = function (oHeaders , oBody)
         var szFileName = oHeaders.getContentDisposition(1);
         this.m_Log.Write("email.js - process - FileName "+ szFileName);
         var bFile = szFileName ? true : false;
+
+        //check for embedded images
+        if (szType.search(/image/i)!=-1 && !bFile) bFile = true
 
         //text\html
         if (szType.search(/text/i)!=-1 && szSubType.search(/html/)!=-1  && !bFile)
