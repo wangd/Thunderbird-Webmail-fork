@@ -126,13 +126,24 @@ nsWebMailCookieManager.prototype =
             var aData = szCookie.split(";");
             this.m_Log.Write("CookieManager.js - createCookie - aData " + aData);
 
+            var szName = null;
             var oCookie = new Cookie();
-            for (j=0; j<aData.length; j++)
+
+            //element 0 is the cookie
+            var iNameSplit = aData[0].indexOf("=");
+            var szName = (aData[0].substr(0, iNameSplit)).replace(/^[\s]+|[\s]+$/,"");
+            var szValue = (aData[0].substr(iNameSplit+1)).replace(/^[\s]+|[\s]+$/,"");;
+            this.m_Log.Write("CookieManager.js - createCookie data - szName " + szName + " szValue " + szValue);
+            oCookie.setName(szName);
+            oCookie.setValue(szValue);
+
+            //rest of cookie data
+            for (j=1; j<aData.length; j++)
             {
                 //split name and value
-                var iNameSplit = aData[j].indexOf("=");
-                var szTempName = (aData[j].substr(0, iNameSplit)).replace(/^[\s]+|[\s]+$/,"");
-                var szTempValue = (aData[j].substr(iNameSplit+1)).replace(/^[\s]+|[\s]+$/,"");
+                iNameSplit = aData[j].indexOf("=");
+                szTempName = (aData[j].substr(0, iNameSplit)).replace(/^[\s]+|[\s]+$/,"");
+                szTempValue = (aData[j].substr(iNameSplit+1)).replace(/^[\s]+|[\s]+$/,"");
                 this.m_Log.Write("CookieManager.js - createCookie ITEM - name : " + szTempName + "  value : " +szTempValue);
 
                 if (szTempName.search(/^domain$/i)!=-1) //get domain
@@ -164,15 +175,10 @@ nsWebMailCookieManager.prototype =
                 }
                 else if (szTempName.search(/^version$/i)!=-1) //get version
                 {
-                    if (!szName)
-                    {
-                        szName = szTempName;
-                        szValue = szTempValue;
-                    }
-                    this.m_Log.Write("CookieManager.js - createCookie - Version " + szName);
-                    oCookie.setName(szName);
-                    oCookie.setValue(szValue);
+                    this.m_Log.Write("CookieManager.js - createCookie - Version " + szValue);
+                    oCookie.setVersion(szValue);
                 }
+                /*
                 else  //should be cookie
                 {
                     if (szTempName.length>0)
@@ -183,7 +189,7 @@ nsWebMailCookieManager.prototype =
                         oCookie.setName(szName);
                         oCookie.setValue(szValue);
                     }
-                }
+                }*/
             }
 
             this.m_Log.Write("CookieManager.js - createCookie - END");
