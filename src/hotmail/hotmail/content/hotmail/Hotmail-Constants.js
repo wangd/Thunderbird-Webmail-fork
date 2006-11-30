@@ -25,7 +25,9 @@ const patternHotmailMsgCount = /<D:visiblecount>(.*?)<\/D:visiblecount>/;
 const patternHotmailTrash = /<hm:deleteditems>(.*?)<\/hm:deleteditems>/;
 const patternHotmailFolderName = /folders\/(.*?)\//i;
 
-const UserAgent = "1.5.0 on Mac OS X Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.0.4) Gecko/20061213 Camino/1.0.2";
+const UserAgent ="1.5.0 on Mac OS X Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.0.4) Gecko/20061213 Camino/1.0.2";
+// "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1) Gecko/20061010 Firefox/2.0";
+
 
 /************************Screen Rippper constants******************************/
 const patternHotmailForm = /<form.*?>[\S\s]*?<\/form>/;
@@ -68,6 +70,7 @@ const patternHotmailSRFrom =/<tr[\S\s]*name="(.*?)"><td>/i;
 
 /*********BETA**********/
 const patternHotmailJSRefresh = /<html><head><script.*?>.*?\.location\.replace.*?\("(.*?)"\).*?<\/script>.*?<\/html>/i;
+const patternHotmailJSBounce = /srf_uRet="(.*?)"/i;
 const patternHotmailLogOut = /<.*?"(.*?logout.aspx.*?)".*?>/gi;
 const patternHotmailViewState = /<input.*?id="__VIEWSTATE".*?value="(.*?)".*?\/>/i;
 const patternHotmailInboxFolderID = /<a href="(.*?Control=Inbox&FolderID.*?1)">/i;

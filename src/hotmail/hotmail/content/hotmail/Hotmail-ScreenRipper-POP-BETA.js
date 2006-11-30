@@ -267,8 +267,7 @@ HotmailScreenRipperBETA.prototype =
                 break;
 
 
-                case 2://inbox
-
+                case 2:
                     //check for logout option
                     var aszLogoutURL = szResponse.match(patternHotmailLogOut);
                     mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler - logout : " + aszLogoutURL);
