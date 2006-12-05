@@ -1,0 +1,8 @@
+<!ENTITY MailDotComAddDomain.Title "添加域">
+<!ENTITY MailDotComAddDomainName.Label "域">
+<!ENTITY MailDotComAddDomainName.AccessKey "D">
+<!ENTITY MailDotComAddDomain.Label "添加 MailDotCom 域">
+<!ENTITY MailDotComAddDomain.ButtonOk.Label "确定">
+<!ENTITY MailDotComAddDomain.ButtonOk.AccessKey "O">
+<!ENTITY MailDotComAddDomain.ButtonCancel.Label "取消">
+<!ENTITY MailDotComAddDomain.ButtonCancel.AccessKey "C">

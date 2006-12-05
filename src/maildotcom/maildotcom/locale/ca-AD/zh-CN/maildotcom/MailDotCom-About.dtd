@@ -1,0 +1,8 @@
+<!ENTITY MailDotComAbout.Title "关于 MailDotCom">
+<!ENTITY MailDotComAbout.ExtName "MailDotCom">
+<!ENTITY MailDotComAbout.ExtVersion "版本:">
+<!ENTITY MailDotComAbout.ExtDescription "Web-Mail 扩展的 MailDotCom 组件。">
+<!ENTITY MailDotComAbout.ExtCreaterTitle "创建者:">
+<!ENTITY MailDotComAbout.ExtHome "主页">
+<!ENTITY MailDotComAbout.ExtButton "关闭">
+<!ENTITY MailDotComAbout.ExtContributorTitle "贡献者:">

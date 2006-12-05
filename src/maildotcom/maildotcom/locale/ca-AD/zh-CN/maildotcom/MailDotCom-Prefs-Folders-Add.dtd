@@ -1,0 +1,8 @@
+<!ENTITY MailDotComFolderAdd.Title "添加文件夹">
+<!ENTITY MailDotComFolderName.Label "文件夹名称">
+<!ENTITY MailDotComFolderName.AccessKey "F">
+<!ENTITY MailDotComFolders.Label "添加下载文件夹">
+<!ENTITY MailDotComFolder.ButtonOk.Label "确定">
+<!ENTITY MailDotComFolder.ButtonOk.AccessKey "O">
+<!ENTITY MailDotComFolder.ButtonCancel.Label "取消">
+<!ENTITY MailDotComFolder.ButtonCancel.AccessKey "C">
