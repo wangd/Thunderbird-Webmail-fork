@@ -1,8 +1,8 @@
-<!ENTITY LycosFolderAdd.Title "Add Folder">
-<!ENTITY LycosFolderName.Label "Folder Name">
+<!ENTITY LycosFolderAdd.Title "添加文件夹">
+<!ENTITY LycosFolderName.Label "文件夹名称">
 <!ENTITY LycosFolderName.AccessKey "F">
-<!ENTITY LycosFolders.Label "Add download folder">
-<!ENTITY LycosFolderName.ButtonOk.Label "Ok">
+<!ENTITY LycosFolders.Label "添加下载文件夹">
+<!ENTITY LycosFolderName.ButtonOk.Label "确定">
 <!ENTITY LycosFolderName.ButtonOk.AccessKey "O">
-<!ENTITY LycosFolderName.ButtonCancel.Label "Cancel">
+<!ENTITY LycosFolderName.ButtonCancel.Label "取消">
 <!ENTITY LycosFolderName.ButtonCancel.AccessKey "C">

@@ -1,45 +1,37 @@
 <!ENTITY HotmailPref.Window.Title "Hotmail 选项">
 <!ENTITY HotmailPref.Panel.Accounts.Title "帐户">
-<!ENTITY HotmailPref.Panel.Domains.Title "域名">
+<!ENTITY HotmailPref.Panel.Domains.Title "域">
 <!ENTITY HotmailPref.Button.Ok.Label "确定">
 <!ENTITY HotmailPref.Button.Cancel.Label "取消">
-
 <!ENTITY HotmailPref.Tab.Mode.Title "模式">
 <!ENTITY HotmailPref.Tab.POP.Title "POP">
 <!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
-
-<!ENTITY HotmailPref.Mode.Label "选择扩展用来连接 Microsoft 服务器的通信模式">
-<!ENTITY HotmailPref.Mode.ScreenScraper.Label "Hotmail Website (Production)">
+<!ENTITY HotmailPref.Mode.Label "选择扩展用来连接 Microsoft 服务器的通信方法">
+<!ENTITY HotmailPref.Mode.ScreenScraper.Label "Hotmail 网站(产品)">
 <!ENTITY HotmailPref.Mode.WebDav.Label "WebDav">
-<!ENTITY HotmailPref.Mode.Beta.Label "Hotmail Website (BETA)">
-
-<!ENTITY HotmailPref.POP.DownloadUnread.Label "只下载未读邮件">
+<!ENTITY HotmailPref.Mode.Beta.Label "Hotmail 网站(BETA)">
+<!ENTITY HotmailPref.POP.DownloadUnread.Label "仅下载未读邮件">
 <!ENTITY HotmailPref.POP.DownloadUnread.AccessKey "u">
 <!ENTITY HotmailPref.POP.JunkMail.Label "下载垃圾邮件">
 <!ENTITY HotmailPref.POP.JunkMail.AccessKey "J">
-<!ENTITY HotmailPref.POP.ButtonAdd.Label " 添加...">
+<!ENTITY HotmailPref.POP.Folders.Label "保存至文件夹:">
+<!ENTITY HotmailPref.POP.ButtonAdd.Label "添加...">
 <!ENTITY HotmailPref.POP.ButtonAdd.AccessKey "A">
 <!ENTITY HotmailPref.POP.ButtonRemove.Label "删除">
 <!ENTITY HotmailPref.POP.ButtonRemove.AccessKey "R">
-<!ENTITY HotmailPref.POP.Folders.Label "保存至此文件夹: ">
-
 <!ENTITY HotmailPref.SMTP.SaveSentItems.Label "在已发送消息中保存备份。">
 <!ENTITY HotmailPref.SMTP.SaveSentItems.AccessKey "s">
-<!ENTITY HotmailPref.SMTP.AlternativeGroup.Label "当发送多信息文本邮件时: ">
-<!ENTITY HotmailPref.SMTP.SendPlain.Label "以纯文本格式发送">
+<!ENTITY HotmailPref.SMTP.AlternativeGroup.Label "在发送多信息文本邮件时，扩展应发送哪一部分:">
+<!ENTITY HotmailPref.SMTP.SendPlain.Label "发送纯文本">
 <!ENTITY HotmailPref.SMTP.SendPlain.AccessKey "p">
-<!ENTITY HotmailPref.SMTP.SendHtml.Label "以 HTML 格式发送">
+<!ENTITY HotmailPref.SMTP.SendHtml.Label "发送 HTML 文本">
 <!ENTITY HotmailPref.SMTP.SendHtml.AccessKey "h">
-
 <!ENTITY HotmailPref.AccountError.Label "未找到 Hotmail 账户">
-<!ENTITY HotmailPref.SMTP.NA.Label "Hotmail BETA 模式没有需要设置的 SMPT 选项">
-
-
-<!ENTITY HotmailPref.Domain.Button.AddDomain.Label " 添加...">
+<!ENTITY HotmailPref.SMTP.NA.Label "Hotmail BETA 模式没有可供设置的 SMPT 选项">
+<!ENTITY HotmailPref.Domain.Label "Hotmail 扩展支持的域:">
+<!ENTITY HotmailPref.Domain.Button.AddDomain.Label "添加...">
 <!ENTITY HotmailPref.Domain.Button.AddDomain.AccessKey "A">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.Label "删除">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.AccessKey "R">
-<!ENTITY HotmailPref.Domain.Label "Hotmail 扩展支持的域: ">
-
-<!ENTITY HotmailPref.POP.MarkAsRead.Label "Mark emails as read on server">
+<!ENTITY HotmailPref.POP.MarkAsRead.Label "在服务器上标记邮件为已读">
 <!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "k">

@@ -31,6 +31,7 @@ function nsAOL()
         }
 
         this.m_szUserName = null;
+        this.m_szLoginUserName = null;
         this.m_szPassWord = null;
         this.m_oResponseStream = null;
 
@@ -104,7 +105,13 @@ nsAOL.prototype =
 
             var szTempUserName = this.m_szUserName.split("@");
             this.m_Log.Write("nsAOL.js - logIN - doamain " + szTempUserName);
+            this.m_szLoginUserName =szTempUserName[0];
             var szDomain = szTempUserName[1];
+            this.m_Log.Write("nsAOL.js - logIN - doamain " + szDomain);
+            if (szDomain.search(/aol/i)==-1 && szDomain.search(/aim/i)==-1 && szDomain.search(/netscape/i)==-1)
+            {
+                this.m_szLoginUserName = this.m_szUserName;
+            }
 
             this.m_prefData = this.loadPrefs();   //get prefs
 
@@ -233,8 +240,7 @@ nsAOL.prototype =
                          }
                     }
 
-                    var szScreenName = mainObject.m_szUserName.split("@")[0];
-                    var szLogin = encodeURIComponent(szScreenName);
+                    var szLogin = encodeURIComponent(mainObject.m_szLoginUserName);
                     mainObject.m_HttpComms.addValuePair("loginId",szLogin);
 
                     var szPass = encodeURIComponent(mainObject.m_szPassWord);

@@ -1,0 +1,8 @@
+<!ENTITY AOLAbout.Title "关于 AOL / Netscape">
+<!ENTITY AOLAbout.ExtName "AOL / Netscape">
+<!ENTITY AOLAbout.ExtVersion "版本">
+<!ENTITY AOLAbout.ExtDescription "Web-Mail 扩展的 AOL / Netscape 组件。">
+<!ENTITY AOLAbout.ExtCreaterTitle "创建者:">
+<!ENTITY AOLAbout.ExtHome "主页">
+<!ENTITY AOLAbout.ExtButton "关闭">
+<!ENTITY AOLAbout.ExtContributorTitle "贡献者:">

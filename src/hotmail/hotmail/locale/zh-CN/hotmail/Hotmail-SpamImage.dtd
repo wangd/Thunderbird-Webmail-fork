@@ -1,6 +1,5 @@
-<!ENTITY HotmailSpam.Window.Title "阻止 Hotmail 垃圾图片">
+<!ENTITY HotmailSpam.Window.Title "Hotmail 反垃圾邮件图片">
 <!ENTITY HotmailSpam.Button.OK.Label "确定">
 <!ENTITY HotmailSpam.Title "Hotmail">
-<!ENTITY HotmailSpam.Decription "确认阻止垃圾">
+<!ENTITY HotmailSpam.Decription "反垃圾邮件验证">
 <!ENTITY HotmailSpam.Label "输入您在上面图片中看到的内容。">
-

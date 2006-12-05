@@ -1,29 +1,23 @@
-<!ENTITY LycosPref.Window.Title "Lycos Options">
-<!ENTITY LycosPref.Panel.Accounts.Title "Accounts">
-<!ENTITY LycosPref.Panel.Domains.Title "Domains">
-<!ENTITY LycosPref.Button.Ok.Label "Ok">
-<!ENTITY LycosPref.Button.Cancel.Label "Cancel">
-
+<!ENTITY LycosPref.Window.Title "Lycos 选项">
+<!ENTITY LycosPref.Panel.Accounts.Title "帐户">
+<!ENTITY LycosPref.Panel.Domains.Title "域">
+<!ENTITY LycosPref.Button.Ok.Label "确定">
+<!ENTITY LycosPref.Button.Cancel.Label "取消">
 <!ENTITY LycosPref.Tab.POP.Title "POP">
 <!ENTITY LycosPref.Tab.SMTP.Title "SMTP">
-
-<!ENTITY LycosPref.POP.DownloadUnread.Label "Download unread emails only">
+<!ENTITY LycosPref.POP.DownloadUnread.Label "仅下载未读邮件">
 <!ENTITY LycosPref.POP.DownloadUnread.AccessKey "u">
-<!ENTITY LycosPref.POP.EmptyTrash.Label "Empty Trash">
+<!ENTITY LycosPref.POP.EmptyTrash.Label "清空废件箱">
 <!ENTITY LycosPref.POP.EmptyTrash.AccessKey "E">
-<!ENTITY LycosPref.POP.JunkMail.Label "Download JunkMail">
+<!ENTITY LycosPref.POP.JunkMail.Label "下载垃圾邮件">
 <!ENTITY LycosPref.POP.JunkMail.AccessKey "J">
-<!ENTITY LycosPref.POP.Folders.Label "Download folders">
-<!ENTITY LycosPref.POP.ButtonAdd.Label "Add...">
+<!ENTITY LycosPref.POP.Folders.Label "保存至文件夹:">
+<!ENTITY LycosPref.POP.ButtonAdd.Label "添加...">
 <!ENTITY LycosPref.POP.ButtonAdd.AccessKey "A">
-<!ENTITY LycosPref.POP.ButtonRemove.Label "Remove">
+<!ENTITY LycosPref.POP.ButtonRemove.Label "删除">
 <!ENTITY LycosPref.POP.ButtonRemove.AccessKey "R">
-
-<!ENTITY LycosPref.SMTP.SaveSentItems.Label "Save copy in sent items.">
+<!ENTITY LycosPref.SMTP.SaveSentItems.Label "在已发送消息中保存副本。">
 <!ENTITY LycosPref.SMTP.SaveSentItems.AccessKey "s">
-
-<!ENTITY LycosPref.AccountError.Label "No Lycos Accounts Found"> 
-
-
-<!ENTITY LycosPref.POP.MarkAsRead.Label "Mark emails as read on server">
+<!ENTITY LycosPref.AccountError.Label "未找到 Lycos 帐户">
+<!ENTITY LycosPref.POP.MarkAsRead.Label "在服务器上标记邮件为已读">
 <!ENTITY LycosPref.POP.MarkAsRead.AccessKey "k">

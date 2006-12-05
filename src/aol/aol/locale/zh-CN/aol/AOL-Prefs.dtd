@@ -1,0 +1,17 @@
+<!ENTITY AOLPref.Window.Title "AOL / Netscape 选项">
+<!ENTITY AOLPref.Panel.Accounts.Title "帐户">
+<!ENTITY AOLPref.Button.Ok.Label "确定">
+<!ENTITY AOLPref.Button.Cancel.Label "取消">
+<!ENTITY AOLPref.Tab.POP.Title "POP">
+<!ENTITY AOLPref.POP.DownloadUnread.Label "仅下载未读邮件">
+<!ENTITY AOLPref.POP.DownloadUnread.AccessKey "u">
+<!ENTITY AOLPref.POP.JunkMail.Label "下载垃圾邮件">
+<!ENTITY AOLPref.POP.JunkMail.AccessKey "J">
+<!ENTITY AOLPref.POP.Folders.Label "保存至文件夹:">
+<!ENTITY AOLPref.POP.ButtonAdd.Label "添加...">
+<!ENTITY AOLPref.POP.ButtonAdd.AccessKey "A">
+<!ENTITY AOLPref.POP.ButtonRemove.Label "删除">
+<!ENTITY AOLPref.POP.ButtonRemove.AccessKey "R">
+<!ENTITY AOLPref.AccountError.Label "未找到 AOL 帐户">
+<!ENTITY AOLPref.POP.MarkAsRead.Label "在服务器上标记邮件为已读">
+<!ENTITY AOLPref.POP.MarkAsRead.AccessKey "k">
