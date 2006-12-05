@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<project name="lycos" default="createxpi">
+    <property name="VERSION" value="1-0-2"/>
+
+    <delete file="lycos-${VERSION}.xpi"/>
+    <delete file="lycos.jar"/>
+
+    <target name="createjar">
+        <zip destfile="lycos.jar" compress="false">
+            <fileset dir="lycos">
+                <include name="locale/**" />
+                <include name="skin/**"/>
+                <include name="content/**"/>
+                <exclude name="**/*.db"/>
+            </fileset>
+        </zip>
+    </target>
+
+    <target name="createxpi" depends="createjar">
+        <zip destfile="lycos-${VERSION}.xpi" >
+            <zipfileset dir="." includes="lycos.jar" prefix="chrome"/>
+            <zipfileset dir="components" prefix="components" includes="**" excludes="*.idl *.bat"/>
+            <zipfileset dir="defaults" prefix="defaults" includes="**"/>
+            <zipfileset dir="." includes="install.rdf"/>
+            <zipfileset dir="." includes="chrome.manifest"/>
+        </zip>
+    </target>
+
+</project>
