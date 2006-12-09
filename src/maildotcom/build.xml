@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <project name="maildotcom" default="createxpi">
-    <property name="VERSION" value="1-0-4"/>
+    <property name="VERSION" value="1-0-5"/>
 
     <delete file="maildotcom-${VERSION}.xpi"/>
     <delete file="maildotcom.jar"/>
