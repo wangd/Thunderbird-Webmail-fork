@@ -7,7 +7,7 @@
 
     <target name="createjar">
         <zip destfile="maildotcom.jar" compress="false">
-            <fileset dir="hotmail">
+            <fileset dir="maildotcom">
                 <include name="locale/**" />
                 <include name="skin/**"/>
                 <include name="content/**"/>

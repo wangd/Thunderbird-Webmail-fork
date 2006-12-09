@@ -436,6 +436,8 @@ nsMailDotComSMTP.prototype =
                         mainObject.m_HttpComms.addValuePair("composebody","");
                     }
 
+                    mainObject.m_HttpComms.addValuePair("send","Send");
+
                     //other composer data
                     for (i=0; i<aszInput.length; i++)
                     {
@@ -455,28 +457,27 @@ nsMailDotComSMTP.prototype =
 
                             mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - input szValue " + szValue);
 
-                            if (szName.search(/^Send$/i)!=-1)
-                                mainObject.m_HttpComms.addValuePair(szName,"Send");
-                            else if (szName.search(/^to$/i)!=-1)
+                            //if (szName.search(/^Send$/i)!=-1)
+                            //    mainObject.m_HttpComms.addValuePair(Send,"Send");
+                            if (szName.search(/^to$/i)!=-1)
                             {
                                 var szTo = mainObject.m_Email.headers.getTo();
-                                mainObject.m_HttpComms.addValuePair(szName, (szTo? escape(szTo) : ""));
+                                mainObject.m_HttpComms.addValuePair(szName, (szTo? encodeURIComponent(szTo) : ""));
                              }
                             else if (szName.search(/^cc$/i)!=-1)
                             {
                                 var szCc = mainObject.m_Email.headers.getCc();
-                                mainObject.m_HttpComms.addValuePair(szName, (szCc? escape(szCc) : ""));
+                                mainObject.m_HttpComms.addValuePair(szName, (szCc? encodeURIComponent(szCc) : ""));
                             }
                             else if (szName.search(/^bcc$/i)!=-1)
                             {
                                 var szBCC = mainObject.getBcc(szTo, szCc);
-                                mainObject.m_HttpComms.addValuePair(szName, (szBCC? escape(szBCC) : ""));
+                                mainObject.m_HttpComms.addValuePair(szName, (szBCC? encodeURIComponent(szBCC) : ""));
                             }
                             else if (szName.search(/subject/i)!=-1)
                             {
                                 var szSubject = mainObject.m_Email.headers.getSubject();
-                                mainObject.m_HttpComms.addValuePair(szName,
-                                            (szSubject? escape(szSubject) : "%20"));
+                                mainObject.m_HttpComms.addValuePair(szName, (szSubject? encodeURIComponent(szSubject) : "%20"));
                             }
                             else if (szName.search(/emailcomposer/i)!=-1 ||
                                      szName.search(/advancededitor/i)!=-1 ||
@@ -490,7 +491,10 @@ nsMailDotComSMTP.prototype =
                                 mainObject.m_HttpComms.addValuePair(szName,szSave);
                             }
                             else
-                                 mainObject.m_HttpComms.addValuePair(szName,szValue);
+                            {
+                                 var szEncodedValue = encodeURIComponent(szValue);
+                                 mainObject.m_HttpComms.addValuePair(szName,szEncodedValue);
+                            }
                         }
                     }
 

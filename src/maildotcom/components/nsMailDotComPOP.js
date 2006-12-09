@@ -959,6 +959,26 @@ nsMailDotCom.prototype =
 
             if (!oPref.Value)
             {
+                if (this.m_prefData.bReUseSession)
+                {
+                    this.m_Log.Write("nsMailDotCom.js - logOut - Setting Session Data");
+
+                    if (!this.m_SessionData)
+                    {
+                        this.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
+                        this.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
+                        this.m_SessionData.szUserName = this.m_szUserName;
+
+                        var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
+                        componentData.QueryInterface(Components.interfaces.nsIComponentData);
+                        this.m_SessionData.oComponentData = componentData;
+                    }
+                    this.m_SessionData.oCookieManager = this.m_HttpComms.getCookieManager();
+                    this.m_SessionData.oComponentData.addElement("szLocation",this.m_szLocation);
+                    this.m_SessionData.oComponentData.addElement("szFolderList", this.m_szFolderList);
+                    this.m_SessionManager.setSessionData(this.m_SessionData);
+                }
+
                 this.m_bAuthorised = false;
                 this.serverComms("+OK Your Out\r\n");
                 return true;
