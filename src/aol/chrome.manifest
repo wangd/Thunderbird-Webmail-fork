@@ -1,5 +1,3 @@
-overlay chrome://messenger/content/messenger.xul    chrome://aol/content/AOL-Start.xul
-
 content aol    jar:chrome/aol.jar!/content/aol/
 
 skin	aol	   classic/1.0	jar:chrome/aol.jar!/skin/classic/aol/
@@ -15,3 +13,4 @@ locale  aol    nl-NL   jar:chrome/aol.jar!/locale/nl-NL/aol/
 locale  aol    lt-LT   jar:chrome/aol.jar!/locale/lt-LT/aol/
 locale  aol    nb-NO   jar:chrome/aol.jar!/locale/nb-NO/aol/
 locale  aol    de-DE   jar:chrome/aol.jar!/locale/de-DE/aol/
+locale  aol    zh-CN   jar:chrome/aol.jar!/locale/zh-CN/aol/

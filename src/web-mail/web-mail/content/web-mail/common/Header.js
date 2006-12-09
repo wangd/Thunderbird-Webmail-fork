@@ -173,8 +173,16 @@ headers.prototype =
                 break;
 
                 case 3://boundary
-                    szContent= szContentType.match(/boundary="(.*?)"/)[1];
-                    szContent = szContent.replace(/\s/,"");
+                     try
+                     {
+                         szContent= szContentType.match(/boundary="(.*?)"/i)[1];
+                     }
+                     catch(e)
+                     {
+                         szContent= szContentType.match(/boundary=(.*?)[;|\s]*$/i)[1];
+                     }
+
+                     szContent = szContent.replace(/\s/,"");
                 break;
 
                 case 4://name

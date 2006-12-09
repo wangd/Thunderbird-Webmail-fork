@@ -1,0 +1,6 @@
+<database>
+	<domain>aol.com</domain>
+    <domain>aim.com</domain>
+    <domain>netscape.com</domain>
+    <domain>netscape.net</domain>
+</database>
