@@ -16,7 +16,7 @@
             <Description>
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id><!-- Thunderbird updates -->
                 <em:minVersion>1.4</em:minVersion>
-                <em:maxVersion>2.0a1</em:maxVersion>
+                <em:maxVersion>2.0</em:maxVersion>
                 <em:updateLink>http://download.mozdev.org/webmail/web-mail-1-0-14.xpi</em:updateLink>
                 <em:updateHash>sha256:3865d35461e05c159c84abafeb73bc7e29c2fe16c12de9a226b00bf8786efcbc</em:updateHash>
           </Description>
