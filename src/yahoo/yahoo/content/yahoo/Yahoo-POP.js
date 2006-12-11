@@ -155,27 +155,6 @@ YahooPOP.prototype =
                 throw new Error("return status " + httpChannel.responseStatus);
 
 
-            if (szResponse.search(patternYahooLoginForm)!=-1)
-            {
-                if ( mainObject.m_iLoginCount<=3)
-                {
-                    if (szResponse.search(patternYahooLogInSpam)!=-1)
-                    {
-                        mainObject.m_Log.Write("YahooPOP.js - loginOnloadHandler - Spam Image found");
-                        mainObject.m_iStage =4; //spam image found
-                        mainObject.m_iLoginCount++;
-                    }
-                    else
-                    {
-                        mainObject.m_iLoginCount++;
-                        mainObject.m_iStage =0;
-                    }
-                }
-                else
-                    throw new Error ("Too Many Login's");
-            }
-
-
             //page code
             switch (mainObject.m_iStage)
             {
@@ -297,71 +276,6 @@ YahooPOP.prototype =
                     //server response
                     mainObject.serverComms("+OK Your in\r\n");
                     mainObject.m_bAuthorised = true;
-                break;
-
-
-                case 4: //download spam image
-                    mainObject.m_aLoginForm = szResponse.match(patternYahooLoginForm);
-                    if ( mainObject.m_aLoginForm  == null)
-                         throw new Error("error parsing yahoo login web page");
-                    mainObject.m_Log.Write("YahooPOP.js - loginOnloadHandler - loginForm Spam " +  mainObject.m_aLoginForm );
-
-                    var szSpamURI = mainObject.m_aLoginForm[0].match(patternYahooSpanURI)[1];
-                    mainObject.m_Log.Write("YahooPOP.js - loginOnloadHandler - szSpamURI " +  szSpamURI );
-
-                    mainObject.m_HttpComms.setURI(szSpamURI);
-                    mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
-                break;
-
-
-
-                case 5: //send login
-                    mainObject.m_Log.Write("YahooPOP.js - loginOnloadHandler - image download");
-                    var szPath = mainObject.writeImageFile(szResponse);
-                    mainObject.m_Log.Write("YahooPOP.js - loginOnloadHandler - imageFile " + szPath);
-                    var szResult =  mainObject.openSpamWindow(szPath);
-                    if (!szResult) throw new Error("Spam Handling Error");
-
-                    //construct form
-                    var szLoginURL = mainObject.m_aLoginForm[0].match(patternYahooAction)[1];
-                    mainObject.m_Log.Write("YahooPOP.js - loginOnloadHandler - loginURL " + szLoginURL);
-
-                    var aLoginData = mainObject.m_aLoginForm[0].match(patternYahooInput);
-                    mainObject.m_Log.Write("YahooPOP.js - loginOnloadHandler - loginData " + aLoginData);
-
-                    for (i=0; i<aLoginData.length; i++)
-                    {
-                        var szName=aLoginData[i].match(patternYahooNameAlt)[1];
-                        szName = szName.replace(/["|']/gm,"");
-                        szName = szName.replace(/^\s*|\s*$/gm,"");
-                        mainObject.m_Log.Write("YahooPOP.js - loginOnloadHandler - loginData name " + szName);
-
-                        var szValue = aLoginData[i].match(patternYahooAltValue)[1];
-                        szValue = szValue.replace(/["|']/gm,"");
-                        szValue = szValue.replace(/^\s*|\s*$/gm,"");
-                        mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - loginData value " + szValue);
-
-                        mainObject.m_HttpComms.addValuePair(szName,(szValue? encodeURIComponent(szValue):""));
-                    }
-
-                    var szLogin = encodeURIComponent(mainObject.m_szLoginUserName);
-                    mainObject.m_HttpComms.addValuePair("login", szLogin);
-
-                    var szPass = encodeURIComponent(mainObject.m_szPassWord);
-                    mainObject.m_HttpComms.addValuePair("passwd",szPass);
-
-                    mainObject.m_HttpComms.addValuePair(".secword",szResult);
-
-                    mainObject.m_HttpComms.addValuePair(".persistent","y");
-
-                    mainObject.m_HttpComms.setURI(szLoginURL);
-                    mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage=1;
                 break;
             };
 

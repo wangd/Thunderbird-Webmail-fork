@@ -98,17 +98,17 @@ YahooSMTP.prototype =
 
             if (this.m_bReUseSession)
             {
-                this.m_Log.Write("YahooSMTPBETA.js - logIN - Getting Session Data");
+                this.m_Log.Write("YahooSMTP.js - logIN - Getting Session Data");
                 this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
                 if (this.m_SessionData)
                 {
-                    this.m_Log.Write("YahooSMTPBETA.js - logIN - Session Data FOUND");
+                    this.m_Log.Write("YahooSMTP.js - logIN - Session Data FOUND");
                     this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
                     this.m_szHomeURI = this.m_SessionData.oComponentData.findElement("szHomeURI");
                     this.m_Log.Write("YahooSMTPBETA.js - logIN - szHomeURI " +this.m_szHomeURI);
                     if (this.m_szHomeURI)
                     {
-                        this.m_Log.Write("YahooSMTPBETA.js - logIN - Session Data Found");
+                        this.m_Log.Write("YahooSMTP.js - logIN - Session Data Found");
                         this.m_iStage =2;
                         this.m_bReEntry = true;
                         this.m_HttpComms.setURI(this.m_szHomeURI);
@@ -142,8 +142,8 @@ YahooSMTP.prototype =
         try
         {
             mainObject.m_Log.Write("YahooSMTP.js - loginOnloadHandler - START");
-            mainObject.m_Log.Write("YahooSMTP.js - loginOnloadHandler : \n" + szResponse);
-            //mainObject.m_Log.Write("YahooSMTP.js - loginOnloadHandler : " + mainObject.m_iStage );
+            //mainObject.m_Log.Write("YahooSMTP.js - loginOnloadHandler : \n" + szResponse);
+            mainObject.m_Log.Write("YahooSMTP.js - loginOnloadHandler : " + mainObject.m_iStage );
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
 
@@ -151,27 +151,6 @@ YahooSMTP.prototype =
             mainObject.m_Log.Write("YahooSMTP.js - loginOnloadHandler - status :" +httpChannel.responseStatus );
             if (httpChannel.responseStatus != 200)
                 throw new Error("return status " + httpChannel.responseStatus);
-
-
-            if (szResponse.search(patternYahooLoginForm)!=-1)
-            {
-                if ( mainObject.m_iLoginCount<=3)
-                {
-                    if (szResponse.search(patternYahooLogInSpam)!=-1)
-                    {
-                        mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - Spam Image found");
-                        mainObject.m_iStage =3; //spam image found
-                        mainObject.m_iLoginCount++;
-                    }
-                    else
-                    {
-                        mainObject.m_iLoginCount++;
-                        mainObject.m_iStage =0;
-                    }
-                }
-                else
-                    throw new Error ("Too Many Login's");
-            }
 
 
             //page code
@@ -235,9 +214,8 @@ YahooSMTP.prototype =
 
                 case 2: //mail box
                     var szLocation = httpChannel.URI.spec;
-                    var iIndex = szLocation.indexOf("uilogin.srt");
                     mainObject.m_Log.Write("YahooSMTP.js - loginOnloadHandler - page check : " + szLocation);
-                    if (szResponse.search(PatternYahooLogout) == -1)
+                    if (szResponse.search(patternYahooShowFolder) == -1)
                     {
                         if (mainObject.m_bReEntry)
                         {
@@ -264,72 +242,6 @@ YahooSMTP.prototype =
                     //server response
                     mainObject.serverComms("235 Your In\r\n");
                     mainObject.m_bAuthorised = true;
-                break;
-
-
-
-                case 3: //download spam image
-                    mainObject.m_aLoginForm = szResponse.match(patternYahooLoginForm);
-                    if ( mainObject.m_aLoginForm  == null)
-                         throw new Error("error parsing yahoo login web page");
-                    mainObject.m_Log.Write("YahooSMTP.js - loginOnloadHandler - loginForm Spam " +  mainObject.m_aLoginForm );
-
-                    var szSpamURI = mainObject.m_aLoginForm[0].match(patternYahooSpanURI)[1];
-                    mainObject.m_Log.Write("YahooSMTP.js - loginOnloadHandler - szSpamURI " +  szSpamURI );
-
-                    mainObject.m_HttpComms.setURI(szSpamURI);
-                    mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
-                break;
-
-
-
-                case 4: //send login
-                    mainObject.m_Log.Write("YahooSMTP.js - loginOnloadHandler - image download");
-                    var szPath = mainObject.writeImageFile(szResponse);
-                    mainObject.m_Log.Write("YahooSMTP.js - loginOnloadHandler - imageFile " + szPath);
-                    var szResult =  mainObject.openSpamWindow(szPath);
-                    if (!szResult) throw new Error("Spam Handling Error");
-
-                    //construct form
-                    var szLoginURL = mainObject.m_aLoginForm[0].match(patternYahooAction)[1];
-                    mainObject.m_Log.Write("YahooSMTP.js - loginOnloadHandler - loginURL " + szLoginURL);
-
-                    var aLoginData = mainObject.m_aLoginForm[0].match(patternYahooLogIn);
-                    mainObject.m_Log.Write("YahooSMTP.js - loginOnloadHandler - loginData " + aLoginData);
-
-                    for (i=0; i<aLoginData.length; i++)
-                    {
-                        var szName=aLoginData[i].match(patternYahooNameAlt)[1];
-                        szName = szName.replace(/["|']/gm,"");
-                        szName = szName.replace(/^\s*|\s*$/gm,"");
-                        mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - loginData name " + szName);
-
-                        var szValue = aLoginData[i].match(patternYahooAltValue)[1];
-                        szValue = szValue.replace(/["|']/gm,"");
-                        szValue = szValue.replace(/^\s*|\s*$/gm,"");
-                        mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - loginData value " + szValue);
-
-                        mainObject.m_HttpComms.addValuePair(szName,(szValue? encodeURIComponent(szValue):""));
-                    }
-
-                    var szLogin = encodeURIComponent(mainObject.m_szLoginUserName);
-                    mainObject.m_HttpComms.addValuePair("login", szLogin);
-
-                    var szPass = encodeURIComponent(mainObject.m_szPassWord);
-                    mainObject.m_HttpComms.addValuePair("passwd",szPass);
-
-                    mainObject.m_HttpComms.addValuePair(".secword",szResult);
-
-                    mainObject.m_HttpComms.addValuePair(".persistent","y");
-
-                    mainObject.m_HttpComms.setURI(szLoginURL);
-                    mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage=1;
                 break;
             };
 
@@ -386,8 +298,8 @@ YahooSMTP.prototype =
         try
         {
             mainObject.m_Log.Write("YahooSMTP.js - composerOnloadHandler - START");
-            mainObject.m_Log.Write("YahooSMTP.js - composerOnloadHandler : \n" + szResponse);
-            //mainObject.m_Log.Write("YahooSMTP.js - composerOnloadHandler : " + mainObject.m_iStage);
+           // mainObject.m_Log.Write("YahooSMTP.js - composerOnloadHandler : \n" + szResponse);
+            mainObject.m_Log.Write("YahooSMTP.js - composerOnloadHandler : " + mainObject.m_iStage);
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
 
