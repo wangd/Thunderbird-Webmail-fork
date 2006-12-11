@@ -1,6 +1,6 @@
-radio[pane] 
+radio[pane]
 {
-    list-style-image: url("chrome://messenger/skin/preferences/mail-options.png"); 
+    list-style-image: url("chrome://web-mail/skin/webmail-PrefsToolbar.png");
 }
 
 radio[pane=paneServers]
@@ -10,18 +10,18 @@ radio[pane=paneServers]
 
 radio[pane=paneGeneral]
 {
-    -moz-image-region: rect(0px, 192px, 32px, 160px)
+    -moz-image-region: rect(0px, 64px, 32px, 32px)
 }
 
 radio[pane=paneDomains]
 {
-	-moz-image-region: rect(0px, 64px, 32px, 32px)
+	-moz-image-region: rect(0px, 96px, 32px, 64px)
 }
 
 
 radio[pane=paneLogging]
 {
-    -moz-image-region: rect(0px, 96px, 32px, 64px)
+    -moz-image-region: rect(0px, 128px, 32px, 96px)
 }
 
 

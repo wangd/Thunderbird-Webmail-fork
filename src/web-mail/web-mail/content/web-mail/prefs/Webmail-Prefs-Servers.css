@@ -1,6 +1,6 @@
 .text
 {
-    font-size: small;
+    font-size: 10pt;
     border-style: hidden;
     background-color: #FCFCFE;
 }
@@ -8,7 +8,7 @@
 .txtStatus
 {
     text-align: center;
-    font-size:  medium;
+    font-size:  12pt;
     color: #000000;
 }
 
@@ -28,7 +28,7 @@
 
 
 /* status indicators*/
-#colourStatus 
+#colourStatus
 {
     list-style-image: url("chrome://web-mail/skin/StatusColour.png")
 }

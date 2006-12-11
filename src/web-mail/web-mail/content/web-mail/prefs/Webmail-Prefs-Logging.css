@@ -1,13 +1,13 @@
 .checkBox
 {
-    font-size: small;
+    font-size: 10pt;
     margin-left: 5px;
     margin-bottom: 1px;
 }
 
 .groupBox
 {
-    font-size: small;
+    font-size: 10pt;
     margin-left: 25px;
     margin-top: 0px;
     margin-bottom: 10px;
@@ -38,6 +38,6 @@
 }
 
 .DisabledLabel[disabled="true"]
-{   
+{
      color: GrayText;
 }
