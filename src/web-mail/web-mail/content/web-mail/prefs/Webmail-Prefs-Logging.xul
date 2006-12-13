@@ -1,109 +1,91 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/global.css"?>
-<?xml-stylesheet href="chrome://web-mail/content/prefs/Webmail-Prefs-Logging.css"?>
+<?xml-stylesheet href="chrome://web-mail/skin/Webmail-Prefs-Logging.css"?>
 
 <!DOCTYPE dialog SYSTEM "chrome://web-mail/locale/Webmail-Prefs-Logging.dtd">
 
 <overlay id="paneLoggingOverlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-           
+
     <prefpane id = "paneLogging" onpaneload= "gLoggingPane.init();" flex="1">
-        <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>       
-        <script type="application/x-javascript" src="chrome://web-mail/content/prefs/Webmail-Prefs-Logging.js"/>        
-        
+        <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
+        <script type="application/x-javascript" src="chrome://web-mail/content/prefs/Webmail-Prefs-Logging.js"/>
+
         <preferences>
             <preference id="bUseLog" name="webmail.logging.comms.UseLog" type="bool"/>
-            <preference id="bUseJSConsole" name="webmail.logging.comms.UseJSconsole" type="bool"/>
-            <preference id="bUseFile" name="webmail.logging.comms.UseFile" type="bool"/>
             <preference id="fileLocation" name="webmail.logging.comms.FileLocation" type="file"/>
         </preferences>
-        
+
         <stringbundle id="stringsWebmailPrefs-Log" src="chrome://web-mail/locale/Webmail-Prefs-Logging.properties"/>
-        
-        <vbox>
+
+        <vbox flex="1">
             <!-- General Extension logging-->
-            <checkbox label="&GeneralLogging.Label;"
-                      accesskey="&GeneralLogging.AccessKey;"
-                      id = "chkWebmailLogging"
-                      class = "checkBox"
-                      preference="bUseLog"
-                      onclick="gLoggingPane.updateBox('chkWebmailLogging',
-                                                     gLoggingPane.m_aLoggingGroupList,
-                                                     'chkLoggingFile',
-                                                     gLoggingPane.m_aLoggingFileList);"/>
-            
-            <groupbox class="groupBox">
-                <!-- use console-->
-                <checkbox label="&JavaScriptConsole.Label;" 
-                          accesskey="&JavaScriptConsole.AccessKey;"
-                          preference="bUseJSConsole"
-                          id="chkLoggingJSConsole"/>
-                
-                <!-- use file-->
-                <checkbox label="&LogFile.Label;" 
-                          accesskey="&LogFile.AccessKey;"
-                          preference="bUseFile"
-                          id="chkLoggingFile"
-                          onclick="gLoggingPane.boxActivation('chkLoggingFile', 
-                                                              gLoggingPane.m_aLoggingFileList, 
-                                                              null);"/>
-                
-                <!-- file location-->
-                <hbox align="center" class="locationBox">
-                    <label value="&Location.Label;" 
-                           accesskey="&Location.AccessKey;"
-                           id="labelLoggingFile"
-                           class = "DisabledLabel"
-                           control="txtLoggingFile"/>
-                    
-                    <filefield flex="1" 
-                             id="txtLoggingFile"
-                             preference-editable="true"
-                             preference="fileLocation"
-                             onsyncfrompreference ="return gLoggingPane.readFolderPref();"
-                             onsynctopreference ="return gLoggingPane.writeFolderPref();"/>
-                             
-                    <button label="&Button.Label;"
-                            accesskey="&Button.AccessKey;" 
-                            id="buttonLoggingFile" 
-                            oncommand= "gLoggingPane.browseForFolders();"/>
-                </hbox>
-            </groupbox>
-           
-            <spacer flex="1"/> 
-                   
-            <!-- information -->   
-            <vbox class ="information">   
-                <hbox>
-                    <image id = "iconWarning" /> 
-                </hbox>
-                <hbox>
-                    <vbox flex="1">           
-                        <description style="margin-left: 25px"> 
+            <groupbox>
+            	<caption >
+		            <checkbox label="&GeneralLogging.Label;"
+		                      accesskey="&GeneralLogging.AccessKey;"
+		                      id = "chkWebmailLogging"
+		                      preference="bUseLog"
+		                      onclick="gLoggingPane.updateBox();"/>
+              	</caption >
+
+	            <!-- file location-->
+	            <hbox align="center" id="locationBox">
+	                <label value="&Location.Label;"
+	                       accesskey="&Location.AccessKey;"
+	                       id="labelLoggingFile"
+	                       class = "DisabledLabel"
+	                       control="txtLoggingFile"/>
+
+	                <filefield flex="1"
+	                         id="txtLoggingFile"
+	                         preference-editable="true"
+	                         preference="fileLocation"
+	                         onsyncfrompreference ="return gLoggingPane.readFolderPref();"
+	                         onsynctopreference ="return gLoggingPane.writeFolderPref();"/>
+
+	                <button label="&Button.Label;"
+	                        accesskey="&Button.AccessKey;"
+	                        id="buttonLoggingFile"
+	                        oncommand= "gLoggingPane.browseForFolders();"/>
+	            </hbox>
+           	</groupbox>
+
+            <spacer flex="6"/>
+
+			<!-- information -->
+            <vbox pack="end">
+	            <hbox class ="information" flex="1">
+	                <vbox>
+	                	<spacer flex="1"/>
+	                    <image id = "iconWarning"/>
+	                	<spacer flex="1"/>
+	                </vbox>
+                    <vbox flex="1">
+	                	<spacer flex="1"/>
+                        <description class="note">
                             &Note.Label;
-                        </description> 
+                        </description>
+                		<spacer flex="1"/>
                     </vbox>
-                </hbox>
-            </vbox>
-            
-            <spacer flex="2"/>
-            
-            <spacer flex="2"/>
-            
-            <!-- information -->   
-            <vbox class = "information">   
-                <hbox>
-                    <image id = "iconMessage" /> 
-                </hbox>
-                <hbox >
+	            </hbox>
+
+	            <hbox class = "information" flex="1">
+	                <vbox>
+	                	<spacer flex="1"/>
+	                    <image id = "iconMessage"/>
+	                	<spacer flex="1"/>
+	                </vbox>
                     <vbox flex="1" >
-                        <description style="margin-left: 25px"> 
+	                	<spacer flex="1"/>
+                        <description class="note">
                             &Restart.Label;
-                        </description> 
-                    </vbox> 
-                </hbox>
+                        </description>
+	                	<spacer flex="1"/>
+                    </vbox>
+	            </hbox>
             </vbox>
         </vbox>
-    
+
     </prefpane>
 </overlay>
