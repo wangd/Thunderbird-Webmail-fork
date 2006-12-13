@@ -1,6 +1,6 @@
-<?xml version="1.0"?> 
-<?xml-stylesheet href="chrome://global/skin/" type="text/css"?> 
-<?xml-stylesheet href="chrome://web-mail/content/Webmail-About.css" type="text/css"?> 
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://web-mail/skin/Webmail-About.css" type="text/css"?>
 
 <!DOCTYPE dialog SYSTEM "chrome://web-mail/locale/Webmail-About.dtd">
 
@@ -12,9 +12,9 @@
         onunload ="gWebMailAbout.stop()"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         id = "WebmailAboutDialog">
-	
+
     <script type="application/x-javascript" src="chrome://web-mail/content/Webmail-About.js"/>
-        
+
     <groupbox align="center" orient="horizontal">
         <vbox>
             <hbox>
@@ -31,7 +31,7 @@
             <hbox>
                 <image id="LionImage"/>
                 <text id ="WebmailCreator" class = "WebmailCreatorText"/>
-            </hbox>          
+            </hbox>
             <text value="&WebmailAbout.ExtContributorTitle;" id = "WebmailContributorLabel"/>
             <vbox flex="1" id="WebmailContributorBox"/>
             <text value="&WebmailAbout.ExtHome;" id = "WebmailHomePage"/>
