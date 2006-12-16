@@ -113,26 +113,6 @@ nsSMTPConnectionManager.prototype.GetStatus = function ()
     try
     {
         this.m_Log.Write("nsSMTPConnectionManager.js - GetStatus - START");
-
-        if ( this.m_iStatus == 1)  //waiting to stop
-        {
-            this.m_Log.Write("nsSMTPConnectionManager.js - GetStatus - connections "
-                                                        + this.m_aSMTPConnections.length);
-            var iCount = 0;
-            if (this.m_aSMTPConnections.length>0)
-            {
-                for (var i =1 ; i<=this.m_aSMTPConnections.length; i++)
-                {
-                    if (this.m_aSMTPConnections[i] != undefined)
-                    {
-                        iCount++;
-                        this.m_Log.Write("nsSMTPConnectionManager.js - GetStatus - connections " + iCount);
-                    }
-                }
-            }
-
-            if (iCount==0 ) this.m_iStatus = 0 //stopped
-        }
         this.m_Log.Write("nsSMTPConnectionManager.js - status = " + this.m_iStatus);
         this.m_Log.Write("nsSMTPConnectionManager.js - GetStatus -  END");
         return this.m_iStatus;

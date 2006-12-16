@@ -114,26 +114,6 @@ nsIMAPConnectionManager.prototype.GetStatus = function ()
     try
     {
         this.m_Log.Write("nsIMAPConnectionManager.js - GetStatus - START");
-
-        if ( this.m_iStatus == 1)  //waiting to stop
-        {
-            this.g_IMAPLog.Write("nsIMAPConnectionManager.js - GetStatus - connections "
-                                                        + this.m_aIMAPConnections.length);
-            var iCount = 0;
-            if (this.m_aIMAPConnections.length>0)
-            {
-                for (var i =1 ; i<=this.m_aIMAPConnections.length; i++)
-                {
-                    if (this.m_aIMAPConnections[i] != undefined)
-                    {
-                        iCount++;
-                        this.g_IMAPLog.Write("nsIMAPConnectionManager.js - GetStatus - connections " + iCount);
-                    }
-                }
-            }
-
-            if (iCount==0 ) this.m_iStatus = 0 //stopped
-        }
         this.m_Log.Write("nsIMAPConnectionManager.js - status = " + this.m_iStatus);
         this.m_Log.Write("nsIMAPConnectionManager.js - GetStatus -  END");
         return this.m_iStatus;

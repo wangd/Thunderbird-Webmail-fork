@@ -117,26 +117,6 @@ nsPOPConnectionManager.prototype.GetStatus = function ()
     try
     {
         this.m_Log.Write("nsPOPConnectionManager - GetStatus - START");
-
-        if ( this.m_iStatus == 1)  //waiting to stop
-        {
-            this.g_POPLog.Write("nsPOPConnectionManager - GetStatus - connections "
-                                                        + this.m_aPOPConnections.length);
-            var iCount = 0;
-            if (this.m_aPOPConnections.length>0)
-            {
-                for (var i =1 ; i<=this.m_aPOPConnections.length; i++)
-                {
-                    if (this.m_aPOPConnections[i] != undefined)
-                    {
-                        iCount++;
-                        this.g_POPLog.Write("nsPOPConnectionManager - GetStatus - connections " + iCount);
-                    }
-                }
-            }
-
-            if (iCount==0 ) this.m_iStatus = 0 //stopped
-        }
         this.m_Log.Write("nsPOPConnectionManager - status = " + this.m_iStatus);
         this.m_Log.Write("nsPOPConnectionManager - GetStatus -  END");
         return this.m_iStatus;
