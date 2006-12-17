@@ -12,6 +12,7 @@ function nsIMAPConnectionManager()
     this.m_iStatus = 0;  //-1 error , 0 = stopped ,1 = waiting, 2= ruuning
     this.m_aIMAPConnections = new Array();
     this.m_bGarbage = false;
+    this.m_iIMAPPort = 0;
 }
 
 nsIMAPConnectionManager.prototype.Start = function()
@@ -47,12 +48,12 @@ nsIMAPConnectionManager.prototype.Start = function()
                 oPref.Value = 143;
             }
             this.m_Log.Write("nsIMAPConnectionManager.js - Start - IMAP port value "+ oPref.Value);
-            this.iIMAPPort = oPref.Value;
+            this.m_iIMAPPort = oPref.Value;
             delete WebMailPrefAccess
 
             //create listener
             //connect only to this machine, 10 Queue
-            this.m_serverSocket.init(this.iIMAPPort, true, 10);
+            this.m_serverSocket.init(this.m_iIMAPPort, true, 10);
             this.m_serverSocket.asyncListen(this);
 
             this.m_iStatus = 2;  //started
@@ -130,6 +131,26 @@ nsIMAPConnectionManager.prototype.GetStatus = function ()
     }
 }
 
+
+nsIMAPConnectionManager.prototype.GetPort = function ()
+{
+    try
+    {
+        this.m_Log.Write("nsIMAPConnectionManager.js - GetPort - START");
+        this.m_Log.Write("nsIMAPConnectionManager.js - port = " + this.m_iIMAPPort);
+        this.m_Log.Write("nsIMAPConnectionManager.js - GetPort -  END");
+        return this.m_iIMAPPort;
+    }
+    catch(e)
+    {
+        this.m_Log.DebugDump("nsIMAPConnectionManager.js: GetStatus : Exception : "
+                                      + e.name
+                                      + ".\nError message: "
+                                      + e.message+ "\n"
+                                      + e.lineNumber);
+        return -1;
+    }
+}
 
 
 nsIMAPConnectionManager.prototype.onSocketAccepted = function(serverSocket, transport)
@@ -288,9 +309,7 @@ nsIMAPConnectionManager.prototype.intial = function ()
     {
         this.m_Log.Write("nsIMAPConnectionManager : intial - START");
 
-        var oPref = new Object();
-        oPref.Value = null;
-
+        var oPref = {Value :null};
         var  WebMailPrefAccess = new WebMailCommonPrefAccess();
         WebMailPrefAccess.Get("bool","webmail.bUseIMAPServer",oPref);
         if (oPref.Value)
@@ -301,6 +320,16 @@ nsIMAPConnectionManager.prototype.intial = function ()
             else
                 this.m_Log.Write("nsIMAPConnectionManager : intial - IMAP server not started");
         }
+
+        oPref.Value = null;
+        if (! WebMailPrefAccess.Get("int", "webmail.server.port.imap", oPref))
+        {
+            this.m_Log.Write("nsIMAPConnectionManager.js - intial - webmail.server.port.imap failed. Set to default 143");
+            oPref.Value = 143;
+        }
+        this.m_Log.Write("nsIMAPConnectionManager.js - intial - IMAP port value "+ oPref.Value);
+        this.m_iIMAPPort = oPref.Value;
+        delete WebMailPrefAccess
 
         this.m_Log.Write("nsIMAPConnectionManager : intial - END");
     }

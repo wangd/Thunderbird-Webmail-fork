@@ -14,6 +14,7 @@ function nsSMTPConnectionManager()
     this.m_aSMTPConnections = new Array();
     this.m_GarbageTimer = null;
     this.m_bGarbage = false;
+    this.m_iSMTPPort = 0;
 }
 
 nsSMTPConnectionManager.prototype.Start = function()
@@ -49,12 +50,12 @@ nsSMTPConnectionManager.prototype.Start = function()
                 oPref.Value = 25;
             }
             this.m_Log.Write("nsSMTPConnectionManager.js - Start - SMTP port value "+ oPref.Value);
-            this.iSMTPPort = oPref.Value;
+            this.m_iSMTPPort = oPref.Value;
 
             delete WebMailPrefAccess;
             //create listener
             //connect only to this machine, 10 Queue
-            this.m_serverSocket.init(this.iSMTPPort, true, 10);
+            this.m_serverSocket.init(this.m_iSMTPPort, true, 10);
             this.m_serverSocket.asyncListen(this);
 
             this.m_iStatus = 2;  //started
@@ -125,6 +126,28 @@ nsSMTPConnectionManager.prototype.GetStatus = function ()
                                       + e.message);
         this.m_iStatus = -1;  //error
         return this.m_iStatus;
+    }
+}
+
+
+
+nsSMTPConnectionManager.prototype.GetPort = function ()
+{
+    try
+    {
+        this.m_Log.Write("nsPOPConnectionManager.js - GetPort - START");
+        this.m_Log.Write("nsPOPConnectionManager.js - port = " + this.m_iSMTPPort);
+        this.m_Log.Write("nsPOPConnectionManager.js - GetPort -  END");
+        return this.m_iSMTPPort;
+    }
+    catch(e)
+    {
+        this.m_Log.DebugDump("nsPOPConnectionManager.js: GetStatus : Exception : "
+                                      + e.name
+                                      + ".\nError message: "
+                                      + e.message+ "\n"
+                                      + e.lineNumber);
+        return -1;
     }
 }
 
@@ -296,6 +319,17 @@ nsSMTPConnectionManager.prototype.intial = function ()
             else
                 this.m_Log.Write("nsPOPConnectionManager : intial - SMTP server not started");
         }
+
+        oPref.Value = null;
+        if (! WebMailPrefAccess.Get("int", "webmail.server.port.smtp", oPref))
+        {
+            this.m_Log.Write("nsSMTPConnectionManager.js - intial - webmail.server.port.SMTP failed. Set to default 25");
+            oPref.Value = 25;
+        }
+        this.m_Log.Write("nsSMTPConnectionManager.js - intial - SMTP port value "+ oPref.Value);
+        this.m_iSMTPPort = oPref.Value;
+
+        delete WebMailPrefAccess;
 
         this.m_Log.Write("nsSMTPConnectionManager : intial - END");
     }

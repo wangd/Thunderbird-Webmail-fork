@@ -16,6 +16,7 @@ function nsPOPConnectionManager()
     this.m_iStatus = 0;   //-1 error , 0 = stopped ,1 = waiting, 2= ruuning
     this.m_aPOPConnections = new Array();
     this.m_bGarbage = false;
+    this.m_iPopPort = 0;
 }
 
 
@@ -51,12 +52,12 @@ nsPOPConnectionManager.prototype.Start = function()
                 oPref.Value = 110;
             }
             this.m_Log.Write("nsPOPConnectionManager - Start - POP port value "+ oPref.Value);
-            this.iPopPort = oPref.Value;
+            this.m_iPopPort = oPref.Value;
             delete WebMailPrefAccess
 
             //create listener
             //connect only to this machine, 10 Queue
-            this.m_serverSocket.init(this.iPopPort, true, 10);
+            this.m_serverSocket.init(this.m_iPopPort, true, 10);
             this.m_serverSocket.asyncListen(this);
 
             this.m_iStatus = 2;  //started
@@ -131,6 +132,27 @@ nsPOPConnectionManager.prototype.GetStatus = function ()
 
         this.m_iStatus = -1;  //error
         return this.m_iStatus;
+    }
+}
+
+
+
+nsPOPConnectionManager.prototype.GetPort = function ()
+{
+    try
+    {
+        this.m_Log.Write("nsPOPConnectionManager.js - GetPort - START");
+        this.m_Log.Write("nsPOPConnectionManager.js - port = " + this.m_iPopPort);
+        this.m_Log.Write("nsPOPConnectionManager.js - GetPort -  END");
+        return this.m_iPopPort;
+    }
+    catch(e)
+    {
+        this.m_Log.DebugDump("nsPOPConnectionManager.js: GetStatus : Exception : "
+                                      + e.name
+                                      + ".\nError message: "
+                                      + e.message+ "\n"
+                                      + e.lineNumber);
     }
 }
 
@@ -291,8 +313,7 @@ nsPOPConnectionManager.prototype.intial = function ()
     {
         this.m_Log.Write("nsPOPConnectionManager : intial - START");
 
-        var oPref = new Object();
-        oPref.Value = null;
+        var oPref = {Value :null};
 
         var  WebMailPrefAccess = new WebMailCommonPrefAccess();
         WebMailPrefAccess.Get("bool","webmail.bUsePOPServer",oPref);
@@ -304,6 +325,15 @@ nsPOPConnectionManager.prototype.intial = function ()
             else
                 this.m_Log.Write("nsPOPConnectionManager : intial - pop server not started");
         }
+
+         if (! WebMailPrefAccess.Get("int", "webmail.server.port.pop", oPref))
+        {
+            this.m_Log.Write("nsPOPConnectionManager - intial - webmail.server.port.pop failed. Set to default 110");
+            oPref.Value = 110;
+        }
+        this.m_Log.Write("nsPOPConnectionManager - intial - POP port value "+ oPref.Value);
+        this.m_iPopPort = oPref.Value;
+        delete WebMailPrefAccess
 
         this.m_Log.Write("nsPOPConnectionManager : intial - END");
     }

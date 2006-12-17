@@ -6,6 +6,7 @@ interface nsISMTPConnectionManager : nsISupports
     boolean Start();
     boolean Stop();
     long GetStatus();
+    long GetPort();
 };
 
 
