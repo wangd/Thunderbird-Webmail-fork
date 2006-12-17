@@ -1,9 +1,9 @@
-<?xml version="1.0"?> 
+<?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/global.css"?>
 <?xml-stylesheet href="chrome://messenger/skin/preferences/preferences.css"?>
 <?xml-stylesheet href="chrome://mozapps/content/preferences/preferences.css"?>
 
-<?xml-stylesheet href="chrome://web-mail/content/prefs/Webmail-Prefs.css"?>
+<?xml-stylesheet href="chrome://web-mail/skin/Webmail-Prefs.css"?>
 
 <!DOCTYPE dialog SYSTEM "chrome://web-mail/locale/Webmail-Prefs.dtd">
 
@@ -12,28 +12,31 @@
             title="&Options.szTitle;"
             xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
             style="&Window.size;"
-            lastSelected = "paneServers"
-            buttons="accept, cancel">
-  
-    
-   <!-- servers --> 
-    <prefpane id="paneServers" 
+            lastSelected="paneServers"
+            instantApply="true"
+            onclose="gServersPane.close()"
+            buttons="extra1"
+            buttonlabelextra1="&close.button.label;"
+            ondialogextra1="window.close();">
+
+    <!-- servers -->
+    <prefpane id="paneServers"
               label="&Servers.Panel.szTitle;"
               src="chrome://web-mail/content/prefs/Webmail-Prefs-Servers.xul"/>
-              
-    <!-- general --> 
-    <prefpane id="paneGeneral" 
+
+    <!-- general -->
+    <prefpane id="paneGeneral"
               label="&General.Panel.szTitle;"
               src="chrome://web-mail/content/prefs/Webmail-Prefs-General.xul"/>
-    
+
     <!-- domains -->
-    <prefpane id="paneDomains" 
+    <prefpane id="paneDomains"
               label="&Domains.Panel.szTitle;"
               src="chrome://web-mail/content/prefs/Webmail-Prefs-Domains.xul"/>
-    
+
     <!-- logging -->
-    <prefpane id="paneLogging" 
+    <prefpane id="paneLogging"
               label="&Logging.Panel.szTitle;"
               src="chrome://web-mail/content/prefs/Webmail-Prefs-Logging.xul"/>
-              
+
 </prefwindow>

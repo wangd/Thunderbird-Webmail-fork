@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/global.css"?>
-<?xml-stylesheet href="chrome://web-mail/skin/Webmail-Prefs-Logging.css"?>
+<?xml-stylesheet href="chrome://web-mail/skin/Webmail-Prefs.css"?>
 
-<!DOCTYPE dialog SYSTEM "chrome://web-mail/locale/Webmail-Prefs-Logging.dtd">
+<!DOCTYPE dialog SYSTEM "chrome://web-mail/locale/Webmail-Prefs.dtd">
 
 <overlay id="paneLoggingOverlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
@@ -12,78 +12,78 @@
         <script type="application/x-javascript" src="chrome://web-mail/content/prefs/Webmail-Prefs-Logging.js"/>
 
         <preferences>
-            <preference id="bUseLog" name="webmail.logging.comms.UseLog" type="bool"/>
-            <preference id="fileLocation" name="webmail.logging.comms.FileLocation" type="file"/>
+            <preference id="bUseLog"      name="webmail.logging.comms.UseLog"       type="bool" instantApply="true"/>
+            <preference id="fileLocation" name="webmail.logging.comms.FileLocation" type="file" instantApply="true"/>
         </preferences>
 
-        <stringbundle id="stringsWebmailPrefs-Log" src="chrome://web-mail/locale/Webmail-Prefs-Logging.properties"/>
+        <stringbundle id="stringsWebmailPrefs-Log" src="chrome://web-mail/locale/Webmail-Prefs.properties"/>
 
         <vbox flex="1">
             <!-- General Extension logging-->
             <groupbox>
-            	<caption >
-		            <checkbox label="&GeneralLogging.Label;"
-		                      accesskey="&GeneralLogging.AccessKey;"
-		                      id = "chkWebmailLogging"
-		                      preference="bUseLog"
-		                      onclick="gLoggingPane.updateBox();"/>
-              	</caption >
+                <caption >
+                    <checkbox label="&GeneralLogging.Label;"
+                              accesskey="&GeneralLogging.AccessKey;"
+                              id = "chkWebmailLogging"
+                              preference="bUseLog"
+                              onclick="gLoggingPane.updateBox();"/>
+                  </caption >
 
-	            <!-- file location-->
-	            <hbox align="center" id="locationBox">
-	                <label value="&Location.Label;"
-	                       accesskey="&Location.AccessKey;"
-	                       id="labelLoggingFile"
-	                       class = "DisabledLabel"
-	                       control="txtLoggingFile"/>
+                <!-- file location-->
+                <hbox align="center" id="locationBox">
+                    <label value="&Location.Label;"
+                           accesskey="&Location.AccessKey;"
+                           id="labelLoggingFile"
+                           class = "DisabledLabel"
+                           control="txtLoggingFile"/>
 
-	                <filefield flex="1"
-	                         id="txtLoggingFile"
-	                         preference-editable="true"
-	                         preference="fileLocation"
-	                         onsyncfrompreference ="return gLoggingPane.readFolderPref();"
-	                         onsynctopreference ="return gLoggingPane.writeFolderPref();"/>
+                    <filefield flex="1"
+                             id="txtLoggingFile"
+                             preference-editable="true"
+                             preference="fileLocation"
+                             onsyncfrompreference ="return gLoggingPane.readFolderPref();"
+                             onsynctopreference ="return gLoggingPane.writeFolderPref();"/>
 
-	                <button label="&Button.Label;"
-	                        accesskey="&Button.AccessKey;"
-	                        id="buttonLoggingFile"
-	                        oncommand= "gLoggingPane.browseForFolders();"/>
-	            </hbox>
-           	</groupbox>
+                    <button label="&Button.Label;"
+                            accesskey="&Button.AccessKey;"
+                            id="buttonLoggingFile"
+                            oncommand= "gLoggingPane.browseForFolders();"/>
+                </hbox>
+               </groupbox>
 
             <spacer flex="6"/>
 
-			<!-- information -->
+            <!-- information -->
             <vbox pack="end">
-	            <hbox class ="information" flex="1">
-	                <vbox>
-	                	<spacer flex="1"/>
-	                    <image id = "iconWarning"/>
-	                	<spacer flex="1"/>
-	                </vbox>
+                <hbox class ="information" flex="1">
+                    <vbox>
+                        <spacer flex="1"/>
+                        <image id = "iconWarning"/>
+                        <spacer flex="1"/>
+                    </vbox>
                     <vbox flex="1">
-	                	<spacer flex="1"/>
+                        <spacer flex="1"/>
                         <description class="note">
                             &Note.Label;
                         </description>
-                		<spacer flex="1"/>
+                        <spacer flex="1"/>
                     </vbox>
-	            </hbox>
+                </hbox>
 
-	            <hbox class = "information" flex="1">
-	                <vbox>
-	                	<spacer flex="1"/>
-	                    <image id = "iconMessage"/>
-	                	<spacer flex="1"/>
-	                </vbox>
+                <hbox class = "information" flex="1">
+                    <vbox>
+                        <spacer flex="1"/>
+                        <image id = "iconMessage"/>
+                        <spacer flex="1"/>
+                    </vbox>
                     <vbox flex="1" >
-	                	<spacer flex="1"/>
+                        <spacer flex="1"/>
                         <description class="note">
                             &Restart.Label;
                         </description>
-	                	<spacer flex="1"/>
+                        <spacer flex="1"/>
                     </vbox>
-	            </hbox>
+                </hbox>
             </vbox>
         </vbox>
 

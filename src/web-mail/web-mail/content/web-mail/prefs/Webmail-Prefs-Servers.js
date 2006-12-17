@@ -1,57 +1,85 @@
-var gServersPane = 
+window.addEventListener("unload", function() {gServersPane.close();} , false);
+
+
+var gServersPane =
 {
-    m_DebugLog : null,
+    m_DebugLog : new DebugLog("webmail.logging.comms", "","webmailPrefs"),
     m_POPServer : null,
     m_SMTPServer : null,
     m_IMAPServer : null,
-    
-    
+    m_Timer : null,
+
+
     init: function ()
     {
-    
-        this.m_DebugLog = new DebugLog("webmail.logging.comms", 
-                                       "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
-                                       "webmailPrefs");
-                                   
         this.m_DebugLog.Write("Webmail-Prefs-Servers : init - START");
-        
+
         try
         {
             //get pop service
-            this.m_POPServer = Components.classes["@mozilla.org/POPConnectionManager;1"];
-            this.m_POPServer = this.m_POPServer.getService();
-            this.m_POPServer.QueryInterface(Components.interfaces.nsIPOPConnectionManager);
-            
+            this.m_POPServer = Components.classes["@mozilla.org/POPConnectionManager;1"].getService()
+                                         .QueryInterface(Components.interfaces.nsIPOPConnectionManager);
+
             //get SMTP service
-            this.m_SMTPServer = Components.classes["@mozilla.org/SMTPConnectionManager;1"];
-            this.m_SMTPServer = this.m_SMTPServer.getService();
-            this.m_SMTPServer.QueryInterface(Components.interfaces.nsISMTPConnectionManager);
-            
+            this.m_SMTPServer = Components.classes["@mozilla.org/SMTPConnectionManager;1"].getService()
+                                          .QueryInterface(Components.interfaces.nsISMTPConnectionManager);
+
             //get IMAP service
-            this.m_IMAPServer = Components.classes["@mozilla.org/IMAPConnectionManager;1"];
-            this.m_IMAPServer = this.m_IMAPServer.getService();
-            this.m_IMAPServer.QueryInterface(Components.interfaces.nsIIMAPConnectionManager);
+            this.m_IMAPServer = Components.classes["@mozilla.org/IMAPConnectionManager;1"].getService()
+                                          .QueryInterface(Components.interfaces.nsIIMAPConnectionManager);
+
+            //status update timer
+            this.m_Timer = Components.classes["@mozilla.org/timer;1"]
+                                     .createInstance(Components.interfaces.nsITimer);
+            this.m_Timer.initWithCallback(this,
+                                          5000,
+                                          Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
         }
         catch(e)
         {
              this.m_DebugLog.Write("Webmail-Prefs-Servers: ERROR"
-                                                         + e.name + 
-                                                         ".\nError message: " 
-                                                         + e.message);    
-        }  
-        
+                                                         + e.name +
+                                                         ".\nError message: "
+                                                         + e.message);
+        }
+
         this.updateStatus();
-         
+
         this.m_DebugLog.Write("Webmail-Prefs-Servers : init - END");
     },
-    
-    
+
+
+
+
+    close : function ()
+    {
+        try
+        {
+            this.m_DebugLog.Write("Webmail-Prefs-Servers : close - START");
+
+            this.m_Timer.cancel();
+
+            this.m_DebugLog.Write("Webmail-Prefs-Servers : close - END");
+        }
+        catch(e)
+        {
+            this.m_DebugLog.DebugDump("Webmail-Prefs-Servers.js : close - Exception in notify : "
+                                        + e.name +
+                                        ".\nError message: "
+                                        + e.message+ "\n"
+                                        + e.lineNumber);
+        }
+    },
+
+
+
+//value : -1 = ERROR (RED); 0 = Stopped (GREY); 1 = WAITING (AMBER)2 = Running (GREEN)
     updateStatus : function ()
     {
         try
         {
             this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - START");
-            
+
             //pop status
             var iPOPvalue = -1;
             this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - getting pop status");
@@ -64,11 +92,34 @@ var gServersPane =
             {
                 this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - this.m_POPServer == null");
             }
-    
+
+
+            if (iPOPvalue == -1 ||iPOPvalue == 0)  //error -  stop
+            {
+                document.getElementById("btnPOPStart").setAttribute("imageID",2); //enable start
+                document.getElementById("btnPOPStop").setAttribute("imageID",-1); //disable stop
+                document.getElementById("btnPOPStop").setAttribute("disabled","true");
+                document.getElementById("btnPOPStart").setAttribute("disabled","false");
+            }
+            else if (iPOPvalue == 1)   //waiting
+            {
+                document.getElementById("btnPOPStart").setAttribute("imageID",-2); //disable start
+                document.getElementById("btnPOPStart").setAttribute("disabled","true");
+                document.getElementById("btnPOPStop").setAttribute("disabled","true");
+                document.getElementById("btnPOPStop").setAttribute("imageID",-1); //disable stop
+            }
+            else if (iPOPvalue == 2)   //running
+            {
+                document.getElementById("btnPOPStart").setAttribute("imageID",-2); //disable start
+                document.getElementById("btnPOPStart").setAttribute("disabled","true");
+                document.getElementById("btnPOPStop").setAttribute("disabled","false");
+                document.getElementById("btnPOPStop").setAttribute("imageID",1); //enable stop
+            }
+
             document.getElementById("imgPopStatus").setAttribute("value",iPOPvalue); //set pop status colour
-            document.getElementById("txtPopStatus").value =this.StatusText(iPOPvalue); //set status text 
-            
-            
+            document.getElementById("txtPopStatus").value =this.StatusText(iPOPvalue); //set status text
+
+
             //SMTP
             var iSMTPvalue = -1;
             this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - getting smtp status");
@@ -81,11 +132,34 @@ var gServersPane =
             {
                 this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - this.m_SMTPServer == null");
             }
-    
+
+            if (iSMTPvalue == -1 ||iSMTPvalue == 0)  //error -  stop
+            {
+                document.getElementById("btnSMTPStart").setAttribute("imageID",2); //enable start
+                document.getElementById("btnSMTPStop").setAttribute("imageID",-1); //disable stop
+                document.getElementById("btnSMTPStop").setAttribute("disabled","true");
+                document.getElementById("btnSMTPStart").setAttribute("disabled","false");
+            }
+            else if (iSMTPvalue == 1)   //waiting
+            {
+                document.getElementById("btnSMTPStart").setAttribute("imageID",-2); //disable start
+                document.getElementById("btnSMTPStart").setAttribute("disabled","true");
+                document.getElementById("btnSMTPStop").setAttribute("disabled","true");
+                document.getElementById("btnSMTPStop").setAttribute("imageID",-1); //disable stop
+            }
+            else if (iSMTPvalue == 2)   //running
+            {
+                document.getElementById("btnSMTPStart").setAttribute("imageID",-2); //disable start
+                document.getElementById("btnSMTPStart").setAttribute("disabled","true");
+                document.getElementById("btnSMTPStop").setAttribute("disabled","false");
+                document.getElementById("btnSMTPStop").setAttribute("imageID",1); //enable stop
+            }
+
+
             document.getElementById("imgSMTPStatus").setAttribute("value",iSMTPvalue); //set SMTP status colour
-            document.getElementById("txtSMTPStatus").value = this.StatusText(iSMTPvalue); //set status text 
-            
-            
+            document.getElementById("txtSMTPStatus").value = this.StatusText(iSMTPvalue); //set status text
+
+
             //IMAP
             var iIMAPvalue = -1;
             this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - getting IMAP status");
@@ -98,40 +172,197 @@ var gServersPane =
             {
                 this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - this.m_IMAPServer == null");
             }
-    
+
+
+            if (iIMAPvalue == -1 ||iIMAPvalue == 0)  //error -  stop
+            {
+                document.getElementById("btnIMAPStart").setAttribute("imageID",2); //enable start
+                document.getElementById("btnIMAPStop").setAttribute("imageID",-1); //disable stop
+                document.getElementById("btnIMAPStop").setAttribute("disabled","true");
+                document.getElementById("btnIMAPStart").setAttribute("disabled","false");
+            }
+            else if (iIMAPvalue == 1)   //waiting
+            {
+                document.getElementById("btnIMAPStart").setAttribute("imageID",-2); //disable start
+                document.getElementById("btnIMAPStart").setAttribute("disabled","true");
+                document.getElementById("btnIMAPStop").setAttribute("disabled","true");
+                document.getElementById("btnIMAPStop").setAttribute("imageID",-1); //disable stop
+            }
+            else if (iIMAPvalue == 2)   //running
+            {
+                document.getElementById("btnIMAPStart").setAttribute("imageID",-2); //disable start
+                document.getElementById("btnIMAPStart").setAttribute("disabled","true");
+                document.getElementById("btnIMAPStop").setAttribute("disabled","false");
+                document.getElementById("btnIMAPStop").setAttribute("imageID",1); //enable stop
+            }
+
             document.getElementById("imgIMAPStatus").setAttribute("value",iIMAPvalue); //set pop status colour
-            document.getElementById("txtIMAPStatus").value = this.StatusText(iIMAPvalue); //set status text 
-           
-            
+            document.getElementById("txtIMAPStatus").value = this.StatusText(iIMAPvalue); //set status text
+
             this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - END");
         }
         catch(err)
         {
-            this.m_DebugLog.DebugDump("Webmail-Prefs-Servers : Exception in updateStatus : " 
-                                      + e.name + 
-                                      ".\nError message: " 
-                                      + e.message);
+            this.m_DebugLog.DebugDump("Webmail-Prefs-Servers : Exception in updateStatus : "
+                                      + e.name +
+                                      ".\nError message: "
+                                      + e.message + "\n" +
+                                      e.lineNumber);
         }
     },
-    
-    
-    
+
+
+
     StatusText : function (iValue)
     {
         this.m_DebugLog.Write("Webmail-Prefs-Servers : StatusText - " + iValue + "- START");
-    
+
         var strbundle=document.getElementById("stringsWebmailPrefs-Servers");
         var szString="";
-        
+
         switch(iValue)
         {// -1 = ERROR (RED); 0 = WAITING (AMBER); 1 = Stopped (GREY); 2 = Running (GREEN)
-            case -1:  szString = strbundle.getString("ERROR"); break              
+            case -1:  szString = strbundle.getString("ERROR"); break
             case 0:   szString = strbundle.getString("Stop"); break
             case 1:   szString = strbundle.getString("Wait"); break
             case 2:   szString = strbundle.getString("Go"); break
         }
-        
+
         this.m_DebugLog.Write("Webmail-Prefs-Servers : StatusText - " + szString + " END");
         return szString;
     },
+
+
+
+    stopServer : function (iServer)
+    {
+        try
+        {
+            this.m_DebugLog.Write("Webmail-Prefs-Servers : stopServer - " + iServer + "- START");
+
+            if (iServer == 1)    //pop
+            {
+                this.m_POPServer.Stop();
+            }
+            else if (iServer  == 2 )  //smtp
+            {
+               this.m_SMTPServer.Stop();
+            }
+            else if (iServer == 3) //imap
+            {
+               this.m_IMAPServer.Stop();
+            }
+            this.updateStatus();
+            this.m_DebugLog.Write("Webmail-Prefs-Servers : stopServer - END");
+        }
+        catch(e)
+        {
+            this.m_DebugLog.DebugDump("Webmail-Prefs-Servers : Exception in stopServer : "
+                                      + e.name +
+                                      ".\nError message: "
+                                      + e.message + "\n" +
+                                      e.lineNumber);
+        }
+    },
+
+
+    startServer : function (iServer)
+    {
+        try
+        {
+            this.m_DebugLog.Write("Webmail-Prefs-Servers : startServer - " + iServer + "- START");
+
+            if (iServer == 1)    //pop
+            {
+                this.m_POPServer.Start();
+                document.getElementById("imgPOPRestart").setAttribute("hidden","true"); //hide warning
+                document.getElementById("boxWarning").setAttribute("hidden","true"); //hide warning
+            }
+            else if (iServer  == 2 )  //smtp
+            {
+               this.m_SMTPServer.Start();
+               document.getElementById("imgSMTPRestart").setAttribute("hidden","true"); //hide warning
+               document.getElementById("boxWarning").setAttribute("hidden","true"); //hide warning
+            }
+            else if (iServer == 3) //imap
+            {
+               this.m_IMAPServer.Start();
+               document.getElementById("imgIMAPRestart").setAttribute("hidden","true"); //hide warning
+               document.getElementById("boxWarning").setAttribute("hidden","true"); //hide warning
+            }
+
+            this.updateStatus();
+            this.m_DebugLog.Write("Webmail-Prefs-Servers : startServer - END");
+
+        }
+        catch(e)
+        {
+            this.m_DebugLog.DebugDump("Webmail-Prefs-Servers : Exception in startServer : "
+                                      + e.name +
+                                      ".\nError message: "
+                                      + e.message + "\n" +
+                                      e.lineNumber);
+        }
+    },
+
+
+
+
+    portChange : function (iServer)
+    {
+        try
+        {
+            this.m_DebugLog.Write("Webmail-Prefs-Servers.js : portChange -  START");
+
+            if (iServer == 1)  //pop
+            {
+                document.getElementById("imgPOPRestart").setAttribute("hidden","false"); //show warning
+                document.getElementById("boxWarning").setAttribute("hidden","false"); //show warning
+            }
+            else if (iServer == 2)  //SMTP
+            {
+                document.getElementById("imgSMTPRestart").setAttribute("hidden","false"); //show warning
+                document.getElementById("boxWarning").setAttribute("hidden","false"); //show warning
+            }
+            else if (iServer == 3)  //imap
+            {
+                document.getElementById("imgIMAPRestart").setAttribute("hidden","false"); //show warning
+                document.getElementById("boxWarning").setAttribute("hidden","false"); //show warning
+            }
+
+            this.m_DebugLog.Write("Webmail-Prefs-Servers.js : portChange - END");
+        }
+        catch(e)
+        {
+            this.m_DebugLog.DebugDump("Webmail-Prefs-Servers.js : portChange - Exception in notify : "
+                                        + e.name +
+                                        ".\nError message: "
+                                        + e.message+ "\n"
+                                        + e.lineNumber);
+        }
+    },
+
+
+
+
+    notify: function(timer)
+    {
+        try
+        {
+            this.m_DebugLog.Write("Webmail-Prefs-Servers.js : notify -  START");
+
+            this.updateStatus();
+
+            this.m_DebugLog.Write("Webmail-Prefs-Servers.js : notify - END");
+        }
+        catch(e)
+        {
+            this.m_DebugLog.DebugDump("Webmail-Prefs-Servers.js : notify - Exception in notify : "
+                                        + e.name +
+                                        ".\nError message: "
+                                        + e.message+ "\n"
+                                        + e.lineNumber);
+        }
+    },
+
 };
