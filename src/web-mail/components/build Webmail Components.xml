@@ -1,0 +1,63 @@
+<?xml version="1.0" ?>
+<project name="web-mail Components">
+    <property name="gecko_sdk_path" location="C:\gecko-sdk"/>
+    <property name="xpidl_exe" location="${gecko_sdk_path}/bin/xpidl.exe" />
+    <property name="IDLs_path" location="${gecko_sdk_path}/idl" />
+
+    <delete>
+        <fileset dir="." includes="*.xpt"/>
+    </delete>
+
+    <target name="compileIDL">
+        <exec executable="${xpidl_exe}">
+            <arg line="-m typelib -w -v -I ${IDLs_path} nsISMTPConnectionManager.idl" />
+        </exec>
+
+        <exec executable="${xpidl_exe}">
+            <arg line="-m typelib -w -v -I ${IDLs_path} nsIIMAPConnectionManager.idl" />
+        </exec>
+
+        <exec executable="${xpidl_exe}">
+            <arg line="-m typelib -w -v -I ${IDLs_path} nsIPOPConnectionManager.idl" />
+        </exec>
+
+        <exec executable="${xpidl_exe}">
+            <arg line="-m typelib -w -v -I ${IDLs_path} nsIWebmailCookieManager.idl" />
+        </exec>
+
+        <exec executable="${xpidl_exe}">
+            <arg line="-m typelib -w -v -I ${IDLs_path} nsIDomainManager.idl" />
+        </exec>
+
+        <exec executable="${xpidl_exe}">
+            <arg line="-m typelib -w -v -I ${IDLs_path} nsIComponentData.idl" />
+        </exec>
+
+        <exec executable="${xpidl_exe}">
+            <arg line="-m typelib -w -v -I ${IDLs_path} nsIHttpAuthManager.idl" />
+        </exec>
+
+        <exec executable="${xpidl_exe}">
+            <arg line="-m typelib -w -v -I ${IDLs_path} nsIIMAPFolders.idl" />
+        </exec>
+
+
+        <copy file="nsIWebmailCookieManager.idl" todir="${IDLs_path}"/>
+        <copy file="nsISessionManager.idl" todir="${IDLs_path}"/>
+        <copy file="nsIComponentData.idl" todir="${IDLs_path}"/>
+        <copy file="nsIHttpAuthManager.idl" todir="${IDLs_path}"/>
+
+        <exec executable="${xpidl_exe}">
+            <arg line="-m typelib -w -v -I ${IDLs_path} nsISessionData.idl" />
+        </exec>
+
+        <exec executable="${xpidl_exe}">
+            <arg line="-m typelib -w -v -I ${IDLs_path} nsISessionManager.idl" />
+        </exec>
+
+        <delete file="${IDLs_path}/nsIWebmailCookieManager.idl"/>
+        <delete file="${IDLs_path}/nsISessionManager.idl"/>
+        <delete file="${IDLs_path}/nsIComponentData.idl"/>
+        <delete file="${IDLs_path}/nsIHttpAuthManager.idl"/>
+    </target>
+</project>
