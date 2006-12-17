@@ -149,7 +149,8 @@
                                              maxlength = "5"
                                              class = "text"
                                              preference="portSMTP"
-                                             oninput="gServersPane.portChange(2);"/>
+                                             oninput="gServersPane.portChange(2);"
+                                             tabindex="5"/>
                                     <hbox>
                                         <spacer flex="1"/>
                                         <image id="imgSMTPRestart"
@@ -166,7 +167,8 @@
                                    accesskey="&Enable.SMTP.AccessKey;"
                                    preference = "enableSMTP"
                                    class = "text"
-                                   id="chkEnableSMTP"/>
+                                   id="chkEnableSMTP"
+                                   tabindex="6"/>
                     </vbox>
 
                     <hbox class="boxImageButtons">
@@ -226,12 +228,13 @@
                                                control="txtImapPort"
                                                class = "text"/>
                                     </vbox>
-                                    <textbox id="txtSmptPort"
+                                    <textbox id="txtIMAPPort"
                                              size = "5"
                                              maxlength = "5"
                                              class = "text"
                                              preference="portIMAP"
-                                             oninput="gServersPane.portChange(3);"/>
+                                             oninput="gServersPane.portChange(3);"
+                                             tabindex="9"/>
                                     <hbox>
                                         <spacer flex="1"/>
                                         <image id="imgIMAPRestart"
@@ -247,7 +250,8 @@
                                   accesskey="&Enable.IMAP.AccessKey;"
                                   class = "text"
                                   preference = "enableIMAP"
-                                  id="chkEnableIMAP"/>
+                                  id="chkEnableIMAP"
+                                  tabindex="10"/>
                     </vbox>
 
                     <hbox class="boxImageButtons">

@@ -8,7 +8,9 @@ var gServersPane =
     m_SMTPServer : null,
     m_IMAPServer : null,
     m_Timer : null,
-
+    m_bPOPPort : false,
+    m_bSMPTPort : false,
+    m_bIMAPPort : false,
 
     init: function ()
     {
@@ -119,7 +121,6 @@ var gServersPane =
             document.getElementById("imgPopStatus").setAttribute("value",iPOPvalue); //set pop status colour
             document.getElementById("txtPopStatus").value =this.StatusText(iPOPvalue); //set status text
 
-
             //SMTP
             var iSMTPvalue = -1;
             this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - getting smtp status");
@@ -199,9 +200,46 @@ var gServersPane =
             document.getElementById("imgIMAPStatus").setAttribute("value",iIMAPvalue); //set pop status colour
             document.getElementById("txtIMAPStatus").value = this.StatusText(iIMAPvalue); //set status text
 
+            //check port number
+            var iServerPort= this.m_POPServer.GetPort();
+            var iPrefPort =  document.getElementById("txtPopPort").value;
+            var bPOPChange = false;
+            this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - iServerPort " + iServerPort + " iPrefPort " + iPrefPort);
+            if (iServerPort != iPrefPort)
+            {
+                document.getElementById("imgPOPRestart").setAttribute("hidden","false"); //show warning
+                document.getElementById("boxWarning").setAttribute("hidden","false");
+                bPOPChange = true;
+            }
+
+            iServerPort= this.m_SMTPServer.GetPort();
+            iPrefPort =  document.getElementById("txtSmptPort").value;
+            var bSMTPChange = false;
+            this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - iServerPort " + iServerPort + " iPrefPort " + iPrefPort);
+            if (iServerPort != iPrefPort)
+            {
+                document.getElementById("imgSMTPRestart").setAttribute("hidden","false"); //show warning
+                document.getElementById("boxWarning").setAttribute("hidden","false");
+                bSMTPChange = true;
+            }
+
+            iServerPort= this.m_IMAPServer.GetPort();
+            iPrefPort =  document.getElementById("txtIMAPPort").value;
+            bIMAPChange = false;
+            this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - iServerPort " + iServerPort + " iPrefPort " + iPrefPort);
+            if (iServerPort != iPrefPort)
+            {
+                document.getElementById("imgIMAPRestart").setAttribute("hidden","false"); //show warning
+                document.getElementById("boxWarning").setAttribute("hidden","false");
+                bIMAPChange = true;
+            }
+
+            if (bPOPChange == false && bSMTPChange == false && bIMAPChange ==false)
+               document.getElementById("boxWarning").setAttribute("hidden","true"); //hide warning
+
             this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - END");
         }
-        catch(err)
+        catch(e)
         {
             this.m_DebugLog.DebugDump("Webmail-Prefs-Servers : Exception in updateStatus : "
                                       + e.name +
@@ -276,19 +314,16 @@ var gServersPane =
             {
                 this.m_POPServer.Start();
                 document.getElementById("imgPOPRestart").setAttribute("hidden","true"); //hide warning
-                document.getElementById("boxWarning").setAttribute("hidden","true"); //hide warning
             }
             else if (iServer  == 2 )  //smtp
             {
                this.m_SMTPServer.Start();
                document.getElementById("imgSMTPRestart").setAttribute("hidden","true"); //hide warning
-               document.getElementById("boxWarning").setAttribute("hidden","true"); //hide warning
-            }
+           }
             else if (iServer == 3) //imap
             {
                this.m_IMAPServer.Start();
                document.getElementById("imgIMAPRestart").setAttribute("hidden","true"); //hide warning
-               document.getElementById("boxWarning").setAttribute("hidden","true"); //hide warning
             }
 
             this.updateStatus();
@@ -306,29 +341,13 @@ var gServersPane =
     },
 
 
-
-
     portChange : function (iServer)
     {
         try
         {
             this.m_DebugLog.Write("Webmail-Prefs-Servers.js : portChange -  START");
 
-            if (iServer == 1)  //pop
-            {
-                document.getElementById("imgPOPRestart").setAttribute("hidden","false"); //show warning
-                document.getElementById("boxWarning").setAttribute("hidden","false"); //show warning
-            }
-            else if (iServer == 2)  //SMTP
-            {
-                document.getElementById("imgSMTPRestart").setAttribute("hidden","false"); //show warning
-                document.getElementById("boxWarning").setAttribute("hidden","false"); //show warning
-            }
-            else if (iServer == 3)  //imap
-            {
-                document.getElementById("imgIMAPRestart").setAttribute("hidden","false"); //show warning
-                document.getElementById("boxWarning").setAttribute("hidden","false"); //show warning
-            }
+            this.updateStatus();
 
             this.m_DebugLog.Write("Webmail-Prefs-Servers.js : portChange - END");
         }
@@ -341,8 +360,6 @@ var gServersPane =
                                         + e.lineNumber);
         }
     },
-
-
 
 
     notify: function(timer)
