@@ -1,0 +1,180 @@
+/* main toolbar */
+radio[pane]
+{
+    list-style-image: url("chrome://web-mail/skin/webmail-PrefsToolbar.png");
+}
+
+radio[pane=paneServers]
+{
+    -moz-image-region: rect(0px, 32px, 32px, 0px)
+}
+
+radio[pane=paneGeneral]
+{
+    -moz-image-region: rect(0px, 64px, 32px, 32px)
+}
+
+radio[pane=paneDomains]
+{
+    -moz-image-region: rect(0px, 96px, 32px, 64px)
+}
+
+
+radio[pane=paneLogging]
+{
+    -moz-image-region: rect(0px, 128px, 32px, 96px)
+}
+
+
+
+/* server panel*/
+.txtStatus
+{
+    text-align: center;
+    font-size:  12pt;
+    color: #000000;
+}
+
+
+
+/* status indicators*/
+#colourStatus
+{
+    list-style-image: url("chrome://web-mail/skin/StatusColour.png")
+}
+
+
+/* red - error*/
+.status[value="-1"]
+{
+    -moz-image-region: rect(0px 80px 20px 60px);
+}
+
+/* grey - off*/
+.status[value="0"]
+{
+    -moz-image-region: rect(0px 20px 20px 0px);
+}
+
+
+/* amber - waiting*/
+.status[value="1"]
+{
+    -moz-image-region: rect(0px 40px 20px 20px);
+}
+
+
+/* green - go */
+.status[value= "2"]
+{
+    -moz-image-region: rect(0px 60px 20px 40px);
+}
+
+
+
+.imgWarning
+{
+    list-style-image: url("chrome://web-mail/skin/Warning.png")
+}
+
+
+
+.settings
+{
+    margin-top : 5px;
+    margin-bottom : 5px;
+}
+
+
+.boxImageButtons
+{
+    margin-top : 3px;
+}
+
+
+.imageButton
+{
+    list-style-image: url("chrome://web-mail/skin/Webmail-SmallToolbar.png");
+    -moz-appearance: none;
+    border: none !important;
+    padding: 1px;
+}
+
+
+/* standard*/
+.imageButton[imageID = "1"]  /*stop */
+{
+    -moz-image-region: rect(16px, 16px, 32px, 0px)
+}
+
+.imageButton[imageID = "2"]   /* go */
+{
+    -moz-image-region: rect(16px,  32px, 32px, 16px)
+}
+
+
+/* hover */
+.imageButton[imageID = "1"]:hover /*stop*/
+{
+    -moz-image-region: rect(0px, 16px, 16px, 0px)
+}
+
+.imageButton[imageID = "2"]:hover /*go*/
+{
+    -moz-image-region: rect(0px, 32px, 16px, 16px)
+}
+
+
+/* disabled */
+.imageButton[imageID = "-1"]  /*stop */
+{
+    -moz-image-region: rect(32px, 16px, 48px, 0px)
+}
+
+.imageButton[imageID = "-2"]   /* go */
+{
+    -moz-image-region: rect(32px,  32px, 48px, 16px)
+}
+
+
+
+
+/* logging panel */
+#locationBox
+{
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.DisabledLabel[disabled="true"]
+{
+     color: GrayText;
+}
+
+
+
+
+/* Information boxes */
+.information
+{
+    border: 1px solid black;
+    background-color: #FFFFCC;
+    padding: 10px;
+    margin-top : 5px;
+}
+
+.note
+{
+    margin-left: 10px
+}
+
+#iconMessage
+{
+    list-style-image: url("chrome://web-mail/skin/Message.png");
+}
+
+#iconWarning
+{
+    list-style-image: url("chrome://web-mail/skin/Error.png");
+}
