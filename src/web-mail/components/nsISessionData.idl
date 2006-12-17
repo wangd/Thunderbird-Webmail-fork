@@ -1,20 +1,20 @@
 #include "nsISupports.idl"
 #include "nsIComponentData.idl"
 #include "nsIHttpAuthManager.idl"
-#include "nsICookieManager.idl"
+#include "nsIWebmailCookieManager.idl"
 
 [scriptable, uuid(f26a2540-3851-11da-8cd6-0800200c9a66)]
 interface nsISessionData : nsISupports
 {
     attribute string szUserName;
-    
+
     attribute nsIWebMailCookieManager oCookieManager;
-    
+
     attribute nsIHttpAuthManager oHttpAuthManager;
-    
-    attribute PRint64 iExpiryTime;
-    
+
+    attribute PRInt64 iExpiryTime;
+
     attribute nsIComponentData oComponentData;
-    
+
     attribute boolean bBlocked;
 };
