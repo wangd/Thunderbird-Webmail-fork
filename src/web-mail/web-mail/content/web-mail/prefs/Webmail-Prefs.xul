@@ -14,7 +14,6 @@
             style="&Window.size;"
             lastSelected="paneServers"
             instantApply="true"
-            onclose="gServersPane.close()"
             buttons="extra1"
             buttonlabelextra1="&close.button.label;"
             ondialogextra1="window.close();">
