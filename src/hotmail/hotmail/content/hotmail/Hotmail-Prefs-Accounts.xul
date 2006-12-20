@@ -5,13 +5,20 @@
 <!DOCTYPE dialog SYSTEM "chrome://hotmail/locale/Hotmail-Prefs.dtd">
 
 <overlay id="paneAccountsOverlay"
-         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+         instantApply="true">
 
     <prefpane id = "paneAccounts" onpaneload="gPrefAccounts.init()" flex="1">
 
         <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
         <script type="application/x-javascript" src="chrome://web-mail/content/common/CommonPrefs.js"/>
         <script type="application/x-javascript" src="chrome://hotmail/content/Hotmail-Prefs-Accounts.js"/>
+
+        <preferences id="HotmailPrefs">
+            <preference id="selectedTabIndex" name="hotmail.selectedTabIndex" type="int" instantApply="true"/>
+            <preference id="selectedUserName" name="hotmail.selectedUserName" type="string" instantApply="true"/>
+        </preferences>
+
 
         <vbox id="vboxAccounts" flex="1">
             <vbox id="boxError" hidden="true" >
@@ -30,7 +37,7 @@
                     </menupopup>
                 </menulist>
 
-                <tabbox  flex="1" id="tabsAccount">
+                <tabbox  flex="1" id="tabsAccount" onselect="gPrefAccounts.tabSelectionChanged();">
                     <tabs>
                         <tab label="&HotmailPref.Tab.Mode.Title;"/>
                         <tab label="&HotmailPref.Tab.POP.Title;"/>

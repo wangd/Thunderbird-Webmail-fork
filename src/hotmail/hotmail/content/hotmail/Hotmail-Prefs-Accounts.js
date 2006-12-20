@@ -5,7 +5,8 @@ var gPrefAccounts =
                               "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
                               "HotmailPrefs"),
     m_aszUserList : null,
-    m_iIndex : -1,
+    m_iIndex : 0,
+    m_bInit : false,
 
 
 
@@ -15,6 +16,8 @@ var gPrefAccounts =
         {
             this.m_DebugLog.Write("Hotmail-Pref-Accounts : Init - START");
 
+            this.m_bInit = true;
+
             this.m_strBundle = document.getElementById("stringHotmailFolders");
 
             //load data
@@ -23,7 +26,7 @@ var gPrefAccounts =
 
             if (this.m_aszUserList.length>0) //select first item
             {
-                document.getElementById("menuAccounts").selectedIndex=0;
+                document.getElementById("menuAccounts").selectedIndex = this.m_iIndex;
             }
            else //disable elements
             {
@@ -32,6 +35,11 @@ var gPrefAccounts =
             }
 
             this.selectUserName();
+
+            var iSelected = document.getElementById("selectedTabIndex").value;
+            this.m_DebugLog.Write("Hotmail-Pref-Accounts : Init - iSelected " + iSelected);
+            if (iSelected != null)
+                document.getElementById("tabsAccount").selectedIndex = iSelected;
 
             this.m_DebugLog.Write("Hotmail-Pref-Accounts : Init - END");
         }
@@ -89,10 +97,8 @@ var gPrefAccounts =
                             {
                                 if (szContentID.value == this.m_cszHotmailContentID) //Hotmail account found
                                 {
-                                   var szFixedUserName = szUserName.replace(/\./g,"_");
-                                   szFixedUserName = szFixedUserName.toLowerCase();
-                                   this.m_DebugLog.Write("Hotmail-Pref-Accounts : getUserNames - userName added " + szFixedUserName);
-                                   this.m_aszUserList.push(szFixedUserName);
+                                   this.m_DebugLog.Write("Hotmail-Pref-Accounts : getUserNames - userName added " + szUserName);
+                                   this.m_aszUserList.push(szUserName);
                                 }
                             }
                         }
@@ -129,6 +135,9 @@ var gPrefAccounts =
             if (this.m_aszUserList.length>0)
             {
                 var szUserName = this.m_aszUserList[this.m_iIndex].toLowerCase();
+                document.getElementById("selectedUserName").value = szUserName;
+                szUserName = szUserName.replace(/\./g,"_");
+                szUserName = szUserName.toLowerCase();
                 this.m_DebugLog.Write("Hotmail-Pref-Accounts : selectUserName -  szUserName "+ szUserName);
 
                 var prefAccess = new WebMailCommonPrefAccess();
@@ -245,12 +254,16 @@ var gPrefAccounts =
         {
             this.m_DebugLog.Write("Hotmail-Pref-Accounts : createUserDropDown - START");
 
+            var szLastUserName = document.getElementById("selectedUserName").value;
+            var regExp = new RegExp("^"+ szLastUserName + "$","i");
+
             var list = document.getElementById("popupAccounts");
             if (this.m_aszUserList.length > 0)
             {
                 for(i =0 ; i< this.m_aszUserList.length; i++)
                 {
                     var szUserName = this.m_aszUserList[i];
+                    if (szUserName.search(regExp)!= -1) this.m_iIndex = i;
                     var newItem = document.createElement("menuitem");
                     newItem.setAttribute("id", szUserName);
                     newItem.setAttribute("label", szUserName);
@@ -260,6 +273,7 @@ var gPrefAccounts =
                     list.appendChild(newItem);
                 }
             }
+            this.m_DebugLog.Write("Hotmail-Pref-Accounts : createUserDropDown - iIndex "+this.m_iIndex);
 
             this.m_DebugLog.Write("Hotmail-Pref-Accounts : createUserDropDown - END");
         }
@@ -275,6 +289,19 @@ var gPrefAccounts =
 
 
 
+   tabSelectionChanged : function ()
+   {
+       this.m_DebugLog.Write("Hotmail-Pref-Accounts : tabSelectionChanged - START");
+
+       if (!this.m_bInit) return;
+
+       var iIndex = document.getElementById("tabsAccount").selectedIndex;
+       this.m_DebugLog.Write("Hotmail-Pref-Accounts : tabSelectionChanged - iIndex " + iIndex);
+       var preference = document.getElementById("selectedTabIndex");
+       preference.value = iIndex;
+
+       this.m_DebugLog.Write("Hotmail-Pref-Accounts : tabSelectionChanged - END");
+   },
 
 /**********************************************************************/
 //Deck Mode Panel
@@ -289,6 +316,8 @@ var gPrefAccounts =
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : rgModeOnChange -  iMode "+ iMode);
 
         var szUserName = this.m_aszUserList[this.m_iIndex].toLowerCase();
+        szUserName = szUserName.replace(/\./g,"_");
+        szUserName = szUserName.toLowerCase();
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : rgModeOnChange -  szUserName "+ szUserName);
 
         //write pref
@@ -337,6 +366,8 @@ var gPrefAccounts =
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : chkDownloadUreadOnChange -  bUnread "+ bUnread);
 
         var szUserName = this.m_aszUserList[this.m_iIndex].toLowerCase();
+        szUserName = szUserName.replace(/\./g,"_");
+        szUserName = szUserName.toLowerCase();
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : chkDownloadUreadOnChange -  username "+ szUserName);
 
         //write pref
@@ -367,6 +398,8 @@ var gPrefAccounts =
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : chkMaskAsReadOnChange -  bMarkAsRead "+ bMarkAsRead);
 
         var szUserName = this.m_aszUserList[this.m_iIndex].toLowerCase();
+        szUserName = szUserName.replace(/\./g,"_");
+        szUserName = szUserName.toLowerCase();
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : chkDownloadUreadOnChange -  username "+ szUserName);
 
         var prefAccess = new WebMailCommonPrefAccess();
@@ -385,6 +418,8 @@ var gPrefAccounts =
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : chkJunkMailOnChange bJunkMail"+ bJunkMail);
 
         var szUserName = this.m_aszUserList[this.m_iIndex].toLowerCase();
+        szUserName = szUserName.replace(/\./g,"_");
+        szUserName = szUserName.toLowerCase();
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : chkJunkMailOnChange -  username "+ szUserName);
 
         var prefAccess = new WebMailCommonPrefAccess();
@@ -414,7 +449,9 @@ var gPrefAccounts =
             {
                 this.m_DebugLog.Write("Hotmail-Pref-Accounts : folderListAdd oParam.szfolder " + oParam.szFolder);
 
-                var szUserName = this.m_aszUserList[this.m_iIndex];
+                var szUserName = this.m_aszUserList[this.m_iIndex].toLowerCase();
+                szUserName = szUserName.replace(/\./g,"_");
+                szUserName = szUserName.toLowerCase();
                 this.m_DebugLog.Write("Hotmail-Pref-Accounts : folderListAdd -  username "+ szUserName);
 
                 var szFolder = "";
@@ -476,7 +513,9 @@ var gPrefAccounts =
             var iIndex = listView.selectedIndex;
             this.m_DebugLog.Write("Hotmail-Pref-Accounts : doRemove - iIndex "+iIndex);
 
-            var szUserName = this.m_aszUserList[this.m_iIndex];
+            var szUserName = this.m_aszUserList[this.m_iIndex].toLowerCase();
+            szUserName = szUserName.replace(/\./g,"_");
+            szUserName = szUserName.toLowerCase();
             this.m_DebugLog.Write("Hotmail-Pref-Accounts : doRemove -  username "+ szUserName);
 
             var item = listView.getItemAtIndex(iIndex);
@@ -618,6 +657,8 @@ var gPrefAccounts =
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : chkSentItemsOnChange -  bSaveItem "+ bSaveItem);
 
         var szUserName = this.m_aszUserList[this.m_iIndex].toLowerCase();
+        szUserName = szUserName.replace(/\./g,"_");
+        szUserName = szUserName.toLowerCase();
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : chkJunkMailOnChange -  username "+ szUserName);
 
         var prefAccess = new WebMailCommonPrefAccess();
@@ -636,6 +677,8 @@ var gPrefAccounts =
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : rgAltOnChange -  bSendHtml "+ bSendHtml);
 
         var szUserName = this.m_aszUserList[this.m_iIndex].toLowerCase();
+        szUserName = szUserName.replace(/\./g,"_");
+        szUserName = szUserName.toLowerCase();
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : chkJunkMailOnChange -  username "+ szUserName);
 
         var prefAccess = new WebMailCommonPrefAccess();
