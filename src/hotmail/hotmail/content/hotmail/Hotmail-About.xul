@@ -1,6 +1,6 @@
-<?xml version="1.0"?> 
-<?xml-stylesheet href="chrome://global/skin/" type="text/css"?> 
-<?xml-stylesheet href="chrome://hotmail/content/Hotmail-About.css" type="text/css"?> 
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://hotmail/skin/Hotmail-About.css" type="text/css"?>
 
 <!DOCTYPE dialog SYSTEM "chrome://hotmail/locale/Hotmail-About.dtd">
 
@@ -12,9 +12,9 @@
         onunload ="gHotmailAbout.stop()"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         id = "HotmailAboutDialog">
-     
+
     <script type="application/x-javascript" src="chrome://hotmail/content/Hotmail-About.js"/>
-        
+
     <groupbox align="center" orient="horizontal">
         <vbox>
             <hbox>
@@ -35,7 +35,7 @@
             <text value="&HotmailAbout.ExtContributorTitle;" id = "HotmailContributorLabel"/>
             <vbox flex="1" id="HotmailContributorBox"/>
             <text id = "HotmailHomePage" value ="&HotmailAbout.ExtHome;"/>
-            
+
         </vbox>
     </groupbox>
 

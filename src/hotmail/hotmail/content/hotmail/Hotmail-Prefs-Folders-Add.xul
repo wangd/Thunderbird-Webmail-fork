@@ -1,72 +1,72 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://hotmail/content/Hotmail-Prefs-Folders-Add.css" type="text/css"?>
+<?xml-stylesheet href="chrome://hotmail/skin/Hotmail-Prefs-Folders-Add.css" type="text/css"?>
 
 <!DOCTYPE dialog SYSTEM "chrome://hotmail/locale/Hotmail-Prefs-Folders-Add.dtd">
 
-<window id="addWindow" 
+<window id="addWindow"
         title="&HotmailFolderAdd.Title;"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         onload="return gHotmailFoldersAdd.init();">
 
     <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
     <script type="application/x-javascript" src="chrome://hotmail/content/Hotmail-Prefs-Folders-Add.js"/>
-    
-    
+
+
     <stringbundleset>
-	   <stringbundle id="stringsHotmailFoldersAdd" src="chrome://hotmail/locale/Hotmail-Prefs-Folders-Add.properties"/>
-	</stringbundleset>
-    
+       <stringbundle id="stringsHotmailFoldersAdd" src="chrome://hotmail/locale/Hotmail-Prefs-Folders-Add.properties"/>
+    </stringbundleset>
+
     <keyset>
         <key id="key_close"  keycode="VK_ESCAPE" command="cmd_close"/>
     </keyset>
-    
+
     <commandset id="globalCommands">
         <command id="cmd_close" oncommand="gHotmailFoldersAdd.doCancel();"/>
     </commandset>
-    
-    
-    
+
+
+
     <vbox flex="1">
         <hbox>
             <vbox>
                 <image id="folderImage" class="folder"/>
                 <spacer flex="1"/>
             </vbox>
-            
+
             <vbox>
                   <label id="labelFolder"
                          value="&HotmailFolders.Label;"/>
             </vbox>
-        </hbox>   
-    
-        <hbox align="center">     
-            <label id="labelFolderName"
-                   value="&HotmailFolderName.Label;" 
-                   accesskey="&HotmailFolderName.AccessKey;"
-                   control="txtDomain"/>           
-            
-            <textbox id="txtDomain" 
-                     value="" 
-                     flex="2" 
-                     onchange = ""/>
-                     
-            <spacer flex="1"/> 
         </hbox>
 
-        
+        <hbox align="center">
+            <label id="labelFolderName"
+                   value="&HotmailFolderName.Label;"
+                   accesskey="&HotmailFolderName.AccessKey;"
+                   control="txtDomain"/>
+
+            <textbox id="txtDomain"
+                     value=""
+                     flex="2"
+                     onchange = ""/>
+
+            <spacer flex="1"/>
+        </hbox>
+
+
         <spacer flex="1" />
 
         <hbox align="end" pack="center">
-            <button id="add" 
+            <button id="add"
                     label="&HotmailFolder.ButtonOk.Label;"
                     accesskey="&HotmailFolder.ButtonOk.AccessKey;"
                     default="true"
                     oncommand ="gHotmailFoldersAdd.doOk();"/>
-            <button id="cancel" 
-                    label="&HotmailFolder.ButtonCancel.Label;" 
+            <button id="cancel"
+                    label="&HotmailFolder.ButtonCancel.Label;"
                     accesskey="&HotmailFolder.ButtonCancel.AccessKey;"
                     oncommand ="gHotmailFoldersAdd.doCancel();"/>
-        </hbox> 
+        </hbox>
     </vbox>
 </window>

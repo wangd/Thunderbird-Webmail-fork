@@ -1,70 +1,70 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://hotmail/content/Hotmail-Prefs-Domains-Add.css" type="text/css"?>
+<?xml-stylesheet href="chrome://hotmail/skin/Hotmail-Prefs-Domains-Add.css" type="text/css"?>
 
 <!DOCTYPE dialog SYSTEM "chrome://hotmail/locale/Hotmail-Prefs-Domains-Add.dtd">
 
-<window id="addWindow" 
+<window id="addWindow"
         title="&HotmailAddDomain.Title;"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         onload="return gHotmailDomainAdd.init();">
 
     <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
     <script type="application/x-javascript" src="chrome://hotmail/content/Hotmail-Prefs-Domains-Add.js"/>
-     
+
     <stringbundleset>
-	   <stringbundle id="stringsHotmailDomainsAdd" src="chrome://hotmail/locale/Hotmail-Prefs-Domains-Add.properties"/>
-	</stringbundleset>
-     
-     
+       <stringbundle id="stringsHotmailDomainsAdd" src="chrome://hotmail/locale/Hotmail-Prefs-Domains-Add.properties"/>
+    </stringbundleset>
+
+
     <keyset>
         <key id="key_close"  keycode="VK_ESCAPE" command="cmd_close"/>
     </keyset>
-    
+
     <commandset id="globalCommands">
         <command id="cmd_close" oncommand="gHotmailDomainAdd.doCancel();"/>
     </commandset>
-    
-     
+
+
     <vbox flex="1">
         <hbox>
             <vbox>
                 <image id="imageDomain" class="folder"/>
                 <spacer flex="1"/>
             </vbox>
-            
+
             <vbox>
                   <label id="labelDomain"
                          value="&HotmailAddDomain.Label;"/>
             </vbox>
-        </hbox>   
-    
-        <hbox align="center">     
+        </hbox>
+
+        <hbox align="center">
             <label id="labelDomainName"
-                   value="&HotmailAddDomainName.Label;" 
+                   value="&HotmailAddDomainName.Label;"
                    accesskey="&HotmailAddDomainName.AccessKey;"
-                   control="txtDomain"/>           
-            
-            <textbox id="txtDomain" 
-                     value="" 
-                     flex="2" 
+                   control="txtDomain"/>
+
+            <textbox id="txtDomain"
+                     value=""
+                     flex="2"
                      onchange = ""/>
-                     
-            <spacer flex="1"/> 
+
+            <spacer flex="1"/>
         </hbox>
 
         <spacer flex="1" />
 
         <hbox align="end" pack="center">
-            <button id="add" 
+            <button id="add"
                     default="true"
                     label="&HotmailAddDomain.ButtonOk.Label;"
                     accesskey="&HotmailAddDomain.ButtonOk.AccessKey;"
                     oncommand ="gHotmailDomainAdd.doOk();"/>
-            <button id="cancel" 
-                    label="&HotmailAddDomain.ButtonCancel.Label;" 
+            <button id="cancel"
+                    label="&HotmailAddDomain.ButtonCancel.Label;"
                     accesskey="&HotmailAddDomain.ButtonCancel.AccessKey;"
                     oncommand ="gHotmailDomainAdd.doCancel();"/>
-        </hbox>   
+        </hbox>
     </vbox>
 </window>
