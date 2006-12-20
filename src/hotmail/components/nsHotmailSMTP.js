@@ -180,6 +180,10 @@ nsHotmailSMTP.prototype =
             var oPref = {Value : null};
             var oData = new PrefData();
 
+            var szUserName =  this.m_szUserName;
+            szUserName = szUserName.replace(/\./g,"_");
+            szUserName = szUserName.toLowerCase();
+
             //do i reuse the session
             if (WebMailPrefAccess.Get("bool","hotmail.bReUseSession",oPref))
                 oData.bReUseSession = oPref.Value;
