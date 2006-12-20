@@ -1,0 +1,25 @@
+#addWindow
+{
+    width: 30em; 
+    height: 10em;
+}
+
+#folderImage
+{
+    margin-left: 10px; 
+    margin-top: 10px;
+    margin-bottom : 10px;
+    list-style-image: url("chrome://hotmail/skin/custom.png");
+}
+
+
+#labelFolder
+{
+    margin-left: 10px; 
+    margin-top: 15px;
+}
+
+#labelFolderName
+{
+    margin-left: 10px; 
+}
