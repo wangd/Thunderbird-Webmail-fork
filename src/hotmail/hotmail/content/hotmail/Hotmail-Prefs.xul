@@ -2,218 +2,29 @@
 <?xml-stylesheet href="chrome://global/skin/global.css"?>
 <?xml-stylesheet href="chrome://messenger/skin/preferences/preferences.css"?>
 <?xml-stylesheet href="chrome://mozapps/content/preferences/preferences.css"?>
-<?xml-stylesheet href="chrome://hotmail/content/Hotmail-Prefs.css"?>
-<?xml-stylesheet href="chrome://hotmail/content/Hotmail-Prefs-Domains.css"?>
-<?xml-stylesheet href="chrome://hotmail/content/Hotmail-Prefs-Accounts.css"?>
+
+<?xml-stylesheet href="chrome://hotmail/skin/Hotmail-Prefs.css"?>
 
 <!DOCTYPE dialog SYSTEM "chrome://hotmail/locale/Hotmail-Prefs.dtd">
 
-<window title="&HotmailPref.Window.Title;"
-        id ="prefsWindow"
-        onload="Startup();"
-        onclose="return onClose();"
-        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<prefwindow type="prefwindow"
+            id="prefsWindow"
+            title="&HotmailPref.Window.Title;"
+            xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+            lastSelected="paneAccounts"
+            instantApply="true"
+            buttons="extra1"
+            buttonlabelextra1="&HotmailPref.Button.Close.Label;"
+            ondialogextra1="window.close();">
 
-    <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
-    <script type="application/x-javascript" src="chrome://web-mail/content/common/CommonPrefs.js"/>
-    <script type="application/x-javascript" src="chrome://hotmail/content/Hotmail-Prefs-Accounts.js"/>
-    <script type="application/x-javascript" src="chrome://hotmail/content/Hotmail-Prefs-Data.js"/>
-    <script type="application/x-javascript" src="chrome://hotmail/content/Hotmail-Prefs-Domains.js"/>
-    <script>
-        <![CDATA[
-            function Startup()
-            {
-                gPrefAccounts.init();
-                gHotmailDomain.init();
-            }
+    <!-- Accounts -->
+    <prefpane id="paneAccounts"
+              label="&HotmailPref.Panel.Accounts.Title;"
+              src="chrome://hotmail/content/Hotmail-Prefs-Accounts.xul"/>
 
+    <!-- Domains -->
+    <prefpane id="paneDomains"
+              label="&HotmailPref.Panel.Domains.Title;"
+              src="chrome://hotmail/content/Hotmail-Prefs-Domains.xul"/>
 
-            function setDeck(index)
-            {
-                document.getElementById("deck").setAttribute("selectedIndex",index);
-            }
-
-            function onClose()
-            {
-                window.close();
-            }
-
-            function onOK()
-            {
-                gPrefAccounts.savePrefs();
-                window.close();
-            }
-        ]]>
-    </script>
-
-
-    <stringbundleset>
-        <stringbundle id="stringsHotmailDomainWindow" src="chrome://hotmail/locale/Hotmail-Prefs-Domains.properties"/>
-    </stringbundleset>
-
-
-    <keyset>
-        <key id="key_close"  keycode="VK_ESCAPE" command="cmd_close"/>
-    </keyset>
-
-    <commandset id="globalCommands">
-        <command id="cmd_close" oncommand="onClose();"/>
-    </commandset>
-
-    <radiogroup id="viewGroup" class="viewSelector" orient="horizontal">
-        <radio id="rAccounts" label="&HotmailPref.Panel.Accounts.Title;" oncommand="setDeck(0);" selected="true"/>
-        <radio id="rDomains"  label="&HotmailPref.Panel.Domains.Title;"  oncommand="setDeck(1);"/>
-    </radiogroup>
-
-    <deck id="deck">
-        <!--  ACCOUNTS  -->
-        <vbox id="vboxAccounts" flex="1">
-            <vbox id="boxError" hidden="true" >
-                <hbox pack="center">
-                    <image id="imageError" />
-                </hbox>
-                <vbox align="center">
-                    <label id="labelError" flex="1" value="&HotmailPref.AccountError.Label;"/>
-                </vbox>
-            </vbox>
-
-
-            <vbox flex="1" id="boxAccounts">
-                <menulist id="menuAccounts">
-                    <menupopup id="popupAccounts">
-                    </menupopup>
-                </menulist>
-
-                <tabbox  flex="1" id="tabsAccount">
-                    <tabs>
-                        <tab label="&HotmailPref.Tab.Mode.Title;"/>
-                        <tab label="&HotmailPref.Tab.POP.Title;"/>
-                        <tab label="&HotmailPref.Tab.SMTP.Title;"/>
-                    </tabs>
-                    <tabpanels flex="1" >
-                        <vbox id="modePanel" class="panel" flex="1">
-                            <vbox>
-                                <label value="&HotmailPref.Mode.Label;" id="labelMode" flex="1"/>
-                                <radiogroup id="radiogroupMode" onclick ="gPrefAccounts.rgModeOnChange();"  class="radio">
-                                    <radio label="&HotmailPref.Mode.ScreenScraper.Label;" value="0"/>
-                                    <radio label="&HotmailPref.Mode.WebDav.Label;"        value="1"/>
-                                    <radio label="&HotmailPref.Mode.Beta.Label;"          value="2"/>
-                                </radiogroup>
-                             </vbox>
-                        </vbox>
-
-                        <vbox id="popPanel" class="panel" flex="1">
-                            <checkbox label="&HotmailPref.POP.DownloadUnread.Label;"
-                                      accesskey="&HotmailPref.POP.DownloadUnread.AccessKey;"
-                                      id="chkDownloadUnread"
-                                      onclick ="gPrefAccounts.chkDownloadUreadOnChange();"/>
-
-                            <checkbox label="&HotmailPref.POP.MarkAsRead.Label;"
-                                      accesskey="&HotmailPref.POP.MarkAsRead.AccessKey;"
-                                      id="chkMarkAsRead"
-                                      onclick ="gPrefAccounts.chkMarkAsReadOnChange();"/>
-
-                            <checkbox label="&HotmailPref.POP.JunkMail.Label;"
-                                      accesskey="&HotmailPref.POP.JunkMail.AccessKey;"
-                                      id="chkJunkMail"
-                                      onclick ="gPrefAccounts.chkJunkMailOnChange();"/>
-
-                            <label value="&HotmailPref.POP.Folders.Label;" id="labelFolders"/>
-                            <vbox id="boxFolders" flex="1">
-                                <hbox flex="1">
-                                    <spacer flex="1"/>
-                                    <richlistbox id="listFolders"
-                                                 class="listbox"
-                                                 onselect="gPrefAccounts.folderListSelect();"/>
-
-                                    <vbox pack="center">
-                                            <button id="addFolderList"
-                                                    label="&HotmailPref.POP.ButtonAdd.Label;"
-                                                    accesskey="&HotmailPref.POP.ButtonAdd.AccessKey;"
-                                                    oncommand ="gPrefAccounts.folderListAdd();"/>
-
-                                            <button id="removeFolderList"
-                                                    label="&HotmailPref.POP.ButtonRemove.Label;"
-                                                    accesskey="&HotmailPref.POP.ButtonRemove.AccessKey;"
-                                                    oncommand ="gPrefAccounts.folderListRemove();"
-                                                    disabled="true"/>
-                                    </vbox>
-                                    <spacer flex="1"/>
-                                </hbox>
-                            </vbox>
-                        </vbox>
-
-                        <vbox id="smptPanel" class="panel" flex="1">
-                            <vbox id="vboxSmtpItems">
-                                <checkbox label="&HotmailPref.SMTP.SaveSentItems.Label;"
-                                          accesskey="&HotmailPref.SMTP.SaveSentItems.AccessKey;"
-                                          id="chkSentItems"
-                                          onclick ="gPrefAccounts.chkSentItemsOnChange();"/>
-
-                                <vbox id="vboxAlt">
-                                    <label value="&HotmailPref.SMTP.AlternativeGroup.Label;" id="labelAlt" flex="1"/>
-                                    <radiogroup id="radiogroupAlt" onclick ="gPrefAccounts.rgAltOnChange();" class="radio">
-                                        <radio label="&HotmailPref.SMTP.SendPlain.Label;"
-                                               accesskey="&HotmailPref.SMTP.SendPlain.AccessKey;"
-                                               value = "0"
-                                               id="rdSendPlain"/>
-
-                                        <radio label="&HotmailPref.SMTP.SendHtml.Label;"
-                                               accesskey="&HotmailPref.SMTP.SendHtml.AccessKey;"
-                                               value = "1"
-                                               id="rdSendHtml"/>
-                                    </radiogroup>
-                                </vbox>
-                            </vbox>
-                            <vbox id="vboxSmtpNA">
-                                <hbox pack="center">
-                                    <image id="imageNA" />
-                                </hbox>
-                                <vbox align="center">
-                                    <label id="labelError"
-                                           flex="1"
-                                           value="&HotmailPref.SMTP.NA.Label;"/>
-                                </vbox>
-                            </vbox>
-                        </vbox>
-                    </tabpanels>
-                </tabbox>
-            </vbox>
-        </vbox>
-
-
-        <!--  DOMAINS -->
-        <vbox id="vboxDomains" flex="1">
-            <label value="&HotmailPref.Domain.Label;" id="labelDomain"/>
-            <hbox align="center">
-                <spacer flex="1"/>
-                <richlistbox  id="listDomain"
-                              class="listDomainbox"
-                              onselect="gHotmailDomain.onSelect();"/>
-
-                <vbox align="center" pack="center">
-                    <button id="add"
-                            label="&HotmailPref.Domain.Button.AddDomain.Label;"
-                            accesskey="&HotmailPref.Domain.Button.AddDomain.AccessKey;"
-                            oncommand ="gHotmailDomain.onAdd();"/>
-                    <button id="remove"
-                            label="&HotmailPref.Domain.Button.RemoveDomain.Label;"
-                            accesskey="&HotmailPref.Domain.Button.RemoveDomain.AccessKey;"
-                            disabled = "true"
-                            oncommand ="gHotmailDomain.onRemove();"/>
-                </vbox>
-                <spacer flex="1"/>
-            </hbox>
-        </vbox>
-    </deck>
-
-    <spacer flex="1" />
-
-    <!-- buttons>-->
-    <vbox pack = "end">
-        <hbox id="buttons" pack="end" align="end" flex="1">
-            <button id="OK"     label="&HotmailPref.Button.Ok.Label;"     oncommand="onOK();"/>
-            <button id="Cancel" label="&HotmailPref.Button.Cancel.Label;" oncommand="onClose();"/>
-        </hbox>
-    </vbox>
-</window>
+</prefwindow>

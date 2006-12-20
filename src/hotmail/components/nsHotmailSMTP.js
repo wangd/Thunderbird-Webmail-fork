@@ -180,68 +180,28 @@ nsHotmailSMTP.prototype =
             var oPref = {Value : null};
             var oData = new PrefData();
 
-            ////////
-            //load defaults
-            ////////
             //do i reuse the session
-            WebMailPrefAccess.Get("bool","hotmail.bReUseSession",oPref);
+            if (WebMailPrefAccess.Get("bool","hotmail.bReUseSession",oPref))
+                oData.bReUseSession = oPref.Value;
             this.m_Log.Write("nsHotmailSMTP.js - getPrefs - hotmail.bReUseSession " + oPref.Value);
-            if (oPref.Value != null) oData.bReUseSession = oPref.Value;
 
-            //save copy in sent items
+            //get Mode
             oPref.Value = null;
-            WebMailPrefAccess.Get("bool","hotmail.bSaveCopy",oPref);
-            this.m_Log.Write("nsHotmailSMTP.js - getPrefs - hotmail.bSaveCopy " + oPref.Value);
-            if (oPref.Value != null) oData.bSaveCopy=oPref.Value;
+            if (WebMailPrefAccess.Get("int","hotmail.Account."+szUserName+".iMode",oPref))
+                oData.iMode = oPref.Value;
+            this.m_Log.Write("nsHotmailSMTP.js - getPrefs - iMode " + oPref.Value);
+
+            //do i save copy
+            oPref.Value = null;
+            if (WebMailPrefAccess.Get("bool","hotmail.Account."+szUserName+".bSaveCopy",oPref))
+                oData.bSaveCopy=oPref.Value;
+            this.m_Log.Write("nsHotmailSMTP.js - getPrefs - bSaveCopy " + oPref.Value);
 
             //what do i do with alternative parts
             oPref.Value = null;
-            WebMailPrefAccess.Get("bool","hotmail.bSendHtml",oPref);
-            this.m_Log.Write("nsHotmailSMTP.js - getPrefs - hotmail.bSendHtml " + oPref.Value);
-            if (oPref.Value != null) oData.bSendHtml = oPref.Value;
-
-            //////
-            //load User prefs
-            //////
-            var iCount = 0;
-            oPref.Value = null;
-            WebMailPrefAccess.Get("int","hotmail.Account.Num",oPref);
-            this.m_Log.Write("nsHotmailSMTP.js - getPrefs - Users Num " + oPref.Value);
-            if (oPref.Value != null) iCount = oPref.Value;
-
-            var regExp = new RegExp(this.m_szUserName,"i");
-
-            for(var i=0; i<iCount; i++)
-            {
-                oPref.Value = null;
-                WebMailPrefAccess.Get("char","hotmail.Account."+i+".user",oPref);
-                this.m_Log.Write("nsHotmailSMTP.js - getPrefs - szUserName " + oPref.Value);
-                if (oPref.Value != null)
-                {
-                    if (oPref.Value.search(regExp)!=-1)
-                    {
-                        this.m_Log.Write("nsHotmailSMTP.js - getPrefs - user found "+ i);
-
-                        //get Mode
-                        oPref.Value = null;
-                        WebMailPrefAccess.Get("int","hotmail.Account."+i+".iMode",oPref);
-                        this.m_Log.Write("nsHotmailSMTP.js - getPrefs - iMode " + oPref.Value);
-                        if (oPref.Value != null) oData.iMode = oPref.Value;
-
-                        //do i save copy
-                        oPref.Value = null;
-                        WebMailPrefAccess.Get("bool","hotmail.Account."+i+".bSaveCopy",oPref);
-                        this.m_Log.Write("nsHotmailSMTP.js - getPrefs - bSaveCopy " + oPref.Value);
-                        if (oPref.Value != null) oData.bSaveCopy=oPref.Value;
-
-                        //what do i do with alternative parts
-                        oPref.Value = null;
-                        WebMailPrefAccess.Get("bool","hotmail.Account."+i+".bSendHtml",oPref);
-                        this.m_Log.Write("nsHotmailSMTP.js - getPrefs - bSendHtml " + oPref.Value);
-                        if (oPref.Value != null) oData.bSendHtml = oPref.Value;
-                    }
-                }
-            }
+            if (WebMailPrefAccess.Get("bool","hotmail.Account."+szUserName+".bSendHtml",oPref))
+                oData.bSendHtml = oPref.Value;
+            this.m_Log.Write("nsHotmailSMTP.js - getPrefs - bSendHtml " + oPref.Value);
 
             this.m_Log.Write("nsHotmailSMTP.js - getPrefs - END");
             return oData;

@@ -307,9 +307,10 @@ nsHotmail.prototype =
             var oPref = {Value : null};
             var oData = new PrefData();
 
-            ////////
-            //load defaults
-            ////////
+            var szUserName =  this.m_szUserName;
+            szUserName = szUserName.replace(/\./g,"_");
+            szUserName = szUserName.toLowerCase();
+
 
             //delay processing time delay
             if (WebMailPrefAccess.Get("int","hotmail.iProcessDelay",oPref))
@@ -325,76 +326,41 @@ nsHotmail.prototype =
             if (WebMailPrefAccess.Get("bool","hotmail.bReUseSession",oPref))
                 oData.bReUseSession = oPref.Value;
 
-            //do i download junkmail
+            //get Mode
             oPref.Value = null;
-            if (WebMailPrefAccess.Get("bool","hotmail.bUseJunkMail",oPref))
-                oData.bUseJunkMail=oPref.Value;
+            if (WebMailPrefAccess.Get("int","hotmail.Account."+szUserName+".iMode",oPref))
+                oData.iMode = oPref.Value;
+            this.m_HotmailLog.Write("nsHotmail.js - getPrefs - iMode " + oData.iMode);
 
-            //do i download unread only
+            //get spam
             oPref.Value = null;
-            if (WebMailPrefAccess.Get("bool","hotmail.bDownloadUnread",oPref))
+            if (WebMailPrefAccess.Get("bool","hotmail.Account."+szUserName+".bUseJunkMail",oPref))
+                oData.bUseJunkMail = oPref.Value;
+            this.m_HotmailLog.Write("nsHotmail.js - getPrefs - bUseJunkMail " + oPref.Value);
+
+            //get unread
+            oPref.Value = null;
+            if (WebMailPrefAccess.Get("bool","hotmail.Account."+szUserName+".bDownloadUnread",oPref))
                 oData.bDownloadUnread = oPref.Value;
+            this.m_HotmailLog.Write("nsHotmail.js - getPrefs - bDownloadUnread " + oPref.Value);
 
-            //////
-            //load User prefs
-            //////
-            var iCount = 0;
+            //mark as read
             oPref.Value = null;
-            WebMailPrefAccess.Get("int","hotmail.Account.Num",oPref);
-            this.m_HotmailLog.Write("nsHotmail.js - getPrefs - Users Num " + oPref.Value);
-            if (oPref.Value) iCount = oPref.Value;
+            if (WebMailPrefAccess.Get("bool","hotmail.Account."+szUserName+".bMarkAsRead",oPref))
+                oData.bMarkAsRead = oPref.Value;
+            this.m_HotmailLog.Write("nsHotmail.js - getPrefs - bMarkAsRead " + oPref.Value);
 
-            var regExp = new RegExp(this.m_szUserName,"i");
-
-            for(var i=0; i<iCount; i++)
+            //get folders
+            oPref.Value = null;
+            WebMailPrefAccess.Get("char","hotmail.Account."+szUserName+".szFolders",oPref);
+            this.m_HotmailLog.Write("nsHotmail.js - getPrefs - szFolders " + oPref.Value);
+            if (oPref.Value)
             {
-                oPref.Value = null;
-                WebMailPrefAccess.Get("char","hotmail.Account."+i+".user",oPref);
-                this.m_HotmailLog.Write("nsHotmail.js - getPrefs - szUserName " + oPref.Value);
-                if (oPref.Value != null)
+                var aszFolders = oPref.Value.split("\r");
+                for (j=0; j<aszFolders.length; j++)
                 {
-                    if (oPref.Value.search(regExp)!=-1)
-                    {
-                        this.m_HotmailLog.Write("nsHotmail.js - getPrefs - user found "+ i);
-
-                        //get Mode
-                        oPref.Value = null;
-                        WebMailPrefAccess.Get("int","hotmail.Account."+i+".iMode",oPref);
-                        this.m_HotmailLog.Write("nsHotmail.js - getPrefs - iMode " + oPref.Value);
-                        if (oPref.Value != null) oData.iMode = oPref.Value;
-
-                        //get spam
-                        oPref.Value = null;
-                        WebMailPrefAccess.Get("bool","hotmail.Account."+i+".bUseJunkMail",oPref);
-                        this.m_HotmailLog.Write("nsHotmail.js - getPrefs - bUseJunkMail " + oPref.Value);
-                        if (oPref.Value != null) oData.bUseJunkMail = oPref.Value;
-
-                        //get unread
-                        oPref.Value = null;
-                        WebMailPrefAccess.Get("bool","hotmail.Account."+i+".bDownloadUnread",oPref);
-                        this.m_HotmailLog.Write("nsHotmail.js - getPrefs - bDownloadUnread " + oPref.Value);
-                        if (oPref.Value != null) oData.bDownloadUnread = oPref.Value;
-
-                        //mark as read
-                        oPref.Value = null;
-                        WebMailPrefAccess.Get("bool","hotmail.Account."+i+".bMarkAsRead",oPref);
-                        this.m_HotmailLog.Write("nsHotmail.js - getPrefs - bMarkAsRead " + oPref.Value);
-                        if (oPref.Value != null) oData.bMarkAsRead = oPref.Value;
-
-                         //get folders
-                        oPref.Value = null;
-                        WebMailPrefAccess.Get("char","hotmail.Account."+i+".szFolders",oPref);
-                        this.m_HotmailLog.Write("nsHotmail.js - getPrefs - szFolders " + oPref.Value);
-                        if (oPref.Value)
-                        {
-                            var aszFolders = oPref.Value.split("\r");
-                            for (j=0; j<aszFolders.length; j++)
-                            {
-                                this.m_HotmailLog.Write("nsHotmail.js - getPrefs - aszFolders " + aszFolders[j]);
-                                oData.aszFolder.push(aszFolders[j]);
-                            }
-                        }
-                    }
+                    this.m_HotmailLog.Write("nsHotmail.js - getPrefs - aszFolders " + aszFolders[j]);
+                    oData.aszFolder.push(aszFolders[j]);
                 }
             }
 

@@ -1,0 +1,132 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/global.css"?>
+<?xml-stylesheet href="chrome://hotmail/skin/Hotmail-Prefs.css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://hotmail/locale/Hotmail-Prefs.dtd">
+
+<overlay id="paneAccountsOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+    <prefpane id = "paneAccounts" onpaneload="gPrefAccounts.init()" flex="1">
+
+        <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
+        <script type="application/x-javascript" src="chrome://web-mail/content/common/CommonPrefs.js"/>
+        <script type="application/x-javascript" src="chrome://hotmail/content/Hotmail-Prefs-Accounts.js"/>
+
+        <vbox id="vboxAccounts" flex="1">
+            <vbox id="boxError" hidden="true" >
+                <hbox pack="center">
+                    <image id="imageError" />
+                </hbox>
+                <vbox align="center">
+                    <label id="labelError" flex="1" value="&HotmailPref.AccountError.Label;"/>
+                </vbox>
+            </vbox>
+
+
+            <vbox flex="1" id="boxAccounts">
+                <menulist id="menuAccounts">
+                    <menupopup id="popupAccounts" class="menuitem-iconic">
+                    </menupopup>
+                </menulist>
+
+                <tabbox  flex="1" id="tabsAccount">
+                    <tabs>
+                        <tab label="&HotmailPref.Tab.Mode.Title;"/>
+                        <tab label="&HotmailPref.Tab.POP.Title;"/>
+                        <tab label="&HotmailPref.Tab.SMTP.Title;"/>
+                    </tabs>
+                    <tabpanels flex="1" >
+                        <vbox id="modePanel" class="panel" flex="1">
+                            <vbox>
+                                <label value="&HotmailPref.Mode.Label;" id="labelMode" flex="1"/>
+                                <radiogroup id="radiogroupMode" onclick ="gPrefAccounts.rgModeOnChange();"  class="radio">
+                                    <radio label="&HotmailPref.Mode.ScreenScraper.Label;" value="0"/>
+                                    <radio label="&HotmailPref.Mode.WebDav.Label;"        value="1"/>
+                                    <radio label="&HotmailPref.Mode.Beta.Label;"          value="2"/>
+                                </radiogroup>
+                             </vbox>
+                        </vbox>
+
+                        <vbox id="popPanel" class="panel" flex="1">
+                            <checkbox label="&HotmailPref.POP.DownloadUnread.Label;"
+                                      accesskey="&HotmailPref.POP.DownloadUnread.AccessKey;"
+                                      id="chkDownloadUnread"
+                                      onclick ="gPrefAccounts.chkDownloadUreadOnChange();"/>
+
+                            <checkbox label="&HotmailPref.POP.MarkAsRead.Label;"
+                                      accesskey="&HotmailPref.POP.MarkAsRead.AccessKey;"
+                                      id="chkMarkAsRead"
+                                      onclick ="gPrefAccounts.chkMarkAsReadOnChange();"/>
+
+                            <checkbox label="&HotmailPref.POP.JunkMail.Label;"
+                                      accesskey="&HotmailPref.POP.JunkMail.AccessKey;"
+                                      id="chkJunkMail"
+                                      onclick ="gPrefAccounts.chkJunkMailOnChange();"/>
+
+                            <label value="&HotmailPref.POP.Folders.Label;" id="labelFolders"/>
+                            <vbox id="boxFolders" flex="1">
+                                <hbox flex="1">
+                                    <spacer flex="1"/>
+                                    <richlistbox id="listFolders"
+                                                 class="listbox"
+                                                 onselect="gPrefAccounts.folderListSelect();"/>
+
+                                    <vbox pack="center">
+                                            <button id="addFolderList"
+                                                    label="&HotmailPref.POP.ButtonAdd.Label;"
+                                                    accesskey="&HotmailPref.POP.ButtonAdd.AccessKey;"
+                                                    oncommand ="gPrefAccounts.addFolderList();"/>
+
+                                            <button id="removeFolderList"
+                                                    label="&HotmailPref.POP.ButtonRemove.Label;"
+                                                    accesskey="&HotmailPref.POP.ButtonRemove.AccessKey;"
+                                                    oncommand ="gPrefAccounts.removefolderList();"
+                                                    disabled="true"/>
+                                    </vbox>
+                                    <spacer flex="1"/>
+                                </hbox>
+                            </vbox>
+                        </vbox>
+
+                        <vbox id="smptPanel" class="panel" flex="1">
+                            <vbox id="vboxSmtpItems">
+                                <checkbox label="&HotmailPref.SMTP.SaveSentItems.Label;"
+                                          accesskey="&HotmailPref.SMTP.SaveSentItems.AccessKey;"
+                                          id="chkSentItems"
+                                          onclick ="gPrefAccounts.chkSentItemsOnChange();"/>
+
+                                <vbox id="vboxAlt">
+                                    <label value="&HotmailPref.SMTP.AlternativeGroup.Label;" id="labelAlt" flex="1"/>
+                                    <radiogroup id="radiogroupAlt" onclick ="gPrefAccounts.rgAltOnChange();" class="radio">
+                                        <radio label="&HotmailPref.SMTP.SendPlain.Label;"
+                                               accesskey="&HotmailPref.SMTP.SendPlain.AccessKey;"
+                                               value = "0"
+                                               id="rdSendPlain"/>
+
+                                        <radio label="&HotmailPref.SMTP.SendHtml.Label;"
+                                               accesskey="&HotmailPref.SMTP.SendHtml.AccessKey;"
+                                               value = "1"
+                                               id="rdSendHtml"/>
+                                    </radiogroup>
+                                </vbox>
+                            </vbox>
+                            <vbox id="vboxSmtpNA">
+                                <hbox pack="center">
+                                    <image id="imageNA" />
+                                </hbox>
+                                <vbox align="center">
+                                    <label id="labelError"
+                                           flex="1"
+                                           value="&HotmailPref.SMTP.NA.Label;"/>
+                                </vbox>
+                            </vbox>
+                        </vbox>
+                    </tabpanels>
+                </tabbox>
+            </vbox>
+        </vbox>
+
+    </prefpane>
+
+</overlay>
