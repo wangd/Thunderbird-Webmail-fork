@@ -18,8 +18,6 @@ var gPrefAccounts =
 
             this.m_bInit = true;
 
-            this.m_strBundle = document.getElementById("stringHotmailFolders");
-
             //load data
             this.getUserNames();
             this.createUserDropDown();
