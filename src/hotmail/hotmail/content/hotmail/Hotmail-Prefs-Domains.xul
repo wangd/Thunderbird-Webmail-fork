@@ -12,6 +12,10 @@
         <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
         <script type="application/x-javascript" src="chrome://hotmail/content/Hotmail-Prefs-Domains.js"/>
 
+        <stringbundleset>
+            <stringbundle id="stringsHotmailDomainWindow" src="chrome://hotmail/locale/Hotmail-Prefs-Domains.properties"/>
+        </stringbundleset>
+
         <vbox id="vboxDomains" flex="1">
             <label value="&HotmailPref.Domain.Label;" id="labelDomain"/>
             <hbox align="center">
