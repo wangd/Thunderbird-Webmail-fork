@@ -1,0 +1,236 @@
+#AOLAboutDialog
+{
+    padding: 0px 0px 0px 0px;
+    background-color: #FFFFFF;
+    color: #000000;
+}
+
+
+#AOLName
+{
+    font-size: x-large;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 9px;
+}
+
+#LionImage
+{
+    margin-left: 20px;
+    list-style-image: url("chrome://AOL/skin/Dragon.png");
+
+}
+
+#AOLImage
+{
+    list-style-image: url("chrome://AOL/skin/aol.png");
+    margin-bottom: 9px;
+}
+
+.AOLVersion
+{
+    color: #909090;
+    margin-bottom: 3px;
+    margin-right: 5px;
+}
+
+#AOLDescription
+{
+  color: #404040;
+}
+
+
+#AOLCreatorLabel
+{
+    border-top: 2px solid #C0C0C0;
+    padding: 5px 0px 3px 0px;
+    margin-top: 3px;
+    font-weight: bold;
+}
+
+#AOLContributorLabel
+{
+    padding: 5px 0px 3px 0px;
+    margin-top: 3px;
+    font-weight: bold;
+}
+
+.AOLCreatorText
+{
+    margin-top: 10px;
+    margin-left: 5px;
+}
+
+.AOLContributorText
+{
+    /*margin-left: 45px;*/
+    margin-top: 10px;
+}
+
+
+#flagImage
+{
+    margin-left: 20px;
+    list-style-image: url("chrome://AOL/skin/flags.png");
+}
+.flag/*world*/
+{
+     -moz-image-region: rect(0px, 32px, 32px, 0px)
+}
+
+
+.flag[value="0"] /*italy*/
+{
+    -moz-image-region: rect(0px, 64px, 32px, 32px)
+}
+
+.flag[value="1"]/*spain*/
+{
+     -moz-image-region: rect(0px, 96px, 32px, 64px)
+}
+
+.flag[value="2"]/*france*/
+{
+     -moz-image-region: rect(0px, 128px, 32px, 96px)
+}
+
+.flag[value="3"]/*germany*/
+{
+     -moz-image-region: rect(0px, 160px, 32px, 128px)
+}
+
+
+.flag[value="4"]/*catalan*/
+{
+     -moz-image-region: rect(0px, 192px, 32px, 160px)
+}
+
+
+.flag[value="5"]/*Netherlands*/
+{
+     -moz-image-region: rect(0px, 224px, 32px, 192px)
+}
+
+
+.flag[value="6"]/*czech*/
+{
+     -moz-image-region: rect(0px, 256px, 32px, 224px)
+}
+
+
+.flag[value="7"]/*china*/
+{
+     -moz-image-region: rect(0px, 288px, 32px, 256px)
+}
+
+
+.flag[value="8"]/*japan*/
+{
+     -moz-image-region: rect(0px, 320px, 32px, 288px)
+}
+
+
+.flag[value="9"]/*South K*/
+{
+     -moz-image-region: rect(0px, 352px, 32px, 320px)
+}
+
+
+.flag[value="10"]/*Sweden*/
+{
+     -moz-image-region: rect(0px, 384px, 32px, 352px)
+}
+
+
+.flag[value="11"]/*Croatia*/
+{
+     -moz-image-region: rect(0px, 416px, 32px, 384px)
+}
+
+
+.flag[value="12"]/*Russia*/
+{
+     -moz-image-region: rect(0px, 448px, 32px, 416px)
+}
+
+
+.flag[value="13"]/*Greece*/
+{
+     -moz-image-region: rect(0px, 480px, 32px, 448px)
+}
+
+
+.flag[value="14"]/*finland*/
+{
+     -moz-image-region: rect(0px, 512px, 32px, 480px)
+}
+
+.flag[value="15"]/*trukish*/
+{
+     -moz-image-region: rect(0px, 544px, 32px, 512px)
+}
+
+
+.flag[value="16"]/*portugal*/
+{
+     -moz-image-region: rect(0px, 576px, 32px, 544px)
+}
+
+
+.flag[value="17"]/*Slovenian*/
+{
+     -moz-image-region: rect(0px, 608px, 32px, 576px)
+}
+
+.flag[value="19"]/*??*/
+{
+     -moz-image-region: rect(0px, 640px, 32px, 608px)
+}
+
+
+.flag[value="18"]/*Brazil*/
+{
+     -moz-image-region: rect(0px, 672px, 32px, 640px)
+}
+
+
+.flag[value="20"]/*AR*/
+{
+     -moz-image-region: rect(0px, 704px, 32px, 672px)
+}
+
+.flag[value="21"]/*AK*/
+{
+     -moz-image-region: rect(0px, 736px, 32px,704px)
+}
+
+.flag[value="22"]/*LT*/
+{
+     -moz-image-region: rect(0px, 768px, 32px,736px)
+}
+
+.flag[value="23"]/*NO*/
+{
+     -moz-image-region: rect(0px, 800px, 32px,768px)
+}
+
+.flag[value="24"]/*pl*/
+{
+     -moz-image-region: rect(0px, 832px, 32px,800px)
+}
+
+
+.flag[value="25"]/*za*/
+{
+     -moz-image-region: rect(0px, 864px, 32px, 832px)
+}
+
+
+#AOLHomePage
+{
+    text-align: right;
+    color: #0000FF;
+    text-decoration: underline !important;
+    cursor: pointer;
+    margin-top: 30px;
+}
