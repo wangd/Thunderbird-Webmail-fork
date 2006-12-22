@@ -1,70 +1,70 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://yahoo/content/Yahoo-Prefs-Domains-Add.css" type="text/css"?>
+<?xml-stylesheet href="chrome://yahoo/skin/Yahoo-Prefs-Domains-Add.css" type="text/css"?>
 
 <!DOCTYPE dialog SYSTEM "chrome://yahoo/locale/Yahoo-Prefs-Domains-Add.dtd">
 
-<window id="addWindow" 
+<window id="addWindow"
         title="&YahooAddDomain.Title;"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         onload="return gYahooDomainAdd.init();">
 
     <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
     <script type="application/x-javascript" src="chrome://yahoo/content/Yahoo-Prefs-Domains-Add.js"/>
-     
+
     <stringbundleset>
-	   <stringbundle id="stringsYahooDomainsAdd" src="chrome://yahoo/locale/Yahoo-Prefs-Domains-Add.properties"/>
-	</stringbundleset>
-     
-     
+       <stringbundle id="stringsYahooDomainsAdd" src="chrome://yahoo/locale/Yahoo-Prefs-Domains-Add.properties"/>
+    </stringbundleset>
+
+
     <keyset>
         <key id="key_close"  keycode="VK_ESCAPE" command="cmd_close"/>
     </keyset>
-    
+
     <commandset id="globalCommands">
         <command id="cmd_close" oncommand="gYahooDomainAdd.doCancel();"/>
     </commandset>
-     
-     
+
+
     <vbox flex="1">
         <hbox>
             <vbox>
                 <image id="imageDomain" class="folder"/>
                 <spacer flex="1"/>
             </vbox>
-            
+
             <vbox>
                   <label id="labelDomain"
                          value="&YahooAddDomain.Label;"/>
             </vbox>
-        </hbox>   
-    
-        <hbox align="center">     
+        </hbox>
+
+        <hbox align="center">
             <label id="labelDomainName"
-                   value="&YahooAddDomainName.Label;" 
+                   value="&YahooAddDomainName.Label;"
                    accesskey="&YahooAddDomainName.AccessKey;"
-                   control="txtDomain"/>           
-            
-            <textbox id="txtDomain" 
-                     value="" 
-                     flex="2" 
+                   control="txtDomain"/>
+
+            <textbox id="txtDomain"
+                     value=""
+                     flex="2"
                      onchange = ""/>
-                     
-            <spacer flex="1"/> 
+
+            <spacer flex="1"/>
         </hbox>
 
         <spacer flex="1" />
 
         <hbox align="end" pack="center">
-            <button id="add" 
+            <button id="add"
                     default="true"
                     label="&YahooAddDomain.ButtonOk.Label;"
                     accesskey="&YahooAddDomain.ButtonOk.AccessKey;"
                     oncommand ="gYahooDomainAdd.doOk();"/>
-            <button id="cancel" 
-                    label="&YahooAddDomain.ButtonCancel.Label;" 
+            <button id="cancel"
+                    label="&YahooAddDomain.ButtonCancel.Label;"
                     accesskey="&YahooAddDomain.ButtonCancel.AccessKey;"
                     oncommand ="gYahooDomainAdd.doCancel();"/>
-        </hbox>   
+        </hbox>
     </vbox>
 </window>

@@ -2,78 +2,78 @@
 <?xml-stylesheet href="chrome://global/skin/global.css"?>
 <?xml-stylesheet href="chrome://messenger/skin/preferences/preferences.css"?>
 <?xml-stylesheet href="chrome://mozapps/content/preferences/preferences.css"?>
-<?xml-stylesheet href="chrome://lycos/content/Lycos-Prefs.css"?>
-<?xml-stylesheet href="chrome://lycos/content/Lycos-Prefs-Accounts.css"?>
+<?xml-stylesheet href="chrome://lycos/skin/Lycos-Prefs.css"?>
+<?xml-stylesheet href="chrome://lycos/skin/Lycos-Prefs-Accounts.css"?>
 
 <!DOCTYPE dialog SYSTEM "chrome://lycos/locale/Lycos-Prefs.dtd">
 
 
 <window title="&LycosPref.Window.Title;"
         id ="prefsWindow"
-        onload="Startup();" 
+        onload="Startup();"
         onclose="return onClose();"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  
+
     <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
     <script type="application/x-javascript" src="chrome://web-mail/content/common/CommonPrefs.js"/>
     <script type="application/x-javascript" src="chrome://lycos/content/Lycos-Prefs-Accounts.js"/>
     <script type="application/x-javascript" src="chrome://lycos/content/Lycos-Prefs-Data.js"/>
     <script>
         <![CDATA[
-            function Startup() 
+            function Startup()
             {
                 gPrefAccounts.init();
             }
-            
+
             function setDeck(index)
             {
                 document.getElementById("deck").setAttribute("selectedIndex",index);
             }
-        
-            function onClose() 
+
+            function onClose()
             {
                 window.close();
             }
-            
+
             function onOK()
             {
                 gPrefAccounts.save();
                 window.close();
             }
         ]]>
-    </script>  
-    
+    </script>
 
-    
+
+
     <keyset>
         <key id="key_close"  keycode="VK_ESCAPE" command="cmd_close"/>
     </keyset>
-    
+
     <commandset id="globalCommands">
         <command id="cmd_close" oncommand="onClose();"/>
     </commandset>
-    
-    
+
+
     <!--  ACCOUNTS  -->
-    <vbox id="vboxAccounts" flex="1">    
-        <hbox  align="center" flex="1" pack="center">     
+    <vbox id="vboxAccounts" flex="1">
+        <hbox  align="center" flex="1" pack="center">
             <vbox id="boxError" hidden="true">
                 <hbox pack="center">
                     <image id="imageError" />
                 </hbox>
                 <vbox align="center">
                     <label id="labelError" flex="1" value="&LycosPref.AccountError.Label;"/>
-                </vbox>    
+                </vbox>
             </vbox>
         </hbox>
-              
-        
+
+
         <vbox flex="1" id="boxAccounts">
             <menulist id="menuAccounts">
                 <menupopup id="popupAccounts">
                 </menupopup>
             </menulist>
-            
+
             <tabbox  flex="1" id="tabsAccount">
                 <tabs>
                     <tab label="&LycosPref.Tab.POP.Title;"/>
@@ -82,72 +82,72 @@
                 <tabpanels flex="1" >
                     <vbox id="popPanel" class="panel">
                         <!-- download unread-->
-                        <checkbox label="&LycosPref.POP.DownloadUnread.Label;" 
+                        <checkbox label="&LycosPref.POP.DownloadUnread.Label;"
                                   accesskey="&LycosPref.POP.DownloadUnread.AccessKey;"
                                   id="chkDownloadUnread"
-                                  onclick ="gPrefAccounts.chkDownloadUreadOnChange();"/> 
+                                  onclick ="gPrefAccounts.chkDownloadUreadOnChange();"/>
                         <!-- mark as read -->
-                        <checkbox label="&LycosPref.POP.MarkAsRead.Label;" 
+                        <checkbox label="&LycosPref.POP.MarkAsRead.Label;"
                                       accesskey="&LycosPref.POP.MarkAsRead.AccessKey;"
                                       id="chkMarkAsRead"
                                       onclick ="gPrefAccounts.chkMarkAsReadOnChange();"/>
-                              
+
                          <!--empty trash-->
-                         <checkbox label="&LycosPref.POP.EmptyTrash.Label;" 
+                         <checkbox label="&LycosPref.POP.EmptyTrash.Label;"
                                    accesskey="&LycosPref.POP.EmptyTrash.AccessKey;"
                                    id="chkEmptyTrash"
                                    onclick ="gPrefAccounts.chkEmptyTrashOnChange();"/>
-                        
-                        <!--Junk Mail-->                                    
-                        <checkbox label="&LycosPref.POP.JunkMail.Label;" 
+
+                        <!--Junk Mail-->
+                        <checkbox label="&LycosPref.POP.JunkMail.Label;"
                                   accesskey="&LycosPref.POP.JunkMail.AccessKey;"
                                   id="chkJunkMail"
                                   onclick ="gPrefAccounts.chkJunkMailOnChange();"/>
-                                     
+
                         <label value="&LycosPref.POP.Folders.Label;" id="labelFolders"/>
-                        <vbox id="boxFolders">     
-                            <hbox flex="1"> 
-                                <spacer flex="1"/>         
-                                <richlistbox id="listFolders" 
+                        <vbox id="boxFolders">
+                            <hbox flex="1">
+                                <spacer flex="1"/>
+                                <richlistbox id="listFolders"
                                              class="listbox"
-                                             onselect="gPrefAccounts.folderListSelect();"/>                            
-                                <vbox pack="center">    
-                                        <button id="addFolderList" 
-                                                label="&LycosPref.POP.ButtonAdd.Label;" 
+                                             onselect="gPrefAccounts.folderListSelect();"/>
+                                <vbox pack="center">
+                                        <button id="addFolderList"
+                                                label="&LycosPref.POP.ButtonAdd.Label;"
                                                 accesskey="&LycosPref.POP.ButtonAdd.AccessKey;"
                                                 oncommand ="gPrefAccounts.folderListAdd();"/>
-                                                
-                                        <button id="removeFolderList" 
-                                                label="&LycosPref.POP.ButtonRemove.Label;" 
+
+                                        <button id="removeFolderList"
+                                                label="&LycosPref.POP.ButtonRemove.Label;"
                                                 accesskey="&LycosPref.POP.ButtonRemove.AccessKey;"
                                                 oncommand ="gPrefAccounts.folderListRemove();"
                                                 disabled="true"/>
                                 </vbox>
                                 <spacer flex="1"/>
                             </hbox>
-                        </vbox> 
+                        </vbox>
                     </vbox>
-                    
+
                     <vbox id="smptPanel" class="panel">
                         <vbox id="vboxSmtpItems">
                             <checkbox label="&LycosPref.SMTP.SaveSentItems.Label;"
-                                      accesskey="&LycosPref.SMTP.SaveSentItems.Label;" 
+                                      accesskey="&LycosPref.SMTP.SaveSentItems.Label;"
                                       id="chkSentItems"
                                       onclick ="gPrefAccounts.chkSentItemsOnChange();"/>
                         </vbox>
                     </vbox>
                 </tabpanels>
             </tabbox>
-        </vbox>                    
-    </vbox> 
-                      
+        </vbox>
+    </vbox>
+
     <spacer flex="1" />
-    
+
     <!-- buttons>-->
     <vbox pack = "end">
         <hbox id="buttons" pack="end" align="end" flex="1">
             <button id="OK"     label="&LycosPref.Button.Ok.Label;"     oncommand="onOK();"/>
-            <button id="Cancel" label="&LycosPref.Button.Cancel.Label;" oncommand="onClose();"/> 
+            <button id="Cancel" label="&LycosPref.Button.Cancel.Label;" oncommand="onClose();"/>
         </hbox>
     </vbox>
 </window>

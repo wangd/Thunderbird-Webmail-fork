@@ -1,17 +1,17 @@
-<?xml version="1.0"?> 
+<?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/global.css"?>
 <?xml-stylesheet href="chrome://messenger/skin/preferences/preferences.css"?>
 <?xml-stylesheet href="chrome://mozapps/content/preferences/preferences.css"?>
-<?xml-stylesheet href="chrome://yahoo/content/Yahoo-Prefs-Window.css"?>
-<?xml-stylesheet href="chrome://yahoo/content/Yahoo-Prefs-Domains.css"?>
-<?xml-stylesheet href="chrome://yahoo/content/Yahoo-Prefs-Accounts.css"?>
-<?xml-stylesheet href="chrome://yahoo/content/Yahoo-Prefs-Globals.css"?>
+<?xml-stylesheet href="chrome://yahoo/skin/Yahoo-Prefs-Window.css"?>
+<?xml-stylesheet href="chrome://yahoo/skin/Yahoo-Prefs-Domains.css"?>
+<?xml-stylesheet href="chrome://yahoo/skin/Yahoo-Prefs-Accounts.css"?>
+<?xml-stylesheet href="chrome://yahoo/skin/Yahoo-Prefs-Globals.css"?>
 
 <!DOCTYPE dialog SYSTEM "chrome://yahoo/locale/Yahoo-Prefs-Window.dtd">
 
 <window title="&YahooPref.Window.Title;"
         id ="prefsWindow"
-        onload="Startup();" 
+        onload="Startup();"
         onclose="return onClose();"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
@@ -23,24 +23,24 @@
     <script type="application/x-javascript" src="chrome://yahoo/content/Yahoo-Prefs-Accounts-Data.js"/>
     <script>
         <![CDATA[
-            function Startup() 
+            function Startup()
             {
                 gPrefAccounts.init();
                 gYahooDomain.init();
                 gPrefGlobals.init();
             }
-            
-        
+
+
             function setDeck(index)
             {
                 document.getElementById("deck").setAttribute("selectedIndex",index);
             }
-        
-            function onClose() 
+
+            function onClose()
             {
                 window.close();
             }
-            
+
             function onOK()
             {
                 gPrefAccounts.save();
@@ -49,53 +49,53 @@
             }
         ]]>
     </script>
-    
-    
+
+
     <stringbundleset>
         <stringbundle id="stringsYahooDomainWindow" src="chrome://yahoo/locale/Yahoo-Prefs-Domains.properties"/>
-    </stringbundleset>  
-    
-    
+    </stringbundleset>
+
+
     <keyset>
         <key id="key_close"  keycode="VK_ESCAPE" command="cmd_close"/>
     </keyset>
-    
+
     <commandset id="globalCommands">
         <command id="cmd_close" oncommand="onClose();"/>
     </commandset>
-    
+
     <radiogroup id="viewGroup" class="viewSelector" orient="horizontal">
         <radio id="rAccounts" label="&YahooPref.Panel.Accounts.Title;" oncommand="setDeck(0);" selected="true"/>
         <radio id="rDomains"  label="&YahooPref.Panel.Domains.Title;"  oncommand="setDeck(1);"/>
-        <radio id="rGlobals"  label="&YahooPref.Panel.Globals.Title;"  oncommand="setDeck(2);"/>      
+        <radio id="rGlobals"  label="&YahooPref.Panel.Globals.Title;"  oncommand="setDeck(2);"/>
     </radiogroup>
-    
-    <deck id="deck"> 
+
+    <deck id="deck">
         <!--  ACCOUNTS  -->
-        <vbox id="vboxAccounts" flex="1">         
+        <vbox id="vboxAccounts" flex="1">
             <vbox id="boxError" hidden="true" >
                 <hbox pack="center">
                     <image id="imageError" />
                 </hbox>
                 <vbox align="center">
                     <label id="labelError" flex="1" value="&YahooPref.AccountError.Label;"/>
-                </vbox>    
+                </vbox>
             </vbox>
-                  
-            
+
+
             <vbox flex="1" id="boxAccounts">
                 <menulist id="menuAccounts">
                     <menupopup id="popupAccounts">
                     </menupopup>
                 </menulist>
-                
+
                 <tabbox  flex="1" id="tabsAccount">
                     <tabs>
                         <tab label="&YahooPref.Tab.Mode.Title;" id ="tabMode"/>
                         <tab label="&YahooPref.Tab.POP.Title;" id ="tabPOP"/>
                         <tab label="&YahooPref.Tab.SMTP.Title;" id ="tabSMTP"/>
                     </tabs>
-                    <tabpanels flex="1" >    
+                    <tabpanels flex="1" >
                         <vbox id="modePanel" class="panel">
                             <vbox>
                                 <label value="&YahooPref.Mode.Label;" id="labelMode" flex="1"/>
@@ -103,48 +103,48 @@
                                     <radio label="&YahooPref.Mode.ScreenScraper.Label;" value="0"/>
                                     <radio label="&YahooPref.Mode.Beta.Label;"          value="1"/>
                                 </radiogroup>
-                             </vbox>   
-                        </vbox>          
-                                 
+                             </vbox>
+                        </vbox>
+
                         <vbox id="popPanel" class="panel">
-                            <checkbox label="&YahooPref.POP.DownloadUnread.Label;" 
+                            <checkbox label="&YahooPref.POP.DownloadUnread.Label;"
                                       accesskey="&YahooPref.POP.DownloadUnread.AccessKey;"
                                       id="chkDownloadUnread"
-                                      onclick ="gPrefAccounts.chkDownloadUreadOnChange();"/> 
-                                      
-                            <checkbox label="&YahooPref.POP.JunkMail.Label;" 
+                                      onclick ="gPrefAccounts.chkDownloadUreadOnChange();"/>
+
+                            <checkbox label="&YahooPref.POP.JunkMail.Label;"
                                       accesskey="&YahooPref.POP.JunkMail.AccessKey;"
                                       id="chkJunkMail"
                                       onclick ="gPrefAccounts.chkJunkMailOnChange();"/>
-    
+
                             <label value="&YahooPref.POP.Folders.Label;" id="labelFolders"/>
-                            <vbox id="boxFolders">     
-                                <hbox flex="1"> 
-                                    <spacer flex="1"/>         
-                                    <richlistbox id="listFolders" 
+                            <vbox id="boxFolders">
+                                <hbox flex="1">
+                                    <spacer flex="1"/>
+                                    <richlistbox id="listFolders"
                                                  class="listbox"
-                                                 onselect="gPrefAccounts.folderListSelect();"/> 
+                                                 onselect="gPrefAccounts.folderListSelect();"/>
                                     <spacer flex="1"/>
                                 </hbox>
-                                <hbox pack="center">    
-                                        <button id="addFolderList" 
-                                                label="&YahooPref.POP.ButtonAdd.Label;" 
+                                <hbox pack="center">
+                                        <button id="addFolderList"
+                                                label="&YahooPref.POP.ButtonAdd.Label;"
                                                 accesskey="&YahooPref.POP.ButtonAdd.AccessKey;"
                                                 oncommand ="gPrefAccounts.folderListAdd();"/>
-                                                
-                                        <button id="removeFolderList" 
-                                                label="&YahooPref.POP.ButtonRemove.Label;" 
+
+                                        <button id="removeFolderList"
+                                                label="&YahooPref.POP.ButtonRemove.Label;"
                                                 accesskey="&YahooPref.POP.ButtonRemove.AccessKey;"
                                                 oncommand ="gPrefAccounts.folderListRemove();"
                                                 disabled="true"/>
                                 </hbox>
-                            </vbox> 
+                            </vbox>
                         </vbox>
-                        
+
                         <vbox id="smptPanel" class="panel">
                             <vbox id="vboxSmtpItems">
                                 <checkbox label="&YahooPref.SMTP.SaveSentItems.Label;"
-                                          accesskey="&YahooPref.SMTP.SaveSentItems.AccessKey;" 
+                                          accesskey="&YahooPref.SMTP.SaveSentItems.AccessKey;"
                                           id="chkSentItems"
                                           onclick ="gPrefAccounts.chkSentItemsOnChange();"/>
                             </vbox>
@@ -153,73 +153,73 @@
                                     <image id="imageNA" />
                                 </hbox>
                                 <vbox align="center">
-                                    <label id="labelError" 
-                                           flex="1" 
+                                    <label id="labelError"
+                                           flex="1"
                                            value="&YahooPref.SMTP.NA.Label;"/>
-                                </vbox>        
+                                </vbox>
                             </vbox>
                         </vbox>
                     </tabpanels>
                 </tabbox>
-            </vbox>                    
+            </vbox>
         </vbox>
-    
-    
+
+
         <!--  DOMAINS -->
         <vbox id="vboxDomains" flex="1">
             <label value="&YahooPref.Domain.Label;" id="labelDomain"/>
-            <hbox align="center">     
+            <hbox align="center">
                 <spacer flex="1"/>
-                <richlistbox  id="listDomain" 
+                <richlistbox  id="listDomain"
                               class="listDomainbox"
                               onselect="gYahooDomain.onSelect();"/>
-           
+
                 <vbox align="center" pack="center">
-                    <button id="add" 
-                            label="&YahooPref.Domain.Button.AddDomain.Label;" 
+                    <button id="add"
+                            label="&YahooPref.Domain.Button.AddDomain.Label;"
                             accesskey="&YahooPref.Domain.Button.AddDomain.AccessKey;"
                             oncommand ="gYahooDomain.onAdd();"/>
-                    <button id="remove" 
-                            label="&YahooPref.Domain.Button.RemoveDomain.Label;" 
+                    <button id="remove"
+                            label="&YahooPref.Domain.Button.RemoveDomain.Label;"
                             accesskey="&YahooPref.Domain.Button.RemoveDomain.AccessKey;"
                             disabled = "true"
                             oncommand ="gYahooDomain.onRemove();"/>
-                </vbox> 
+                </vbox>
                 <spacer flex="1"/>
             </hbox>
         </vbox>
-        
-        
+
+
         <!-- Globals -->
         <vbox id="vboxGlobals" flex="1">
-            <checkbox label= "&YahooPref.Globals.ShortID.Label;" 
-                      accesskey= "&YahooPref.Globals.ShortID.AccessKey;" 
+            <checkbox label= "&YahooPref.Globals.ShortID.Label;"
+                      accesskey= "&YahooPref.Globals.ShortID.AccessKey;"
                       id="chkShortID"/>
-            <vbox id="ShortIDInfo">   
+            <vbox id="ShortIDInfo">
                 <hbox>
-                    <image id ="iconMessage"/> 
+                    <image id ="iconMessage"/>
                 </hbox>
                 <hbox >
                     <vbox flex="1" >
-                        <description style="margin-left: 25px"> 
+                        <description style="margin-left: 25px">
                             &YahooPref.GlobalsInfo.Label;
-                        </description> 
-                    </vbox> 
+                        </description>
+                    </vbox>
                 </hbox>
-            </vbox>      
-            <checkbox label="&YahooPref.Globals.ReUseSession.Label;" 
-                      accesskey="&YahooPref.Globals.ReUseSession.AccessKey;" 
+            </vbox>
+            <checkbox label="&YahooPref.Globals.ReUseSession.Label;"
+                      accesskey="&YahooPref.Globals.ReUseSession.AccessKey;"
                       id="chkReUseSession"/>
         </vbox>
     </deck>
-    
+
     <spacer flex="1" />
-    
+
     <!-- buttons>-->
     <vbox pack = "end">
         <hbox id="buttons" pack="end" align="end" flex="1">
             <button id="OK"     label="&YahooPref.Button.Ok.Label;"     oncommand="onOK();"/>
-            <button id="Cancel" label="&YahooPref.Button.Cancel.Label;" oncommand="onClose();"/> 
+            <button id="Cancel" label="&YahooPref.Button.Cancel.Label;" oncommand="onClose();"/>
         </hbox>
     </vbox>
 </window>
