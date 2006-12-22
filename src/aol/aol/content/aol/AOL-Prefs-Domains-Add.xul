@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://aol/skin/AOL-Prefs-Domains-Add.css" type="text/css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://aol/locale/AOL-Prefs-Domains-Add.dtd">
+
+<window id="addWindow"
+        title="&AOLAddDomain.Title;"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        onload="return gAOLDomainAdd.init();">
+
+    <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
+    <script type="application/x-javascript" src="chrome://aol/content/AOL-Prefs-Domains-Add.js"/>
+
+    <stringbundleset>
+       <stringbundle id="stringsAOLDomainsAdd" src="chrome://aol/locale/AOL-Prefs-Domains-Add.properties"/>
+    </stringbundleset>
+
+
+    <keyset>
+        <key id="key_close"  keycode="VK_ESCAPE" command="cmd_close"/>
+        <key id="key_return" keycode="VK_RETURN" command="cmd_ok" />
+        <key id="key_enter" keycode="VK_ENTER" command="cmd_ok" />
+    </keyset>
+
+    <commandset id="globalCommands">
+        <command id="cmd_close" oncommand="gAOLDomainAdd.doCancel();"/>
+        <command id="cmd_ok" oncommand="gAOLDomainAdd.doOk();" />
+    </commandset>
+
+
+    <vbox flex="1">
+        <hbox>
+            <vbox>
+                <image id="imageDomain" class="folder"/>
+                <spacer flex="1"/>
+            </vbox>
+
+            <vbox>
+                  <label id="labelDomain"
+                         value="&AOLAddDomain.Label;"/>
+            </vbox>
+        </hbox>
+
+        <hbox align="center">
+            <label id="labelDomainName"
+                   value="&AOLAddDomainName.Label;"
+                   accesskey="&AOLAddDomainName.AccessKey;"
+                   control="txtDomain"/>
+
+            <textbox id="txtDomain"
+                     value=""
+                     flex="2"
+                     onchange = ""/>
+
+            <spacer flex="1"/>
+        </hbox>
+
+        <spacer flex="1" />
+
+        <hbox align="end" pack="center">
+            <button id="add"
+                    default="true"
+                    label="&AOLAddDomain.ButtonOk.Label;"
+                    accesskey="&AOLAddDomain.ButtonOk.AccessKey;"
+                    oncommand ="gAOLDomainAdd.doOk();"/>
+            <button id="cancel"
+                    label="&AOLAddDomain.ButtonCancel.Label;"
+                    accesskey="&AOLAddDomain.ButtonCancel.AccessKey;"
+                    oncommand ="gAOLDomainAdd.doCancel();"/>
+        </hbox>
+    </vbox>
+</window>

@@ -1,0 +1,25 @@
+#addWindow
+{
+    width: 30em;
+    height: 10em;
+}
+
+#imageDomain
+{
+    margin-left: 10px;
+    margin-top: 10px;
+    margin-bottom : 10px;
+    list-style-image: url("chrome://aol/skin/addDomains.png");
+}
+
+
+#labelDomain
+{
+    margin-left: 10px;
+    margin-top: 15px;
+}
+
+#labelDomainName
+{
+    margin-left: 10px;
+}

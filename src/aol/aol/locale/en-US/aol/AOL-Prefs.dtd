@@ -1,7 +1,7 @@
 <!ENTITY AOLPref.Window.Title "AOL / Netscape Options">
 <!ENTITY AOLPref.Panel.Accounts.Title "Accounts">
-<!ENTITY AOLPref.Button.Ok.Label "Ok">
-<!ENTITY AOLPref.Button.Cancel.Label "Cancel">
+<!ENTITY AOLPref.Panel.Domains.Title "Domains">
+<!ENTITY AOLPref.Button.Close.Label "Close">
 
 <!ENTITY AOLPref.Tab.POP.Title "POP">
 
@@ -15,8 +15,15 @@
 <!ENTITY AOLPref.POP.ButtonRemove.Label "Remove">
 <!ENTITY AOLPref.POP.ButtonRemove.AccessKey "R">
 
-<!ENTITY AOLPref.AccountError.Label "No AOL Accounts Found"> 
-
+<!ENTITY AOLPref.AccountError.Label "No AOL Accounts Found">
 
 <!ENTITY AOLPref.POP.MarkAsRead.Label "Mark emails as read on server">
 <!ENTITY AOLPref.POP.MarkAsRead.AccessKey "k">
+
+
+
+<!ENTITY AOLPref.Domain.Label "Domains supported by AOL extension">
+<!ENTITY AOLPref.Domain.Button.AddDomain.Label "Add...">
+<!ENTITY AOLPref.Domain.Button.AddDomain.AccessKey "A">
+<!ENTITY AOLPref.Domain.Button.RemoveDomain.Label "Remove">
+<!ENTITY AOLPref.Domain.Button.RemoveDomain.AccessKey "R">

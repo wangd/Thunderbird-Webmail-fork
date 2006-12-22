@@ -58,12 +58,11 @@ function nsAOLSMTP()
         this.m_SessionData = null;
 
         //do i reuse the session
+        this.m_bReUseSession=true;
         var oPref = {Value:null};
         var  WebMailPrefAccess = new WebMailCommonPrefAccess();
         if (WebMailPrefAccess.Get("bool","aol.bReUseSession",oPref))
             this.m_bReUseSession=oPref.Value;
-        else
-            this.m_bReUseSession=true;
 
         delete WebMailPrefAccess;
 

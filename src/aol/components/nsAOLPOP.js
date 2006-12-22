@@ -970,88 +970,57 @@ nsAOL.prototype =
             this.m_Log.Write("nsAOL.js - loadPrefs - START");
 
             //get user prefs
+            var WebMailPrefAccess = new WebMailCommonPrefAccess();
+            var oPref = {Value : null};
             var oData = new PrefData();
-            var oPref = {Value:null};
-            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+
+            var szUserName =  this.m_szUserName;
+            szUserName = szUserName.replace(/\./g,"_");
+            szUserName = szUserName.toLowerCase();
+            this.m_Log.Write("nsAOLPOP.js - getPrefs - szUserName " + szUserName);
 
             //do i reuse the session
-            WebMailPrefAccess.Get("bool","lycos.bReUseSession",oPref);
-            this.m_Log.Write("nsAOL.js - loadPrefs - bReUseSession " + oPref.Value);
-            if (oPref.Value != null) oData.bReUseSession = oPref.Value;
+            if (WebMailPrefAccess.Get("bool","aol.bReUseSession",oPref))
+                oData.bReUseSession = oPref.Value;
+            this.m_Log.Write("nsAOLPOP.js - getPrefs - oData.bReUseSession " + oData.bReUseSession);
 
-            var iCount = 0;
+            //get folders
             oPref.Value = null;
-            WebMailPrefAccess.Get("int","aol.Account.Num",oPref);
-            this.m_Log.Write("nsAOL.js - loadPrefs - num " + oPref.Value);
-            if (oPref.Value != null) iCount = oPref.Value;
-
-            var bFound = false;
-            var regExp = new RegExp(this.m_szUserName,"i");
-            for (i=0; i<iCount; i++)
+            WebMailPrefAccess.Get("char","aol.Account."+szUserName+".szFolders",oPref);
+            this.m_Log.Write("nsAOLPOP.js - getPrefs - szFolders " + oPref.Value);
+            if (oPref.Value)
             {
-                //get user name
-                oPref.Value = null;
-                WebMailPrefAccess.Get("char","aol.Account."+i+".user",oPref);
-                this.m_Log.Write("nsAOL.js - loadPrefs - user " + oPref.Value);
-                if (oPref.Value != null)
+                var aszFolders = oPref.Value.split("\r");
+                for (j=0; j<aszFolders.length; j++)
                 {
-                    if (oPref.Value.search(regExp)!=-1)
-                    {
-                        this.m_Log.Write("nsAOL.js - loadPrefs - user found "+ i);
-                        bFound = true;
-
-                        //get folders
-                        WebMailPrefAccess.Get("char","aol.Account."+i+".szFolders",oPref);
-                        this.m_Log.Write("nsAOL.js - loadPrefs - szFolders " + oPref.Value);
-                        if (oPref.Value)
-                        {
-                            var aszFolders = oPref.Value.split("\r");
-                            for (j=0; j<aszFolders.length; j++)
-                            {
-                                this.m_Log.Write("nsAOL.js - loadPRefs - aszFolders[j] " + aszFolders[j]);
-                                oData.aszFolder.push(encodeURIComponent(aszFolders[j]));
-                            }
-                        }
-
-                        //get unread
-                        oPref.Value = null;
-                        WebMailPrefAccess.Get("bool","aol.Account."+i+".bDownloadUnread",oPref);
-                        this.m_Log.Write("nsAOL.js - loadPrefs - bDownloadUnread " + oPref.Value);
-                        if (oPref.Value != null) oData.bUnread=oPref.Value;
-
-                         //mark as read
-                        oPref.Value = null;
-                        WebMailPrefAccess.Get("bool","aol.Account."+i+".bMarkAsRead",oPref);
-                        this.m_Log.Write("nsAOL.js - loadPrefs - bMarkAsRead " + oPref.Value);
-                        if (oPref.Value != null) oData.bMarkAsRead=oPref.Value;
-
-                        //get junkmail
-                        oPref.Value = null;
-                        WebMailPrefAccess.Get("bool","aol.Account."+i+".bUseJunkMail",oPref);
-                        this.m_Log.Write("nsAOL.js - loadPrefs - bUseJunkMail " + oPref.Value);
-                        if (oPref.Value != null) oData.bUseJunkMail = oPref.Value;
-                        if (oData.bUseJunkMail) oData.aszFolder.push("spam");
-                    }
+                    this.m_Log.Write("nsAOL.js - loadPRefs - aszFolders[j] " + aszFolders[j]);
+                    oData.aszFolder.push(encodeURIComponent(aszFolders[j]));
                 }
             }
 
-            if (!bFound) //get defaults
+
+            //mark as read
+            oPref.Value = null;
+            if (WebMailPrefAccess.Get("bool","aol.Account."+szUserName+".bMarkAsRead",oPref))
+                oData.bMarkAsRead = oPref.Value;
+            this.m_Log.Write("nsAOLPOP.js - getPrefs - bMarkAsRead " + oPref.Value);
+
+
+            //get unread
+            oPref.Value = null;
+            if (WebMailPrefAccess.Get("bool","aol.Account."+szUserName+".bDownloadUnread",oPref))
+                oData.bDownloadUnread = oPref.Value;
+            this.m_Log.Write("nsAOLPOP.js - getPrefs - bDownloadUnread " + oPref.Value);
+
+            //get spam
+            oPref.Value = null;
+            if (WebMailPrefAccess.Get("bool","aol.Account."+szUserName+".bUseJunkMail",oPref))
             {
-                this.m_Log.Write("nsAOL.js - loadPrefs - Default Folders");
-
-                //unread only
-                oPref.Value = null;
-                WebMailPrefAccess.Get("bool","aol.bDownloadUnread",oPref);
-                this.m_Log.Write("nsAOL.js - loadPrefs - bDownloadUnread " + oPref.Value);
-                if (oPref.Value != null) oData.bUnread=oPref.Value;
-
-                //get junkmail
-                oPref.Value = null;
-                WebMailPrefAccess.Get("bool","aol.bUseJunkMail",oPref);
-                this.m_Log.Write("nsAOL.js - loadPrefs - bUseJunkMail " + oPref.Value);
-                if (oPref.Value != null) oData.bUseJunkMail = oPref.Value;
-                if (oData.bUseJunkMail) oData.aszFolder.push("spam");
+                oData.bUseJunkMail = oPref.Value;
+                oData.aszFolder.push("spam");
             }
+            this.m_Log.Write("nsAOLPOP.js - getPrefs - bUseJunkMail " + oPref.Value);
+
             this.m_Log.Write("nsAOL.js - loadPrefs - END");
             return oData;
         }
