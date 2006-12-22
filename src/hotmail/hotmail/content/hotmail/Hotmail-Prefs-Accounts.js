@@ -75,13 +75,13 @@ var gPrefAccounts =
 
                 if (currentServer.type.search(/pop3/i)!=-1)  //found pop account
                 {
-                    var szUserName = currentServer.username;
+                    var szUserName = currentServer.realUsername;
                     this.m_DebugLog.Write("Hotmail-Pref-Accounts : getUserNames - userName " + szUserName);
                     if (szUserName)
                     {
                         if (szUserName.search(/@/)==-1)
                         {
-                            szUserName = currentServer.realUsername ;
+                            szUserName = currentServer.username;
                             this.m_DebugLog.Write("Hotmail-Pref-Accounts  : getUserNames - realuserName " + szUserName);
                         }
 
