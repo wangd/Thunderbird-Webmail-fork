@@ -379,7 +379,7 @@ YahooPOP.prototype =
                         if (szName.search(/DEL/i)!=-1)
                             oYahooData.szValue = 1;
                         else
-                            oYahooData.szValue = escape(szValue); //encodeURIComponent
+                            oYahooData.szValue = encodeURIComponent(szValue); //encodeURIComponent
 
                        mainObject.m_aDeleteData.push(oYahooData);
                      }

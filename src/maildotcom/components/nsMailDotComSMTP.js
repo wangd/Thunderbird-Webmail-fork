@@ -838,8 +838,8 @@ nsMailDotComSMTP.prototype =
 
     escapeStr : function(szMSG)
     {
-        var szEncode = escape(szMSG);
-        szEncode = szEncode.replace(/%20/gm,"+"); //replace space
+        var szEncode = encodeURIComponent(szMSG);
+        //szEncode = szEncode.replace(/%20/gm,"+"); //replace space
         return szEncode;
     },
 

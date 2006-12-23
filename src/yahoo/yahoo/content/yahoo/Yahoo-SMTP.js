@@ -374,7 +374,7 @@ YahooSMTP.prototype =
 
                     var szSubject = mainObject.m_Email.headers.getSubject();
                     mainObject.m_HttpComms.addValuePair("Subj",
-                                            (szSubject? escape(szSubject) : "%20"));
+                                            (szSubject? mainObject.escapeStr(szSubject) : "%20"));
 
                     if (mainObject.m_Email.htmlBody)
                     {
@@ -684,8 +684,8 @@ YahooSMTP.prototype =
 
     escapeStr : function(szMSG)
     {
-        var szEncode = escape(szMSG);
-        szEncode = szEncode.replace(/%20/gm,"+"); //replace space
+        var szEncode = encodeURIComponent(szMSG);
+        //szEncode = szEncode.replace(/%20/gm,"+"); //replace space
         return szEncode;
     },
 
