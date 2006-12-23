@@ -16,15 +16,16 @@
        <stringbundle id="stringsYahooFoldersAdd" src="chrome://yahoo/locale/Yahoo-Prefs-Folders-Add.properties"/>
     </stringbundleset>
 
-
     <keyset>
         <key id="key_close"  keycode="VK_ESCAPE" command="cmd_close"/>
+        <key id="key_return" keycode="VK_RETURN" command="cmd_ok" />
+        <key id="key_enter" keycode="VK_ENTER" command="cmd_ok" />
     </keyset>
 
     <commandset id="globalCommands">
         <command id="cmd_close" oncommand="gYahooFoldersAdd.doCancel();"/>
+        <command id="cmd_ok" oncommand="gYahooFoldersAdd.doOk();" />
     </commandset>
-
 
     <vbox flex="1">
         <hbox>
