@@ -1142,72 +1142,46 @@ nsMailDotCom.prototype =
             //get user prefs
             var oData = new PrefData();
             var oPref = {Value:null};
-            //do i reuse the session
             var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-            WebMailPrefAccess.Get("bool","maildotcom.bReUseSession",oPref);
-            this.m_Log.Write("nsMailDotCom.js - loadPrefs - bReUseSession " + oPref.Value);
-            if (oPref.Value != null) oData.bReUseSession = oPref.Value;
 
-            var iCount = 0;
+            var szUserName =  this.m_szUserName;
+            szUserName = szUserName.replace(/\./g,"_");
+            szUserName = szUserName.toLowerCase();
+
+            //do i reuse the session
+            if (WebMailPrefAccess.Get("bool","maildotcom.bReUseSession",oPref))
+                oData.bReUseSession = oPref.Value;
+
+            //inbox
+            oData.aszFolder.push("inbox");
+
+            //get folders
             oPref.Value = null;
-            WebMailPrefAccess.Get("int","maildotcom.Account.Num",oPref);
-            this.m_Log.Write("nsMailDotCom.js - loadPrefs - num " + oPref.Value);
-            if (oPref.Value != null) iCount = oPref.Value;
-
-            var bFound = false;
-            var regExp = new RegExp(this.m_szUserName,"i");
-            for (i=0; i<iCount; i++)
+            WebMailPrefAccess.Get("char","maildotcom.Account."+szUserName+".szFolders",oPref);
+            this.m_Log.Write("nsMailDotCom.js - getPrefs - szFolders " + oPref.Value);
+            if (oPref.Value)
             {
-                //get user name
-                oPref.Value = null;
-                WebMailPrefAccess.Get("char","maildotcom.Account."+i+".user",oPref);
-                this.m_Log.Write("nsMailDotCom.js - loadPrefs - user " + oPref.Value);
-                if (oPref.Value != null)
+                var aszFolders = oPref.Value.split("\r");
+                for (j=0; j<aszFolders.length; j++)
                 {
-                    if (oPref.Value.search(regExp)!=-1)
-                    {
-                        this.m_Log.Write("nsMailDotCom.js - loadPrefs - user found "+ i);
-                        bFound = true;
-
-                        //inbox
-                        oData.aszFolder.push("inbox");
-
-                        //get folders
-                        WebMailPrefAccess.Get("char","maildotcom.Account."+i+".szFolders",oPref);
-                        this.m_Log.Write("nsMailDotCom.js - loadPrefs - szFolders " + oPref.Value);
-                        if (oPref.Value)
-                        {
-                            var aszFolders = oPref.Value.split("\r");
-                            for (j=0; j<aszFolders.length; j++)
-                            {
-                                this.m_Log.Write("nsMailDotCom - loadPRefs - aszFolders[j] " + aszFolders[j]);
-                                oData.aszFolder.push(encodeURIComponent(aszFolders[j]));
-                            }
-                        }
-
-                        //get unread
-                        oPref.Value = null;
-                        WebMailPrefAccess.Get("bool","maildotcom.Account."+i+".bDownloadUnread",oPref);
-                        this.m_Log.Write("nsMailDotCom.js - loadPrefs - bDownloadUnread " + oPref.Value);
-                        if (oPref.Value != null) oData.bUnread=oPref.Value;
-                    }
+                    this.m_Log.Write("nsMailDotCom.js - getPrefs - aszFolders " + aszFolders[j]);
+                    oData.aszFolder.push(aszFolders[j]);
                 }
             }
 
-            if (!bFound) //get defaults
-            {
-                this.m_Log.Write("nsYahoo - loadPrefs - Default Folders");
+            //get unread
+            oPref.Value = null;
+            if (WebMailPrefAccess.Get("bool","maildotcom.Account."+szUserName+".bDownloadUnread",oPref))
+                oData.bDownloadUnread = oPref.Value;
+            this.m_Log.Write("nsMailDotCom.js - getPrefs - bDownloadUnread " + oPref.Value);
 
-                //unread only
-                oPref.Value = null;
-                WebMailPrefAccess.Get("bool","maildotcom.bDownloadUnread",oPref);
-                this.m_Log.Write("nsMailDotCom.js - loadPrefs - bDownloadUnread " + oPref.Value);
-                if (oPref.Value != null) oData.bUnread=oPref.Value;
+            //get empty trash
+            oPref.Value = null;
+            if (WebMailPrefAccess.Get("bool","maildotcom.Account."+szUserName+".bEmptyTrash",oPref))
+                oData.bEmptyTrash = oPref.Value;
+            this.m_Log.Write("nsMailDotCom.js - getPrefs - bEmptyTrash " + oPref.Value);
 
-                //inbox
-                this.m_Log.Write("nsMailDotCom - loadPrefs - Default Folders - inbox");
-                oData.aszFolder.push("inbox");
-            }
+
             this.m_Log.Write("nsMailDotCom.js - loadPrefs - END");
             return oData;
         }

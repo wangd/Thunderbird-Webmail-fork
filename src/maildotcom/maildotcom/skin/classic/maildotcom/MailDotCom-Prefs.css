@@ -1,59 +1,167 @@
 #prefsWindow
 {
-    width: 40em; 
+    width: 40em;
     height: 38em;
 }
 
-.viewSelector 
+/* main toolbar */
+radio[pane]
 {
-    border-bottom: 2px groove ThreeDFace;
-    margin: 0px;
-    -moz-padding-start: 10px;
-    background-color: -moz-Field;
-    color: -moz-FieldText;
-}
-
-
-.viewButtonIcon 
-{
-    width: 32px;
-    height: 32px;
-}
-
-#viewGroup radio 
-{
-    margin: 0px 1px 0px 1px;
-    padding: 1px 3px 1px 3px;
-    min-width: 4.5em;
     list-style-image: url("chrome://maildotcom/skin/MailDotCom-Prefs.png");
-    -moz-binding: url("chrome://maildotcom/content/MailDotCom-Prefs.xml#viewbutton");
-    -moz-box-orient: vertical;
-    -moz-box-align: center;
-    -moz-appearance: none;
 }
 
-
-#viewGroup radio:hover 
-{
-    background-color: #E0E8F6;
-    color: black;
-}
-
-
-#viewGroup radio[selected="true"] 
-{
-    background-color: #C1D2EE;
-    color: black; 
-}
-
-
-radio#rAccounts
+radio[pane=paneAccounts]
 {
     -moz-image-region: rect(0px, 32px, 32px, 0px)
 }
 
-
-radio#rDomains
+radio[pane=paneDomains]
 {
     -moz-image-region: rect(0px, 64px, 32px, 32px)
+}
+
+
+
+
+
+/* accounts */
+#tabsAccount
+{
+    margin-top:10px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.radio
+{
+    margin-top: 5px;
+    margin-left: 25px;
+}
+
+#labelAlt
+{
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+#labelFolders
+{
+    margin-top: 5px;
+    margin-left: 10px;
+}
+
+.emailAddress
+{
+       font-size: medium;
+}
+
+#boxFolders
+{
+    margin-top:5px;
+    margin-left: 75px;
+    margin-right: 75px;
+    margin-bottom: 25px;
+}
+
+
+#listFolders
+{
+    height: 10em;
+    width : 20em;
+}
+
+
+.listItem
+{
+    padding: 4px 8px 4px 4px;
+    min-height: 35px !important;
+    border-bottom: 1px dotted #C0C0C0;
+}
+
+
+.listItem[selected="true"]
+{
+    -moz-user-focus: normal;
+    background-image: url("chrome://mozapps/skin/shared/itemSelected.png");
+}
+
+#customFolderImage
+{
+    list-style-image: url("chrome://maildotcom/skin/custom.png");
+    margin-left: 5px;
+}
+
+
+#folderName
+{
+    margin-left: 10px;
+}
+
+#imageError
+{
+    list-style-image: url("chrome://maildotcom/skin/error.png");
+}
+
+#labelError
+{
+    font-weight: bold;
+    font-size: medium;
+    font-style: italic;
+    line-height: 2em;
+}
+
+
+
+
+/* domains */
+#listDomain
+{
+    width: 25em;
+    height: 25em;
+}
+
+#labelDomain
+{
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+
+.listItemDomain
+{
+    padding: 4px 4px 4px 4px;
+    min-height: 25px !important;
+    border-bottom: 1px dotted #C0C0C0;
+}
+
+.listItemDomain[selected="true"]
+{
+    -moz-user-focus: normal;
+    background-image: url("chrome://mozapps/skin/shared/itemSelected.png");
+}
+
+#maildotcomImage
+{
+    list-style-image: url("chrome://maildotcom/skin/MailDotCom-VerySmall.png");
+    margin-left: 5px;
+}
+
+
+.listError
+{
+    padding-top: 4px;
+}
+
+
+#imageError
+{
+    list-style-image: url("chrome://maildotcom/skin/error.png");
+}
+
+.errorMSG
+{
+    font-weight: bold;
+    font-size: medium;
+    letter-spacing: 0.3ex;
+    line-height: 2em;
 }

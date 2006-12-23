@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/global.css"?>
+<?xml-stylesheet href="chrome://maildotcom/skin/MailDotCom-Prefs.css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://maildotcom/locale/MailDotCom-Prefs.dtd">
+
+<overlay id="paneAccountsOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+         instantApply="true">
+
+    <prefpane id = "paneAccounts" onpaneload="gPrefAccounts.init()" flex="1">
+
+        <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
+        <script type="application/x-javascript" src="chrome://web-mail/content/common/CommonPrefs.js"/>
+        <script type="application/x-javascript" src="chrome://maildotcom/content/MailDotCom-Prefs-Accounts.js"/>
+
+        <preferences id="MailDotComPrefs">
+            <preference id="selectedTabIndex" name="maildotcom.selectedTabIndex" type="int" instantApply="true"/>
+            <preference id="selectedUserName" name="maildotcom.selectedUserName" type="string" instantApply="true"/>
+        </preferences>
+
+
+        <vbox id="vboxAccounts" flex="1">
+            <vbox id="boxError" hidden="true" >
+                <hbox pack="center">
+                    <image id="imageError" />
+                </hbox>
+                <vbox align="center">
+                    <label id="labelError" flex="1" value="&MailDotComPref.AccountError.Label;"/>
+                </vbox>
+            </vbox>
+
+
+            <vbox flex="1" id="boxAccounts">
+                <menulist id="menuAccounts">
+                    <menupopup id="popupAccounts" class="menuitem-iconic">
+                    </menupopup>
+                </menulist>
+
+                <tabbox  flex="1" id="tabsAccount" onselect="gPrefAccounts.tabSelectionChanged();">
+                    <tabs>
+                        <tab label="&MailDotComPref.Tab.POP.Title;"/>
+                        <tab label="&MailDotComPref.Tab.SMTP.Title;"/>
+                    </tabs>
+                    <tabpanels flex="1" >
+                        <vbox id="popPanel" class="panel" flex="1">
+                            <checkbox label="&MailDotComPref.POP.DownloadUnread.Label;"
+                                      accesskey="&MailDotComPref.POP.DownloadUnread.AccessKey;"
+                                      id="chkDownloadUnread"
+                                      onclick ="gPrefAccounts.chkDownloadUreadOnChange();"/>
+
+                             <!--empty trash-->
+                             <checkbox label="&MailDotComPref.POP.EmptyTrash.Label;"
+                                       accesskey="&MailDotComPref.POP.EmptyTrash.AccessKey;"
+                                       id="chkEmptyTrash"
+                                       onclick ="gPrefAccounts.chkEmptyTrashOnChange();"/>
+
+                            <label value="&MailDotComPref.POP.Folders.Label;" id="labelFolders"/>
+                            <vbox id="boxFolders">
+                                <hbox flex="1">
+                                    <spacer flex="1"/>
+                                    <richlistbox id="listFolders"
+                                                 class="listbox"
+                                                 onselect="gPrefAccounts.folderListSelect();"/>
+                                    <spacer flex="1"/>
+                                </hbox>
+                                <hbox pack="center">
+                                        <button id="addFolderList"
+                                                label="&MailDotComPref.POP.ButtonAdd.Label;"
+                                                accesskey="&MailDotComPref.POP.ButtonAdd.AccessKey;"
+                                                oncommand ="gPrefAccounts.addFolderList();"/>
+
+                                        <button id="removeFolderList"
+                                                label="&MailDotComPref.POP.ButtonRemove.Label;"
+                                                accesskey="&MailDotComPref.POP.ButtonRemove.AccessKey;"
+                                                oncommand ="gPrefAccounts.removefolderList();"
+                                                disabled="true"/>
+                                </hbox>
+                            </vbox>
+                        </vbox>
+
+                        <vbox id="smptPanel" class="panel" flex="1">
+                            <vbox id="vboxSmtpItems">
+                                <checkbox label="&MailDotComPref.SMTP.SaveSentItems.Label;"
+                                          accesskey="&MailDotComPref.SMTP.SaveSentItems.Label;"
+                                          id="chkSentItems"
+                                          onclick ="gPrefAccounts.chkSentItemsOnChange();"/>
+
+                                <label value="&MailDotComPref.SMTP.AlternativeGroup.Label;" id="labelAlt" flex="1"/>
+                                <radiogroup id="radiogroupAlt" onclick ="gPrefAccounts.rgAltOnChange();" class="radio">
+                                    <radio label="&MailDotComPref.SMTP.SendPlain.Label;"
+                                           accesskey="&MailDotComPref.SMTP.SendPlain.AccessKey;"
+                                           value = "0"
+                                           id="rdSendPlain"/>
+
+                                    <radio label="&MailDotComPref.SMTP.SendHtml.Label;"
+                                           accesskey="&MailDotComPref.SMTP.SendHtml.AccessKey;"
+                                           value = "1"
+                                           id="rdSendHtml"/>
+                                </radiogroup>
+                            </vbox>
+                        </vbox>
+                    </tabpanels>
+                </tabbox>
+            </vbox>
+        </vbox>
+
+    </prefpane>
+
+</overlay>

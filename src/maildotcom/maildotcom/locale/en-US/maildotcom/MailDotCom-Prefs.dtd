@@ -1,8 +1,7 @@
 <!ENTITY MailDotComPref.Window.Title "MailDotCom Options">
 <!ENTITY MailDotComPref.Panel.Accounts.Title "Accounts">
 <!ENTITY MailDotComPref.Panel.Domains.Title "Domains">
-<!ENTITY MailDotComPref.Button.Ok.Label "Ok">
-<!ENTITY MailDotComPref.Button.Cancel.Label "Cancel">
+<!ENTITY MailDotComPref.Button.Close.Label "Close">
 
 <!ENTITY MailDotComPref.Tab.POP.Title "POP">
 <!ENTITY MailDotComPref.Tab.SMTP.Title "SMTP">
@@ -25,7 +24,7 @@
 <!ENTITY MailDotComPref.SMTP.SendHtml.Label "Send html text">
 <!ENTITY MailDotComPref.SMTP.SendHtml.AccessKey "h">
 
-<!ENTITY MailDotComPref.AccountError.Label "No MailDotCom Accounts Found"> 
+<!ENTITY MailDotComPref.AccountError.Label "No MailDotCom Accounts Found">
 
 <!ENTITY MailDotComPref.Domain.Label "Domains supported by MailDotCom extension">
 <!ENTITY MailDotComPref.Domain.Button.AddDomain.Label "Add...">

@@ -3,189 +3,27 @@
 <?xml-stylesheet href="chrome://messenger/skin/preferences/preferences.css"?>
 <?xml-stylesheet href="chrome://mozapps/content/preferences/preferences.css"?>
 <?xml-stylesheet href="chrome://maildotcom/skin/MailDotCom-Prefs.css"?>
-<?xml-stylesheet href="chrome://maildotcom/skin/MailDotCom-Prefs-Domains.css"?>
-<?xml-stylesheet href="chrome://maildotcom/skin/MailDotCom-Prefs-Accounts.css"?>
 
 <!DOCTYPE dialog SYSTEM "chrome://maildotcom/locale/MailDotCom-Prefs.dtd">
 
-<window title="&MailDotComPref.Window.Title;"
-        id ="prefsWindow"
-        onload="Startup();"
-        onclose="return onClose();"
-        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<prefwindow type="prefwindow"
+            id="prefsWindow"
+            title="&MailDotComPref.Window.Title;"
+            xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+            lastSelected="paneAccounts"
+            instantApply="true"
+            buttons="extra1"
+            buttonlabelextra1="&MailDotComPref.Button.Close.Label;"
+            ondialogextra1="window.close();">
 
+    <!-- Accounts -->
+    <prefpane id="paneAccounts"
+              label="&MailDotComPref.Panel.Accounts.Title;"
+              src="chrome://maildotcom/content/MailDotCom-Prefs-Accounts.xul"/>
 
-    <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
-    <script type="application/x-javascript" src="chrome://web-mail/content/common/CommonPrefs.js"/>
-    <script type="application/x-javascript" src="chrome://maildotcom/content/MailDotCom-Prefs-Accounts.js"/>
-    <script type="application/x-javascript" src="chrome://maildotcom/content/MailDotCom-Prefs-Data.js"/>
-    <script type="application/x-javascript" src="chrome://maildotcom/content/MailDotCom-Prefs-Domains.js"/>
-    <script>
-        <![CDATA[
-            function Startup()
-            {
-                gPrefAccounts.init();
-                gHotmailDomain.init();
-            }
+    <!-- Domains -->
+    <prefpane id="paneDomains"
+              label="&MailDotComPref.Panel.Domains.Title;"
+              src="chrome://maildotcom/content/MailDotCom-Prefs-Domains.xul"/>
 
-
-            function setDeck(index)
-            {
-                document.getElementById("deck").setAttribute("selectedIndex",index);
-            }
-
-            function onClose()
-            {
-                window.close();
-            }
-
-            function onOK()
-            {
-                gPrefAccounts.save();
-                window.close();
-            }
-        ]]>
-    </script>
-
-
-    <stringbundleset>
-        <stringbundle id="stringsMailDotComDomainWindow" src="chrome://maildotcom/locale/MailDotCom-Prefs-Domains.properties"/>
-    </stringbundleset>
-
-
-    <keyset>
-        <key id="key_close"  keycode="VK_ESCAPE" command="cmd_close"/>
-    </keyset>
-
-    <commandset id="globalCommands">
-        <command id="cmd_close" oncommand="onClose();"/>
-    </commandset>
-
-    <radiogroup id="viewGroup" class="viewSelector" orient="horizontal">
-        <radio id="rAccounts" label="&MailDotComPref.Panel.Accounts.Title;" oncommand="setDeck(0);" selected="true"/>
-        <radio id="rDomains"  label="&MailDotComPref.Panel.Domains.Title;"  oncommand="setDeck(1);"/>
-    </radiogroup>
-
-    <deck id="deck">
-        <!--  ACCOUNTS  -->
-        <vbox id="vboxAccounts" flex="1">
-            <vbox id="boxError" hidden="true" >
-                <hbox pack="center">
-                    <image id="imageError" />
-                </hbox>
-                <vbox align="center">
-                    <label id="labelError" flex="1" value="&MailDotComPref.AccountError.Label;"/>
-                </vbox>
-            </vbox>
-
-
-            <vbox flex="1" id="boxAccounts">
-                <menulist id="menuAccounts">
-                    <menupopup id="popupAccounts">
-                    </menupopup>
-                </menulist>
-
-                <tabbox  flex="1" id="tabsAccount">
-                    <tabs>
-                        <tab label="&MailDotComPref.Tab.POP.Title;"/>
-                        <tab label="&MailDotComPref.Tab.SMTP.Title;"/>
-                    </tabs>
-                    <tabpanels flex="1" >
-                        <vbox id="popPanel" class="panel">
-                            <checkbox label="&MailDotComPref.POP.DownloadUnread.Label;"
-                                      accesskey="&MailDotComPref.POP.DownloadUnread.AccessKey;"
-                                      id="chkDownloadUnread"
-                                      onclick ="gPrefAccounts.chkDownloadUreadOnChange();"/>
-
-                             <!--empty trash-->
-                             <checkbox label="&MailDotComPref.POP.EmptyTrash.Label;"
-                                       accesskey="&MailDotComPref.POP.EmptyTrash.AccessKey;"
-                                       id="chkEmptyTrash"
-                                       onclick ="gPrefAccounts.chkEmptyTrashOnChange();"/>
-
-                            <label value="&MailDotComPref.POP.Folders.Label;" id="labelFolders"/>
-                            <vbox id="boxFolders">
-                                <hbox flex="1">
-                                    <spacer flex="1"/>
-                                    <richlistbox id="listFolders"
-                                                 class="listbox"
-                                                 onselect="gPrefAccounts.folderListSelect();"/>
-                                    <spacer flex="1"/>
-                                </hbox>
-                                <hbox pack="center">
-                                        <button id="addFolderList"
-                                                label="&MailDotComPref.POP.ButtonAdd.Label;"
-                                                accesskey="&MailDotComPref.POP.ButtonAdd.AccessKey;"
-                                                oncommand ="gPrefAccounts.folderListAdd();"/>
-
-                                        <button id="removeFolderList"
-                                                label="&MailDotComPref.POP.ButtonRemove.Label;"
-                                                accesskey="&MailDotComPref.POP.ButtonRemove.AccessKey;"
-                                                oncommand ="gPrefAccounts.folderListRemove();"
-                                                disabled="true"/>
-                                </hbox>
-                            </vbox>
-                        </vbox>
-
-                        <vbox id="smptPanel" class="panel">
-                            <vbox id="vboxSmtpItems">
-                                <checkbox label="&MailDotComPref.SMTP.SaveSentItems.Label;"
-                                          accesskey="&MailDotComPref.SMTP.SaveSentItems.Label;"
-                                          id="chkSentItems"
-                                          onclick ="gPrefAccounts.chkSentItemsOnChange();"/>
-
-                                <label value="&MailDotComPref.SMTP.AlternativeGroup.Label;" id="labelAlt" flex="1"/>
-                                <radiogroup id="radiogroupAlt" onclick ="gPrefAccounts.rgAltOnChange();" class="radio">
-                                    <radio label="&MailDotComPref.SMTP.SendPlain.Label;"
-                                           accesskey="&MailDotComPref.SMTP.SendPlain.AccessKey;"
-                                           value = "0"
-                                           id="rdSendPlain"/>
-
-                                    <radio label="&MailDotComPref.SMTP.SendHtml.Label;"
-                                           accesskey="&MailDotComPref.SMTP.SendHtml.AccessKey;"
-                                           value = "1"
-                                           id="rdSendHtml"/>
-                                </radiogroup>
-                            </vbox>
-                        </vbox>
-                    </tabpanels>
-                </tabbox>
-            </vbox>
-        </vbox>
-
-
-        <!--  DOMAINS -->
-        <vbox id="vboxDomains" flex="1">
-            <label value="&MailDotComPref.Domain.Label;" id="labelDomain"/>
-            <hbox align="center">
-                <spacer flex="1"/>
-                <richlistbox  id="listDomain"
-                              class="listDomainbox"
-                              onselect="gHotmailDomain.onSelect();"/>
-
-                <vbox align="center" pack="center">
-                    <button id="add"
-                            label="&MailDotComPref.Domain.Button.AddDomain.Label;"
-                            accesskey="&MailDotComPref.Domain.Button.AddDomain.AccessKey;"
-                            oncommand ="gHotmailDomain.onAdd();"/>
-                    <button id="remove"
-                            label="&MailDotComPref.Domain.Button.RemoveDomain.Label;"
-                            accesskey="&MailDotComPref.Domain.Button.RemoveDomain.AccessKey;"
-                            disabled = "true"
-                            oncommand ="gHotmailDomain.onRemove();"/>
-                </vbox>
-                <spacer flex="1"/>
-            </hbox>
-        </vbox>
-    </deck>
-
-    <spacer flex="1" />
-
-    <!-- buttons>-->
-    <vbox pack = "end">
-        <hbox id="buttons" pack="end" align="end" flex="1">
-            <button id="OK"     label="&MailDotComPref.Button.Ok.Label;"     oncommand="onOK();"/>
-            <button id="Cancel" label="&MailDotComPref.Button.Cancel.Label;" oncommand="onClose();"/>
-        </hbox>
-    </vbox>
-</window>
+</prefwindow>

@@ -857,62 +857,25 @@ nsMailDotComSMTP.prototype =
             var oData = new PrefData();
             var oPref = {Value:null};
 
+            var szUserName =  this.m_szUserName;
+            szUserName = szUserName.replace(/\./g,"_");
+            szUserName = szUserName.toLowerCase();
+
             //do i reuse the session
-            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-            WebMailPrefAccess.Get("bool","maildotcom.bReUseSession",oPref);
-            this.m_Log.Write("nsMailDotComSMTP.js - loadPrefs - bReUseSession " + oPref.Value);
-            if (oPref.Value != null) oData.bReUseSession = oPref.Value;
+            if (WebMailPrefAccess.Get("bool","maildotcom.bReUseSession",oPref))
+                oData.bReUseSession = oPref.Value;
 
-            var iCount = 0;
+            //do i save copy
             oPref.Value = null;
-            WebMailPrefAccess.Get("int","maildotcom.Account.Num",oPref);
-            this.m_Log.Write("nsMailDotComSMTP.js - loadPrefs - num " + oPref.Value);
-            if (oPref.Value != null) iCount = oPref.Value;
+            if (WebMailPrefAccess.Get("bool","maildotcom.Account."+szUserName+".bSaveCopy",oPref))
+                oData.bSaveCopy=oPref.Value;
+            this.m_Log.Write("nsHotmailSMTP.js - getPrefs - bSaveCopy " + oPref.Value);
 
-            var bFound = false;
-            var regExp = new RegExp(this.m_szUserName,"i");
-            for (i=0; i<iCount; i++)
-            {
-                //get user name
-                oPref.Value = null;
-                WebMailPrefAccess.Get("char","maildotcom.Account."+i+".user",oPref);
-                this.m_Log.Write("nsMailDotComSMTP.js - loadPrefs - user " + oPref.Value);
-                if (oPref.Value != null)
-                {
-                    if (oPref.Value.search(regExp)!=-1)
-                    {
-                        this.m_Log.Write("nsMailDotComSMTP.js - loadPrefs - user found "+ i);
-                        bFound = true;
-
-                        //save copy in sent items
-                        oPref.Value = null;
-                        WebMailPrefAccess.Get("bool","maildotcom.Account."+i+".bSaveCopy",oPref);
-                        this.m_Log.Write("nsMailDotComSMTP.js - loadPrefs - bSaveCopy " + oPref.Value);
-                        if (oPref.Value != null) oData.bSaveCopy=oPref.Value;
-
-                        //what do i do with alternative parts
-                        oPref.Value = null;
-                        WebMailPrefAccess.Get("bool","maildotcom.Account."+i+".bSendHtml",oPref);
-                        this.m_Log.Write("nsMailDotComSMTP.js - getPrefs - bSendHtml " + oData.bSendHtml);
-                        if (oPref.Value != null) oData.bSendHtml = oPref.Value;
-                    }
-                }
-            }
-
-            if (!bFound) //use defaults
-            {
-                 //save copy in sent items
-                oPref.Value = null;
-                WebMailPrefAccess.Get("bool","maildotcom.bSaveCopy",oPref);
-                this.m_Log.Write("nsMailDotComSMTP.js - loadPrefs - bSaveCopy " + oPref.Value);
-                if (oPref.Value != null) oData.bSaveCopy=oPref.Value;
-
-                //what do i do with alternative parts
-                oPref.Value = null;
-                WebMailPrefAccess.Get("bool","maildotcom.bSendHtml",oPref);
-                this.m_Log.Write("nsMailDotComSMTP.js - getPrefs - bSendHtml " + oData.bSendHtml);
-                if (oPref.Value != null) oData.bSendHtml = oPref.Value;
-            }
+            //what do i do with alternative parts
+            oPref.Value = null;
+            if (WebMailPrefAccess.Get("bool","maildotcom.Account."+szUserName+".bSendHtml",oPref))
+                oData.bSendHtml = oPref.Value;
+            this.m_Log.Write("nsHotmailSMTP.js - getPrefs - bSendHtml " + oPref.Value);
 
             this.m_Log.Write("nsMailDotComSMTP.js - loadPrefs - END");
             return oData;
