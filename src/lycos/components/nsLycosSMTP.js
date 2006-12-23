@@ -303,51 +303,22 @@ nsLycosSMTP.prototype =
             var oPref = {Value:null};
             var  WebMailPrefAccess = new WebMailCommonPrefAccess();
 
+            var szUserName =  this.m_szUserName;
+            szUserName = szUserName.replace(/\./g,"_");
+            szUserName = szUserName.toLowerCase();
+
             //do i reuse the session
-            WebMailPrefAccess.Get("bool","lycos.bReUseSession",oPref);
-            this.m_Log.Write("nsLycos.js - loadPrefs - bReUseSession " + oPref.Value);
-            if (oPref.Value != null) oData.bReUseSession = oPref.Value;
+            if (WebMailPrefAccess.Get("bool","lycos.bReUseSession",oPref))
+                oData.bReUseSession = oPref.Value;
+            this.m_Log.Write("nsLycosSMTP.js - getPrefs - lycos.bReUseSession " + oPref.Value);
 
-            var iCount = 0;
+
+            //do i save copy
             oPref.Value = null;
-            WebMailPrefAccess.Get("int","lycos.Account.Num",oPref);
-            this.m_Log.Write("nsLycos.js - loadPrefs - num " + oPref.Value);
-            if (oPref.Value != null) iCount = oPref.Value;
+            if (WebMailPrefAccess.Get("bool","lycos.Account."+szUserName+".bSaveCopy",oPref))
+                oData.bSaveCopy=oPref.Value;
+            this.m_Log.Write("nsLycosSMTP.js - getPrefs - bSaveCopy " + oPref.Value);
 
-            var bFound = false;
-            var regExp = new RegExp(this.m_szUserName,"i");
-            for (i=0; i<iCount; i++)
-            {
-                //get user name
-                oPref.Value = null;
-                WebMailPrefAccess.Get("char","lycos.Account."+i+".user",oPref);
-                this.m_Log.Write("nsLycos.js - loadPrefs - user " + oPref.Value);
-                if (oPref.Value != null)
-                {
-                    if (oPref.Value.search(regExp)!=-1)
-                    {
-                        this.m_Log.Write("nsLycos.js - loadPrefs - user found "+ i);
-                        bFound = true;
-
-                        //get SaveSentItems
-                        oPref.Value = null;
-                        WebMailPrefAccess.Get("bool","lycos.Account."+i+".bSaveCopy",oPref);
-                        oData.bSaveCopy = oPref.Value;
-                        this.m_Log.Write("lycos-Pref-Accounts.js - getAccountPrefs - oData.bSaveSentItem " + oData.bSaveCopy);
-                    }
-                }
-            }
-
-            if (!bFound) //get defaults
-            {
-                this.m_Log.Write("nsLycos - loadPrefs - Default Folders");
-
-                //save copy in sent items
-                oPref.Value = null;
-                WebMailPrefAccess.Get("bool","lycos.bSaveCopy",oPref);
-                this.m_Log.Write("nsMailDotComSMTP.js - loadPrefs - bSaveCopy " + oPref.Value);
-                if (oPref.Value != null) oData.bSaveCopy=oPref.Value;
-            }
             this.m_Log.Write("nsLycos.js - loadPrefs - END");
             return oData;
         }

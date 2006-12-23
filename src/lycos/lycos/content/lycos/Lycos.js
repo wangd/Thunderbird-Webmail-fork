@@ -48,6 +48,93 @@ var gLycosStartUp =
                                           Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
             this.m_Log.Write("Lycos.js : init - DB not loaded");
 
+
+            //convert prefs
+            var WebMailPrefAccess = new WebMailCommonPrefAccess();
+            var oPref = {Value : null};
+            if (WebMailPrefAccess.Get("int","lycos.Account.Num",oPref))
+            {
+                //convert to new keys
+                var iNum = oPref.Value;
+                this.m_Log.Write("Lycos.js : - init - iNum " + iNum);
+
+                for (var i=0; i<iNum; i++)
+                {
+                    oPref.Value = null;
+                    if (WebMailPrefAccess.Get("char","lycos.Account."+i+".user",oPref))
+                    {
+                        this.m_Log.Write("Lycos.js : - init - userName " + oPref.Value);
+                        var szUserName =  oPref.Value;
+                        szUserName = szUserName.replace(/\./g,"_");
+                        szUserName = szUserName.toLowerCase();
+
+                        oPref.Value = null;
+                        if (WebMailPrefAccess.Get("bool","lycos.Account."+i+".bUseJunkMail",oPref))
+                        {
+                            this.m_Log.Write("Lycos.js - init - bUseJunkMail " + oPref.Value);
+                            WebMailPrefAccess.Set("bool","lycos.Account."+szUserName+".bUseJunkMail",oPref.Value)
+                        }
+
+                        //get unread
+                        oPref.Value = null;
+                        if (WebMailPrefAccess.Get("bool","lycos.Account."+i+".bDownloadUnread",oPref))
+                        {
+                            this.m_Log.Write("nslycos.js - init - bDownloadUnread " + oPref.Value);
+                            WebMailPrefAccess.Set("bool","lycos.Account."+szUserName+".bDownloadUnread",oPref.Value)
+                        }
+
+                        //mark as read
+                        oPref.Value = null;
+                        if (WebMailPrefAccess.Get("bool","lycos.Account."+i+".bMarkAsRead",oPref))
+                        {
+                            this.m_Log.Write("Lycos.js - init - bMarkAsRead " + oPref.Value);
+                            WebMailPrefAccess.Set("bool","lycos.Account."+szUserName+".bMarkAsRead",oPref.Value)
+                        }
+
+                        //get folders
+                        oPref.Value = null;
+                        if (WebMailPrefAccess.Get("char","lycos.Account."+i+".szFolders",oPref))
+                        {
+                            this.m_Log.Write("Lycos.js - init - szFolders " + oPref.Value);
+                            WebMailPrefAccess.Set("char","lycos.Account."+szUserName+".szFolders",oPref.Value)
+                        }
+
+
+                        //empty trash
+                        oPref.Value = null;
+                        if (WebMailPrefAccess.Get("bool","lycos.Account."+i+".bEmptyTrash",oPref))
+                        {
+                            this.m_Log.Write("Lycos.js - init - bEmptyTrash " + oPref.Value);
+                            WebMailPrefAccess.Set("bool","lycos.Account."+szUserName+".bEmptyTrash",oPref.Value)
+                        }
+
+
+                        // save copy
+                        oPref.Value = null;
+                        if (WebMailPrefAccess.Get("bool","lycos.Account."+i+".bSaveCopy",oPref))
+                        {
+                            this.m_Log.Write("Lycos.js - init - bSaveCopy " + oPref.Value);
+                            WebMailPrefAccess.Set("bool","lycos.Account."+szUserName+".bSaveCopy",oPref.Value)
+                        }
+
+                        WebMailPrefAccess.DeleteBranch("lycos.Account."+i+".user");
+                        WebMailPrefAccess.DeleteBranch("lycos.Account."+i+".bUseJunkMail");
+                        WebMailPrefAccess.DeleteBranch("lycos.Account."+i+".bDownloadUnread");
+                        WebMailPrefAccess.DeleteBranch("lycos.Account."+i+".bMarkAsRead");
+                        WebMailPrefAccess.DeleteBranch("lycos.Account."+i+".szFolders");
+                        WebMailPrefAccess.DeleteBranch("lycos.Account."+i+".bSaveCopy");
+                        WebMailPrefAccess.DeleteBranch("lycos.Account."+i+".bEmptyTrash");
+                    }
+                }
+                WebMailPrefAccess.DeleteBranch("lycos.Account.Num");
+            }
+
+            //delete unused keys
+            WebMailPrefAccess.DeleteBranch("lycos.bDownloadUnread");
+            WebMailPrefAccess.DeleteBranch("lycos.bSaveCopy");
+            WebMailPrefAccess.DeleteBranch("lycos.bEmptyTrash");
+            WebMailPrefAccess.DeleteBranch("lycos.bUseJunkMail");
+            delete WebMailPrefAccess;
             window.removeEventListener("load", function() {gLycosStartUp.init();} , false);
 
             this.m_Log.Write("Lycos.js : init - END ");
