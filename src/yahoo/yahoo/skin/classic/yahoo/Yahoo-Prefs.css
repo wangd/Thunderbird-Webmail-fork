@@ -1,0 +1,200 @@
+#prefsWindow
+{
+    width: 45em;
+    height: 38em;
+}
+
+
+
+/* main toolbar */
+radio[pane]
+{
+    list-style-image: url("chrome://yahoo/skin/Yahoo-Prefs-Window.png");
+}
+
+radio[pane=paneAccounts]
+{
+    -moz-image-region: rect(0px, 32px, 32px, 0px)
+}
+
+radio[pane=paneDomains]
+{
+    -moz-image-region: rect(0px, 64px, 32px, 32px)
+}
+
+radio[pane=paneGlobals]
+{
+    -moz-image-region: rect(0px, 96px, 32px, 64px)
+}
+
+
+
+/* accounts */
+#tabsAccount
+{
+    margin-top:15px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+
+.radio
+{
+    margin-top: 5px;
+    margin-left: 25px;
+}
+
+
+#labelFolders
+{
+    margin-left: 10px;
+}
+
+
+#boxFolders
+{
+    margin-top:5px;
+    margin-left: 75px;
+    margin-right: 75px;
+    margin-bottom: 25px;
+}
+
+
+#listFolders
+{
+    height: 10em;
+    width : 20em;
+}
+
+
+.listItem
+{
+    padding: 4px 8px 4px 4px;
+    min-height: 35px !important;
+    border-bottom: 1px dotted #C0C0C0;
+}
+
+
+.listItem[selected="true"]
+{
+    -moz-user-focus: normal;
+    background-image: url("chrome://mozapps/skin/shared/itemSelected.png");
+}
+
+#customFolderImage
+{
+    list-style-image: url("chrome://yahoo/skin/custom.png");
+    margin-left: 5px;
+}
+
+
+#folderName
+{
+    margin-left: 10px;
+}
+
+#imageError
+{
+    list-style-image: url("chrome://yahoo/skin/error.png");
+}
+
+#labelError
+{
+    font-weight: bold;
+    font-size: medium;
+    font-style: italic;
+    line-height: 2em;
+}
+
+#imageNA
+{
+    list-style-image: url("chrome://yahoo/skin/information.png");
+}
+
+
+
+/* domains */
+#listDomain
+{
+    width: 25em;
+    height: 25em;
+}
+
+#labelDomain
+{
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+
+.listItemDomain
+{
+    padding: 4px 4px 4px 4px;
+    min-height: 25px !important;
+    border-bottom: 1px dotted #C0C0C0;
+}
+
+.listItemDomain[selected="true"]
+{
+    -moz-user-focus: normal;
+    background-image: url("chrome://mozapps/skin/shared/itemSelected.png");
+}
+
+#yahooImage
+{
+    list-style-image: url("chrome://yahoo/skin/Yahoo-VerySmall.png");
+    margin-left: 5px;
+}
+
+
+.listError
+{
+    padding-top: 4px;
+}
+
+
+#imageError
+{
+    list-style-image: url("chrome://yahoo/skin/error.png");
+}
+
+.errorMSG
+{
+    font-weight: bold;
+    font-size: medium;
+    letter-spacing: 0.3ex;
+    line-height: 2em;
+}
+
+
+
+/*globals */
+#chkShortID
+{
+    margin-top: 15px;
+    margin-left: 15px;
+}
+
+#chkReUseSession
+{
+    margin-top: 10px;
+    margin-left: 15px;
+}
+
+
+#iconMessage
+{
+    list-style-image: url("chrome://yahoo/skin/Message.png");
+}
+
+
+#ShortIDInfo
+{
+    margin-left: 30px;
+    margin-right: 30px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 1px solid black;
+    background-color: #FFFFCC;
+    padding: 5px;
+}

@@ -2,8 +2,7 @@
 <!ENTITY YahooPref.Panel.Accounts.Title "Accounts">
 <!ENTITY YahooPref.Panel.Domains.Title "Domains">
 <!ENTITY YahooPref.Panel.Globals.Title "Globals">
-<!ENTITY YahooPref.Button.Ok.Label "Ok">
-<!ENTITY YahooPref.Button.Cancel.Label "Cancel">
+<!ENTITY YahooPref.Button.Close.Label "Close">
 
 <!ENTITY YahooPref.Tab.Mode.Title "Mode">
 <!ENTITY YahooPref.Tab.POP.Title "POP">
@@ -26,7 +25,7 @@
 <!ENTITY YahooPref.SMTP.SaveSentItems.Label "Save copy in sent items.">
 <!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "s">
 
-<!ENTITY YahooPref.AccountError.Label "No Yahoo Accounts Found"> 
+<!ENTITY YahooPref.AccountError.Label "No Yahoo Accounts Found">
 <!ENTITY YahooPref.SMTP.NA.Label "No SMTP options for Yahoo BETA">
 
 <!ENTITY YahooPref.Domain.Label "Domains supported by Yahoo extension">

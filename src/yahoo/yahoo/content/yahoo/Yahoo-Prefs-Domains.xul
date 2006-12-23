@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/global.css"?>
+<?xml-stylesheet href="chrome://yahoo/skin/Yahoo-Prefs.css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://yahoo/locale/Yahoo-Prefs-Window.dtd">
+
+<overlay id="paneDomainsOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+    <prefpane id = "paneDomains" onpaneload="gYahooDomain.init()" flex="1">
+
+        <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
+        <script type="application/x-javascript" src="chrome://yahoo/content/Yahoo-Prefs-Domains.js"/>
+
+        <stringbundleset>
+            <stringbundle id="stringsYahooDomainWindow" src="chrome://yahoo/locale/Yahoo-Prefs-Domains.properties"/>
+        </stringbundleset>
+
+        <vbox id="vboxDomains" flex="1">
+            <label value="&YahooPref.Domain.Label;" id="labelDomain"/>
+            <hbox align="center">
+                <spacer flex="1"/>
+                <richlistbox  id="listDomain"
+                              class="listDomainbox"
+                              onselect="gYahooDomain.onSelect();"/>
+
+                <vbox align="center" pack="center">
+                    <button id="add"
+                            label="&YahooPref.Domain.Button.AddDomain.Label;"
+                            accesskey="&YahooPref.Domain.Button.AddDomain.AccessKey;"
+                            oncommand ="gYahooDomain.onAdd();"/>
+                    <button id="remove"
+                            label="&YahooPref.Domain.Button.RemoveDomain.Label;"
+                            accesskey="&YahooPref.Domain.Button.RemoveDomain.AccessKey;"
+                            disabled = "true"
+                            oncommand ="gYahooDomain.onRemove();"/>
+                </vbox>
+                <spacer flex="1"/>
+            </hbox>
+        </vbox>
+
+    </prefpane>
+
+</overlay>

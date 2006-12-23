@@ -290,117 +290,76 @@ nsYahoo.prototype =
             //get user prefs
             var oData = new PrefData();
             var oPref = {Value:null};
-            //do i reuse the session
             var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-            WebMailPrefAccess.Get("bool","yahoo.bReUseSession",oPref);
-            this.m_Log.Write("nsYahoo.js - loadPrefs - bReUseSession " + oPref.Value);
-            if (oPref.Value != null) oData.bReUseSession = oPref.Value;
+
+            var szUserName =  this.m_szUserName;
+            szUserName = szUserName.replace(/\./g,"_");
+            szUserName = szUserName.toLowerCase();
+
+            //do i reuse the session
+            if (WebMailPrefAccess.Get("bool","yahoo.bReUseSession",oPref))
+                oData.bReUseSession = oPref.Value;
 
             //delay processing time delay
             oPref.Value = null;
-            WebMailPrefAccess.Get("int","yahoo.iProcessDelay",oPref);
-            if (oPref.Value != null) oData.iProcessDelay = oPref.Value;
-
-            //use short id
-            oPref.Value = null;
-            WebMailPrefAccess.Get("bool","yahoo.bUseShortID",oPref);
-            if (oPref.Value != null) oData.bUseShortID = oPref.Value;
-            this.m_Log.Write("nsYahoo.js - loadPrefs - bUseShortID " + oPref.Value);
+            if (WebMailPrefAccess.Get("int","yahoo.iProcessDelay",oPref))
+               oData.iProcessDelay = oPref.Value;
 
             //delay proccess amount
             oPref.Value = null;
-            WebMailPrefAccess.Get("bool","yahoo.iProcessAmount",oPref);
-            if (oPref.Value != null) oData.iProcessAmount = oPref.Value;
+            if (WebMailPrefAccess.Get("bool","yahoo.iProcessAmount",oPref))
+                oData.iProcessAmount = oPref.Value;
 
 
-            var iCount = 0;
+            //use short id
             oPref.Value = null;
-            WebMailPrefAccess.Get("int","yahoo.Account.Num",oPref);
-            this.m_Log.Write("nsYahoo.js - loadPrefs - num " + oPref.Value);
-            if (oPref.Value != null) iCount = oPref.Value;
+            if (WebMailPrefAccess.Get("bool","yahoo.bUseShortID",oPref))
+               oData.bUseShortID = oPref.Value;
+            this.m_Log.Write("nsYahoo.js - loadPrefs - bUseShortID " + oPref.Value);
 
 
-            var bFound = false;
-            var regExp = new RegExp(this.m_szUserName,"i");
-            for (i=0; i<iCount; i++)
+            //inbox
+            oData.aszFolder.push("inbox");
+
+            //get spam
+            oPref.Value = null;
+            if (WebMailPrefAccess.Get("bool","yahoo.Account."+szUserName+".bUseJunkMail",oPref))
+               oData.aszFolder.push("%40B%40Bulk");
+            this.m_Log.Write("nsYahoo.js - loadPrefs - bUseJunkMail " + oPref.Value);
+
+
+
+            //get folders
+            oPref.Value = null;
+            WebMailPrefAccess.Get("char","yahoo.Account."+szUserName+".szFolders",oPref);
+            this.m_Log.Write("nsYahoo.js - loadPrefs - szFolders " + oPref.Value);
+            if (oPref.Value)
             {
-                //get user name
-                oPref.Value = null;
-                WebMailPrefAccess.Get("char","yahoo.Account."+i+".user",oPref);
-                this.m_Log.Write("nsYahoo.js - loadPrefs - user " + oPref.Value);
-                if (oPref.Value != null)
+                var aszFolders = oPref.Value.split("\r");
+                for (j=0; j<aszFolders.length; j++)
                 {
-                    if (oPref.Value.search(regExp)!=-1)
-                    {
-                        this.m_Log.Write("nsYahoo.js - loadPrefs - user found "+ i);
-                        bFound = true;
-
-                        //inbox
-                        oData.aszFolder.push("inbox");
-
-                        //get spam
-                        oPref.Value = null;
-                        WebMailPrefAccess.Get("bool","yahoo.Account."+i+".bUseJunkMail",oPref);
-                        this.m_Log.Write("nsYahoo.js - loadPrefs - bUseJunkMail " + oPref.Value);
-                        if (oPref.Value == true)  oData.aszFolder.push("%40B%40Bulk");
-
-
-                        //get folders
-                        WebMailPrefAccess.Get("char","yahoo.Account."+i+".szFolders",oPref);
-                        this.m_Log.Write("nsYahoo.js - loadPrefs - szFolders " + oPref.Value);
-                        if (oPref.Value)
-                        {
-                            var aszFolders = oPref.Value.split("\r");
-                            for (j=0; j<aszFolders.length; j++)
-                            {
-                                this.m_Log.Write("nsYahoo - loadPRefs - aszFolders[j] " + aszFolders[j]);
-                                oData.aszFolder.push(encodeURIComponent(aszFolders[j]));
-                            }
-                        }
-
-                        //get unread
-                        oPref.Value = null;
-                        WebMailPrefAccess.Get("bool","yahoo.Account."+i+".bDownloadUnread",oPref);
-                        this.m_Log.Write("nsYahoo.js - loadPrefs - bDownloadUnread " + oPref.Value);
-                        if (oPref.Value != null) oData.bUnread=oPref.Value;
-
-                        //get unread
-                        oPref.Value = null;
-                        WebMailPrefAccess.Get("bool","yahoo.Account."+i+".bMarkAsRead",oPref);
-                        this.m_Log.Write("nsYahoo.js - loadPrefs - bMarkAsRead " + oPref.Value);
-                        if (oPref.Value != null) oData.bMarkAsRead=oPref.Value;
-
-                        //use yahoo beta site
-                        oPref.Value = null;
-                        WebMailPrefAccess.Get("bool","yahoo.Account."+i+".bBeta",oPref);
-                        if (oPref.Value != null) oData.bBeta=oPref.Value;
-                    }
+                    this.m_Log.Write("nsYahoo - loadPRefs - aszFolders[j] " + aszFolders[j]);
+                    oData.aszFolder.push(encodeURIComponent(aszFolders[j]));
                 }
             }
 
-            if (!bFound) //get defaults
-            {
-                this.m_Log.Write("nsYahoo - loadPrefs - Default Folders");
+            //use yahoo beta site
+            oPref.Value = null;
+            if (WebMailPrefAccess.Get("bool","yahoo.Account."+szUserName+".bBeta",oPref))
+                oData.bBeta=oPref.Value;
 
-                //unread only
-                oPref.Value = null;
-                WebMailPrefAccess.Get("bool","yahoo.bDownloadUnread",oPref);
-                this.m_Log.Write("nsYahoo.js - loadPrefs - bDownloadUnread " + oPref.Value);
-                if (oPref.Value != null) oData.bUnread=oPref.Value;
+            //get unread
+            oPref.Value = null;
+            if (WebMailPrefAccess.Get("bool","yahoo.Account."+szUserName+".bDownloadUnread",oPref))
+                oData.bUnread=oPref.Value;
+            this.m_Log.Write("nsYahoo.js - loadPrefs - bDownloadUnread " + oPref.Value);
 
-                //inbox
-                this.m_Log.Write("nsYahoo - loadPrefs - Default Folders - inbox");
-                oData.aszFolder.push("inbox");
+            //bMarkAsRead
+            oPref.Value = null;
+            if (WebMailPrefAccess.Get("bool","yahoo.Account."+szUserName+".bMarkAsRead",oPref))
+               oData.bMarkAsRead=oPref.Value;
+            this.m_Log.Write("nsYahoo.js - loadPrefs - bMarkAsRead " + oPref.Value);
 
-                //spam
-                oPref.Value = null;
-                WebMailPrefAccess.Get("bool","yahoo.bUseJunkMail",oPref);
-                if (oPref.Value == true)
-                {
-                    this.m_Log.Write("nsYahoo - loadPrefs - Default Folders - spam");
-                    oData.aszFolder.push("%40B%40Bulk");
-                }
-            }
             this.m_Log.Write("nsYahoo.js - loadPrefs - END");
             return oData;
         }

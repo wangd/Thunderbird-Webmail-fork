@@ -149,52 +149,30 @@ nsYahooSMTP.prototype =
         {
             this.m_Log.Write("nsYahooSMTP.js - loadPrefs - START");
 
+            var szUserName =  this.m_szUserName;
+            szUserName = szUserName.replace(/\./g,"_");
+            szUserName = szUserName.toLowerCase();
+
             //get user prefs
             var oData = new PrefData();
             var oPref = {Value:null};
+
             //do i reuse the session
-            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-            WebMailPrefAccess.Get("bool","yahoo.bReUseSession",oPref);
-            this.m_Log.Write("nsYahooSMTP.js - loadPrefs - bReUseSession " + oPref.Value);
-            if (oPref.Value != null) oData.bReUseSession = oPref.Value;
+            if (WebMailPrefAccess.Get("bool","yahoo.bReUseSession",oPref))
+                oData.bReUseSession = oPref.Value;
 
+            //do i save copy
             oPref.Value = null;
-            WebMailPrefAccess.Get("bool","yahoo.Account.bSaveCopy",oPref);
-            if (oPref.Value != null) oData.bSaveSentItem=oPref.Value;
+            if (WebMailPrefAccess.Get("bool","yahoo.Account."+szUserName+".bSaveCopy",oPref))
+                oData.bSaveCopy=oPref.Value;
+            this.m_Log.Write("nsHotmailSMTP.js - getPrefs - bSaveCopy " + oPref.Value);
 
-            var iCount = 0;
+
+            //use yahoo beta site
             oPref.Value = null;
-            WebMailPrefAccess.Get("int","yahoo.Account.Num",oPref);
-            this.m_Log.Write("nsYahooSMTP.js - loadPrefs - num " + oPref.Value);
-            if (oPref.Value != null) iCount = oPref.Value;
-
-            var bFound = false;
-            var regExp = new RegExp(this.m_szUserName,"i");
-            for (i=0; i<iCount; i++)
-            {
-                //get user name
-                oPref.Value = null;
-                WebMailPrefAccess.Get("char","yahoo.Account."+i+".user",oPref);
-                this.m_Log.Write("nsYahooSMTP.js - loadPrefs - user " + oPref.Value);
-                if (oPref.Value != null)
-                {
-                    if (oPref.Value.search(regExp)!=-1)
-                    {
-                        this.m_Log.Write("nsYahooSMTP.js - loadPrefs - user found "+ i);
-                        bFound = true;
-
-                        //use yahoo beta site
-                        oPref.Value = null;
-                        WebMailPrefAccess.Get("bool","yahoo.Account."+i+".bBeta",oPref);
-                        if (oPref.Value != null) oData.bBeta=oPref.Value;
-
-                        //do i save copy
-                        oPref.Value = null;
-                        WebMailPrefAccess.Get("bool","yahoo.Account."+i+".bSaveCopy",oPref);
-                        if (oPref.Value != null) oData.bSaveSentItem=oPref.Value;
-                    }
-                }
-            }
+            if (WebMailPrefAccess.Get("bool","yahoo.Account."+szUserName+".bBeta",oPref))
+               oData.bBeta=oPref.Value;
+            this.m_Log.Write("nsHotmailSMTP.js - getPrefs - bBeta " + oPref.Value);
 
             this.m_Log.Write("nsYahooSMTP.js - loadPrefs - END");
             return oData;
