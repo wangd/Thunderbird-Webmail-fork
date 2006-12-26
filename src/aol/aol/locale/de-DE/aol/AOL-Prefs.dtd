@@ -1,7 +1,6 @@
 <!ENTITY AOLPref.Window.Title "AOL/Netscape-Einstellungen">
 <!ENTITY AOLPref.Panel.Accounts.Title "Konten">
-<!ENTITY AOLPref.Button.Ok.Label "OK">
-<!ENTITY AOLPref.Button.Cancel.Label "Abbrechen">
+<!ENTITY AOLPref.Button.Close.Label "Close">
 <!ENTITY AOLPref.Tab.POP.Title "POP3">
 <!ENTITY AOLPref.POP.DownloadUnread.Label "Nur ungelesene Nachrichten herunterladen">
 <!ENTITY AOLPref.POP.DownloadUnread.AccessKey "u">

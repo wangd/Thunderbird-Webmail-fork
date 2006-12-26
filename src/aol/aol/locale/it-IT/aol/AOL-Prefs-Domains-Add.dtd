@@ -1,0 +1,8 @@
+<!ENTITY AOLAddDomain.Title "Aggiunta di un dominio">
+<!ENTITY AOLAddDomain.Label "Aggiungere un dominio di AOL / Netscape">
+<!ENTITY AOLAddDomainName.Label "Dominio:">
+<!ENTITY AOLAddDomainName.AccessKey "D">
+<!ENTITY AOLAddDomain.ButtonOk.Label "OK">
+<!ENTITY AOLAddDomain.ButtonOk.AccessKey "O">
+<!ENTITY AOLAddDomain.ButtonCancel.Label "Annulla">
+<!ENTITY AOLAddDomain.ButtonCancel.AccessKey "A">

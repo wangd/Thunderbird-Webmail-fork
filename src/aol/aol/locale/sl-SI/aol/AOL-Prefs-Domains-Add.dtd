@@ -1,0 +1,8 @@
+<!ENTITY AOLAddDomain.Title "Dodaj domeno">
+<!ENTITY AOLAddDomain.Label "Dodaj domeno AOL">
+<!ENTITY AOLAddDomainName.Label "Domena">
+<!ENTITY AOLAddDomainName.AccessKey "D">
+<!ENTITY AOLAddDomain.ButtonOk.Label "V redu">
+<!ENTITY AOLAddDomain.ButtonOk.AccessKey "r">
+<!ENTITY AOLAddDomain.ButtonCancel.Label "Prekliči">
+<!ENTITY AOLAddDomain.ButtonCancel.AccessKey "k">

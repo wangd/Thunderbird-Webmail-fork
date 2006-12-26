@@ -1,9 +1,8 @@
 <!ENTITY YahooPref.Window.Title "Yahoo nustatymai">
 <!ENTITY YahooPref.Panel.Accounts.Title "Paskyros">
 <!ENTITY YahooPref.Panel.Domains.Title "Domenai">
-<!ENTITY YahooPref.Panel.Globals.Title "Bendrieji">
-<!ENTITY YahooPref.Button.Ok.Label "Gerai">
-<!ENTITY YahooPref.Button.Cancel.Label "Atšaukti">
+<!ENTITY YahooPref.Panel.Globals.Title "Bendra">
+<!ENTITY YahooPref.Button.Close.Label "Užverti">
 <!ENTITY YahooPref.Tab.Mode.Title "Režimas">
 <!ENTITY YahooPref.Tab.POP.Title "POP">
 <!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
@@ -28,8 +27,8 @@
 <!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "P">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Pašalinti">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "P">
-<!ENTITY YahooPref.Globals.ShortID.Label "Naudoti trumpąjį ID">
+<!ENTITY YahooPref.Globals.ShortID.Label "Naudoti trumpajį ID">
 <!ENTITY YahooPref.Globals.ShortID.AccessKey "I">
 <!ENTITY YahooPref.Globals.ReUseSession.Label "Pakartotinai panaudoti HTTP sesijos duomenis.">
 <!ENTITY YahooPref.Globals.ReUseSession.AccessKey "H">
-<!ENTITY YahooPref.GlobalsInfo.Label "Pakeitus trumpąjį ID nustatymą, bus atsiųsta visa jūsų pašto dėžutė">
+<!ENTITY YahooPref.GlobalsInfo.Label "Pakeitus Trumpojo ID pasirinktį, bus atsiųsta visa pašto dėžutė.">

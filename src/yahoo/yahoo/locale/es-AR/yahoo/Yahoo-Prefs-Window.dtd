@@ -2,12 +2,11 @@
 <!ENTITY YahooPref.Panel.Accounts.Title "Cuentas">
 <!ENTITY YahooPref.Panel.Domains.Title "Dominios">
 <!ENTITY YahooPref.Panel.Globals.Title "Globales">
-<!ENTITY YahooPref.Button.Ok.Label "Ok">
-<!ENTITY YahooPref.Button.Cancel.Label "Cancelar">
+<!ENTITY YahooPref.Button.Close.Label "Cerrar">
 <!ENTITY YahooPref.Tab.Mode.Title "Modo">
 <!ENTITY YahooPref.Tab.POP.Title "POP">
 <!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
-<!ENTITY YahooPref.Mode.Label "Select website the extension will use">
+<!ENTITY YahooPref.Mode.Label "Elija el sitio web que utilizará la extensión">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Sitio Web de Producción">
 <!ENTITY YahooPref.Mode.Beta.Label "Sitio Web BETA">
 <!ENTITY YahooPref.POP.DownloadUnread.Label "Descargar solamente los correos no leídos">

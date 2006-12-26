@@ -1,7 +1,7 @@
 <!ENTITY AOLAbout.Title "AOL / Netscape - À propos">
 <!ENTITY AOLAbout.ExtName "AOL / Netscape">
 <!ENTITY AOLAbout.ExtVersion "version">
-<!ENTITY AOLAbout.ExtDescription "Composant AOL / Netscape pour l&apos;extension Web-mail.">
+<!ENTITY AOLAbout.ExtDescription "Composant AOL / Netscape pour l&apos;extension WebMail.">
 <!ENTITY AOLAbout.ExtCreaterTitle "Créée par :">
 <!ENTITY AOLAbout.ExtHome "Page web :">
 <!ENTITY AOLAbout.ExtButton "Fermer">

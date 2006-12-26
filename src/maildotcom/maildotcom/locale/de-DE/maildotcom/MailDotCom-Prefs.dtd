@@ -1,8 +1,7 @@
 <!ENTITY MailDotComPref.Window.Title "MailDotCom-Einstellungen">
 <!ENTITY MailDotComPref.Panel.Accounts.Title "Konten">
 <!ENTITY MailDotComPref.Panel.Domains.Title "Websites">
-<!ENTITY MailDotComPref.Button.Ok.Label "OK">
-<!ENTITY MailDotComPref.Button.Cancel.Label "Abbrechen">
+<!ENTITY MailDotComPref.Button.Close.Label "Close">
 <!ENTITY MailDotComPref.Tab.POP.Title "POP3">
 <!ENTITY MailDotComPref.Tab.SMTP.Title "SMTP">
 <!ENTITY MailDotComPref.POP.DownloadUnread.Label "Nur ungelesene Nachrichten herunterladen">

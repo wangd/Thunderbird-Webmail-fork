@@ -1,0 +1,8 @@
+<!ENTITY AOLAddDomain.Title "Alan Adı Ekle">
+<!ENTITY AOLAddDomain.Label "AOL Alan Adı Ekle">
+<!ENTITY AOLAddDomainName.Label "Alan Adı">
+<!ENTITY AOLAddDomainName.AccessKey "D">
+<!ENTITY AOLAddDomain.ButtonOk.Label "Tamam">
+<!ENTITY AOLAddDomain.ButtonOk.AccessKey "O">
+<!ENTITY AOLAddDomain.ButtonCancel.Label "İptal">
+<!ENTITY AOLAddDomain.ButtonCancel.AccessKey "C">

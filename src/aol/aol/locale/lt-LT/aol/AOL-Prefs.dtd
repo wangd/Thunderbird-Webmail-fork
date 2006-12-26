@@ -1,7 +1,7 @@
 <!ENTITY AOLPref.Window.Title "AOL / Netscape nustatymai">
 <!ENTITY AOLPref.Panel.Accounts.Title "Paskyros">
-<!ENTITY AOLPref.Button.Ok.Label "Gerai">
-<!ENTITY AOLPref.Button.Cancel.Label "Atšaukti">
+<!ENTITY AOLPref.Panel.Domains.Title "Domenai">
+<!ENTITY AOLPref.Button.Close.Label "Užverti">
 <!ENTITY AOLPref.Tab.POP.Title "POP">
 <!ENTITY AOLPref.POP.DownloadUnread.Label "Parsiųsti tik neskaitytus laiškus">
 <!ENTITY AOLPref.POP.DownloadUnread.AccessKey "n">
@@ -12,6 +12,11 @@
 <!ENTITY AOLPref.POP.ButtonAdd.AccessKey "P">
 <!ENTITY AOLPref.POP.ButtonRemove.Label "Pašalinti">
 <!ENTITY AOLPref.POP.ButtonRemove.AccessKey "š">
-<!ENTITY AOLPref.AccountError.Label "Nerasta jokių AOL paskyrų">
-<!ENTITY AOLPref.POP.MarkAsRead.Label "Pažymėti laiškus serveryje kaip perskaitytus">
-<!ENTITY AOLPref.POP.MarkAsRead.AccessKey "m">
+<!ENTITY AOLPref.AccountError.Label "Nerasta jokių Lycos paskyrų">
+<!ENTITY AOLPref.POP.MarkAsRead.Label "Serveryje pažymėti laiškus kaip perskaitytus">
+<!ENTITY AOLPref.POP.MarkAsRead.AccessKey "s">
+<!ENTITY AOLPref.Domain.Label "Domenai, palaikomi AOL priedo">
+<!ENTITY AOLPref.Domain.Button.AddDomain.Label "Pridėti">
+<!ENTITY AOLPref.Domain.Button.AddDomain.AccessKey "P">
+<!ENTITY AOLPref.Domain.Button.RemoveDomain.Label "Pašalinti">
+<!ENTITY AOLPref.Domain.Button.RemoveDomain.AccessKey "Š">

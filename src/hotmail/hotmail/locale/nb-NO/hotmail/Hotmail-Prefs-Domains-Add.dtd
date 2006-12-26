@@ -1,0 +1,8 @@
+<!ENTITY HotmailAddDomain.Title "Legg til domene">
+<!ENTITY HotmailAddDomain.Label "Legg til Hotmail-domene">
+<!ENTITY HotmailAddDomainName.Label "Domene">
+<!ENTITY HotmailAddDomainName.AccessKey "D">
+<!ENTITY HotmailAddDomain.ButtonOk.Label "OK">
+<!ENTITY HotmailAddDomain.ButtonOk.AccessKey "O">
+<!ENTITY HotmailAddDomain.ButtonCancel.Label "Fjern">
+<!ENTITY HotmailAddDomain.ButtonCancel.AccessKey "C">

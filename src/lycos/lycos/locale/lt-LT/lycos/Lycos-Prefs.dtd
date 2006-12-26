@@ -1,8 +1,7 @@
 <!ENTITY LycosPref.Window.Title "Lycos Nustatymai">
 <!ENTITY LycosPref.Panel.Accounts.Title "Paskyros">
 <!ENTITY LycosPref.Panel.Domains.Title "Domenai">
-<!ENTITY LycosPref.Button.Ok.Label "Gerai">
-<!ENTITY LycosPref.Button.Cancel.Label "Atšaukti">
+<!ENTITY LycosPref.Button.Close.Label "Užverti">
 <!ENTITY LycosPref.Tab.POP.Title "POP">
 <!ENTITY LycosPref.Tab.SMTP.Title "SMTP">
 <!ENTITY LycosPref.POP.DownloadUnread.Label "Parsiųsti tik neskaitytus laiškus">
@@ -19,5 +18,5 @@
 <!ENTITY LycosPref.SMTP.SaveSentItems.Label "Saugoti kopiją išsiųstų laiškų aplanke">
 <!ENTITY LycosPref.SMTP.SaveSentItems.AccessKey "k">
 <!ENTITY LycosPref.AccountError.Label "Nerasta jokių Lycos paskyrų">
-<!ENTITY LycosPref.POP.MarkAsRead.Label "Pažymėti laiškus serveryje kaip perskaitytus">
-<!ENTITY LycosPref.POP.MarkAsRead.AccessKey "m">
+<!ENTITY LycosPref.POP.MarkAsRead.Label "Serveryje pažymėti laiškus kaip perskaitytus">
+<!ENTITY LycosPref.POP.MarkAsRead.AccessKey "s">

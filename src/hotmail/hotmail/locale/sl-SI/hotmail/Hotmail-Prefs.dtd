@@ -1,8 +1,7 @@
 <!ENTITY HotmailPref.Window.Title "Možnosti Hotmail">
 <!ENTITY HotmailPref.Panel.Accounts.Title "Računi">
 <!ENTITY HotmailPref.Panel.Domains.Title "Domene">
-<!ENTITY HotmailPref.Button.Ok.Label "V redu">
-<!ENTITY HotmailPref.Button.Cancel.Label "Prekliči">
+<!ENTITY HotmailPref.Button.Close.Label "Zapri">
 <!ENTITY HotmailPref.Tab.Mode.Title "Način">
 <!ENTITY HotmailPref.Tab.POP.Title "POP">
 <!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
@@ -28,10 +27,10 @@
 <!ENTITY HotmailPref.SMTP.SendHtml.AccessKey "h">
 <!ENTITY HotmailPref.AccountError.Label "Ni najdenih računov Hotmail">
 <!ENTITY HotmailPref.SMTP.NA.Label "Ni možnosti SMPT za Hotmail BETA">
+<!ENTITY HotmailPref.POP.MarkAsRead.Label "Na strežniku označi sporočila prebrana">
+<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "p">
 <!ENTITY HotmailPref.Domain.Label "Domene, ki jih podpira razširitev za Hotmail">
 <!ENTITY HotmailPref.Domain.Button.AddDomain.Label "Dodaj ...">
 <!ENTITY HotmailPref.Domain.Button.AddDomain.AccessKey "D">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.Label "Odstrani">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.AccessKey "O">
-<!ENTITY HotmailPref.POP.MarkAsRead.Label "Na strežniku označi sporočila prebrana">
-<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "p">

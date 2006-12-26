@@ -1,8 +1,7 @@
 <!ENTITY MailDotComPref.Window.Title "Opções do MailDotCom">
 <!ENTITY MailDotComPref.Panel.Accounts.Title "Contas">
 <!ENTITY MailDotComPref.Panel.Domains.Title "Domínios">
-<!ENTITY MailDotComPref.Button.Ok.Label "Ok">
-<!ENTITY MailDotComPref.Button.Cancel.Label "Cancelar">
+<!ENTITY MailDotComPref.Button.Close.Label "Close">
 
 <!ENTITY MailDotComPref.Tab.POP.Title "POP">
 <!ENTITY MailDotComPref.Tab.SMTP.Title "SMTP">

@@ -1,8 +1,7 @@
 <!ENTITY LycosPref.Window.Title "Opzioni del componente Lycos">
 <!ENTITY LycosPref.Panel.Accounts.Title "Account">
 <!ENTITY LycosPref.Panel.Domains.Title "Dominii">
-<!ENTITY LycosPref.Button.Ok.Label "OK">
-<!ENTITY LycosPref.Button.Cancel.Label "Annulla">
+<!ENTITY LycosPref.Button.Close.Label "Chiudi">
 <!ENTITY LycosPref.Tab.POP.Title "POP">
 <!ENTITY LycosPref.Tab.SMTP.Title "SMTP">
 <!ENTITY LycosPref.POP.DownloadUnread.Label "Scarica solo messaggi non letti">

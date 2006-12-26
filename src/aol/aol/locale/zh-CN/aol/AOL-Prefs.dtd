@@ -1,7 +1,7 @@
 <!ENTITY AOLPref.Window.Title "AOL / Netscape 选项">
 <!ENTITY AOLPref.Panel.Accounts.Title "帐户">
-<!ENTITY AOLPref.Button.Ok.Label "确定">
-<!ENTITY AOLPref.Button.Cancel.Label "取消">
+<!ENTITY AOLPref.Panel.Domains.Title "域">
+<!ENTITY AOLPref.Button.Close.Label "关闭">
 <!ENTITY AOLPref.Tab.POP.Title "POP">
 <!ENTITY AOLPref.POP.DownloadUnread.Label "仅下载未读邮件">
 <!ENTITY AOLPref.POP.DownloadUnread.AccessKey "u">
@@ -15,3 +15,8 @@
 <!ENTITY AOLPref.AccountError.Label "未找到 AOL 帐户">
 <!ENTITY AOLPref.POP.MarkAsRead.Label "在服务器上标记邮件为已读">
 <!ENTITY AOLPref.POP.MarkAsRead.AccessKey "k">
+<!ENTITY AOLPref.Domain.Label "AOL 扩展支持的域">
+<!ENTITY AOLPref.Domain.Button.AddDomain.Label "添加">
+<!ENTITY AOLPref.Domain.Button.AddDomain.AccessKey "A">
+<!ENTITY AOLPref.Domain.Button.RemoveDomain.Label "删除">
+<!ENTITY AOLPref.Domain.Button.RemoveDomain.AccessKey "R">

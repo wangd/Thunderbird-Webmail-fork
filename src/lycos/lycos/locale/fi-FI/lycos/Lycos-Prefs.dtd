@@ -1,8 +1,7 @@
 <!ENTITY LycosPref.Window.Title "Lycos - Asetukset">
 <!ENTITY LycosPref.Panel.Accounts.Title "Tilit">
 <!ENTITY LycosPref.Panel.Domains.Title "Verkkotunnukset">
-<!ENTITY LycosPref.Button.Ok.Label "Ok">
-<!ENTITY LycosPref.Button.Cancel.Label "Peruuta">
+<!ENTITY LycosPref.Button.Close.Label "Close">
 <!ENTITY LycosPref.Tab.POP.Title "POP">
 <!ENTITY LycosPref.Tab.SMTP.Title "SMTP">
 <!ENTITY LycosPref.POP.DownloadUnread.Label "Lataa vain lukemattomat viestit">

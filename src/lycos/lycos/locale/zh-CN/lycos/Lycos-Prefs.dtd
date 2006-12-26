@@ -1,8 +1,7 @@
 <!ENTITY LycosPref.Window.Title "Lycos 选项">
 <!ENTITY LycosPref.Panel.Accounts.Title "帐户">
 <!ENTITY LycosPref.Panel.Domains.Title "域">
-<!ENTITY LycosPref.Button.Ok.Label "确定">
-<!ENTITY LycosPref.Button.Cancel.Label "取消">
+<!ENTITY LycosPref.Button.Close.Label "关闭">
 <!ENTITY LycosPref.Tab.POP.Title "POP">
 <!ENTITY LycosPref.Tab.SMTP.Title "SMTP">
 <!ENTITY LycosPref.POP.DownloadUnread.Label "仅下载未读邮件">

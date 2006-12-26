@@ -1,0 +1,8 @@
+<!ENTITY HotmailFolderAdd.Title "Legg til mappe">
+<!ENTITY HotmailFolderName.Label "Mappenavn">
+<!ENTITY HotmailFolderName.AccessKey "F">
+<!ENTITY HotmailFolders.Label "Legg til nedlastingsmappe">
+<!ENTITY HotmailFolder.ButtonOk.Label "OK">
+<!ENTITY HotmailFolder.ButtonOk.AccessKey "O">
+<!ENTITY HotmailFolder.ButtonCancel.Label "Avbryt">
+<!ENTITY HotmailFolder.ButtonCancel.AccessKey "C">

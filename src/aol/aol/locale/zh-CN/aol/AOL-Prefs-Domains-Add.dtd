@@ -1,0 +1,8 @@
+<!ENTITY AOLAddDomain.Title "添加域">
+<!ENTITY AOLAddDomain.Label "添加 AOL 域">
+<!ENTITY AOLAddDomainName.Label "域名">
+<!ENTITY AOLAddDomainName.AccessKey "D">
+<!ENTITY AOLAddDomain.ButtonOk.Label "确定">
+<!ENTITY AOLAddDomain.ButtonOk.AccessKey "O">
+<!ENTITY AOLAddDomain.ButtonCancel.Label "取消">
+<!ENTITY AOLAddDomain.ButtonCancel.AccessKey "C">

@@ -1,0 +1,8 @@
+<!ENTITY AOLAddDomain.Title "Legg til domene">
+<!ENTITY AOLAddDomain.Label "Legg til AOL-domene">
+<!ENTITY AOLAddDomainName.Label "Domene">
+<!ENTITY AOLAddDomainName.AccessKey "D">
+<!ENTITY AOLAddDomain.ButtonOk.Label "OK">
+<!ENTITY AOLAddDomain.ButtonOk.AccessKey "O">
+<!ENTITY AOLAddDomain.ButtonCancel.Label "Avbryt">
+<!ENTITY AOLAddDomain.ButtonCancel.AccessKey "C">

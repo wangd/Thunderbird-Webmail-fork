@@ -2,8 +2,7 @@
 <!ENTITY YahooPref.Panel.Accounts.Title "Tilit">
 <!ENTITY YahooPref.Panel.Domains.Title "Verkkotunnukset">
 <!ENTITY YahooPref.Panel.Globals.Title "Yleiset">
-<!ENTITY YahooPref.Button.Ok.Label "OK">
-<!ENTITY YahooPref.Button.Cancel.Label "Peruuta">
+<!ENTITY YahooPref.Button.Close.Label "Close">
 <!ENTITY YahooPref.Tab.Mode.Title "Menetelmä">
 <!ENTITY YahooPref.Tab.POP.Title "POP">
 <!ENTITY YahooPref.Tab.SMTP.Title "SMTP">

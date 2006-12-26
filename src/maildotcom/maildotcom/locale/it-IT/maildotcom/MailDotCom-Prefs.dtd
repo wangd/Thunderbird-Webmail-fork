@@ -1,12 +1,9 @@
 <!ENTITY MailDotComPref.Window.Title "Opzioni del componente MailDotCom">
 <!ENTITY MailDotComPref.Panel.Accounts.Title "Account">
 <!ENTITY MailDotComPref.Panel.Domains.Title "Dominii">
-<!ENTITY MailDotComPref.Button.Ok.Label "OK">
-<!ENTITY MailDotComPref.Button.Cancel.Label "Annulla">
-
+<!ENTITY MailDotComPref.Button.Close.Label "Chiudi">
 <!ENTITY MailDotComPref.Tab.POP.Title "POP">
 <!ENTITY MailDotComPref.Tab.SMTP.Title "SMTP">
-
 <!ENTITY MailDotComPref.POP.DownloadUnread.Label "Scarica solo messaggi non letti">
 <!ENTITY MailDotComPref.POP.DownloadUnread.AccessKey "N">
 <!ENTITY MailDotComPref.POP.EmptyTrash.Label "Svuota il cestino">
@@ -16,7 +13,6 @@
 <!ENTITY MailDotComPref.POP.ButtonAdd.AccessKey "A">
 <!ENTITY MailDotComPref.POP.ButtonRemove.Label "Elimina">
 <!ENTITY MailDotComPref.POP.ButtonRemove.AccessKey "E">
-
 <!ENTITY MailDotComPref.SMTP.SaveSentItems.Label "Salva una copia del messaggio in &apos;Posta inviata&apos;">
 <!ENTITY MailDotComPref.SMTP.SaveSentItems.AccessKey "s">
 <!ENTITY MailDotComPref.SMTP.AlternativeGroup.Label "Quando si inviano messaggi sia in testo semplice che in HTML, il componente MailDotCom:">
@@ -24,9 +20,7 @@
 <!ENTITY MailDotComPref.SMTP.SendPlain.AccessKey "p">
 <!ENTITY MailDotComPref.SMTP.SendHtml.Label "invia in HTML">
 <!ENTITY MailDotComPref.SMTP.SendHtml.AccessKey "h">
-
 <!ENTITY MailDotComPref.AccountError.Label "Nessun account MailDotCom trovato">
-
 <!ENTITY MailDotComPref.Domain.Label "Dominii supportati dal componente MailDotCom:">
 <!ENTITY MailDotComPref.Domain.Button.AddDomain.Label "Aggiungi...">
 <!ENTITY MailDotComPref.Domain.Button.AddDomain.AccessKey "A">

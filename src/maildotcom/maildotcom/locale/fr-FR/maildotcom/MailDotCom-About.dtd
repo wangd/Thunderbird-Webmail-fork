@@ -1,9 +1,8 @@
 <!ENTITY MailDotComAbout.Title "MailDotCom - À propos">
 <!ENTITY MailDotComAbout.ExtName "MailDotCom">
 <!ENTITY MailDotComAbout.ExtVersion "version">
-<!ENTITY MailDotComAbout.ExtDescription "Composant MailDotCom pour l'extension Web-mail.">
-<!ENTITY MailDotComAbout.ExtCreaterTitle "Créé par :">
+<!ENTITY MailDotComAbout.ExtDescription "Composant MailDotCom pour l&apos;extension WebMail.">
+<!ENTITY MailDotComAbout.ExtCreaterTitle "Créée par :">
 <!ENTITY MailDotComAbout.ExtHome "Page web :">
 <!ENTITY MailDotComAbout.ExtButton "fermer">
-<!ENTITY MailDotComAbout.ExtContributorTitle "Contributeurs:">
-
+<!ENTITY MailDotComAbout.ExtContributorTitle "Traducteurs :">

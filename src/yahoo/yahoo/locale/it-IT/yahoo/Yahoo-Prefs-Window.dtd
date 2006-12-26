@@ -2,8 +2,7 @@
 <!ENTITY YahooPref.Panel.Accounts.Title "Account">
 <!ENTITY YahooPref.Panel.Domains.Title "Dominii">
 <!ENTITY YahooPref.Panel.Globals.Title "Globali">
-<!ENTITY YahooPref.Button.Ok.Label "OK">
-<!ENTITY YahooPref.Button.Cancel.Label "Annulla">
+<!ENTITY YahooPref.Button.Close.Label "Chiudi">
 <!ENTITY YahooPref.Tab.Mode.Title "Modalità">
 <!ENTITY YahooPref.Tab.POP.Title "POP">
 <!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
@@ -22,7 +21,7 @@
 <!ENTITY YahooPref.SMTP.SaveSentItems.Label "Salva una copia del messaggio in &apos;Posta inviata&apos;">
 <!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "s">
 <!ENTITY YahooPref.AccountError.Label "Nessun account Yahoo trovato">
-<!ENTITY YahooPref.SMTP.NA.Label "Nessuna opzione SMPT per Yahoo BETA">
+<!ENTITY YahooPref.SMTP.NA.Label "Nessuna opzione SMTP per Yahoo BETA">
 <!ENTITY YahooPref.Domain.Label "Dominii supportati dal componente Yahoo:">
 <!ENTITY YahooPref.Domain.Button.AddDomain.Label "Aggiungi...">
 <!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "A">

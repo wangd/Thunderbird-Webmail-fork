@@ -1,8 +1,7 @@
 <!ENTITY HotmailPref.Window.Title "Opcions de Hotmail">
 <!ENTITY HotmailPref.Panel.Accounts.Title "Comptes">
 <!ENTITY HotmailPref.Panel.Domains.Title "Dominis">
-<!ENTITY HotmailPref.Button.Ok.Label "D&apos;acord">
-<!ENTITY HotmailPref.Button.Cancel.Label "Cancel·la">
+<!ENTITY HotmailPref.Button.Close.Label "Tanca">
 <!ENTITY HotmailPref.Tab.Mode.Title "Mode">
 <!ENTITY HotmailPref.Tab.POP.Title "POP">
 <!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
@@ -28,10 +27,10 @@
 <!ENTITY HotmailPref.SMTP.SendHtml.AccessKey "h">
 <!ENTITY HotmailPref.AccountError.Label "No s&apos;han trobat comptes de Hotmail">
 <!ENTITY HotmailPref.SMTP.NA.Label "No hi ha opcions SMPT per a Hotmail BETA">
+<!ENTITY HotmailPref.POP.MarkAsRead.Label "Marca els correus com a llegits al servidor">
+<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "k">
 <!ENTITY HotmailPref.Domain.Label "Dominis suportats per l&apos;extensió Hotmail">
 <!ENTITY HotmailPref.Domain.Button.AddDomain.Label "Afegeix...">
 <!ENTITY HotmailPref.Domain.Button.AddDomain.AccessKey "A">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.Label "Suprimeix">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.AccessKey "R">
-<!ENTITY HotmailPref.POP.MarkAsRead.Label "Marca els correus com a llegits al servidor">
-<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "k">

@@ -1,7 +1,6 @@
 <!ENTITY AOLPref.Window.Title "Opciones AOL / Netscape">
 <!ENTITY AOLPref.Panel.Accounts.Title "Cuentas">
-<!ENTITY AOLPref.Button.Ok.Label "Ok">
-<!ENTITY AOLPref.Button.Cancel.Label "Cancelar">
+<!ENTITY AOLPref.Button.Close.Label "Clsoe">
 <!ENTITY AOLPref.Tab.POP.Title "POP">
 <!ENTITY AOLPref.POP.DownloadUnread.Label "Descargar solamente los correos no leídos">
 <!ENTITY AOLPref.POP.DownloadUnread.AccessKey "u">

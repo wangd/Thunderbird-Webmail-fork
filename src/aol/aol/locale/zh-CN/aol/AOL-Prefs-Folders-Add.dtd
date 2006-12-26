@@ -1,7 +1,7 @@
 <!ENTITY AOLFolderAdd.Title "添加文件夹">
 <!ENTITY AOLFolderName.Label "文件夹名称">
 <!ENTITY AOLFolderName.AccessKey "F">
-<!ENTITY AOLFolders.Label "添加下载文件夹">
+<!ENTITY AOLFolders.Label "添加文件夹">
 <!ENTITY AOLFolderName.ButtonOk.Label "确定">
 <!ENTITY AOLFolderName.ButtonOk.AccessKey "O">
 <!ENTITY AOLFolderName.ButtonCancel.Label "取消">

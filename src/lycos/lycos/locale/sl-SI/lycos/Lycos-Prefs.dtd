@@ -1,8 +1,7 @@
 <!ENTITY LycosPref.Window.Title "Možnosti Lycos">
 <!ENTITY LycosPref.Panel.Accounts.Title "Računi">
 <!ENTITY LycosPref.Panel.Domains.Title "Domene">
-<!ENTITY LycosPref.Button.Ok.Label "V redu">
-<!ENTITY LycosPref.Button.Cancel.Label "Prekliči">
+<!ENTITY LycosPref.Button.Close.Label "Zapri">
 <!ENTITY LycosPref.Tab.POP.Title "POP">
 <!ENTITY LycosPref.Tab.SMTP.Title "SMTP">
 <!ENTITY LycosPref.POP.DownloadUnread.Label "Prenesi le neprebrano pošto">

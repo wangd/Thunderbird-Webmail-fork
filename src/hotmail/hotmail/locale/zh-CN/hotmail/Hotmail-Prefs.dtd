@@ -1,8 +1,7 @@
 <!ENTITY HotmailPref.Window.Title "Hotmail 选项">
 <!ENTITY HotmailPref.Panel.Accounts.Title "帐户">
 <!ENTITY HotmailPref.Panel.Domains.Title "域">
-<!ENTITY HotmailPref.Button.Ok.Label "确定">
-<!ENTITY HotmailPref.Button.Cancel.Label "取消">
+<!ENTITY HotmailPref.Button.Close.Label "关闭">
 <!ENTITY HotmailPref.Tab.Mode.Title "模式">
 <!ENTITY HotmailPref.Tab.POP.Title "POP">
 <!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
@@ -28,10 +27,10 @@
 <!ENTITY HotmailPref.SMTP.SendHtml.AccessKey "h">
 <!ENTITY HotmailPref.AccountError.Label "未找到 Hotmail 账户">
 <!ENTITY HotmailPref.SMTP.NA.Label "Hotmail BETA 模式没有可供设置的 SMPT 选项">
+<!ENTITY HotmailPref.POP.MarkAsRead.Label "在服务器上标记邮件为已读">
+<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "k">
 <!ENTITY HotmailPref.Domain.Label "Hotmail 扩展支持的域:">
 <!ENTITY HotmailPref.Domain.Button.AddDomain.Label "添加...">
 <!ENTITY HotmailPref.Domain.Button.AddDomain.AccessKey "A">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.Label "删除">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.AccessKey "R">
-<!ENTITY HotmailPref.POP.MarkAsRead.Label "在服务器上标记邮件为已读">
-<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "k">

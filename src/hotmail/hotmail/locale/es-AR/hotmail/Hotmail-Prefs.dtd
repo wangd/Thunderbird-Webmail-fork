@@ -1,8 +1,7 @@
 <!ENTITY HotmailPref.Window.Title "Opciones de Hotmail">
 <!ENTITY HotmailPref.Panel.Accounts.Title "Cuentas">
 <!ENTITY HotmailPref.Panel.Domains.Title "Dominios">
-<!ENTITY HotmailPref.Button.Ok.Label "Ok">
-<!ENTITY HotmailPref.Button.Cancel.Label "Cancelar">
+<!ENTITY HotmailPref.Button.Close.Label "Cerrar">
 <!ENTITY HotmailPref.Tab.Mode.Title "Modo">
 <!ENTITY HotmailPref.Tab.POP.Title "POP">
 <!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
@@ -27,11 +26,11 @@
 <!ENTITY HotmailPref.SMTP.SendHtml.Label "Enviar como texto HTML">
 <!ENTITY HotmailPref.SMTP.SendHtml.AccessKey "h">
 <!ENTITY HotmailPref.AccountError.Label "No se encontraron Cuentas de Hotmail">
-<!ENTITY HotmailPref.SMTP.NA.Label "No SMPT options for Hotmail BETA">
+<!ENTITY HotmailPref.SMTP.NA.Label "No hay opciones SMTP para Hotmail BETA">
+<!ENTITY HotmailPref.POP.MarkAsRead.Label "Marcar los correos como leídos en el servidor">
+<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "k">
 <!ENTITY HotmailPref.Domain.Label "Dominios soportados por la extensión Hotmail">
 <!ENTITY HotmailPref.Domain.Button.AddDomain.Label "Agergar...">
 <!ENTITY HotmailPref.Domain.Button.AddDomain.AccessKey "A">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.Label "Remover">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.AccessKey "R">
-<!ENTITY HotmailPref.POP.MarkAsRead.Label "Marcar los correos como leídos en el servidor">
-<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "k">

@@ -1,8 +1,7 @@
 <!ENTITY HotmailPref.Window.Title "Opções do Hotmail">
 <!ENTITY HotmailPref.Panel.Accounts.Title "Contas">
 <!ENTITY HotmailPref.Panel.Domains.Title "Domínios">
-<!ENTITY HotmailPref.Button.Ok.Label "Ok">
-<!ENTITY HotmailPref.Button.Cancel.Label "Cancelar">
+<!ENTITY HotmailPref.Button.Close.Label "Close">
 <!ENTITY HotmailPref.Tab.Mode.Title "Modo">
 <!ENTITY HotmailPref.Tab.POP.Title "POP">
 <!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">

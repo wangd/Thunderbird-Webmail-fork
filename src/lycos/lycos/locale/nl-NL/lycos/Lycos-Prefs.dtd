@@ -2,7 +2,7 @@
 <!ENTITY LycosPref.Panel.Accounts.Title "Accounts">
 <!ENTITY LycosPref.Panel.Domains.Title "Domeinen">
 <!ENTITY LycosPref.Button.Ok.Label "OK">
-<!ENTITY LycosPref.Button.Cancel.Label "Annuleren">
+<!ENTITY LycosPref.Button.Close.Label "Close">
 <!ENTITY LycosPref.Tab.POP.Title "POP">
 <!ENTITY LycosPref.Tab.SMTP.Title "SMTP">
 <!ENTITY LycosPref.POP.DownloadUnread.Label "Download alleen ongelezen emails">

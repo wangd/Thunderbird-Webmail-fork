@@ -1,8 +1,7 @@
 <!ENTITY HotmailPref.Window.Title "Hotmail Options">
 <!ENTITY HotmailPref.Panel.Accounts.Title "Accounts">
 <!ENTITY HotmailPref.Panel.Domains.Title "Domains">
-<!ENTITY HotmailPref.Button.Ok.Label "Ok">
-<!ENTITY HotmailPref.Button.Cancel.Label "Cancel">
+<!ENTITY HotmailPref.Button.Close.Label "Close">
 
 <!ENTITY HotmailPref.Tab.Mode.Title "Mode">
 <!ENTITY HotmailPref.Tab.POP.Title "POP">
@@ -31,7 +30,7 @@
 <!ENTITY HotmailPref.SMTP.SendHtml.Label "Send html text">
 <!ENTITY HotmailPref.SMTP.SendHtml.AccessKey "h">
 
-<!ENTITY HotmailPref.AccountError.Label "No Hotmail Accounts Found"> 
+<!ENTITY HotmailPref.AccountError.Label "No Hotmail Accounts Found">
 <!ENTITY HotmailPref.SMTP.NA.Label "No SMPT options for Hotmail BETA">
 
 <!ENTITY HotmailPref.Domain.Label "Domains supported by Hotmail extension">

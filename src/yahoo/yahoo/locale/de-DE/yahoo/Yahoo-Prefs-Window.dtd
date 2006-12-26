@@ -1,8 +1,7 @@
 <!ENTITY YahooPref.Window.Title "Yahoo-Einstellungen">
 <!ENTITY YahooPref.Panel.Accounts.Title "Konten">
 <!ENTITY YahooPref.Panel.Domains.Title "Websites">
-<!ENTITY YahooPref.Button.Ok.Label "OK">
-<!ENTITY YahooPref.Button.Cancel.Label "Abbrechen">
+<!ENTITY YahooPref.Button.Close.Label "Close">
 <!ENTITY YahooPref.Tab.Mode.Title "Zugangsart">
 <!ENTITY YahooPref.Tab.POP.Title "POP3">
 <!ENTITY YahooPref.Tab.SMTP.Title "SMTP">

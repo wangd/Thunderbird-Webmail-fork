@@ -1,7 +1,7 @@
 <!ENTITY AOLPref.Window.Title "Options de AOL / Netscape">
 <!ENTITY AOLPref.Panel.Accounts.Title "Comptes">
-<!ENTITY AOLPref.Button.Ok.Label "OK">
-<!ENTITY AOLPref.Button.Cancel.Label "Annuler">
+<!ENTITY AOLPref.Panel.Domains.Title "Domaine">
+<!ENTITY AOLPref.Button.Close.Label "Fermer">
 <!ENTITY AOLPref.Tab.POP.Title "POP">
 <!ENTITY AOLPref.POP.DownloadUnread.Label "Ne relever que le courrier non lu">
 <!ENTITY AOLPref.POP.DownloadUnread.AccessKey "N">
@@ -15,3 +15,8 @@
 <!ENTITY AOLPref.AccountError.Label "Aucun compte AOL trouvé">
 <!ENTITY AOLPref.POP.MarkAsRead.Label "Marqué le courrier du serveur comme étant lu">
 <!ENTITY AOLPref.POP.MarkAsRead.AccessKey "S">
+<!ENTITY AOLPref.Domain.Label "Domaines supportés par l&apos;extension AOL">
+<!ENTITY AOLPref.Domain.Button.AddDomain.Label "Ajouté...">
+<!ENTITY AOLPref.Domain.Button.AddDomain.AccessKey "A">
+<!ENTITY AOLPref.Domain.Button.RemoveDomain.Label "Retirer">
+<!ENTITY AOLPref.Domain.Button.RemoveDomain.AccessKey "R">

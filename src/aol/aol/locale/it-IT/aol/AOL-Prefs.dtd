@@ -1,7 +1,7 @@
 <!ENTITY AOLPref.Window.Title "Opzioni del componente AOL / Netscape">
 <!ENTITY AOLPref.Panel.Accounts.Title "Account">
-<!ENTITY AOLPref.Button.Ok.Label "Ok">
-<!ENTITY AOLPref.Button.Cancel.Label "Annulla">
+<!ENTITY AOLPref.Panel.Domains.Title "Dominii">
+<!ENTITY AOLPref.Button.Close.Label "Chiudi">
 <!ENTITY AOLPref.Tab.POP.Title "POP">
 <!ENTITY AOLPref.POP.DownloadUnread.Label "Scarica solo messaggi non letti">
 <!ENTITY AOLPref.POP.DownloadUnread.AccessKey "N">
@@ -15,3 +15,8 @@
 <!ENTITY AOLPref.AccountError.Label "Nessun account AOL / Netscape trovato">
 <!ENTITY AOLPref.POP.MarkAsRead.Label "Segna i messaggi come letti sul server">
 <!ENTITY AOLPref.POP.MarkAsRead.AccessKey "S">
+<!ENTITY AOLPref.Domain.Label "Dominii supportati dal componente AOL / Netscape:">
+<!ENTITY AOLPref.Domain.Button.AddDomain.Label "Aggiungi...">
+<!ENTITY AOLPref.Domain.Button.AddDomain.AccessKey "A">
+<!ENTITY AOLPref.Domain.Button.RemoveDomain.Label "Elimina">
+<!ENTITY AOLPref.Domain.Button.RemoveDomain.AccessKey "E">

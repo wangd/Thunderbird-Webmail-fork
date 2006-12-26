@@ -1,0 +1,8 @@
+<!ENTITY AOLFolderAdd.Title "Dosya Ekle">
+<!ENTITY AOLFolderName.Label "Dosya Adı">
+<!ENTITY AOLFolderName.AccessKey "F">
+<!ENTITY AOLFolders.Label "Dosya İndirme Ekle">
+<!ENTITY AOLFolderName.ButtonOk.Label "Tamam">
+<!ENTITY AOLFolderName.ButtonOk.AccessKey "O">
+<!ENTITY AOLFolderName.ButtonCancel.Label "İptal">
+<!ENTITY AOLFolderName.ButtonCancel.AccessKey "C">

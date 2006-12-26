@@ -2,11 +2,10 @@
 <!ENTITY YahooPref.Panel.Accounts.Title "Konti">
 <!ENTITY YahooPref.Panel.Domains.Title "Domæner">
 <!ENTITY YahooPref.Panel.Globals.Title "Globale">
-<!ENTITY YahooPref.Button.Ok.Label "Ok">
-<!ENTITY YahooPref.Button.Cancel.Label "Annuller">
-<!ENTITY YahooPref.Tab.Mode.Title "POP">
-<!ENTITY YahooPref.Tab.POP.Title "SMTP">
-<!ENTITY YahooPref.Tab.SMTP.Title "Modus">
+<!ENTITY YahooPref.Button.Close.Label "Luk">
+<!ENTITY YahooPref.Tab.Mode.Title "Tilstand">
+<!ENTITY YahooPref.Tab.POP.Title "POP">
+<!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
 <!ENTITY YahooPref.Mode.Label "Vælg website som udvidelsen skal bruge">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Produktionswebsite">
 <!ENTITY YahooPref.Mode.Beta.Label "BETA-website">

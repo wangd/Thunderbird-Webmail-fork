@@ -1,11 +1,11 @@
 <!ENTITY AOLPref.Window.Title "AOL/Netscape-innstillinger">
 <!ENTITY AOLPref.Panel.Accounts.Title "Kontoer">
-<!ENTITY AOLPref.Button.Ok.Label "OK">
-<!ENTITY AOLPref.Button.Cancel.Label "Avbryt">
+<!ENTITY AOLPref.Panel.Domains.Title "Domener">
+<!ENTITY AOLPref.Button.Close.Label "Steng">
 <!ENTITY AOLPref.Tab.POP.Title "POP">
-<!ENTITY AOLPref.POP.DownloadUnread.Label "Last ned bare uleste mailer">
+<!ENTITY AOLPref.POP.DownloadUnread.Label "Kun last ned uleste meldinger">
 <!ENTITY AOLPref.POP.DownloadUnread.AccessKey "u">
-<!ENTITY AOLPref.POP.JunkMail.Label "Last ned SøppelPost">
+<!ENTITY AOLPref.POP.JunkMail.Label "Last ned Søppelpost">
 <!ENTITY AOLPref.POP.JunkMail.AccessKey "J">
 <!ENTITY AOLPref.POP.Folders.Label "Nedlastingsmapper">
 <!ENTITY AOLPref.POP.ButtonAdd.Label "Legg til...">
@@ -13,5 +13,10 @@
 <!ENTITY AOLPref.POP.ButtonRemove.Label "Fjern">
 <!ENTITY AOLPref.POP.ButtonRemove.AccessKey "R">
 <!ENTITY AOLPref.AccountError.Label "Ingen Lycos-kontoer funnet">
-<!ENTITY AOLPref.POP.MarkAsRead.Label "Marker e-mailer som lest på serveren">
-<!ENTITY AOLPref.POP.MarkAsRead.AccessKey "k">
+<!ENTITY AOLPref.POP.MarkAsRead.Label "Marker meldinger som lest på serveren">
+<!ENTITY AOLPref.POP.MarkAsRead.AccessKey "K">
+<!ENTITY AOLPref.Domain.Label "Domener støttet av AOL-tillegget">
+<!ENTITY AOLPref.Domain.Button.AddDomain.Label "Legg til...">
+<!ENTITY AOLPref.Domain.Button.AddDomain.AccessKey "A">
+<!ENTITY AOLPref.Domain.Button.RemoveDomain.Label "Fjern">
+<!ENTITY AOLPref.Domain.Button.RemoveDomain.AccessKey "R">

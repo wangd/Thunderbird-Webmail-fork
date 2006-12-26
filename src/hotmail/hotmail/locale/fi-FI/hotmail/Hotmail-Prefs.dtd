@@ -1,8 +1,7 @@
 <!ENTITY HotmailPref.Window.Title "Hotmail - Asetukset">
 <!ENTITY HotmailPref.Panel.Accounts.Title "Tilit">
 <!ENTITY HotmailPref.Panel.Domains.Title "Verkkotunnukset">
-<!ENTITY HotmailPref.Button.Ok.Label "Ok">
-<!ENTITY HotmailPref.Button.Cancel.Label "Peruuta">
+<!ENTITY HotmailPref.Button.Close.Label "Close">
 <!ENTITY HotmailPref.Tab.Mode.Title "Menetelmä">
 <!ENTITY HotmailPref.Tab.POP.Title "POP">
 <!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">

@@ -1,0 +1,22 @@
+<!ENTITY AOLPref.Window.Title "AOL / Netscape Seçenekleri">
+<!ENTITY AOLPref.Panel.Accounts.Title "Hesaplar">
+<!ENTITY AOLPref.Panel.Domains.Title "Alan Adları">
+<!ENTITY AOLPref.Button.Close.Label "Kapat">
+<!ENTITY AOLPref.Tab.POP.Title "POP">
+<!ENTITY AOLPref.POP.DownloadUnread.Label "Yalnızca okunmamış e-postaları indir.">
+<!ENTITY AOLPref.POP.DownloadUnread.AccessKey "u">
+<!ENTITY AOLPref.POP.JunkMail.Label "JunkMail indir">
+<!ENTITY AOLPref.POP.JunkMail.AccessKey "J">
+<!ENTITY AOLPref.POP.Folders.Label "Dosyaları indir">
+<!ENTITY AOLPref.POP.ButtonAdd.Label "Ekle...">
+<!ENTITY AOLPref.POP.ButtonAdd.AccessKey "A">
+<!ENTITY AOLPref.POP.ButtonRemove.Label "Kaldır">
+<!ENTITY AOLPref.POP.ButtonRemove.AccessKey "R">
+<!ENTITY AOLPref.AccountError.Label "AOL Hesabı Bulunamadı">
+<!ENTITY AOLPref.POP.MarkAsRead.Label "E-Postaları servis sağlayıcı üzerinde okundu olarak işaretle">
+<!ENTITY AOLPref.POP.MarkAsRead.AccessKey "k">
+<!ENTITY AOLPref.Domain.Label "AOL eklentisi tarafından desteklenen alan adları">
+<!ENTITY AOLPref.Domain.Button.AddDomain.Label "Ekle...">
+<!ENTITY AOLPref.Domain.Button.AddDomain.AccessKey "A">
+<!ENTITY AOLPref.Domain.Button.RemoveDomain.Label "Kaldır">
+<!ENTITY AOLPref.Domain.Button.RemoveDomain.AccessKey "R">

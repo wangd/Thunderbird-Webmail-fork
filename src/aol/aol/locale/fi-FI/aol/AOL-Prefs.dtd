@@ -1,7 +1,6 @@
 <!ENTITY AOLPref.Window.Title "AOL / Netscape - Asetukset">
 <!ENTITY AOLPref.Panel.Accounts.Title "Tilit">
-<!ENTITY AOLPref.Button.Ok.Label "Ok">
-<!ENTITY AOLPref.Button.Cancel.Label "Peruuta">
+<!ENTITY AOLPref.Button.Close.Label "Clsoe">
 <!ENTITY AOLPref.Tab.POP.Title "POP">
 <!ENTITY AOLPref.POP.DownloadUnread.Label "Lataa vain lukemattomat viestit">
 <!ENTITY AOLPref.POP.DownloadUnread.AccessKey "a">
