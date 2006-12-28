@@ -156,6 +156,8 @@ nsYahooSMTP.prototype =
             //get user prefs
             var oData = new PrefData();
             var oPref = {Value:null};
+            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+
 
             //do i reuse the session
             if (WebMailPrefAccess.Get("bool","yahoo.bReUseSession",oPref))
