@@ -856,6 +856,7 @@ nsMailDotComSMTP.prototype =
             //get user prefs
             var oData = new PrefData();
             var oPref = {Value:null};
+            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
 
             var szUserName =  this.m_szUserName;
             szUserName = szUserName.replace(/\./g,"_");
