@@ -2,8 +2,7 @@
 <!ENTITY YahooPref.Panel.Accounts.Title "Contas">
 <!ENTITY YahooPref.Panel.Domains.Title "Domínios">
 <!ENTITY YahooPref.Panel.Globals.Title "Globais">
-<!ENTITY YahooPref.Button.Ok.Label "Ok">
-<!ENTITY YahooPref.Button.Close.Label "Close">
+<!ENTITY YahooPref.Button.Close.Label "Fechar">
 <!ENTITY YahooPref.Tab.Mode.Title "Modo">
 <!ENTITY YahooPref.Tab.POP.Title "POP">
 <!ENTITY YahooPref.Tab.SMTP.Title "SMTP">

@@ -432,6 +432,10 @@ YahooSMTPBETA.prototype =
             {
                 var szTXTBody = this.m_Email.txtBody.body.getBody();
                 if (szTXTBody.length==0) szTXTBody = " "
+                szTXTBody = szTXTBody.replace(/&/g, "&amp;");
+                szTXTBody = szTXTBody.replace(/</g,"&lt;");
+                szTXTBody = szTXTBody.replace(/>/g,"&gt;");
+                szTXTBody = szTXTBody.replace(/£/g,"Â£");
                 szMSGBody += "<text>"+szTXTBody+"\r\n\r\n</text>";
             }
             if (this.m_Email.htmlBody)                                  //add HTML part
@@ -440,8 +444,6 @@ YahooSMTPBETA.prototype =
                 szMsg = szMsg.replace(/&/g, "&amp;");
                 szMsg = szMsg.replace(/</g,"&lt;");
                 szMsg = szMsg.replace(/>/g,"&gt;");
-              //  szMsg = szMsg.replace(/\"/g, "&quot;");
-                //szMsg = szMsg.replace(/\s/g, "&nbsp;");
                 szMsg = szMsg.replace(/\r/g, "");
                 szMsg = szMsg.replace(/\n/g, "");
                 szMSGBody += "<html>"+szMsg+"</html>";
@@ -456,7 +458,7 @@ YahooSMTPBETA.prototype =
 
             if (this.m_Email.attachments.length==0) //no attchments
             {
-                var szURI = this.m_szLocationURI + "/ws/mail/v1/soap?&appid=YahooMailRC&m=SendMessage&wssid="+this.m_szWssid;
+                var szURI = this.m_szLocationURI + "/ws/mail/v1/soap?appid=YahooMailRC&m=SendMessage&wssid="+this.m_szWssid;
                 this.m_iStage = 0 ;
                 this.m_HttpComms.setURI(szURI);
                 this.m_HttpComms.setRequestMethod("POST");
@@ -614,7 +616,7 @@ YahooSMTPBETA.prototype =
 
                         mainObject.m_szData = mainObject.m_szData.replace(/EMAILATTCHMENTS/,szMSGBody);
                         mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - mainObject.m_szData "+ mainObject.m_szData);
-                        var szURI = mainObject.m_szLocationURI + "/ws/mail/v1/soap?&appid=YahooMailRC&m=SendMessage&wssid="+mainObject.m_szWssid;
+                        var szURI = mainObject.m_szLocationURI + "/ws/mail/v1/soap?appid=YahooMailRC&m=SendMessage&wssid="+mainObject.m_szWssid;
                         mainObject.m_iStage = 0 ;
                         mainObject.m_HttpComms.setURI(szURI);
                         mainObject.m_HttpComms.setRequestMethod("POST");
@@ -640,7 +642,7 @@ YahooSMTPBETA.prototype =
                     szGreq += "<gha>"+szResult+"</gha>";
                     mainObject.m_szData = mainObject.m_szData.replace(kPatternGreq,szGreq);
 
-                    var szURI = mainObject.m_szLocationURI + "/ws/mail/v1/soap?&appid=YahooMailRC&m=SendMessage&wssid="+mainObject.m_szWssid;
+                    var szURI = mainObject.m_szLocationURI + "/ws/mail/v1/soap?appid=YahooMailRC&m=SendMessage&wssid="+mainObject.m_szWssid;
                     mainObject.m_iStage = 0 ;
                     mainObject.m_HttpComms.setURI(szURI);
                     mainObject.m_HttpComms.setRequestMethod("POST");
