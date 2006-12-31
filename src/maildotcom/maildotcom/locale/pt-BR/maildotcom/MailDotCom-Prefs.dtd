@@ -1,11 +1,9 @@
 <!ENTITY MailDotComPref.Window.Title "Opções do MailDotCom">
 <!ENTITY MailDotComPref.Panel.Accounts.Title "Contas">
 <!ENTITY MailDotComPref.Panel.Domains.Title "Domínios">
-<!ENTITY MailDotComPref.Button.Close.Label "Close">
-
+<!ENTITY MailDotComPref.Button.Close.Label "Fechar">
 <!ENTITY MailDotComPref.Tab.POP.Title "POP">
 <!ENTITY MailDotComPref.Tab.SMTP.Title "SMTP">
-
 <!ENTITY MailDotComPref.POP.DownloadUnread.Label "Baixar apenas emails não lidos">
 <!ENTITY MailDotComPref.POP.DownloadUnread.AccessKey "n">
 <!ENTITY MailDotComPref.POP.EmptyTrash.Label "Esvaziar lixeira">
@@ -15,7 +13,6 @@
 <!ENTITY MailDotComPref.POP.ButtonAdd.AccessKey "A">
 <!ENTITY MailDotComPref.POP.ButtonRemove.Label "Remover">
 <!ENTITY MailDotComPref.POP.ButtonRemove.AccessKey "R">
-
 <!ENTITY MailDotComPref.SMTP.SaveSentItems.Label "Salvar cópia nos ítens enviados.">
 <!ENTITY MailDotComPref.SMTP.SaveSentItems.AccessKey "s">
 <!ENTITY MailDotComPref.SMTP.AlternativeGroup.Label "Ao enviar emails rich text como a extensão deve enviar?">
@@ -23,9 +20,7 @@
 <!ENTITY MailDotComPref.SMTP.SendPlain.AccessKey "p">
 <!ENTITY MailDotComPref.SMTP.SendHtml.Label "Enviar texto html">
 <!ENTITY MailDotComPref.SMTP.SendHtml.AccessKey "h">
-
 <!ENTITY MailDotComPref.AccountError.Label "Nenhuma conta do MailDotCom foi encontrada">
-
 <!ENTITY MailDotComPref.Domain.Label "Domains supported by MailDotCom extension">
 <!ENTITY MailDotComPref.Domain.Button.AddDomain.Label "Add...">
 <!ENTITY MailDotComPref.Domain.Button.AddDomain.AccessKey "A">
