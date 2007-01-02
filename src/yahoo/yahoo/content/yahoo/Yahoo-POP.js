@@ -502,11 +502,11 @@ YahooPOP.prototype =
                     var callback = {
                        notify: function(timer) { this.parent.processSizes(timer)}
                     };
-                    callback.parent = this;
-                    this.m_iHandleCount = 0;
-                    this.m_Timer.initWithCallback(callback,
-                                                  this.m_iTime,
-                                                  Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
+                    callback.parent = mainObject;
+                    mainObject.m_iHandleCount = 0;
+                    mainObject.m_Timer.initWithCallback(callback,
+                                                       mainObject.m_iTime,
+                                                       Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
                 }
 
                 delete mainObject.m_aDeleteData;
