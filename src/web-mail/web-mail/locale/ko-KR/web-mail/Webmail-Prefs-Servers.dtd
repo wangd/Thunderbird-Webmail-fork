@@ -1,0 +1,25 @@
+<!ENTITY ServerStatus.Label "서버 상태">
+<!ENTITY Ports.Label "포트">
+<!ENTITY Ports.AccessKey "r">
+<!ENTITY Pop.Label "POP">
+<!ENTITY Pop.AccessKey "O">
+<!ENTITY POP.Default.Label "기본값 110">
+<!ENTITY Note.Label "1024번 이하 포트는 OS에 의하여 차단될지도 모릅니다">
+<!ENTITY Restart.Label "변경된 내용이 효력을 가지려면 Thunderbird의 재시작이 필요합니다.">
+<!ENTITY SMTP.Label "SMTP">
+<!ENTITY SMTP.AccessKey "S">
+<!ENTITY SMTP.Default.Label "기본값 25">
+<!ENTITY IMAP.Label "IMAP">
+<!ENTITY IMAP.AccessKey "I">
+<!ENTITY IMAP.Default.Label "기본값 143">
+<!ENTITY Enable.POP.Label "POP 서버 사용.">
+<!ENTITY Enable.POP.AccessKey "P">
+<!ENTITY Enable.SMTP.Label "SMTP 서버 사용.">
+<!ENTITY Enable.SMTP.AccessKey "T">
+<!ENTITY Enable.IMAP.Label "IMAP 서버 사용.">
+<!ENTITY Enable.IMAP.AccessKey "M">
+<!ENTITY Enable.Label "사용">
+<!ENTITY Enable.AccessKey "E">
+<!ENTITY Status.Label "상태">
+<!ENTITY Status.AccessKey "u">
+<!ENTITY StatusBox.size "width: 6em;">

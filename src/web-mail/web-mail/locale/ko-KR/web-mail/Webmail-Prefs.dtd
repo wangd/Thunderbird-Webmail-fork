@@ -1,0 +1,6 @@
+<!ENTITY Options.szTitle "웹메일 선택사항">
+<!ENTITY Servers.Panel.szTitle "서버">
+<!ENTITY Domains.Panel.szTitle "도메인">
+<!ENTITY Logging.Panel.szTitle "로그">
+<!ENTITY General.Panel.szTitle "일반">
+<!ENTITY Window.size "width: 46em; height: 37em">

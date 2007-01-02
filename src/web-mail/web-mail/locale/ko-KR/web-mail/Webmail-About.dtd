@@ -1,0 +1,8 @@
+<!ENTITY WebmailAbout.Title "Webmail - 정보">
+<!ENTITY WebmailAbout.ExtName "웹 메일">
+<!ENTITY WebmailAbout.ExtVersion "버전">
+<!ENTITY WebmailAbout.ExtDescription "Thunderbird를 이용해 웹 메일 계정에 접근합니다.">
+<!ENTITY WebmailAbout.ExtCreaterTitle "제작자:">
+<!ENTITY WebmailAbout.ExtHome "홈 페이지">
+<!ENTITY WebmailAbout.ExtButton "닫기">
+<!ENTITY WebmailAbout.ExtContributorTitle "공헌자:">

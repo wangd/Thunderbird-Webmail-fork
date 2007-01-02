@@ -1,0 +1,4 @@
+<!ENTITY AccountWizard.Label "계정 마법사에 WebMail를 추가">
+<!ENTITY AccountWizard.AccessKey "A">
+<!ENTITY AccountWizardWarning.Label "응용 폴더에 기록 접근을 요구한다.">
+<!ENTITY Restart.Label "변경된 내용이 효력을 가지려면 Thunderbird의 재시작이 필요합니다.">
