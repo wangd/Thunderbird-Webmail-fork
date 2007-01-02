@@ -1057,7 +1057,7 @@ nsLycos.prototype =
                 var aszFolders = oPref.Value.split("\r");
                 for (j=0; j<aszFolders.length; j++)
                 {
-                    this.m_HotmailLog.Write("nsLycos.js - getPrefs - aszFolders " + aszFolders[j]);
+                    this.m_Log.Write("nsLycos.js - getPrefs - aszFolders " + aszFolders[j]);
                     this.m_aszFolder.push(aszFolders[j]);
                 }
             }
