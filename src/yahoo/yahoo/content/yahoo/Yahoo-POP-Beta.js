@@ -496,9 +496,15 @@ YahooPOPBETA.prototype =
             }
             else
             {
-                mainObject.m_Log.Write("YahooPOPBETA.js - mailBoxOnloadHandler - download complet e- starting delay");
+                mainObject.m_Log.Write("YahooPOPBETA.js - mailBoxOnloadHandler - download complete - starting delay");
+
                 //start timer
-                mainObject.m_Timer.initWithCallback(mainObject,
+                var callback = {
+                    notify: function(timer) { this.parent.processItem(timer)}
+                 };
+                callback.parent = mainObject;
+
+                mainObject.m_Timer.initWithCallback(callback,
                                                     mainObject.m_iTime,
                                                     Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
             }
@@ -521,27 +527,65 @@ YahooPOPBETA.prototype =
 
 
 
-    notify : function(timer)
+    processItem : function(timer)
     {
         try
         {
-            this.m_Log.Write("YahooPOPBETA.js - notify - START");
+            this.m_Log.Write("YahooPOPBETA.js - processItem - START");
 
             if (this.m_aRawData.length>0)
             {
                 var iCount=0;
                 do{
                     var Item = this.m_aRawData.shift();
-                    this.processItem(Item);
+                    this.m_Log.Write("YahooPOPBETA.js - processItem - Item " + Item);
+
+                    if (Item.search(/folderInfo/)!=-1)  //folder info
+                    {
+                        this.m_szBox = Item.match(kPatternFolderID)[1];
+                        this.m_Log.Write("YahooPOPBETA.js - processItem - folder " +this.m_szBox );
+                    }
+                    else  //message info
+                    {
+                        var bRead = true;
+                        if (this.m_bDownloadUnread)
+                        {
+                            bRead = parseInt(Item.match(kPatternSeen)[1]) ? false : true;
+                            this.m_Log.Write("YahooPOPBETA.js - processItem - bRead -" + bRead);
+                        }
+
+                        if (bRead)
+                        {
+                            //mail url
+                            var oMSG = new YahooMSG();
+
+                            //ID
+                            oMSG.szID =  Item.match(kPatternID)[1];
+                            this.m_Log.Write("YahooPOPBETA.js - processItem - oMSG.szID -" + oMSG.szID);
+
+                            //size
+                            oMSG.iSize = parseInt(Item.match(kPatternSize)[1]);
+                            this.m_Log.Write("YahooPOPBETA.js - processItem - oMSG.iSize - "+ oMSG.iSize);
+                            this.m_iTotalSize += oMSG.iSize;
+
+                            //Folder
+                            oMSG.szFolder = this.m_szBox;
+                            this.m_Log.Write("YahooPOPBETA.js - processItem - oMSG.szFolder - "+ oMSG.szFolder);
+
+                            this.m_aMsgDataStore.push(oMSG);
+                        }
+                    }
+
                     iCount++;
-                    this.m_Log.Write("YahooPOPBETA.js - notify - rawData icount " + iCount + " " + this.m_aRawData.length);
+                    this.m_Log.Write("YahooPOPBETA.js - processItem - rawData icount " + iCount + " " + this.m_aRawData.length);
                 }while(iCount != this.m_iProcessAmount && this.m_aRawData.length!=0)
 
             }
             else
             {
-                this.m_Log.Write("YahooPOPBETA.js - notify - all data handled");
-                this.m_Timer.cancel();
+                this.m_Log.Write("YahooPOPBETA.js - processItem - all data handled");
+                timer.cancel();
+                delete  this.m_aRawData;
 
                 if (this.m_bStat) //called by stat
                 {
@@ -550,19 +594,15 @@ YahooPOPBETA.prototype =
                 }
                 else //called by list
                 {
-                    this.serverComms("+OK " + this.m_aMsgDataStore.length + " Messages\r\n");
-                    this.m_Log.Write("YahooPOPBETA.js - notify - : " + this.m_aMsgDataStore.length);
-
-                    for (i = 0; i <  this.m_aMsgDataStore.length; i++)
-                    {
-                        var iEmailSize = this.m_aMsgDataStore[i].iSize;
-                        this.serverComms((i+1) + " " + iEmailSize + "\r\n");
-                    }
-
-                    this.serverComms(".\r\n");
+                    var callback = {
+                       notify: function(timer) { this.parent.processSizes(timer)}
+                    };
+                    callback.parent = this;
+                    this.m_iHandleCount = 0;
+                    this.m_Timer.initWithCallback(callback,
+                                                  this.m_iTime,
+                                                  Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
                 }
-
-                delete  this.m_aRawData;
             }
 
             this.m_Log.Write("YahooPOPBETA.js - notify - END");
@@ -582,53 +622,6 @@ YahooPOPBETA.prototype =
 
 
 
-    processItem : function (rawData)
-    {
-        this.m_Log.Write("YahooPOPBETA.js - processItem - START");
-        this.m_Log.Write("YahooPOPBETA.js - processItem - rawData " +rawData);
-
-        if (rawData.search(/folderInfo/)!=-1)  //folder info
-        {
-            this.m_szBox = rawData.match(kPatternFolderID)[1];
-            this.m_Log.Write("YahooPOPBETA.js - processItem - rawData " +this.m_szBox );
-        }
-        else  //message info
-        {
-            var bRead = true;
-            if (this.m_bDownloadUnread)
-            {
-                bRead = parseInt(rawData.match(kPatternSeen)[1]) ? false : true;
-                this.m_Log.Write("YahooPOPBETA.js - processItem - bRead -" + bRead);
-            }
-
-            if (bRead)
-            {
-                //mail url
-                var oMSG = new YahooMSG();
-
-                //ID
-                oMSG.szID =  rawData.match(kPatternID)[1];
-                this.m_Log.Write("YahooPOPBETA.js - processItem - oMSG.szID -" + oMSG.szID);
-
-                //size
-                oMSG.iSize = parseInt(rawData.match(kPatternSize)[1]);
-                this.m_Log.Write("YahooPOPBETA.js - processItem - oMSG.iSize - "+ oMSG.iSize);
-                this.m_iTotalSize += oMSG.iSize;
-
-                //Folder
-                oMSG.szFolder = this.m_szBox;
-                this.m_Log.Write("YahooPOPBETA.js - processItem - oMSG.szFolder - "+ oMSG.szFolder);
-
-                this.m_aMsgDataStore.push(oMSG);
-            }
-        }
-        this.m_Log.Write("YahooPOPBETA.js - processItem - END");
-    },
-
-
-
-
-
     //list
     getMessageSizes : function()
     {
@@ -638,20 +631,14 @@ YahooPOPBETA.prototype =
 
             if (this.m_bStat)
             {  //msg table has been donwloaded
-
-                this.m_Log.Write("YahooPOPBETA.js - getMessageSizes - getting sizes");
-                var szPOPResponse = "+OK " + this.m_aMsgDataStore.length + " Messages\r\n";
-                this.m_Log.Write("nsYahoo.js - getMessagesSizes - : " + this.m_aMsgDataStore.length);
-
-                for (i = 0; i <  this.m_aMsgDataStore.length; i++)
-                {
-                    var iEmailSize = this.m_aMsgDataStore[i].iSize;
-                    szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";
-                }
-
-                szPOPResponse += ".\r\n";
-
-                this.serverComms(szPOPResponse);
+                var callback = {
+                   notify: function(timer) { this.parent.processSizes(timer)}
+                };
+                callback.parent = this;
+                this.m_iHandleCount = 0;
+                this.m_Timer.initWithCallback(callback,
+                                              this.m_iTime,
+                                              Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
             }
             else
             { //download msg list
@@ -673,6 +660,53 @@ YahooPOPBETA.prototype =
 
 
 
+
+    processSizes : function(timer)
+    {
+        try
+        {
+            this.m_Log.Write("YahooPOPBETA.js - processSizes - START");
+
+            //response start
+            if (this.m_iHandleCount ==  0)
+                this.serverComms("+OK " + this.m_aMsgDataStore.length + " Messages\r\n")
+
+
+            if ( this.m_aMsgDataStore.length > 0)
+            {
+                var iCount = 0;
+                do{
+                    var iEmailSize = this.m_aMsgDataStore[this.m_iHandleCount].iSize;
+                    this.serverComms((this.m_iHandleCount+1) + " " + iEmailSize + "\r\n");
+                    this.m_iHandleCount++;
+                    iCount++;
+                }while(iCount != this.m_iProcessAmount && this.m_iHandleCount!=this.m_aMsgDataStore.length)
+            }
+
+            //response end
+            if (this.m_iHandleCount == this.m_aMsgDataStore.length)
+            {
+              this.serverComms(".\r\n");
+              timer.cancel();
+            }
+
+            this.m_Log.Write("YahooPOPBETA.js - processSizes - END");
+        }
+        catch(err)
+        {
+            this.m_Timer.cancel();
+            this.m_Log.DebugDump("YahooPOPBETA.js: processSizes : Exception : "
+                                              + err.name
+                                              + ".\nError message: "
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
+
+            this.serverComms("-ERR negative vibes from " +this.m_szUserName+ "\r\n");
+        }
+    },
+
+
+
     //IUDL
     getMessageIDs : function()
     {
@@ -680,34 +714,14 @@ YahooPOPBETA.prototype =
         {
             this.m_Log.Write("YahooPOPBETA.js - getMessageIDs - START");
 
-            var szPOPResponse = "+OK " + this.m_aMsgDataStore.length + " Messages\r\n";
-            this.m_Log.Write("YahooPOPBETA.js - getMessageIDs - return : " + this.m_aMsgDataStore.length );
-
-            for (i = 0; i <  this.m_aMsgDataStore.length; i++)
-            {
-                var szEmailID = this.m_aMsgDataStore[i].szID;;
-
-                //use short id    1_8571_AJSySdEAAREkRPe9dgtLa1BshJg
-                if (this.m_bUseShortID)
-                {
-                    var aszIDParts = szEmailID.split(/_/);
-                    szEmailID ="";
-                    for (var j=0; j<aszIDParts.length; j++)
-                    {
-                        if (j!=1)
-                        {
-                            szEmailID += aszIDParts[j];
-                            if (j!=aszIDParts.length-1) szEmailID += "_";
-                        }
-                    }
-                }
-
-                this.m_Log.Write("YahooPOPBETA.js - getMessageIDs - IDS : " +szEmailID);
-                szPOPResponse+=(i+1) + " " +szEmailID + "\r\n";
-            }
-
-            szPOPResponse += ".\r\n";
-            this.serverComms(szPOPResponse);
+            var callback = {
+               notify: function(timer) { this.parent.processIDS(timer)}
+            };
+            callback.parent = this;
+            this.m_iHandleCount = 0;
+            this.m_Timer.initWithCallback(callback,
+                                          this.m_iTime,
+                                          Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
 
             this.m_Log.Write("YahooPOPBETA.js - getMessageIDs - END");
             return true;
@@ -722,6 +736,70 @@ YahooPOPBETA.prototype =
             return false;
         }
     },
+
+
+
+    processIDS : function(timer)
+    {
+        try
+        {
+            this.m_Log.Write("YahooPOPBETA.js - processIDS - START");
+
+            //response start
+            if (this.m_iHandleCount ==  0)
+                this.serverComms("+OK " + this.m_aMsgDataStore.length + " Messages\r\n");
+
+
+            if ( this.m_aMsgDataStore.length > 0)
+            {
+                var iCount = 0;
+                do{
+                    var szEmailID = this.m_aMsgDataStore[this.m_iHandleCount].szID;;
+
+                     //use short id    1_8571_AJSySdEAAREkRPe9dgtLa1BshJg
+                    if (this.m_bUseShortID)
+                    {
+                        var aszIDParts = szEmailID.split(/_/);
+                        szEmailID ="";
+                        for (var j=0; j<aszIDParts.length; j++)
+                        {
+                            if (j!=1)
+                            {
+                                szEmailID += aszIDParts[j];
+                                if (j!=aszIDParts.length-1) szEmailID += "_";
+                            }
+                        }
+                    }
+                    this.serverComms((this.m_iHandleCount+1) + " " + szEmailID + "\r\n");
+                    this.m_iHandleCount++;
+                    iCount++;
+                }while(iCount != this.m_iProcessAmount && this.m_iHandleCount!=this.m_aMsgDataStore.length)
+            }
+
+
+            //response end
+            if (this.m_iHandleCount == this.m_aMsgDataStore.length)
+            {
+              this.serverComms(".\r\n");
+              timer.cancel();
+            }
+
+            this.m_Log.Write("YahooPOPBETA.js - processIDS - END");
+        }
+        catch(err)
+        {
+            this.m_Timer.cancel();
+            this.m_Log.DebugDump("YahooPOPBETA.js: processIDS : Exception : "
+                                              + err.name
+                                              + ".\nError message: "
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
+
+            this.serverComms("-ERR negative vibes from " +this.m_szUserName+ "\r\n");
+        }
+    },
+
+
 
 
     //top

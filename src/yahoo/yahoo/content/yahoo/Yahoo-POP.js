@@ -20,6 +20,8 @@ function YahooPOP(oResponseStream, oLog, oPrefs)
         this.m_bDownloadUnread= oPrefs.bUnread;
         this.m_aszFolderList = oPrefs.aszFolder;
         this.m_bUseShortID = oPrefs.bUseShortID;
+        this.m_iTime = oPrefs.iProcessDelay;            //timer delay
+        this.m_iProcessAmount =  oPrefs.iProcessAmount; //delay proccess amount
 
         //login data
         this.m_bAuthorised = false;
@@ -50,6 +52,10 @@ function YahooPOP(oResponseStream, oLog, oPrefs)
         this.m_aDeleteData = new Array();
         this.m_aszFolderURLList = new Array();
         this.m_bUnread = true;
+        this.m_iHandleCount = 0;
+
+        this.m_Timer = Components.classes["@mozilla.org/timer;1"]
+                                 .createInstance(Components.interfaces.nsITimer);
 
         this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"]
                                           .getService(Components.interfaces.nsISessionManager);
@@ -304,14 +310,7 @@ YahooPOP.prototype =
             this.m_Log.Write("YahooPOP.js - getNumMessages - START");
 
             if (this.m_aszFolderURLList.length==0) return false;
-            var szMailboxURI = this.m_aszFolderURLList.shift();
-            this.m_Log.Write("YahooPOP.js - getNumMessages - mail box url " + szMailboxURI);
-
-            this.m_HttpComms.setURI(szMailboxURI);
-            this.m_HttpComms.setRequestMethod("GET");
-            var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this);
-            if (!bResult) throw new Error("httpConnection returned false");
-            this.m_bStat = true;
+            this.mailBox(true);
 
             this.m_Log.Write("YahooPOP.js - getNumMessages - END");
             return true;
@@ -329,13 +328,30 @@ YahooPOP.prototype =
 
 
 
+    mailBox : function (bState)
+    {
+        this.m_Log.Write("YahooPOP.js - mailBox - START");
+
+        var szMailboxURI = this.m_aszFolderURLList.shift();
+        this.m_Log.Write("YahooPOP.js - getNumMessages - mail box url " + szMailboxURI);
+
+        this.m_HttpComms.setURI(szMailboxURI);
+        this.m_HttpComms.setRequestMethod("GET");
+        var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this);
+        if (!bResult) throw new Error("httpConnection returned false");
+        this.m_bStat = bState;
+
+        this.m_Log.Write("YahooPOP.js - mailBox - END");
+    },
+
+
+
 
     mailBoxOnloadHandler : function (szResponse ,event , mainObject)
     {
         try
         {
             mainObject.m_Log.Write("YahooPOP.js - mailBoxOnloadHandler - START");
-            //mainObject.m_Log.Write("YahooPOP.js - mailBoxOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("YahooPOP.js - mailBoxOnloadHandler : " + mainObject.m_iStage);
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -483,17 +499,14 @@ YahooPOP.prototype =
                 }
                 else //called by list
                 {
-                    var szPOPResponse = "+OK " + mainObject.m_aMsgDataStore.length + " Messages\r\n";
-                    this.m_Log.Write("YahooPOP.js - getMessagesSizes - : " + mainObject.m_aMsgDataStore.length);
-
-                    for (i = 0; i <  mainObject.m_aMsgDataStore.length; i++)
-                    {
-                        var iEmailSize = mainObject.m_aMsgDataStore[i].iSize;
-                        szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";
-                    }
-
-                    szPOPResponse += ".\r\n";
-                    mainObject.serverComms(szPOPResponse);
+                    var callback = {
+                       notify: function(timer) { this.parent.processSizes(timer)}
+                    };
+                    callback.parent = this;
+                    this.m_iHandleCount = 0;
+                    this.m_Timer.initWithCallback(callback,
+                                                  this.m_iTime,
+                                                  Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
                 }
 
                 delete mainObject.m_aDeleteData;
@@ -516,9 +529,6 @@ YahooPOP.prototype =
 
 
 
-
-
-
     //list
     //i'm not downloading the mailbox again.
     getMessageSizes : function()
@@ -529,35 +539,20 @@ YahooPOP.prototype =
 
             if (this.m_bStat)
             {  //msg table has been donwloaded
-
-                this.m_Log.Write("YahooPOP.js - getMessageSizes - getting sizes");
-                var szPOPResponse = "+OK " + this.m_aMsgDataStore.length + " Messages\r\n";
-                this.m_Log.Write("nsYahoo.js - getMessagesSizes - : " + this.m_aMsgDataStore.length);
-
-                for (i = 0; i <  this.m_aMsgDataStore.length; i++)
-                {
-                    var iEmailSize = this.m_aMsgDataStore[i].iSize;
-                    szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";
-                }
-
-                szPOPResponse += ".\r\n";
-
-                this.serverComms(szPOPResponse);
+                var callback = {
+                   notify: function(timer) { this.parent.processSizes(timer)}
+                };
+                callback.parent = this;
+                this.m_iHandleCount = 0;
+                this.m_Timer.initWithCallback(callback,
+                                              this.m_iTime,
+                                              Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
             }
             else
             { //download msg list
-
                 this.m_Log.Write("YahooPOP.js - getMessageSizes - calling stat");
-
                 if (this.m_aszFolderURLList.length==0) return false;
-                var szMailboxURI = this.m_aszFolderURLList.shift();
-                this.m_Log.Write("nsYahoo.js - getMessageSizes - mail box url " + szMailboxURI);
-
-                this.m_HttpComms.setURI(szMailboxURI);
-                this.m_HttpComms.setRequestMethod("GET");
-                this.m_iStage =0;
-                var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this);
-                if (!bResult) throw new Error("httpConnection returned false");
+                this.mailBox(false);
             }
             this.m_Log.Write("YahooPOP.js - getMessageSizes - END");
             return true;
@@ -574,6 +569,55 @@ YahooPOP.prototype =
 
 
 
+
+
+    processSizes : function(timer)
+    {
+        try
+        {
+            this.m_Log.Write("YahooPOP.js - processSizes - START");
+
+            //response start
+            if (this.m_iHandleCount ==  0)
+                this.serverComms("+OK " + this.m_aMsgDataStore.length + " Messages\r\n")
+
+
+            if ( this.m_aMsgDataStore.length > 0)
+            {
+                var iCount = 0;
+                do{
+                    var iEmailSize = this.m_aMsgDataStore[this.m_iHandleCount].iSize;
+                    this.serverComms((this.m_iHandleCount+1) + " " + iEmailSize + "\r\n");
+                    this.m_iHandleCount++;
+                    iCount++;
+                }while(iCount != this.m_iProcessAmount && this.m_iHandleCount!=this.m_aMsgDataStore.length)
+            }
+
+            //response end
+            if (this.m_iHandleCount == this.m_aMsgDataStore.length)
+            {
+              this.serverComms(".\r\n");
+              timer.cancel();
+            }
+
+            this.m_Log.Write("YahooPOP.js - processSizes - END");
+        }
+        catch(err)
+        {
+            this.m_Timer.cancel();
+            this.m_Log.DebugDump("YahooPOP.js: processSizes : Exception : "
+                                              + err.name
+                                              + ".\nError message: "
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
+
+            this.serverComms("-ERR negative vibes from " +this.m_szUserName+ "\r\n");
+        }
+    },
+
+
+
+
     //IUDL
     getMessageIDs : function()
     {
@@ -581,37 +625,14 @@ YahooPOP.prototype =
         {
             this.m_Log.Write("YahooPOP.js - getMessageIDs - START");
 
-            var szPOPResponse = "+OK " + this.m_aMsgDataStore.length + " Messages\r\n";
-            this.m_Log.Write("YahooPOP.js - getMessageIDs - return : " + this.m_aMsgDataStore.length );
-
-            for (i = 0; i <  this.m_aMsgDataStore.length; i++)
-            {
-                var oMSGData = this.m_aMsgDataStore[i];
-                var szEmailURL = oMSGData.szMSGUri;
-                this.m_Log.Write("YahooPOP.js - getMessageIDs - Email URL : " +szEmailURL);
-
-                 var szEmailID = szEmailURL.match(PatternYahooID)[1];
-                //use short id
-                if (this.m_bUseShortID)
-                {
-                    var aszIDParts = szEmailID.split(/_/);
-                    szEmailID ="";
-                    for (var j=0; j<aszIDParts.length; j++)
-                    {
-                        if (j!=1 && j!=2)
-                        {
-                            szEmailID += aszIDParts[j];
-                            if (j!=aszIDParts.length-1) szEmailID += "_";
-                        }
-                    }
-                }
-
-                this.m_Log.Write("YahooPOP.js - getMessageIDs - IDS : " +szEmailID);
-                szPOPResponse+=(i+1) + " " +szEmailID + "\r\n";
-            }
-
-            szPOPResponse += ".\r\n";
-            this.serverComms(szPOPResponse);
+            var callback = {
+               notify: function(timer) { this.parent.processIDS(timer)}
+            };
+            callback.parent = this;
+            this.m_iHandleCount = 0;
+            this.m_Timer.initWithCallback(callback,
+                                          this.m_iTime,
+                                          Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
 
             this.m_Log.Write("YahooPOP.js - getMessageIDs - END");
             return true;
@@ -624,6 +645,72 @@ YahooPOP.prototype =
                                           + e.message+ "\n"
                                           + e.lineNumber);
             return false;
+        }
+    },
+
+
+
+
+
+    processIDS : function(timer)
+    {
+        try
+        {
+            this.m_Log.Write("YahooPOP.js - processIDS - START");
+
+            //response start
+            if (this.m_iHandleCount ==  0)
+                this.serverComms("+OK " + this.m_aMsgDataStore.length + " Messages\r\n");
+
+
+            if ( this.m_aMsgDataStore.length > 0)
+            {
+                var iCount = 0;
+                do{
+                     var szEmailURL = this.m_aMsgDataStore[this.m_iHandleCount].szMSGUri;
+                     this.m_Log.Write("YahooPOP.js - getMessageIDs - Email URL : " +szEmailURL);
+                     var szEmailID = szEmailURL.match(PatternYahooID)[1];
+
+                     //use short id    1_8571_AJSySdEAAREkRPe9dgtLa1BshJg
+                    if (this.m_bUseShortID)
+                    {
+                        var aszIDParts = szEmailID.split(/_/);
+                        szEmailID ="";
+                        for (var j=0; j<aszIDParts.length; j++)
+                        {
+                            if (j!=1 && j!=2)
+                            {
+                                szEmailID += aszIDParts[j];
+                                if (j!=aszIDParts.length-1) szEmailID += "_";
+                            }
+                        }
+                    }
+                    this.serverComms((this.m_iHandleCount+1) + " " + szEmailID + "\r\n");
+                    this.m_iHandleCount++;
+                    iCount++;
+                }while(iCount != this.m_iProcessAmount && this.m_iHandleCount!=this.m_aMsgDataStore.length)
+            }
+
+
+            //response end
+            if (this.m_iHandleCount == this.m_aMsgDataStore.length)
+            {
+              this.serverComms(".\r\n");
+              timer.cancel();
+            }
+
+            this.m_Log.Write("YahooPOP.js - processIDS - END");
+        }
+        catch(err)
+        {
+            this.m_Timer.cancel();
+            this.m_Log.DebugDump("YahooPOP.js: processIDS : Exception : "
+                                              + err.name
+                                              + ".\nError message: "
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
+
+            this.serverComms("-ERR negative vibes from " +this.m_szUserName+ "\r\n");
         }
     },
 
