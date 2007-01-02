@@ -408,10 +408,10 @@ YahooSMTP.prototype =
                     //check for add address to addressbook
                     if (szResponse.search(/AddAddresses/i)!=-1)
                     {
-                        mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - SEND OK");
+                        mainObject.m_Log.Write("YahooSMTP.js - composerOnloadHandler - SEND OK");
                         if (mainObject.m_bReUseSession)
                         {
-                            mainObject.m_Log.Write("YahooPOPBETA.js - logOut - Setting Session Data");
+                            mainObject.m_Log.Write("YahooPOP.js - logOut - Setting Session Data");
 
                             if (!mainObject.m_SessionData)
                             {
@@ -641,6 +641,7 @@ YahooSMTP.prototype =
                         var szValue = aszInput[i].match(patternYahooAltValue)[1]
                         szValue = szValue.replace(/"/mg,"");
                         szValue = szValue.replace(/'/mg,"");
+                        szValue = mainObject.cleanHTML(szValue);
                         szValue = mainObject.escapeStr(szValue);
                         mainObject.m_Log.Write("YahooSMTP.js - composerOnloadHandler - value " + szValue);
 
@@ -831,6 +832,20 @@ YahooSMTP.prototype =
     },
 
 
+    cleanHTML : function (szRaw)
+    {
+        this.m_Log.Write("YahooSMTP - cleanHTML");
+        var szMsg = szRaw.replace(/&lt;/g,"<");
+        szMsg = szMsg.replace(/&gt;/g,">");
+        szMsg = szMsg.replace(/&quot;/g, "\"");
+        szMsg = szMsg.replace(/&amp;/g, "&");
+        szMsg = szMsg.replace(/&nbsp;/g, " ");
+        szMsg = szMsg.replace(/&#xA;/g,"\n");
+        szMsg = szMsg.replace(/&#10;/g,"\n");
+        szMsg = szMsg.replace(/&#xD;/g,"\r");
+        szMsg = szMsg.replace(/&#13;/g,"\r");
+        return szMsg;
+    },
     ////////////////////////////////////////////////////////////////////////////
     /////  Comms
 
