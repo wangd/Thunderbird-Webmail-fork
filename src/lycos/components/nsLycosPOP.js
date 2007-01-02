@@ -16,7 +16,6 @@ function nsLycos()
         scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://lycos/content/Lycos-POPMSG.js");
-        scriptLoader.loadSubScript("chrome://lycos/content/Lycos-Prefs-Data.js");
 
         var date = new Date();
         var  szLogFileName = "Lycos Log - " + date.getHours()+ "-" + date.getMinutes() + "-"+ date.getUTCMilliseconds() +" -";
@@ -33,9 +32,6 @@ function nsLycos()
             scriptLoader.loadSubScript("chrome://lycos/content/Lycos-Constants.js");
         }
 
-
-        this.m_prefData = null;
-
         this.m_szUserName = null;
         this.m_szPassWord = null;
         this.m_oResponseStream = null;
@@ -50,6 +46,17 @@ function nsLycos()
         this.m_iTotalSize = 0;
         this.m_bJunkMail = false;
         this.m_aRawData = new Array();
+
+        this.m_iTime = 10;
+        this.m_iProcessAmount =  25;
+        this.m_iProcessTrigger = 50;
+        this.m_bReUseSession = true;
+        this.m_bUseJunkMail= false;
+        this.m_bDownloadUnread = false;
+        this.m_bMarkAsRead = true;
+        this.m_iHandleCount = 0;
+        this.m_aszFolder = new Array();
+        this.m_bEmptyTrash = false;
 
         this.m_Timer = Components.classes["@mozilla.org/timer;1"];
         this.m_Timer = this.m_Timer.createInstance(Components.interfaces.nsITimer);
@@ -122,9 +129,9 @@ nsLycos.prototype =
             else
                 throw new Error("Unknown domain");
 
-            this.m_prefData = this.loadPrefs();   //get prefs
+            this.loadPrefs();   //get prefs
 
-            if (this.m_prefData.bReUseSession)
+            if (this.m_bReUseSession)
             {
                 this.m_Log.Write("nsLycos.js - logIN - Looking for Session Data");
                 this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
@@ -197,9 +204,9 @@ nsLycos.prototype =
                     var aszFolderList = szResponse.match(kLycosResponse );
                     mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - aszFolderList :" +aszFolderList);
 
-                    for (j=0; j<mainObject.m_prefData.aszFolder.length; j++)
+                    for (j=0; j<mainObject.m_aszFolder.length; j++)
                     {
-                        var regExp = new RegExp("^"+mainObject.m_prefData.aszFolder[j]+"$","i");
+                        var regExp = new RegExp("^"+mainObject.m_aszFolder[j]+"$","i");
                         mainObject.m_Log.Write("nsLycos.js - loginOnloadHandler - regExp : "+regExp );
 
                         var i =0;
@@ -253,19 +260,12 @@ nsLycos.prototype =
         try
         {
             this.m_Log.Write("nsLycos.js - getNumMessages - START");
-            this.m_iStage=0;
 
-            if (this.m_aszFolderURLList.length==0) return false;
             this.m_Log.Write("Lycos.js - getNumMessages - mail box url " + this.m_aszFolderURLList);
+            if (this.m_aszFolderURLList.length==0) return false;
 
-            this.m_HttpComms.setContentType("text/xml");
-            var szUri = this.m_aszFolderURLList.shift();
-            this.m_HttpComms.setURI(szUri);
-            this.m_HttpComms.setRequestMethod("PROPFIND");
-            this.m_HttpComms.addData(kLycosMailSchema);
-            var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this);
-            if (!bResult) throw new Error("httpConnection returned false");
-            this.m_bStat = true;
+            this.mailBox(true);
+
             this.m_Log.Write("nsLycos.js - getNumMessages - END");
             return true;
         }
@@ -279,6 +279,23 @@ nsLycos.prototype =
             return false;
         }
     },
+
+
+
+    mailBox : function (bState)
+    {
+        this.m_iStage=0;
+        this.m_HttpComms.setContentType("text/xml");
+        var szUri = this.m_aszFolderURLList.shift();
+        this.m_HttpComms.setURI(szUri);
+        this.m_HttpComms.setRequestMethod("PROPFIND");
+        this.m_HttpComms.addData(kLycosMailSchema);
+        var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this);
+        if (!bResult) throw new Error("httpConnection returned false");
+        this.m_bStat = bState;
+    },
+
+
 
     mailBoxOnloadHandler : function (szResponse ,event , mainObject)
     {
@@ -318,7 +335,12 @@ nsLycos.prototype =
             {
                 mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - download complet e- starting delay");
                 //start timer
-                mainObject.m_Timer.initWithCallback(mainObject,
+                var callback = {
+                    notify: function(timer) { this.parent.processItem(timer)}
+                 };
+                callback.parent = mainObject;
+
+                mainObject.m_Timer.initWithCallback(callback,
                                                     mainObject.m_iTime,
                                                     Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
             }
@@ -339,7 +361,7 @@ nsLycos.prototype =
 
 
 
-    notify : function(timer)
+    processItem : function(timer)
     {
         try
         {
@@ -350,7 +372,75 @@ nsLycos.prototype =
                 var iCount=0;
                 do{
                     var Item = this.m_aRawData.shift();
-                    this.processItem(Item);
+                    var bRead = true;
+                    if (this.m_bDownloadUnread)
+                    {
+                        bRead = parseInt(Item.match(kLycosRead)[1]) ? false : true;
+                        mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - bRead -" + bRead);
+                    }
+
+                    if (bRead)
+                    {
+                        var data = new LycosPOPMSG();
+                        data.szMSGUri = Item.match(kLycosHref)[1]; //uri
+                        data.iSize = parseInt(Item.match(kLycosSize)[1]);//size
+                        this.m_iTotalSize += data.iSize;
+
+                        //set junk mail status
+                        if (this.m_szJunkMailURI)
+                        {
+                            if(data.szMSGUri.search(this.m_szJunkMailURI)!=-1)
+                               data.bJunkFolder = true;
+                        }
+
+                        var szTO="";
+                        try
+                        {
+                            szTO = Item.match(kLycosTo)[1].match(/[\S\d]*@[\S\d]*/);
+                        }
+                        catch(err)
+                        {
+                            szTO = Item.match(kLycosTo)[1];
+                        }
+                        data.szTo = szTO;
+
+                        var szFrom = "";
+                        try
+                        {
+                            szFrom = Item.match(kLycosFrom)[1].match(/[\S\d]*@[\S\d]*/);
+                        }
+                        catch(err)
+                        {
+                            szFrom = Item.match(kLycosFrom)[1];
+                        }
+                        data.szFrom = szFrom;
+
+                        var szSubject= "";
+                        try
+                        {
+                            szSubject= Item.match(kLycosSubject)[1];
+                        }
+                        catch(err){}
+                        data.szSubject = szSubject;
+
+                        try
+                        {
+                            var aszDateTime = Item.match(kLycosDate);
+                            var aszDate = aszDateTime[1].split("-");
+                            var aszTime = aszDateTime[2].split(":");
+
+                            var date = new Date(parseInt(aszDate[0],10),  //year
+                                             parseInt(aszDate[1],10)-1,  //month
+                                             parseInt(aszDate[2],10),  //day
+                                             parseInt(aszTime[0],10),  //hour
+                                             parseInt(aszTime[1],10),  //minute
+                                             parseInt(aszTime[2],10));  //second
+                            data.szDate = date.toGMTString();
+                        }
+                        catch(err){}
+
+                        this.m_aMsgDataStore.push(data);
+                    }
                     iCount++;
                     this.m_Log.Write("nsLycos.js - notify - rawData icount " + iCount + " " + this.m_aRawData.length);
                 }while(iCount != this.m_iProcessAmount && this.m_aRawData.length!=0)
@@ -358,7 +448,8 @@ nsLycos.prototype =
             else
             {
                 this.m_Log.Write("nsLycos.js - notify - all data handled");
-                this.m_Timer.cancel();
+                timer.cancel();
+                delete  this.m_aRawData;
 
                 if (this.m_bStat) //called by stat
                 {
@@ -367,20 +458,15 @@ nsLycos.prototype =
                 }
                 else //called by list
                 {
-                    var szPOPResponse = "+OK " + this.m_aMsgDataStore.length + " Messages\r\n";
-                    this.m_Log.Write("Lycos.js - getMessagesSizes - : " + this.m_aMsgDataStore.length);
-
-                    for (i = 0; i <  this.m_aMsgDataStore.length; i++)
-                    {
-                        var iEmailSize = this.m_aMsgDataStore[i].iSize;
-                        szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";
-                    }
-
-                    szPOPResponse += ".\r\n";
-                    this.serverComms(szPOPResponse);
+                    var callback = {
+                       notify: function(timer) { this.parent.processSizes(timer)}
+                    };
+                    callback.parent = mainObject;
+                    this.m_iHandleCount = 0;
+                    this.m_Timer.initWithCallback(callback,
+                                                  this.m_iTime,
+                                                  Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
                 }
-
-                delete  this.m_aRawData;
             }
 
             this.m_Log.Write("nsLycos.js - notify - END");
@@ -400,86 +486,6 @@ nsLycos.prototype =
 
 
 
-    processItem : function (rawData)
-    {
-        this.m_Log.Write("nsLycos.js - processItem - START");
-        this.m_Log.Write("nsLycos.js - processItem - rawData " +rawData);
-
-        var bRead = true;
-        if (this.m_prefData.bDownloadUnread)
-        {
-            bRead = parseInt(rawData.match(kLycosRead)[1]) ? false : true;
-            mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - bRead -" + bRead);
-        }
-
-        if (bRead)
-        {
-            var data = new LycosPOPMSG();
-            data.szMSGUri = rawData.match(kLycosHref)[1]; //uri
-            data.iSize = parseInt(rawData.match(kLycosSize)[1]);//size
-            this.m_iTotalSize += data.iSize;
-
-            //set junk mail status
-            if (this.m_szJunkMailURI)
-            {
-                if(data.szMSGUri.search(this.m_szJunkMailURI)!=-1)
-                   data.bJunkFolder = true;
-            }
-
-            var szTO="";
-            try
-            {
-                szTO = rawData.match(kLycosTo)[1].match(/[\S\d]*@[\S\d]*/);
-            }
-            catch(err)
-            {
-                szTO = rawData.match(kLycosTo)[1];
-            }
-            data.szTo = szTO;
-
-            var szFrom = "";
-            try
-            {
-                szFrom = rawData.match(kLycosFrom)[1].match(/[\S\d]*@[\S\d]*/);
-            }
-            catch(err)
-            {
-                szFrom = rawData.match(kLycosFrom)[1];
-            }
-            data.szFrom = szFrom;
-
-            var szSubject= "";
-            try
-            {
-                szSubject= rawData.match(kLycosSubject)[1];
-            }
-            catch(err){}
-            data.szSubject = szSubject;
-
-            try
-            {
-                var aszDateTime = rawData.match(kLycosDate);
-                var aszDate = aszDateTime[1].split("-");
-                var aszTime = aszDateTime[2].split(":");
-
-                var date = new Date(parseInt(aszDate[0],10),  //year
-                                 parseInt(aszDate[1],10)-1,  //month
-                                 parseInt(aszDate[2],10),  //day
-                                 parseInt(aszTime[0],10),  //hour
-                                 parseInt(aszTime[1],10),  //minute
-                                 parseInt(aszTime[2],10));  //second
-                data.szDate = date.toGMTString();
-            }
-            catch(err){}
-
-            this.m_aMsgDataStore.push(data);
-        }
-
-        this.m_Log.Write("nsLycos.js - processItem - END");
-    },
-
-
-
     //list
     getMessageSizes : function()
     {
@@ -489,29 +495,22 @@ nsLycos.prototype =
 
             if (this.m_bStat)
             {  //msg table has been donwloaded
-                var szPOPResponse = "+OK " +  this.m_aMsgDataStore.length + " Messages\r\n";
-                for (i = 0; i < this.m_aMsgDataStore.length; i++)
-                {
-                    var iEmailSize = this.m_aMsgDataStore[i].iSize;
-                    this.m_Log.Write("Lycos.js - getMessageSizes - Email Size : " +iEmailSize);
-                    szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";
-                }
-                szPOPResponse += ".\r\n";
+                this.m_Log.Write("nsLycos.js - getMessageSizes - getting sizes");
 
-                this.serverComms(szPOPResponse);
+                var callback = {
+                   notify: function(timer) { this.parent.processSizes(timer)}
+                };
+                callback.parent = this;
+                this.m_iHandleCount = 0;
+                this.m_Timer.initWithCallback(callback,
+                                              this.m_iTime,
+                                              Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
             }
             else
             { //download msg list
-                this.m_iStage=0;
-                if (this.m_szFolderURI == null) return false;
-                this.m_Log.Write("nsLycos.js - getNumMessages - mail box url " + this.m_szFolderURI);
-
-                this.m_HttpComms.setContentType("text/xml");
-                this.m_HttpComms.setURI(this.m_szFolderURI);
-                this.m_HttpComms.setRequestMethod("PROPFIND");
-                this.m_HttpComms.addData(kLycosFolderSchema);
-                var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this);
-                if (!bResult) throw new Error("httpConnection returned false");
+                this.m_Log.Write("Lycos.js - getNumMessages - mail box url " + this.m_aszFolderURLList);
+                if (this.m_aszFolderURLList.length==0) return false;
+                this.mailBox(false);
             }
 
             this.m_Log.Write("nsLycos.js - getMessageSizes - END");
@@ -530,6 +529,51 @@ nsLycos.prototype =
 
 
 
+    processSizes : function(timer)
+    {
+        try
+        {
+            this.m_Log.Write("nsLycos.js - processSizes - START");
+
+            //response start
+            if (this.m_iHandleCount ==  0)
+                this.serverComms("+OK " + this.m_aMsgDataStore.length + " Messages\r\n")
+
+
+            if ( this.m_aMsgDataStore.length > 0)
+            {
+                var iCount = 0;
+                do{
+                    var iEmailSize = this.m_aMsgDataStore[this.m_iHandleCount].iSize;
+                    this.serverComms((this.m_iHandleCount+1) + " " + iEmailSize + "\r\n");
+                    this.m_iHandleCount++;
+                    iCount++;
+                }while(iCount != this.m_iProcessAmount && this.m_iHandleCount!=this.m_aMsgDataStore.length)
+            }
+
+            //response end
+            if (this.m_iHandleCount == this.m_aMsgDataStore.length)
+            {
+              this.serverComms(".\r\n");
+              timer.cancel();
+            }
+
+            this.m_Log.Write("nsLycos.js - processSizes - END");
+        }
+        catch(err)
+        {
+            this.m_Timer.cancel();
+            this.m_Log.DebugDump("nsLycos.js: processSizes : Exception : "
+                                              + err.name
+                                              + ".\nError message: "
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
+
+            this.serverComms("-ERR negative vibes from " +this.m_szUserName+ "\r\n");
+        }
+    },
+
+
 
 
     //IUDL
@@ -539,19 +583,14 @@ nsLycos.prototype =
         {
             this.m_Log.Write("nsLycos.js - getMessageIDs - START");
 
-            var szPOPResponse = "+OK " + this.m_aMsgDataStore.length + " Messages\r\n";
-            for (i = 0; i <  this.m_aMsgDataStore.length; i++)
-            {
-                var szEmailURL = this.m_aMsgDataStore[i].szMSGUri;
-                this.m_Log.Write("nsLycos.js - getMessageIDs - Email URL : " +szEmailURL);
-
-                var szEmailID = szEmailURL.match(kLycosMSGID);
-
-                this.m_Log.Write("nsLycos.js - getMessageIDs - IDS : " +szEmailID);
-                szPOPResponse+=(i+1) + " " + szEmailID + "\r\n";
-            }
-            szPOPResponse += ".\r\n";
-            this.serverComms(szPOPResponse);
+            var callback = {
+               notify: function(timer) { this.parent.processIDS(timer)}
+            };
+            callback.parent = this;
+            this.m_iHandleCount = 0;
+            this.m_Timer.initWithCallback(callback,
+                                          this.m_iTime,
+                                          Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
 
             this.m_Log.Write("nsLycos.js - getMessageIDs - END");
             return true;
@@ -566,6 +605,62 @@ nsLycos.prototype =
             return false;
         }
     },
+
+
+
+
+    processIDS : function(timer)
+    {
+        try
+        {
+            this.m_Log.Write("nsLycos.js - processIDS - START");
+
+            //response start
+            if (this.m_iHandleCount ==  0)
+                this.serverComms("+OK " + this.m_aMsgDataStore.length + " Messages\r\n");
+
+
+            if ( this.m_aMsgDataStore.length > 0)
+            {
+                var iCount = 0;
+                do{
+                    var szEmailID = this.m_aMsgDataStore[this.m_iHandleCount].szID;
+
+                    var szURL = this.m_aMsgDataStore[this.m_iHandleCount].szMSGUri;
+                    this.m_Log.Write("nsLycos.js - getMessageIDs - Email URL : " +szURL);
+
+                    var szEmailID = szURL.match(patternHotmailMSGID);
+                    this.m_Log.Write("nsLycos.js - getMessageIDs - IDS : " +szID);
+
+                    this.serverComms((this.m_iHandleCount+1) + " " + szEmailID + "\r\n");
+                    this.m_iHandleCount++;
+                    iCount++;
+                }while(iCount != this.m_iProcessAmount && this.m_iHandleCount!=this.m_aMsgDataStore.length)
+            }
+
+
+            //response end
+            if (this.m_iHandleCount == this.m_aMsgDataStore.length)
+            {
+                this.serverComms(".\r\n");
+                timer.cancel();
+            }
+
+            this.m_Log.Write("nsLycos.js - processIDS - END");
+        }
+        catch(err)
+        {
+            this.m_Timer.cancel();
+            this.m_Log.DebugDump("nsLycos.js: processIDS : Exception : "
+                                              + err.name
+                                              + ".\nError message: "
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
+
+            this.serverComms("-ERR negative vibes from " +this.m_szUserName+ "\r\n");
+        }
+    },
+
 
 
 
@@ -665,12 +760,12 @@ nsLycos.prototype =
             {
                 case 0:  //email
                     mainObject.m_szMSG = "X-WebMail: true\r\n";
-                    mainObject.m_szMSG += "X-JunkFolder: " +(mainObject.m_prefData.bJunkMail? "true":"false")+ "\r\n";
+                    mainObject.m_szMSG += "X-JunkFolder: " +(mainObject.m_bJunkMail? "true":"false")+ "\r\n";
                     mainObject.m_szMSG +=szResponse;
                     mainObject.m_szMSG = mainObject.m_szMSG.replace(/^\./mg,"..");    //bit padding
                     mainObject.m_szMSG += "\r\n.\r\n";//msg end
 
-                    if (!mainObject.m_prefData.bMarkAsRead)
+                    if (!mainObject.m_bMarkAsRead)
                     {
                         //mark email as read
                         mainObject.m_HttpComms.setContentType("text/xml");
@@ -796,7 +891,7 @@ nsLycos.prototype =
         {
             this.m_Log.Write("nsLycos.js - logOUT - START");
 
-            if (this.m_prefData.bReUseSession)
+            if (this.m_bReUseSession)
             {
                 this.m_Log.Write("Lycos.js - logOUT - saving Session Data");
                 if (!this.m_SessionData)
@@ -811,7 +906,7 @@ nsLycos.prototype =
             }
 
 
-            if (!this.m_prefData.bEmptyTrash)
+            if (!this.m_bEmptyTrash)
             {
                 this.m_bAuthorised = false;
                 this.serverComms("+OK Your Out\r\n");
@@ -926,32 +1021,32 @@ nsLycos.prototype =
             szUserName = szUserName.toLowerCase();
 
             //get user prefs
-            var oData = new PrefData();
             var oPref = {Value:null};
             var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+
 
             //do i reuse the session
             oPref.Value = null;
             if (WebMailPrefAccess.Get("bool","lycos.bReUseSession",oPref))
-                oData.bReUseSession = oPref.Value;
+                this.m_bReUseSession = oPref.Value;
 
             //get timer
             oPref.Value = null;
             if (WebMailPrefAccess.Get("int","lycos.iProcessDelay",oPref))
-               oData.iTime=oPref.Value;
+                this.m_iTime = oPref.Value;
 
             //delay process trigger
             oPref.Value = null;
             if (WebMailPrefAccess.Get("bool","lycos.iProcessTrigger",oPref))
-               oData.iProcessTrigger = oPref.Value;
+                this.m_iProcessTrigger = oPref.Value;
 
             //delay proccess amount
             oPref.Value = null;
             if (WebMailPrefAccess.Get("bool","lycos.iProcessAmount",oPref))
-                oData.iProcessAmount = oPref.Value;
+                this.m_iProcessAmount = oPref.Value;
 
             //inbox
-            oData.aszFolder.push("inbox");
+            this.m_aszFolder.push("inbox");
 
             //get folders
             oPref.Value = null;
@@ -963,28 +1058,28 @@ nsLycos.prototype =
                 for (j=0; j<aszFolders.length; j++)
                 {
                     this.m_HotmailLog.Write("nsLycos.js - getPrefs - aszFolders " + aszFolders[j]);
-                    oData.aszFolder.push(aszFolders[j]);
+                    this.m_aszFolder.push(aszFolders[j]);
                 }
             }
 
             //get unread
             oPref.Value = null;
             if (WebMailPrefAccess.Get("bool","lycos.Account."+szUserName+".bDownloadUnread",oPref))
-                oData.bDownloadUnread = oPref.Value;
+                this.m_bDownloadUnread = oPref.Value;
             this.m_Log.Write("nsLycos.js - getPrefs - bDownloadUnread " + oPref.Value);
 
             //mark as read
             oPref.Value = null;
             if (WebMailPrefAccess.Get("bool","lycos.Account."+szUserName+".bMarkAsRead",oPref))
-                oData.bMarkAsRead = oPref.Value;
+                this.m_bMarkAsRead = oPref.Value;
             this.m_Log.Write("nsLycos.js - getPrefs - bMarkAsRead " + oPref.Value);
 
             //get spam
             oPref.Value = null;
             if (WebMailPrefAccess.Get("bool","lycos.Account."+szUserName+".bUseJunkMail",oPref))
             {
-                oData.bUseJunkMail = oPref.Value;
-                oData.aszFolder.push("Courrier%20ind%26eacute;sirable");
+                this.m_bUseJunkMail= oPref.Value;
+                this.m_aszFolder.push("Courrier%20ind%26eacute;sirable");
             }
             this.m_Log.Write("nsHotmail.js - getPrefs - bUseJunkMail " + oPref.Value);
 
@@ -992,12 +1087,10 @@ nsLycos.prototype =
             //get empty trash
             oPref.Value = null;
             if (WebMailPrefAccess.Get("bool","lycos.Account."+szUserName+".bEmptyTrash",oPref))
-               oData.bEmptyTrash = oPref.Value;
+               this.m_bEmptyTrash = oPref.Value;
             this.m_Log.Write("nsLycos.js - loadPrefs - bEmptyTrash " + oPref.Value);
 
-
             this.m_Log.Write("nsLycos.js - loadPrefs - END");
-            return oData;
         }
         catch(e)
         {

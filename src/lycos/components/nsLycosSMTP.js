@@ -14,7 +14,6 @@ function nsLycosSMTP()
         scriptLoader.loadSubScript("chrome://web-mail/content/common/base64.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
-        scriptLoader.loadSubScript("chrome://lycos/content/Lycos-Prefs-Data.js");
 
         var date = new Date();
         var  szLogFileName = "Lycos SMTP Log - " + date.getHours()
@@ -31,8 +30,6 @@ function nsLycosSMTP()
             scriptLoader.loadSubScript("chrome://lycos/content/Lycos-Constants.js");
         }
 
-        this.m_prefData = null;
-
         this.m_bAuthorised = false;
         this.m_szUserName = null;
         this.m_szPassWord = null;
@@ -43,6 +40,8 @@ function nsLycosSMTP()
         this.m_szFrom = null;
         this.m_iStage = 0;
         this.m_szSendUri = null;
+        this.m_bReUseSession = true;
+        this.m_bSaveCopy = false;
 
         this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"]
                                   .getService(Components.interfaces.nsISessionManager);
@@ -118,13 +117,13 @@ nsLycosSMTP.prototype =
                 throw new Error("Unknown domain");
 
             this.m_iStage = 0;
-            this.m_prefData = this.loadPrefs();   //get prefs
+            this.loadPrefs();   //get prefs
 
-            if (this.m_prefData.bReUseSession)
+            if (this.m_bReUseSession)
             {
                 this.m_Log.Write("nsLycos.js - logIN - Looking for Session Data");
                 this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
-                if (this.m_SessionData && this.m_prefData.bReUseSession)
+                if (this.m_SessionData && this.m_bReUseSession)
                 {
                     this.m_Log.Write("nsLycos.js - logIN - Session Data found");
                     this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
@@ -216,7 +215,7 @@ nsLycosSMTP.prototype =
             this.m_HttpComms.setContentType("message/rfc821");
             this.m_HttpComms.setURI(this.m_szSendUri);
             this.m_HttpComms.setRequestMethod("POST");
-            this.m_HttpComms.addRequestHeader("SAVEINSENT", this.m_prefData.bSaveCopy?"t":"f", false);
+            this.m_HttpComms.addRequestHeader("SAVEINSENT", this.m_bSaveCopy?"t":"f", false);
             this.m_HttpComms.addData(szMsg);
             var bResult = this.m_HttpComms.send(this.composerOnloadHandler, this);
             if (!bResult) throw new Error("httpConnection returned false");
@@ -258,7 +257,7 @@ nsLycosSMTP.prototype =
             }
             else
             {
-                if (mainObject.m_prefData.bReUseSession)
+                if (mainObject.m_bReUseSession)
                 {
                     mainObject.m_Log.Write("Lycos.js - logIN - deleting Session Data");
                     if (!mainObject.m_SessionData)
@@ -299,7 +298,6 @@ nsLycosSMTP.prototype =
             this.m_Log.Write("nsLycos.js - loadPrefs - START");
 
             //get user prefs
-            var oData = new PrefData();
             var oPref = {Value:null};
             var  WebMailPrefAccess = new WebMailCommonPrefAccess();
 
@@ -309,18 +307,17 @@ nsLycosSMTP.prototype =
 
             //do i reuse the session
             if (WebMailPrefAccess.Get("bool","lycos.bReUseSession",oPref))
-                oData.bReUseSession = oPref.Value;
+                this.m_bReUseSession = oPref.Value;
             this.m_Log.Write("nsLycosSMTP.js - getPrefs - lycos.bReUseSession " + oPref.Value);
 
 
             //do i save copy
             oPref.Value = null;
             if (WebMailPrefAccess.Get("bool","lycos.Account."+szUserName+".bSaveCopy",oPref))
-                oData.bSaveCopy=oPref.Value;
+                this.m_bSaveCopy=oPref.Value;
             this.m_Log.Write("nsLycosSMTP.js - getPrefs - bSaveCopy " + oPref.Value);
 
             this.m_Log.Write("nsLycos.js - loadPrefs - END");
-            return oData;
         }
         catch(e)
         {

@@ -41,6 +41,8 @@ function HotmailScreenRipper(oResponseStream, oLog, oPrefData)
 
         this.m_bReEntry = false;
 
+        this.m_iTime = oPrefData.iProcessDelay;            //timer delay
+        this.m_iProcessAmount =  oPrefData.iProcessAmount; //delay proccess amount
         this.m_bReUseSession = oPrefData.bReUseSession;    //do i reuse the session
         this.m_bUseJunkMail= oPrefData.bUseJunkMail;       //do i download junkmail
         this.m_bDownloadUnread = oPrefData.bDownloadUnread; //do i download unread only
@@ -58,6 +60,10 @@ function HotmailScreenRipper(oResponseStream, oLog, oPrefData)
         this.m_Log.Write("Hotmail-SR - Constructor - m_aszFolders "+ this.m_aszFolders);
 
         this.m_bStat = false;
+        this.m_iHandleCount = 0;
+        this.m_Timer = Components.classes["@mozilla.org/timer;1"];
+        this.m_Timer = this.m_Timer.createInstance(Components.interfaces.nsITimer);
+
 
         this.m_Log.Write("Hotmail-SR.js - Constructor - END");
     }
@@ -359,16 +365,8 @@ HotmailScreenRipper.prototype =
             this.m_Log.Write("Hotmail-SR - getNumMessages - START");
 
             if (this.m_szMailboxURI == null) return false;
-            this.m_szFolderURI = this.m_szLocationURI + this.m_szMailboxURI + "&sort=Date";
-            this.m_Log.Write("Hotmail-SR - getNumMessages - mail box url " + this.m_szFolderURI);
-            this.m_szFolderName = "INBOX";
+            this.mailBox(true);
 
-            this.m_iStage = 0;
-            this.m_HttpComms.setURI(this.m_szFolderURI);
-            this.m_HttpComms.setRequestMethod("GET");
-            var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this);
-            if (!bResult) throw new Error("httpConnection returned false");
-            this.m_bStat = true;
             this.m_Log.Write("Hotmail-SR - getNumMessages - END");
             return true;
         }
@@ -381,6 +379,22 @@ HotmailScreenRipper.prototype =
                                           + e.lineNumber);
             return false;
         }
+    },
+
+
+
+    mailBox : function (bState)
+    {
+        this.m_szFolderURI = this.m_szLocationURI + this.m_szMailboxURI + "&sort=Date";
+        this.m_Log.Write("Hotmail-SR - getNumMessages - mail box url " + this.m_szFolderURI);
+        this.m_szFolderName = "INBOX";
+
+        this.m_iStage = 0;
+        this.m_HttpComms.setURI(this.m_szFolderURI);
+        this.m_HttpComms.setRequestMethod("GET");
+        var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this);
+        if (!bResult) throw new Error("httpConnection returned false");
+        this.m_bStat = bState;
     },
 
 
@@ -486,15 +500,14 @@ HotmailScreenRipper.prototype =
                     }
                     else //called by list
                     {
-                        mainObject.serverComms("+OK " + mainObject.m_aMsgDataStore.length + " Messages\r\n");
-
-                        for (i = 0; i <  mainObject.m_aMsgDataStore.length; i++)
-                        {
-                            var iEmailSize = mainObject.m_aMsgDataStore[i].iSize;
-                            mainObject.serverComms((i+1) + " " + iEmailSize + "\r\n");
-                        }
-
-                        mainObject.serverComms(".\r\n");
+                        var callback = {
+                           notify: function(timer) { this.parent.processSizes(timer)}
+                        };
+                        callback.parent = mainObject;
+                        mainObject.m_iHandleCount = 0;
+                        mainObject.m_Timer.initWithCallback(callback,
+                                                            mainObject.m_iTime,
+                                                            Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
                     }
                 }
             }
@@ -684,28 +697,19 @@ HotmailScreenRipper.prototype =
 
             if (this.m_bStat)
             {  //msg table has been donwloaded
-                var szPOPResponse = "+OK " + this.m_aMsgDataStore.length + " Messages\r\n";
-                for (i = 0; i <  this.m_aMsgDataStore.length; i++)
-                {
-                    var iSize = this.m_aMsgDataStore[i].iSize;
-                    this.m_Log.Write("Hotmail-SR-BETAR - getMessageSizes - size : " +iSize);
-                    szPOPResponse+=(i+1) + " " + iSize + "\r\n";
-                }
-                szPOPResponse += ".\r\n";
-
-                this.serverComms(szPOPResponse);
+                var callback = {
+                   notify: function(timer) { this.parent.processSizes(timer)}
+                };
+                callback.parent = this;
+                this.m_iHandleCount = 0;
+                this.m_Timer.initWithCallback(callback,
+                                              this.m_iTime,
+                                              Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
             }
             else
             {
                 if (this.m_szMailboxURI == null) return false;
-                var szMailboxURI = this.m_szLocationURI + this.m_szMailboxURI + "&sort=Date";
-                this.m_Log.Write("Hotmail-SR - getNumMessages - mail box url " + szMailboxURI);
-
-                this.m_iStage = 0;
-                this.m_HttpComms.setURI(szMailboxURI);
-                this.m_HttpComms.setRequestMethod("GET");
-                var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this);
-                if (!bResult) throw new Error("httpConnection returned false");
+                this.mailBox(false);
             }
 
             this.m_Log.Write("Hotmail-SR - getMessageSizes - END");
@@ -724,6 +728,54 @@ HotmailScreenRipper.prototype =
 
 
 
+
+    processSizes : function(timer)
+    {
+        try
+        {
+            this.m_Log.Write("Hotmail-SR.js - processSizes - START");
+
+            //response start
+            if (this.m_iHandleCount ==  0)
+                this.serverComms("+OK " + this.m_aMsgDataStore.length + " Messages\r\n")
+
+
+            if ( this.m_aMsgDataStore.length > 0)
+            {
+                var iCount = 0;
+                do{
+                     var iEmailSize = this.m_aMsgDataStore[this.m_iHandleCount].iSize;
+                    this.serverComms((this.m_iHandleCount+1) + " " + iEmailSize + "\r\n");
+                    this.m_iHandleCount++;
+                    iCount++;
+                }while(iCount != this.m_iProcessAmount && this.m_iHandleCount!=this.m_aMsgDataStore.length)
+            }
+
+            //response end
+            if (this.m_iHandleCount == this.m_aMsgDataStore.length)
+            {
+              this.serverComms(".\r\n");
+              timer.cancel();
+            }
+
+            this.m_Log.Write("Hotmail-SR.js - processSizes - END");
+        }
+        catch(err)
+        {
+            this.m_Timer.cancel();
+            this.m_Log.DebugDump("Hotmail-SR.js: processSizes : Exception : "
+                                              + err.name
+                                              + ".\nError message: "
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
+
+            this.serverComms("-ERR negative vibes from " +this.m_szUserName+ "\r\n");
+        }
+    },
+
+
+
+
     //IUDL
     getMessageIDs : function()
     {
@@ -731,29 +783,14 @@ HotmailScreenRipper.prototype =
         {
             this.m_Log.Write("Hotmail-SR - getMessageIDs - START");
 
-            var szPOPResponse = "+OK " + this.m_aMsgDataStore.length + " Messages\r\n";
-
-            for (i = 0; i <  this.m_aMsgDataStore.length; i++)
-            {
-                var szEmailURL = this.m_aMsgDataStore[i].szMSGUri;
-                this.m_Log.Write("Hotmail-SR - getMessageIDs - Email URL : " +szEmailURL);
-
-                var aEmailID = szEmailURL.match(patternHotmailEmailID);
-                var szEmailID;
-                if (aEmailID ==null) //not got id
-                {
-                    var iStartOfID = szEmailURL.indexOf('=');
-                    szEmailID =  szEmailURL.substring(iStartOfID +1, szEmailURL.length );
-                }
-                else
-                    szEmailID = aEmailID[1];
-
-                this.m_Log.Write("Hotmail-SR - getMessageIDs - IDS : " +szEmailID);
-                szPOPResponse+=(i+1) + " " + szEmailID + "\r\n";
-            }
-
-            szPOPResponse += ".\r\n";
-            this.serverComms(szPOPResponse);
+            var callback = {
+               notify: function(timer) { this.parent.processIDS(timer)}
+            };
+            callback.parent = this;
+            this.m_iHandleCount = 0;
+            this.m_Timer.initWithCallback(callback,
+                                          this.m_iTime,
+                                          Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
 
             this.m_Log.Write("Hotmail-SR - getMessageIDs - END");
             return true;
@@ -769,6 +806,68 @@ HotmailScreenRipper.prototype =
             return false;
         }
     },
+
+
+
+
+    processIDS : function(timer)
+    {
+        try
+        {
+            this.m_Log.Write("Hotmail-SR-BETAR.js - processIDS - START");
+
+            //response start
+            if (this.m_iHandleCount ==  0)
+                this.serverComms("+OK " + this.m_aMsgDataStore.length + " Messages\r\n");
+
+
+            if ( this.m_aMsgDataStore.length > 0)
+            {
+                var iCount = 0;
+                do{
+                    var szEmailURL = this.m_aMsgDataStore[this.m_iHandleCount].szMSGUri;
+                    this.m_Log.Write("Hotmail-SR - getMessageIDs - Email URL : " +szEmailURL);
+
+                    var aEmailID = szEmailURL.match(patternHotmailEmailID);
+                    var szEmailID;
+                    if (aEmailID ==null) //not got id
+                    {
+                        var iStartOfID = szEmailURL.indexOf('=');
+                        szEmailID =  szEmailURL.substring(iStartOfID +1, szEmailURL.length );
+                    }
+                    else
+                        szEmailID = aEmailID[1];
+
+                    this.serverComms((this.m_iHandleCount+1) + " " + szEmailID + "\r\n");
+                    this.m_iHandleCount++;
+                    iCount++;
+                }while(iCount != this.m_iProcessAmount && this.m_iHandleCount!=this.m_aMsgDataStore.length)
+            }
+
+
+            //response end
+            if (this.m_iHandleCount == this.m_aMsgDataStore.length)
+            {
+                this.serverComms(".\r\n");
+                timer.cancel();
+            }
+
+            this.m_Log.Write("Hotmail-SR-BETAR.js - processIDS - END");
+        }
+        catch(err)
+        {
+            this.m_Timer.cancel();
+            this.m_Log.DebugDump("HotmailWebDav.js: processIDS : Exception : "
+                                              + err.name
+                                              + ".\nError message: "
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
+
+            this.serverComms("-ERR negative vibes from " +this.m_szUserName+ "\r\n");
+        }
+    },
+
+
 
 
     //top

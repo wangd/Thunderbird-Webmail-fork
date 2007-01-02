@@ -2,3 +2,5 @@ build.bat
 ExcludeFiles.txt
 Jar.txt
 Xpi.txt
+*.xpi
+*.jar

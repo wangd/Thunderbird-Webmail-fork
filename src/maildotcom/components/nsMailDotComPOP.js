@@ -14,7 +14,6 @@ function nsMailDotCom()
         scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://maildotcom/content/MailDotCom-MSG.js");
-        scriptLoader.loadSubScript("chrome://maildotcom/content/MailDotCom-Prefs-Data.js");
 
         var date = new Date();
         var  szLogFileName = "MailDotCom Log - " + date.getHours()+ "-"
@@ -36,7 +35,13 @@ function nsMailDotCom()
         this.m_oResponseStream = null;
         this.m_bReEntry = false;
 
-        this.m_prefData = null;
+        //prefs
+        this.m_bReUseSession = false;
+        this.m_bDownloadUnread = false;
+        this.m_bEmptyTrash = false;
+        this.m_aszFolder = new Array();
+        this.m_iProcessDelay = 10;
+        this.m_iProcessAmount = 25;
 
         //comms
         this.m_HttpComms = new HttpComms(this.m_Log);
@@ -55,6 +60,10 @@ function nsMailDotCom()
         this.m_szFolderName = null;
         this.m_szHeaders = null;
         this.m_bStat = false;
+        this.m_iHandleCount = 0;
+
+        this.m_Timer = Components.classes["@mozilla.org/timer;1"]
+                                 .createInstance(Components.interfaces.nsITimer);
 
         this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"]
                                           .getService(Components.interfaces.nsISessionManager);
@@ -100,13 +109,13 @@ nsMailDotCom.prototype =
 
             if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
 
-            this.m_prefData = this.loadPrefs();   //get prefs
+            this.loadPrefs();   //get prefs
 
             this.m_iStage =0;
             this.m_HttpComms.setURI("http://www.mail.com");
             this.m_HttpComms.setRequestMethod("GET");
 
-            if (this.m_prefData.bReUseSession)
+            if (this.m_bReUseSession)
             {
                 this.m_Log.Write("nsMailDotCom.js - logIN - Getting Session Data");
                 this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
@@ -310,9 +319,9 @@ nsMailDotCom.prototype =
                     var szPath = szLocation.match(/(http:\/\/.*?)\//i)[1];
                     mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - path "+ szPath);
 
-                    for (j=0; j<mainObject.m_prefData.aszFolder.length; j++)
+                    for (j=0; j<mainObject.m_aszFolder.length; j++)
                     {
-                        var regExp = new RegExp("^"+mainObject.m_prefData.aszFolder[j]+"$","i");
+                        var regExp = new RegExp("^"+mainObject.m_aszFolder[j]+"$","i");
                         mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - regExp "+ regExp);
 
                         for(i=0; i<aszFolderList.length; i++)
@@ -366,15 +375,7 @@ nsMailDotCom.prototype =
         {
             this.m_Log.Write("nsMailDotCom.js - getNumMessages - START");
             if (this.m_aszURI.length==0) return false;
-
-            this.m_iStage=0;
-            var szURI = this.m_aszURI.shift();
-
-            this.m_HttpComms.setURI(szURI);
-            this.m_HttpComms.setRequestMethod("GET");
-            var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this);
-            if (!bResult) throw new Error("httpConnection returned false");
-            this.m_bStat = true;
+            this.mailBox(true);
             this.m_Log.Write("nsMailDotCom.js - getNumMessages - END");
             return true;
         }
@@ -391,13 +392,25 @@ nsMailDotCom.prototype =
 
 
 
+    mailBox : function (bState)
+    {
+        this.m_iStage=0;
+        var szURI = this.m_aszURI.shift();
+
+        this.m_HttpComms.setURI(szURI);
+        this.m_HttpComms.setRequestMethod("GET");
+        var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this);
+        if (!bResult) throw new Error("httpConnection returned false");
+        this.m_bStat = bState;
+    },
+
+
 
     mailBoxOnloadHandler : function (szResponse ,event , mainObject)
     {
         try
         {
             mainObject.m_Log.Write("nsMailDotCom.js - mailBoxOnloadHandler - START");
-           // mainObject.m_Log.Write("nsMailDotCom.js - mailBoxOnloadHandler : \n" + szResponse);
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             mainObject.m_Log.Write("nsMailDotCom.js - mailBoxOnloadHandler - Mailbox :" + httpChannel.responseStatus);
 
@@ -537,17 +550,14 @@ nsMailDotCom.prototype =
                 }
                 else //called by list
                 {
-                    var szPOPResponse = "+OK " + mainObject.m_aMsgDataStore.length + " Messages\r\n";
-                    this.m_Log.Write("AOL.js - getMessagesSizes - : " + mainObject.m_aMsgDataStore.length);
-
-                    for (i = 0; i <  mainObject.m_aMsgDataStore.length; i++)
-                    {
-                        var iEmailSize = mainObject.m_aMsgDataStore[i].iSize;
-                        szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";
-                    }
-
-                    szPOPResponse += ".\r\n";
-                    mainObject.serverComms(szPOPResponse);
+                    var callback = {
+                       notify: function(timer) { this.parent.processSizes(timer)}
+                    };
+                    callback.parent = mainObject;
+                    mainObject.m_iHandleCount = 0;
+                    mainObject.m_Timer.initWithCallback(callback,
+                                                        mainObject.m_iTime,
+                                                        Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
                 }
             }
 
@@ -581,29 +591,20 @@ nsMailDotCom.prototype =
 
             if (this.m_bStat)
             {  //msg table has been donwloaded
-                var szPOPResponse = "+OK " +  this.m_aMsgDataStore.length + " Messages\r\n";
-                for (i = 0; i < this.m_aMsgDataStore.length; i++)
-                {
-                    var iEmailSize = this.m_aMsgDataStore[i].iSize;
-                    this.m_Log.Write("nsMailDotCom.js - getMessageSizes - Email Size : " +iEmailSize);
-                    szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";
-                }
-                szPOPResponse += ".\r\n";
-
-                this.serverComms(szPOPResponse);
+                var callback = {
+                   notify: function(timer) { this.parent.processSizes(timer)}
+                };
+                callback.parent = this;
+                this.m_iHandleCount = 0;
+                this.m_Timer.initWithCallback(callback,
+                                              this.m_iTime,
+                                              Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
             }
             else
             { //download msg list
                 this.m_Log.Write("nsMailDotCom - getMessageSizes - calling stat");
-
-                if (this.m_szInboxURI == null) return false;
-                this.m_Log.Write("nsMailDotCom.js - getNumMessages - Inbox " + this.m_szInboxURI);
-
-                this.m_iStage=0;
-                this.m_HttpComms.setURI(this.m_szInboxURI);
-                this.m_HttpComms.setRequestMethod("GET");
-                var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this);
-                if (!bResult) throw new Error("httpConnection returned false");
+                if (this.m_aszURI.length==0) return false;
+                this.mailBox(false);
             }
 
             this.m_Log.Write("nsMailDotCom.js - getMessageSizes - END");
@@ -622,6 +623,56 @@ nsMailDotCom.prototype =
 
 
 
+
+    processSizes : function(timer)
+    {
+        try
+        {
+            this.m_Log.Write("nsMailDotCom.js - processSizes - START");
+
+            //response start
+            if (this.m_iHandleCount ==  0)
+                this.serverComms("+OK " + this.m_aMsgDataStore.length + " Messages\r\n")
+
+
+            if ( this.m_aMsgDataStore.length > 0)
+            {
+                var iCount = 0;
+                do{
+                    var iEmailSize = this.m_aMsgDataStore[this.m_iHandleCount].iSize;
+                    this.serverComms((this.m_iHandleCount+1) + " " + iEmailSize + "\r\n");
+                    this.m_iHandleCount++;
+                    iCount++;
+                }while(iCount != this.m_iProcessAmount && this.m_iHandleCount!=this.m_aMsgDataStore.length)
+            }
+
+            //response end
+            if (this.m_iHandleCount == this.m_aMsgDataStore.length)
+            {
+              this.serverComms(".\r\n");
+              timer.cancel();
+            }
+
+            this.m_Log.Write("nsMailDotCom.js - processSizes - END");
+        }
+        catch(err)
+        {
+            this.m_Timer.cancel();
+            this.m_Log.DebugDump("nsMailDotCom.js: processSizes : Exception : "
+                                              + err.name
+                                              + ".\nError message: "
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
+
+            this.serverComms("-ERR negative vibes from " +this.m_szUserName+ "\r\n");
+        }
+    },
+
+
+
+
+
+
     //IUDL
     getMessageIDs : function()
     {
@@ -629,18 +680,14 @@ nsMailDotCom.prototype =
         {
             this.m_Log.Write("nsMailDotCom.js - getMessageIDs - START");
 
-            var szPOPResponse = "+OK " + this.m_aMsgDataStore.length + " Messages\r\n";
-            for (i = 0; i <  this.m_aMsgDataStore.length; i++)
-            {
-                var szURL = this.m_aMsgDataStore[i].szMSGUri;
-                this.m_Log.Write("nsMailDotCom.js - getMessageIDs - Email URL : " +szURL);
-                var szEmailID = szURL.match(patternMailDotComMsgId)[1];
-                this.m_Log.Write("nsMailDotCom.js - getMessageIDs - IDS : " +szEmailID);
-                szPOPResponse+=(i+1) + " " + szEmailID + "\r\n";
-            }
-            szPOPResponse += ".\r\n";
-            this.serverComms(szPOPResponse);
-
+            var callback = {
+               notify: function(timer) { this.parent.processIDS(timer)}
+            };
+            callback.parent = this;
+            this.m_iHandleCount = 0;
+            this.m_Timer.initWithCallback(callback,
+                                          this.m_iTime,
+                                          Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
             this.m_Log.Write("nsMailDotCom.js - getMessageIDs - END");
             return true;
         }
@@ -654,6 +701,58 @@ nsMailDotCom.prototype =
             return false;
         }
     },
+
+
+
+
+    processIDS : function(timer)
+    {
+        try
+        {
+            this.m_Log.Write("nsLycos.js - processIDS - START");
+
+            //response start
+            if (this.m_iHandleCount ==  0)
+                this.serverComms("+OK " + this.m_aMsgDataStore.length + " Messages\r\n");
+
+
+            if ( this.m_aMsgDataStore.length > 0)
+            {
+                var iCount = 0;
+                do{
+                    var szURL = this.m_aMsgDataStore[this.m_iHandleCount].szMSGUri;
+                    this.m_Log.Write("nsMailDotCom.js - getMessageIDs - Email URL : " +szURL);
+                    var szEmailID = szURL.match(patternMailDotComMsgId)[1];
+
+                    this.serverComms((this.m_iHandleCount+1) + " " + szEmailID + "\r\n");
+                    this.m_iHandleCount++;
+                    iCount++;
+                }while(iCount != this.m_iProcessAmount && this.m_iHandleCount!=this.m_aMsgDataStore.length)
+            }
+
+
+            //response end
+            if (this.m_iHandleCount == this.m_aMsgDataStore.length)
+            {
+                this.serverComms(".\r\n");
+                timer.cancel();
+            }
+
+            this.m_Log.Write("nsLycos.js - processIDS - END");
+        }
+        catch(err)
+        {
+            this.m_Timer.cancel();
+            this.m_Log.DebugDump("nsLycos.js: processIDS : Exception : "
+                                              + err.name
+                                              + ".\nError message: "
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
+
+            this.serverComms("-ERR negative vibes from " +this.m_szUserName+ "\r\n");
+        }
+    },
+
 
 
 
@@ -959,7 +1058,7 @@ nsMailDotCom.prototype =
 
             if (!oPref.Value)
             {
-                if (this.m_prefData.bReUseSession)
+                if (this.m_bReUseSession)
                 {
                     this.m_Log.Write("nsMailDotCom.js - logOut - Setting Session Data");
 
@@ -1032,7 +1131,7 @@ nsMailDotCom.prototype =
                 return;
             }
 
-            if (mainObject.m_prefData.bReUseSession)
+            if (mainObject.m_bReUseSession)
             {
                 mainObject.m_Log.Write("nsMailDotCom.js - logOut - Setting Session Data");
 
@@ -1140,7 +1239,6 @@ nsMailDotCom.prototype =
             this.m_Log.Write("nsMailDotCom.js - loadPrefs - START");
 
             //get user prefs
-            var oData = new PrefData();
             var oPref = {Value:null};
             var  WebMailPrefAccess = new WebMailCommonPrefAccess();
 
@@ -1148,12 +1246,23 @@ nsMailDotCom.prototype =
             szUserName = szUserName.replace(/\./g,"_");
             szUserName = szUserName.toLowerCase();
 
+            //delay processing time delay
+            if (WebMailPrefAccess.Get("int","maildotcom.iProcessDelay",oPref))
+               this.m_iProcessDelay = oPref.Value;
+
+            //delay proccess amount
+            oPref.Value = null;
+            if (WebMailPrefAccess.Get("bool","maildotcom.iProcessAmount",oPref))
+                this.m_iProcessAmount = oPref.Value;
+
+
             //do i reuse the session
+            oPref.Value = null;
             if (WebMailPrefAccess.Get("bool","maildotcom.bReUseSession",oPref))
-                oData.bReUseSession = oPref.Value;
+                this.m_bReUseSession = oPref.Value;
 
             //inbox
-            oData.aszFolder.push("inbox");
+            this.m_aszFolder.push("inbox");
 
             //get folders
             oPref.Value = null;
@@ -1165,25 +1274,24 @@ nsMailDotCom.prototype =
                 for (j=0; j<aszFolders.length; j++)
                 {
                     this.m_Log.Write("nsMailDotCom.js - getPrefs - aszFolders " + aszFolders[j]);
-                    oData.aszFolder.push(aszFolders[j]);
+                    this.m_aszFolder.push(aszFolders[j]);
                 }
             }
 
             //get unread
             oPref.Value = null;
             if (WebMailPrefAccess.Get("bool","maildotcom.Account."+szUserName+".bDownloadUnread",oPref))
-                oData.bDownloadUnread = oPref.Value;
+                this.m_bDownloadUnread = oPref.Value;
             this.m_Log.Write("nsMailDotCom.js - getPrefs - bDownloadUnread " + oPref.Value);
 
             //get empty trash
             oPref.Value = null;
             if (WebMailPrefAccess.Get("bool","maildotcom.Account."+szUserName+".bEmptyTrash",oPref))
-                oData.bEmptyTrash = oPref.Value;
+                this.m_bEmptyTrash = oPref.Value;
             this.m_Log.Write("nsMailDotCom.js - getPrefs - bEmptyTrash " + oPref.Value);
 
-
             this.m_Log.Write("nsMailDotCom.js - loadPrefs - END");
-            return oData;
+
         }
         catch(e)
         {

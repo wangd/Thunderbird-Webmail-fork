@@ -359,20 +359,7 @@ nsAOL.prototype =
         {
             this.m_Log.Write("nsAOL.js - getNumMessages - START");
 
-            //will always download from inbox
-            var szURL = this.m_szLocation + "GetMessageList.aspx?page=1";
-            var szData = "previousFolder=&stateToken=&newMailToken=&"
-            szData += "version="+ this.m_szVersion;
-            szData += "&user=" + this.m_szUserId;
-            var szInbox = szURL + "&folder=Inbox&" + szData;
-            this.m_Log.Write("AOLPOP.js - getNumMessages - szInboxURL " + szInbox);
-
-            this.m_iStage = 0;
-            this.m_HttpComms.setURI(szInbox);
-            this.m_HttpComms.setRequestMethod("GET");
-            var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this);
-            if (!bResult) throw new Error("httpConnection returned false");
-            this.m_bStat = true;
+            this.mailBox(true);
 
             this.m_Log.Write("nsAOL.js - getNumMessages - END");
             return true;
@@ -390,12 +377,32 @@ nsAOL.prototype =
 
 
 
+    mailBox : function (bState)
+    {
+        //will always download from inbox
+        var szURL = this.m_szLocation + "GetMessageList.aspx?page=1";
+        var szData = "previousFolder=&stateToken=&newMailToken=&"
+        szData += "version="+ this.m_szVersion;
+        szData += "&user=" + this.m_szUserId;
+        var szInbox = szURL + "&folder=Inbox&" + szData;
+        this.m_Log.Write("AOLPOP.js - getNumMessages - szInboxURL " + szInbox);
+
+        this.m_iStage = 0;
+        this.m_HttpComms.setURI(szInbox);
+        this.m_HttpComms.setRequestMethod("GET");
+        var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this);
+        if (!bResult) throw new Error("httpConnection returned false");
+        this.m_bStat = bState;
+    },
+
+
+
+
     mailBoxOnloadHandler : function (szResponse ,event , mainObject)
     {
         try
         {
             mainObject.m_Log.Write("AOLPOP.js - mailBoxOnloadHandler - START");
-            //mainObject.m_Log.Write("AOLPOP.js - mailBoxOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("AOLPOP.js - mailBoxOnloadHandler : " + mainObject.m_iStage);
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -533,17 +540,14 @@ nsAOL.prototype =
                     }
                     else //called by list
                     {
-                        var szPOPResponse = "+OK " + mainObject.m_aMsgDataStore.length + " Messages\r\n";
-                        this.m_Log.Write("AOL.js - getMessagesSizes - : " + mainObject.m_aMsgDataStore.length);
-
-                        for (i = 0; i <  mainObject.m_aMsgDataStore.length; i++)
-                        {
-                            var iEmailSize = mainObject.m_aMsgDataStore[i].iSize;
-                            szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";
-                        }
-
-                        szPOPResponse += ".\r\n";
-                        mainObject.serverComms(szPOPResponse);
+                        var callback = {
+                           notify: function(timer) { this.parent.processSizes(timer)}
+                        };
+                        callback.parent = mainObject;
+                        mainObject.m_iHandleCount = 0;
+                        mainObject.m_Timer.initWithCallback(callback,
+                                                            mainObject.m_iTime,
+                                                            Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
                     }
                 }
             }
@@ -576,33 +580,19 @@ nsAOL.prototype =
 
             if (this.m_bStat)
             {  //msg table has been donwloaded
-                var szPOPResponse = "+OK " +  this.m_aMsgDataStore.length + " Messages\r\n";
-                for (i = 0; i < this.m_aMsgDataStore.length; i++)
-                {
-                    var iEmailSize = this.m_aMsgDataStore[i].iSize;
-                    this.m_Log.Write("AOLPOP.js - getMessageSizes - Email Size : " +iEmailSize);
-                    szPOPResponse+=(i+1) + " " + iEmailSize + "\r\n";
-                }
-                szPOPResponse += ".\r\n";
-
-                this.serverComms(szPOPResponse);
+                var callback = {
+                   notify: function(timer) { this.parent.processSizes(timer)}
+                };
+                callback.parent = this;
+                this.m_iHandleCount = 0;
+                this.m_Timer.initWithCallback(callback,
+                                              this.m_iTime,
+                                              Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
             }
             else
             { //download msg list
                 this.m_Log.Write("AOL - getMessageSizes - calling stat");
-                //will always download from inbox
-                var szURL = this.m_szLocation + "GetMessageList.aspx?page=1";
-                var szData = "previousFolder=&stateToken=&newMailToken=&"
-                szData += "version="+ this.m_szVersion;
-                szData += "&user="+ this.m_szUserId;
-                var szInbox = szURL + "&folder=Inbox&" + szData;
-                this.m_Log.Write("AOL.js - getMessageSizes - szInboxURL " + szInbox);
-
-                this.m_iStage = 0;
-                this.m_HttpComms.setURI(szInbox);
-                this.m_HttpComms.setRequestMethod("GET");
-                var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this);
-                if (!bResult) throw new Error("httpConnection returned false");
+                this.mailBox(false);
             }
 
 
@@ -622,6 +612,51 @@ nsAOL.prototype =
 
 
 
+    processSizes : function(timer)
+    {
+        try
+        {
+            this.m_Log.Write("nsAOL.js - processSizes - START");
+
+            //response start
+            if (this.m_iHandleCount ==  0)
+                this.serverComms("+OK " + this.m_aMsgDataStore.length + " Messages\r\n")
+
+
+            if ( this.m_aMsgDataStore.length > 0)
+            {
+                var iCount = 0;
+                do{
+                    var iEmailSize = this.m_aMsgDataStore[this.m_iHandleCount].iSize;
+                    this.serverComms((this.m_iHandleCount+1) + " " + iEmailSize + "\r\n");
+                    this.m_iHandleCount++;
+                    iCount++;
+                }while(iCount != this.m_iProcessAmount && this.m_iHandleCount!=this.m_aMsgDataStore.length)
+            }
+
+            //response end
+            if (this.m_iHandleCount == this.m_aMsgDataStore.length)
+            {
+              this.serverComms(".\r\n");
+              timer.cancel();
+            }
+
+            this.m_Log.Write("nsAOL.js - processSizes - END");
+        }
+        catch(err)
+        {
+            this.m_Timer.cancel();
+            this.m_Log.DebugDump("nsAOL.js: processSizes : Exception : "
+                                              + err.name
+                                              + ".\nError message: "
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
+
+            this.serverComms("-ERR negative vibes from " +this.m_szUserName+ "\r\n");
+        }
+    },
+
+
 
 
     //IUDL
@@ -631,17 +666,14 @@ nsAOL.prototype =
         {
             this.m_Log.Write("nsAOL.js - getMessageIDs - START");
 
-            var szPOPResponse = "+OK " + this.m_aMsgDataStore.length + " Messages\r\n";
-            for (i = 0; i <  this.m_aMsgDataStore.length; i++)
-            {
-                var iEmailID = this.m_aMsgDataStore[i].iID;
-                this.m_Log.Write("AOLPOP.js - getMessageIDs - Email URL : " +iEmailID);
-
-                szPOPResponse+=(i+1) + " " + iEmailID + "\r\n";
-            }
-            szPOPResponse += ".\r\n";
-            this.serverComms(szPOPResponse);
-
+            var callback = {
+               notify: function(timer) { this.parent.processIDS(timer)}
+            };
+            callback.parent = this;
+            this.m_iHandleCount = 0;
+            this.m_Timer.initWithCallback(callback,
+                                          this.m_iTime,
+                                          Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
             this.m_Log.Write("nsAOL.js - getMessageIDs - END");
             return true;
         }
@@ -653,6 +685,53 @@ nsAOL.prototype =
                                           + e.message+ "\n"
                                           + e.lineNumber);
             return false;
+        }
+    },
+
+
+
+    processIDS : function(timer)
+    {
+        try
+        {
+            this.m_Log.Write("nsAOL.js - processIDS - START");
+
+            //response start
+            if (this.m_iHandleCount ==  0)
+                this.serverComms("+OK " + this.m_aMsgDataStore.length + " Messages\r\n");
+
+
+            if ( this.m_aMsgDataStore.length > 0)
+            {
+                var iCount = 0;
+                do{
+                    var iEmailID = this.m_aMsgDataStore[this.m_iHandleCount].iID;
+                    this.serverComms((this.m_iHandleCount+1) + " " + szEmailID + "\r\n");
+                    this.m_iHandleCount++;
+                    iCount++;
+                }while(iCount != this.m_iProcessAmount && this.m_iHandleCount!=this.m_aMsgDataStore.length)
+            }
+
+
+            //response end
+            if (this.m_iHandleCount == this.m_aMsgDataStore.length)
+            {
+              this.serverComms(".\r\n");
+              timer.cancel();
+            }
+
+            this.m_Log.Write("nsAOL.js - processIDS - END");
+        }
+        catch(err)
+        {
+            this.m_Timer.cancel();
+            this.m_Log.DebugDump("nsAOL.js: processIDS : Exception : "
+                                              + err.name
+                                              + ".\nError message: "
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
+
+            this.serverComms("-ERR negative vibes from " +this.m_szUserName+ "\r\n");
         }
     },
 

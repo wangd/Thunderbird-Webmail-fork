@@ -14,8 +14,6 @@ function nsMailDotComSMTP()
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Email.js");
-        scriptLoader.loadSubScript("chrome://maildotcom/content/MailDotCom-Prefs-Data.js");
-
 
         var date = new Date();
         var  szLogFileName = "MailDotCom SMTP Log - " + date.getHours()
@@ -54,7 +52,9 @@ function nsMailDotComSMTP()
 
         this.m_bReEntry = false;
 
-        this.m_prefData = null;
+        this.m_bReUseSession = false;
+        this.m_bSaveCopy = false;
+        this.m_bSendHtml = false;
 
         this.m_Log.Write("nsMailDotComSMTP.js - Constructor - END");
     }
@@ -101,14 +101,14 @@ nsMailDotComSMTP.prototype =
 
             if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
 
-            this.m_prefData = this.loadPrefs();   //get prefs
+            this.loadPrefs();   //get prefs
 
             //get mail.com webpage
             this.m_iStage =0;
             this.m_HttpComms.setURI("http://www.mail.com");
             this.m_HttpComms.setRequestMethod("GET");
 
-            if (this.m_prefData.bReUseSession)
+            if (this.this.m_bReUseSession)
             {
                 this.m_Log.Write("nsMailDotCom.js - logIN - Getting Session Data");
                 this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
@@ -419,14 +419,14 @@ nsMailDotComSMTP.prototype =
                     if (mainObject.m_Email.htmlBody)
                         szHtmlBody = mainObject.m_Email.htmlBody.body.getBody();
 
-                    if (szTxtBody && !mainObject.m_prefData.bSendHtml || !szHtmlBody)
+                    if (szTxtBody && !mainObject.this.m_bSendHtml || !szHtmlBody)
                     {
                         mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - plain");
                         mainObject.m_HttpComms.addValuePair("format","");
                         mainObject.m_HttpComms.addValuePair("body",mainObject.escapeStr(szTxtBody));
                         mainObject.m_HttpComms.addValuePair("advancededitor","");
                     }
-                    else if (szHtmlBody && mainObject.m_prefData.bSendHtml || !szTxtBody)
+                    else if (szHtmlBody && mainObject.this.m_bSendHtml || !szTxtBody)
                     {
                         mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - html");
                         mainObject.m_HttpComms.addValuePair("emailcomposer","advanced");
@@ -487,7 +487,7 @@ nsMailDotComSMTP.prototype =
                             }
                             else if (szName.search(/savesent/i)!=-1)
                             {
-                                var szSave = mainObject.m_prefData.bSaveCopy ? "yes" : "no";
+                                var szSave = mainObject.this.m_bSaveCopy ? "yes" : "no";
                                 mainObject.m_HttpComms.addValuePair(szName,szSave);
                             }
                             else
@@ -509,7 +509,7 @@ nsMailDotComSMTP.prototype =
                     mainObject.m_Log.Write("nsMailDotCom.js - composerOnloadHandler - message ok");
                     if (szResponse.search(/aftersent/igm)!=-1)
                     {
-                        if (mainObject.m_prefData.bReUseSession)
+                        if (mainObject.this.m_bReUseSession)
                         {
                             mainObject.m_Log.Write("nsMailDotCom.js - composerOnloadHandler - Setting Session Data");
 
@@ -854,7 +854,6 @@ nsMailDotComSMTP.prototype =
             this.m_Log.Write("nsMailDotComSMTP.js - loadPrefs - START");
 
             //get user prefs
-            var oData = new PrefData();
             var oPref = {Value:null};
             var  WebMailPrefAccess = new WebMailCommonPrefAccess();
 
@@ -864,22 +863,21 @@ nsMailDotComSMTP.prototype =
 
             //do i reuse the session
             if (WebMailPrefAccess.Get("bool","maildotcom.bReUseSession",oPref))
-                oData.bReUseSession = oPref.Value;
+                this.m_bReUseSession = oPref.Value;
 
             //do i save copy
             oPref.Value = null;
             if (WebMailPrefAccess.Get("bool","maildotcom.Account."+szUserName+".bSaveCopy",oPref))
-                oData.bSaveCopy=oPref.Value;
+                this.m_bSaveCopy=oPref.Value;
             this.m_Log.Write("nsHotmailSMTP.js - getPrefs - bSaveCopy " + oPref.Value);
 
             //what do i do with alternative parts
             oPref.Value = null;
             if (WebMailPrefAccess.Get("bool","maildotcom.Account."+szUserName+".bSendHtml",oPref))
-                oData.bSendHtml = oPref.Value;
+                this.m_bSendHtml = oPref.Value;
             this.m_Log.Write("nsHotmailSMTP.js - getPrefs - bSendHtml " + oPref.Value);
 
             this.m_Log.Write("nsMailDotComSMTP.js - loadPrefs - END");
-            return oData;
         }
         catch(e)
         {
