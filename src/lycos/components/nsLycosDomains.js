@@ -1,10 +1,10 @@
 /*****************************  Globals   *************************************/
-const nsAOLDomainsClassID = Components.ID("{0e1009c0-8533-11db-b606-0800200c9a66}");
-const nsAOLDomainsContactID = "@mozilla.org/AOLDomains;1";
+const nsLycosDomainsClassID = Components.ID("{50de2190-9cff-11db-b606-0800200c9a66}");
+const nsLycosDomainsContactID = "@mozilla.org/LycosDomains;1";
 
 
 /***********************  UriManager ********************************/
-function nsAOLDomains()
+function nsLycosDomains()
 {
     this.m_scriptLoader = null;
     this.m_Log = null;
@@ -20,11 +20,11 @@ function nsAOLDomains()
     this.m_iCount = 0;
 }
 
-nsAOLDomains.prototype =
+nsLycosDomains.prototype =
 {
     isReady : function ()
     {
-        this.m_Log.Write("nsAOLDomains.js - isReady - " +  this.m_bReady);
+        this.m_Log.Write("nsLycosDomains.js - isReady - " +  this.m_bReady);
         return this.m_bReady;
     },
 
@@ -32,31 +32,34 @@ nsAOLDomains.prototype =
     {
         try
         {
-            this.m_Log.Write("nsAOLDomains.js - addDomain - START " + szDomain);
+            this.m_Log.Write("nsLycosDomains.js - addDomain - START " + szDomain);
 
-            if ( szDomain.search(/[^a-zA-Z0-9\.]+/i)!=-1 ||
+            if ( szDomain.search(/[^a-zA-Z0-9\.\-]+/i)!=-1 ||
                  szDomain.search(/\s/)!=-1 ||
                  szDomain.search(/\./)==-1 ||
                  szDomain.search(/^\./)!=-1 ||
                  szDomain.search(/\.$/)!=-1)
             {
-                this.m_Log.Write("nsAOLDomains.js - addDomain - domain invalid ");
+                this.m_Log.Write("nsLycosDomains.js - addDomain - domain invalid ");
                 return false;
             }
 
             var bADD = false;
 
-            if (!this.domainCheck(szDomain, "POP", "@mozilla.org/AOLPOP;1"))
-                bADD = this.domainAdd(szDomain, "POP", "@mozilla.org/AOLPOP;1")
+            if (!this.domainCheck(szDomain, "POP", "@mozilla.org/LycosPOP;1"))
+                bADD = this.domainAdd(szDomain, "POP", "@mozilla.org/LycosPOP;1")
 
-            if (!this.domainCheck(szDomain, "SMTP", "@mozilla.org/AOLSMTP;1"))
-                bADD = this.domainAdd(szDomain, "SMTP", "@mozilla.org/AOLSMTP;1")
+            if (!this.domainCheck(szDomain, "SMTP", "@mozilla.org/LycosSMTP;1"))
+                bADD = this.domainAdd(szDomain, "SMTP", "@mozilla.org/LycosSMTP;1")
+
+            if (!this.domainCheck(szDomain, "IMAP", "@mozilla.org/LycosIMAP;1"))
+                bADD = this.domainAdd(szDomain, "IMAP", "@mozilla.org/LycosIMAP;1")
 
             var bFound = false;
             //custom
             if (this.m_aszCustomDomains.length>0)
             {
-                this.m_Log.Write("nsAOLDomains.js - addDomain - search for domain - Custom");
+                this.m_Log.Write("nsLycosDomains.js - addDomain - search for domain - Custom");
 
                 var i=0;
                 var regExp = new RegExp("^"+szDomain+"$", "i");
@@ -70,7 +73,7 @@ nsAOLDomains.prototype =
             //standard
             if (!bFound && this.m_aszStandardDomains.length>0)
             {
-                this.m_Log.Write("nsAOLDomains.js - addDomain - search for domain - Standard");
+                this.m_Log.Write("nsLycosDomains.js - addDomain - search for domain - Standard");
 
                 var i=0;
                 var regExp = new RegExp("^"+szDomain+"$", "i");
@@ -83,19 +86,19 @@ nsAOLDomains.prototype =
 
             if (!bFound)
             {
-                this.m_Log.Write("nsAOLDomains.js - addDomain - not Found added");
+                this.m_Log.Write("nsLycosDomains.js - addDomain - not Found added");
                 this.m_aszCustomDomains.push(szDomain);
             }
 
             this.m_bChange = true;
 
 
-            this.m_Log.Write("nsAOLDomains.js - addDomain - END");
+            this.m_Log.Write("nsLycosDomains.js - addDomain - END");
             return bADD;
         }
         catch(err)
         {
-            this.m_Log.DebugDump("nsAOLDomains.js: addDomain : Exception : "
+            this.m_Log.DebugDump("nsLycosDomains.js: addDomain : Exception : "
                                           + err.name
                                           + ".\nError message: "
                                           + err.message + "\n"
@@ -111,7 +114,7 @@ nsAOLDomains.prototype =
     {
         try
         {
-            this.m_Log.Write("nsAOLDomains.js - removeDomain - START " + szDomain);
+            this.m_Log.Write("nsLycosDomains.js - removeDomain - START " + szDomain);
 
             if ( szDomain.search(/[^a-zA-Z0-9\.]+/i)!=-1 ||
                  szDomain.search(/\s/)!=-1 ||
@@ -119,7 +122,7 @@ nsAOLDomains.prototype =
                  szDomain.search(/^\./)!=-1 ||
                  szDomain.search(/\.$/)!=-1)
             {
-                this.m_Log.Write("nsAOLDomains.js - removeDomain - domain invalid ");
+                this.m_Log.Write("nsLycosDomains.js - removeDomain - domain invalid ");
                 return false;
             }
 
@@ -134,16 +137,16 @@ nsAOLDomains.prototype =
             {
                 do{
                     szTempDomain = this.m_aszCustomDomains.shift();
-                    this.m_Log.Write("nsAOLDomains.js - removeDomain Custom- " + szTempDomain);
+                    this.m_Log.Write("nsLycosDomains.js - removeDomain Custom- " + szTempDomain);
 
                     if (szTempDomain.search(regExp)==-1)
                     {
-                        this.m_Log.Write("nsAOLDomains.js - removeDomain Custom- pushed back");
+                        this.m_Log.Write("nsLycosDomains.js - removeDomain Custom- pushed back");
                         this.m_aszCustomDomains.push(szTempDomain);
                     }
                     else
                     {
-                        this.m_Log.Write("nsAOLDomains.js - removeDomain Custom -found");
+                        this.m_Log.Write("nsLycosDomains.js - removeDomain Custom -found");
                         bFound = true;
                     }
                     i++;
@@ -156,16 +159,16 @@ nsAOLDomains.prototype =
             {
                 do{
                     szTempDomain = this.m_aszStandardDomains.shift();
-                    this.m_Log.Write("nsAOLDomains.js - removeDomain Standard- " + szTempDomain);
+                    this.m_Log.Write("nsLycosDomains.js - removeDomain Standard- " + szTempDomain);
 
                     if (szTempDomain.search(regExp)==-1)
                     {
-                        this.m_Log.Write("nsAOLDomains.js - removeDomain Standard- pushed back");
+                        this.m_Log.Write("nsLycosDomains.js - removeDomain Standard- pushed back");
                         this.m_aszStandardDomains.push(szTempDomain);
                     }
                     else
                     {
-                        this.m_Log.Write("nsAOLDomains.js - removeDomain Standard -found");
+                        this.m_Log.Write("nsLycosDomains.js - removeDomain Standard -found");
                         bFound = true;
                     }
                     i++;
@@ -176,18 +179,19 @@ nsAOLDomains.prototype =
 
             if (bFound)
             {
-                this.m_Log.Write("nsAOLDomains.js - removeDomain - found");
+                this.m_Log.Write("nsLycosDomains.js - removeDomain - found");
                 this.m_DomainManager.removeDomainForProtocol(szDomain, "POP");
                 this.m_DomainManager.removeDomainForProtocol(szDomain, "SMTP");
+                this.m_DomainManager.removeDomainForProtocol(szDomain, "IMAP");
                 bFound = true;
             }
 
-            this.m_Log.Write("nsAOLDomains.js - removeDomain - END");
+            this.m_Log.Write("nsLycosDomains.js - removeDomain - END");
             return true;
         }
         catch(err)
         {
-            this.m_Log.DebugDump("nsAOLDomains.js: removeDomain : Exception : "
+            this.m_Log.DebugDump("nsLycosDomains.js: removeDomain : Exception : "
                                           + err.name
                                           + ".\nError message: "
                                           + err.message + "\n"
@@ -204,19 +208,19 @@ nsAOLDomains.prototype =
     {
         try
         {
-            this.m_Log.Write("nsAOLDomains.js - getAllDomains -  START " );
+            this.m_Log.Write("nsLycosDomains.js - getAllDomains -  START " );
 
             var aResult = this.m_aszStandardDomains.concat(this.m_aszCustomDomains);
             iCount.value = aResult.length;
             aszDomains.value = aResult;
-            this.m_Log.Write("nsAOLDomains.js - getAllDomains - " + iCount.value + " " + aszDomains.value);
+            this.m_Log.Write("nsLycosDomains.js - getAllDomains - " + iCount.value + " " + aszDomains.value);
 
-            this.m_Log.Write("nsAOLDomains.js - getAllDomains -  END" );
+            this.m_Log.Write("nsLycosDomains.js - getAllDomains -  END" );
             return true;
         }
         catch(e)
         {
-            this.m_Log.DebugDump("nsAOLDomains.js: getAllDomains : Exception : "
+            this.m_Log.DebugDump("nsLycosDomains.js: getAllDomains : Exception : "
                                           + e.name +
                                           ".\nError message: "
                                           + e.message+ "\n"
@@ -232,7 +236,7 @@ nsAOLDomains.prototype =
     {
         try
         {
-            this.m_Log.Write("nsAOLDomains.js - loadDataBase - START");
+            this.m_Log.Write("nsLycosDomains.js - loadDataBase - START");
 
             this.m_iFile = 0;
 
@@ -241,14 +245,14 @@ nsAOLDomains.prototype =
                                       createInstance(Components.interfaces.nsIProperties).
                                       get("ProfD", Components.interfaces.nsIFile);
             this.m_oStandardFile.append("extensions");          //goto profile extension folder
-            this.m_oStandardFile.append("{268d7420-9032-11da-a72b-0800200c9a66}"); //goto client extension folder
+            this.m_oStandardFile.append("{10e6e940-8a9c-11d9-9669-0800200c9a66}"); //goto client extension folder
             this.m_oStandardFile.append("domains.txt");       //goto logfiles folder
 
 
             //check file exist
             if (!this.m_oStandardFile.exists())
             {   //create file
-                this.m_Log.Write("nsAOLDomains.js - loadStandardData - creating file");
+                this.m_Log.Write("nsLycosDomains.js - loadStandardData - creating file");
                 this.m_oStandardFile.create(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 420);
             }
 
@@ -271,12 +275,12 @@ nsAOLDomains.prototype =
                  channel.asyncOpen(streamLoader, this);
             }
 
-            this.m_Log.Write("nsAOLDomains.js - loadDataBase - END");
+            this.m_Log.Write("nsLycosDomains.js - loadDataBase - END");
             return true;
         }
         catch(err)
         {
-            this.m_Log.DebugDump("nsAOLDomains.js: loadDataBase : Exception : "
+            this.m_Log.DebugDump("nsLycosDomains.js: loadDataBase : Exception : "
                                           + err.name
                                           + ".\nError message: "
                                           + err.message + "\n"
@@ -292,7 +296,7 @@ nsAOLDomains.prototype =
     {
         try
         {
-            this.m_Log.Write("nsAOLDomains.js - loadCustomData - START");
+            this.m_Log.Write("nsLycosDomains.js - loadCustomData - START");
 
             this.m_iFile = 1;
 
@@ -301,12 +305,12 @@ nsAOLDomains.prototype =
                                       createInstance(Components.interfaces.nsIProperties).
                                       get("ProfD", Components.interfaces.nsIFile);
             this.m_oCustomFile.append("WebmailData");          //goto data folder
-            this.m_oCustomFile.append("AOLDomains.txt");       //goto domains
+            this.m_oCustomFile.append("LycosDomains.txt");       //goto domains
 
             //check file exist
             if (!this.m_oCustomFile.exists())
             {   //create file
-                this.m_Log.Write("nsAOLDomains.js - loadCustomData - creating file");
+                this.m_Log.Write("nsLycosDomains.js - loadCustomData - creating file");
                 this.m_oCustomFile.create(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 420);
             }
 
@@ -329,12 +333,12 @@ nsAOLDomains.prototype =
                  channel.asyncOpen(streamLoader, this);
             }
 
-            this.m_Log.Write("nsAOLDomains.js - loadCustomData - END");
+            this.m_Log.Write("nsLycosDomains.js - loadCustomData - END");
             return true;
         }
         catch(err)
         {
-            this.m_Log.DebugDump("nsAOLDomains.js: loadCustomData : Exception : "
+            this.m_Log.DebugDump("nsLycosDomains.js: loadCustomData : Exception : "
                                           + err.name
                                           + ".\nError message: "
                                           + err.message + "\n"
@@ -350,7 +354,7 @@ nsAOLDomains.prototype =
     {
         try
         {
-            this.m_Log.Write("nsAOLDomains.js - onStreamComplete - START");
+            this.m_Log.Write("nsLycosDomains.js - onStreamComplete - START");
 
             var szResult = null;
             try
@@ -362,7 +366,7 @@ nsAOLDomains.prototype =
             }
             catch(e)
             {
-                this.m_Log.Write("nsAOLDomains.js - onStreamComplete - conversion failed");
+                this.m_Log.Write("nsLycosDomains.js - onStreamComplete - conversion failed");
             }
 
 
@@ -379,7 +383,7 @@ nsAOLDomains.prototype =
                     for (i=0; i < aszRows.length; i++)
                     {
                         var szDomain = aszRows[i].match(/<domain>([\S\s]*?)<\/domain>/i)[1];
-                        this.m_Log.Write("nsAOLDomains.js - onStreamComplete - szDomain " + szDomain);
+                        this.m_Log.Write("nsLycosDomains.js - onStreamComplete - szDomain " + szDomain);
                         if (this.m_iFile==0)
                             this.m_aszStandardDomains.push(szDomain);
                         else
@@ -389,9 +393,8 @@ nsAOLDomains.prototype =
             }
             catch(err)
             {
-                this.m_Log.Write("nsAOLDomains.js - onStreamComplete - NO DATA");
+                this.m_Log.Write("nsLycosDomains.js - onStreamComplete - NO DATA" );
             }
-
 
 
             if (this.m_iFile ==0)
@@ -406,12 +409,12 @@ nsAOLDomains.prototype =
                                               Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
             }
 
-            this.m_Log.Write("nsAOLDomains.js - onStreamComplete - END");
+            this.m_Log.Write("nsLycosDomains.js - onStreamComplete - END");
             return true;
         }
         catch(err)
         {
-            this.m_Log.DebugDump("nsAOLDomains.js: onStreamComplete : Exception : "
+            this.m_Log.DebugDump("nsLycosDomains.js: onStreamComplete : Exception : "
                                           + err.name
                                           + ".\nError message: "
                                           + err.message + "\n"
@@ -428,22 +431,24 @@ nsAOLDomains.prototype =
     {
         try
         {
-            this.m_Log.Write("nsAOLDomains.js : TimerCallback -  START");
+            this.m_Log.Write("nsLycosDomains.js : TimerCallback -  START");
 
 
             if(!this.m_DomainManager.isReady())
             {
-                this.m_Log.Write("nsAOLDomains.js : TimerCallback -  db not ready");
+                this.m_Log.Write("nsLycosDomains.js : TimerCallback -  db not ready");
                 return;
             }
 
             var aszDomain = this.m_aszStandardDomains.concat(this.m_aszCustomDomains);
             if (this.m_iCount<aszDomain.length)
             {
-                if (!this.domainCheck(aszDomain[this.m_iCount], "POP", "@mozilla.org/AOLPOP;1"))
-                    this.domainAdd(aszDomain[this.m_iCount], "POP", "@mozilla.org/AOLPOP;1")
-                if (!this.domainCheck(aszDomain[this.m_iCount], "SMTP", "@mozilla.org/AOLSMTP;1"))
-                    this.domainAdd(aszDomain[this.m_iCount], "SMTP", "@mozilla.org/AOLSMTP;1")
+                if (!this.domainCheck(aszDomain[this.m_iCount], "POP", "@mozilla.org/LycosPOP;1"))
+                    this.domainAdd(aszDomain[this.m_iCount], "POP", "@mozilla.org/LycosPOP;1")
+                if (!this.domainCheck(aszDomain[this.m_iCount], "SMTP", "@mozilla.org/LycosSMTP;1"))
+                    this.domainAdd(aszDomain[this.m_iCount], "SMTP", "@mozilla.org/LycosSMTP;1")
+                if (!this.domainCheck(aszDomain[this.m_iCount], "IMAP", "@mozilla.org/LycosIMAP;1"))
+                    this.domainAdd(aszDomain[this.m_iCount], "IMAP", "@mozilla.org/LycosIMAP;1")
             }
             else
             {
@@ -452,12 +457,13 @@ nsAOLDomains.prototype =
             }
             this.m_iCount++;
 
-            this.m_Log.Write("nsAOLDomains.js : TimerCallback - END");
+
+            this.m_Log.Write("nsLycosDomains.js : TimerCallback - END");
         }
         catch(e)
         {
-            this.m_Timer.cancel();
-            this.m_Log.DebugDump("nsAOLDomains.js : TimerCallback - Exception in notify : "
+            timer.cancel();
+            this.m_Log.DebugDump("nsLycosDomains.js : TimerCallback - Exception in notify : "
                                         + e.name +
                                         ".\nError message: "
                                         + e.message + "\n"
@@ -467,21 +473,21 @@ nsAOLDomains.prototype =
 
 
 
-    domainAdd : function (szDomain,szProtocol, szAOLContentID)
+    domainAdd : function (szDomain,szProtocol, szLycosContentID)
     {
         try
         {
-            this.m_Log.Write("nsAOLDomains.js - domainAdd - START ");
-            this.m_Log.Write("nsAOLDomains.js - domainAdd - " +szDomain + " " + szProtocol + " " + szAOLContentID);
+            this.m_Log.Write("nsLycosDomains.js - domainAdd - START ");
+            this.m_Log.Write("nsLycosDomains.js - domainAdd - " +szDomain + " " + szProtocol + " " + szLycosContentID);
 
-            var bFound = this.m_DomainManager.newDomainForProtocol(szDomain, szProtocol, szAOLContentID);
+            var bFound = this.m_DomainManager.newDomainForProtocol(szDomain, szProtocol, szLycosContentID);
 
-            this.m_Log.Write("nsAOLDomains.js - domainAdd - END " + bFound);
+            this.m_Log.Write("nsLycosDomains.js - domainAdd - END " + bFound);
             return bFound;
         }
         catch(err)
         {
-            this.m_Log.DebugDump("nsAOLDomains.js: domainCheck : Exception : "
+            this.m_Log.DebugDump("nsLycosDomains.js: domainCheck : Exception : "
                                           + err.name
                                           + ".\nError message: "
                                           + err.message + "\n"
@@ -493,31 +499,31 @@ nsAOLDomains.prototype =
 
 
 
-    domainCheck : function (szDomain,szProtocol, szAOLContentID)
+    domainCheck : function (szDomain,szProtocol, szLycosContentID)
     {
         try
         {
-            this.m_Log.Write("nsAOLDomains.js - domainCheck - START ");
-            this.m_Log.Write("nsAOLDomains.js - domainCheck - " +szDomain + " " + szProtocol + " " + szAOLContentID);
+            this.m_Log.Write("nsLycosDomains.js - domainCheck - START ");
+            this.m_Log.Write("nsLycosDomains.js - domainCheck - " +szDomain + " " + szProtocol + " " + szLycosContentID);
 
             var bFound = false;
             var szContentID = new Object;
             if (this.m_DomainManager.getDomainForProtocol(szDomain,szProtocol, szContentID))
             {
 
-                if (szContentID.value == szAOLContentID)
+                if (szContentID.value == szLycosContentID)
                 {
-                    this.m_Log.Write("nsAOLDomains.js : idCheck - found");
+                    this.m_Log.Write("nsLycosDomains.js : idCheck - found");
                     bFound = true;
                 }
             }
 
-            this.m_Log.Write("nsAOLDomains.js - domainCheck - END " + bFound);
+            this.m_Log.Write("nsLycosDomains.js - domainCheck - END " + bFound);
             return bFound;
         }
         catch(err)
         {
-            this.m_Log.DebugDump("nsAOLDomains.js: domainCheck : Exception : "
+            this.m_Log.DebugDump("nsLycosDomains.js: domainCheck : Exception : "
                                           + err.name
                                           + ".\nError message: "
                                           + err.message + "\n"
@@ -533,7 +539,7 @@ nsAOLDomains.prototype =
     {
         try
         {
-            this.m_Log.Write("nsAOLDomains.js - saveDataBase - START");
+            this.m_Log.Write("nsLycosDomains.js - saveDataBase - START");
 
            //create standard file
             var szDataBase = "<database>\r\n";
@@ -563,12 +569,12 @@ nsAOLDomains.prototype =
             outStream.write( szDataBase, szDataBase.length );
             outStream.close();
 
-            this.m_Log.Write("nsAOLDomains.js - saveDataBase - END");
+            this.m_Log.Write("nsLycosDomains.js - saveDataBase - END");
             return true;
         }
         catch(err)
         {
-            this.m_Log.DebugDump("nsAOLDomains.js: saveDataBase : Exception : "
+            this.m_Log.DebugDump("nsLycosDomains.js: saveDataBase : Exception : "
                                           + err.name
                                           + ".\nError message: "
                                           + err.message + "\n"
@@ -604,7 +610,7 @@ nsAOLDomains.prototype =
                 this.m_scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
                 this.m_Log = new DebugLog("webmail.logging.comms",
                                           "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
-                                          "AOLDomainsLog");
+                                          "LycosDomainsLog");
                 try
                 {
                     this.m_DomainManager = Components.classes["@mozilla.org/DomainManager;1"].
@@ -613,14 +619,14 @@ nsAOLDomains.prototype =
                 }
                 catch(err)
                 {
-                    this.m_Log.Write("nsAOLDomains.js - domainmanager not found");
+                    this.m_Log.Write("nsLycosDomains.js - domainmanager not found");
                 }
 
                 this.loadStandardData();
             break;
 
             case "quit-application":
-                this.m_Log.Write("nsAOLDomains.js - quit-application ");
+                this.m_Log.Write("nsLycosDomains.js - quit-application ");
                 if (this.m_bChange) this.saveData();
             break;
 
@@ -649,78 +655,78 @@ nsAOLDomains.prototype =
 
 /******************************************************************************/
 /* FACTORY*/
-var nsAOLDomainsFactory = new Object();
+var nsLycosDomainsFactory = new Object();
 
-nsAOLDomainsFactory.createInstance = function (outer, iid)
+nsLycosDomainsFactory.createInstance = function (outer, iid)
 {
     if (outer != null)
         throw Components.results.NS_ERROR_NO_AGGREGATION;
 
-    if (!iid.equals(nsAOLDomainsClassID)
+    if (!iid.equals(nsLycosDomainsClassID)
             && !iid.equals(Components.interfaces.nsISupports))
         throw Components.results.NS_ERROR_INVALID_ARG;
 
-    return new nsAOLDomains();
+    return new nsLycosDomains();
 }
 
 
 /******************************************************************************/
 /* MODULE */
-var nsAOLDomainsModule = new Object();
+var nsLycosDomainsModule = new Object();
 
-nsAOLDomainsModule.registerSelf = function(compMgr, fileSpec, location, type)
+nsLycosDomainsModule.registerSelf = function(compMgr, fileSpec, location, type)
 {
     var catman = Components.classes["@mozilla.org/categorymanager;1"].
                         getService(Components.interfaces.nsICategoryManager);
 
     catman.addCategoryEntry("xpcom-startup",
-                            "AOL Domains",
-                            nsAOLDomainsContactID,
+                            "Lycos Domains",
+                            nsLycosDomainsContactID,
                             true,
                             true);
 
     catman.addCategoryEntry("app-startup",
-                            "AOL Domains",
-                            "service," + nsAOLDomainsContactID,
+                            "Lycos Domains",
+                            "service," + nsLycosDomainsContactID,
                             true,
                             true);
 
     compMgr = compMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
-    compMgr.registerFactoryLocation(nsAOLDomainsClassID,
-                                    "AOL Domains",
-                                    nsAOLDomainsContactID,
+    compMgr.registerFactoryLocation(nsLycosDomainsClassID,
+                                    "Lycos Domains",
+                                    nsLycosDomainsContactID,
                                     fileSpec,
                                     location,
                                     type);
 }
 
 
-nsAOLDomainsModule.unregisterSelf = function(aCompMgr, aFileSpec, aLocation)
+nsLycosDomainsModule.unregisterSelf = function(aCompMgr, aFileSpec, aLocation)
 {
     var catman = Components.classes["@mozilla.org/categorymanager;1"].
                             getService(Components.interfaces.nsICategoryManager);
 
-    catman.deleteCategoryEntry("xpcom-startup", "AOL Domains", true);
-    catman.deleteCategoryEntry("app-startup", "AOL Domains", true);
+    catman.deleteCategoryEntry("xpcom-startup", "Lycos Domains", true);
+    catman.deleteCategoryEntry("app-startup", "Lycos Domains", true);
 
     aCompMgr = aCompMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
-    aCompMgr.unregisterFactoryLocation(nsAOLDomainsClassID, aFileSpec);
+    aCompMgr.unregisterFactoryLocation(nsLycosDomainsClassID, aFileSpec);
 }
 
 
-nsAOLDomainsModule.getClassObject = function(compMgr, cid, iid)
+nsLycosDomainsModule.getClassObject = function(compMgr, cid, iid)
 {
-    if (!cid.equals(nsAOLDomainsClassID))
+    if (!cid.equals(nsLycosDomainsClassID))
         throw Components.results.NS_ERROR_NO_INTERFACE;
 
     if (!iid.equals(Components.interfaces.nsIFactory))
         throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
 
-    return nsAOLDomainsFactory;
+    return nsLycosDomainsFactory;
 }
 
 
-nsAOLDomainsModule.canUnload = function(compMgr)
+nsLycosDomainsModule.canUnload = function(compMgr)
 {
     return true;
 }
@@ -729,5 +735,5 @@ nsAOLDomainsModule.canUnload = function(compMgr)
 
 function NSGetModule(compMgr, fileSpec)
 {
-    return nsAOLDomainsModule;
+    return nsLycosDomainsModule;
 }

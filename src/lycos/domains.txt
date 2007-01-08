@@ -1,0 +1,9 @@
+<database>
+    <domain>lycos.co.uk</domain>
+    <domain>lycos.it</domain>
+    <domain>lycos.at</domain>
+    <domain>lycos.de</domain>
+    <domain>lycos.es</domain>
+    <domain>caramail.com</domain>
+    <domain>lycos.nl</domain>
+</database>
