@@ -1,33 +1,38 @@
 #include "nsISupports.idl"
+#include "nsIDomainData.idl"
 
 [scriptable, uuid(76f4dcb0-284a-11d9-9669-0800200c9a66)]
 interface nsIDomainManager : nsISupports
-{  
+{
     //1 = database can be accessed
     //0 = database not ready
     boolean isReady();
-    
+
     //returns
     // -1 = db not ready
     // 0 = error
     // 1 = ok
-    
+
     //protocol = pop, imap, smtp
-    
+
     //gets domainhandler id for give domain
-    long getDomainForProtocol(in string Address,in string szProtocol , out string contentID );      
-    
-    
-    //adds new doamin   
-    long newDomainForProtocol(in string Address,  in string szProtocol,in string contentID);  
-    
-     
-    //removes given domain       
-    long removeDomainForProtocol(in string szAddrees, in string szProtocol);  
-    
-    
-    //gets all domains 
+    long getDomainForProtocol(in string Address,in string szProtocol , out string contentID );
+
+
+    //adds new doamin
+    long newDomainForProtocol(in string Address, in string szProtocol, in string contentID);
+
+
+    //removes given domain
+    long removeDomainForProtocol(in string szAddrees, in string szProtocol);
+
+
+    //gets all domains
     long getAllDomainsForProtocol(in string szProtocol,
-                                   out PRUint32 count,
-                                   [array, size_is(count)] out string Domains);
+                                  out PRUint32 count,
+                                  [array, size_is(count)] out string Domains);
+
+        //gets all domains
+    long getAllDomains(out PRUint32 count,
+                       [array, size_is(count)] out nsIDomainData Domains);
 };

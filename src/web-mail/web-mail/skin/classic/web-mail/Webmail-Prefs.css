@@ -178,3 +178,36 @@ radio[pane=paneLogging]
 {
     list-style-image: url("chrome://web-mail/skin/Error.png");
 }
+
+
+
+
+
+/* domains */
+treechildren::-moz-tree-image(DomainImage)
+{
+    width:16px;
+    margin-right: 5px;
+    list-style-image: url("chrome://web-mail/skin/worldIcon.png");
+}
+
+treechildren::-moz-tree-image(check)
+{
+    width:16px;
+    margin-right: 5px;
+    list-style-image: url("chrome://web-mail/skin/tick.png");
+}
+
+
+treechildren::-moz-tree-image(cross)
+{
+    width:16px;
+    margin-right: 5px;
+    list-style-image: url("chrome://web-mail/skin/cross.png");
+}
+
+treechildren::-moz-tree-row(selected) { background-color: #FFFFAA; }
+treechildren::-moz-tree-row(odd) { background-color: #EEEEEE; }
+treechildren::-moz-tree-row(odd, selected) { background-color: #FFFFAA; }
+treechildren::-moz-tree-cell-text(selected) { color: #000000; }
+treechildren::-moz-tree-cell-text(odd, selected) { color: #000000; }

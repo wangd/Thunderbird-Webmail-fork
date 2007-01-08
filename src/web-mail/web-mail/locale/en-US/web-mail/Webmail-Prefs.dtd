@@ -35,3 +35,9 @@
 <!ENTITY Note.Label "These logs will contain usernames and passwords.">
 <!ENTITY Restart.Label "A restart of Thunderbird is required before changes take effect.">
 <!ENTITY RestartServer.Label "A restart of the server is required before the port change takes effect.">
+
+
+<!ENTITY Domain.Label "Domain">
+<!ENTITY POP.Label "POP">
+<!ENTITY SMTP.Label "SMTP">
+<!ENTITY IMAP.Label "IMAP">

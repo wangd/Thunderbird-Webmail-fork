@@ -19,7 +19,7 @@
     <target name="createxpi" depends="createjar">
         <zip destfile="web-mail-${VERSION}.xpi" >
             <zipfileset dir="." includes="web-mail.jar" prefix="chrome"/>
-            <zipfileset dir="components" prefix="components" includes="**" excludes="*.idl *.bat"/>
+            <zipfileset dir="components" prefix="components" includes="**" excludes="*.idl *.bat *xml"/>
             <zipfileset dir="defaults" prefix="defaults" includes="**"/>
             <zipfileset dir="." includes="install.rdf"/>
             <zipfileset dir="." includes="chrome.manifest"/>

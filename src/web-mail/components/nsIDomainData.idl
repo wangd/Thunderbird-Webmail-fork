@@ -1,0 +1,10 @@
+#include "nsISupports.idl"
+
+[scriptable, uuid(49765fd0-9da9-11db-b606-0800200c9a66)]
+interface nsIDomainData : nsISupports
+{
+    attribute string szDomain;
+    attribute boolean bPOP;
+    attribute boolean bSMTP;
+    attribute boolean bIMAP;
+};

@@ -1,157 +1,136 @@
-var gDomainsPane = 
+var gDomainsPane =
 {
     m_DebugLog : null,
     m_tree  :  null,
     m_mainTreeChildren : null,
     m_strbundle : null,
-    
-   
+
+
     init: function ()
     {
-    
-        this.m_DebugLog = new DebugLog("webmail.logging.comms", 
+
+        this.m_DebugLog = new DebugLog("webmail.logging.comms",
                                        "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
                                        "webmailPrefs");
-                                   
+
         this.m_DebugLog.Write("Webmail-Prefs-Domains : init - START");
-        
-        this.m_strbundle =document.getElementById("stringsWebmailPrefs-Domains");
-               
-        var szPOP=this.m_strbundle.getString("POP");
-        var aszDomains = this.loadWebmailDomains("pop");
-        this.addDomainsListItems(szPOP,aszDomains);
-        
-        var szSMTP=this.m_strbundle.getString("SMTP");
-        aszDomains = this.loadWebmailDomains("smtp");
-        this.addDomainsListItems(szSMTP,aszDomains);
-        
-        var szIMAP=this.m_strbundle.getString("IMAP");
-        aszDomains = this.loadWebmailDomains("imap");
-        this.addDomainsListItems(szIMAP,aszDomains);
-        
+
+        var aszDomains = this.loadWebmailDomains();
+        this.addDomainsListItems(aszDomains);
+
         this.m_DebugLog.Write("Webmail-Prefs-Domains : init - END");
     },
-    
-    
-    
-    loadWebmailDomains : function (szProtocol)
+
+
+
+    loadWebmailDomains : function ()
     {
         try
         {
             this.m_DebugLog.Write("Webmail-Prefs-Domains : LoadWebmailDomains - START");
-           
+
             var DomainManager = Components.classes["@mozilla.org/DomainManager;1"].
                                            getService().
                                            QueryInterface(Components.interfaces.nsIDomainManager);
-            
+
             var aszDomains = {value : null};
-            var iCount = {value : null }; 
-            if (DomainManager.getAllDomainsForProtocol(szProtocol, iCount, aszDomains))
-            {
-                this.m_DebugLog.Write("Webmail-Prefs-Domains : LoadWebmailDomains "
-                                                + szProtocol
-                                                + iCount.value +"\n"
-                                                + aszDomains.value);
-            }
-            
-            this.m_DebugLog.Write("Webmail-Prefs-Domains : LoadWebmailDomains - END"); 
+            var iCount = {value : null };
+            DomainManager.getAllDomains(iCount, aszDomains);
+
+            this.m_DebugLog.Write("Webmail-Prefs-Domains : LoadWebmailDomains - END");
             return aszDomains.value;
         }
         catch(e)
         {
-            this.m_DebugLog.DebugDump("Webmail-Prefs-Domains : Exception in LoadWebmailDomains : " 
-                                                     + e.name 
-                                                     + ".\nError message: " 
-                                                     + e.message);
+            this.m_DebugLog.DebugDump("Webmail-Prefs-Domains : Exception in LoadWebmailDomains : "
+                                                     + e.name
+                                                     + ".\nError message: "
+                                                     + e.message + "\n" +
+                                                     e.lineNumber);
         }
     },
-    
-    
-    addDomainsListItems : function (szProtocol,aszDomains)
+
+
+    addDomainsListItems : function (aszDomains)
     {
         try
         {
             this.m_DebugLog.Write("Webmail-Prefs-Domains : AddListItems - START");
-            
-            if (!this.m_tree) 
-                this.m_tree = document.getElementById("domainTree");
-            if (!this.m_mainTreeChildren) 
-                this.m_mainTreeChildren = document.createElement("treechildren");
-           
-            var newDomainItem = document.createElement("treeitem"); 
-            newDomainItem.setAttribute("container","true");  
-            newDomainItem.setAttribute("open","false");  
-    
-            var newTreeRow = document.createElement("treerow"); 
-            var newTreeCell = document.createElement("treecell"); 
-            newTreeCell.setAttribute("label",szProtocol);
-            
-            if (szProtocol.search(/pop/i)!=-1 )//pop
+
+            if (aszDomains.length > 0)
             {
-                newTreeCell.setAttribute("properties","POPImage");
-            }
-            else if (szProtocol.search(/smtp/i)!=-1)//smtp
-            {
-                newTreeCell.setAttribute("properties","SMTPImage");
-            }
-            else //imap
-            {
-                newTreeCell.setAttribute("properties","IMAPImage");
-            }
-            
-            newTreeRow.appendChild(newTreeCell);
-            newDomainItem.appendChild(newTreeRow);
-            
-            var newTreeChildren = document.createElement("treechildren"); 
-            
-            if (aszDomains.length > 0) 
-            {
-                aszDomains = aszDomains.sort();
+                var tree = document.getElementById("domainTree");
+                var mainTreeChildren = document.createElement("treechildren");
+
+                var strbundle=document.getElementById("stringsWebmailPrefs-Domains");
+                var szYes=strbundle.getString("Yes");
+                var szNo=strbundle.getString("No");
+
                 for(i =0 ; i< aszDomains.length; i++)
                 {
-                    var newTreeCell = document.createElement("treecell"); 
-                    newTreeCell.setAttribute("label",aszDomains[i]); 
-                    newTreeCell.setAttribute("properties","DomainImage");
-                    
+                    var newDomainItem = document.createElement("treeitem");
                     var newTreeRow = document.createElement("treerow");
-                    newTreeRow.appendChild(newTreeCell);
-                   	
-                   	var newTreeItem = document.createElement("treeitem"); 
-                    newTreeItem.appendChild(newTreeRow);
-                    
-                    newTreeChildren.appendChild(newTreeItem);
+
+                    var treecellDomain = document.createElement("treecell");
+                    treecellDomain.setAttribute("label",aszDomains[i].szDomain);
+                    treecellDomain.setAttribute("properties","DomainImage");
+                    newTreeRow.appendChild(treecellDomain);
+
+                    var treecellPOP = document.createElement("treecell");
+                    if (aszDomains[i].bPOP)
+                    {
+                        treecellPOP.setAttribute("properties","check");
+                        treecellPOP.setAttribute("label",szYes);
+                    }
+                    else
+                    {
+                        treecellPOP.setAttribute("properties","cross");
+                        treecellPOP.setAttribute("label",szNo);
+                    }
+                    newTreeRow.appendChild(treecellPOP);
+
+                    var treecellSMTP = document.createElement("treecell");
+                    if (aszDomains[i].bSMTP)
+                    {
+                        treecellSMTP.setAttribute("properties","check");
+                        treecellSMTP.setAttribute("label",szYes);
+                    }
+                    else
+                    {
+                        treecellSMTP.setAttribute("properties","cross");
+                        treecellSMTP.setAttribute("label",szNo);
+                    }
+                    newTreeRow.appendChild(treecellSMTP);
+
+                    var treecellIMAP = document.createElement("treecell");
+                    if (aszDomains[i].bIMAP)
+                    {
+                        treecellIMAP.setAttribute("properties","check");
+                        treecellIMAP.setAttribute("label",szYes);
+                    }
+                    else
+                    {
+                        treecellIMAP.setAttribute("properties","cross");
+                        treecellIMAP.setAttribute("label",szNo);
+                    }
+                    newTreeRow.appendChild(treecellIMAP);
+
+                    newDomainItem.appendChild(newTreeRow);
+                    mainTreeChildren.appendChild(newDomainItem);
                 }
+
+                tree.appendChild(mainTreeChildren);
             }
-            else
-            {
-                this.m_DebugLog.Write("Webmail-Prefs-Domains : AddListItems - Domains = 0");
-                var newTreeCell = document.createElement("treecell"); 
-                
-                var szNoDomain=this.m_strbundle.getString("NoDomain");
-                newTreeCell.setAttribute("label",szNoDomain); 
-                newTreeCell.setAttribute("properties","noDomainImage");
-                
-                var newTreeRow = document.createElement("treerow");
-                newTreeRow.appendChild(newTreeCell);
-               	
-               	var newTreeItem = document.createElement("treeitem"); 
-                newTreeItem.appendChild(newTreeRow);
-                
-                newTreeChildren.appendChild(newTreeItem);
-            }
-            
-            newDomainItem.appendChild(newTreeChildren);
-            this.m_mainTreeChildren.appendChild(newDomainItem);
-            this.m_tree.appendChild(this.m_mainTreeChildren);
-                       
-            this.m_DebugLog.Write("Webmail-Prefs-Domains : AddListItems - END"); 
+
+            this.m_DebugLog.Write("Webmail-Prefs-Domains : AddListItems - END");
         }
         catch(e)
         {
-            this.m_DebugLog.DebugDump("Webmail-Prefs-Domains : Exception in AddListItems : " 
-                                           + e.name + 
-                                           ".\nError message: " 
-                                           + e.message);
+            this.m_DebugLog.DebugDump("Webmail-Prefs-Domains : Exception in AddListItems : "
+                                           + e.name +
+                                           ".\nError message: "
+                                           + e.message+ "\n" +
+                                             e.lineNumber);
         }
-    }, 
+    },
 };
