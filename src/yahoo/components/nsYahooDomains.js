@@ -17,6 +17,7 @@ function nsYahooDomains()
     this.m_iFile = 0;
     this.m_bChange = false;
     this.m_bReady = false;
+    this.m_iCount = 0;
 }
 
 nsYahooDomains.prototype =
@@ -401,7 +402,7 @@ nsYahooDomains.prototype =
                 this.m_Timer = Components.classes["@mozilla.org/timer;1"]
                                         .createInstance(Components.interfaces.nsITimer);
                 this.m_Timer.initWithCallback(this,
-                                              100,
+                                              250,
                                               Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
             }
 
@@ -435,23 +436,27 @@ nsYahooDomains.prototype =
                 this.m_Log.Write("nsYahooDomains.js : TimerCallback -  db not ready");
                 return;
             }
-            timer.cancel();
 
             var aszDomain = this.m_aszStandardDomains.concat(this.m_aszCustomDomains);
-            for (i=0; i < aszDomain.length; i++)
+            if (this.m_iCount<aszDomain.length)
             {
-                if (!this.domainCheck(aszDomain[i], "POP", "@mozilla.org/YahooPOP;1"))
-                    this.domainAdd(aszDomain[i], "POP", "@mozilla.org/YahooPOP;1")
-                if (!this.domainCheck(aszDomain[i], "SMTP", "@mozilla.org/YahooSMTP;1"))
-                    this.domainAdd(aszDomain[i], "SMTP", "@mozilla.org/YahooSMTP;1")
+                if (!this.domainCheck(aszDomain[this.m_iCount], "POP", "@mozilla.org/YahooPOP;1"))
+                    this.domainAdd(aszDomain[this.m_iCount], "POP", "@mozilla.org/YahooPOP;1")
+                if (!this.domainCheck(aszDomain[this.m_iCount], "SMTP", "@mozilla.org/YahooSMTP;1"))
+                    this.domainAdd(aszDomain[this.m_iCount], "SMTP", "@mozilla.org/YahooSMTP;1")
             }
-
-            this.m_bReady = true;
+            else
+            {
+                timer.cancel();
+                this.m_bReady = true;
+            }
+            this.m_iCount++;
 
             this.m_Log.Write("nsYahooDomains.js : TimerCallback - END");
         }
         catch(e)
         {
+            this.m_Timer.cancel();
             this.m_Log.DebugDump("nsYahooDomains.js : TimerCallback - Exception in notify : "
                                         + e.name +
                                         ".\nError message: "

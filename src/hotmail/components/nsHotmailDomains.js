@@ -17,6 +17,7 @@ function nsHotmailDomains()
     this.m_iFile = 0;
     this.m_bChange = false;
     this.m_bReady = false;
+    this.m_iCount = 0;
 }
 
 nsHotmailDomains.prototype =
@@ -400,7 +401,7 @@ nsHotmailDomains.prototype =
                 this.m_Timer = Components.classes["@mozilla.org/timer;1"]
                                         .createInstance(Components.interfaces.nsITimer);
                 this.m_Timer.initWithCallback(this,
-                                              100,
+                                              250,
                                               Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
             }
 
@@ -434,24 +435,29 @@ nsHotmailDomains.prototype =
                 this.m_Log.Write("nsHotmailDomains.js : TimerCallback -  db not ready");
                 return;
             }
-            timer.cancel();
 
             var aszDomain = this.m_aszStandardDomains.concat(this.m_aszCustomDomains);
-            for (i=0; i < aszDomain.length; i++)
+            if (this.m_iCount<aszDomain.length)
             {
-                if (!this.domainCheck(aszDomain[i], "POP", "@mozilla.org/HotmailPOP;1"))
-                    this.domainAdd(aszDomain[i], "POP", "@mozilla.org/HotmailPOP;1")
-                if (!this.domainCheck(aszDomain[i], "SMTP", "@mozilla.org/HotmailSMTP;1"))
-                    this.domainAdd(aszDomain[i], "SMTP", "@mozilla.org/HotmailSMTP;1")
-                if (!this.domainCheck(aszDomain[i], "IMAP", "@mozilla.org/HotmailIMAP;1"))
-                    this.domainAdd(aszDomain[i], "IMAP", "@mozilla.org/HotmailIMAP;1")
+                if (!this.domainCheck(aszDomain[this.m_iCount], "POP", "@mozilla.org/HotmailPOP;1"))
+                    this.domainAdd(aszDomain[this.m_iCount], "POP", "@mozilla.org/HotmailPOP;1")
+                if (!this.domainCheck(aszDomain[this.m_iCount], "SMTP", "@mozilla.org/HotmailSMTP;1"))
+                    this.domainAdd(aszDomain[this.m_iCount], "SMTP", "@mozilla.org/HotmailSMTP;1")
+                if (!this.domainCheck(aszDomain[this.m_iCount], "IMAP", "@mozilla.org/HotmailIMAP;1"))
+                    this.domainAdd(aszDomain[this.m_iCount], "IMAP", "@mozilla.org/HotmailIMAP;1")
             }
+            else
+            {
+                this.m_bReady = true;
+                timer.cancel();
+            }
+            this.m_iCount++;
 
-            this.m_bReady = true;
             this.m_Log.Write("nsHotmailDomains.js : TimerCallback - END");
         }
         catch(e)
         {
+            this.m_Timer.cancel();
             this.m_Log.DebugDump("nsHotmailDomains.js : TimerCallback - Exception in notify : "
                                         + e.name +
                                         ".\nError message: "
