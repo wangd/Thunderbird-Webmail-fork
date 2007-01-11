@@ -1,0 +1,8 @@
+<!ENTITY HotmailAbout.Title "Hotmail - 정보">
+<!ENTITY HotmailAbout.ExtName "Hotmail">
+<!ENTITY HotmailAbout.ExtVersion "버전">
+<!ENTITY HotmailAbout.ExtDescription "Web-Mail 확장 기능의 Hotmail 컴포넌트입니다.">
+<!ENTITY HotmailAbout.ExtCreaterTitle "제작자:">
+<!ENTITY HotmailAbout.ExtHome "홈페이지">
+<!ENTITY HotmailAbout.ExtButton "닫기">
+<!ENTITY HotmailAbout.ExtContributorTitle "공헌자:">

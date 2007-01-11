@@ -1,0 +1,8 @@
+<!ENTITY HotmailFolderAdd.Title "폴더 추가">
+<!ENTITY HotmailFolderName.Label "폴더 이름">
+<!ENTITY HotmailFolderName.AccessKey "F">
+<!ENTITY HotmailFolders.Label "다운로드 폴더 추가">
+<!ENTITY HotmailFolder.ButtonOk.Label "확인">
+<!ENTITY HotmailFolder.ButtonOk.AccessKey "O">
+<!ENTITY HotmailFolder.ButtonCancel.Label "취소">
+<!ENTITY HotmailFolder.ButtonCancel.AccessKey "C">

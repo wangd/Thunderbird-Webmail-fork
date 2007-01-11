@@ -1,0 +1,8 @@
+<!ENTITY HotmailAddDomain.Title "도메인 추가">
+<!ENTITY HotmailAddDomain.Label "Hotmail 도메인 추가">
+<!ENTITY HotmailAddDomainName.Label "도메인">
+<!ENTITY HotmailAddDomainName.AccessKey "D">
+<!ENTITY HotmailAddDomain.ButtonOk.Label "확인">
+<!ENTITY HotmailAddDomain.ButtonOk.AccessKey "O">
+<!ENTITY HotmailAddDomain.ButtonCancel.Label "취소">
+<!ENTITY HotmailAddDomain.ButtonCancel.AccessKey "C">

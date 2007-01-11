@@ -1,0 +1,36 @@
+<!ENTITY HotmailPref.Window.Title "Hotmail 설정">
+<!ENTITY HotmailPref.Panel.Accounts.Title "계정">
+<!ENTITY HotmailPref.Panel.Domains.Title "도메인">
+<!ENTITY HotmailPref.Button.Close.Label "닫기">
+<!ENTITY HotmailPref.Tab.Mode.Title "모드">
+<!ENTITY HotmailPref.Tab.POP.Title "POP">
+<!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
+<!ENTITY HotmailPref.Mode.Label "마이크로소프트 서버에 접속하기 위한 연결 방식을 선택하십시오.">
+<!ENTITY HotmailPref.Mode.ScreenScraper.Label "Hotmail 웹사이트(제품)">
+<!ENTITY HotmailPref.Mode.WebDav.Label "WebDav">
+<!ENTITY HotmailPref.Mode.Beta.Label "Hotmail 웹사이트(베타)">
+<!ENTITY HotmailPref.POP.DownloadUnread.Label "읽지 않은 메일만 다운로드">
+<!ENTITY HotmailPref.POP.DownloadUnread.AccessKey "u">
+<!ENTITY HotmailPref.POP.JunkMail.Label "스팸 메일 다운로드">
+<!ENTITY HotmailPref.POP.JunkMail.AccessKey "J">
+<!ENTITY HotmailPref.POP.Folders.Label "폴더 다운로드">
+<!ENTITY HotmailPref.POP.ButtonAdd.Label "추가...">
+<!ENTITY HotmailPref.POP.ButtonAdd.AccessKey "A">
+<!ENTITY HotmailPref.POP.ButtonRemove.Label "제거">
+<!ENTITY HotmailPref.POP.ButtonRemove.AccessKey "R">
+<!ENTITY HotmailPref.SMTP.SaveSentItems.Label "보낸 항목의 복사본을 저장합니다.">
+<!ENTITY HotmailPref.SMTP.SaveSentItems.AccessKey "s">
+<!ENTITY HotmailPref.SMTP.AlternativeGroup.Label "일반 형식으로 보내기에서 전송될 부분을 선택하십시오.">
+<!ENTITY HotmailPref.SMTP.SendPlain.Label "일반 형식으로 보내기">
+<!ENTITY HotmailPref.SMTP.SendPlain.AccessKey "p">
+<!ENTITY HotmailPref.SMTP.SendHtml.Label "HTML 형식으로 보내기">
+<!ENTITY HotmailPref.SMTP.SendHtml.AccessKey "h">
+<!ENTITY HotmailPref.AccountError.Label "Hotmail 계정을 찾을 수 없습니다.">
+<!ENTITY HotmailPref.SMTP.NA.Label "Hotmail 베타의 SMTP 설정을 찾을 수 없습니다.">
+<!ENTITY HotmailPref.POP.MarkAsRead.Label "서버에서 읽은 상태로 표시">
+<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "k">
+<!ENTITY HotmailPref.Domain.Label "Hotmail 확장 기능에서 지원되는 도메인">
+<!ENTITY HotmailPref.Domain.Button.AddDomain.Label "추가...">
+<!ENTITY HotmailPref.Domain.Button.AddDomain.AccessKey "A">
+<!ENTITY HotmailPref.Domain.Button.RemoveDomain.Label "제거">
+<!ENTITY HotmailPref.Domain.Button.RemoveDomain.AccessKey "R">
