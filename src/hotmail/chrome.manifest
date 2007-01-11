@@ -2,9 +2,9 @@ overlay chrome://messenger/content/messenger.xul    chrome://hotmail/content/Hot
 
 content hotmail    jar:chrome/hotmail.jar!/content/hotmail/
 
-skin	hotmail	   classic/1.0	jar:chrome/hotmail.jar!/skin/classic/hotmail/
+skin    hotmail       classic/1.0    jar:chrome/hotmail.jar!/skin/classic/hotmail/
 
-locale	hotmail    en-US   jar:chrome/hotmail.jar!/locale/en-US/hotmail/
+locale  hotmail    en-US   jar:chrome/hotmail.jar!/locale/en-US/hotmail/
 locale  hotmail    it-IT   jar:chrome/hotmail.jar!/locale/it-IT/hotmail/
 locale  hotmail    es-ES   jar:chrome/hotmail.jar!/locale/es-ES/hotmail/
 locale  hotmail    fr-FR   jar:chrome/hotmail.jar!/locale/fr-FR/hotmail/
@@ -20,3 +20,4 @@ locale  hotmail    br-PT   jar:chrome/hotmail.jar!/locale/br-PT/hotmail/
 locale  hotmail    es-AR   jar:chrome/hotmail.jar!/locale/es-AR/hotmail/
 locale  hotmail    da-DK   jar:chrome/hotmail.jar!/locale/da-DK/hotmail/
 locale  hotmail    lt-LT   jar:chrome/hotmail.jar!/locale/lt-LT/hotmail/
+locale  hotmail    ko-KR   jar:chrome/hotmail.jar!/locale/ko-KR/hotmail/
