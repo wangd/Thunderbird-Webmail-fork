@@ -5,20 +5,20 @@
      <RDF:Description about="urn:mozilla:extension:268d7420-9032-11da-a72b-0800200c9a66}">
         <em:updates>
             <RDF:Seq>
-                <RDF:li resource="urn:mozilla:extension:{268d7420-9032-11da-a72b-0800200c9a66}:1.0.3"/>
+                <RDF:li resource="urn:mozilla:extension:{268d7420-9032-11da-a72b-0800200c9a66}:1.0.4"/>
             </RDF:Seq>
         </em:updates>
     </RDF:Description>
 
-    <RDF:Description about="urn:mozilla:extension:{268d7420-9032-11da-a72b-0800200c9a66}:1.0.3">
-        <em:version>1.0.3</em:version>
+    <RDF:Description about="urn:mozilla:extension:{268d7420-9032-11da-a72b-0800200c9a66}:1.0.4">
+        <em:version>1.0.4</em:version>
         <em:targetApplication>
             <Description>
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id> <!-- Thunderbird updates -->
                 <em:minVersion>1.4</em:minVersion>
                 <em:maxVersion>2.0</em:maxVersion>
-                <em:updateLink>http://download.mozdev.org/webmail/aol-1-0-2.xpi</em:updateLink>
-                <em:updateHash>sha256:9229b710d7b87d383cdbdb515d4f35639921ab70dc97038f7bb3acbee1b01969</em:updateHash>
+                <em:updateLink>http://download.mozdev.org/webmail/aol-1-0-4.xpi</em:updateLink>
+                <em:updateHash>sha256:a6320de7563e044c67f764f24539892fdc588a764bbdcc242189bdf7a2060ef1</em:updateHash>
           </Description>
         </em:targetApplication>
 
