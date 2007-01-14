@@ -1,0 +1,8 @@
+<!ENTITY YahooFolderAdd.Title "Pridať priečinok">
+<!ENTITY YahooFolderName.Label "Názov priečinka">
+<!ENTITY YahooFolderName.AccessKey "N">
+<!ENTITY YahooFolders.Label "Pridať priečinok sťahovania">
+<!ENTITY YahooFolder.ButtonOk.Label "OK">
+<!ENTITY YahooFolder.ButtonOk.AccessKey "O">
+<!ENTITY YahooFolder.ButtonCancel.Label "Zrušiť">
+<!ENTITY YahooFolder.ButtonCancel.AccessKey "Z">

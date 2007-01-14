@@ -1,0 +1,22 @@
+<!ENTITY AOLPref.Window.Title "Možnosti komponentu AOL / Netscape">
+<!ENTITY AOLPref.Panel.Accounts.Title "Účty">
+<!ENTITY AOLPref.Panel.Domains.Title "Domény">
+<!ENTITY AOLPref.Button.Close.Label "Zavrieť">
+<!ENTITY AOLPref.Tab.POP.Title "POP">
+<!ENTITY AOLPref.POP.DownloadUnread.Label "Sťahovať len neprečítané e-maily">
+<!ENTITY AOLPref.POP.DownloadUnread.AccessKey "n">
+<!ENTITY AOLPref.POP.JunkMail.Label "Sťahovať nevyžiadanú poštu">
+<!ENTITY AOLPref.POP.JunkMail.AccessKey "e">
+<!ENTITY AOLPref.POP.Folders.Label "Sťahovať priečinky">
+<!ENTITY AOLPref.POP.ButtonAdd.Label "Pridať...">
+<!ENTITY AOLPref.POP.ButtonAdd.AccessKey "P">
+<!ENTITY AOLPref.POP.ButtonRemove.Label "Odstrániť">
+<!ENTITY AOLPref.POP.ButtonRemove.AccessKey "d">
+<!ENTITY AOLPref.AccountError.Label "Neboli nájdené žiadne účty AOL">
+<!ENTITY AOLPref.POP.MarkAsRead.Label "Označiť e-maily na serveri ako prečítané">
+<!ENTITY AOLPref.POP.MarkAsRead.AccessKey "z">
+<!ENTITY AOLPref.Domain.Label "Domény podporované rozšírením AOL">
+<!ENTITY AOLPref.Domain.Button.AddDomain.Label "Pridať...">
+<!ENTITY AOLPref.Domain.Button.AddDomain.AccessKey "P">
+<!ENTITY AOLPref.Domain.Button.RemoveDomain.Label "Odstrániť">
+<!ENTITY AOLPref.Domain.Button.RemoveDomain.AccessKey "O">

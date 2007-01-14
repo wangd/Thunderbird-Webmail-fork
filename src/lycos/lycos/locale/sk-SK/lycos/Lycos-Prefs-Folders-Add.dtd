@@ -1,0 +1,8 @@
+<!ENTITY LycosFolderAdd.Title "Pridať priečinok">
+<!ENTITY LycosFolderName.Label "Názov priečinka">
+<!ENTITY LycosFolderName.AccessKey "N">
+<!ENTITY LycosFolders.Label "Pridať priečinok sťahovania">
+<!ENTITY LycosFolderName.ButtonOk.Label "OK">
+<!ENTITY LycosFolderName.ButtonOk.AccessKey "O">
+<!ENTITY LycosFolderName.ButtonCancel.Label "Zrušiť">
+<!ENTITY LycosFolderName.ButtonCancel.AccessKey "Z">

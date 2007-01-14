@@ -1,0 +1,22 @@
+<!ENTITY LycosPref.Window.Title "Možnosti komponentu Lycos">
+<!ENTITY LycosPref.Panel.Accounts.Title "Účty">
+<!ENTITY LycosPref.Panel.Domains.Title "Domény">
+<!ENTITY LycosPref.Button.Close.Label "Zavrieť">
+<!ENTITY LycosPref.Tab.POP.Title "POP">
+<!ENTITY LycosPref.Tab.SMTP.Title "SMTP">
+<!ENTITY LycosPref.POP.DownloadUnread.Label "Sťahovať len neprečítané e-maily">
+<!ENTITY LycosPref.POP.DownloadUnread.AccessKey "n">
+<!ENTITY LycosPref.POP.EmptyTrash.Label "Vyprázdniť kôš">
+<!ENTITY LycosPref.POP.EmptyTrash.AccessKey "r">
+<!ENTITY LycosPref.POP.JunkMail.Label "Sťahovať nevyžiadanú poštu">
+<!ENTITY LycosPref.POP.JunkMail.AccessKey "e">
+<!ENTITY LycosPref.POP.Folders.Label "Sťahovať priečinky">
+<!ENTITY LycosPref.POP.ButtonAdd.Label "Pridať...">
+<!ENTITY LycosPref.POP.ButtonAdd.AccessKey "P">
+<!ENTITY LycosPref.POP.ButtonRemove.Label "Odstrániť">
+<!ENTITY LycosPref.POP.ButtonRemove.AccessKey "d">
+<!ENTITY LycosPref.SMTP.SaveSentItems.Label "Ukladať kópie v odoslaných položkách">
+<!ENTITY LycosPref.SMTP.SaveSentItems.AccessKey "U">
+<!ENTITY LycosPref.AccountError.Label "Neboli nájdené žiadne účty Lycos">
+<!ENTITY LycosPref.POP.MarkAsRead.Label "Označiť e-maily na serveri ako prečítané">
+<!ENTITY LycosPref.POP.MarkAsRead.AccessKey "z">

@@ -1,0 +1,34 @@
+<!ENTITY YahooPref.Window.Title "Možnosti komponentu Yahoo">
+<!ENTITY YahooPref.Panel.Accounts.Title "Účty">
+<!ENTITY YahooPref.Panel.Domains.Title "Domény">
+<!ENTITY YahooPref.Panel.Globals.Title "Všeobecné">
+<!ENTITY YahooPref.Button.Close.Label "Zavrieť">
+<!ENTITY YahooPref.Tab.Mode.Title "Režim">
+<!ENTITY YahooPref.Tab.POP.Title "POP">
+<!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
+<!ENTITY YahooPref.Mode.Label "Vyberte webovú stránku, ktorú má rozšírenie používať">
+<!ENTITY YahooPref.Mode.ScreenScraper.Label "Webová stránka služby">
+<!ENTITY YahooPref.Mode.Beta.Label "Webová stránka (BETA verzia)">
+<!ENTITY YahooPref.POP.DownloadUnread.Label "Sťahovať len neprečítané e-maily">
+<!ENTITY YahooPref.POP.DownloadUnread.AccessKey "n">
+<!ENTITY YahooPref.POP.JunkMail.Label "Sťahovať nevyžiadanú poštu">
+<!ENTITY YahooPref.POP.JunkMail.AccessKey "e">
+<!ENTITY YahooPref.POP.Folders.Label "Sťahovať priečinky">
+<!ENTITY YahooPref.POP.ButtonAdd.Label "Pridať...">
+<!ENTITY YahooPref.POP.ButtonAdd.AccessKey "P">
+<!ENTITY YahooPref.POP.ButtonRemove.Label "Odstrániť">
+<!ENTITY YahooPref.POP.ButtonRemove.AccessKey "d">
+<!ENTITY YahooPref.SMTP.SaveSentItems.Label "Ukladať kópie v odoslaných položkách">
+<!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "U">
+<!ENTITY YahooPref.AccountError.Label "Neboli nájdené žiadne účty Yahoo">
+<!ENTITY YahooPref.SMTP.NA.Label "Pre Yahoo BETA nie sú dostupné žiadne možnosti pre SMTP">
+<!ENTITY YahooPref.Domain.Label "Domény podporované rozšírením Yahoo">
+<!ENTITY YahooPref.Domain.Button.AddDomain.Label "Pridať...">
+<!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "P">
+<!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Odstrániť">
+<!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "s">
+<!ENTITY YahooPref.Globals.ShortID.Label "Použiť Krátke ID">
+<!ENTITY YahooPref.Globals.ShortID.AccessKey "I">
+<!ENTITY YahooPref.Globals.ReUseSession.Label "Znovu použiť http dáta relácie">
+<!ENTITY YahooPref.Globals.ReUseSession.AccessKey "t">
+<!ENTITY YahooPref.GlobalsInfo.Label "Zmena možnosti Krátke ID spôsobí stiahnutie celého obsahu schránky.">

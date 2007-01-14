@@ -11,9 +11,10 @@ locale    aol    fr-FR   jar:chrome/aol.jar!/locale/fr-FR/aol/
 locale    aol    it-IT   jar:chrome/aol.jar!/locale/it-IT/aol/
 locale    aol    pt-Br   jar:chrome/aol.jar!/locale/pt-BR/aol/
 locale    aol    sl-SI   jar:chrome/aol.jar!/locale/sl-SI/aol/
-locale  aol    nl-NL   jar:chrome/aol.jar!/locale/nl-NL/aol/
-locale  aol    lt-LT   jar:chrome/aol.jar!/locale/lt-LT/aol/
-locale  aol    nb-NO   jar:chrome/aol.jar!/locale/nb-NO/aol/
-locale  aol    de-DE   jar:chrome/aol.jar!/locale/de-DE/aol/
-locale  aol    zh-CN   jar:chrome/aol.jar!/locale/zh-CN/aol/
-locale  aol    tr-TR   jar:chrome/aol.jar!/locale/tr-TR/aol/
+locale    aol    nl-NL   jar:chrome/aol.jar!/locale/nl-NL/aol/
+locale    aol    lt-LT   jar:chrome/aol.jar!/locale/lt-LT/aol/
+locale    aol    nb-NO   jar:chrome/aol.jar!/locale/nb-NO/aol/
+locale    aol    de-DE   jar:chrome/aol.jar!/locale/de-DE/aol/
+locale    aol    zh-CN   jar:chrome/aol.jar!/locale/zh-CN/aol/
+locale    aol    tr-TR   jar:chrome/aol.jar!/locale/tr-TR/aol/
+locale    aol    sk-SK   jar:chrome/aol.jar!/locale/sk-SK/aol/

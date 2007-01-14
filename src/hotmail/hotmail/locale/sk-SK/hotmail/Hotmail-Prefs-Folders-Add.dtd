@@ -1,0 +1,8 @@
+<!ENTITY HotmailFolderAdd.Title "Pridať priečinok">
+<!ENTITY HotmailFolderName.Label "Názov priečinka">
+<!ENTITY HotmailFolderName.AccessKey "N">
+<!ENTITY HotmailFolders.Label "Pridať priečinok sťahovania">
+<!ENTITY HotmailFolder.ButtonOk.Label "OK">
+<!ENTITY HotmailFolder.ButtonOk.AccessKey "O">
+<!ENTITY HotmailFolder.ButtonCancel.Label "Zrušiť">
+<!ENTITY HotmailFolder.ButtonCancel.AccessKey "Z">

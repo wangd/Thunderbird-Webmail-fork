@@ -1,0 +1,8 @@
+<!ENTITY MailDotComFolderAdd.Title "Pridať priečinok">
+<!ENTITY MailDotComFolderName.Label "Názov priečinka">
+<!ENTITY MailDotComFolderName.AccessKey "N">
+<!ENTITY MailDotComFolders.Label "Pridať priečinok sťahovania">
+<!ENTITY MailDotComFolder.ButtonOk.Label "OK">
+<!ENTITY MailDotComFolder.ButtonOk.AccessKey "O">
+<!ENTITY MailDotComFolder.ButtonCancel.Label "Zrušiť">
+<!ENTITY MailDotComFolder.ButtonCancel.AccessKey "Z">

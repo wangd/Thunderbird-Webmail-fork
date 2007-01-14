@@ -1,0 +1,8 @@
+<!ENTITY AOLFolderAdd.Title "Pridať priečinok">
+<!ENTITY AOLFolderName.Label "Názov priečinka">
+<!ENTITY AOLFolderName.AccessKey "N">
+<!ENTITY AOLFolders.Label "Pridať priečinok sťahovania">
+<!ENTITY AOLFolderName.ButtonOk.Label "OK">
+<!ENTITY AOLFolderName.ButtonOk.AccessKey "O">
+<!ENTITY AOLFolderName.ButtonCancel.Label "Zrušiť">
+<!ENTITY AOLFolderName.ButtonCancel.AccessKey "Z">

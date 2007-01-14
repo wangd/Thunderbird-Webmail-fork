@@ -2,9 +2,9 @@ overlay chrome://messenger/content/messenger.xul    chrome://lycos/content/Lycos
 
 content lycos    jar:chrome/lycos.jar!/content/lycos/
 
-skin	lycos	 classic/1.0     jar:chrome/lycos.jar!/skin/classic/lycos/
+skin    lycos     classic/1.0     jar:chrome/lycos.jar!/skin/classic/lycos/
 
-locale	lycos    en-US   jar:chrome/lycos.jar!/locale/en-US/lycos/
+locale    lycos    en-US   jar:chrome/lycos.jar!/locale/en-US/lycos/
 locale  lycos    it-IT   jar:chrome/lycos.jar!/locale/it-IT/lycos/
 locale  lycos    es-ES   jar:chrome/lycos.jar!/locale/es-ES/lycos/
 locale  lycos    fr-FR   jar:chrome/lycos.jar!/locale/fr-FR/lycos/
@@ -18,3 +18,4 @@ locale  lycos    pt-BR   jar:chrome/lycos.jar!/locale/pt-BR/lycos/
 locale  lycos    sl-SI   jar:chrome/lycos.jar!/locale/sl-SI/lycos/
 locale  lycos    lt-LT   jar:chrome/lycos.jar!/locale/lt-LT/lycos/
 locale  lycos    zh-CN   jar:chrome/lycos.jar!/locale/zh-CN/lycos/
+locale  lycos    sk-SK   jar:chrome/lycos.jar!/locale/sk-SK/lycos/

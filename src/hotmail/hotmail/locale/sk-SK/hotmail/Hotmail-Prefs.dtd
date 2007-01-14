@@ -1,0 +1,36 @@
+<!ENTITY HotmailPref.Window.Title "Možnosti komponentu Hotmail">
+<!ENTITY HotmailPref.Panel.Accounts.Title "Účty">
+<!ENTITY HotmailPref.Panel.Domains.Title "Domény">
+<!ENTITY HotmailPref.Button.Close.Label "Zavrieť">
+<!ENTITY HotmailPref.Tab.Mode.Title "Režim">
+<!ENTITY HotmailPref.Tab.POP.Title "POP">
+<!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
+<!ENTITY HotmailPref.Mode.Label "Vyberte metódu, pomocou ktorej sa bude rozšírenie pripájať k serverom Microsoft">
+<!ENTITY HotmailPref.Mode.ScreenScraper.Label "Webstránka WebMail-u (produkt)">
+<!ENTITY HotmailPref.Mode.WebDav.Label "WebDav">
+<!ENTITY HotmailPref.Mode.Beta.Label "Webstránka WebMail-u (BETA)">
+<!ENTITY HotmailPref.POP.DownloadUnread.Label "Sťahovať len neprečítané e-maily">
+<!ENTITY HotmailPref.POP.DownloadUnread.AccessKey "n">
+<!ENTITY HotmailPref.POP.JunkMail.Label "Sťahovať nevyžiadanú poštu">
+<!ENTITY HotmailPref.POP.JunkMail.AccessKey "e">
+<!ENTITY HotmailPref.POP.Folders.Label "Sťahovať priečinky">
+<!ENTITY HotmailPref.POP.ButtonAdd.Label "Pridať...">
+<!ENTITY HotmailPref.POP.ButtonAdd.AccessKey "P">
+<!ENTITY HotmailPref.POP.ButtonRemove.Label "Odstrániť">
+<!ENTITY HotmailPref.POP.ButtonRemove.AccessKey "d">
+<!ENTITY HotmailPref.SMTP.SaveSentItems.Label "Ukladať kópie v odoslaných položkách">
+<!ENTITY HotmailPref.SMTP.SaveSentItems.AccessKey "U">
+<!ENTITY HotmailPref.SMTP.AlternativeGroup.Label "Aký typ formátovania textov má rozšírenie použiť pri odosielaní e-mailov?">
+<!ENTITY HotmailPref.SMTP.SendPlain.Label "Odoslať ako čistý text">
+<!ENTITY HotmailPref.SMTP.SendPlain.AccessKey "t">
+<!ENTITY HotmailPref.SMTP.SendHtml.Label "Odoslať vo formáte HTML">
+<!ENTITY HotmailPref.SMTP.SendHtml.AccessKey "H">
+<!ENTITY HotmailPref.AccountError.Label "Neboli nájdené žiadne účty Hotmail">
+<!ENTITY HotmailPref.SMTP.NA.Label "Pre Hotmail BETA nie sú dostupné žiadne možnosti SMTP">
+<!ENTITY HotmailPref.POP.MarkAsRead.Label "Označiť e-maily na serveri ako prečítané">
+<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "z">
+<!ENTITY HotmailPref.Domain.Label "Domény podporované rozšírením Hotmail">
+<!ENTITY HotmailPref.Domain.Button.AddDomain.Label "Pridať...">
+<!ENTITY HotmailPref.Domain.Button.AddDomain.AccessKey "P">
+<!ENTITY HotmailPref.Domain.Button.RemoveDomain.Label "Odstrániť">
+<!ENTITY HotmailPref.Domain.Button.RemoveDomain.AccessKey "s">

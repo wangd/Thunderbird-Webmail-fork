@@ -2,9 +2,9 @@ overlay chrome://messenger/content/messenger.xul    chrome://maildotcom/content/
 
 content maildotcom    jar:chrome/maildotcom.jar!/content/maildotcom/
 
-skin	maildotcom	 classic/1.0     jar:chrome/maildotcom.jar!/skin/classic/maildotcom/
+skin    maildotcom     classic/1.0     jar:chrome/maildotcom.jar!/skin/classic/maildotcom/
 
-locale	maildotcom    en-US   jar:chrome/maildotcom.jar!/locale/en-US/maildotcom/
+locale    maildotcom    en-US   jar:chrome/maildotcom.jar!/locale/en-US/maildotcom/
 locale  maildotcom    it-IT   jar:chrome/maildotcom.jar!/locale/it-IT/maildotcom/
 locale  maildotcom    es-ES   jar:chrome/maildotcom.jar!/locale/es-ES/maildotcom/
 locale  maildotcom    de-DE   jar:chrome/maildotcom.jar!/locale/de-DE/maildotcom/
@@ -16,3 +16,4 @@ locale  maildotcom    fi-FI   jar:chrome/maildotcom.jar!/locale/fi-FI/maildotcom
 locale  maildotcom    tr-TR   jar:chrome/maildotcom.jar!/locale/tr-TR/maildotcom/
 locale  maildotcom    pt-BR   jar:chrome/maildotcom.jar!/locale/pt-BR/maildotcom/
 locale  maildotcom    sl-SI   jar:chrome/maildotcom.jar!/locale/sl-SI/maildotcom/
+locale  maildotcom    sk-SK   jar:chrome/maildotcom.jar!/locale/sk-SK/maildotcom/

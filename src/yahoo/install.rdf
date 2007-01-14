@@ -28,7 +28,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
         <em:contributor>George C. Tsoi (zh-CN)|7</em:contributor>
         <em:contributor>Fishbone (zh-CN)|7</em:contributor>
         <em:contributor>Akilles (fi-FI)|14</em:contributor>
-        <em:contributor>Martin Srebotnjak, Lugos.si (sl-SI)|17</em:contributor>
+        <em:contributor>Martin Srebotnjak, Lugos.si (sl-SI)|16</em:contributor>
         <em:contributor>Batuhan &#199;etin (tr-TR)|15</em:contributor>
         <em:contributor>Jameka (sv-SE)|10</em:contributor>
         <em:contributor>Rodrigo Bergmann Laurindo (pt-BR)|18</em:contributor>
@@ -37,6 +37,8 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
         <em:contributor>Ivers (nb-NO)|23</em:contributor>
         <em:contributor>lloco (pt-PT)|16</em:contributor>
         <em:contributor>Garas (lt-LT)|22</em:contributor>
+        <em:contributor>Branislav Rozbora (sk-SK)|17</em:contributor>
+
 
         <em:targetApplication>
             <Description>

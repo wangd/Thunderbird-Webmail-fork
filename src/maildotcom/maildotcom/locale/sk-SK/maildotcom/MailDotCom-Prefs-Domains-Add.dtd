@@ -1,0 +1,8 @@
+<!ENTITY MailDotComAddDomain.Title "Pridať doménu">
+<!ENTITY MailDotComAddDomainName.Label "Doména">
+<!ENTITY MailDotComAddDomainName.AccessKey "D">
+<!ENTITY MailDotComAddDomain.Label "Pridať doménu MailDotCom">
+<!ENTITY MailDotComAddDomain.ButtonOk.Label "OK">
+<!ENTITY MailDotComAddDomain.ButtonOk.AccessKey "O">
+<!ENTITY MailDotComAddDomain.ButtonCancel.Label "Zrušiť">
+<!ENTITY MailDotComAddDomain.ButtonCancel.AccessKey "Z">
