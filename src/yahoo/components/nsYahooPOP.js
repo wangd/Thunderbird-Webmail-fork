@@ -324,7 +324,7 @@ nsYahoo.prototype =
             //get spam
             oPref.Value = null;
             if (WebMailPrefAccess.Get("bool","yahoo.Account."+szUserName+".bUseJunkMail",oPref))
-               oData.aszFolder.push("%40B%40Bulk");
+               if (oPref.value) oData.aszFolder.push("%40B%40Bulk");
             this.m_Log.Write("nsYahoo.js - loadPrefs - bUseJunkMail " + oPref.Value);
 
 
