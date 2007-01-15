@@ -20,7 +20,7 @@
                 <em:minVersion>1.4</em:minVersion>
                 <em:maxVersion>2.0</em:maxVersion>
                 <em:updateLink>http://download.mozdev.org/webmail/yahoo-1-1-9.xpi</em:updateLink>
-                <em:updateHash>sha256:c670b1d6ff778a7e1aec32c4999a2c3ad288749f94cdf42ffe51403563d98b81</em:updateHash>
+                <em:updateHash>sha256:3f3f94e56e8027db2ebfe9de95084eae46a8975daf164bef13642e4fb2d85ada</em:updateHash>
           </Description>
         </em:targetApplication>
 
