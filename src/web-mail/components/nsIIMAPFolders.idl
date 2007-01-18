@@ -2,62 +2,57 @@
 
 [scriptable, uuid(d79c86a0-f65a-11da-974d-0800200c9a66)]
 interface nsIIMAPFolders : nsISupports
-{  
+{
+    boolean createUser (in string szUser);
+
     boolean listSubscribed(in string szUser,
                           out PRUint32 iCount,
                           [array, size_is(iCount)] out string aszFolders);
-    
-    
+
+
     boolean subscribeFolder (in string szUser, in string szFolder);
-    
-    
+
+
     boolean unsubscribeFolder(in string szUser, in string szFolder);
-    
-    
-    boolean addFolder(in string szUser, 
-                      in string szHiererchy, 
-                      in string szHref,
-                      in string szUID,
-                      in long iMSGCount,
-                      in long iUnreadCount);
-    
-    
+
+
+    boolean addFolder(in string szUser,
+                      in string szHiererchy,
+                      in string szHref);
+
+
     boolean deleteFolder(in string szUser,
                          in string szHierarchy);
-    
-                         
-    boolean renameFolder(in string szUser, 
+
+
+    boolean renameFolder(in string szUser,
                          in string szOldHierarchy,
                          in string szNewHierarchy,
                          in string szNewHref);
-    
-    
-    long getFolderCount(in string szUser);
-    
-    
+
+
     boolean getHierarchies(in string szUser,
                            in string szHierarchy,
                            out PRUint32 iCount,
                            [array, size_is(iCount)] out string aszFolders);
-    
-                           
+
+
     boolean getFolderDetails(in string szUser,
                              in string szHierarchy,
                              out string szHref,
                              out string szUID,
                              out long iMSGCount,
                              out long iUnreadCount);
-    
-    
-    boolean cleanAllMSG( in string szUser, in string szHierarchy);
-    
-    
-    boolean getMSGUIDS( in string szUser, 
-                        in string szHierarchy,
-                        out PRUint32 iCount,
-                        [array, size_is(iCount)] out string aszUIDs);
-    
-                             
+
+
+    boolean getRangeMSGIDs( in string szUser,
+                            in string szHierarchy,
+                            in long iFistID,
+                            in long iLastID,
+                            out PRUint32 iCount,
+                            [array, size_is(iCount)] out long aiIDs);
+
+
     boolean addMSG(in string szUser,
                    in string szHierarchy,
                    in string szHref,
@@ -68,33 +63,55 @@ interface nsIIMAPFolders : nsISupports
                    in string szSubject,
                    in string szDate,
                    in long iSize);
-        
-                   
-    boolean getMSG(in string szUser,
-                   in string szHierarchy,
-                   in string szUID,
-                   out long iIndex,
-                   out string szHref,
-                   out boolean bRead,
-                   out boolean bDelete,
-                   out string szTo,
-                   out string szFrom,
-                   out string szSubject,
-                   out string szDate,
-                   out long iSize);
-           
-                   
+
+
+    boolean copyMSG(in string szUser,
+                    in string szUID,
+                    in string szOldHierarchy,
+                    in string szNewHierarchy);
+
+
+    boolean getMSGHeaders(in string szUser,
+                          in string szHierarchy,
+                          in string szUID,
+                          out string szHref,
+                          out boolean bRead,
+                          out boolean bDelete,
+                          out string szTo,
+                          out string szFrom,
+                          out string szSubject,
+                          out string szDate,
+                          out long iSize,
+                          out long iSeqNum);
+
+
+    boolean getMSGHref(in string szUser,
+                       in string szHierarchy,
+                       in string szUID,
+                       out string szHref);
+
+
+    boolean getMSGStatus(in string szUser,
+                       in string szHierarchy,
+                       in string szUID,
+                       out string szHref,
+                       out boolean bRead,
+                       out boolean bDelete,
+                       out long iSeqNum);
+
+
     boolean setMSGSeenFlag(in string szUser,
                            in string szHierarchy,
                            in string szUID,
                            in boolean bSeen);
-    
+
+
     boolean setMSGDeleteFlag(in string szUser,
                              in string szHierarchy,
                              in string szUID,
                              in boolean bDelete);
-                             
+
+
     boolean deleteMSG(in string szUser,
-                       in string szHierarchy,
-                       out PRUint32 iIndex);
+                      in string szHierarchy);
 };

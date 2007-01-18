@@ -1,402 +1,630 @@
-/*****************************  Globals   *************************************/                 
+/*****************************  Globals   *************************************/
 const nsIMAPFoldersClassID = Components.ID("{9433ab20-f658-11da-974d-0800200c9a66}");
 const nsIMAPFoldersContactID = "@mozilla.org/nsIMAPFolders;1";
 
 
 /***********************  UriManager ********************************/
 function nsIMAPFolders()
-{   
-    this.m_scriptLoader = null; 
-    this.m_Log = null; 
-    this.m_aUsers = new Array();
-    this.m_bSubUpdate = false;
+{
+    this.m_scriptLoader = null;
+    this.m_Log = null;
+    this.m_dbService = null;
+    this.m_dbConn = null;
+    this.m_dbConnDummy = null;
+    this.m_iCurrentDBVersion = 1;
+    this.m_bIsReady = false;
+    this.m_iSession = 0;
 }
+
 
 nsIMAPFolders.prototype =
 {
-    listSubscribed : function (szUser, iCount, aszFolders)
+    loadDataBase : function()
+    {
+        try
+        {
+            this.m_Log.Write("nsIMAPFolders.js - loadDataBase - START");
+
+            try
+            {
+                this.m_dbService = Components.classes["@mozilla.org/storage/service;1"]
+                                             .getService(Components.interfaces.mozIStorageService);
+            }
+            catch(err)
+            {
+                this.m_Log.Write("nsIMAPFolders.js : startUp - SQL components NOT installed");
+                throw new Error("no database");
+            }
+
+            //get location of DB
+            var fileDB = Components.classes["@mozilla.org/file/directory_service;1"];
+            fileDB = fileDB.createInstance(Components.interfaces.nsIProperties);
+            fileDB = fileDB.get("ProfD", Components.interfaces.nsILocalFile);
+            fileDB.append("WebmailData");         //add folder
+            if (!fileDB.exists())    //check folder exist
+                fileDB.create(Components.interfaces.nsIFile.DIRECTORY_TYPE, 0664);
+            fileDB.append("imapdata.db3");         //sqlite database
+            fileDB.QueryInterface(Components.interfaces.nsIFile)
+            this.m_Log.Write("nsIMAPFolders.js - loadDB - fileDB "+ fileDB.path);
+
+            //load DB
+            this.m_dbConn = this.m_dbService.openDatabase(fileDB);
+            if (!this.m_dbConn) return false;
+
+            var iVersion = this.getDBVersion();
+            if (iVersion == -1)
+                this.createDB();
+            else if (iVersion != this.m_iCurrentDBVersion)
+                this.updateDB(iVersion);
+
+            this.m_dbConn.executeSimpleSQL("PRAGMA page_size=1024");
+
+            this.m_dbConnDummy = this.m_dbService.openDatabase(fileDB);
+            this.openDummy();
+
+            this.m_dbConn.executeSimpleSQL("PRAGMA cache_size=20");
+
+            this.m_dbConn.preload();
+
+            this.m_iSession = this.getSession();
+
+            this.m_bIsReady = true;
+
+            this.m_Log.Write("nsIMAPFolders.js - loadDataBase - END");
+            return true;
+        }
+        catch(err)
+        {
+            this.m_Log.DebugDump("nsIMAPFolders.js: loadDataBase : Exception : "
+                                          + err.name
+                                          + ".\nError message: "
+                                          + err.message + "\n"
+                                          + err.lineNumber);
+
+            return false;
+        }
+    },
+
+
+
+
+    getDBVersion : function ()
+    {
+        try
+        {
+            this.m_Log.Write("nsIMAPFolders.js - getDBVersion - START");
+
+            var iVersion = -1;
+
+            try
+            {
+                var szVersion = "SELECT version FROM imap_schema_version LIMIT 1";
+                var statement = this.m_dbConn.createStatement(szVersion);
+                var wStatement = Components.classes["@mozilla.org/storage/statement-wrapper;1"]
+                                           .createInstance(Components.interfaces.mozIStorageStatementWrapper);
+                try
+                {
+                    wStatement.initialize(statement);
+                    if (wStatement.step()) iVersion = wStatement.row["version"];
+                }
+                finally
+                {
+                    wStatement.reset();
+                    this.m_Log.Write("nsIMAPFolders : getDBversion - DB Reset");
+                }
+            }
+            catch (e)
+            {
+                iVersion = -1;
+            }
+
+            this.m_Log.Write("nsIMAPFolders.js - getDBVersion - "+ iVersion);
+            this.m_Log.Write("nsIMAPFolders.js - getDBVersion - END");
+            return iVersion;
+        }
+        catch(err)
+        {
+            this.m_Log.DebugDump("nsIMAPFolders.js: getDBVersion : Exception : "
+                                          + err.name
+                                          + "\nError message: "
+                                          + err.message +"\n"
+                                          + err.lineNumber+ "\n"
+                                          + this.m_dbConn.lastErrorString);
+            return -1;
+        }
+    },
+
+
+
+
+    createDB : function ()
+    {
+        try
+        {
+            this.m_Log.Write("nsIMAPFolders.js - createDB - START");
+            var szSQL;
+
+            //dummy table
+            szSQL = "CREATE TABLE dummy_table (id INTEGER PRIMARY KEY);";
+            this.m_Log.Write("nsIMAPFolders.js - createDB - szSQL " + szSQL);
+            this.m_dbConn.executeSimpleSQL(szSQL);
+            szSQL = "INSERT OR IGNORE INTO dummy_table VALUES (1)";
+            this.m_dbConn.executeSimpleSQL(szSQL);
+
+
+            //Version table
+            szSQL = "CREATE TABLE imap_schema_version (version INTEGER);";
+            this.m_dbConn.executeSimpleSQL(szSQL);
+            szSQL = "INSERT INTO imap_schema_version VALUES(1);";
+            this.m_dbConn.executeSimpleSQL(szSQL);
+
+
+            //session table
+            szSQL = "CREATE TABLE session ";
+            szSQL +="(";
+            szSQL +=    "id INTEGER PRIMARY KEY, ";
+            szSQL +=    "session INTEGER ";
+            szSQL +=");";
+            this.m_dbConn.executeSimpleSQL(szSQL);
+            this.m_Log.Write("nsIMAPFolders.js - createDB - szSQL " + szSQL);
+            szSQL = "INSERT INTO session (id ,session) VALUES (1, 1)";
+            this.m_dbConn.executeSimpleSQL(szSQL);
+
+
+            //account table
+            szSQL = "CREATE TABLE imap_accounts ";
+            szSQL +="(";
+            szSQL +=    "id INTEGER PRIMARY KEY AUTOINCREMENT, ";
+            szSQL +=    "account_name TEXT ";
+            szSQL +=");";
+            this.m_dbConn.executeSimpleSQL(szSQL);
+            this.m_Log.Write("nsIMAPFolders.js - createDB - szSQL " + szSQL);
+
+
+            //subscribed folder list
+            szSQL = "CREATE TABLE subscribed_folders ";
+            szSQL +="(";
+            szSQL +=    "id INTEGER PRIMARY KEY AUTOINCREMENT, ";
+            szSQL +=    "account_id INTEGER, ";
+            szSQL +=    "folder_hierarchy TEXT ";
+            szSQL +=");";
+            this.m_dbConn.executeSimpleSQL(szSQL);
+            this.m_Log.Write("nsIMAPFolders.js - createDB - szSQL " + szSQL);
+
+
+            //folder table
+            szSQL = "CREATE TABLE folders ";
+            szSQL +="(";
+            szSQL +=    "id INTEGER PRIMARY KEY AUTOINCREMENT, ";
+            szSQL +=    "account_id INTEGER, ";
+            szSQL +=    "folder_hierarchy TEXT, ";
+            szSQL +=    "folder_url TEXT, ";
+            szSQL +=    "session INTEGER ";
+            szSQL +=");";
+            this.m_dbConn.executeSimpleSQL(szSQL);
+            this.m_Log.Write("nsIMAPFolders.js - createDB - szSQL " + szSQL);
+
+
+
+            //message table
+            szSQL = "CREATE TABLE messages ";
+            szSQL +="(";
+            szSQL +=    "id INTEGER PRIMARY KEY AUTOINCREMENT, ";
+            szSQL +=    "account_id INTEGER, ";
+            szSQL +=    "folder_id INTEGER,"
+            szSQL +=    "href TEXT,";
+            szSQL +=    "uid TEXT,";
+            szSQL +=    "recipient TEXT,";
+            szSQL +=    "sender TEXT,";
+            szSQL +=    "subject TEXT,";
+            szSQL +=    "date TEXT,";
+            szSQL +=    "size TEXT,";
+            szSQL +=    "read BOOLEAN,";
+            szSQL +=    "deleted BOOLEAN,";
+            szSQL +=    "session INTEGER";
+            szSQL +=");";
+            this.m_dbConn.executeSimpleSQL(szSQL);
+            this.m_Log.Write("nsIMAPFolders.js - createDB - szSQL " + szSQL);
+
+
+            this.m_Log.Write("nsIMAPFolders.js - createDB - END");
+
+        }
+        catch(err)
+        {
+            this.m_Log.DebugDump("nsDataBaseManager.js: createDB : Exception : "
+                                          + err.name +
+                                          "\nError message: "
+                                          + err.message +"\n"
+                                          + "DB Error " + "\n"
+                                          + err.lineNumber+ "\n"
+                                          + this.m_dbConn.lastErrorString);
+            return false;
+        }
+    },
+
+
+
+
+    getSession : function ()
+    {
+        try
+        {
+            this.m_Log.Write("nsIMAPFolders.js - getSession - START");
+
+            var iSession = 0;
+
+            var szSQL = "SELECT session FROM session"
+            var statement = this.m_dbConn.createStatement(szSQL);
+            var wStatement = Components.classes["@mozilla.org/storage/statement-wrapper;1"]
+                                       .createInstance(Components.interfaces.mozIStorageStatementWrapper);
+            try
+            {
+                wStatement.initialize(statement);
+                if (wStatement.step()) iSession = wStatement.row["session"];
+            }
+            finally
+            {
+                wStatement.reset();
+                this.m_Log.Write("nsIMAPFolders : getSession - DB Reset");
+            }
+
+            iSession++;
+
+            szSQL = "REPLACE INTO session (id, session) VALUES (1, ?1)";
+            statement = this.m_dbConn.createStatement(szSQL);
+            statement.bindStringParameter(0, iSession);
+            statement.execute();
+
+            this.m_Log.Write("nsIMAPFolders.js - getSession - END " + iSession);
+            return iSession;
+        }
+        catch(err)
+        {
+            this.m_Log.DebugDump("nsDataBaseManager.js: createDB : Exception : "
+                                          + err.name +
+                                          "\nError message: "
+                                          + err.message +"\n"
+                                          + "DB Error " + "\n"
+                                          + err.lineNumber+ "\n"
+                                          + this.m_dbConn.lastErrorString);
+            return 0;
+        }
+    },
+
+
+
+
+    openDummy : function()
+    {
+        try
+        {
+            this.m_Log.Write("nsIMAPFolders.js - openDummy - START");
+
+            var szSQL = "SELECT id FROM dummy_table LIMIT (1)";
+            var statement = this.m_dbConnDummy.createStatement(szSQL);
+            statement.executeStep();
+
+            this.m_Log.Write("nsIMAPFolders.js - openDummy - END");
+        }
+        catch(e)
+        {
+            this.m_Log.DebugDump("nsIMAPFolders.js: openDummy : Exception : "
+                                          + e.name +
+                                          ".\nError message: "
+                                          + e.message+ "\n"
+                                          + e.lineNumber+ "\n" +
+                                          this.m_dbConn.lastErrorString);
+            return false;
+        }
+    },
+
+
+
+
+    createUser : function (szUserName)
+    {
+        try
+        {
+            this.m_Log.Write("nsIMAPFolders.js - createUser - START");
+            this.m_Log.Write("nsIMAPFolders.js - createUser - " +szUserName);
+
+            var szSQL = "REPLACE INTO imap_accounts (id, account_name) ";
+            szSQL    += "VALUES ";
+            szSQL    += "(" ;
+            szSQL    += "  (SELECT id FROM imap_accounts WHERE account_name LIKE ?1),";
+            szSQL    += "  ?1";
+            szSQL    += ");";
+
+            var statement = this.m_dbConn.createStatement(szSQL);
+            statement.bindStringParameter(0, szUserName.toLowerCase());
+            statement.execute();
+
+            this.m_Log.Write("nsIMAPFolders.js - createUser - END");
+        }
+        catch(e)
+        {
+            this.m_Log.DebugDump("nsIMAPFolders.js: createUser : Exception : "
+                                          + e.name +
+                                          ".\nError message: "
+                                          + e.message+ "\n"
+                                          + e.lineNumber+ "\n" +
+                                          this.m_dbConn.lastErrorString);
+            return false;
+        }
+    },
+
+
+
+
+    listSubscribed : function (szAddress, iCount, aszFolders)
     {
         try
         {
             this.m_Log.Write("nsIMAPFolder.js - listSubscribed - Start");
-            this.m_Log.Write("nsIMAPFolder.js - listSubscribed - "+szUser);
-            
+            this.m_Log.Write("nsIMAPFolder.js - listSubscribed - "+szAddress);
+
             var bReturn = false;
-            //Find user
-            var oUser = this.getUser(szUser);
-            
-            if (oUser)//get sub list
-            {                              
-                var aResult = new Array();
-                for (i=0; i<oUser.aszSubFolders.length; i++)
+            var szSQL = "SELECT folder_hierarchy "
+            szSQL    += "FROM subscribed_folders, imap_accounts ";
+            szSQL    += "WHERE imap_accounts.account_name  LIKE ?1 AND imap_accounts.id = subscribed_folders.account_id"
+            var statement = this.m_dbConn.createStatement(szSQL);
+            statement.bindStringParameter(0, szAddress.toLowerCase());
+
+            var aResult = new Array();
+            try
+            {
+                var wStatement = Components.classes["@mozilla.org/storage/statement-wrapper;1"]
+                                       .createInstance(Components.interfaces.mozIStorageStatementWrapper);
+                wStatement.initialize(statement);
+                while (wStatement.step())
                 {
-                    aResult.push(oUser.aszSubFolders[i]);
+                   aResult.push(wStatement.row["folder_hierarchy"]);
+                   bReturn = true;
                 }
- 
-                iCount.value = aResult.length;
-                aszFolders.value = aResult;
-                bReturn = true;
-                this.m_Log.Write("nsIMAPFolder.js - listSubscribed - " + iCount.value + " " + aszFolders.value);    
             }
-            
+            finally
+            {
+                statement.reset();
+                this.m_Log.Write("nsIMAPFolder : listSubscribed - DB Reset "+ this.m_dbConn.lastErrorString);
+            }
+
+            iCount.value = aResult.length;
+            aszFolders.value = aResult;
+            bReturn = true;
+
+            this.m_Log.Write("nsIMAPFolder.js - listSubscribed - " + iCount.value + " " + aszFolders.value);
             this.m_Log.Write("nsIMAPFolder.js - listSubscribed - End");
             return bReturn;
         }
         catch(err)
         {
-            this.m_Log.DebugDump("nsIMAPFolder.js: listSubscribed : Exception : " 
-                                          + err.name 
-                                          + ".\nError message: " 
+            this.m_Log.DebugDump("nsIMAPFolder.js: listSubscribed : Exception : "
+                                          + err.name
+                                          + ".\nError message: "
                                           + err.message + "\n"
-                                          + err.lineNumber);
+                                          + err.lineNumber+ "\n" +
+                                          this.m_dbConn.lastErrorString);
             return false;
         }
     },
-    
-    
-    
-    
-    subscribeFolder :function (szUser, szFolder)
+
+
+
+
+    subscribeFolder :function (szAddress, szFolder)
     {
         try
         {
             this.m_Log.Write("nsIMAPFolder.js - subscribeFolder - Start");
-            this.m_Log.Write("nsIMAPFolder.js - subscribeFolder - "+szUser + " " + szFolder);
-            
+            this.m_Log.Write("nsIMAPFolder.js - subscribeFolder - "+szAddress + " " + szFolder);
+
             var bReturn = false;
-            //find user
-            var oUser = this.getUser(szUser);      
-            if (!oUser) //add new user
-            {
-                oUser = new IMAPUser();
-                oUser.szUser = szUser;
-                this.m_aUsers.push(oUser);  
-            }
-            
-            var bFound = false;
-            if (oUser.aszSubFolders.length>0)
-            {   
-                var regexpFolder = new RegExp("^"+szFolder+"$","i");
-                var i=0;
-                do 
-                {
-                   
-                    if (oUser.aszSubFolders[i].search(regexpFolder)!=-1)
-                    {
-                        this.m_Log.Write("nsIMAPFolder.js - subscribeFolder - Found");
-                        bFound = true;
-                    } 
-                    i++                    
-                }while(i!=oUser.aszSubFolders.length && !bFound)
-            }
-            
-            //add new folder  
-            if (!bFound)
-            { 
-                oUser.aszSubFolders.push(szFolder);             
-                bReturn = true;
-                this.m_bSubUpdate = true;
-            }
-            
+
+            var szSQL = "REPLACE INTO subscribed_folders (id, account_id, folder_hierarchy) ";
+            szSQL    += "VALUES ";
+            szSQL    += "(";
+            szSQL    += "   (";
+            szSQL    += "        SELECT subscribed_folders.id " +
+                                 "FROM subscribed_folders, imap_accounts " +
+                                 "WHERE imap_accounts.account_name  LIKE ?1 AND " +
+                                       "imap_accounts.id = subscribed_folders.account_id  AND " +
+                                       "subscribed_folders.folder_hierarchy  = ?2";
+            szSQL    += "    ),"
+            szSQL    += "    ("
+            szSQL    += "        SELECT imap_accounts.id " +
+                                 "FROM imap_accounts " +
+                                 "WHERE imap_accounts.account_name LIKE ?1 " +
+                                 "LIMIT 1"
+            szSQL    += "     ),";
+            szSQL    += "     ?2";
+            szSQL    += ")"
+
+            var statement = this.m_dbConn.createStatement(szSQL);
+            statement.bindStringParameter(0, szAddress.toLowerCase());
+            statement.bindStringParameter(1, szFolder);
+            statement.execute();
+
             this.m_Log.Write("nsIMAPFolder.js - subscribeFolder - End");
             return bReturn;
         }
         catch(err)
         {
-            this.m_Log.DebugDump("nsIMAPFolder.js: subscribeFolder : Exception : " 
-                                          + err.name 
-                                          + ".\nError message: " 
+            this.m_Log.DebugDump("nsIMAPFolder.js: subscribeFolder : Exception : "
+                                          + err.name
+                                          + ".\nError message: "
                                           + err.message + "\n"
-                                          + err.lineNumber);
+                                          + err.lineNumber+ "\n" +
+                                          this.m_dbConn.lastErrorString);
             return false;
         }
     },
-    
-    
-    
-    
-    unsubscribeFolder : function (szUser, szFolder)
+
+
+
+
+    unsubscribeFolder : function (szAddress, szFolder)
     {
         try
         {
             this.m_Log.Write("nsIMAPFolder.js - unsubscribeFolder - Start");
-            this.m_Log.Write("nsIMAPFolder.js - unsubscribeFolder - "+szUser + " " + szFolder);
-            
-            //find user
-            var oUser = this.getUser(szUser);
-            var bFound = false;
-            if (oUser)  //remove folder
-            {   
-                var i=0;  
-                
-                var regexpFolder = new RegExp("^"+szFolder+"$","i");
-                this.m_Log.Write("nsIMAPFolder.js - unsubscribeFolder - Target folder  " +regexpFolder);
+            this.m_Log.Write("nsIMAPFolder.js - unsubscribeFolder - "+szAddress + " " + szFolder);
 
-                if (oUser.aszSubFolders.length>0)
-                {
-                    do 
-                    {
-                        var oTemp = oUser.aszSubFolders.shift();
-                        if (oTemp.search(regexpFolder)!=-1)
-                        {
-                            this.m_Log.Write("nsIMAPFolder.js - unsubscribeFolder - Found");
-                            bFound = true;
-                            this.m_bSubUpdate = true;
-                            delete oTemp;
-                        } 
-                        else
-                        {
-                            this.m_Log.Write("nsIMAPFolder.js - unsubscribeFolder - Not Found");
-                            oUser.aszSubFolders.push(oTemp);
-                        }
-                        i++
-                        
-                    }while(i!=oUser.aszSubFolders.length && !bFound)
-                }
-            }
-            
+            var bFound = true;
+            var szSQL = "DELETE FROM subscribed_folders ";
+            szSQL   +=  "WHERE account_id = (SELECT id FROM imap_accounts WHERE account_name LIKE ?1) AND folder_hierarchy = ?2";
+            var statement = this.m_dbConn.createStatement(szSQL);
+            statement.bindStringParameter(0, szAddress.toLowerCase());
+            statement.bindStringParameter(1, szFolder);
+            statement.execute();
+
             this.m_Log.Write("nsIMAPFolder.js - unsubscribeFolder - End");
             return bFound;
         }
         catch(err)
         {
-            this.m_Log.DebugDump("nsIMAPFolder.js: unsubscribeFolder : Exception : " 
-                                          + err.name 
-                                          + ".\nError message: " 
+            this.m_Log.DebugDump("nsIMAPFolder.js: unsubscribeFolder : Exception : "
+                                          + err.name
+                                          + ".\nError message: "
                                           + err.message + "\n"
-                                          + err.lineNumber);
+                                          + err.lineNumber+ "\n" +
+                                          this.m_dbConn.lastErrorString);
             return false;
         }
     },
-       
-       
-    
-    addFolder : function (szUser, szHiererchy, szHref, szUID, iMSGCount, iUnreadCount)
+
+
+
+
+    addFolder : function (szUser, szHiererchy, szHref)
     {
         try
         {
             this.m_Log.Write("nsIMAPFolder.js - addFolder - Start");
-            this.m_Log.Write("nsIMAPFolder.js - addFolder - "+ szUser + " " + szHiererchy + " " + szHref + " " + szUID + " " + iMSGCount + " " +iUnreadCount);
-            
-            var bFound = false;
-            
-            //find user
-            var oUser = this.getUser(szUser);
-            
-            if (!oUser) //add new user
-            {
-                this.m_Log.Write("nsIMAPFolder.js - addFolder - creating user");
-                oUser = new IMAPUser();
-                oUser.szUser = szUser;
-                this.m_aUsers.push(oUser);  
-            }
-            
-            //create new folder object
-            var oFolder = new IMAPFolderData()
-            oFolder.szHeirerchy = szHiererchy;
-            oFolder.szHref = szHref;
-            oFolder.szHref = szHref;
-            oFolder.szUID = szUID;
-            oFolder.iMSGCount = iMSGCount;
-            oFolder.iUnreadCount = iUnreadCount;
-            
-            if (oUser.aFolders.length == 0)
-            {
-                this.m_Log.Write("nsIMAPFolder.js - addFolder - creating folder object");
-                oUser.aFolders.push(oFolder);
-                bFound = true;
-            }
-            else //search list
-            {
-                var i=0;
-                var regexpHier = new RegExp("^"+szHiererchy+"$","i");
-                this.m_Log.Write("nsIMAPFolder.js - addFolder - Target Hier  " +regexpHier);
-                
-                do
-                {
-                    this.m_Log.Write("nsIMAPFolder.js - addFolder - search folders "+ oUser.aFolders[i].szHeirerchy);
-                    if (oUser.aFolders[i].szHeirerchy.search(regexpHier)!=-1)
-                    { //found update it
-                        this.m_Log.Write("nsIMAPFolder.js - addFolder - folder Found");
-                        bFound = true;
-                        oUser.aFolders[i].szHref = szHref;
-                        oUser.aFolders[i].szUID = szUID;
-                       // oUser.aFolders[i].iMSGCount = iMSGCount;
-                       // oUser.aFolders[i].iUnreadCount = iUnreadCount;
-                        delete oFolder;
-                    }
-                    i++;
-                }while (i!=oUser.aFolders.length && !bFound)
-                
-                //not found add it
-                if (!bFound)
-                {   
-                    oUser.aFolders.push(oFolder);
-                    bFound = true;
-                }
-            }
-            
+            this.m_Log.Write("nsIMAPFolder.js - addFolder - "+ szUser + " " + szHiererchy + " " + szHref);
+
+            var szSQL = "REPLACE INTO folders (id, account_id, folder_hierarchy, folder_url, session) "
+            szSQL    += "VALUES ";
+            szSQL    += "(";
+            szSQL    += "   (";
+            szSQL    += "        SELECT folders.id " +
+                                 "FROM folders, imap_accounts " +
+                                 "WHERE imap_accounts.account_name LIKE ?1 AND " +
+                                       "imap_accounts.id = folders.account_id  AND " +
+                                       "folders.folder_hierarchy  = ?2";
+            szSQL    += "    ),"
+            szSQL    += "    ("
+            szSQL    += "        SELECT imap_accounts.id  " +
+                                 "FROM imap_accounts " +
+                                 "WHERE imap_accounts.account_name LIKE ?1 " +
+                                 "LIMIT 1"
+            szSQL    += "     ),";
+            szSQL    += "     ?2,";
+            szSQL    += "     ?3,";
+            szSQL    += "     ?4";
+            szSQL    += ");"
+
+            var statement = this.m_dbConn.createStatement(szSQL);
+            statement.bindStringParameter(0, szUser.toLowerCase());
+            statement.bindStringParameter(1, szHiererchy);
+            statement.bindStringParameter(2, szHref);
+            statement.bindStringParameter(3, this.m_iSession);
+            statement.execute();
+
             this.m_Log.Write("nsIMAPFolder.js - addFolder - End");
-            return bFound;
+            return true;
         }
         catch(err)
         {
-            this.m_Log.DebugDump("nsIMAPFolder.js: addFolder : Exception : " 
-                                          + err.name 
-                                          + ".\nError message: " 
+            this.m_Log.DebugDump("nsIMAPFolder.js: addFolder : Exception : "
+                                          + err.name
+                                          + ".\nError message: "
                                           + err.message + "\n"
-                                          + err.lineNumber);
+                                          + err.lineNumber+ "\n" +
+                                          this.m_dbConn.lastErrorString);
             return false;
         }
     },
-    
-    
+
+
+
+
     deleteFolder : function (szUser, szHiererchy)
     {
         try
         {
             this.m_Log.Write("nsIMAPFolder.js - deleteFolder - Start");
             this.m_Log.Write("nsIMAPFolder.js - deleteFolder - "+ szUser + " " + szHiererchy);
-            
-            var bFound = false;
-            
-            //find user
-            var oUser = this.getUser(szUser);
-            
-            if (!oUser) //add new user
-            {
-                this.m_Log.Write("nsIMAPFolder.js - deleteFolder - user not found");
-                return false;
-            }
-    
-    
-            if (oUser.aFolders.length != 0)
-            {
-                var i=0;
-                var regexpHier = new RegExp("^"+szHiererchy+"$","i");
-                this.m_Log.Write("nsIMAPFolder.js - deleteFolder - Target Hier  " +regexpHier);
-                
-                do
-                {
-                    var oFolder = oUser.aFolders.shift();
-                    this.m_Log.Write("nsIMAPFolder.js - deleteFolder - search folders "+ oFolder.szHeirerchy);
-                    if (oFolder.szHeirerchy.search(regexpHier)!=-1)
-                    { //found update it
-                        this.m_Log.Write("nsIMAPFolder.js - deleteFolder - folder Found");
-                        bFound = true;
-                        delete oFolder;
-                    }
-                    else
-                    {   
-                        this.m_Log.Write("nsIMAPFolder.js - deleteFolder - folder NOT Found");
-                        oUser.aFolders.push(oFolder);    
-                    }
-                    i++;
-                }while (i!=oUser.aFolders.length && !bFound)
 
-            }
-            
+            var szSQL = "DELETE FROM folders "
+            szSQL    += "WHERE (account_id = (SELECT id FROM imap_accounts WHERE account_name LIKE ?1)) AND folder_hierarchy LIKE ?2 "
+
+            var statement = this.m_dbConn.createStatement(szSQL);
+            statement.bindStringParameter(0, szUser.toLowerCase());
+            statement.bindStringParameter(1, szHiererchy);
+            statement.execute();
+
             this.m_Log.Write("nsIMAPFolder.js - deleteFolder - End");
-            return bFound;
+            return true;
         }
         catch(err)
         {
-            this.m_Log.DebugDump("nsIMAPFolder.js: deleteFolder : Exception : " 
-                                          + err.name 
-                                          + ".\nError message: " 
+            this.m_Log.DebugDump("nsIMAPFolder.js: deleteFolder : Exception : "
+                                          + err.name
+                                          + ".\nError message: "
                                           + err.message + "\n"
-                                          + err.lineNumber);
+                                          + err.lineNumber + "\n" +
+                                          this.m_dbConn.lastErrorString);
             return false;
         }
     },
-    
-    
-    
-    getFolderCount :function (szUser)
-    {
-        try
-        {
-            this.m_Log.Write("nsIMAPFolder.js - getFolderCount - START " +szUser);
-            
-            //find user
-            var oUser = this.getUser(szUser);
-            var num = 0;
-            
-            if (oUser) //add new user
-            {
-                this.m_Log.Write("nsIMAPFolder.js - getFolderCount - user found");
-                num = oUser.aFolders.length;
-            }
-                 
-            this.m_Log.Write("nsIMAPFolder.js - getFolderCount - End "+ num);
-            return num;
-        }
-        catch(err)
-        {
-             this.m_Log.DebugDump("nsIMAPFolder.js: getFolderCount : Exception : " 
-                                          + err.name 
-                                          + ".\nError message: " 
-                                          + err.message + "\n"
-                                          + err.lineNumber);
-            return 0;
-        }
-    },
-    
-    
-    
+
+
+
+
     renameFolder : function (szUser, szOldHierarchy, szNewHierarchy, szNewHref)
     {
         try
         {
             this.m_Log.Write("nsIMAPFolder.js - renameFolder - Start");
             this.m_Log.Write("nsIMAPFolder.js - renameFolder - "+ szUser + " " + szOldHierarchy + " " + szNewHierarchy + " " + szNewHref);
-            
-            var bFound = false;
-            
-            //find user
-            var oUser = this.getUser(szUser);
-            if (!oUser) //add new user
-            {
-                this.m_Log.Write("nsIMAPFolder.js - renameFolder - creating user");
-                return false;
-            }
-                    
-            if (oUser.aFolders.length != 0)
-            {
-                var i=0;
-                var regexpHier = new RegExp("^"+szOldHierarchy+"$","i");
-                this.m_Log.Write("nsIMAPFolder.js - renameFolder - Target Hier  " +regexpHier);
-                
-                do
-                {
-                    this.m_Log.Write("nsIMAPFolder.js - renameFolder - search folders "+ oUser.aFolders[i].szHeirerchy);
-                    if (oUser.aFolders[i].szHeirerchy.search(regexpHier)!=-1)
-                    { //found update it
-                        this.m_Log.Write("nsIMAPFolder.js - renameFolder - folder Found");
-                        bFound = true;
-                        oUser.aFolders[i].szHref = szNewHref;
-                        oUser.aFolders[i].szHeirerchy = szNewHierarchy;
-                    }
-                    i++;
-                }while (i!=oUser.aFolders.length && !bFound)
-            }
-            
+
+            var szSQL = "UPDATE folders ";
+            szSQL    += "SET folder_hierarchy = ?3, " +
+                            "folder_url = ?4 ";
+            szSQL    += "WHERE id = ( SELECT folders.id " +
+                                     "FROM folders, imap_accounts " +
+                                     "WHERE imap_accounts.account_name LIKE ?1 AND " +
+                                     "      imap_accounts.id = folders.account_id  AND " +
+                                     "      folders.folder_hierarchy  = ?2 " +
+                                    ");"
+
+            var statement = this.m_dbConn.createStatement(szSQL);
+            statement.bindStringParameter(0, szUser.toLowerCase());
+            statement.bindStringParameter(1, szOldHierarchy);
+            statement.bindStringParameter(2, szNewHierarchy);
+            statement.bindStringParameter(3, szNewHref);
+            statement.execute();
+
+
             this.m_Log.Write("nsIMAPFolder.js - renameFolder - End");
-            return bFound;
+            return true;
         }
         catch(err)
         {
-            this.m_Log.DebugDump("nsIMAPFolder.js: renameFolder : Exception : " 
-                                          + err.name 
-                                          + ".\nError message: " 
+            this.m_Log.DebugDump("nsIMAPFolder.js: renameFolder : Exception : "
+                                          + err.name
+                                          + ".\nError message: "
                                           + err.message + "\n"
-                                          + err.lineNumber);
+                                          + err.lineNumber + "\n" +
+                                          this.m_dbConn.lastErrorString);
             return false;
-        }   
+        }
     },
-    
-    
-       
+
+
+
+
     getHierarchies : function (szUser, szHierarchy ,iCount, aszFolders)
     {
         try
@@ -405,362 +633,633 @@ nsIMAPFolders.prototype =
             this.m_Log.Write("nsIMAPFolder.js - getAllHiererchy - " + szUser + " " +szHierarchy);
             if (!szHierarchy) throw new Error("no szHierarchy");
             if (szHierarchy.search(/INBOX/)==-1) throw new Error("searching not for inbox");
-            
-            var bResult = false;      
-            var aResult = new Array();
-            
-            //get user
-            var oUser = this.getUser(szUser);
 
-            if (oUser) //user found
+            var bResult = false;
+            var aResult = new Array();
+            var szSQL;
+            var statement;
+
+
+            if (szHierarchy.search(/INBOX\.(.*?)\.\*|\%$/)!=-1)
             {
-                this.m_Log.Write("nsIMAPFolder.js - getAllHiererchy - user found");
-                            
-                var bWildcards = false;
-                if (szHierarchy.search(/INBOX\.\*|\%$/)!=-1) bWildcards = true; 
-                this.m_Log.Write("nsIMAPFolder.js - getAllHiererchy - wildcard " + bWildcards);
-            
-                var aHier = szHierarchy.split(".");
-                this.m_Log.Write("nsIMAPFolder.js - getAllHiererchy " + aHier);
-                var regexpHier = null;
-                if (aHier.length==1)
-                    regexpHier = new RegExp(szHierarchy+"$");
-                else
-                    regexpHier = new RegExp(aHier[1]);
-                this.m_Log.Write("nsIMAPFolder.js - getAllHiererchy  Reg "+ regexpHier);
-            
-            
-                for (var i = 0 ; i<oUser.aFolders.length; i++)
-                {                    
-                    var szTempHierarchy = oUser.aFolders[i].szHeirerchy;
-                    this.m_Log.Write("nsIMAPFolder.js - getAllHiererchy " + i + " "+ szTempHierarchy);
-                   
-                    if (bWildcards) //wildcard retun everything
-                    {
-                        aResult.push(szTempHierarchy);
-                    }
-                    else
-                    {
-                        if (szTempHierarchy.search(regexpHier)!=-1)
-                        {
-                            this.m_Log.Write("nsIMAPFolder.js - getAllHiererchy found");
-                            aResult.push(szTempHierarchy);
-                            bResult=true;
-                        }
-                    }
+                var aHierarchy = szHierarchy.split(/\./);
+                this.m_Log.Write("nsIMAPFolder.js - getAllHiererchy - aHierarchy " + aHierarchy);
+                szHierarchy =  aHierarchy[0] + "."+ aHierarchy[1];
+                this.m_Log.Write("nsIMAPFolder.js - getAllHiererchy - szHierarchy " + szHierarchy);
+            }
+
+            if (szHierarchy.search(/INBOX\.\*|\%$/)!=-1)
+            {
+                this.m_Log.Write("nsIMAPFolder.js - getAllHiererchy - wildcard ");
+                szSQL  = "SELECT folder_hierarchy "
+                szSQL += "FROM folders, imap_accounts "
+                szSQL += "WHERE folders.account_id = imap_accounts.id AND " +
+                                "imap_accounts.account_name LIKE ?1 AND " +
+                                "session = ?2"
+                statement = this.m_dbConn.createStatement(szSQL);
+                statement.bindStringParameter(0, szUser);
+                statement.bindStringParameter(1, this.m_iSession);
+            }
+            else
+            {
+                szSQL  = "SELECT folder_hierarchy "
+                szSQL += "FROM folders, imap_accounts "
+                szSQL += "WHERE folders.account_id = imap_accounts.id AND " +
+                                "imap_accounts.account_name LIKE ?1 AND " +
+                                "folder_hierarchy LIKE ?2 AND " +
+                                "session = ?3"
+                statement = this.m_dbConn.createStatement(szSQL);
+                statement.bindStringParameter(0, szUser);
+                statement.bindStringParameter(1, szHierarchy);
+                statement.bindStringParameter(2, this.m_iSession);
+            }
+
+            try
+            {
+                var wStatement = Components.classes["@mozilla.org/storage/statement-wrapper;1"]
+                                       .createInstance(Components.interfaces.mozIStorageStatementWrapper);
+                wStatement.initialize(statement);
+                while (wStatement.step())
+                {
+                   aResult.push(wStatement.row["folder_hierarchy"]);
+                   bResult = true;
                 }
             }
-            
+            finally
+            {
+                statement.reset();
+                this.m_Log.Write("nsIMAPFolder : getAllHiererchy - DB Reset "+ this.m_dbConn.lastErrorString);
+            }
+
+
             iCount.value = aResult.length;
             aszFolders.value = aResult;
-            
+            this.m_Log.Write("nsIMAPFolder.js - getAllHiererchy - " + iCount.value + " " + aszFolders.value);
             this.m_Log.Write("nsIMAPFolder.js - getAllHiererchy - End");
             return bResult;
         }
         catch(err)
         {
-            this.m_Log.DebugDump("nsIMAPFolder.js: getAllHiererchy : Exception : " 
-                                          + err.name 
-                                          + ".\nError message: " 
+            this.m_Log.DebugDump("nsIMAPFolder.js: getAllHiererchy : Exception : "
+                                          + err.name
+                                          + ".\nError message: "
                                           + err.message + "\n"
-                                          + err.lineNumber);
+                                          + err.lineNumber + "\n" +
+                                          this.m_dbConn.lastErrorString);
             return false;
         }
-    },  
-       
-         
-    
+    },
+
+
+
+
     getFolderDetails : function (szUser, szHierarchy, szHref, szUID, iMSGCount, iUnreadCount)
     {
         try
         {
             this.m_Log.Write("nsIMAPFolder.js - getFolderDetails - Start");
             this.m_Log.Write("nsIMAPFolder.js - getFolderDetails - " + szUser + " " + szHierarchy);
-            
-            var bResult = false;
-            
-            //get user
-            var oUser = this.getUser(szUser);
 
-            if (oUser) //user found
+            var bResult = false;
+
+            var szSQL = "SELECT folders.id, " +
+                               "folders.folder_url," +
+                               "(    SELECT COUNT(*) "+
+                                "    FROM messages, folders, imap_accounts " +
+                                "    WHERE folders.account_id = imap_accounts.id AND " +
+                                "          messages.account_id = imap_accounts.id AND"+
+                                "          imap_accounts.account_name LIKE ?1 AND "+
+                                "          folders.id = messages.folder_id AND "+
+                                "          folders.folder_hierarchy LIKE ?2 AND " +
+                                "          messages.session = ?3 AND " +
+                                "          messages.deleted = \"false\" " +
+                                ") AS message_count, " +
+                                "(   SELECT COUNT(*) " +
+                                "    FROM messages, folders, imap_accounts " +
+                                "    WHERE folders.account_id = imap_accounts.id AND " +
+                                "          messages.account_id = imap_accounts.id AND"+
+                                "          imap_accounts.account_name LIKE ?1 AND " +
+                                "          folders.id = messages.folder_id AND "+
+                                "          folders.folder_hierarchy LIKE ?2 AND " +
+                                "          messages.read = \"false\" AND " +
+                                "          messages.deleted = \"false\" AND " +
+                                "          messages.session = ?3 " +
+                                ") AS read_count "
+            szSQL    += "FROM folders, imap_accounts "
+            szSQL    += "WHERE folders.account_id = imap_accounts.id AND " +
+                              "imap_accounts.account_name LIKE ?1 AND " +
+                              "folders.folder_hierarchy LIKE ?2 AND " +
+                              "folders.session = ?3 "
+            szSQL    += "LIMIT 1;"
+
+
+            var statement = this.m_dbConn.createStatement(szSQL);
+            statement.bindStringParameter(0, szUser);
+            statement.bindStringParameter(1, szHierarchy);
+            statement.bindStringParameter(2, this.m_iSession);
+
+            try
             {
-                this.m_Log.Write("nsIMAPFolder.js - getFolderDetails - user found");
-                
-                //get folder
-                var oFolder = this.getFolder(oUser ,szHierarchy);
-                if (oFolder)
+                var wStatement = Components.classes["@mozilla.org/storage/statement-wrapper;1"]
+                                       .createInstance(Components.interfaces.mozIStorageStatementWrapper);
+                wStatement.initialize(statement);
+                while (wStatement.step())
                 {
-                    this.m_Log.Write("nsIMAPFolder.js - getFolderDetails - folder found");
-                    
-                    szHref.value = oFolder.szHref;
-                    szUID.value = oFolder.szUID;
-                    iMSGCount.value = oFolder.iMSGCount;
-                    iUnreadCount.value = oFolder.iUnreadCount;
-                    this.m_Log.Write("nsIMAPFolder.js - getFolderDetails - " + szHref.value + " " + szUID.value + " " + iMSGCount.value + " " + iUnreadCount.value);
+                    szUID.value = wStatement.row["id"];
+                    this.m_Log.Write("nsIMAPFolder.js - getFolderDetails - "+ szUID.value);
+                    szHref.value = wStatement.row["folder_url"];
+                    this.m_Log.Write("nsIMAPFolder.js - getFolderDetails - " + szHref.value);
+                    iMSGCount.value =  wStatement.row["message_count"];
+                    this.m_Log.Write("nsIMAPFolder.js - getFolderDetails - " + iMSGCount.value);
+                    iUnreadCount.value =  wStatement.row["read_count"];
+                    this.m_Log.Write("nsIMAPFolder.js - getFolderDetails - " + iUnreadCount.value);
                     bResult = true;
                 }
             }
-                      
-            this.m_Log.Write("nsIMAPFolder.js - getFolderDetails - End" +bResult);
+            finally
+            {
+                statement.reset();
+                this.m_Log.Write("nsIMAPFolder : getAllHiererchy - DB Reset "+ this.m_dbConn.lastErrorString);
+            }
+
+            this.m_Log.Write("nsIMAPFolder.js - getFolderDetails - End " +bResult);
             return bResult;
         }
         catch(err)
         {
-             this.m_Log.DebugDump("nsIMAPFolder.js: getFolderDetails : Exception : " 
-                                          + err.name 
-                                          + ".\nError message: " 
+             this.m_Log.DebugDump("nsIMAPFolder.js: getFolderDetails : Exception : "
+                                          + err.name
+                                          + ".\nError message: "
                                           + err.message + "\n"
-                                          + err.lineNumber);
+                                          + err.lineNumber + "\n" +
+                                          this.m_dbConn.lastErrorString);
             return false;
         }
     },
-    
-    
-    getMSGUIDS : function (szUser, szHierarchy, iCount, aszUIDs)
-    {
-        try
-        {
-            this.m_Log.Write("nsIMAPFolder.js - getMSGUIDS - Start");
-            this.m_Log.Write("nsIMAPFolder.js - getMSGUIDS - " + szUser + " " + szHierarchy);
-            
-            var bResult = false;
-            var aResult = new Array();
-            
-            //get user
-            var oUser = this.getUser(szUser);
 
-            if (oUser) //user found
-            {
-                this.m_Log.Write("nsIMAPFolder.js - getMSGUIDS - user found");
-                
-                //get folder
-                var oFolder = this.getFolder(oUser ,szHierarchy);
-                if (oFolder)
-                {
-                    this.m_Log.Write("nsIMAPFolder.js - getMSGUIDS - folder found");
-                    
-                    aResult=aResult.concat(oFolder.aUIDs);
-                    
-                    this.m_Log.Write("nsIMAPFolder.js - getMSGUIDS - aResult " + aResult);
-                    bResult = true;
-                }
-            }
 
-            iCount.value = aResult.length;
-            aszUIDs.value = aResult;
 
-            this.m_Log.Write("nsIMAPFolder.js - getMSGUIDS - End " +bResult);
-            return bResult;
-        }
-        catch(err)
-        {
-            this.m_Log.DebugDump("nsIMAPFolder.js: getMSGUIDS : Exception : " 
-                                          + err.name 
-                                          + ".\nError message: " 
-                                          + err.message + "\n"
-                                          + err.lineNumber);
-            return false;
-        }
-    },
-    
-    
-    cleanAllMSG : function (szUser, szHierarchy)
-    {
-        try
-        {
-            this.m_Log.Write("nsIMAPFolder.js - cleanAllMSG - START");
-            this.m_Log.Write("nsIMAPFolder.js - cleanAllMSG - " + szUser + " " + szHierarchy);
-            var bResult = false;
-            
-            var oUser = this.getUser(szUser);
-            if (oUser) //user found
-            {
-                this.m_Log.Write("nsIMAPFolder.js - cleanAllMSG - user found");
-                
-                //get folder
-                var oFolder = this.getFolder(oUser ,szHierarchy);
-                if (oFolder)
-                {
-                    this.m_Log.Write("nsIMAPFolder.js - cleanAllMSG - folder found - MSG deleted");
-                    delete oFolder.aMSG;
-                    oFolder.aMSG = new Array();
-                    oFolder.iMSGCount = 0;
-                    oFolder.iUnreadCount = 0;
-                    delete oFolder.aUIDs;
-                    oFolder.aUIDs = new Array(); 
-                    bResult= true;
-                }
-            }
-            
-            this.m_Log.Write("nsIMAPFolder.js - cleanAllMSG - End" +bResult);
-            return bResult;        
-        }
-        catch(err)
-        {
-            this.m_Log.DebugDump("nsIMAPFolder.js: cleanAllMSG : Exception : " 
-                                          + err.name 
-                                          + ".\nError message: " 
-                                          + err.message + "\n"
-                                          + err.lineNumber);
-            return false;
-        }
-    },
-      
-      
-      
-        
+
     addMSG : function (szUser, szHierarchy, szHref, szUID, bRead, szTo, szFrom, szSubject, szDate, iSize)
     {
         try
         {
             this.m_Log.Write("nsIMAPFolder.js - addMSG - Start");
-            this.m_Log.Write("nsIMAPFolder.js - addMSG - " + szUser + " " + szHierarchy + " " + szHref + " " + szUID + " " + bRead +" " 
+            this.m_Log.Write("nsIMAPFolder.js - addMSG - " + szUser + " " + szHierarchy + " " + szHref + " " + szUID + " " + bRead +" "
                                                            + szTo + " " + szFrom + " " + szSubject + " " + szDate + " " + iSize);
             var bResult = false;
-        
-            var MSG = new IMAPMSGData();
-            MSG.szHref = szHref;
-            MSG.szTo= szTo;
-            MSG.szFrom = szFrom;
-            MSG.szSubject = szSubject;
-            MSG.szDate = szDate;
-            MSG.bRead= bRead;
-            MSG.iSize= iSize;
-            MSG.szUID = szUID;
-          
-            var oUser = this.getUser(szUser);  
-            if (oUser) //user found
-            {
-                this.m_Log.Write("nsIMAPFolder.js - addMSG - user found");
-                
-                //get folder
-                var oFolder = this.getFolder(oUser ,szHierarchy);
-                if (oFolder)
-                {
-                    this.m_Log.Write("nsIMAPFolder.js - addMSG - folder found");
-                    
-                    var oMSG = {value : null};
-                    var oIndex = {value : null};
-                    var bMSG; 
-                    if (szUID)    
-                        bMSG = this.findMSGUID(oFolder, szUID, oMSG, oIndex);
-                    else
-                    {
-                        bMSG = this.findMSGURI(oFolder, szHref, oMSG, oIndex);
-                        if (!bMSG) 
-                        {
-                            MSG.szUID  = oUser.iNextMSGID;
-                            this.m_Log.Write("nsIMAPFolder.js - addMSG - MSG.szUID " + MSG.szUID );
-                            oUser.iNextMSGID++;
-                        }
-                    }  
-                                        
-                    if (!bMSG)
-                    {
-                        this.m_Log.Write("nsIMAPFolder.js - addMSG MSG added");
-                        oFolder.aMSG.push(MSG);
-                        var aTempMSG = oFolder.aMSG.sort(this.sortMSGUID);
-                        delete oFolder.aMSG;
-                        oFolder.aMSG = aTempMSG;
-                        
-                        oFolder.aUIDs.push(MSG.szUID);
-                        var aTempUID = oFolder.aUIDs.sort(this.sortUID);
-                        oFolder.aUIDs = aTempUID;  
-                        bResult = true;
-                        oFolder.iMSGCount++;                             
-                        if (!bRead) oFolder.iUnreadCount++; 
-                        this.m_Log.Write("nsIMAPFolder.js - addMSG MSG - oFolder.iMSGCount " + oFolder.iMSGCount +  " oFolder.iUnreadCount " + oFolder.iUnreadCount);
-                    }
-                    else
-                    {
-                        this.m_Log.Write("nsIMAPFolder.js - addMSG MSG Found");
-                        oMSG.bDelete = false;
-                        oMSG.bRead = bRead;
-                    }
-                }
-            }
-            
+
+            var szSQL = "REPLACE INTO messages " ;
+            szSQL    +=         "(id, account_id, folder_id, uid, href, recipient, sender, subject, date, size, read, deleted ,session) "
+            szSQL    += "VALUES ";
+            szSQL    += "(";
+            szSQL    += "    (" +
+                                "SELECT messages.id " +
+                                "FROM messages, imap_accounts, folders " +
+                                "WHERE messages.account_id = imap_accounts.id  AND  " +
+                                      "imap_accounts.id = folders.account_id  AND " +
+                                      "imap_accounts.account_name LIKE ?1 AND " +
+                                      "messages.folder_id = folders.id AND " +
+                                      "folders.folder_hierarchy LIKE ?2 AND " +
+                                      "messages.uid = ?3 AND " +
+                                      "messages.deleted = \"false\" " +
+                                "LIMIT 1 "
+            szSQL    += "    ),"
+            szSQL    += "    (" +
+                                 "SELECT imap_accounts.id  " +
+                                 "FROM imap_accounts " +
+                                 "WHERE imap_accounts.account_name LIKE ?1 " +
+                                 "LIMIT 1 "
+            szSQL    += "     ),";
+            szSQL    += "    (" +
+                                 "SELECT folders.id " +
+                                 "FROM folders, imap_accounts " +
+                                 "WHERE imap_accounts.account_name LIKE ?1 AND " +
+                                       "imap_accounts.id = folders.account_id AND " +
+                                       "folders.folder_hierarchy LIKE ?2 " +
+                                 "LIMIT 1 "
+            szSQL    += "     ),"
+            szSQL    += "     ?3,";
+            szSQL    += "     ?4,";
+            szSQL    += "     ?5,";
+            szSQL    += "     ?6,";
+            szSQL    += "     ?7,";
+            szSQL    += "     ?8,";
+            szSQL    += "     ?9,";
+            szSQL    += "     ?10,";
+            szSQL    += "     ?11,";
+            szSQL    += "     ?12";
+            szSQL    += ");"
+
+            var statement = this.m_dbConn.createStatement(szSQL);
+            statement.bindStringParameter(0, szUser);
+            statement.bindStringParameter(1, szHierarchy);
+            statement.bindStringParameter(2, szUID);
+            statement.bindStringParameter(3, szHref);
+            statement.bindStringParameter(4, szTo);
+            statement.bindStringParameter(5, szFrom);
+            statement.bindStringParameter(6, szSubject);
+            statement.bindStringParameter(7, szDate);
+            statement.bindStringParameter(8, iSize);
+            statement.bindStringParameter(9, bRead);
+            statement.bindStringParameter(10, "false");
+            statement.bindStringParameter(11, this.m_iSession);
+            statement.execute();
+
             this.m_Log.Write("nsIMAPFolder.js - addMSG - End " +bResult);
             return bResult;
         }
         catch(err)
         {
-            this.m_Log.DebugDump("nsIMAPFolder.js: addMSG : Exception : " 
-                                          + err.name 
-                                          + ".\nError message: " 
+            this.m_Log.DebugDump("nsIMAPFolder.js: addMSG : Exception : "
+                                          + err.name
+                                          + ".\nError message: "
                                           + err.message + "\n"
-                                          + err.lineNumber);
+                                          + err.lineNumber + "\n" +
+                                          this.m_dbConn.lastErrorString);
             return false;
         }
     },
-         
-      
-    sortUID : function (a,b)
-    {
-        return (a-b);
-    },
-    
-    sortMSGUID : function (a,b)
-    {
-        return (a.szUID - b.szUID);
-    },
-    
 
-    getMSG : function (szUser, szHierarchy, szUID, iIndex, szHref, bRead, bDelete, szTo, szFrom, szSubject, szDate, iSize)
+
+
+    copyMSG : function (szUser , szUID, szOldHierarchy, szNewHierarchy)
+    {
+        try
+        {
+            this.m_Log.Write("nsIMAPFolder.js - copyMSG - Start");
+            this.m_Log.Write("nsIMAPFolder.js - copyMSG - " + szUser + " " + szOldHierarchy + " " + szUID + " " +szNewHierarchy);
+            var bResult = false;
+
+            var szSQL ="SELECT  messages.href," +
+                               "messages.recipient," +
+                               "messages.sender, " +
+                               "messages.subject, " +
+                               "messages.date, " +
+                               "messages.size, " +
+                               "messages.read, " +
+                               "messages.uid "
+            szSQL   += "FROM folders, imap_accounts, messages "
+            szSQL   += "WHERE  folders.account_id = imap_accounts.id AND " +
+                              "messages.account_id =  imap_accounts.id AND " +
+                              "imap_accounts.account_name LIKE ?1 AND " +
+                              "folders.id = messages.folder_id AND " +
+                              "folders.folder_hierarchy LIKE ?2 AND  " +
+                              "messages.session = ?3 AND " +
+                              "messages.id= ?4 "
+            szSQL   += "LIMIT 1"
+
+            var statement = this.m_dbConn.createStatement(szSQL);
+            statement.bindStringParameter(0, szUser);
+            statement.bindStringParameter(1, szOldHierarchy);
+            statement.bindStringParameter(2, this.m_iSession);
+            statement.bindStringParameter(3, szUID);
+
+            var szHref = null;
+            var szTo = null;
+            var szFrom = null;
+            var szSubject = null;
+            var szDate = null;
+            var iSize = 0;
+            var bRead = false;
+
+            try
+            {
+                var wStatement = Components.classes["@mozilla.org/storage/statement-wrapper;1"]
+                                           .createInstance(Components.interfaces.mozIStorageStatementWrapper);
+                wStatement.initialize(statement);
+                while (wStatement.step())
+                {
+                   szHref = wStatement.row["href"];
+                   szTo = wStatement.row["recipient"];
+                   szFrom = wStatement.row["sender"];
+                   szSubject = wStatement.row["subject"];
+                   szDate = wStatement.row["date"];
+                   iSize = Number(wStatement.row["size"]);
+                   var szRead = wStatement.row["read"];
+                   bRead = (szRead.search(/true/i)!=-1) ? true : false;
+                   szMSGID = wStatement.row["uid"];
+                }
+            }
+            finally
+            {
+                statement.reset();
+                this.m_Log.Write("nsIMAPFolder : copyMSG - DB Reset "+ this.m_dbConn.lastErrorString);
+            }
+
+
+            bResult = this.addMSG(szUser, szNewHierarchy, szHref, szMSGID, bRead, szTo, szFrom, szSubject, szDate, iSize);
+
+            this.m_Log.Write("nsIMAPFolder.js - copyMSG - END " + bResult);
+            return bResult;
+        }
+        catch(err)
+        {
+            this.m_Log.DebugDump("nsIMAPFolder.js: copyMSG : Exception : "
+                                          + err.name
+                                          + ".\nError message: "
+                                          + err.message + "\n"
+                                          + err.lineNumber + "\n" +
+                                          this.m_dbConn.lastErrorString);
+            return false;
+        }
+    },
+
+
+    getRangeMSGIDs : function (szUser, szHierarchy, iMinID, iMaxID, iCount, aiIDs)
+    {
+        try
+        {
+            this.m_Log.Write("nsIMAPFolder.js - getMSGUIDS - Start");
+            this.m_Log.Write("nsIMAPFolder.js - getMSGUIDS - " + szUser + " " + szHierarchy + " " + iMinID + " " + iMaxID);
+
+            var bResult = false;
+            var aResults = new Array();
+
+            var szSQL  = "SELECT messages.id "
+            szSQL     += "FROM messages, imap_accounts, folders "
+            szSQL     += "WHERE folders.account_id = imap_accounts.id AND " +
+                        "       imap_accounts.account_name LIKE ?1 AND " +
+                        "       folders.id = messages.folder_id AND " +
+                        "       folders.folder_hierarchy LIKE ?2 AND " +
+                        "       messages.session = ?3 AND" +
+                        "       messages.id >= ?4 ";
+            if (iMaxID != -1) szSQL += " AND messages.id <= ?5 "
+            szSQL    += "ORDER BY messages.id ASC ";
+            this.m_Log.Write("nsIMAPFolder.js - getMSGUIDS - " + szSQL);
+
+            var statement = this.m_dbConn.createStatement(szSQL);
+            statement.bindStringParameter(0, szUser);
+            statement.bindStringParameter(1, szHierarchy);
+            statement.bindStringParameter(2, this.m_iSession);
+            statement.bindStringParameter(3, iMinID);
+            if (iMaxID != -1) statement.bindStringParameter(4, iMaxID);
+
+            try
+            {
+                var wStatement = Components.classes["@mozilla.org/storage/statement-wrapper;1"]
+                                           .createInstance(Components.interfaces.mozIStorageStatementWrapper);
+                wStatement.initialize(statement);
+                while (wStatement.step())
+                {
+                   aResults.push(wStatement.row["id"])
+                   bResult = true;
+                }
+            }
+            finally
+            {
+                statement.reset();
+                this.m_Log.Write("nsIMAPFolder : getAllHiererchy - DB Reset "+ this.m_dbConn.lastErrorString);
+            }
+
+            iCount.value = aResults.length;
+            aiIDs.value = aResults;
+            this.m_Log.Write("nsIMAPFolder.js - getMSGUIDS - End " +bResult + " " + aiIDs.value);
+            this.m_Log.Write("nsIMAPFolder.js - getMSGUIDS - End ");
+            return bResult;
+        }
+        catch(err)
+        {
+            this.m_Log.DebugDump("nsIMAPFolder.js: getMSGUIDS : Exception : "
+                                          + err.name
+                                          + ".\nError message: "
+                                          + err.message + "\n"
+                                          + err.lineNumber + "\n" +
+                                          this.m_dbConn.lastErrorString);
+            return false;
+        }
+    },
+
+
+
+
+
+    getMSGHeaders : function (szUser, szHierarchy, szUID, szHref, bRead, bDelete, szTo, szFrom, szSubject, szDate, iSize, iSeqNum)
     {
         try
         {
             this.m_Log.Write("nsIMAPFolder.js - getMSG - Start");
             this.m_Log.Write("nsIMAPFolder.js - getMSG - " + szUser + " " + szHierarchy + " " + szUID);
             var bResult = false;
-                      
-            var oUser = this.getUser(szUser);  
-            if (oUser) //user found
+
+            var szSQL ="SELECT  messages.href," +
+                               "messages.recipient," +
+                               "messages.sender, " +
+                               "messages.subject, " +
+                               "messages.date, " +
+                               "messages.size, " +
+                               "messages.read, " +
+                               "messages.deleted, " +
+                               "(  SELECT COUNT(*) " +
+                               "   FROM messages, folders, imap_accounts " +
+                               "   WHERE folders.account_id = imap_accounts.id AND " +
+                               "         messages.account_id = imap_accounts.id AND " +
+                               "         imap_accounts.account_name LIKE ?1 AND " +
+                               "         messages.folder_id = folders.id AND " +
+                               "         folders.folder_hierarchy LIKE ?2 AND " +
+                               "         messages.session = ?3 AND " +
+                               "         messages.id <= ?4" +
+                               ") AS sequence_number "
+            szSQL   += "FROM folders, imap_accounts, messages "
+            szSQL   += "WHERE  folders.account_id = imap_accounts.id AND " +
+                              "messages.account_id =  imap_accounts.id AND " +
+                              "imap_accounts.account_name LIKE ?1 AND " +
+                              "folders.id = messages.folder_id AND " +
+                              "folders.folder_hierarchy LIKE ?2 AND  " +
+                              "messages.session = ?3 AND " +
+                              "messages.id= ?4 "
+            szSQL   += "LIMIT 1"
+
+            var statement = this.m_dbConn.createStatement(szSQL);
+            statement.bindStringParameter(0, szUser);
+            statement.bindStringParameter(1, szHierarchy);
+            statement.bindStringParameter(2, this.m_iSession);
+            statement.bindStringParameter(3, szUID);
+
+            try
             {
-                this.m_Log.Write("nsIMAPFolder.js - getMSG - user found");
-                
-                //get folder
-                var oFolder = this.getFolder(oUser ,szHierarchy);
-                if (oFolder)
+                var wStatement = Components.classes["@mozilla.org/storage/statement-wrapper;1"]
+                                           .createInstance(Components.interfaces.mozIStorageStatementWrapper);
+                wStatement.initialize(statement);
+                while (wStatement.step())
                 {
-                    this.m_Log.Write("nsIMAPFolder.js - getMSG - folder found");
-                    
-                    var oMSG = {value : null};
-                    var oIndex = {value : null};
-                    var bMSG = this.findMSGUID(oFolder, szUID, oMSG, oIndex);
-                    
-                    if (bMSG)
-                    {
-                        this.m_Log.Write("nsIMAPFolder.js - getMSG MSG found");
-                        bResult = true;
-                        iIndex.value = oIndex.value;
-                        szHref.value = oMSG.value.szHref;
-                        bRead.value = oMSG.value.bRead;
-                        bDelete.value = oMSG.value.bDelete;
-                        szTo.value = oMSG.value.szTo;
-                        szFrom.value = oMSG.value.szFrom;
-                        szSubject.value = oMSG.value.szSubject;
-                        szDate.value = oMSG.value.szDate;
-                        iSize.value = oMSG.value.iSize;
-                    }
+                   szHref.value = wStatement.row["href"];
+                   szTo.value = wStatement.row["recipient"];
+                   szFrom.value = wStatement.row["sender"];
+                   szSubject.value = wStatement.row["subject"];
+                   szDate.value = wStatement.row["date"];
+                   iSize.value = Number(wStatement.row["size"]);
+                   var szRead = wStatement.row["read"];
+                   bRead.value = (szRead.search(/true/i)!=-1) ? true : false;
+                   var szDeleted = wStatement.row["deleted"];
+                   bDelete.value = (szDeleted.search(/true/i)!=-1) ? true : false;
+                   iSeqNum.value =  Number(wStatement.row["sequence_number"]);
+                   bResult = true;
                 }
             }
-            
+            finally
+            {
+                statement.reset();
+                this.m_Log.Write("nsIMAPFolder : getMSG - DB Reset "+ this.m_dbConn.lastErrorString);
+            }
+
             this.m_Log.Write("nsIMAPFolder.js - getMSG - END " +bResult);
             return bResult;
         }
         catch(err)
         {
-             this.m_Log.DebugDump("nsIMAPFolder.js: getMSG : Exception : " 
-                                          + err.name 
-                                          + ".\nError message: " 
+             this.m_Log.DebugDump("nsIMAPFolder.js: getMSG : Exception : "
+                                          + err.name
+                                          + ".\nError message: "
                                           + err.message + "\n"
-                                          + err.lineNumber);
+                                          + err.lineNumber+ "\n" +
+                                          this.m_dbConn.lastErrorString);
             return false;
         }
     },
-    
-    
+
+
+
+
+
+    getMSGHref : function (szUser, szHierarchy, szUID, szHref)
+    {
+        try
+        {
+            this.m_Log.Write("nsIMAPFolder.js - getMSGHref - Start");
+            this.m_Log.Write("nsIMAPFolder.js - getMSGHref - " + szUser + " " + szHierarchy + " " + szUID);
+            var bResult = false;
+
+            var szSQL ="SELECT  messages.href ";
+            szSQL   += "FROM folders, imap_accounts, messages "
+            szSQL   += "WHERE  folders.account_id = imap_accounts.id AND " +
+                              "messages.account_id =  imap_accounts.id AND " +
+                              "imap_accounts.account_name LIKE ?1 AND " +
+                              "folders.id = messages.folder_id AND " +
+                              "folders.folder_hierarchy LIKE ?2 AND  " +
+                              "messages.session = ?3 AND " +
+                              "messages.id= ?4 "
+            szSQL   += "LIMIT 1"
+
+            var statement = this.m_dbConn.createStatement(szSQL);
+            statement.bindStringParameter(0, szUser);
+            statement.bindStringParameter(1, szHierarchy);
+            statement.bindStringParameter(2, this.m_iSession);
+            statement.bindStringParameter(3, szUID);
+
+            try
+            {
+                var wStatement = Components.classes["@mozilla.org/storage/statement-wrapper;1"]
+                                           .createInstance(Components.interfaces.mozIStorageStatementWrapper);
+                wStatement.initialize(statement);
+                while (wStatement.step())
+                {
+                   szHref.value = wStatement.row["href"];
+                   bResult = true;
+                }
+            }
+            finally
+            {
+                statement.reset();
+                this.m_Log.Write("nsIMAPFolder : getMSGHref - DB Reset "+ this.m_dbConn.lastErrorString);
+            }
+
+            this.m_Log.Write("nsIMAPFolder.js - getMSGHref - END " +bResult);
+            return bResult;
+        }
+        catch(err)
+        {
+             this.m_Log.DebugDump("nsIMAPFolder.js: getMSGHref : Exception : "
+                                          + err.name
+                                          + ".\nError message: "
+                                          + err.message + "\n"
+                                          + err.lineNumber+ "\n" +
+                                          this.m_dbConn.lastErrorString);
+            return false;
+        }
+    },
+
+
+
+
+
+    getMSGStatus : function (szUser, szHierarchy, szUID, szHref, bRead, bDelete, iSeqNum)
+    {
+        try
+        {
+            this.m_Log.Write("nsIMAPFolder.js - getMSGStatus - Start");
+            this.m_Log.Write("nsIMAPFolder.js - getMSGStatus - " + szUser + " " + szHierarchy + " " + szUID);
+            var bResult = false;
+
+            var szSQL ="SELECT  messages.href," +
+                               "messages.read, " +
+                               "messages.deleted, " +
+                               "(  SELECT COUNT(*) " +
+                               "   FROM messages, folders, imap_accounts " +
+                               "   WHERE folders.account_id = imap_accounts.id AND " +
+                               "         messages.account_id = imap_accounts.id AND " +
+                               "         imap_accounts.account_name LIKE ?1 AND " +
+                               "         messages.folder_id = folders.id AND " +
+                               "         folders.folder_hierarchy LIKE ?2 AND " +
+                               "         messages.session = ?3 AND " +
+                               "         messages.id <= ?4" +
+                               ") AS sequence_number "
+            szSQL   += "FROM folders, imap_accounts, messages "
+            szSQL   += "WHERE  folders.account_id = imap_accounts.id AND " +
+                              "messages.account_id =  imap_accounts.id AND " +
+                              "imap_accounts.account_name LIKE ?1 AND " +
+                              "folders.id = messages.folder_id AND " +
+                              "folders.folder_hierarchy LIKE ?2 AND  " +
+                              "messages.session = ?3 AND " +
+                              "messages.id= ?4 "
+            szSQL   += "LIMIT 1"
+
+            var statement = this.m_dbConn.createStatement(szSQL);
+            statement.bindStringParameter(0, szUser);
+            statement.bindStringParameter(1, szHierarchy);
+            statement.bindStringParameter(2, this.m_iSession);
+            statement.bindStringParameter(3, szUID);
+
+            try
+            {
+                var wStatement = Components.classes["@mozilla.org/storage/statement-wrapper;1"]
+                                           .createInstance(Components.interfaces.mozIStorageStatementWrapper);
+                wStatement.initialize(statement);
+                while (wStatement.step())
+                {
+                   szHref.value = wStatement.row["href"];
+                   var szRead = wStatement.row["read"];
+                   bRead.value = (szRead.search(/true/i)!=-1) ? true : false;
+                   var szDeleted = wStatement.row["deleted"];
+                   bDelete.value = (szDeleted.search(/true/i)!=-1) ? true : false;
+                   iSeqNum.value =  Number(wStatement.row["sequence_number"]);
+                   bResult = true;
+                }
+            }
+            finally
+            {
+                statement.reset();
+                this.m_Log.Write("nsIMAPFolder : getMSGStatus - DB Reset "+ this.m_dbConn.lastErrorString);
+            }
+
+            this.m_Log.Write("nsIMAPFolder.js - getMSGStatus - END " +bResult);
+            return bResult;
+        }
+        catch(err)
+        {
+             this.m_Log.DebugDump("nsIMAPFolder.js: getMSGStatus : Exception : "
+                                          + err.name
+                                          + ".\nError message: "
+                                          + err.message + "\n"
+                                          + err.lineNumber+ "\n" +
+                                          this.m_dbConn.lastErrorString);
+            return false;
+        }
+    },
+
+
+
+
 
     setMSGSeenFlag : function(szUser, szHierarchy, szUID, bSeen)
     {
@@ -768,426 +1267,117 @@ nsIMAPFolders.prototype =
         {
             this.m_Log.Write("nsIMAPFolder.js - setMSGSeenFlag - Start");
             this.m_Log.Write("nsIMAPFolder.js - setMSGSeenFlag - " + szUser + " " + szHierarchy + " " + szUID + " " + bSeen);
-            var bResult = false;
-                      
-            var oUser = this.getUser(szUser);  
-            if (oUser) //user found
-            {
-                this.m_Log.Write("nsIMAPFolder.js - setMSGSeenFlag - user found");
-                
-                //get folder
-                var oFolder = this.getFolder(oUser ,szHierarchy);
-                if (oFolder)
-                {
-                    this.m_Log.Write("nsIMAPFolder.js - setMSGSeenFlag - folder found");
-                    
-                    var oMSG = {value : null};
-                    var oIndex = {value : null};
-                    var bMSG = this.findMSGUID(oFolder, szUID, oMSG, oIndex);
-                                            
-                    if (bMSG)
-                    {
-                        this.m_Log.Write("nsIMAPFolder.js - setMSGSeenFlag MSG found");
-                        bResult = true; 
-                        if (bSeen)
-                            if (oFolder.iUnreadCount>0)oFolder.iUnreadCount--;
-                        else
-                            oFolder.iUnreadCount++;
-                            
-                        oMSG.value.bRead = bSeen;
-                    }
-                }
-            }
-            
-            this.m_Log.Write("nsIMAPFolder.js - setMSGSeenFlag - END " +bResult);
-            return bResult;
+
+            var szSQL = "UPDATE messages ";
+            szSQL    += "SET read = ?4 "
+            szSQL    += "WHERE id = ( SELECT messages.id " +
+                                     "FROM messages, folders, imap_accounts " +
+                                     "WHERE imap_accounts.account_name LIKE ?1 AND " +
+                                     "      imap_accounts.id = folders.account_id  AND " +
+                                     "      messages.account_id = imap_accounts.id AND " +
+                                     "      messages.folder_id = folders.id AND " +
+                                     "      folders.folder_hierarchy  = ?2  AND " +
+                                     "      messages.id = ?3" +
+                                    ");"
+
+            var statement = this.m_dbConn.createStatement(szSQL);
+            statement.bindStringParameter(0, szUser.toLowerCase());
+            statement.bindStringParameter(1, szHierarchy);
+            statement.bindStringParameter(2, szUID);
+            statement.bindStringParameter(3, bSeen);
+            statement.execute();
+
+            this.m_Log.Write("nsIMAPFolder.js - setMSGSeenFlag - END ");
+            return true;
         }
         catch(err)
         {
-             this.m_Log.DebugDump("nsIMAPFolder.js: setMSGSeenFlag : Exception : " 
-                                          + err.name 
-                                          + ".\nError message: " 
+             this.m_Log.DebugDump("nsIMAPFolder.js: setMSGSeenFlag : Exception : "
+                                          + err.name
+                                          + ".\nError message: "
                                           + err.message + "\n"
-                                          + err.lineNumber);
+                                          + err.lineNumber+ "\n" +
+                                          this.m_dbConn.lastErrorString);
             return false;
         }
     },
-    
-    
-    
-    
-    
+
+
+
+
     setMSGDeleteFlag : function (szUser, szHierarchy, szUID, bDelete)
     {
         try
         {
             this.m_Log.Write("nsIMAPFolder.js - setMSGDeleteFlag - Start");
             this.m_Log.Write("nsIMAPFolder.js - setMSGDeleteFlag - " + szUser + " " + szHierarchy + " " + szUID + " " + bDelete);
-            var bResult = false;
-                      
-            var oUser = this.getUser(szUser);  
-            if (oUser) //user found
-            {
-                this.m_Log.Write("nsIMAPFolder.js - setMSGDeleteFlag - user found");
-                
-                //get folder
-                var oFolder = this.getFolder(oUser ,szHierarchy);
-                if (oFolder)
-                {
-                    this.m_Log.Write("nsIMAPFolder.js - setMSGDeleteFlag - folder found");
-                    
-                    var oMSG = {value : null};
-                    var oIndex = {value : null};
-                    var bMSG = this.findMSGUID(oFolder, szUID, oMSG, oIndex);
-                      
-                    if (bMSG)
-                    {
-                        this.m_Log.Write("nsIMAPFolder.js - setMSGDeleteFlag MSG found");
-                        bResult = true;
-                        oMSG.value.bDelete = bDelete;
-                    }
-                }
-            }
-            
-            this.m_Log.Write("nsIMAPFolder.js - setMSGDeleteFlag - END " +bResult);
-            return bResult;
+
+            var szSQL = "UPDATE messages ";
+            szSQL    += "SET deleted = ?4 "
+            szSQL    += "WHERE id = ( SELECT messages.id " +
+                                     "FROM messages, folders, imap_accounts " +
+                                     "WHERE imap_accounts.account_name LIKE ?1 AND " +
+                                     "      imap_accounts.id = folders.account_id  AND " +
+                                     "      messages.account_id = imap_accounts.id AND " +
+                                     "      messages.folder_id = folders.id AND " +
+                                     "      folders.folder_hierarchy  = ?2  AND " +
+                                     "      messages.id = ?3" +
+                                    ");"
+
+            var statement = this.m_dbConn.createStatement(szSQL);
+            statement.bindStringParameter(0, szUser.toLowerCase());
+            statement.bindStringParameter(1, szHierarchy);
+            statement.bindStringParameter(2, szUID);
+            statement.bindStringParameter(3, bDelete);
+            statement.execute();
+
+
+            this.m_Log.Write("nsIMAPFolder.js - setMSGDeleteFlag - END ");
+            return true;
         }
         catch(err)
         {
-             this.m_Log.DebugDump("nsIMAPFolder.js: setMSGDeleteFlag : Exception : " 
-                                          + err.name 
-                                          + ".\nError message: " 
+             this.m_Log.DebugDump("nsIMAPFolder.js: setMSGDeleteFlag : Exception : "
+                                          + err.name
+                                          + ".\nError message: "
                                           + err.message + "\n"
-                                          + err.lineNumber);
+                                          + err.lineNumber+ "\n" +
+                                          this.m_dbConn.lastErrorString);
             return false;
         }
     },
 
 
 
-    deleteMSG : function (szUser, szHierarchy, oIndex)
+
+    deleteMSG : function (szUser, szHierarchy)
     {
         try
         {
             this.m_Log.Write("nsIMAPFolder.js - deleteMSGs - START ");
-            var bResult = false;
-            var aResult = new Array();
-            
-            var oUser = this.getUser(szUser);  
-            if (oUser) //user found
-            {
-                this.m_Log.Write("nsIMAPFolder.js - deleteMSGs - user found");
-                
-                //get folder
-                var oFolder = this.getFolder(oUser ,szHierarchy);
-                if (oFolder)
-                {
-                    this.m_Log.Write("nsIMAPFolder.js - deleteMSGs - folder found");
-                    
-                    if (oFolder.aMSG.length > 0)
-                    {
-                        var  i=0;
-                        do
-                        { 
-                            var TempMSG = oFolder.aMSG.shift();
-                            var TempID = oFolder.aUIDs.shift();
-                             
-                            if (TempMSG.bDelete)
-                            {
-                                this.m_Log.Write("nsIMAPFolder.js - deleteMSGs - Deleted MSG found - Index" + i+1 + " UID " +TempMSG.szUID );
-                                oIndex.value = i+1;
-                                bResult = true;
-                                oFolder.iMSGCount--;
-                                if (TempMSG.bRead) oFolder.iUnreadCount--;
-                                delete TempMSG;
-                                delete TempID;
-                            }
-                            else
-                            {
-                                this.m_Log.Write("nsIMAPFolder.js - deleteMSGs - Deleted MSG NOT found - UID " +TempMSG.szUID);
-                                oFolder.aMSG.push(TempMSG);
-                                oFolder.aUIDs.push(TempID);
-                            }
-                            i++;
-                        }while(i!=oFolder.aMSG.length && !bResult) 
-                    
-                        //resort arrays
-                        var aTempMSG = oFolder.aMSG.sort(this.sortMSGUID);
-                        delete oFolder.aMSG;
-                        oFolder.aMSG = aTempMSG;
-                                
-                        var aTempUID = oFolder.aUIDs.sort(this.sortUID);
-                        delete oFolder.aUIDs;
-                        oFolder.aUIDs = aTempUID;
-                    } 
-                }
-            }
-                 
-            this.m_Log.Write("nsIMAPFolder.js - deleteMSGs - END " +bResult);
-            return bResult;
+            this.m_Log.Write("nsIMAPFolder.js - deleteMSGs - " + szUser + " " + szHierarchy );
+
+            var szSQL = "DELETE FROM messages ";
+            szSQL   +=  "WHERE account_id = (SELECT id FROM imap_accounts WHERE account_name LIKE ?1) AND " +
+                              "folder_id = (SELECT id FROM folders WHERE folder_hierarchy LIKE ?2) AND " +
+                              "deleted = \"true\"";
+
+            var statement = this.m_dbConn.createStatement(szSQL);
+            statement.bindStringParameter(0, szUser);
+            statement.bindStringParameter(1, szHierarchy);
+            statement.execute();
+
+            this.m_Log.Write("nsIMAPFolder.js - deleteMSGs - END ");
+            return true;
         }
         catch(err)
         {
-            this.m_Log.DebugDump("nsIMAPFolder.js: deleteMSGs : Exception : " 
-                              + err.name 
-                              + ".\nError message: " 
+            this.m_Log.DebugDump("nsIMAPFolder.js: deleteMSGs : Exception : "
+                              + err.name
+                              + ".\nError message: "
                               + err.message + "\n"
-                              + err.lineNumber);
-            return false;
-        }
-    },
-
-
-
-    findMSGUID : function (oFolder, szUID , oMSG, oIndex)
-    {
-        try
-        {
-            this.m_Log.Write("nsIMAPFolder.js - findMSGUID - START");
-            
-            if (oFolder.aMSG.length>0)
-            {
-                var regexpMSG = new RegExp("^"+szUID+"$");
-                this.m_Log.Write("nsIMAPFolder.js - findMSGUID  Reg "+ regexpMSG);
-                
-                var bResult = false;
-                var  i=0;
-                do
-                {                   
-                    var szTempID = new String(oFolder.aMSG[i].szUID);
-                    this.m_Log.Write("nsIMAPFolder.js - findMSGUID " + i + " "+ szTempID);
-                   
-                    if (szTempID.search(regexpMSG)!=-1)
-                    {
-                        this.m_Log.Write("nsIMAPFolder.js - findMSGUID found");
-                        oMSG.value = oFolder.aMSG[i];
-                        oIndex.value = i+1;
-                        bResult = true;
-                    }
-                    i++;
-                }while(i!=oFolder.aMSG.length && !bResult)
-            }
-            
-            this.m_Log.Write("nsIMAPFolder.js - findMSGUID - End");
-            return bResult;
-        }
-        catch(err)
-        {
-            this.m_Log.DebugDump("nsIMAPFolder.js: findMSGUID : Exception : " 
-                                          + err.name 
-                                          + ".\nError message: " 
-                                          + err.message + "\n"
-                                          + err.lineNumber);
-            return null;
-        }
-        
-    },
-    
-    
-    
-    
-    findMSGURI : function (oFolder, szHref , oMSG, oIndex)
-    {
-        try
-        {
-            this.m_Log.Write("nsIMAPFolder.js - findMSGURI - START");
-            
-            if (oFolder.aMSG.length>0)
-            {
-                var regexpMSG = new RegExp("^"+szHref+"$");
-                this.m_Log.Write("nsIMAPFolder.js - findMSGURI  Reg "+ regexpMSG);
-                
-                var bResult = false;
-                var  i=0;
-                do
-                {                   
-                    var szTempID = oFolder.aMSG[i].szHref;
-                    this.m_Log.Write("nsIMAPFolder.js - findMSGURI " + i + " "+ szTempID);
-                   
-                    if (szTempID.search(regexpMSG)!=-1)
-                    {
-                        this.m_Log.Write("nsIMAPFolder.js - findMSGURI found");
-                        oMSG.value = oFolder.aMSG[i];
-                        oIndex.value = i+1;
-                        bResult = true;
-                    }
-                    i++;
-                }while(i!=oFolder.aMSG.length && !bResult)
-            }
-            
-            this.m_Log.Write("nsIMAPFolder.js - findMSGURI - End");
-            return bResult;
-        }
-        catch(err)
-        {
-            this.m_Log.DebugDump("nsIMAPFolder.js: findMSGURI : Exception : " 
-                                          + err.name 
-                                          + ".\nError message: " 
-                                          + err.message + "\n"
-                                          + err.lineNumber);
-            return null;
-        }
-        
-    },
-    
-    
-    
-    getFolder : function (oUser, szFolder)
-    {
-        try
-        {
-            this.m_Log.Write("nsIMAPFolder.js - getFolder - START");
-            var oFolder = null;
-            
-            if (oUser.aFolders.length>0)
-            {
-                var regexpHier = new RegExp(szFolder+"$");
-                this.m_Log.Write("nsIMAPFolder.js - getFolder  Reg "+ regexpHier);
-                
-                var bResult = false;
-                var  i=0;
-                do
-                {                   
-                    var szTempHierarchy = oUser.aFolders[i].szHeirerchy;
-                    this.m_Log.Write("nsIMAPFolder.js - getFolder " + i + " "+ szTempHierarchy);
-                   
-                    if (szTempHierarchy.search(regexpHier)!=-1)
-                    {
-                        this.m_Log.Write("nsIMAPFolder.js - getFolder folder found");
-                        oFolder = oUser.aFolders[i];
-                        bResult = true;
-                    }
-                    i++;
-                }while(i!=oUser.aFolders.length && !bResult)
-            }
-            
-            this.m_Log.Write("nsIMAPFolder.js - getFolder - End");
-            return oFolder;
-        }
-        catch(err)
-        {
-            this.m_Log.DebugDump("nsIMAPFolder.js: getFolder : Exception : " 
-                                          + err.name 
-                                          + ".\nError message: " 
-                                          + err.message + "\n"
-                                          + err.lineNumber);
-            return null;
-        }
-    },
-    
-    
-
-    
-          
-    getUser : function (szUser)
-    {
-        try
-        {
-            this.m_Log.Write("nsIMAPFolder.js - getUser - Start");
-            this.m_Log.Write("nsIMAPFolder.js - getUser - "+szUser);
-            
-            //find user
-            var bFound = false;
-            var  i =0;
-            var oUser = null;
-            var regexpUser = new RegExp("^"+szUser+"$","i");
-            this.m_Log.Write("nsIMAPFolder.js - getUser - Target User  " +regexpUser);
-            
-            if (this.m_aUsers.length>0)
-            {
-                do
-                {     
-                    this.m_Log.Write("nsIMAPFolder.js - getUser - search users " + this.m_aUsers[i].szUser);  
-                    if (this.m_aUsers[i].szUser.search(regexpUser)!=-1)
-                    {
-                        this.m_Log.Write("nsIMAPFolder.js - getUser - user Found");
-                        bFound = true;
-                        oUser = this.m_aUsers[i];
-                    }
-                     
-                    i++;
-                }while(i!=this.m_aUsers.length && !bFound)
-            }
-            
-            this.m_Log.Write("nsIMAPFolder.js - getUser - End "+ oUser);
-            return oUser;
-        }
-        catch(err)
-        {
-            this.m_Log.DebugDump("nsIMAPFolder.js: getUser : Exception : " 
-                                          + err.name 
-                                          + ".\nError message: " 
-                                          + err.message + "\n"
-                                          + err.lineNumber);
-            return null;
-        }
-    },
-    
-    
-    
-    loadSubData : function()
-    {
-        try
-        {
-            this.m_Log.Write("nsIMAPFolder.js - loadSubData - START");   
-            
-            //get user prefs
-            var iCount = 0;
-            var oPref = {Value:null};
-            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-            WebMailPrefAccess.Get("int","webmail.IMAPSubFolders.Num",oPref);
-            this.m_Log.Write("nsIMAPFolder.js - loadPrefs - num " + oPref.Value);
-            if (oPref.Value)
-            { 
-                iCount = oPref.Value;
-        
-                for (i=0; i<iCount; i++)
-                {          
-                    //get user name
-                    oPref.Value = null;
-                    WebMailPrefAccess.Get("char","webmail.IMAPSubFolders."+i+".user",oPref);
-                    this.m_Log.Write("nsIMAPFolder.js - loadPrefs - user " + oPref.Value);
-                    if (oPref.Value)
-                    { 
-                        var data = new IMAPUser();
-                        data.szUser = oPref.Value;
-                        
-                        //get folders
-                        oPref.Value= null;
-                        WebMailPrefAccess.Get("char","webmail.IMAPSubFolders."+i+".szFolders",oPref);
-                        this.m_Log.Write("nsIMAPFolder.js - loadPrefs - szFolders " + oPref.Value);
-                        if (oPref.Value)
-                        {
-                            //data.aszSubFolders = new Array();
-                            
-                            var aszFolders = oPref.Value.split("\r");
-                            for (j=0; j<aszFolders.length; j++)
-                            {
-                                this.m_Log.Write("nsYahoo - loadPRefs - aszFolders[j] " + aszFolders[j]);
-                                data.aszSubFolders.push(aszFolders[j]);
-                            }
-                        }
-/* 
-                        oPref.Value= null;
-                        WebMailPrefAccess.Get("int","webmail.IMAPSubFolders."+i+".iNextMSGID",oPref);
-                        this.m_Log.Write("nsIMAPFolder.js - loadPrefs - iNextMSGID " + oPref.Value);
-                        if (oPref.Value) data.iNextMSGID = oPref.Value;
-*/
-                        this.m_aUsers.push(data);
-                    }
-                }
-            }    
-            this.m_Log.Write("nsIMAPFolder.js - loadSubData - END");  
-            return true;
-        }
-        catch(err)
-        {
-            this.m_Log.DebugDump("nsIMAPFolder.js: loadSubData : Exception : " 
-                                          + err.name 
-                                          + ".\nError message: " 
-                                          + err.message + "\n"
-                                          + err.lineNumber);
-                                          
+                              + err.lineNumber+ "\n" +
+                              this.m_dbConn.lastErrorString);
             return false;
         }
     },
@@ -1195,60 +1385,9 @@ nsIMAPFolders.prototype =
 
 
 
-    saveSubData : function()
+    observe : function(aSubject, aTopic, aData)
     {
-        try
-        {
-            this.m_Log.Write("nsIMAPFolder.js - saveSubData - START");   
-            
-            this.m_Log.Write("nsIMAPFolder.js - saveSubData - " +this.m_bSubUpdate);
-
-            //write prefs
-            var WebMailPrefAccess = new WebMailCommonPrefAccess();
-            WebMailPrefAccess.DeleteBranch("webmail.IMAPSubFolders");
-            WebMailPrefAccess.Set("int","webmail.IMAPSubFolders.Num",this.m_aUsers.length);
-            
-            for (var i=0; i<this.m_aUsers.length; i++)
-            {
-                WebMailPrefAccess.Set("char","webmail.IMAPSubFolders."+i+".user",this.m_aUsers[i].szUser);
-                this.m_Log.Write("nsIMAPFolder.js - saveSubData - user " + this.m_aUsers[i].szUser);
-                
-                var szFolders = "";
-                for (var j=0; j<this.m_aUsers[i].aszSubFolders.length; j++)
-                {
-                    szFolders += this.m_aUsers[i].aszSubFolders[j];
-                    if (j!=this.m_aUsers[i].aszSubFolders.length-1) szFolders += "\r";
-                }
-
-                WebMailPrefAccess.Set("char","webmail.IMAPSubFolders."+i+".szFolders",szFolders);
-                this.m_Log.Write("nsIMAPFolder.js - saveSubData - szFolders " + szFolders);
-/*
-                WebMailPrefAccess.Set("int","webmail.IMAPSubFolders."+i+".iNextMSGID",this.m_aUsers[i].iNextMSGID);
-                this.m_Log.Write("nsIMAPFolder.js - saveSubData - iNextMSGID " + this.m_aUsers[i].iNextMSGID);   
-*/
-            }
-        
-     
-            this.m_Log.Write("nsIMAPFolder.js - saveSubData - END");  
-            return true;
-        }
-        catch(err)
-        {
-            this.m_Log.DebugDump("nsIMAPFolder.js: loadDataBase : Exception : " 
-                                          + err.name 
-                                          + ".\nError message: " 
-                                          + err.message + "\n"
-                                          + err.lineNumber);
-                                          
-            return false;
-        }
-    },  
-
-
-    
-    observe : function(aSubject, aTopic, aData) 
-    {
-        switch(aTopic) 
+        switch(aTopic)
         {
             case "xpcom-startup":
                 // this is run very early, right after XPCOM is initialized, but before
@@ -1258,35 +1397,32 @@ nsIMAPFolders.prototype =
                                 getService(Components.interfaces.nsIObserverService);
                 obsSvc.addObserver(this, "profile-after-change", false);
                 obsSvc.addObserver(this, "quit-application", false);
-                
+
                 this.m_scriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                                         .getService(Components.interfaces.mozIJSSubScriptLoader);
             break;
-            
+
             case "profile-after-change":
                 // This happens after profile has been loaded and user preferences have been read.
                 // startup code here
                 this.m_scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
                 this.m_scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
-                this.m_scriptLoader.loadSubScript("chrome://web-mail/content/common/IMAPData.js");
-                this.m_Log = new DebugLog("webmail.logging.comms", 
+                this.m_Log = new DebugLog("webmail.logging.comms",
                                           "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
                                           "IMAP Folders");
-                                          
+
                 this.m_Log.Write("nsIMAPFolder.js - profile-after-change");
-                this.loadSubData();
+                this.loadDataBase();
             break;
 
             case "quit-application":
-                this.m_Log.Write("nsIMAPFolder.js - quit-application "); 
-                this.saveSubData();
+                this.m_Log.Write("nsIMAPFolder.js - quit-application ");
             break;
 
             case "app-startup":
             break;
-            
-            default:
-                throw Components.Exception("Unknown topic: " + aTopic);
+
+            default: throw Components.Exception("Unknown topic: " + aTopic);
         }
     },
 
@@ -1295,15 +1431,15 @@ nsIMAPFolders.prototype =
 /******************************************************************************/
     QueryInterface : function (iid)
     {
-        if (!iid.equals(Components.interfaces.nsIIMAPFolders) 
-        	    && !iid.equals(Components.interfaces.nsISupports)
+        if (!iid.equals(Components.interfaces.nsIIMAPFolders)
+                && !iid.equals(Components.interfaces.nsISupports)
                     && !iid.equals(Components.interfaces.nsIObserver))
             throw Components.results.NS_ERROR_NO_INTERFACE;
-            
+
         return this;
     }
 }
- 
+
 
 /******************************************************************************/
 /* FACTORY*/
@@ -1313,11 +1449,11 @@ nsIMAPFoldersFactory.createInstance = function (outer, iid)
 {
     if (outer != null)
         throw Components.results.NS_ERROR_NO_AGGREGATION;
-    
-    if (!iid.equals(nsIMAPFoldersClassID) 
+
+    if (!iid.equals(nsIMAPFoldersClassID)
             && !iid.equals(Components.interfaces.nsISupports))
         throw Components.results.NS_ERROR_INVALID_ARG;
-    
+
     return new nsIMAPFolders();
 }
 
@@ -1330,25 +1466,25 @@ nsIMAPFoldersModule.registerSelf = function(compMgr, fileSpec, location, type)
 {
     var catman = Components.classes["@mozilla.org/categorymanager;1"].
                         getService(Components.interfaces.nsICategoryManager);
-        
-    catman.addCategoryEntry("xpcom-startup", 
-                            "IMAP Folders", 
-                            nsIMAPFoldersContactID, 
-                            true, 
-                            true);                     
-                            
-    catman.addCategoryEntry("app-startup", 
-                            "IMAP Folders", 
-                            "service," + nsIMAPFoldersContactID, 
-                            true, 
+
+    catman.addCategoryEntry("xpcom-startup",
+                            "IMAP Folders",
+                            nsIMAPFoldersContactID,
+                            true,
                             true);
-                            
+
+    catman.addCategoryEntry("app-startup",
+                            "IMAP Folders",
+                            "service," + nsIMAPFoldersContactID,
+                            true,
+                            true);
+
     compMgr = compMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
     compMgr.registerFactoryLocation(nsIMAPFoldersClassID,
                                     "IMAP Folders",
-                                    nsIMAPFoldersContactID, 
+                                    nsIMAPFoldersContactID,
                                     fileSpec,
-                                    location, 
+                                    location,
                                     type);
 }
 
@@ -1357,15 +1493,15 @@ nsIMAPFoldersModule.unregisterSelf = function(aCompMgr, aFileSpec, aLocation)
 {
     var catman = Components.classes["@mozilla.org/categorymanager;1"].
                             getService(Components.interfaces.nsICategoryManager);
-                            
+
     catman.deleteCategoryEntry("xpcom-startup", "IMAP Folders", true);
     catman.deleteCategoryEntry("app-startup", "IMAP Folders", true);
-    
+
     aCompMgr = aCompMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
     aCompMgr.unregisterFactoryLocation(nsIMAPFoldersClassID, aFileSpec);
 }
 
- 
+
 nsIMAPFoldersModule.getClassObject = function(compMgr, cid, iid)
 {
     if (!cid.equals(nsIMAPFoldersClassID))
@@ -1387,5 +1523,5 @@ nsIMAPFoldersModule.canUnload = function(compMgr)
 
 function NSGetModule(compMgr, fileSpec)
 {
-    return nsIMAPFoldersModule; 
+    return nsIMAPFoldersModule;
 }
