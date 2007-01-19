@@ -365,11 +365,15 @@ nsIMAPFolders.prototype =
             this.m_Log.Write("nsIMAPFolder.js - listSubscribed - "+szAddress);
 
             var bReturn = false;
-            var szSQL = "SELECT folder_hierarchy "
-            szSQL    += "FROM subscribed_folders, imap_accounts ";
-            szSQL    += "WHERE imap_accounts.account_name  LIKE ?1 AND imap_accounts.id = subscribed_folders.account_id"
+            var szSQL = "SELECT subscribed_folders.folder_hierarchy "
+            szSQL    += "FROM subscribed_folders, imap_accounts, folders ";
+            szSQL    += "WHERE imap_accounts.account_name LIKE ?1 AND " +
+                        "      imap_accounts.id = subscribed_folders.account_id  AND " +
+                        "      subscribed_folders.folder_hierarchy LIKE folders.folder_hierarchy  AND " +
+                        "      folders.session = ?2 "
             var statement = this.m_dbConn.createStatement(szSQL);
             statement.bindStringParameter(0, szAddress.toLowerCase());
+            statement.bindStringParameter(1, this.m_iSession);
 
             var aResult = new Array();
             try
