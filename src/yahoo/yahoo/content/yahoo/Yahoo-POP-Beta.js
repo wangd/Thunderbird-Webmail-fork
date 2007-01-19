@@ -1083,10 +1083,9 @@ YahooPOPBETA.prototype =
                     else
                     {   //download first file
                         var szURI = mainObject.m_szLocationURI + "/ya/download?";
-                        szURI += "fid=" + mainObject.m_szBox;
+                        szURI += "fid=" + encodeURIComponent(mainObject.m_szBox);
                         szURI += "&mid=" + encodeURIComponent(mainObject.m_szMsgID);
                         szURI += "&pid=" +mainObject.m_aDownloadFiles[0].match(kPatternPartId)[1];
-
 
                         mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szURI " +szURI);
                         mainObject.m_HttpComms.setURI(szURI);
@@ -1172,7 +1171,7 @@ YahooPOPBETA.prototype =
                     else
                     {   //download first file
                         var szURI = mainObject.m_szLocationURI + "/ya/download?";
-                        szURI += "fid=" + mainObject.m_szBox;
+                        szURI += "fid=" + encodeURIComponent(mainObject.m_szBox);
                         szURI += "&mid=" + encodeURIComponent(mainObject.m_szMsgID);
                         szURI += "&pid=" +mainObject.m_aDownloadFiles[0].match(kPatternPartId)[1];
                         mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szURI " +szURI);
@@ -1440,7 +1439,7 @@ YahooPOPBETA.prototype =
 
     cleanHTML : function (szRaw)
     {
-        this.m_Log.Write("YahooPOPBETA - cleanHTML - START");
+        this.m_Log.Write("YahooPOPBETA - cleanHTML");
         var szMsg = szRaw.replace(/&lt;/g,"<");
         szMsg = szMsg.replace(/&gt;/g,">");
         szMsg = szMsg.replace(/&quot;/g, "\"");
@@ -1450,6 +1449,7 @@ YahooPOPBETA.prototype =
         szMsg = szMsg.replace(/&#10;/g,"\n");
         szMsg = szMsg.replace(/&#xD;/g,"\r");
         szMsg = szMsg.replace(/&#13;/g,"\r");
+        szMsg = szMsg.replace(/\uC2/g," ").replace(/\uA0/g, "");
         return szMsg;
     },
 }
