@@ -41,7 +41,6 @@ function nsLycosIMAP()
         this.m_HttpComms.setHandleHttpAuth(true);
         this.m_bAuthorised = false;
         this.m_iStage=0;
-        this.m_iFolderUpdate = 0;
 
         this.m_szFolderURI = null;
         this.m_szFolderReference = null;
@@ -53,11 +52,11 @@ function nsLycosIMAP()
         this.m_szFolderNewName = null;
         this.m_aRawData = new Array();
         this.m_iTimerTask = -1;
-        this.m_iLastCheck = 0;
         this.m_szRange = null;
         this.m_szFlag = null;
         this.m_iUID = 0;
         this.m_szDestinationFolder = null;
+        this.m_iListType = 0;
 
         this.m_Timer = Components.classes["@mozilla.org/timer;1"];
         this.m_Timer = this.m_Timer.createInstance(Components.interfaces.nsITimer);
@@ -68,10 +67,15 @@ function nsLycosIMAP()
 
         var oPref = {Value:null};
         var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-        if (WebMailPrefAccess.Get("int","lycos.iProcessDelay",oPref))
-            this.m_iTime=oPref.Value;
+        if (WebMailPrefAccess.Get("int","lycos.iFolderBiff",oPref))
+            this.m_iFolderBiff = oPref.Value;
         else
-            this.m_iTime=10;
+            this.m_iFolderBiff = 1200000;
+
+        if (WebMailPrefAccess.Get("int","lycos.iMSGListBiff",oPref))
+            this.m_iMSGListBiff = oPref.Value;
+        else
+            this.m_iMSGListBiff = 600000;
 
         this.m_Log.Write("nsLycosIMAP.js - Constructor - END");
     }
@@ -143,10 +147,6 @@ nsLycosIMAP.prototype =
                 this.m_Log.Write("nsLycos.js - logIN - Session Data found");
                 this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
                 this.m_HttpComms.setHttpAuthManager(this.m_SessionData.oHttpAuthManager);
-                if (this.m_SessionData.oComponentData)
-                {
-                    this.m_iFolderUpdate = this.m_SessionData.oComponentData.findElement("iFolderUpdate");
-                }
             }
 
             this.m_HttpComms.setUserName(this.m_szUserName);
@@ -209,8 +209,6 @@ nsLycosIMAP.prototype =
             }
             mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
             mainObject.m_SessionData.oHttpAuthManager = mainObject.m_HttpComms.getHttpAuthManager();
-            mainObject.m_SessionData.oComponentData.addElement("iFolderUpdate",mainObject.m_iFolderUpdate);
-
             mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);
 
             //server response
@@ -238,18 +236,25 @@ nsLycosIMAP.prototype =
         {
             this.m_Log.Write("nsLycosIMAP.js - listSubscribe - START");
 
-            var aszFolders = {value : null};
-            var iFolders = {value : null };
-            var aszFolder = this.m_oIMAPData.listSubscribed(this.m_szUserName, iFolders, aszFolders);
-            this.m_Log.Write("nsLycosIMAP.js - listSubscribe - list: " + aszFolders.value);
+            var iUpdateDate = this.m_oIMAPData.lastFolderListUpdate(this.m_szUserName);
+            iUpdateDate += this.m_iFolderBiff;
+            this.m_Log.Write("nsLycosIMAP.js - list - iUpdateDate " + iUpdateDate);
+            this.m_iListType = 0;
 
-            var szResponse = "";
-            for (i=0; i<aszFolders.value.length; i++)
-            {
-                szResponse += "* lsub (\\Noinferiors \\HasNoChildren) " + "\".\" \"" + aszFolders.value[i] + "\"\r\n";
+            if (iUpdateDate < Date.now())
+            {//donwload folder list
+                this.m_HttpComms.setContentType("text/xml");
+                this.m_HttpComms.setRequestMethod("PROPFIND");
+                this.m_HttpComms.addData(kLycosFolderSchema);
+                this.m_HttpComms.setURI(this.m_szFolderURI);
+                var bResult = this.m_HttpComms.send(this.listOnloadHandler, this);
+                if (!bResult) throw new Error("httpConnection returned false");
             }
-            szResponse += this.m_iTag + " OK LSUB Completed\r\n";
-            this.serverComms(szResponse);
+            else
+            {
+                this.subscribeResponse();
+            }
+
 
             this.m_Log.Write("nsLycosIMAP.js - listSubscribe - END");
             return true;
@@ -342,12 +347,14 @@ nsLycosIMAP.prototype =
 
             this.m_szFolderReference = szReference;
 
-            var iUpdateDate = this.m_iFolderUpdate + 600000;  //10 minute check
+            var iUpdateDate = this.m_oIMAPData.lastFolderListUpdate(this.m_szUserName);
+            iUpdateDate += this.m_iFolderBiff;
             this.m_Log.Write("nsLycosIMAP.js - list - iUpdateDate " + iUpdateDate);
+
+            this.m_iListType = 1
 
             if (iUpdateDate < Date.now())
             {//donwload folder list
-                this.m_iFolderUpdate = Date.now();
                 this.m_HttpComms.setContentType("text/xml");
                 this.m_HttpComms.setRequestMethod("PROPFIND");
                 this.m_HttpComms.addData(kLycosFolderSchema);
@@ -382,7 +389,6 @@ nsLycosIMAP.prototype =
         try
         {
             mainObject.m_Log.Write("nsLycosIMAP.js - listOnloadHandler - START");
-            mainObject.m_Log.Write("nsLycosIMAP.js - listOnloadHandler - " + szResponse);
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
 
@@ -404,7 +410,10 @@ nsLycosIMAP.prototype =
                 mainObject.processFolder(aszResponses[i]);
             }
 
-            mainObject.listResponse();
+            if (mainObject.m_iListType == 1)
+                mainObject.listResponse();
+            else
+                mainObject.subscribeResponse();
 
             mainObject.m_Log.Write("nsLycosIMAP.js - listOnloadHandler - END");
         }
@@ -518,6 +527,41 @@ nsLycosIMAP.prototype =
 
 
 
+    subscribeResponse : function ()
+    {
+        try
+        {
+            this.m_Log.Write("nsLycosIMAP.js - subscribeResponse - START");
+
+            var aszFolders = {value : null};
+            var iFolders = {value : null };
+            this.m_oIMAPData.listSubscribed(this.m_szUserName, iFolders, aszFolders);
+            this.m_Log.Write("nsLycosIMAP.js - listSubscribe - list: " + aszFolders.value);
+
+            var szResponse = "";
+            for (i=0; i<aszFolders.value.length; i++)
+            {
+                szResponse += "* lsub (\\Noinferiors \\HasNoChildren) " + "\".\" \"" + aszFolders.value[i] + "\"\r\n";
+            }
+            szResponse += this.m_iTag + " OK LSUB Completed\r\n";
+            this.serverComms(szResponse);
+
+            this.m_Log.Write("nsLycosIMAP.js - subscribeResponse - END");
+        }
+        catch(err)
+        {
+             this.m_Log.DebugDump("nsLycosIMAP.js: subscribeResponse : Exception : "
+                                              + err.name
+                                              + ".\nError message: "
+                                              + err.message + "\n"
+                                              + err.lineNumber);
+
+             this.serverComms(this.m_iTag +" BAD error\r\n");
+        }
+    },
+
+
+
 
 
     select : function (szReference)
@@ -533,13 +577,13 @@ nsLycosIMAP.prototype =
 
             var bResult = false;
 
-            var iUpdateDate = this.m_iFolderUpdate + 600000;  //10 minute check
-            this.m_Log.Write("nsLycosIMAP.js - select - iUpdateDate " + iUpdateDate);
+            var iUpdateDateFolder = this.m_oIMAPData.lastFolderListUpdate(this.m_szUserName);
+            iUpdateDateFolder += this.m_iFolderBiff;
+            this.m_Log.Write("nsLycosIMAP.js - Select - iUpdateDateFolder " + iUpdateDateFolder);
 
-            if (iUpdateDate < Date.now())
+            if (iUpdateDateFolder < Date.now())
             {
                 this.m_Log.Write("nsLycosIMAP.js - select - folders not found");
-
                 this.m_iStage=0;
                 this.m_Log.Write("nsLycosIMAP.js - select - " + this.m_szFolderURI);
                 this.m_HttpComms.setURI(this.m_szFolderURI);
@@ -551,24 +595,37 @@ nsLycosIMAP.prototype =
             }
             else
             {
-                this.m_Log.Write("nsLycosIMAP.js - select - folder found");
-                var oHref = {value:null};
-                var oUID = {value:null};
-                var oMSGCount = {value:null};
-                var oUnreadCount = {value:null};
-                if (!this.m_oIMAPData.getFolderDetails(this.m_szUserName, szReference , oHref , oUID, oMSGCount, oUnreadCount))
-                    throw new Error("Folder not found");
+                this.m_Log.Write("nsLycosIMAP.js - select - folder data current ");
 
-                this.m_Log.Write("nsLycosIMAP.js - select - " + oHref.value + " " + oUID.value + " "
-                                                              + oMSGCount.value + " " + oUnreadCount.value);
+                var iUpdateDateMSGList = this.m_oIMAPData.lastMsgListUpdate(this.m_szUserName, this.m_szSelectFolder);
+                iUpdateDateMSGList += this.m_iMSGListBiff;
+                this.m_Log.Write("nsLycosIMAP.js - Select - iUpdateDateMSGList " + iUpdateDateMSGList);
 
-                this.m_iStage = 1;
-                this.m_HttpComms.setURI(oHref.value);
-                this.m_HttpComms.setContentType("text/xml");
-                this.m_HttpComms.setRequestMethod("PROPFIND");
-                this.m_HttpComms.addData(kLycosMailSchema);
-                var bResult = this.m_HttpComms.send(this.selectOnloadHandler, this);
-                if (!bResult) throw new Error("httpConnection returned false");
+                if (iUpdateDateMSGList < Date.now())
+                {
+                    var oHref = {value:null};
+                    var oUID = {value:null};
+                    var oMSGCount = {value:null};
+                    var oUnreadCount = {value:null};
+                    if (!this.m_oIMAPData.getFolderDetails(this.m_szUserName, szReference , oHref , oUID, oMSGCount, oUnreadCount))
+                        throw new Error("Folder not found");
+
+                    this.m_Log.Write("nsLycosIMAP.js - select - " + oHref.value + " " + oUID.value + " "
+                                                                  + oMSGCount.value + " " + oUnreadCount.value);
+
+                    this.m_iStage = 1;
+                    this.m_HttpComms.setURI(oHref.value);
+                    this.m_HttpComms.setContentType("text/xml");
+                    this.m_HttpComms.setRequestMethod("PROPFIND");
+                    this.m_HttpComms.addData(kLycosMailSchema);
+                    var bResult = this.m_HttpComms.send(this.selectOnloadHandler, this);
+                    if (!bResult) throw new Error("httpConnection returned false");
+                }
+                else
+                {
+                    this.m_Log.Write("nsLycosIMAP.js - select - msg data current ");
+                    this.responseSelect();
+                }
             }
 
             this.m_Log.Write("nsLycosIMAP.js - select - END");
@@ -652,8 +709,6 @@ nsLycosIMAP.prototype =
                     else
                         mainObject.m_aRawData = new Array();
 
-                    mainObject.m_iLastCheck = mainObject.getTime();
-
                     var callback = {
                           notify: function(timer) { this.parent.processMSG(timer)}
                     };
@@ -682,6 +737,48 @@ nsLycosIMAP.prototype =
 
 
 
+    responseSelect : function ()
+    {
+        try
+        {
+            this.m_Log.Write("nsLycosIMAP.js - selectResponse - Start ");
+
+            //get folder details
+            var oHref = {value:null};
+            var oUID = {value:null};
+            var oMSGCount = {value:null};
+            var oUnreadCount = {value:null};
+
+            if (!this.m_oIMAPData.getFolderDetails(this.m_szUserName, this.m_szSelectFolder , oHref , oUID, oMSGCount, oUnreadCount))
+                throw new Error("folder not found");
+
+            //send select ok message back to TB
+            var szSelectResponse= "* " +  oMSGCount.value + " EXISTS\r\n";
+            szSelectResponse+= "* " + oUnreadCount.value + " RECENT\r\n";
+            szSelectResponse+= "* OK [UIDVALIDITY " + oUID.value + "] UIDs\r\n";
+            szSelectResponse+= "* FLAGS (\\Seen \\Deleted)\r\n";
+            szSelectResponse+= "* OK [PERMANENTFLAGS (\\Seen)] Limited\r\n";
+            szSelectResponse+= this.m_iTag +" OK [READ-WRITE] SELECT COMPLETE\r\n";
+
+            this.serverComms(szSelectResponse);
+
+            this.m_Log.Write("nsLycosIMAP.js - selectResponse - END");
+        }
+        catch(err)
+        {
+             this.m_Log.DebugDump("nsLycosIMAP.js: selectResponse : Exception : "
+                                              + err.name
+                                              + ".\nError message: "
+                                              + err.message +"\n"
+                                              + err.lineNumber);
+
+             this.serverComms(mainObject.m_iTag +" BAD error\r\n");
+        }
+    },
+
+
+
+
 
 
     processMSG : function (timer)
@@ -697,25 +794,7 @@ nsLycosIMAP.prototype =
             else
             {
                 this.m_Log.Write("nsLycosIMAP.js - processMSG - all data handled");
-
-                //get folder details
-                var oHref = {value:null};
-                var oUID = {value:null};
-                var oMSGCount = {value:null};
-                var oUnreadCount = {value:null};
-
-                if (!this.m_oIMAPData.getFolderDetails(this.m_szUserName, this.m_szSelectFolder , oHref , oUID, oMSGCount, oUnreadCount))
-                    throw new Error("folder not found");
-
-                //send select ok message back to TB
-                var szSelectResponse= "* " +  oMSGCount.value + " EXISTS\r\n";
-                szSelectResponse+= "* " + oUnreadCount.value + " RECENT\r\n";
-                szSelectResponse+= "* OK [UIDVALIDITY " + oUID.value + "] UIDs\r\n";
-                szSelectResponse+= "* FLAGS (\\Seen \\Deleted)\r\n";
-                szSelectResponse+= "* OK [PERMANENTFLAGS (\\Seen)] Limited\r\n";
-                szSelectResponse+= this.m_iTag +" OK [READ-WRITE] SELECT COMPLETE\r\n";
-
-                this.serverComms(szSelectResponse);
+                this.responseSelect();
                 delete this.m_aRawData;
                 this.m_aRawData = new Array();
                 timer.cancel();
@@ -725,13 +804,13 @@ nsLycosIMAP.prototype =
         }
         catch(err)
         {
-             mainObject.m_Log.DebugDump("nsLycosIMAP.js: selectOnloadHandler : Exception : "
+             this.m_Log.DebugDump("nsLycosIMAP.js: selectOnloadHandler : Exception : "
                                               + err.name
                                               + ".\nError message: "
                                               + err.message +"\n"
                                               + err.lineNumber);
 
-             mainObject.serverComms(mainObject.m_iTag +" BAD error\r\n");
+             this.serverComms(mainObject.m_iTag +" BAD error\r\n");
         }
     },
 
@@ -824,21 +903,32 @@ nsLycosIMAP.prototype =
         {
             this.m_Log.Write("nsLycosIMAP.js - noop - START");
 
-            var oHref = {value:null};
-            var oUID = {value:null};
-            var oMSGCount = {value:null};
-            var oUnreadCount = {value:null};
-            if (!this.m_oIMAPData.getFolderDetails(this.m_szUserName, this.m_szSelectFolder , oHref , oUID, oMSGCount, oUnreadCount))
-                throw new Error("Folder not found");
+            var iUpdateDateFolder = this.m_oIMAPData.lastFolderListUpdate(this.m_szUserName);
+            iUpdateDateFolder += this.m_iFolderBiff;
+            this.m_Log.Write("nsLycosIMAP.js - noop - iUpdateDateFolder " + iUpdateDateFolder);
 
-            this.m_Log.Write("nsLycosIMAP.js - noop - " + oHref.value + " " + oUID.value + " " + oMSGCount.value + " " + oUnreadCount.value);
+            if (iUpdateDateFolder < Date.now())
+            {
+                var oHref = {value:null};
+                var oUID = {value:null};
+                var oMSGCount = {value:null};
+                var oUnreadCount = {value:null};
+                if (!this.m_oIMAPData.getFolderDetails(this.m_szUserName, this.m_szSelectFolder , oHref , oUID, oMSGCount, oUnreadCount))
+                    throw new Error("Folder not found");
 
-            this.m_HttpComms.setURI(oHref.value);
-            this.m_HttpComms.setContentType("text/xml");
-            this.m_HttpComms.setRequestMethod("PROPFIND");
-            this.m_HttpComms.addData(kLycosMailSchema);
-            var bResult = this.m_HttpComms.send(this.noopOnloadHandler, this);
-            if (!bResult) throw new Error("httpConnection returned false");
+                this.m_Log.Write("nsLycosIMAP.js - noop - " + oHref.value + " " + oUID.value + " " + oMSGCount.value + " " + oUnreadCount.value);
+
+                this.m_HttpComms.setURI(oHref.value);
+                this.m_HttpComms.setContentType("text/xml");
+                this.m_HttpComms.setRequestMethod("PROPFIND");
+                this.m_HttpComms.addData(kLycosMailSchema);
+                var bResult = this.m_HttpComms.send(this.noopOnloadHandler, this);
+                if (!bResult) throw new Error("httpConnection returned false");
+            }
+            else
+            {
+                this.responseNOOP();
+            }
             this.m_Log.Write("nsLycosIMAP.js - noop - END");
         }
         catch(err)
@@ -862,7 +952,6 @@ nsLycosIMAP.prototype =
         try
         {
             mainObject.m_Log.Write("nsLycosIMAP.js - noopOnloadHandler - START");
-           // mainObject.m_Log.Write("nsLycosIMAP.js - noopOnloadHandler : \n"+ szResponse);
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
 
@@ -881,8 +970,6 @@ nsLycosIMAP.prototype =
             }
             else
                 mainObject.m_aRawData = new Array();
-
-            mainObject.m_iLastCheck = mainObject.getTime();
 
             var callback = {
                   notify: function(timer) { this.parent.processNOOP(timer)}
@@ -932,23 +1019,7 @@ nsLycosIMAP.prototype =
             else
             {
                 this.m_Log.Write("nsLycosIMAP.js - processNOOP - all data handled");
-
-                //get folder details
-                var oHref = {value:null};
-                var oUID = {value:null};
-                var oMSGCount = {value:null};
-                var oUnreadCount = {value:null};
-
-                if (!this.m_oIMAPData.getFolderDetails(this.m_szUserName, this.m_szSelectFolder ,
-                                                       oHref , oUID, oMSGCount, oUnreadCount))
-                    throw new Error("folder not found");
-
-                //send select ok message back to TB
-                var szSelectResponse= "* " +  oMSGCount.value + " EXISTS\r\n";
-                szSelectResponse+= "* " + oUnreadCount.value + " RECENT\r\n";
-                szSelectResponse+= this.m_iTag +" OK NOOP COMPLETE\r\n";
-
-                this.serverComms(szSelectResponse);
+                this.responseNOOP();
             }
 
             this.m_Log.Write("nsLycosIMAP.js - processNOOP - END");
@@ -969,6 +1040,47 @@ nsLycosIMAP.prototype =
 
 
 
+    responseNOOP : function ()
+    {
+        try
+        {
+            this.m_Log.Write("nsLycosIMAP.js - responseNOOP - Start ");
+
+            //get folder details
+            var oHref = {value:null};
+            var oUID = {value:null};
+            var oMSGCount = {value:null};
+            var oUnreadCount = {value:null};
+
+            if (!this.m_oIMAPData.getFolderDetails(this.m_szUserName, this.m_szSelectFolder ,
+                                                   oHref , oUID, oMSGCount, oUnreadCount))
+                throw new Error("folder not found");
+
+            //send select ok message back to TB
+            var szSelectResponse= "* " +  oMSGCount.value + " EXISTS\r\n";
+            szSelectResponse+= "* " + oUnreadCount.value + " RECENT\r\n";
+            szSelectResponse+= this.m_iTag +" OK NOOP COMPLETE\r\n";
+
+            this.serverComms(szSelectResponse);
+
+            this.m_Log.Write("nsLycosIMAP.js - responseNOOP - END");
+        }
+        catch(err)
+        {
+             this.m_Log.DebugDump("nsLycosIMAP.js: responseNOOP : Exception : "
+                                              + err.name
+                                              + ".\nError message: "
+                                              + err.message +"\n"
+                                              + err.lineNumber);
+
+             this.serverComms(mainObject.m_iTag +" BAD error\r\n");
+        }
+    },
+
+
+
+
+
 
 
 
@@ -982,7 +1094,11 @@ nsLycosIMAP.prototype =
             this.m_Log.Write("nsLycosIMAP.js - fetch - START");
             this.m_Log.Write("nsLycosIMAP.js - fetch - Range " + szRange + " Flags "+ szFlag);
 
-            if ((this.m_iLastCheck + 300000)<this.getTime()) //recheck mail box if last check was more than 5m ago
+            var iUpdateDate = this.m_oIMAPData.lastMsgListUpdate(this.m_szUserName, this.m_szSelectFolder);
+            iUpdateDate += this.m_iMSGListBiff;
+            this.m_Log.Write("nsLycosIMAP.js - fetch - iUpdateDate " + iUpdateDate);
+
+            if (iUpdateDate < Date.now())
             {
                 this.m_Log.Write("nsLycosIMAP.js - fetch - Check for new data");
                 this.m_szRange = szRange;
@@ -1085,8 +1201,6 @@ nsLycosIMAP.prototype =
             }
             else
                 mainObject.m_aRawData = new Array();
-
-            mainObject.m_iLastCheck = mainObject.getTime();
 
             var callback = {
                   notify: function(timer) { this.parent.processFetch(timer)}
