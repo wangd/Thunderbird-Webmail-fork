@@ -3,3 +3,5 @@ pref("lycos.bReUseSession", true);
 pref("lycos.iProcessTrigger", 50);
 pref("lycos.iProcessAmount", 25);
 pref("lycos.iProcessDelay", 10);
+pref("lycos.iFolderBiff", 1200000);
+pref("lycos.iMSGListBiff", 600000);
