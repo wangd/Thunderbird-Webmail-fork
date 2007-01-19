@@ -114,4 +114,12 @@ interface nsIIMAPFolders : nsISupports
 
     boolean deleteMSG(in string szUser,
                       in string szHierarchy);
+
+
+    PRUint64 lastMsgListUpdate(in string szUser,
+                               in string szHierarchy);
+
+
+    PRUint64 lastFolderListUpdate(in string szUser);
+
 };

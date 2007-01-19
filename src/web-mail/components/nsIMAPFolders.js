@@ -227,6 +227,71 @@ nsIMAPFolders.prototype =
             this.m_Log.Write("nsIMAPFolders.js - createDB - szSQL " + szSQL);
 
 
+            //folder update table
+            szSQL  =  "CREATE TABLE last_folder_update  ";
+            szSQL += "( " ;
+            szSQL += "    id INTEGER PRIMARY KEY, ";
+            szSQL += "    account_id INTEGER, ";
+            szSQL += "    folder_id INTEGER, ";
+            szSQL += "    session INTEGER, " ;
+            szSQL += "    date DATE ";
+            szSQL += ")";
+            this.m_dbConn.executeSimpleSQL(szSQL);
+            this.m_Log.Write("nsIMAPFolders.js - createDB - szSQL " + szSQL);
+
+
+            //trigger on Insert in messages
+            szSQL  = "CREATE TRIGGER trigger_insert_messages INSERT ON messages "
+            szSQL += "BEGIN ";
+            szSQL += "     REPLACE INTO last_folder_update (id , account_id, folder_id, session,date) ";
+            szSQL += "     VALUES ";
+            szSQL += "     ( ";
+            szSQL += "           (SELECT id ";
+            szSQL += "             FROM last_folder_update ";
+            szSQL += "            WHERE account_id = NEW.account_id AND ";
+            szSQL += "                   folder_id = NEW.folder_id ";
+            szSQL += "            ),";
+            szSQL += "            NEW.account_id, ";
+            szSQL += "            NEW.folder_id, ";
+            szSQL += "            NEW.session, ";
+            szSQL += "            current_timestamp ";
+            szSQL += "     ); ";
+            szSQL += "END"
+            this.m_dbConn.executeSimpleSQL(szSQL);
+            this.m_Log.Write("nsIMAPFolders.js - createDB - szSQL " + szSQL);
+
+
+            //Table last_user_update
+            szSQL  = "CREATE TABLE last_user_update ";
+            szSQL += "( ";
+            szSQL += "   id INTEGER PRIMARY KEY, "
+            szSQL += "   account_id INTEGER, "
+            szSQL += "   session INTEGER, "
+            szSQL += "   date DATE "
+            szSQL += ")";
+            this.m_dbConn.executeSimpleSQL(szSQL);
+            this.m_Log.Write("nsIMAPFolders.js - createDB - szSQL " + szSQL);
+
+
+            szSQL  = "CREATE TRIGGER trigger_insert_folders INSERT ON folders "
+            szSQL += "BEGIN ";
+            szSQL += "     REPLACE INTO last_user_update (id, account_id, session, date) ";
+            szSQL += "     VALUES ";
+            szSQL += "     ( ";
+            szSQL += "          (SELECT id ";
+            szSQL += "           FROM last_user_update ";
+            szSQL += "           WHERE account_id = NEW.account_id ";
+            szSQL += "           LIMIT 1 ";
+            szSQL += "          ), ";
+            szSQL += "          NEW.account_id, ";
+            szSQL += "          NEW.session, ";
+            szSQL += "          current_timestamp ";
+            szSQL += "     ); ";
+            szSQL += "END"
+            this.m_dbConn.executeSimpleSQL(szSQL);
+            this.m_Log.Write("nsIMAPFolders.js - createDB - szSQL " + szSQL);
+
+
             this.m_Log.Write("nsIMAPFolders.js - createDB - END");
 
         }
@@ -1386,6 +1451,151 @@ nsIMAPFolders.prototype =
         }
     },
 
+
+
+   lastMsgListUpdate : function (szUser, szHierarchy)
+   {
+         try
+        {
+            this.m_Log.Write("nsIMAPFolder.js - lastMsgListUpdate - START ");
+            this.m_Log.Write("nsIMAPFolder.js - lastMsgListUpdate - " + szUser);
+
+            var iDate = 0;
+            var szSQL = "SELECT last_folder_update.date ";
+            szSQL    += "FROM last_folder_update, imap_accounts, folders "
+            szSQL    += "WHERE last_folder_update.account_id = imap_accounts.id AND " +
+                              "imap_accounts.id = folders.account_id AND " +
+                              "imap_accounts.account_name LIKE ?1 AND " +
+                              "folders.id = last_folder_update.folder_id AND " +
+                              "folders.folder_hierarchy LIKE ?2 AND " +
+                              "last_folder_update.session = ?3"
+
+            var statement = this.m_dbConn.createStatement(szSQL);
+            statement.bindStringParameter(0, szUser);
+            statement.bindStringParameter(1, szHierarchy);
+            statement.bindStringParameter(2, this.m_iSession);
+
+            try
+            {
+                var wStatement = Components.classes["@mozilla.org/storage/statement-wrapper;1"]
+                                           .createInstance(Components.interfaces.mozIStorageStatementWrapper);
+                wStatement.initialize(statement);
+                while (wStatement.step())
+                {
+                   var dbDate = wStatement.row["date"];
+                   this.m_Log.Write("nsIMAPFolder.js : dbDate - "  +dbDate);
+
+                   var aDateTime = dbDate.split(/\s/);
+                   this.m_Log.Write("nsIMAPFolder.js : aDateTime - " +aDateTime);
+
+                   var aDate = aDateTime[0].split(/-/);
+                   this.m_Log.Write("nsIMAPFolder.js : aDate - " +aDate);
+
+                   var aTime = aDateTime[1].split(/:/);
+                   this.m_Log.Write("nsIMAPFolder.js : aTime - " +aTime);
+
+                   var oDate = new Date ();
+                   oDate.setFullYear(aDate[0]);
+                   oDate.setMonth(aDate[1]-1);
+                   oDate.setDate(aDate[2]);
+                   oDate.setHours(aTime[0]);
+                   oDate.setMinutes(aTime[1]);
+                   oDate.setSeconds(aTime[2]);
+
+                   iDate = Date.parse(oDate);
+                }
+            }
+            finally
+            {
+                statement.reset();
+                this.m_Log.Write("nsIMAPFolder : lastMsgListUpdate - DB Reset "+ this.m_dbConn.lastErrorString);
+            }
+
+            this.m_Log.Write("nsIMAPFolder.js - lastMsgListUpdate - END " +iDate);
+            return iDate;
+        }
+        catch(err)
+        {
+            this.m_Log.DebugDump("nsIMAPFolder.js: lastMsgListUpdate : Exception : "
+                              + err.name
+                              + ".\nError message: "
+                              + err.message + "\n"
+                              + err.lineNumber+ "\n" +
+                              this.m_dbConn.lastErrorString);
+            return 0;
+        }
+   },
+
+
+
+   lastFolderListUpdate :function (szUser)
+   {
+        try
+        {
+            this.m_Log.Write("nsIMAPFolder.js - lastFolderListUpdate - START ");
+            this.m_Log.Write("nsIMAPFolder.js - lastFolderListUpdate - " + szUser);
+
+            var iDate = 0;
+            var szSQL = "SELECT last_user_update.date ";
+            szSQL    += "FROM last_user_update, imap_accounts "
+            szSQL    += "WHERE last_user_update.account_id = imap_accounts.id AND " +
+                              "imap_accounts.account_name LIKE ?1 AND " +
+                              "last_user_update.session = ?2"
+
+            var statement = this.m_dbConn.createStatement(szSQL);
+            statement.bindStringParameter(0, szUser);
+            statement.bindStringParameter(1, this.m_iSession);
+
+            try
+            {
+                var wStatement = Components.classes["@mozilla.org/storage/statement-wrapper;1"]
+                                           .createInstance(Components.interfaces.mozIStorageStatementWrapper);
+                wStatement.initialize(statement);
+                while (wStatement.step())
+                {
+                   var dbDate = wStatement.row["date"];
+                   this.m_Log.Write("nsIMAPFolder.js : dbDate - "  +dbDate);
+
+                   var aDateTime = dbDate.split(/\s/);
+                   this.m_Log.Write("nsIMAPFolder.js : aDateTime - " +aDateTime);
+
+                   var aDate = aDateTime[0].split(/-/);
+                   this.m_Log.Write("nsIMAPFolder.js : aDate - " +aDate);
+
+                   var aTime = aDateTime[1].split(/:/);
+                   this.m_Log.Write("nsIMAPFolder.js : aTime - " +aTime);
+
+                   var oDate = new Date ();
+                   oDate.setFullYear(aDate[0]);
+                   oDate.setMonth(aDate[1]-1);
+                   oDate.setDate(aDate[2]);
+                   oDate.setHours(aTime[0]);
+                   oDate.setMinutes(aTime[1]);
+                   oDate.setSeconds(aTime[2]);
+
+                   iDate = Date.parse(oDate);
+                }
+            }
+            finally
+            {
+                statement.reset();
+                this.m_Log.Write("nsIMAPFolder : lastFolderListUpdate - DB Reset "+ this.m_dbConn.lastErrorString);
+            }
+
+            this.m_Log.Write("nsIMAPFolder.js - lastFolderListUpdate - END " +iDate);
+            return iDate;
+        }
+        catch(err)
+        {
+            this.m_Log.DebugDump("nsIMAPFolder.js: lastFolderListUpdate : Exception : "
+                              + err.name
+                              + ".\nError message: "
+                              + err.message + "\n"
+                              + err.lineNumber+ "\n" +
+                              this.m_dbConn.lastErrorString);
+            return 0;
+        }
+   },
 
 
 
