@@ -196,9 +196,7 @@ nsIMAPConnectionManager.prototype.notify = function()
             for (var i = 0 ; i<iMax ; i++)
             {
                 this.m_Log.Write("nsIMAPConnectionManager.js - connection " + i + " "+ this.m_aIMAPConnections[i]);
-                this.m_Log.Write("nsIMAPConnectionManager.js - connection " + i + " "+ this.m_aIMAPConnections[i].bRunning
-                                                                                     + " " +this.m_aIMAPConnections[i].iID);
-  /*
+
                 if (this.m_aIMAPConnections[0] != undefined)
                 {
                     var temp = this.m_aIMAPConnections.shift();  //get first item
@@ -214,7 +212,7 @@ nsIMAPConnectionManager.prototype.notify = function()
                         this.m_aIMAPConnections.push(temp);
                         this.m_Log.Write("nsIMAPConnectionManager.js - notify - restored live connection"+ " " +temp.iID);
                     }
-                }*/
+                }
             }
         }
 

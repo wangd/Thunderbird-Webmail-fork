@@ -57,6 +57,7 @@ function nsLycosIMAP()
         this.m_iUID = 0;
         this.m_szDestinationFolder = null;
         this.m_iListType = 0;
+        this.m_deleteResponse
 
         this.m_Timer = Components.classes["@mozilla.org/timer;1"];
         this.m_Timer = this.m_Timer.createInstance(Components.interfaces.nsITimer);
@@ -903,11 +904,11 @@ nsLycosIMAP.prototype =
         {
             this.m_Log.Write("nsLycosIMAP.js - noop - START");
 
-            var iUpdateDateFolder = this.m_oIMAPData.lastFolderListUpdate(this.m_szUserName);
-            iUpdateDateFolder += this.m_iFolderBiff;
-            this.m_Log.Write("nsLycosIMAP.js - noop - iUpdateDateFolder " + iUpdateDateFolder);
+            var iUpdateDateMSGList = this.m_oIMAPData.lastMsgListUpdate(this.m_szUserName, this.m_szSelectFolder);
+            iUpdateDateMSGList += this.m_iMSGListBiff;
+            this.m_Log.Write("nsLycosIMAP.js - noop - iUpdateDateFolder " + iUpdateDateMSGList);
 
-            if (iUpdateDateFolder < Date.now())
+            if (iUpdateDateMSGList < Date.now())
             {
                 var oHref = {value:null};
                 var oUID = {value:null};
@@ -1648,11 +1649,7 @@ nsLycosIMAP.prototype =
             var bMSG = mainObject.m_oIMAPData.getMSGStatus(mainObject.m_szUserName, mainObject.m_szSelectFolder, mainObject.m_iUID,
                                                            oHref, oRead, oDelete, oSeqNum);
 
-            var szResponse = "* " + oSeqNum.value +" FETCH (UID " + mainObject.m_iUID ; //id
-            szResponse+= " FLAGS (";
-            szResponse+= oRead.value? "\\Seen ":"";
-            szResponse+= oDelete.value? "\\Deleted ":"";
-            szResponse+= "))\r\n";
+
 
             mainObject.serverComms(szResponse);
 
@@ -1660,6 +1657,14 @@ nsLycosIMAP.prototype =
             {
                 mainObject.m_Log.Write("nsLycosIMAP.js - storeOnloadHandler - marks as deleted");
                 mainObject.storeDelete( mainObject.m_iUID);
+            }
+            else
+            {
+                var szResponse = "* " + oSeqNum.value +" FETCH (UID " + mainObject.m_iUID ; //id
+                szResponse+= " FLAGS (";
+                szResponse+= oRead.value? "\\Seen ":"";
+                szResponse+= oDelete.value? "\\Deleted ":"";
+                szResponse+= "))\r\n";
             }
 
             if (mainObject.m_aRawData.length>0)
@@ -1957,8 +1962,30 @@ nsLycosIMAP.prototype =
             this.m_Log.Write("nsLycosIMAP.js - expunge - START");
 
             this.m_oIMAPData.deleteMSG(this.m_szUserName, this.m_szSelectFolder)
-            this.serverComms(this.m_iTag +" OK EXPUNGE COMPLETE\r\n");
 
+
+            //empty trash
+            if (this.m_szSelectFolder.match(/^INBOX.Trash$/,i)!=-1)
+            {
+                //get trash
+                this.m_HttpComms.setContentType("text/xml");
+                var oHref = {value:null};
+                var oUID = {value:null};
+                var oMSGCount = {value:null};
+                var oUnreadCount = {value:null};
+                this.m_oIMAPData.getFolderDetails(this.m_szUserName, this.m_szSelectFolder,
+                                                  oHref, oUID, oMSGCount, oUnreadCount);
+                this.m_HttpComms.setURI(oHref.value);
+                this.m_HttpComms.setRequestMethod("PROPFIND");
+                this.m_HttpComms.addData(kLycosMailSchema);
+                var bResult = this.m_HttpComms.send(this.emptyTrashOnloadHandler, this);
+                if (!bResult) throw new Error("httpConnection returned false");
+                this.m_iStage=0;
+            }
+            else
+            {
+                this.serverComms(this.m_iTag +" OK EXPUNGE COMPLETE\r\n");
+            }
             this.m_Log.Write("nsLycosIMAP.js - expunge - END");
         }
         catch(err)
@@ -1973,6 +2000,131 @@ nsLycosIMAP.prototype =
             return false;
         }
     },
+
+
+
+
+    emptyTrashOnloadHandler : function (szResponse ,event , mainObject)
+    {
+        try
+        {
+            mainObject.m_Log.Write("nsLycos.js - emptyTrashOnloadHandler - START");
+            mainObject.m_Log.Write("nsLycos.js - emptyTrashOnloadHandler : " + mainObject.m_iStage);
+
+            var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
+
+            //if this fails we've gone somewhere new
+            mainObject.m_Log.Write("nsLycos - emptyTrashOnloadHandler - status :" +httpChannel.responseStatus );
+            if (httpChannel.responseStatus <200 || httpChannel.responseStatus >300 )
+                throw new Error("return status " + httpChannel.responseStatus);
+
+            switch(mainObject.m_iStage)
+            {
+
+                case 0:
+                    mainObject.m_aRawData = szResponse.match(kLycosResponse);
+                    mainObject.m_Log.Write("nsLycos.js - emptyTrashOnloadHandler - trash - \n" +  mainObject.m_aRawData);
+                    if (mainObject.m_aRawData)
+                    {
+                        mainObject.m_deleteResponse = "<?xml version=\"1.0\"?>\r\n<D:delete xmlns:D=\"DAV:\">\r\n<D:target>\r\n";
+
+                        var callback = {
+                            notify: function(timer) { this.parent.processItemDelete(timer)}
+                         };
+                        callback.parent = mainObject;
+
+                        mainObject.m_Timer.initWithCallback(callback,
+                                                            mainObject.m_iTime,
+                                                            Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
+                    }
+                    else //no messages
+                    {
+                        mainObject.m_bAuthorised = false;
+                        mainObject.serverComms(this.m_iTag +" OK EXPUNGE COMPLETE\r\n");
+                    }
+                break;
+
+                case 1:
+                    mainObject.m_bAuthorised = false;
+                        mainObject.serverComms(this.m_iTag +" OK EXPUNGE COMPLETE\r\n");
+                break;
+            }
+
+            mainObject.m_Log.Write("nsLycos.js - emptyTrashOnloadHandler - END");
+        }
+        catch(err)
+        {
+            mainObject.m_Log.DebugDump("nsLycos.js: emptyTrashOnloadHandler : Exception : "
+                                              + err.name
+                                              + ".\nError message: "
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
+
+            this.serverComms(this.m_iTag +" BAD error\r\n");
+        }
+    },
+
+
+
+
+
+    processItemDelete: function(timer)
+    {
+        try
+        {
+            this.m_Log.Write("nsLycos.js - processItemDelete - START");
+
+            var Item = null;
+            if (this.m_aRawData.length>0)
+                Item = this.m_aRawData.shift();
+            else
+            {
+                delete this.m_aRawData;
+                this.m_aRawData = new Array();
+                timer.cancel();
+            }
+
+            if (Item)
+            {
+                var szMSGUri = Item.match(kLycosHref)[1]; //uri
+                var szMsgID =  szMSGUri.match(kLycosMSGID); //id
+                var temp ="<D:href>"+szMsgID+"</D:href>\r\n"
+                this.m_deleteResponse += temp;
+            }
+            else
+            {
+                var oHref = {value:null};
+                var oUID = {value:null};
+                var oMSGCount = {value:null};
+                var oUnreadCount = {value:null};
+                this.m_oIMAPData.getFolderDetails(this.m_szUserName, this.m_szSelectFolder,
+                                                  oHref, oUID, oMSGCount, oUnreadCount);
+
+                this.m_deleteResponse += "</D:target>\r\n</D:delete>";
+                this.m_HttpComms.setContentType("text/xml");
+                this.m_HttpComms.setURI(oHref.value);
+                this.m_HttpComms.setRequestMethod("BDELETE");
+                this.m_HttpComms.addData(this.m_deleteResponse);
+                var bResult = this.m_HttpComms.send(this.logoutOnloadHandler, this);
+                if (!bResult) throw new Error("httpConnection returned false");
+                this.m_iStage=1;
+            }
+
+            this.m_Log.Write("nsLycos.js - processItemDelete - END");
+        }
+        catch(err)
+        {
+            this.m_Timer.cancel();
+            this.m_Log.DebugDump("nsLycos.js: processItemDelete : Exception : "
+                                              + err.name
+                                              + ".\nError message: "
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
+
+            this.serverComms(this.m_iTag +" BAD error\r\n");
+        }
+    },
+
 
 
 
@@ -2436,16 +2588,7 @@ nsLycosIMAP.prototype =
     },
 
 
-    getTime : function()
-    {
-        var date = new Date();
-        var time = date.getTime();
-        return time;
-    },
-
-
      /*******************************Server Comms  ****************************/
-
     serverComms : function (szMsg)
     {
         try

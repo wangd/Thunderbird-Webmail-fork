@@ -46,6 +46,7 @@ function nsLycos()
         this.m_iTotalSize = 0;
         this.m_bJunkMail = false;
         this.m_aRawData = new Array();
+        this.m_deleteResponse = null;
 
         this.m_iTime = 10;
         this.m_iProcessAmount =  25;
@@ -333,7 +334,7 @@ nsLycos.prototype =
             }
             else
             {
-                mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - download complet e- starting delay");
+                mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - download complet e- starting delay");
                 //start timer
                 var callback = {
                     notify: function(timer) { this.parent.processItem(timer)}
@@ -629,8 +630,8 @@ nsLycos.prototype =
                     var szURL = this.m_aMsgDataStore[this.m_iHandleCount].szMSGUri;
                     this.m_Log.Write("nsLycos.js - getMessageIDs - Email URL : " +szURL);
 
-                    var szEmailID = szURL.match(patternHotmailMSGID);
-                    this.m_Log.Write("nsLycos.js - getMessageIDs - IDS : " +szID);
+                    var szEmailID = szURL.match(kLycosMSGID);
+                    this.m_Log.Write("nsLycos.js - getMessageIDs - IDS : " +szEmailID);
 
                     this.serverComms((this.m_iHandleCount+1) + " " + szEmailID + "\r\n");
                     this.m_iHandleCount++;
@@ -942,7 +943,6 @@ nsLycos.prototype =
         try
         {
             mainObject.m_Log.Write("nsLycos.js - logoutOnloadHandler - START");
-            mainObject.m_Log.Write("nsLycos.js - logoutOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("nsLycos.js - logoutOnloadHandler : " + mainObject.m_iStage);
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -954,32 +954,21 @@ nsLycos.prototype =
 
             switch(mainObject.m_iStage)
             {
-
                 case 0:
-                    var aszResponses = szResponse.match(kLycosResponse);
-                    mainObject.m_Log.Write("nsLycos.js - logoutOnloadHandler - trash - \n" + aszResponses);
-                    if (aszResponses)
+                    mainObject.m_aRawData = szResponse.match(kLycosResponse);
+                    mainObject.m_Log.Write("nsLycos.js - logoutOnloadHandler - trash - \n" +  mainObject.m_aRawData);
+                    if (mainObject.m_aRawData)
                     {
-                        var szStart = "<?xml version=\"1.0\"?>\r\n<D:delete xmlns:D=\"DAV:\">\r\n<D:target>\r\n";
-                        var szEnd = "</D:target>\r\n</D:delete>";
+                        mainObject.m_deleteResponse = "<?xml version=\"1.0\"?>\r\n<D:delete xmlns:D=\"DAV:\">\r\n<D:target>\r\n";
 
-                        var szDeleteMsg= szStart;
-                        for (i=0; i<aszResponses.length; i++)
-                        {
-                            var szMSGUri = aszResponses[i].match(kLycosHref)[1]; //uri
-                            var szMsgID =  szMSGUri.match(kLycosMSGID); //id
-                            var temp ="<D:href>"+szMsgID+"</D:href>\r\n"
-                            szDeleteMsg+=temp;
-                        }
-                        szDeleteMsg+= szEnd;
+                        var callback = {
+                            notify: function(timer) { this.parent.processDeleteItem(timer)}
+                         };
+                        callback.parent = mainObject;
 
-                        mainObject.m_HttpComms.setContentType("text/xml");
-                        mainObject.m_HttpComms.setURI(mainObject.m_szTrashURI);
-                        mainObject.m_HttpComms.setRequestMethod("BDELETE");
-                        mainObject.m_HttpComms.addData(szDeleteMsg);
-                        var bResult = mainObject.m_HttpComms.send(mainObject.logoutOnloadHandler, mainObject);
-                        if (!bResult) throw new Error("httpConnection returned false");
-                        mainObject.m_iStage=1;
+                        mainObject.m_Timer.initWithCallback(callback,
+                                                            mainObject.m_iTime,
+                                                            Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
                     }
                     else //no messages
                     {
@@ -998,7 +987,7 @@ nsLycos.prototype =
         }
         catch(err)
         {
-            mainObject.m_Log.DebugDump("nsLycos.js: deleteMessageOnloadHandler : Exception : "
+            mainObject.m_Log.DebugDump("nsLycos.js: logoutOnloadHandler : Exception : "
                                               + err.name
                                               + ".\nError message: "
                                               + err.message+ "\n"
@@ -1007,6 +996,61 @@ nsLycos.prototype =
             mainObject.serverComms("-ERR Comms Error from "+ mainObject.m_szUserName+"\r\n");
         }
     },
+
+
+
+
+
+    processDeleteItem : function(timer)
+    {
+        try
+        {
+            this.m_Log.Write("nsLycos.js - processItemDelete - START");
+
+            var Item = null;
+            if (this.m_aRawData.length>0)
+                Item = this.m_aRawData.shift();
+            else
+            {
+                delete this.m_aRawData;
+                this.m_aRawData = new Array();
+                timer.cancel();
+            }
+
+            if (Item)
+            {
+                var szMSGUri = Item.match(kLycosHref)[1]; //uri
+                var szMsgID =  szMSGUri.match(kLycosMSGID); //id
+                var temp ="<D:href>"+szMsgID+"</D:href>\r\n"
+                this.m_deleteResponse += temp;
+            }
+            else
+            {
+                this.m_deleteResponse += "</D:target>\r\n</D:delete>";
+                this.m_HttpComms.setContentType("text/xml");
+                this.m_HttpComms.setURI(this.m_szTrashURI);
+                this.m_HttpComms.setRequestMethod("BDELETE");
+                this.m_HttpComms.addData(this.m_deleteResponse);
+                var bResult = this.m_HttpComms.send(this.logoutOnloadHandler, this);
+                if (!bResult) throw new Error("httpConnection returned false");
+                this.m_iStage=1;
+            }
+
+            this.m_Log.Write("nsLycos.js - processItemDelete - END");
+        }
+        catch(err)
+        {
+            this.m_Timer.cancel();
+            this.m_Log.DebugDump("nsLycos.js: processItemDelete : Exception : "
+                                              + err.name
+                                              + ".\nError message: "
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
+
+            this.serverComms("-ERR negative vibes from " +this.m_szUserName+ "\r\n");
+        }
+    },
+
 
 
 
@@ -1081,7 +1125,7 @@ nsLycos.prototype =
                 this.m_bUseJunkMail= oPref.Value;
                 this.m_aszFolder.push("Courrier%20ind%26eacute;sirable");
             }
-            this.m_Log.Write("nsHotmail.js - getPrefs - bUseJunkMail " + oPref.Value);
+            this.m_Log.Write("nsLycos.js - getPrefs - bUseJunkMail " + oPref.Value);
 
 
             //get empty trash

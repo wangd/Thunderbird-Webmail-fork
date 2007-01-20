@@ -952,6 +952,7 @@ nsIMAPFolders.prototype =
 
 
 
+
     copyMSG : function (szUser , szUID, szOldHierarchy, szNewHierarchy)
     {
         try
@@ -1033,6 +1034,8 @@ nsIMAPFolders.prototype =
             return false;
         }
     },
+
+
 
 
     getRangeMSGIDs : function (szUser, szHierarchy, iMinID, iMaxID, iCount, aiIDs)
@@ -1458,7 +1461,7 @@ nsIMAPFolders.prototype =
          try
         {
             this.m_Log.Write("nsIMAPFolder.js - lastMsgListUpdate - START ");
-            this.m_Log.Write("nsIMAPFolder.js - lastMsgListUpdate - " + szUser);
+            this.m_Log.Write("nsIMAPFolder.js - lastMsgListUpdate - " + szUser + " " + szHierarchy);
 
             var iDate = 0;
             var szSQL = "SELECT last_folder_update.date ";
@@ -1599,6 +1602,43 @@ nsIMAPFolders.prototype =
 
 
 
+
+    cleanDB : function ()
+    {
+        try
+        {
+            this.m_Log.Write("nsIMAPFolder.js - cleanDB - START ");
+
+            //delete old messages
+            var szSQL = "DELETE FROM messages WHERE session <= ?1"
+            var statement = this.m_dbConn.createStatement(szSQL);
+            statement.bindStringParameter(0, this.m_iSession - 50);
+            statement.execute();
+
+
+            //delete old folders
+            var szSQL = "DELETE FROM folders WHERE session <= ?1"
+            var statement = this.m_dbConn.createStatement(szSQL);
+            statement.bindStringParameter(0, this.m_iSession - 100);
+            statement.execute();
+
+            this.m_Log.Write("nsIMAPFolder.js - cleanDB - END ");
+        }
+        catch(err)
+        {
+            this.m_Log.DebugDump("nsIMAPFolder.js: lastFolderListUpdate : Exception : "
+                                  + err.name
+                                  + ".\nError message: "
+                                  + err.message + "\n"
+                                  + err.lineNumber+ "\n" +
+                                  this.m_dbConn.lastErrorString);
+        }
+    },
+
+
+
+
+
     observe : function(aSubject, aTopic, aData)
     {
         switch(aTopic)
@@ -1631,6 +1671,7 @@ nsIMAPFolders.prototype =
 
             case "quit-application":
                 this.m_Log.Write("nsIMAPFolder.js - quit-application ");
+                this.cleanDB();
             break;
 
             case "app-startup":
