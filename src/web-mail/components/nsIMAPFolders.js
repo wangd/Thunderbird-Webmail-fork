@@ -782,7 +782,7 @@ nsIMAPFolders.prototype =
 
 
 
-    getFolderDetails : function (szUser, szHierarchy, szHref, szUID, iMSGCount, iUnreadCount)
+    getFolderDetails : function (szUser, szHierarchy, szHref, szUID, iMSGCount, iUnreadCount, iExpungeCount)
     {
         try
         {
@@ -813,7 +813,17 @@ nsIMAPFolders.prototype =
                                 "          messages.read = \"false\" AND " +
                                 "          messages.deleted = \"false\" AND " +
                                 "          messages.session = ?3 " +
-                                ") AS read_count "
+                                ") AS read_count, " +
+                                "(   SELECT COUNT(*) " +
+                                    "FROM messages, folders, imap_accounts " +
+                                    "WHERE folders.account_id = imap_accounts.id AND " +
+                                          "messages.account_id = imap_accounts.id AND " +
+                                          "imap_accounts.account_name LIKE ?1 AND " +
+                                          "folders.id = messages.folder_id AND " +
+                                          "folders.folder_hierarchy LIKE ?2 AND " +
+                                          "messages.deleted = \"true\" AND " +
+                                          "messages.session = ?3 " +
+                                ") AS expunge_count ";
             szSQL    += "FROM folders, imap_accounts "
             szSQL    += "WHERE folders.account_id = imap_accounts.id AND " +
                               "imap_accounts.account_name LIKE ?1 AND " +
@@ -842,6 +852,8 @@ nsIMAPFolders.prototype =
                     this.m_Log.Write("nsIMAPFolder.js - getFolderDetails - " + iMSGCount.value);
                     iUnreadCount.value =  wStatement.row["read_count"];
                     this.m_Log.Write("nsIMAPFolder.js - getFolderDetails - " + iUnreadCount.value);
+                    iExpungeCount.value =  wStatement.row["expunge_count"];
+                    this.m_Log.Write("nsIMAPFolder.js - getFolderDetails - " + iExpungeCount.value);
                     bResult = true;
                 }
             }

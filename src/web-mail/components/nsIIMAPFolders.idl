@@ -42,7 +42,8 @@ interface nsIIMAPFolders : nsISupports
                              out string szHref,
                              out string szUID,
                              out long iMSGCount,
-                             out long iUnreadCount);
+                             out long iUnreadCount,
+                             out long iExpungeCount);
 
 
     boolean getRangeMSGIDs( in string szUser,
