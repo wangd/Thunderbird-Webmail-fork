@@ -4,3 +4,5 @@ pref("hotmail.iProcessTrigger", 50);
 pref("hotmail.iProcessAmount", 25);
 pref("hotmail.iProcessDelay", 10);
 pref("hotmail.iBiff", 300000);
+pref("hotmail.iFolderBiff", 1200000);
+pref("hotmail.iMSGListBiff", 600000);
