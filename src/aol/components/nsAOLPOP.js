@@ -55,6 +55,10 @@ function nsAOL()
         this.m_szMSG = null;
         this.iID = -1;
         this.m_aszFolderURLList = new Array();
+
+        this.m_Timer = Components.classes["@mozilla.org/timer;1"];
+        this.m_Timer = this.m_Timer.createInstance(Components.interfaces.nsITimer);
+
         this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"]
                                           .getService(Components.interfaces.nsISessionManager);
         this.m_SessionData = null;
@@ -706,7 +710,7 @@ nsAOL.prototype =
                 var iCount = 0;
                 do{
                     var iEmailID = this.m_aMsgDataStore[this.m_iHandleCount].iID;
-                    this.serverComms((this.m_iHandleCount+1) + " " + szEmailID + "\r\n");
+                    this.serverComms((this.m_iHandleCount+1) + " " + iEmailID + "\r\n");
                     this.m_iHandleCount++;
                     iCount++;
                 }while(iCount != this.m_iProcessAmount && this.m_iHandleCount!=this.m_aMsgDataStore.length)
