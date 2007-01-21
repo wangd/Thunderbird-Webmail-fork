@@ -1,4 +1,0 @@
-<!ENTITY AccountWizard.Label "Ajouter Web Mail au gestionnaire de comptes">
-<!ENTITY AccountWizard.AccessKey "A">
-<!ENTITY AccountWizardWarning.Label "Nécessite les droits d'écriture sur le dossier de l'application.">
-<!ENTITY Restart.Label "Un redémarrage de Thunderbird est nécessaire pour que les changements prennent effet.">

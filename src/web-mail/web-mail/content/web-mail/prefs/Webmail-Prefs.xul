@@ -23,11 +23,6 @@
               label="&Servers.Panel.szTitle;"
               src="chrome://web-mail/content/prefs/Webmail-Prefs-Servers.xul"/>
 
-    <!-- general -->
-    <prefpane id="paneGeneral"
-              label="&General.Panel.szTitle;"
-              src="chrome://web-mail/content/prefs/Webmail-Prefs-General.xul"/>
-
     <!-- domains -->
     <prefpane id="paneDomains"
               label="&Domains.Panel.szTitle;"

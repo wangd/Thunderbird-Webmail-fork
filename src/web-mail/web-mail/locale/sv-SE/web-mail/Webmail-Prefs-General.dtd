@@ -1,4 +1,0 @@
-<!ENTITY AccountWizard.Label "Lägg till Webmail i Kontoguiden">
-<!ENTITY AccountWizard.AccessKey "L">
-<!ENTITY AccountWizardWarning.Label "Webmail behöver rättighet att skriva till Applicationsmappen.">
-<!ENTITY Restart.Label "Thunderbird måste startas om innan förändringarna fungerar.">
