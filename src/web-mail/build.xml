@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <project name="web-mail" default="createxpi">
-    <property name="VERSION" value="1-0-15"/>
+    <property name="VERSION" value="1-1-0"/>
 
     <delete file="web-mail-${VERSION}.xpi"/>
     <delete file="web-mail.jar"/>
@@ -21,9 +21,9 @@
             <zipfileset dir="." includes="web-mail.jar" prefix="chrome"/>
             <zipfileset dir="components" prefix="components" includes="**" excludes="*.idl *.bat *xml"/>
             <zipfileset dir="defaults" prefix="defaults" includes="**"/>
+            <zipfileset dir="isp" prefix="isp" includes="**"/>
             <zipfileset dir="." includes="install.rdf"/>
             <zipfileset dir="." includes="chrome.manifest"/>
-            <zipfileset dir="." includes="webmail.rdf"/>
         </zip>
     </target>
 
