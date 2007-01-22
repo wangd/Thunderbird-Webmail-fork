@@ -15,10 +15,10 @@
 }
 
 #LionImage
-{   
+{
     margin-left: 20px;
     list-style-image: url("chrome://lycos/skin/Dragon.png");
-    
+
 }
 
 #LycosImage
@@ -59,7 +59,7 @@
 
 .LycosCreatorText
 {
-    margin-top: 10px; 
+    margin-top: 10px;
     margin-left: 5px;
 }
 
@@ -185,11 +185,15 @@
 }
 
 
-.flag[value="18"]/*swish*/
+.flag[value="19"]/**/
 {
      -moz-image-region: rect(0px, 640px, 32px, 608px)
 }
 
+.flag[value="18"]/*Brazil*/
+{
+     -moz-image-region: rect(0px, 672px, 32px, 640px)
+}
 
 .flag[value="20"]/*AR*/
 {
@@ -202,7 +206,6 @@
      -moz-image-region: rect(0px, 736px, 32px,704px)
 }
 
-
 .flag[value="22"]/*LT*/
 {
      -moz-image-region: rect(0px, 768px, 32px,736px)
@@ -212,8 +215,6 @@
 {
      -moz-image-region: rect(0px, 800px, 32px,768px)
 }
-
-
 
 .flag[value="24"]/*pl*/
 {
@@ -225,7 +226,6 @@
 {
      -moz-image-region: rect(0px, 864px, 32px, 832px)
 }
-
 
 #LycosHomePage
 {
