@@ -69,10 +69,10 @@
 
 
 #LionImage
-{   
+{
     margin-left: 20px;
     list-style-image: url("chrome://maildotcom/skin/Dragon.png");
-    
+
 }
 
 
@@ -191,15 +191,22 @@
      -moz-image-region: rect(0px, 608px, 32px, 576px)
 }
 
-.flag[value="18"]/*swish*/
+
+.flag[value="19"]/**/
 {
      -moz-image-region: rect(0px, 640px, 32px, 608px)
+}
+
+.flag[value="18"]/*Brazil*/
+{
+     -moz-image-region: rect(0px, 672px, 32px, 640px)
 }
 
 .flag[value="20"]/*AR*/
 {
      -moz-image-region: rect(0px, 704px, 32px, 672px)
 }
+
 
 .flag[value="21"]/*AK*/
 {
@@ -226,6 +233,7 @@
 {
      -moz-image-region: rect(0px, 864px, 32px, 832px)
 }
+
 
 #MailDotComHomePage
 {
