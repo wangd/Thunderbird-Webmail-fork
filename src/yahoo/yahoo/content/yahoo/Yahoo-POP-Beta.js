@@ -1449,7 +1449,7 @@ YahooPOPBETA.prototype =
         szMsg = szMsg.replace(/&#10;/g,"\n");
         szMsg = szMsg.replace(/&#xD;/g,"\r");
         szMsg = szMsg.replace(/&#13;/g,"\r");
-        szMsg = szMsg.replace(/\uC2/g," ").replace(/\uA0/g, "");
+        szMsg = szMsg.replace(/\u00C2/g," ");  //UTF8
         return szMsg;
     },
 }
