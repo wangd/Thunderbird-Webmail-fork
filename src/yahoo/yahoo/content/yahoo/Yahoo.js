@@ -27,6 +27,72 @@ var gYahooStartUp =
             //convert prefs
             var WebMailPrefAccess = new WebMailCommonPrefAccess();
             var oPref = {Value : null};
+            if (!WebMailPrefAccess.Get("bool","yahoo.Account.Update",oPref))
+            {
+                //get user name list
+                var aszUserList = this.getUserNames();
+                for (var i=0; i<aszUserList.length; i++)
+                {
+                    var szOldUserName = aszUserList[i].replace(/\./g,"_");
+                    this.m_Log.Write("nsHotmail.js - init - szOldUserName " +szOldUserName);
+                    var szNewUserName = aszUserList[i].replace(/\./g,"~");
+                    this.m_Log.Write("nsHotmail.js - init - szNewUserName " +szNewUserName);
+
+                    if (WebMailPrefAccess.Get("bool","yahoo.Account."+szOldUserName+".bBeta",oPref))
+                    {
+                        this.m_Log.Write("yahoo.js - init - iMode " + oPref.Value);
+                        WebMailPrefAccess.Set("bool","yahoo.Account."+szNewUserName+".bBeta",oPref.Value)
+                    }
+
+                    oPref.Value = null;
+                    if (WebMailPrefAccess.Get("bool","yahoo.Account."+szOldUserName+".bUseJunkMail",oPref))
+                    {
+                        this.m_Log.Write("yahoo.js - init - bUseJunkMail " + oPref.Value);
+                        WebMailPrefAccess.Set("bool","yahoo.Account."+szNewUserName+".bUseJunkMail",oPref.Value)
+                    }
+
+                    //get unread
+                    oPref.Value = null;
+                    if (WebMailPrefAccess.Get("bool","yahoo.Account."+szOldUserName+".bDownloadUnread",oPref))
+                    {
+                        this.m_Log.Write("yahoo.js - init - bDownloadUnread " + oPref.Value);
+                        WebMailPrefAccess.Set("bool","yahoo.Account."+szNewUserName+".bDownloadUnread",oPref.Value)
+                    }
+
+                    //get folders
+                    oPref.Value = null;
+                    if (WebMailPrefAccess.Get("char","yahoo.Account."+szOldUserName+".szFolders",oPref))
+                    {
+                        this.m_Log.Write("yahoo.js - init - szFolders " + oPref.Value);
+                        WebMailPrefAccess.Set("char","yahoo.Account."+szNewUserName+".szFolders",oPref.Value)
+                    }
+
+                    // save copy
+                    oPref.Value = null;
+                    if (WebMailPrefAccess.Get("bool","yahoo.Account."+szOldUserName+".bSaveCopy",oPref))
+                    {
+                        this.m_Log.Write("yahoo.js - init - bSaveCopy " + oPref.Value);
+                        WebMailPrefAccess.Set("bool","yahoo.Account."+szNewUserName+".bSaveCopy",oPref.Value)
+                    }
+
+                    var aszUserName = szOldUserName.split(/@/);
+                    if (aszUserName[0].search(/_/g)==-1)
+                    {
+                        WebMailPrefAccess.DeleteBranch("yahoo.Account."+szOldUserName+".bBeta");
+                        WebMailPrefAccess.DeleteBranch("yahoo.Account."+szOldUserName+".bUseJunkMail");
+                        WebMailPrefAccess.DeleteBranch("yahoo.Account."+szOldUserName+".bDownloadUnread");
+                        WebMailPrefAccess.DeleteBranch("yahoo.Account."+szOldUserName+".bMarkAsRead");
+                        WebMailPrefAccess.DeleteBranch("yahoo.Account."+szOldUserName+".szFolders");
+                        WebMailPrefAccess.DeleteBranch("yahoo.Account."+szOldUserName+".bSaveCopy");
+                    }
+                }
+
+                WebMailPrefAccess.Set("bool","hotmail.Account.updated",true);
+            }
+
+
+
+
             if (WebMailPrefAccess.Get("int","yahoo.Account.Num",oPref))
             {
                 //convert to new keys
@@ -109,6 +175,75 @@ var gYahooStartUp =
                                         + e.message);
         }
     },
+
+
+
+
+    getUserNames : function ()
+    {
+        try
+        {
+            this.m_Log.Write("Yahoo.js: getUserNames - START");
+
+            var cszHotmailContentID = "@mozilla.org/YahooPOP;1";
+            var aszUserList =  new Array();
+            var accountManager = Components.classes["@mozilla.org/messenger/account-manager;1"]
+                                           .getService(Components.interfaces.nsIMsgAccountManager);
+
+            var domainManager = Components.classes["@mozilla.org/DomainManager;1"]
+                                          .getService(Components.interfaces.nsIDomainManager);
+
+            var allServers = accountManager.allServers;
+
+            for (var i=0; i < allServers.Count(); i++)
+            {
+                var currentServer = allServers.GetElementAt(i)
+                                              .QueryInterface(Components.interfaces.nsIMsgIncomingServer);
+
+                if (currentServer.type.search(/pop3/i)!=-1)  //found pop account
+                {
+                    var szUserName = currentServer.realUsername;
+                    this.m_Log.Write("Yahoo.js : getUserNames - userName " + szUserName);
+                    if (szUserName)
+                    {
+                        if (szUserName.search(/@/)==-1)
+                        {
+                            szUserName = currentServer.username;
+                            this.m_Log.Write("Yahoo.js  : getUserNames - realuserName " + szUserName);
+                        }
+
+                        if (szUserName.search(/@/)!=-1)
+                        {
+                            var szDomain = szUserName.split("@")[1];
+                            this.m_Log.Write("Yahoo.js : getUserNames - szDomain " + szDomain);
+
+                            var szContentID ={value:null};
+                            if (domainManager.getDomainForProtocol(szDomain,"pop", szContentID))//domain found
+                            {
+                                if (szContentID.value == cszHotmailContentID) //Hotmail account found
+                                {
+                                   this.m_Log.Write("Yahoo.js : getUserNames - userName added " + szUserName);
+                                   aszUserList.push(szUserName.toLowerCase());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            this.m_Log.Write("Yahoo : getUserNames - END");
+            return aszUserList;
+        }
+        catch(e)
+        {
+            this.m_Log.DebugDump("Yahoo : Exception in getUserNames : "
+                                          + e.name +
+                                          ".\nError message: "
+                                          + e.message + "\n"
+                                          + e.lineNumber);
+        }
+    },
+
 
 
 

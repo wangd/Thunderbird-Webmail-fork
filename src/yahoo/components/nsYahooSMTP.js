@@ -150,7 +150,7 @@ nsYahooSMTP.prototype =
             this.m_Log.Write("nsYahooSMTP.js - loadPrefs - START");
 
             var szUserName =  this.m_szUserName;
-            szUserName = szUserName.replace(/\./g,"_");
+            szUserName = szUserName.replace(/\./g,"~");
             szUserName = szUserName.toLowerCase();
 
             //get user prefs
