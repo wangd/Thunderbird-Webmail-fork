@@ -34,9 +34,9 @@ var gYahooStartUp =
                 for (var i=0; i<aszUserList.length; i++)
                 {
                     var szOldUserName = aszUserList[i].replace(/\./g,"_");
-                    this.m_Log.Write("nsHotmail.js - init - szOldUserName " +szOldUserName);
+                    this.m_Log.Write("yahoo.js - init - szOldUserName " +szOldUserName);
                     var szNewUserName = aszUserList[i].replace(/\./g,"~");
-                    this.m_Log.Write("nsHotmail.js - init - szNewUserName " +szNewUserName);
+                    this.m_Log.Write("yahoo.js - init - szNewUserName " +szNewUserName);
 
                     if (WebMailPrefAccess.Get("bool","yahoo.Account."+szOldUserName+".bBeta",oPref))
                     {
@@ -87,12 +87,12 @@ var gYahooStartUp =
                     }
                 }
 
-                WebMailPrefAccess.Set("bool","hotmail.Account.updated",true);
+                WebMailPrefAccess.Set("bool","yahoo.Account.updated",true);
             }
 
 
 
-
+            oPref.Value = null;
             if (WebMailPrefAccess.Get("int","yahoo.Account.Num",oPref))
             {
                 //convert to new keys
@@ -106,7 +106,7 @@ var gYahooStartUp =
                     {
                         this.m_Log.Write("Yahoo.js : - init - userName " + oPref.Value);
                         var szUserName =  oPref.Value;
-                        szUserName = szUserName.replace(/\./g,"_");
+                        szUserName = szUserName.replace(/\./g,"~");
                         szUserName = szUserName.toLowerCase();
 
                         oPref.Value = null;
@@ -157,6 +157,7 @@ var gYahooStartUp =
                     }
                 }
                 WebMailPrefAccess.DeleteBranch("yahoo.Account.Num");
+                WebMailPrefAccess.Set("bool","yahoo.Account.updated",true);
             }
 
             //delete unused keys
@@ -185,7 +186,7 @@ var gYahooStartUp =
         {
             this.m_Log.Write("Yahoo.js: getUserNames - START");
 
-            var cszHotmailContentID = "@mozilla.org/YahooPOP;1";
+            var cContentID = "@mozilla.org/YahooPOP;1";
             var aszUserList =  new Array();
             var accountManager = Components.classes["@mozilla.org/messenger/account-manager;1"]
                                            .getService(Components.interfaces.nsIMsgAccountManager);
@@ -220,7 +221,7 @@ var gYahooStartUp =
                             var szContentID ={value:null};
                             if (domainManager.getDomainForProtocol(szDomain,"pop", szContentID))//domain found
                             {
-                                if (szContentID.value == cszHotmailContentID) //Hotmail account found
+                                if (szContentID.value == cContentID) //account found
                                 {
                                    this.m_Log.Write("Yahoo.js : getUserNames - userName added " + szUserName);
                                    aszUserList.push(szUserName.toLowerCase());
