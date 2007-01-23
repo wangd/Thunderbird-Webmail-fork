@@ -302,7 +302,7 @@ nsLycosSMTP.prototype =
             var  WebMailPrefAccess = new WebMailCommonPrefAccess();
 
             var szUserName =  this.m_szUserName;
-            szUserName = szUserName.replace(/\./g,"_");
+            szUserName = szUserName.replace(/\./g,"~");
             szUserName = szUserName.toLowerCase();
 
             //do i reuse the session

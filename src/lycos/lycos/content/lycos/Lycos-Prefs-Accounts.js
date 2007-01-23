@@ -171,7 +171,7 @@ var gPrefAccounts =
             {
                 var szUserName = this.m_aszUserList[this.m_iIndex].toLowerCase();
                 document.getElementById("selectedUserName").value = szUserName;
-                szUserName = szUserName.replace(/\./g,"_");
+                szUserName = szUserName.replace(/\./g,"~");
                 szUserName = szUserName.toLowerCase();
                 this.m_DebugLog.Write("lycos-Pref-Accounts : selectUserName -  szUserName "+ szUserName);
 
@@ -282,7 +282,7 @@ var gPrefAccounts =
         this.m_DebugLog.Write("lycos-Pref-Accounts : chkDownloadUreadOnChange -  bUnread "+ bUnread);
 
         var szUserName = this.m_aszUserList[this.m_iIndex].toLowerCase();
-        szUserName = szUserName.replace(/\./g,"_");
+        szUserName = szUserName.replace(/\./g,"~");
         szUserName = szUserName.toLowerCase();
         this.m_DebugLog.Write("Lycos-Pref-Accounts : chkDownloadUreadOnChange -  username "+ szUserName);
 
@@ -314,7 +314,7 @@ var gPrefAccounts =
         this.m_DebugLog.Write("lycos-Pref-Accounts : chkMaskAsReadOnChange -  bMarkAsRead "+ !bMarkAsRead);
 
         var szUserName = this.m_aszUserList[this.m_iIndex].toLowerCase();
-        szUserName = szUserName.replace(/\./g,"_");
+        szUserName = szUserName.replace(/\./g,"~");
         szUserName = szUserName.toLowerCase();
         this.m_DebugLog.Write("Lycos-Pref-Accounts : chkDownloadUreadOnChange -  username "+ szUserName);
 
@@ -333,7 +333,7 @@ var gPrefAccounts =
         this.m_DebugLog.Write("lycos-Pref-Accounts : chkJunkMailOnChange bJunkMail"+ bJunkMail);
 
         var szUserName = this.m_aszUserList[this.m_iIndex].toLowerCase();
-        szUserName = szUserName.replace(/\./g,"_");
+        szUserName = szUserName.replace(/\./g,"~");
         szUserName = szUserName.toLowerCase();
         this.m_DebugLog.Write("Lycos-Pref-Accounts : chkJunkMailOnChange -  username "+ szUserName);
 
@@ -352,7 +352,7 @@ var gPrefAccounts =
         this.m_DebugLog.Write("lycos-Pref-Accounts : chkEmptyTrashOnChange bEmptyTrash"+ bEmptyTrash);
 
         var szUserName = this.m_aszUserList[this.m_iIndex].toLowerCase();
-        szUserName = szUserName.replace(/\./g,"_");
+        szUserName = szUserName.replace(/\./g,"~");
         szUserName = szUserName.toLowerCase();
         this.m_DebugLog.Write("Lycos-Pref-Accounts : chkEmptyTrashOnChange -  username "+ szUserName);
 
@@ -384,7 +384,7 @@ var gPrefAccounts =
                 this.m_DebugLog.Write("lycos-Pref-Accounts : folderListAdd oParam.szfolder " + oParam.szFolder);
 
                 var szUserName = this.m_aszUserList[this.m_iIndex].toLowerCase();
-                szUserName = szUserName.replace(/\./g,"_");
+                szUserName = szUserName.replace(/\./g,"~");
                 szUserName = szUserName.toLowerCase();
                 this.m_DebugLog.Write("Lycos-Pref-Accounts : folderListAdd -  username "+ szUserName);
 
@@ -449,7 +449,7 @@ var gPrefAccounts =
             this.m_DebugLog.Write("lycos-Pref-Accounts : doRemove - iIndex "+iIndex);
 
             var szUserName = this.m_aszUserList[this.m_iIndex].toLowerCase();
-            szUserName = szUserName.replace(/\./g,"_");
+            szUserName = szUserName.replace(/\./g,"~");
             szUserName = szUserName.toLowerCase();
             this.m_DebugLog.Write("Lycos-Pref-Accounts : doRemove -  username "+ szUserName);
 
@@ -598,7 +598,7 @@ var gPrefAccounts =
         this.m_DebugLog.Write("lycos-Pref-Accounts : chkSentItemsOnChange -  bSaveItem "+ bSaveItem);
 
         var szUserName = this.m_aszUserList[this.m_iIndex].toLowerCase();
-        szUserName = szUserName.replace(/\./g,"_");
+        szUserName = szUserName.replace(/\./g,"~");
         szUserName = szUserName.toLowerCase();
         this.m_DebugLog.Write("lycos-Pref-Accounts : chkJunkMailOnChange -  username "+ szUserName);
 
