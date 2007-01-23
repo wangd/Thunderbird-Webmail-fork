@@ -308,7 +308,7 @@ nsHotmail.prototype =
             var oData = new PrefData();
 
             var szUserName =  this.m_szUserName;
-            szUserName = szUserName.replace(/\./g,"_");
+            szUserName = szUserName.replace(/\./g,"~");
             szUserName = szUserName.toLowerCase();
 
 
