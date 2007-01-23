@@ -70,6 +70,7 @@ const patternHotmailSRFrom =/<tr[\S\s]*name="(.*?)"><td>/i;
 
 /*********BETA**********/
 const patternHotmailJSRefresh = /<html><head><script.*?>.*?\.location\.replace.*?\("(.*?)"\).*?<\/script>.*?<\/html>/i;
+const patternHotmailJSRefreshAlt = /<head><meta http-equiv="REFRESH".*?content=".*?URL=(.*?)">.*?<\/head><\/html>/i;
 const patternHotmailJSBounce = /srf_uRet="(.*?)"/i;
 const patternHotmailLogOut = /<.*?"(.*?logout.aspx.*?)".*?>/gi;
 const patternHotmailViewState = /<input.*?id="__VIEWSTATE".*?value="(.*?)".*?\/>/i;

@@ -154,6 +154,9 @@ HotmailScreenRipperBETA.prototype =
 
             //check for java refresh
             var aRefresh = szResponse.match(patternHotmailJSRefresh);
+            mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler aRefresh "+ aRefresh);
+            if (!aRefresh) aRefresh = szResponse.match(patternHotmailJSRefreshAlt);
+            mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler aRefresh "+ aRefresh);
             if (aRefresh)
             {
                 mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler - refresh ");
