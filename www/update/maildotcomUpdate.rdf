@@ -17,8 +17,8 @@
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id> <!-- Thunderbird updates -->
                 <em:minVersion>1.4</em:minVersion>
                 <em:maxVersion>2.0</em:maxVersion>
-                <em:updateLink>http://download.mozdev.org/webmail/maildotcom-1-0-6.xpi</em:updateLink>
-                <em:updateHash>sha256:86e2cb74c6dcc3ffe8d23f743ceaced57a847cf4833a9208e68bcd830f9d4750</em:updateHash>
+                <em:updateLink>http://download.mozdev.org/webmail/maildotcom-1-0-6-2.xpi</em:updateLink>
+                <em:updateHash>sha256:2c5fd5e40c142e63dcc3a55d6e4bd45fbd508495e1bc3f2a41c494a2e984347d</em:updateHash>
           </Description>
         </em:targetApplication>
 

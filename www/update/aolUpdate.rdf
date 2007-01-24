@@ -17,8 +17,8 @@
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id> <!-- Thunderbird updates -->
                 <em:minVersion>1.4</em:minVersion>
                 <em:maxVersion>2.0</em:maxVersion>
-                <em:updateLink>http://download.mozdev.org/webmail/aol-1-0-5.xpi</em:updateLink>
-                <em:updateHash>sha256:e24b0b7d8d8d7166059495fdc86bf99303053c607a87e666a79732b6c336c88e</em:updateHash>
+                <em:updateLink>http://download.mozdev.org/webmail/aol-1-0-5-1.xpi</em:updateLink>
+                <em:updateHash>sha256:4ba033542d3c6d8e2f3f96a040bbec0d7c90776858f954e53b2e961aedd26176</em:updateHash>
           </Description>
         </em:targetApplication>
 
