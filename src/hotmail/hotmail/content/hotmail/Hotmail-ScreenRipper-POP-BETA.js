@@ -17,14 +17,12 @@ function HotmailScreenRipperBETA(oResponseStream, oLog, oPrefData)
         this.m_szPassWord = null;
         this.m_oResponseStream = oResponseStream;
         this.m_HttpComms = new HttpComms(this.m_Log);
-        this.m_szMailboxURI = null;
         this.m_szLocationURI = null;
-        this.m_szJunkFolderURI = null;
+        this.m_szFolderURL = null;
         this.m_aMsgDataStore = new Array();
         this.m_szHomeURI = null;
         this.m_iTotalSize = 0;
         this.m_iStage = 0;
-        this.m_bJunkMail = false;
         this.m_szMSGURI = null;
         this.m_szMSG = null;
         this.m_bStat = false;
@@ -298,13 +296,30 @@ HotmailScreenRipperBETA.prototype =
                     }
 
                     //get urls for later use
-                    mainObject.m_szLocationURI = httpChannel.URI.prePath ;
+                    var IOService = Components.classes["@mozilla.org/network/io-service;1"];
+                    IOService = IOService.getService(Components.interfaces.nsIIOService);
+                    var nsIURI = IOService.newURI(httpChannel.URI.spec, null, null);
+                    var szDirectory = nsIURI.QueryInterface(Components.interfaces.nsIURL).directory;
+                    this.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler - directory : " +szDirectory);
+                    mainObject.m_szLocationURI = httpChannel.URI.prePath + szDirectory;
                     mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler - m_szLocationURI : "+mainObject.m_szLocationURI );
 
                     mainObject.m_szHomeURI = httpChannel.URI.spec;
                     mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler - m_szHomeURI : "+mainObject.m_szHomeURI );
 
-                    //get folders
+                    //get folder manager
+                    var szURI = mainObject.m_szLocationURI + szResponse.match(patternHotmailFolderManager)[1];
+                    mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler - folders : "+szURI);
+                    mainObject.m_iStage =3;
+                    mainObject.m_HttpComms.setURI(szURI);
+                    mainObject.m_HttpComms.setRequestMethod("GET");
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
+                    if (!bResult) throw new Error("httpConnection returned false");
+                break;
+
+
+                case 3: //other folders
+                    mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler - processing folders");
 
                     //inbox - 000000000001
                     var oFolder = new FolderData();
@@ -323,33 +338,11 @@ HotmailScreenRipperBETA.prototype =
                         mainObject.m_aszFolderURLList.push(oFolder);
                     }
 
-                    if (mainObject.m_aszFolders.length>0)
-                    {
-                        //get folder manager
-                        var szURI = mainObject.m_szLocationURI + szResponse.match(patternHotmailFolderManager)[1];
-                        mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler - folders : "+szURI);
-                        mainObject.m_iStage =3;
-                        mainObject.m_HttpComms.setURI(szURI);
-                        mainObject.m_HttpComms.setRequestMethod("GET");
-                        var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
-                        if (!bResult) throw new Error("httpConnection returned false");
-                    }
-                    else
-                    {
-                        //server response
-                        mainObject.serverComms("+OK Your in\r\n");
-                        mainObject.m_bAuthorised = true;
-                    }
-                break;
-
-                case 3: //other folders
-                    mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler - processing folders");
-
-                    var aszFolderList = szResponse.match(patternHotmailFolderList);
-                    mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler - szFolderList : "+aszFolderList);
-
                     if (aszFolderList)
                     {
+                        var aszFolderList = szResponse.match(patternHotmailFolderList);
+                        mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler - szFolderList : "+aszFolderList);
+
                         for (var i=0 ; i<mainObject.m_aszFolders.length; i++ )
                         {
                             var regExp = new RegExp("^"+mainObject.m_aszFolders[i]+"$","i");
@@ -374,6 +367,7 @@ HotmailScreenRipperBETA.prototype =
                             }
                         }
                     }
+
                     //server response
                     mainObject.serverComms("+OK Your in\r\n");
                     mainObject.m_bAuthorised = true;
@@ -429,6 +423,7 @@ HotmailScreenRipperBETA.prototype =
         this.m_iStage = 0;
         var oFolder = this.m_aszFolderURLList.shift();
         this.m_szFolderName = oFolder.szFolderName;
+        this.m_szFolderURL = oFolder.szURI;
         this.m_Log.Write("Hotmail-SR-BETAR - getNumMessages - mail box "+this.m_szFolderName + "  url " + oFolder.szURI);
         this.m_HttpComms.setURI(oFolder.szURI);
         this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
@@ -469,10 +464,10 @@ HotmailScreenRipperBETA.prototype =
                 mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler - szViewState : " +szStatView);
 
                 //get msg urls
-                var aMsgTable = szResponse.match(patternHotmailInboxTable);
-                mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler -msg table : " +aMsgTable);
+                var szMsgTable = szResponse.match(patternHotmailMailBoxTable)[1];
+                mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler -msg table : " +szMsgTable);
 
-                var szMsgRows = aMsgTable[0].match(patternHotmailMailBoxTableRow);  //split on rows
+                var szMsgRows = szMsgTable.match(patternHotmailMailBoxTableRow);  //split on rows
                 mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler -split msg table : " +szMsgRows);
                 if (szMsgRows)
                 {
@@ -504,6 +499,7 @@ HotmailScreenRipperBETA.prototype =
                 {
                     var oFolder = mainObject.m_aszFolderURLList.shift();
                     mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler - :" + oFolder.szURI);
+                    mainObject.m_szFolderURL = oFolder.szURI;
                     mainObject.m_szFolderName = oFolder.szFolderName;
                     mainObject.m_iPageCount = 0; //reset array
                     mainObject.m_aszPageURLS = new Array;
@@ -553,7 +549,6 @@ HotmailScreenRipperBETA.prototype =
     processMSG : function (szMSGData,szStatView)
     {
         this.m_Log.Write("Hotmail-SR-BETAR - processMSG - START");
-        this.m_Log.Write("Hotmail-SR-BETAR - processMSG - \n" + szMSGData);
 
         var oMSG =  null;
         var bRead = true;
@@ -567,21 +562,22 @@ HotmailScreenRipperBETA.prototype =
         {
             oMSG = new HotmailMSG();
 
-            var szEmailURL = szMSGData.match(patternHotmailEMailURL)[1];
+            var aTableData = szMSGData.match(patternHotmailMailBoxTableData);
+            this.m_Log.Write("HotmailWebDav.js - processMSG - aTableData -" + aTableData);
+
+            var szEmailURL = aTableData[1].match(patternHotmailEMailURL)[1];
             var szPath = this.m_szLocationURI + szEmailURL;
             this.m_Log.Write("Hotmail-SR-BETAR - processMSG - Email URL : " +szPath);
             oMSG.szMSGUri = szPath;
 
-            oMSG.iSize = 2000;    //size unknown
-            this.m_iTotalSize += oMSG.iSize;
-
             oMSG.szFolderName = this.m_szFolderName;
+            oMSG.szFolderURL = this.m_szFolderURL;
             oMSG.szTo = this.m_szUserName;
 
             var szFrom = "";
             try
             {
-                szFrom = szMSGData.match(patternHotmailEmailSender)[1];
+                szFrom = aTableData[1].match(patternHotmailEmailSender)[1];
                 szFrom = this.removeHTML(szFrom);
                 this.m_Log.Write("Hotmail-SR-BETAR - processMSG - Email From : " +szFrom);
             }
@@ -591,7 +587,7 @@ HotmailScreenRipperBETA.prototype =
             var szSubject= "";
             try
             {
-                szSubject= szMSGData.match(patternHotmailEmailSubject)[1];
+                szSubject= aTableData[5].match(patternHotmailEmailSubject)[1];
                 szSubject= this.removeHTML(szSubject);
                 this.m_Log.Write("Hotmail-SR-BETAR - processMSG - Email szSubject : " +szSubject);
             }
@@ -601,7 +597,7 @@ HotmailScreenRipperBETA.prototype =
 
             try
             {
-                var szRawDate = szMSGData.match(patternHotmailEmailDate)[1];
+                var szRawDate = aTableData[6].match(patternHotmailEmailDate)[1];
                 this.m_Log.Write("Hotmail-SR-BETAR.js - processMSG - raw date/time "+szRawDate);
                 var today = new Date();
 
@@ -628,6 +624,10 @@ HotmailScreenRipperBETA.prototype =
                 this.m_Log.Write("Hotmail-SR-BETAR.js - processMSG - " + oMSG.szDate);
             }
             catch(err){}
+
+            oMSG.iSize = 2000; //aTableData[6].match(patternHotmailEmailDate)[1];
+            this.m_Log.Write("Hotmail-SR-BETAR - processMSG - size " + oMSG.iSize );
+            this.m_iTotalSize += oMSG.iSize;
 
             oMSG.szStatView = szStatView;
         }
@@ -864,15 +864,7 @@ HotmailScreenRipperBETA.prototype =
             this.m_szMSGURI = oMSG.szMSGUri;
             var szMSGID = this.m_szMSGURI.match(patternHotmailEMailID)[1];
 
-            var IOService = Components.classes["@mozilla.org/network/io-service;1"];
-            IOService = IOService.getService(Components.interfaces.nsIIOService);
-            var nsIURI = IOService.newURI(oMSG.szMSGUri, null, null);
-            var szDirectory = nsIURI.QueryInterface(Components.interfaces.nsIURL).directory;
-            this.m_Log.Write("Hotmail-SR-POP-BETA - loginOnloadHandler - directory : " +szDirectory);
-            var szURL = this.m_szLocationURI+szDirectory;
-            this.m_Log.Write("Hotmail-SR-POP-BETA - loginOnloadHandler - szURL : " +szURL);
-
-            var szMsgURI = szURL + "GetMessageSource.aspx?msgid=" + szMSGID;
+            var szMsgURI = this.m_szLocationURI + "GetMessageSource.aspx?msgid=" + szMSGID;
             this.m_Log.Write("Hotmail-SR-BETAR - getMessage - msg uri" + szMsgURI);
 
             this.m_szFolderName = oMSG.szFolderName;
@@ -992,25 +984,16 @@ HotmailScreenRipperBETA.prototype =
             this.m_HttpComms.setContentType("multipart/form-data");
             this.m_HttpComms.setRequestMethod("POST");
 
+            var szURL = oMSG.szFolderURL
+            this.m_Log.Write("Hotmail-SR-BETAR - deleteMessage - szURL " + szURL );
 
-//            var IOService = Components.classes["@mozilla.org/network/io-service;1"];
-//            IOService = IOService.getService(Components.interfaces.nsIIOService);
-//            var nsIURI = IOService.newURI(oMSG.szMSGUri, null, null);
-//            var szDirectory = nsIURI.QueryInterface(Components.interfaces.nsIURL).directory;
-//            this.m_Log.Write("Hotmail-SR-POP-BETA - deleteMessage - directory : " +szDirectory);
-            var szFolderID = oMSG.szMSGUri.match(patternHotmailFolderID)[1];
-            var szBaseURL = oMSG.szMSGUri.match(/^(.*?\?)/)[1];
-            this.m_Log.Write("Hotmail-SR-POP-BETA - deleteMessage - szBaseURL : " +szBaseURL);
-            szBaseURL = szBaseURL+"Control=Inbox&FolderID="+szFolderID;
-            this.m_Log.Write("Hotmail-SR-POP-BETA - deleteMessage - szURL : " +szBaseURL);
-
-            this.m_HttpComms.setURI(szBaseURL);
+            this.m_HttpComms.setURI(szURL);
             this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             this.m_HttpComms.addValuePair("__VIEWSTATE",oMSG.szStatView);
-            this.m_HttpComms.addValuePair("InboxDeleteMessages","Delete");
-            this.m_HttpComms.addValuePair("InboxMoveMessage","");
-            this.m_HttpComms.addValuePair("messages",szID);
-            this.m_HttpComms.addValuePair(szID,"on");
+            this.m_HttpComms.addValuePair("query","");
+            this.m_HttpComms.addValuePair("MoveMessageSelector","");
+            this.m_HttpComms.addValuePair("ToolbarActionItem","DeleteMessages");
+            this.m_HttpComms.addValuePair("SelectedMessages",szID);
 
             var bResult = this.m_HttpComms.send(this.deleteMessageOnloadHandler, this);
             if (!bResult) throw new Error("httpConnection returned false");

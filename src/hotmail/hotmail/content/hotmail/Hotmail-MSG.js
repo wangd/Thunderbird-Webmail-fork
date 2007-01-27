@@ -19,3 +19,5 @@ HotmailMSG.prototype.szDate = null;
 HotmailMSG.prototype.szStatView = null;
 
 HotmailMSG.prototype.bJunkFolder = false;
+
+HotmailMSG.prototype.szFolderURL = null;
