@@ -39,7 +39,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
             <Description>
                 <!-- Mozilla Thunderbird -->
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
-                <em:minVersion>1.5.*</em:minVersion>
+                <em:minVersion>1.5</em:minVersion>
                 <em:maxVersion>2.0.*</em:maxVersion>
             </Description>
         </em:targetApplication>
