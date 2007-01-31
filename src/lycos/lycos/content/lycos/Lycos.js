@@ -29,7 +29,7 @@ var gLycosStartUp =
             //convert prefs
             var WebMailPrefAccess = new WebMailCommonPrefAccess();
             var oPref = {Value : null};
-            if (!WebMailPrefAccess.Get("bool","lycos.Account.Update",oPref))
+            if (!WebMailPrefAccess.Get("bool","lycos.Account.updated",oPref))
             {
                 //get user name list
                 var aszUserList = this.getUserNames();
@@ -106,7 +106,7 @@ var gLycosStartUp =
             }
 
 
- 			oPref.Value = null; 
+             oPref.Value = null;
             if (WebMailPrefAccess.Get("int","lycos.Account.Num",oPref))
             {
                 //convert to new keys
@@ -182,7 +182,7 @@ var gLycosStartUp =
                     }
                 }
                 WebMailPrefAccess.DeleteBranch("lycos.Account.Num");
-				WebMailPrefAccess.Set("bool","lycos.Account.updated",true);
+                WebMailPrefAccess.Set("bool","lycos.Account.updated",true);
             }
 
             //delete unused keys
@@ -207,7 +207,7 @@ var gLycosStartUp =
 
 
 
- 	getUserNames : function ()
+     getUserNames : function ()
     {
         try
         {

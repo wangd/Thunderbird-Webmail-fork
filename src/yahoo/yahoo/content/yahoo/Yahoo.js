@@ -27,7 +27,7 @@ var gYahooStartUp =
             //convert prefs
             var WebMailPrefAccess = new WebMailCommonPrefAccess();
             var oPref = {Value : null};
-            if (!WebMailPrefAccess.Get("bool","yahoo.Account.Updated",oPref))
+            if (!WebMailPrefAccess.Get("bool","yahoo.Account.updated",oPref))
             {
                 //get user name list
                 var aszUserList = this.getUserNames();

@@ -28,7 +28,7 @@ var gHotmailStartUp =
             var WebMailPrefAccess = new WebMailCommonPrefAccess();
             var oPref = {Value : null};
 
-            if (!WebMailPrefAccess.Get("bool","hotmail.Account.Update",oPref))
+            if (!WebMailPrefAccess.Get("bool","hotmail.Account.updated",oPref))
             {
                 //get user name list
                 var aszUserList = this.getUserNames();
@@ -192,7 +192,7 @@ var gHotmailStartUp =
                     }
                 }
                 WebMailPrefAccess.DeleteBranch("hotmail.Account.Num");
-				WebMailPrefAccess.Set("bool","hotmail.Account.updated",true);
+                WebMailPrefAccess.Set("bool","hotmail.Account.updated",true);
             }
 
             //delete unused keys
