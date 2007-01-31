@@ -108,7 +108,7 @@ nsMailDotComSMTP.prototype =
             this.m_HttpComms.setURI("http://www.mail.com");
             this.m_HttpComms.setRequestMethod("GET");
 
-            if (this.this.m_bReUseSession)
+            if (this.m_bReUseSession)
             {
                 this.m_Log.Write("nsMailDotCom.js - logIN - Getting Session Data");
                 this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
@@ -419,14 +419,14 @@ nsMailDotComSMTP.prototype =
                     if (mainObject.m_Email.htmlBody)
                         szHtmlBody = mainObject.m_Email.htmlBody.body.getBody();
 
-                    if (szTxtBody && !mainObject.this.m_bSendHtml || !szHtmlBody)
+                    if (szTxtBody && !mainObject.m_bSendHtml || !szHtmlBody)
                     {
                         mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - plain");
                         mainObject.m_HttpComms.addValuePair("format","");
                         mainObject.m_HttpComms.addValuePair("body",mainObject.escapeStr(szTxtBody));
                         mainObject.m_HttpComms.addValuePair("advancededitor","");
                     }
-                    else if (szHtmlBody && mainObject.this.m_bSendHtml || !szTxtBody)
+                    else if (szHtmlBody && mainObject.m_bSendHtml || !szTxtBody)
                     {
                         mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - html");
                         mainObject.m_HttpComms.addValuePair("emailcomposer","advanced");
@@ -487,7 +487,7 @@ nsMailDotComSMTP.prototype =
                             }
                             else if (szName.search(/savesent/i)!=-1)
                             {
-                                var szSave = mainObject.this.m_bSaveCopy ? "yes" : "no";
+                                var szSave = mainObject.m_bSaveCopy ? "yes" : "no";
                                 mainObject.m_HttpComms.addValuePair(szName,szSave);
                             }
                             else
@@ -509,7 +509,7 @@ nsMailDotComSMTP.prototype =
                     mainObject.m_Log.Write("nsMailDotCom.js - composerOnloadHandler - message ok");
                     if (szResponse.search(/aftersent/igm)!=-1)
                     {
-                        if (mainObject.this.m_bReUseSession)
+                        if (mainObject.m_bReUseSession)
                         {
                             mainObject.m_Log.Write("nsMailDotCom.js - composerOnloadHandler - Setting Session Data");
 
