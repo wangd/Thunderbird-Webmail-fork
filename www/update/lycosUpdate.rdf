@@ -18,7 +18,7 @@
                 <em:minVersion>1.4</em:minVersion>
                 <em:maxVersion>2.0</em:maxVersion>
                 <em:updateLink>http://download.mozdev.org/webmail/lycos-1-0-4-1.xpi</em:updateLink>
-                <em:updateHash>sha256:940376a68416b0b850883415de9c8c097df9ea9e177090f3e3503ccb43dfe1e7</em:updateHash>
+                <em:updateHash>sha256:66292a3c67f66e6fdd140958b01d14c1cc3908e82fc993a7b388a86d2efa4e3e</em:updateHash>
           </Description>
         </em:targetApplication>
 
