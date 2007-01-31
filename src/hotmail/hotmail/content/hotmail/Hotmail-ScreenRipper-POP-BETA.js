@@ -338,11 +338,10 @@ HotmailScreenRipperBETA.prototype =
                         mainObject.m_aszFolderURLList.push(oFolder);
                     }
 
+                    var aszFolderList = szResponse.match(patternHotmailFolderList);
+                    mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler - szFolderList : "+aszFolderList);
                     if (aszFolderList)
                     {
-                        var aszFolderList = szResponse.match(patternHotmailFolderList);
-                        mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler - szFolderList : "+aszFolderList);
-
                         for (var i=0 ; i<mainObject.m_aszFolders.length; i++ )
                         {
                             var regExp = new RegExp("^"+mainObject.m_aszFolders[i]+"$","i");
@@ -907,6 +906,34 @@ HotmailScreenRipperBETA.prototype =
             //check status should be 200.
             if (httpChannel.responseStatus != 200)
                 throw new Error("error status " + httpChannel.responseStatus);
+
+ 			var szContentType = httpChannel.getResponseHeader("Content-Type");
+            mainObject.m_Log.Write("Hotmail-SR-BETAR - emailOnloadHandler - szContentType :" +szContentType);
+
+            if (szContentType.search(/UTF-8/i)==-1)
+            {
+                try
+                {
+
+                    //Content-Type: text/html; charset=utf-16
+                    var szCharset = szContentType.match(/charset=(.*?)$/i)[1]
+                    var Converter = Components.classes["@mozilla.org/intl/scriptableunicodeconverter"]
+                                              .getService(Components.interfaces.nsIScriptableUnicodeConverter);
+
+                    Converter.charset =  szCharset;
+                    var unicode =  Converter.ConvertToUnicode(szResponse);
+                    this.m_Log.Write("Hotmail-SR-BETAR - emailOnloadHandler - unicode " + unicode);
+
+                    Converter.charset = "utf-8";
+                    szDecoded = Converter.ConvertFromUnicode(unicode);
+                    this.m_Log.Write("Hotmail-SR-BETAR - emailOnloadHandler - utf-8 "+szDecoded);
+                    szResponse = szDecoded
+                }
+                catch(e)
+                {
+                }
+            }
+
 
             switch(mainObject.m_iStage)
             {
