@@ -95,7 +95,22 @@ var gPrefAccounts =
                             {
                                 if (szContentID.value == this.m_cszHotmailContentID) //Hotmail account found
                                 {
-                                   this.m_DebugLog.Write("Hotmail-Pref-Accounts : getUserNames - userName added " + szUserName);
+                                   this.m_DebugLog.Write("Hotmail-Pref-Accounts : getUserNames - userName raw " + szUserName);
+
+                                   //clean username
+                                   if (szUserName.search(/^.*?\:.*?\:(.*?@.*?)$/)!=-1)  //POPFile
+                                       szUserName = szUserName.match(/^.*?\:.*?\:(.*?@.*?)$/)[1];
+                                   else if (szUserName.search(/^(.*?@.*?)#.*?/)!=-1) //SpamTerminator Avast
+                                       szUserName = szUserName.match(/^(.*?@.*?)#.*?/)[1];
+                                   else if (szUserName.search(/^(.*?@.*?)@.*?/)!=-1) //SpamPal
+                                       szUserName = szUserName.match(/^(.*?@.*?)@.*?/)[1];
+                                   else if (szUserName.search(/.*?\/.*?\/(.*?@.*?)$/)!=-1) //K9
+                                       szUserName = szUserName.match(/.*?\/.*?\/(.*?@.*?)$/)[1];
+                                   else if (szUserName.search(/^.*?&(.*?@.*?)&.*?$/)!=-1) //SpamHilator
+                                       szUserName = szUserName.match(/^.*?&(.*?@.*?)&.*?$/)[1];
+
+                                   this.m_DebugLog.Write("Hotmail-Pref-Accounts : getUserNames - userName clean " + szUserName);
+
                                    this.m_aszUserList.push(szUserName);
                                 }
                             }
