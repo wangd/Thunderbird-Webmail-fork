@@ -184,7 +184,6 @@ nsAOLSMTP.prototype =
         try
         {
             mainObject.m_Log.Write("nsAOL.js - loginOnloadHandler - START");
-            //mainObject.m_Log.Write("nsAOL.js - loginOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("nsAOL.js - loginOnloadHandler : " + mainObject.m_iStage);
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -406,7 +405,6 @@ nsAOLSMTP.prototype =
         try
         {
             mainObject.m_Log.Write("nsAOLSMTP.js - composerOnloadHandler - START");
-            mainObject.m_Log.Write("nsAOLSMTP.js - composerOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("nsAOLSMTP.js - composerOnloadHandler : " + mainObject.m_iStage);
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -443,7 +441,10 @@ nsAOLSMTP.prototype =
                                 if (szName.search(/user/i)!=-1)
                                     szValue = mainObject.m_szUserId;
                                 else if (szName.search(/From/i)!=-1)
+                                {
                                     szValue = mainObject.m_szFrom;
+                                    szValue = szValue.toLowerCase();
+                                }
                                 else if (szName.search(/PlainBody/i)!=-1)
                                 {
                                     if (mainObject.m_Email.txtBody)
