@@ -1,6 +1,33 @@
+<!ENTITY Window.size "šírka: 46em; výška: 37em">
 <!ENTITY Options.szTitle "Možnosti WebMail">
 <!ENTITY Servers.Panel.szTitle "Servery">
 <!ENTITY Domains.Panel.szTitle "Domény">
 <!ENTITY Logging.Panel.szTitle "Prihlásenie">
 <!ENTITY General.Panel.szTitle "Všeobecné">
-<!ENTITY Window.size "šírka: 46em; výška: 37em">
+<!ENTITY close.button.label "Zatvoriť">
+<!ENTITY Ports.Label "Port">
+<!ENTITY Ports.POP.AccessKey "o">
+<!ENTITY Ports.SMTP.AccessKey "r">
+<!ENTITY Ports.IMAP.AccessKey "t">
+<!ENTITY Pop.Label "POP">
+<!ENTITY SMTP.Label "SMTP">
+<!ENTITY IMAP.Label "IMAP">
+<!ENTITY StatusBox.size "šírka:6em;">
+<!ENTITY StartServer.Tooltip "Spustiť server">
+<!ENTITY StopServer.Tooltip "Zastaviť server">
+<!ENTITY Enable.Server.Label "Zapnúť pri spustení">
+<!ENTITY Enable.POP.AccessKey "Z">
+<!ENTITY Enable.SMTP.AccessKey "n">
+<!ENTITY Enable.IMAP.AccessKey "a">
+<!ENTITY GeneralLogging.Label "Zapnúť prihlásenie">
+<!ENTITY GeneralLogging.AccessKey "P">
+<!ENTITY Location.Label "Umiestnenie">
+<!ENTITY Location.AccessKey "U">
+<!ENTITY Button.Label "Hľadať...">
+<!ENTITY Button.AccessKey "H">
+<!ENTITY NotePort.Label "Niektoré OS blokujú porty pod 1024.">
+<!ENTITY Note.Label "Tieto výpisy budú obsahovať používateľské mená a heslá.">
+<!ENTITY Restart.Label "Na zmenu je potrebný reštart Thunderbirdu.">
+<!ENTITY RestartServer.Label "Na zmenu je potrebný reštart servera.">
+<!ENTITY Domain.Label "Doména">
+<!ENTITY POP.Label "POP">

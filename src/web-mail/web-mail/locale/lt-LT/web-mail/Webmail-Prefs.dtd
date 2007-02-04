@@ -1,6 +1,33 @@
+<!ENTITY Window.size "width: 46em; height: 37em">
 <!ENTITY Options.szTitle "WebMail nustatymai">
 <!ENTITY Servers.Panel.szTitle "Serveriai">
 <!ENTITY Domains.Panel.szTitle "Domenai">
 <!ENTITY Logging.Panel.szTitle "Registravimas">
 <!ENTITY General.Panel.szTitle "Bendra">
-<!ENTITY Window.size "width: 46em; height: 37em">
+<!ENTITY close.button.label "Užverti">
+<!ENTITY Ports.Label "Prievadas">
+<!ENTITY Ports.POP.AccessKey "a">
+<!ENTITY Ports.SMTP.AccessKey "d">
+<!ENTITY Ports.IMAP.AccessKey "e">
+<!ENTITY Pop.Label "POP">
+<!ENTITY SMTP.Label "SMTP">
+<!ENTITY IMAP.Label "IMAP">
+<!ENTITY StatusBox.size "width: 6em;">
+<!ENTITY StartServer.Tooltip "Paleisti serverį">
+<!ENTITY StopServer.Tooltip "Sustabdyti serverį">
+<!ENTITY Enable.Server.Label "Įjungti paleidžiant">
+<!ENTITY Enable.POP.AccessKey "P">
+<!ENTITY Enable.SMTP.AccessKey "S">
+<!ENTITY Enable.IMAP.AccessKey "I">
+<!ENTITY GeneralLogging.Label "Įjungti registravimą">
+<!ENTITY GeneralLogging.AccessKey "r">
+<!ENTITY Location.Label "Vieta">
+<!ENTITY Location.AccessKey "V">
+<!ENTITY Button.Label "Naršyti...">
+<!ENTITY Button.AccessKey "N">
+<!ENTITY NotePort.Label "Kai kurios OS blokuoja prievadus mažesnius nei 1024.">
+<!ENTITY Note.Label "Šie įrašai turės vartotojų vardus ir slaptažodžius.">
+<!ENTITY Restart.Label "Pakartotinis Thunderbird paleidimas reikalingas, kad įsigaliotų pakeitimai.">
+<!ENTITY RestartServer.Label "Pakartotinis serverio paleidimas reikalingas, kad prievado keitimas įsigaliotų.">
+<!ENTITY Domain.Label "Domenas">
+<!ENTITY POP.Label "POP">

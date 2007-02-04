@@ -1,7 +1,7 @@
 <!ENTITY WebmailAbout.Title "о WebMail">
 <!ENTITY WebmailAbout.ExtName "Web Mail">
 <!ENTITY WebmailAbout.ExtVersion "версия">
-<!ENTITY WebmailAbout.ExtDescription "Доступ к учётной записи WebMail через Thunderbird.">
+<!ENTITY WebmailAbout.ExtDescription "Доступ через Thunderbird к учётной записи Web-почты.">
 <!ENTITY WebmailAbout.ExtCreaterTitle "Автор:">
 <!ENTITY WebmailAbout.ExtHome "Сайт проекта">
 <!ENTITY WebmailAbout.ExtButton "Закрыть">

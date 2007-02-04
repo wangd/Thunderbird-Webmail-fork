@@ -1,6 +1,33 @@
+<!ENTITY Window.size "width: 46em; height: 37em">
 <!ENTITY Options.szTitle "Impostazioni di Webmail">
 <!ENTITY Servers.Panel.szTitle "Server">
 <!ENTITY Domains.Panel.szTitle "Dominii">
 <!ENTITY Logging.Panel.szTitle "Dati di accesso">
 <!ENTITY General.Panel.szTitle "Generali">
-<!ENTITY Window.size "width: 46em; height: 37em">
+<!ENTITY close.button.label "Chiudi">
+<!ENTITY Ports.Label "Porta">
+<!ENTITY Ports.POP.AccessKey "P">
+<!ENTITY Ports.SMTP.AccessKey "o">
+<!ENTITY Ports.IMAP.AccessKey "r">
+<!ENTITY Pop.Label "POP">
+<!ENTITY SMTP.Label "SMTP">
+<!ENTITY IMAP.Label "IMAP">
+<!ENTITY StatusBox.size "width: 6em;">
+<!ENTITY StartServer.Tooltip "Avvia il server">
+<!ENTITY StopServer.Tooltip "Ferma il server">
+<!ENTITY Enable.Server.Label "Attiva all&apos;avvio">
+<!ENTITY Enable.POP.AccessKey "A">
+<!ENTITY Enable.SMTP.AccessKey "t">
+<!ENTITY Enable.IMAP.AccessKey "v">
+<!ENTITY GeneralLogging.Label "Attiva le registrazioni">
+<!ENTITY GeneralLogging.AccessKey "A">
+<!ENTITY Location.Label "Cartella">
+<!ENTITY Location.AccessKey "C">
+<!ENTITY Button.Label "Sfoglia...">
+<!ENTITY Button.AccessKey "S">
+<!ENTITY NotePort.Label "Le porte sotto la 1024 potrebbero essere bloccate dal sistema operativo">
+<!ENTITY Note.Label "Questi file di registrazione conterranno i dati di nome utente e password">
+<!ENTITY Restart.Label "Riavviare Thunderbird per rendere effettive le modifiche">
+<!ENTITY RestartServer.Label "Riavviare il server per rendere effettive le modifiche">
+<!ENTITY Domain.Label "Dominio">
+<!ENTITY POP.Label "POP">

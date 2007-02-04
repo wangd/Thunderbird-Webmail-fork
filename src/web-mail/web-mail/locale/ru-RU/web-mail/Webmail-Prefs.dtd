@@ -1,6 +1,33 @@
+<!ENTITY Window.size "width: 46em; height: 37em">
 <!ENTITY Options.szTitle "Опции WebMail">
 <!ENTITY Servers.Panel.szTitle "Серверы">
 <!ENTITY Domains.Panel.szTitle "Домены">
 <!ENTITY Logging.Panel.szTitle "Журналы">
 <!ENTITY General.Panel.szTitle "Основное">
-<!ENTITY Window.size "width: 46em; height: 37em">
+<!ENTITY close.button.label "Закрыть">
+<!ENTITY Ports.Label "Порт">
+<!ENTITY Ports.POP.AccessKey "о">
+<!ENTITY Ports.SMTP.AccessKey "р">
+<!ENTITY Ports.IMAP.AccessKey "т">
+<!ENTITY Pop.Label "POP">
+<!ENTITY SMTP.Label "SMTP">
+<!ENTITY IMAP.Label "IMAP">
+<!ENTITY StatusBox.size "width: 6em;">
+<!ENTITY StartServer.Tooltip "Запуск сервера">
+<!ENTITY StopServer.Tooltip "Останов сервера">
+<!ENTITY Enable.Server.Label "Включить при запуске">
+<!ENTITY Enable.POP.AccessKey "В">
+<!ENTITY Enable.SMTP.AccessKey "к">
+<!ENTITY Enable.IMAP.AccessKey "л">
+<!ENTITY GeneralLogging.Label "Включить журналирование">
+<!ENTITY GeneralLogging.AccessKey "В">
+<!ENTITY Location.Label "Расположение">
+<!ENTITY Location.AccessKey "Р">
+<!ENTITY Button.Label "Обзор...">
+<!ENTITY Button.AccessKey "О">
+<!ENTITY NotePort.Label "В некоторых ОС порты меньше 1024-го блокированы.">
+<!ENTITY Note.Label "Эти журналы будут содержать имена и пароли.">
+<!ENTITY Restart.Label "Чтобы изменения вступили в силу необходимо перезапустить Thunderbird.">
+<!ENTITY RestartServer.Label "Чтобы изменения вступили в силу необходимо перезапустить сервер.">
+<!ENTITY Domain.Label "Домен">
+<!ENTITY POP.Label "POP">

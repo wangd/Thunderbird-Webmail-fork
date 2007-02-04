@@ -1,6 +1,33 @@
+<!ENTITY Window.size "width: 57em; height: 37em">
 <!ENTITY Options.szTitle "WebMail - Asetukset">
 <!ENTITY Servers.Panel.szTitle "Palvelimet">
 <!ENTITY Domains.Panel.szTitle "Verkkotunnukset">
 <!ENTITY Logging.Panel.szTitle "Kirjaaminen">
 <!ENTITY General.Panel.szTitle "Yleiset">
-<!ENTITY Window.size "width: 46em; height: 37em">
+<!ENTITY close.button.label "Sulje">
+<!ENTITY Ports.Label "Portti">
+<!ENTITY Ports.POP.AccessKey "P">
+<!ENTITY Ports.SMTP.AccessKey "o">
+<!ENTITY Ports.IMAP.AccessKey "r">
+<!ENTITY Pop.Label "POP">
+<!ENTITY SMTP.Label "SMTP">
+<!ENTITY IMAP.Label "IMAP">
+<!ENTITY StatusBox.size "width: 5em;">
+<!ENTITY StartServer.Tooltip "Käynnistä palvelin">
+<!ENTITY StopServer.Tooltip "Pysäytä palvelin">
+<!ENTITY Enable.Server.Label "Ota käyttöön käynnistettäessä">
+<!ENTITY Enable.POP.AccessKey "t">
+<!ENTITY Enable.SMTP.AccessKey "k">
+<!ENTITY Enable.IMAP.AccessKey "a">
+<!ENTITY GeneralLogging.Label "Ota kirjaaminen käyttöön">
+<!ENTITY GeneralLogging.AccessKey "O">
+<!ENTITY Location.Label "Sijainti">
+<!ENTITY Location.AccessKey "i">
+<!ENTITY Button.Label "Selaa...">
+<!ENTITY Button.AccessKey "S">
+<!ENTITY NotePort.Label "Jotkut käyttöjärjestelmät estävät portit, jotka ovat pienempiä kuin 1024.">
+<!ENTITY Note.Label "Nämä lokitiedostot sisältävä käyttäjänimiä ja salasanoja.">
+<!ENTITY Restart.Label "Thunderbirdin uudelleenkäynnistys vaaditaan, jotta muutokset tulevat voimaan.">
+<!ENTITY RestartServer.Label "Palvelimen uudelleenkäynnistys vaaditaan, jotta muutokset tulevat voimaan.">
+<!ENTITY Domain.Label "Verkkotunnus">
+<!ENTITY POP.Label "POP">

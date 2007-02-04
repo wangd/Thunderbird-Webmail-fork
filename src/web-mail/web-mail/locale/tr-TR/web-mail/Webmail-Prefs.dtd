@@ -1,6 +1,43 @@
-<!ENTITY Options.szTitle "WebMail Seçenekleri">
-<!ENTITY Servers.Panel.szTitle "Sunucular">
-<!ENTITY Domains.Panel.szTitle "Alan İsimleri">
-<!ENTITY Logging.Panel.szTitle "Giriş">
-<!ENTITY General.Panel.szTitle "Genel">
 <!ENTITY Window.size "width: 46em; height: 37em">
+<!ENTITY Options.szTitle "WebMail Options">
+<!ENTITY Servers.Panel.szTitle "Servers">
+<!ENTITY Domains.Panel.szTitle "Domains">
+<!ENTITY Logging.Panel.szTitle "Logging">
+<!ENTITY General.Panel.szTitle "General">
+
+<!ENTITY close.button.label "Close">
+
+<!ENTITY Ports.Label "Port">
+<!ENTITY Ports.POP.AccessKey "o">
+<!ENTITY Ports.SMTP.AccessKey "r">
+<!ENTITY Ports.IMAP.AccessKey "t">
+<!ENTITY Pop.Label "POP">
+<!ENTITY SMTP.Label "SMTP">
+<!ENTITY IMAP.Label "IMAP">
+<!ENTITY StatusBox.size "width: 6em;">
+<!ENTITY StartServer.Tooltip "Start Server">
+<!ENTITY StopServer.Tooltip "Stop Server">
+<!ENTITY Enable.Server.Label "Enable at startup">
+<!ENTITY Enable.POP.AccessKey "E">
+<!ENTITY Enable.SMTP.AccessKey "n">
+<!ENTITY Enable.IMAP.AccessKey "a">
+
+
+<!ENTITY GeneralLogging.Label "Enable logging">
+<!ENTITY GeneralLogging.AccessKey "E">
+<!ENTITY Location.Label "Location">
+<!ENTITY Location.AccessKey "L">
+<!ENTITY Button.Label "Browse...">
+<!ENTITY Button.AccessKey "B">
+
+
+<!ENTITY NotePort.Label "Some OS's block ports below 1024.">
+<!ENTITY Note.Label "These logs will contain usernames and passwords.">
+<!ENTITY Restart.Label "A restart of Thunderbird is required before changes take effect.">
+<!ENTITY RestartServer.Label "A restart of the server is required before the port change takes effect.">
+
+
+<!ENTITY Domain.Label "Domain">
+<!ENTITY POP.Label "POP">
+<!ENTITY SMTP.Label "SMTP">
+<!ENTITY IMAP.Label "IMAP">

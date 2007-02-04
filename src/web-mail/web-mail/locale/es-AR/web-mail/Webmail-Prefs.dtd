@@ -1,6 +1,33 @@
+<!ENTITY Window.size "ancho: 46em; alto:37em">
 <!ENTITY Options.szTitle "Opciones de WebMail">
 <!ENTITY Servers.Panel.szTitle "Servidores">
 <!ENTITY Domains.Panel.szTitle "Dominios">
 <!ENTITY Logging.Panel.szTitle "Registro">
 <!ENTITY General.Panel.szTitle "General">
-<!ENTITY Window.size "ancho: 46em; alto:37em">
+<!ENTITY close.button.label "Cerrar">
+<!ENTITY Ports.Label "Puerto">
+<!ENTITY Ports.POP.AccessKey "O">
+<!ENTITY Ports.SMTP.AccessKey "r">
+<!ENTITY Ports.IMAP.AccessKey "t">
+<!ENTITY Pop.Label "POP">
+<!ENTITY SMTP.Label "SMTP">
+<!ENTITY IMAP.Label "IMAP">
+<!ENTITY StatusBox.size "width: 6em;">
+<!ENTITY StartServer.Tooltip "Iniciar Servidor">
+<!ENTITY StopServer.Tooltip "Detener Servidor">
+<!ENTITY Enable.Server.Label "Habilitar al inicio">
+<!ENTITY Enable.POP.AccessKey "E">
+<!ENTITY Enable.SMTP.AccessKey "n">
+<!ENTITY Enable.IMAP.AccessKey "a">
+<!ENTITY GeneralLogging.Label "Habilitar registro">
+<!ENTITY GeneralLogging.AccessKey "E">
+<!ENTITY Location.Label "Ubicación">
+<!ENTITY Location.AccessKey "L">
+<!ENTITY Button.Label "Examinar">
+<!ENTITY Button.AccessKey "B">
+<!ENTITY NotePort.Label "Algunos SO&apos;s bloquean los puertos por debajo del 1024.">
+<!ENTITY Note.Label "Éstos archivos de registro contendrán nombres de usuario y contraseñas.">
+<!ENTITY Restart.Label "Se necesita reiniciar Thunderbird  para que los cambios tengan efecto.">
+<!ENTITY RestartServer.Label "Se requiere reiniciar el servidor para que los cambios en los puertos tengan efecto.">
+<!ENTITY Domain.Label "Dominio">
+<!ENTITY POP.Label "POP">

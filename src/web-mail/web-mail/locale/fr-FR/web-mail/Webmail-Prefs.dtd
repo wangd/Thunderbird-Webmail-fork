@@ -1,6 +1,33 @@
+<!ENTITY Window.size "width: 46em; height: 37em">
 <!ENTITY Options.szTitle "Options de Web Mail">
 <!ENTITY Servers.Panel.szTitle "Serveurs">
 <!ENTITY Domains.Panel.szTitle "Domaines">
 <!ENTITY Logging.Panel.szTitle "Archivage">
 <!ENTITY General.Panel.szTitle "Général">
-<!ENTITY Window.size "width: 46em; height: 37em">
+<!ENTITY close.button.label "Fermer">
+<!ENTITY Ports.Label "Port">
+<!ENTITY Ports.POP.AccessKey "p">
+<!ENTITY Ports.SMTP.AccessKey "o">
+<!ENTITY Ports.IMAP.AccessKey "r">
+<!ENTITY Pop.Label "POP">
+<!ENTITY SMTP.Label "SMTP">
+<!ENTITY IMAP.Label "IMAP">
+<!ENTITY StatusBox.size "width: 6em;">
+<!ENTITY StartServer.Tooltip "Démarrer le serveur">
+<!ENTITY StopServer.Tooltip "Arrêter le serveur">
+<!ENTITY Enable.Server.Label "Activer au démarrage">
+<!ENTITY Enable.POP.AccessKey "a">
+<!ENTITY Enable.SMTP.AccessKey "c">
+<!ENTITY Enable.IMAP.AccessKey "t">
+<!ENTITY GeneralLogging.Label "Activer le journal">
+<!ENTITY GeneralLogging.AccessKey "A">
+<!ENTITY Location.Label "Emplacement">
+<!ENTITY Location.AccessKey "E">
+<!ENTITY Button.Label "Parcourir">
+<!ENTITY Button.AccessKey "P">
+<!ENTITY NotePort.Label "Les ports inférieurs à 1024 peuvent être bloqués par le système">
+<!ENTITY Note.Label "Ces journaux contiendrons vos noms d&apos;utilisateurs et mot de passes">
+<!ENTITY Restart.Label "Un redémarrage est nécessaire pour que les changements prennent effet.">
+<!ENTITY RestartServer.Label "Un redémarrage du serveur est nécessaire pour que le changement de port prennent effet.">
+<!ENTITY Domain.Label "Domaine">
+<!ENTITY POP.Label "POP">

@@ -3,6 +3,6 @@
 <!ENTITY WebmailAbout.ExtVersion "version">
 <!ENTITY WebmailAbout.ExtDescription "Accéder aux comptes webmails depuis Thunderbird.">
 <!ENTITY WebmailAbout.ExtCreaterTitle "Créée par :">
-<!ENTITY WebmailAbout.ExtHome "Page d'accueil">
+<!ENTITY WebmailAbout.ExtHome "Page d&apos;accueil">
 <!ENTITY WebmailAbout.ExtButton "Fermer">
 <!ENTITY WebmailAbout.ExtContributorTitle "Traducteurs :">

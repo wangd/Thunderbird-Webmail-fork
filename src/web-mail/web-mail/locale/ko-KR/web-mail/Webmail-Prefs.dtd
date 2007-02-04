@@ -1,6 +1,33 @@
+<!ENTITY Window.size "width: 46em; height: 37em">
 <!ENTITY Options.szTitle "웹메일 선택사항">
 <!ENTITY Servers.Panel.szTitle "서버">
 <!ENTITY Domains.Panel.szTitle "도메인">
 <!ENTITY Logging.Panel.szTitle "로그">
 <!ENTITY General.Panel.szTitle "일반">
-<!ENTITY Window.size "width: 46em; height: 37em">
+<!ENTITY close.button.label "닫기">
+<!ENTITY Ports.Label "포트">
+<!ENTITY Ports.POP.AccessKey "o">
+<!ENTITY Ports.SMTP.AccessKey "r">
+<!ENTITY Ports.IMAP.AccessKey "t">
+<!ENTITY Pop.Label "POP">
+<!ENTITY SMTP.Label "SMTP">
+<!ENTITY IMAP.Label "IMAP">
+<!ENTITY StatusBox.size "width: 6em;">
+<!ENTITY StartServer.Tooltip "서버 시작">
+<!ENTITY StopServer.Tooltip "서버 정지">
+<!ENTITY Enable.Server.Label "시작 사용">
+<!ENTITY Enable.POP.AccessKey "E">
+<!ENTITY Enable.SMTP.AccessKey "n">
+<!ENTITY Enable.IMAP.AccessKey "a">
+<!ENTITY GeneralLogging.Label "로그 사용">
+<!ENTITY GeneralLogging.AccessKey "E">
+<!ENTITY Location.Label "위치">
+<!ENTITY Location.AccessKey "L">
+<!ENTITY Button.Label "찾아보기...">
+<!ENTITY Button.AccessKey "B">
+<!ENTITY NotePort.Label "일부 OS는 1024번 이하 포트를 차단합니다.">
+<!ENTITY Note.Label "로그에 사용자명과 암호가 포함될겁니다.">
+<!ENTITY Restart.Label "변경된 내용은 Thunderbird 재시작 후 적용됩니다.">
+<!ENTITY RestartServer.Label "변경된 포트의 효과는 서버 재시작 후 적용됩니다.">
+<!ENTITY Domain.Label "도메인">
+<!ENTITY POP.Label "POP">
