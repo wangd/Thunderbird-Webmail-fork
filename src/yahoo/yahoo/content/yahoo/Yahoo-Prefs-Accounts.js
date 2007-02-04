@@ -94,8 +94,23 @@ var gPrefAccounts =
                             {
                                 if (szContentID.value == this.m_cszYahooContentID) //yahoo account found
                                 {
-                                    this.m_DebugLog.Write("Yahoo-Pref-Accounts : getUserNames - userName added");
-                                    this.m_aszUserList.push(szUserName);
+                                   this.m_DebugLog.Write("Yahoo-Pref-Accounts : getUserNames - userName raw " + szUserName);
+
+                                   //clean username
+                                   if (szUserName.search(/^.*?\:.*?\:(.*?@.*?)$/)!=-1)  //POPFile
+                                       szUserName = szUserName.match(/^.*?\:.*?\:(.*?@.*?)$/)[1];
+                                   else if (szUserName.search(/^(.*?@.*?)#.*?/)!=-1) //SpamTerminator Avast
+                                       szUserName = szUserName.match(/^(.*?@.*?)#.*?/)[1];
+                                   else if (szUserName.search(/^(.*?@.*?)@.*?/)!=-1) //SpamPal
+                                       szUserName = szUserName.match(/^(.*?@.*?)@.*?/)[1];
+                                   else if (szUserName.search(/.*?\/.*?\/(.*?@.*?)$/)!=-1) //K9
+                                       szUserName = szUserName.match(/.*?\/.*?\/(.*?@.*?)$/)[1];
+                                   else if (szUserName.search(/^.*?&(.*?@.*?)&.*?$/)!=-1) //SpamHilator
+                                       szUserName = szUserName.match(/^.*?&(.*?@.*?)&.*?$/)[1];
+
+                                   this.m_DebugLog.Write("Yahoo-Pref-Accounts : getUserNames - userName clean " + szUserName);
+
+                                   this.m_aszUserList.push(szUserName);
                                 }
                             }
                         }
