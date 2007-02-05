@@ -17,7 +17,6 @@
                                 <NC:deleteMailLeftOnServer>true</NC:deleteMailLeftOnServer>
                             </NC:nsIPopIncomingServer>
                         </NC:ServerType-pop3>
-                        <NC:incomingServerUserNameRequiresDomain>true</NC:incomingServerUserNameRequiresDomain>
                         <NC:loginAtStartUp>true</NC:loginAtStartUp>
                         <NC:downloadOnBiff>true</NC:downloadOnBiff>
                         <NC:rememberPassword>true</NC:rememberPassword>
@@ -37,8 +36,8 @@
                         <NC:description>Webmail</NC:description>
                       </NC:nsISmtpServer>
                 </NC:smtp>
-                <NC:smtpRequiresUsername>true</NC:smtpRequiresUsername>
                 <NC:smtpUserNameRequiresDomain>true</NC:smtpUserNameRequiresDomain>
+                <NC:smtpRequiresUsername>true</NC:smtpRequiresUsername>
                 <NC:smtpCreateNewServer>true</NC:smtpCreateNewServer>
                 <NC:smtpUsePreferredServer>true</NC:smtpUsePreferredServer>
 
