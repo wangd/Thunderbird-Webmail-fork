@@ -480,10 +480,10 @@ HotmailScreenRipperBETA.prototype =
             }
 
             //get pages uri
-            var aszNextPage = szResponse.match(patternHotmailNextPage);
-            if (aszNextPage)  //get next url
+            if (szResponse.search(patternHotmailNextPage)!=-1)
             {
-                mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler -aszNextPage : " +aszNextPage[1]);
+       			var aszNextPage = szResponse.match(patternHotmailNextPage);
+                mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler -aszNextPage : " +aszNextPage);
                 var szNextPage = mainObject.m_szLocationURI + aszNextPage[1];
                 mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler -next page url : " +szNextPage);
 

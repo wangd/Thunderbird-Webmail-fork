@@ -87,7 +87,7 @@ const patternHotmailCompose = /href="(.*?EditMessageLight.*?)"/i;
 const patternHotmailSend = /href=".*?,'(.*?SendMessageLight.*?)'.*?"/i;
 const patternHotmailAddAttachment = /href=".*?,'(.*?AddAttachmentLight.*?)'.*?"/i;
 const patternHotmailLastAttachment = /href=".*?,'(.*?EditMessageLight.*?)'.*?"/i;
-const patternHotmailNextPage = /<div class="dItemListHeaderNav">[\s\S]*?<a href="(.*?InboxPage=next&Page=[\d]*?)">/i;
+const patternHotmailNextPage = /href="\/.*?\/(.*?Next&Page.*?)"/i;
 const patternHotmailSentOK = /smcMainContentContainer/im;
 const patternHotmailMailBoxTable = /<table.*?class="dItemListContentTable".*?>[\s\S]*?<tbody([\s\S]*?)<\/tbody>[\s\S]*?<\/table>/im;
 const patternHotmailMailBoxTableRow = /<tr.*?>[\s\S]*?<\/tr>/ig;
