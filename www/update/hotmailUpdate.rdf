@@ -5,20 +5,20 @@
      <RDF:Description about="urn:mozilla:extension:{a6a33690-2c6a-11d9-9669-0800200c9a66}">
         <em:updates>
             <RDF:Seq>
-                <RDF:li resource="urn:mozilla:extension:{a6a33690-2c6a-11d9-9669-0800200c9a66}:1.0.19"/>
+                <RDF:li resource="urn:mozilla:extension:{a6a33690-2c6a-11d9-9669-0800200c9a66}:1.0.20"/>
             </RDF:Seq>
         </em:updates>
     </RDF:Description>
 
-    <RDF:Description about="urn:mozilla:extension:{a6a33690-2c6a-11d9-9669-0800200c9a66}:1.0.19">
-        <em:version>1.0.19</em:version>
+    <RDF:Description about="urn:mozilla:extension:{a6a33690-2c6a-11d9-9669-0800200c9a66}:1.0.20">
+        <em:version>1.0.20</em:version>
         <em:targetApplication>
             <Description>
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id> <!-- Thunderbird updates -->
                 <em:minVersion>1.4</em:minVersion>
                 <em:maxVersion>2.0</em:maxVersion>
-                <em:updateLink>http://download.mozdev.org/webmail/hotmail-1-0-19.xpi</em:updateLink>
-                <em:updateHash>sha256:8f6ac04de0ee8f4c77ce9f7b1e1f6c2ea9d9d4288e831bea7413b95692555f2d</em:updateHash>
+                <em:updateLink>http://download.mozdev.org/webmail/hotmail-1-0-20.xpi</em:updateLink>
+                <em:updateHash>sha256:91a28a5d0e5aa0057982cbab06f38d85d1c74a41915b61f7516ea14321dc7656</em:updateHash>
           </Description>
         </em:targetApplication>
 
