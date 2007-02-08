@@ -182,7 +182,6 @@ nsAOL.prototype =
         try
         {
             mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - START");
-            //mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler : " + mainObject.m_iStage);
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -199,21 +198,9 @@ nsAOL.prototype =
             switch (mainObject.m_iStage)
             {
                 case 0://get login page
-                    var szSiteDomain =  szResponse.match(patternAOLSitedomain)[1];
-                    mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - szSiteDomain " + szSiteDomain);
-                    var szSiteState =  szResponse.match(patternAOLSiteState)[1];
-                    mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - szSiteState " + szSiteState);
-                    var szSeamless =  szResponse.match(patternAOLSeamless)[1];
-                    mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - szSeamless " + szSeamless);
-
-                    var szURL = "https://my.screenname.aol.com/_cqr/login/login.psp?";
-                    szURL += "mcState=initialized&";
-                    szURL += "sitedomain=" + szSiteDomain + "&";
-                    szURL += "siteState=" + szSiteState + "&";
-                    szURL += "seamless=" + szSeamless;
-                    mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - szURL " + szURL);
-
-                    mainObject.m_HttpComms.setURI(szURL);
+                    var szBounce =  szResponse.match(patternAOLBounce)[1];
+                    mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - szBounce " + szBounce);
+                    mainObject.m_HttpComms.setURI(szBounce);
                     mainObject.m_HttpComms.setRequestMethod("GET");
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
                     if (!bResult) throw new Error("httpConnection returned false");

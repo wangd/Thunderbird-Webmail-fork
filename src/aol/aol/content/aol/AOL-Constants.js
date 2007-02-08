@@ -28,6 +28,4 @@ const patternAOLFolderName = /FN\("(.*?)",.*?\);/i
 const patternAOLFolderNameURL = /folder=(.*?)&/i;
 const patternAOLSend =/<form.*?name="SendForm".*?>[\s\S]*?<\/form>/igm;
 const patternAOLSendCheck = /parent.HandleSendSaveResponse\(true,.*?\)/igm;
-const patternAOLSitedomain = /sitedomain.*?"(.*?)";/i;
-const patternAOLSiteState = /siteState.*?"(.*?)";/i;
-const patternAOLSeamless = /seamless.*?"(.*?)";/i;
+const patternAOLBounce =/goToLoginUrl[\s\S]*?snsRedir\("(.*?)"\);[\s\S]*?\}/im;
