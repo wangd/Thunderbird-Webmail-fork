@@ -20,8 +20,6 @@
 <!ENTITY AOLPref.POP.MarkAsRead.Label "Mark emails as read on server">
 <!ENTITY AOLPref.POP.MarkAsRead.AccessKey "k">
 
-
-
 <!ENTITY AOLPref.Domain.Label "Domains supported by AOL extension">
 <!ENTITY AOLPref.Domain.Button.AddDomain.Label "Add...">
 <!ENTITY AOLPref.Domain.Button.AddDomain.AccessKey "A">
