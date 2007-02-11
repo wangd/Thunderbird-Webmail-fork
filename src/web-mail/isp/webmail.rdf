@@ -4,7 +4,7 @@
 
     <RDF:Description about="NC:ispinfo">
         <NC:providers>
-              <NC:nsIMsgAccount about="urn:webmail">
+              <NC:nsIMsgAccount  about="urn:webmail">
                 <!-- pop3 server info -->
                 <NC:incomingServer>
                     <NC:nsIMsgIncomingServer>
@@ -39,7 +39,7 @@
                 <NC:smtpUserNameRequiresDomain>true</NC:smtpUserNameRequiresDomain>
                 <NC:smtpRequiresUsername>true</NC:smtpRequiresUsername>
                 <NC:smtpCreateNewServer>true</NC:smtpCreateNewServer>
-                <NC:smtpUsePreferredServer>true</NC:smtpUsePreferredServer>
+                <NC:smtpUsePreferredServer>false</NC:smtpUsePreferredServer>
 
                 <!-- identity defaults -->
                 <NC:identity>
@@ -48,7 +48,7 @@
                 </NC:identity>
 
                 <!-- other options -->
-                <NC:wizardSkipPanels>serverpage,accnamepage,loginpage</NC:wizardSkipPanels>
+                <NC:wizardSkipPanels>serverpage,accnamepage</NC:wizardSkipPanels>
                 <NC:wizardShortName>Webmail</NC:wizardShortName>
                 <NC:wizardLongName>Webmail</NC:wizardLongName>
                 <NC:wizardShow>true</NC:wizardShow>
