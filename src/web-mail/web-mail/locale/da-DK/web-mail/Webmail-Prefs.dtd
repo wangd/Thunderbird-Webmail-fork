@@ -1,12 +1,10 @@
 <!ENTITY Window.size "width: 46em; height: 37em">
-<!ENTITY Options.szTitle "WebMail Options">
-<!ENTITY Servers.Panel.szTitle "Servers">
-<!ENTITY Domains.Panel.szTitle "Domains">
-<!ENTITY Logging.Panel.szTitle "Logging">
-<!ENTITY General.Panel.szTitle "General">
-
-<!ENTITY close.button.label "Close">
-
+<!ENTITY Options.szTitle "WebMail indstillinger">
+<!ENTITY Servers.Panel.szTitle "Servere">
+<!ENTITY Domains.Panel.szTitle "Domæner">
+<!ENTITY Logging.Panel.szTitle "Logning">
+<!ENTITY General.Panel.szTitle "Generelt">
+<!ENTITY close.button.label "Luk">
 <!ENTITY Ports.Label "Port">
 <!ENTITY Ports.POP.AccessKey "o">
 <!ENTITY Ports.SMTP.AccessKey "r">
@@ -17,27 +15,19 @@
 <!ENTITY StatusBox.size "width: 6em;">
 <!ENTITY StartServer.Tooltip "Start Server">
 <!ENTITY StopServer.Tooltip "Stop Server">
-<!ENTITY Enable.Server.Label "Enable at startup">
-<!ENTITY Enable.POP.AccessKey "E">
-<!ENTITY Enable.SMTP.AccessKey "n">
-<!ENTITY Enable.IMAP.AccessKey "a">
-
-
-<!ENTITY GeneralLogging.Label "Enable logging">
-<!ENTITY GeneralLogging.AccessKey "E">
-<!ENTITY Location.Label "Location">
+<!ENTITY Enable.Server.Label "Aktiver ved opstart">
+<!ENTITY Enable.POP.AccessKey "A">
+<!ENTITY Enable.SMTP.AccessKey "k">
+<!ENTITY Enable.IMAP.AccessKey "t">
+<!ENTITY GeneralLogging.Label "Aktiver logning">
+<!ENTITY GeneralLogging.AccessKey "e">
+<!ENTITY Location.Label "Lokation">
 <!ENTITY Location.AccessKey "L">
-<!ENTITY Button.Label "Browse...">
-<!ENTITY Button.AccessKey "B">
-
-
-<!ENTITY NotePort.Label "Some OS's block ports below 1024.">
-<!ENTITY Note.Label "These logs will contain usernames and passwords.">
-<!ENTITY Restart.Label "A restart of Thunderbird is required before changes take effect.">
-<!ENTITY RestartServer.Label "A restart of the server is required before the port change takes effect.">
-
-
-<!ENTITY Domain.Label "Domain">
+<!ENTITY Button.Label "Gennemse...">
+<!ENTITY Button.AccessKey "G">
+<!ENTITY NotePort.Label "Nogle OSer blokerer porte over 1024.">
+<!ENTITY Note.Label "Disse logs vil indeholde brugernavne og kodeord.">
+<!ENTITY Restart.Label "En genstart af Thunderbird er påkrævet før ændringerne træder i kraft.">
+<!ENTITY RestartServer.Label "En genstart af serveren er påkrævet før portændringerne træder i kraft.">
+<!ENTITY Domain.Label "Domæne">
 <!ENTITY POP.Label "POP">
-<!ENTITY SMTP.Label "SMTP">
-<!ENTITY IMAP.Label "IMAP">
