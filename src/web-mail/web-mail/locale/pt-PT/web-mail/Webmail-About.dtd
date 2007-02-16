@@ -1,8 +1,8 @@
-<!ENTITY WebmailAbout.Title "Sobre o Webmail">
+<!ENTITY WebmailAbout.Title "Webmail-Sobre">
 <!ENTITY WebmailAbout.ExtName "Web Mail">
 <!ENTITY WebmailAbout.ExtVersion "versão">
-<!ENTITY WebmailAbout.ExtDescription "Aceder a contas de correio electrónico utilizando o Thunderbird">
+<!ENTITY WebmailAbout.ExtDescription "Cede a contas de correio electrónico da web utilizando o Thunderbird.">
 <!ENTITY WebmailAbout.ExtCreaterTitle "Criado por:">
-<!ENTITY WebmailAbout.ExtHome "Página Inicial">
+<!ENTITY WebmailAbout.ExtHome "Página inicial">
 <!ENTITY WebmailAbout.ExtButton "Fechar">
-<!ENTITY WebmailAbout.ExtContributorTitle "Colaboradores:">
+<!ENTITY WebmailAbout.ExtContributorTitle "Colaboradores">
