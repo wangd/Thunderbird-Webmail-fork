@@ -86,8 +86,8 @@ const kDelete = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/
 const kPatternDeleteMSGResponse = /<MoveMessagesResponse.*?>([\s\S]*?)<\/MoveMessagesResponse.*?>/i;
 
 const kSendMessge = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><m:SendMessage xmlns:m=\"urn:yahoo:ymws\"><message>TOADDRESS-BCCEMAILADDRESS-CCEMAILADDRESS<from><email>FROMADDRESS</email></from><simplebody>EMAILBODY</simplebody><subject>EMAILSUBJECT</subject></message></m:SendMessage></SOAP-ENV:Body></SOAP-ENV:Envelope>";
-const kPatternSendMSGResponse = "<SendMessageResponse.*?>([\s\S]*?)<\/SendMessageResponse>";
+const kPatternSendMSGResponse = /<SendMessageResponse.*?>/i;
 const kPatternDiskFileName =/diskfilename=(.*?)&/i;
 
-const kPatternSpamImageURL = /<imageurl>(.*?)<\/imageurl>/i;
+const kPatternSpamImageURL = /<imageurl>(.*?)<\/imageurl>/igm;
 const kPatternGreq = /<greq.*?>(.*?)<\/greq>/i;

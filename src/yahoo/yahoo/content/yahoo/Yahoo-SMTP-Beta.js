@@ -444,8 +444,6 @@ YahooSMTPBETA.prototype =
                 szMsg = szMsg.replace(/&/g, "&amp;");
                 szMsg = szMsg.replace(/</g,"&lt;");
                 szMsg = szMsg.replace(/>/g,"&gt;");
-                szMsg = szMsg.replace(/\r/g, "");
-                szMsg = szMsg.replace(/\n/g, "");
                 szMSGBody += "<html>"+szMsg+"</html>";
 
             }
@@ -520,7 +518,7 @@ YahooSMTPBETA.prototype =
 
             //if this fails we've gone somewhere new
             mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - status :" +httpChannel.responseStatus );
-            if (httpChannel.responseStatus != 200)
+            if (httpChannel.responseStatus != 200 && httpChannel.responseStatus != 500)
                 throw new Error("return status " + httpChannel.responseStatus);
 
             mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
@@ -551,13 +549,13 @@ YahooSMTPBETA.prototype =
 
                         mainObject.serverComms("250 OK\r\n");
                     }
-                    else if (szResponse.search(/Client.HumanVerificationRequired/)!=-1)
+                    else if (szResponse.search(/Client.HumanVerificationRequired/i)!=-1)
                     {
                         mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - Spam Image");
 
                         //spam image challange
                         var szURL = szResponse.search(kPatternSpamImageURL)[1];
-                        mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - szURL" +szURL);
+                        mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - szURL " +szURL);
 
                         mainObject.m_HttpComms.setURI(szURL);
                         mainObject.m_HttpComms.setRequestMethod("GET");
