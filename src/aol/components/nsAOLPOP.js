@@ -32,6 +32,7 @@ function nsAOL()
 
         this.m_szUserName = null;
         this.m_szLoginUserName = null;
+        this.m_szRealUserName = null;
         this.m_szPassWord = null;
         this.m_oResponseStream = null;
 
@@ -137,6 +138,8 @@ nsAOL.prototype =
                     this.m_Log.Write("AOLPOP.js - logIN - m_szHomeURI " +this.m_szHomeURI);
                     this.m_szUserId = this.m_SessionData.oComponentData.findElement("szUserId");
                     this.m_Log.Write("AOLPOP.js - logIN - m_szUserId " +this.m_szUserId);
+                    this.m_szRealUserName = this.m_SessionData.oComponentData.findElement("szRealUserName");
+                    this.m_Log.Write("AOLPOP.js - logIN - m_szRealUserName " +this.m_szRealUserName);
                     this.m_szVersion = this.m_SessionData.oComponentData.findElement("szVersion");
                     this.m_Log.Write("AOLPOP.js - logIN - m_szVersion " +this.m_szVersion);
                     this.m_SuccessPath = this.m_SessionData.oComponentData.findElement("szSuccessPath");
@@ -273,6 +276,9 @@ nsAOL.prototype =
                         var szCookies =  httpChannel.getResponseHeader("Set-Cookie");
                         mainObject.m_szUserId = szCookies.match(patternAOLUserID)[1];
                         mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - m_szUserId " +mainObject.m_szUserId);
+
+                        mainObject.m_szRealUserName = decodeURIComponent(szCookies.match(patternAOLRealUserName)[1]);
+                        mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - m_szRealUserName " +mainObject.m_szRealUserName);
                     }
                     catch(e){}
 
@@ -311,6 +317,9 @@ nsAOL.prototype =
                         var szCookies =  httpChannel.getResponseHeader("Set-Cookie");
                         mainObject.m_szUserId = szCookies.match(patternAOLUserID)[1];
                         mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - m_szUserId " +mainObject.m_szUserId);
+
+                        mainObject.m_szRealUserName = decodeURIComponent(szCookies.match(patternAOLRealUserName)[1]);
+                        mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - m_szRealUserName " +mainObject.m_szRealUserName);
                     }
                     catch(e){}
 
@@ -816,7 +825,6 @@ nsAOL.prototype =
         try
         {
             mainObject.m_Log.Write("AOLPOP.js - emailOnloadHandler - START");
-           // mainObject.m_Log.Write("AOLPOP.js - emailOnloadHandler : \n" + szResponse);
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             mainObject.m_Log.Write("AOLPOP.js - emailOnloadHandler - msg :" + httpChannel.responseStatus);
@@ -932,7 +940,6 @@ nsAOL.prototype =
         try
         {
             mainObject.m_Log.Write("AOLPOP.js - deleteMessageOnloadHandler - START");
-           // mainObject.m_Log.Write("AOLPOP.js - deleteMessageOnloadHandler : \n" + szResponse);
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             mainObject.m_Log.Write("AOLPOP.js - emailOnloadHandler - msg :" + httpChannel.responseStatus);
@@ -983,6 +990,7 @@ nsAOL.prototype =
                 this.m_SessionData.oCookieManager = this.m_HttpComms.getCookieManager();
                 this.m_SessionData.oComponentData.addElement("szHomeURI",this.m_szHomeURI);
                 this.m_SessionData.oComponentData.addElement("szUserId",this.m_szUserId);
+                this.m_SessionData.oComponentData.addElement("szRealUserName",this.m_szRealUserName);
                 this.m_SessionData.oComponentData.addElement("szVersion",this.m_szVersion);
                 this.m_SessionData.oComponentData.addElement("szSuccessPath", this.m_SuccessPath);
                 this.m_SessionData.oComponentData.addElement("szHostURL",this.m_szHostURL);

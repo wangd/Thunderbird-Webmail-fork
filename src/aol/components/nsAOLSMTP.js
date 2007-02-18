@@ -32,6 +32,7 @@ function nsAOLSMTP()
         this.m_bAuthorised = false;
         this.m_szUserName = null;
         this.m_szLoginUserName = null;
+        this.m_szRealUserName = null;
         this.m_szPassWord = null;
         this.m_aszTo = new Array;
         this.m_szFrom = null;
@@ -141,6 +142,8 @@ nsAOLSMTP.prototype =
                     this.m_Log.Write("AOLPOP.js - logIN - m_szHomeURI " +this.m_szHomeURI);
                     this.m_szUserId = this.m_SessionData.oComponentData.findElement("szUserId");
                     this.m_Log.Write("AOLPOP.js - logIN - m_szUserId " +this.m_szUserId);
+                    this.m_szRealUserName = this.m_SessionData.oComponentData.findElement("szRealUserName");
+                    this.m_Log.Write("AOLPOP.js - logIN - m_szRealUserName " +this.m_szRealUserName);
                     this.m_szVersion = this.m_SessionData.oComponentData.findElement("szVersion");
                     this.m_Log.Write("AOLPOP.js - logIN - m_szVersion " +this.m_szVersion);
                     this.m_SuccessPath = this.m_SessionData.oComponentData.findElement("szSuccessPath");
@@ -273,6 +276,9 @@ nsAOLSMTP.prototype =
                         var szCookies =  httpChannel.getResponseHeader("Set-Cookie");
                         mainObject.m_szUserId = szCookies.match(patternAOLUserID)[1];
                         mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - m_szUserId " +mainObject.m_szUserId);
+
+                        mainObject.m_szRealUserName = decodeURIComponent(szCookies.match(patternAOLRealUserName)[1]);
+                        mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - m_szRealUserName " +mainObject.m_szRealUserName);
                     }
                     catch(e){}
 
@@ -312,6 +318,9 @@ nsAOLSMTP.prototype =
                         var szCookies =  httpChannel.getResponseHeader("Set-Cookie");
                         mainObject.m_szUserId = szCookies.match(patternAOLUserID)[1];
                         mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - m_szUserId " +mainObject.m_szUserId);
+
+                        mainObject.m_szRealUserName = decodeURIComponent(szCookies.match(patternAOLRealUserName)[1]);
+                        mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - m_szRealUserName " +mainObject.m_szRealUserName);
                     }
                     catch(e){}
 
@@ -348,7 +357,6 @@ nsAOLSMTP.prototype =
         try
         {
             this.m_Log.Write("nsAOLSMTP.js - rawMSG - START");
-            this.m_Log.Write("nsAOLSMTP.js - rawMSG from " +this.m_szFrom );
             this.m_Log.Write("nsAOLSMTP.js - rawMSG to " +this.m_aszTo );
             this.m_Log.Write("nsAOLSMTP.js - rawMSG " + szEmail);
 
@@ -421,7 +429,7 @@ nsAOLSMTP.prototype =
                         if (szType.search(/button/i)==-1 && szType.search(/checkbox/i)==-1)
                         {
                             var szName = aszInput[i].match(patternAOLName)[1];
-                            mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - Name " + szName);
+                            mainObject.m_Log.Write("nsAOLSMTP.js - composerOnloadHandler - Name " + szName);
 
                             var szValue = null;
                             if (szName.search(/upload/i)==-1)
@@ -430,7 +438,7 @@ nsAOLSMTP.prototype =
                                     szValue = mainObject.m_szUserId;
                                 else if (szName.search(/From/i)!=-1)
                                 {
-                                    szValue = mainObject.m_szFrom;
+                                    szValue = mainObject.m_szRealUserName;
                                     szValue = szValue.toLowerCase();
                                 }
                                 else if (szName.search(/PlainBody/i)!=-1)
@@ -537,6 +545,7 @@ nsAOLSMTP.prototype =
                         mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
                         mainObject.m_SessionData.oComponentData.addElement("szHomeURI",mainObject.m_szHomeURI);
                         mainObject.m_SessionData.oComponentData.addElement("szUserId",mainObject.m_szUserId);
+                        mainObject.m_SessionData.oComponentData.addElement("szRealUserName",mainObject.m_szRealUserName);
                         mainObject.m_SessionData.oComponentData.addElement("szVersion",mainObject.m_szVersion);
                         mainObject.m_SessionData.oComponentData.addElement("szSuccessPath", mainObject.m_SuccessPath);
                         mainObject.m_SessionData.oComponentData.addElement("szHostURL",mainObject.m_szHostURL);
@@ -599,7 +608,7 @@ nsAOLSMTP.prototype =
         }
         catch(err)
         {
-            this.m_Log.DebugDump("nsYahooSMTP.js: getBcc : Exception : "
+            this.m_Log.DebugDump("nsAOLSMTP.js: getBcc : Exception : "
                                                   + err.name
                                                   + ".\nError message: "
                                                   + err.message + "\n"

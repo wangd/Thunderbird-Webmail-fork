@@ -16,6 +16,7 @@ const patternAOLHost = /Host.*?"(.*?)";/i;
 const patternAOLMSGList = /gMessageButtonVisibility/i;
 const patternAOLVersion =/var VERSION="(.*?)"/i;
 const patternAOLUserID =/uid:(.*?)&/i;
+const patternAOLRealUserName =/&ea:(.*?)&/i;
 const patternAOLPageNum = /info.pageCount\s=\s(.*?);/i;
 const patternAOLMSGSender = /^fa[\s\S].*$/gmi;
 const patternAOLMSGData = /MI\(.*?\);/igm;
