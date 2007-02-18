@@ -237,7 +237,7 @@ headers.prototype =
                 switch(iField)
                 {
                     case 0:  //all
-                        szContent = szContentDispo;
+                        szResult = szContent;
                     break;
 
                     case 1: // filename
