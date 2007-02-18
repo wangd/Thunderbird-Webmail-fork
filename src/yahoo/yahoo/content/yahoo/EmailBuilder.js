@@ -214,7 +214,7 @@ emailBuilder.prototype.build = function ()
                                         {
                                             var szContentDis =aTemp[j].headers.getContentDisposition(0);
                                             this.m_Log.Write("emailBuilder.js - build - getContentDisposition " + szContentDis);
-                                            var szContent =aTemp[j].headers.getContent(1);
+                                            var szContent =aTemp[j].headers.getContentType(1);
                                             this.m_Log.Write("emailBuilder.js - build - getContent " + szContent);
                                             if (szContentDis && szContent.search(/image/i)!=-1)
                                             {
@@ -243,7 +243,7 @@ emailBuilder.prototype.build = function ()
                                                 if (oData2)
                                                 {
                                                     var szContentDis = oData2.headers.getContentDisposition(0);
-                                                    var szContent = oData2.headers.getContent(1);
+                                                    var szContent = oData2.headers.getContentType(1);
                                                     if (szContentDis && szContent.search(/image/i)!=-1)
                                                     {
                                                         if (szContentDis.search(/inline/i)!=-1)
