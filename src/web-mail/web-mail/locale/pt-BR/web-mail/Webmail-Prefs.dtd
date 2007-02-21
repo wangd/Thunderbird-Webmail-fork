@@ -1,13 +1,11 @@
 <!ENTITY Window.size "width: 46em; height: 37em">
-<!ENTITY Options.szTitle "WebMail Options">
-<!ENTITY Servers.Panel.szTitle "Servers">
-<!ENTITY Domains.Panel.szTitle "Domains">
-<!ENTITY Logging.Panel.szTitle "Logging">
-<!ENTITY General.Panel.szTitle "General">
-
-<!ENTITY close.button.label "Close">
-
-<!ENTITY Ports.Label "Port">
+<!ENTITY Options.szTitle "Opções do WebMail">
+<!ENTITY Servers.Panel.szTitle "Servidores">
+<!ENTITY Domains.Panel.szTitle "Domínios">
+<!ENTITY Logging.Panel.szTitle "Log">
+<!ENTITY General.Panel.szTitle "Geral">
+<!ENTITY close.button.label "Fechar">
+<!ENTITY Ports.Label "Porta">
 <!ENTITY Ports.POP.AccessKey "o">
 <!ENTITY Ports.SMTP.AccessKey "r">
 <!ENTITY Ports.IMAP.AccessKey "t">
@@ -15,29 +13,21 @@
 <!ENTITY SMTP.Label "SMTP">
 <!ENTITY IMAP.Label "IMAP">
 <!ENTITY StatusBox.size "width: 6em;">
-<!ENTITY StartServer.Tooltip "Start Server">
-<!ENTITY StopServer.Tooltip "Stop Server">
-<!ENTITY Enable.Server.Label "Enable at startup">
+<!ENTITY StartServer.Tooltip "Iniciar Servidor">
+<!ENTITY StopServer.Tooltip "Parar Servidor">
+<!ENTITY Enable.Server.Label "Habilitar na inicialização">
 <!ENTITY Enable.POP.AccessKey "E">
 <!ENTITY Enable.SMTP.AccessKey "n">
 <!ENTITY Enable.IMAP.AccessKey "a">
-
-
-<!ENTITY GeneralLogging.Label "Enable logging">
+<!ENTITY GeneralLogging.Label "Habilitar log">
 <!ENTITY GeneralLogging.AccessKey "E">
-<!ENTITY Location.Label "Location">
+<!ENTITY Location.Label "Localização">
 <!ENTITY Location.AccessKey "L">
-<!ENTITY Button.Label "Browse...">
+<!ENTITY Button.Label "Buscar...">
 <!ENTITY Button.AccessKey "B">
-
-
-<!ENTITY NotePort.Label "Some OS's block ports below 1024.">
-<!ENTITY Note.Label "These logs will contain usernames and passwords.">
-<!ENTITY Restart.Label "A restart of Thunderbird is required before changes take effect.">
-<!ENTITY RestartServer.Label "A restart of the server is required before the port change takes effect.">
-
-
-<!ENTITY Domain.Label "Domain">
+<!ENTITY NotePort.Label "Alguns sistemas operacionais bloqueiam portas abaixo de 1024.">
+<!ENTITY Note.Label "Estes logs conterão nomes de usuários e senhas.">
+<!ENTITY Restart.Label "Uma reinicialização do Thunderbird é necessária para que as mudanças façam efeito.">
+<!ENTITY RestartServer.Label "Uma reinicialização do servidor é necessária para que a mudança de porta faça efeito.">
+<!ENTITY Domain.Label "Domínio">
 <!ENTITY POP.Label "POP">
-<!ENTITY SMTP.Label "SMTP">
-<!ENTITY IMAP.Label "IMAP">
