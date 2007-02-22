@@ -733,5 +733,5 @@ HotmailSMTPScreenRipperBETA.prototype =
                                               + e.message+ "\n"
                                               + e.lineNumber);
         }
-    },
+    }
 }

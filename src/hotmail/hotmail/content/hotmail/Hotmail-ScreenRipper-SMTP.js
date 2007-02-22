@@ -847,5 +847,5 @@ HotmailSMTPScreenRipper.prototype =
                                                + err.message + "\n"
                                                + err.lineNumber);
         }
-    },
+    }
 }

@@ -1252,5 +1252,5 @@ HotmailScreenRipper.prototype =
         szEncoded = szEncoded.replace(/!/g,"%21");
         return szEncoded;
 
-    },
+    }
 }

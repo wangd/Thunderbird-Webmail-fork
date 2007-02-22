@@ -275,5 +275,5 @@ HotmailSMTPWebDav.prototype =
                                               + e.message+ "\n"
                                               + e.lineNumber);
         }
-    },
+    }
 }

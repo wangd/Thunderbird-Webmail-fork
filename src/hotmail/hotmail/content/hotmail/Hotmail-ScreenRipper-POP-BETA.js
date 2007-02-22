@@ -482,7 +482,7 @@ HotmailScreenRipperBETA.prototype =
             //get pages uri
             if (szResponse.search(patternHotmailNextPage)!=-1)
             {
-       			var aszNextPage = szResponse.match(patternHotmailNextPage);
+                   var aszNextPage = szResponse.match(patternHotmailNextPage);
                 mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler -aszNextPage : " +aszNextPage);
                 var szNextPage = mainObject.m_szLocationURI + aszNextPage[1];
                 mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler -next page url : " +szNextPage);
@@ -907,7 +907,7 @@ HotmailScreenRipperBETA.prototype =
             if (httpChannel.responseStatus != 200)
                 throw new Error("error status " + httpChannel.responseStatus);
 
- 			var szContentType = httpChannel.getResponseHeader("Content-Type");
+             var szContentType = httpChannel.getResponseHeader("Content-Type");
             mainObject.m_Log.Write("Hotmail-SR-BETAR - emailOnloadHandler - szContentType :" +szContentType);
 
             if (szContentType.search(/UTF-8/i)==-1)
@@ -1158,5 +1158,5 @@ HotmailScreenRipperBETA.prototype =
         szEncoded = szEncoded.replace(/!/g,"%21");
         return szEncoded;
 
-    },
+    }
 }
