@@ -180,12 +180,18 @@ HotmailWebDav.prototype =
                             mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - szFolderURL : "+szFolderURL );
                             var szFolderName = szFolderURL.match(patternHotmailFolderName)[1];
                             mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - szFolderName : "+szFolderName );
+
                             var szDisplayName = "";
                             if (aszFolderList[i].search(patternHotmailDisplayName)!=-1)
                                 szDisplayName =aszFolderList[i].match(patternHotmailDisplayName)[1];
                             mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - szDisplayName : "+szDisplayName );
 
-                            if (szFolderName.search(regExp)>=0 || szDisplayName.search(regExp)>=0)
+                            var szSpecial = "";
+                            if (aszFolderList[i].search(patternHotmailSpecial)!=-1)
+                                szSpecial =aszFolderList[i].match(patternHotmailSpecial)[1];
+                            mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - szSpecial : "+szSpecial );
+
+                            if (szFolderName.search(regExp)>=0 || szDisplayName.search(regExp)>=0 || szSpecial.search(regExp)>=0 )
                             {
                                 bFound = true;
                                 mainObject.m_aszFolderURLList.push(szFolderURL);
