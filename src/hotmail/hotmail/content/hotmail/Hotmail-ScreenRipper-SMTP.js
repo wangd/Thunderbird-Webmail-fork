@@ -451,7 +451,7 @@ HotmailSMTPScreenRipper.prototype =
                     {
                         mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - plain");
                         var szTxtBody = mainObject.m_Email.txtBody.body.getBody();
-                        mainObject.m_HttpComms.addValuePair("body",encodeURIComponent(szTxtBody));
+                        mainObject.m_HttpComms.addValuePair("body",escape(szTxtBody));
                     }
                     else if (mainObject.m_Email.htmlBody && mainObject.m_bSendHtml || !mainObject.m_Email.txtBody)
                     {
