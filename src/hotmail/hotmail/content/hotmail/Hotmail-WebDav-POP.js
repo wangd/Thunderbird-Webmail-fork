@@ -784,7 +784,8 @@ HotmailWebDav.prototype =
                     var szCleanName = szFolderName;
                     if (szFolderName.search(/active/i)!=-1) szCleanName = "Inbox"
                     else if (szFolderName.search(/BuLkMail/i)!=-1) szCleanName = "Spam";
-                    mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - szCleanName - " + szCleanName);
+                    else if (szFolderName.search(/sAVeD/i)!=-1) szCleanName = "Sent Items";
+					mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - szCleanName - " + szCleanName);
                     mainObject.m_szMSG += "X-Folder: " +szCleanName+ "\r\n";
 
                     mainObject.m_szMSG +=szResponse;
