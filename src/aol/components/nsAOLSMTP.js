@@ -444,7 +444,22 @@ nsAOLSMTP.prototype =
                                 else if (szName.search(/PlainBody/i)!=-1)
                                 {
                                     if (mainObject.m_Email.txtBody)
+                                    {
+                                        //convert to UTF 8
+                                        var szContentType = mainObject.m_Email.headers.getContentType(0);
+                                        var szCharset = szContentType.match(/charset=(.*?)[$|;]/i)[1];
                                         szValue = mainObject.m_Email.txtBody.body.getBody();
+
+                                        mainObject.m_Log.Write("AOLSMTP.js - composerOnloadHandler szCharset " + szCharset);
+                                        var Converter = Components.classes["@mozilla.org/intl/scriptableunicodeconverter"]
+                                                                  .getService(Components.interfaces.nsIScriptableUnicodeConverter);
+                                        Converter.charset =  szCharset;
+                                        var unicode =  Converter.ConvertToUnicode(szValue);
+                                        Converter.charset = "utf-8";
+                                        var szDecoded = Converter.ConvertFromUnicode(unicode);
+                                        mainObject.m_Log.Write("AOLSMTP.js - composerOnloadHandler - utf-8 "+szDecoded);
+                                        szValue = szDecoded;
+                                    }
                                     else
                                         szValue ="";
                                 }

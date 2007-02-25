@@ -370,7 +370,6 @@ nsMailDotComSMTP.prototype =
         try
         {
             mainObject.m_Log.Write("nsMailDotComSMTP.js - composerOnloadHandler - START");
-            //mainObject.m_Log.Write("nsMailDotComSMTP.js - composerOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("nsMailDotComSMTP.js - composerOnloadHandler : " + mainObject.m_iStage);
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -423,7 +422,7 @@ nsMailDotComSMTP.prototype =
                     {
                         mainObject.m_Log.Write("nsYahooSMTP.js - composerOnloadHandler - plain");
                         mainObject.m_HttpComms.addValuePair("format","");
-                        mainObject.m_HttpComms.addValuePair("body",mainObject.escapeStr(szTxtBody));
+                        mainObject.m_HttpComms.addValuePair("body",escape(szTxtBody));
                         mainObject.m_HttpComms.addValuePair("advancededitor","");
                     }
                     else if (szHtmlBody && mainObject.m_bSendHtml || !szTxtBody)
