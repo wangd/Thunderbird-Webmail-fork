@@ -858,7 +858,7 @@ YahooPOPBETA.prototype =
                 throw new Error("error status " + httpChannel.responseStatus);
 
             var szHeader = szResponse.match(kPatternHeader)[1];
-            szHeader= mainObject.cleanHTML(szHeader);
+            szHeader= mainObject.cleanHTML(szHeader,null);
             mainObject.m_Log.Write("YahooPOPBETA.js - headerOnloadHandler - szHeader : " + szHeader);
 
             var szHeaderTemp  = "X-WebMail: true\r\n";
@@ -959,7 +959,7 @@ YahooPOPBETA.prototype =
                         throw new Error("Error Parsing Headers");
 
                     var szHeader = szResponse.match(kPatternHeader)[1];
-                    szHeader= mainObject.cleanHTML(szHeader);
+                    szHeader= mainObject.cleanHTML(szHeader, null);
 
                     var szHeaderTemp  = "X-WebMail: true\r\n";
                     szHeaderTemp += "X-Folder: " +mainObject.m_szBox+ "\r\n";
@@ -1004,6 +1004,15 @@ YahooPOPBETA.prototype =
                         var szType = szData.match(kPatternPartType)[1];
                         mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szType : " + szType);
 
+                        var szSubType = szData.match(kPatternPartSubType)[1];
+                        mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szSubType : " + szSubType);
+
+                        if (szData.search(kPatternPartTypeParams)!=-1)
+                        {
+                             var szTypeParams = szData.match(kPatternPartTypeParams)[1];
+                             mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szTypeParams : " + szTypeParams);
+                        }
+
                         if (szType.search(/header/i)!=-1)
                         {
                             //do nothing
@@ -1015,11 +1024,6 @@ YahooPOPBETA.prototype =
                             var szHeader = null;
                             if(szData.search(kPatternPartTypeParams)!=-1)
                             {
-                                mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - params found");
-                                var szSubType = szData.match(kPatternPartSubType)[1];
-                                var szTypeParams = szData.match(kPatternPartTypeParams)[1];
-                                var szSubType = szData.match(kPatternPartSubType)[1];
-
                                 szHeader = "Content-Type: "+szType+"/"+szSubType+"; " +szTypeParams + "\r\n";
                                 szHeader += "Content-Transfer-Encoding: 7bit\r\n";
                                 if (szData.search(kPatternPartDispParam)!=-1)
@@ -1038,7 +1042,10 @@ YahooPOPBETA.prototype =
 
                             //get text
                             var szText = szData.match(kPatternPartText)[1];
-                            szText= mainObject.cleanHTML(szText);
+                            var szCharset = null;
+                            if (szTypeParams.search(/charset/i)!=-1)
+                                szCharset = szTypeParams.match(/charset=(.*?)(;|$|\s)/i)[1];
+                            szText= mainObject.cleanHTML(szText, szCharset);
                             mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szText : " + szText);
                             mainObject.m_oEmail.addBody(szHeader,szText);
                         }
@@ -1123,7 +1130,7 @@ YahooPOPBETA.prototype =
                     if (szPart.search(kPatternContentId)!=-1)
                     {
                         szContentID = szPart.match(kPatternContentId)[1];
-                        szContentID = mainObject.cleanHTML(szContentID);
+                        szContentID = mainObject.cleanHTML(szContentID, null);
                     }
                     var szType = "application/octet-stream";
                     if (szPart.search(kPatternPartType)!=-1 && szPart.search(kPatternPartSubType)!=-1)
@@ -1437,9 +1444,9 @@ YahooPOPBETA.prototype =
 
 
 
-    cleanHTML : function (szRaw)
+    cleanHTML : function (szRaw, szCharset)
     {
-        this.m_Log.Write("YahooPOPBETA - cleanHTML");
+        this.m_Log.Write("YahooPOPBETA - cleanHTML " +szCharset );
         var szMsg = szRaw.replace(/&lt;/g,"<");
         szMsg = szMsg.replace(/&gt;/g,">");
         szMsg = szMsg.replace(/&quot;/g, "\"");
@@ -1449,7 +1456,18 @@ YahooPOPBETA.prototype =
         szMsg = szMsg.replace(/&#10;/g,"\n");
         szMsg = szMsg.replace(/&#xD;/g,"\r");
         szMsg = szMsg.replace(/&#13;/g,"\r");
-        szMsg = szMsg.replace(/\u00C2/g," ");  //UTF8
+
+        if (szCharset)
+        {
+            var Converter = Components.classes["@mozilla.org/intl/scriptableunicodeconverter"]
+                                      .getService(Components.interfaces.nsIScriptableUnicodeConverter);
+            Converter.charset = "utf-8";
+            var unicode =  Converter.ConvertToUnicode(szMsg);
+            Converter.charset =  szCharset;
+            var szDecoded = Converter.ConvertFromUnicode(unicode);
+            this.m_Log.Write("Hotmail-SR-BETAR - cleanHTML - "+szDecoded);
+            szMsg = szDecoded;
+        }
         return szMsg;
     },
 }

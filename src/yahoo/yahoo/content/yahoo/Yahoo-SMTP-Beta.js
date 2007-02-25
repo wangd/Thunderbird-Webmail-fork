@@ -431,11 +431,25 @@ YahooSMTPBETA.prototype =
             if (this.m_Email.txtBody)                                   //add plain text part
             {
                 var szTXTBody = this.m_Email.txtBody.body.getBody();
-                if (szTXTBody.length==0) szTXTBody = " "
+                if (szTXTBody.length==0) szTXTBody = " ";
+
                 szTXTBody = szTXTBody.replace(/&/g, "&amp;");
                 szTXTBody = szTXTBody.replace(/</g,"&lt;");
                 szTXTBody = szTXTBody.replace(/>/g,"&gt;");
-                szTXTBody = szTXTBody.replace(/£/g,"Â£");
+
+                //convert to UTF 8
+                var szContentType = this.m_Email.headers.getContentType(0);
+                var szCharset = szContentType.match(/charset=(.*?)[$|;]/i)[1];
+                this.m_Log.Write("YahooSMTPBETA.js - rawMSG -szCharset " + szCharset);
+                var Converter = Components.classes["@mozilla.org/intl/scriptableunicodeconverter"]
+                                          .getService(Components.interfaces.nsIScriptableUnicodeConverter);
+                Converter.charset =  szCharset;
+                var unicode =  Converter.ConvertToUnicode(szTXTBody);
+                Converter.charset = "utf-8";
+                var szDecoded = Converter.ConvertFromUnicode(unicode);
+                this.m_Log.Write("YahooSMTPBETA.js - rawMSG - utf-8 "+szDecoded);
+
+                szTXTBody = szDecoded;
                 szMSGBody += "<text>"+szTXTBody+"\r\n\r\n</text>";
             }
             if (this.m_Email.htmlBody)                                  //add HTML part
