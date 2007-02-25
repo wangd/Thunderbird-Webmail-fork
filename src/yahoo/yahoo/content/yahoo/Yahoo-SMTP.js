@@ -298,7 +298,6 @@ YahooSMTP.prototype =
         try
         {
             mainObject.m_Log.Write("YahooSMTP.js - composerOnloadHandler - START");
-           // mainObject.m_Log.Write("YahooSMTP.js - composerOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("YahooSMTP.js - composerOnloadHandler : " + mainObject.m_iStage);
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -394,7 +393,7 @@ YahooSMTP.prototype =
                     {
                         mainObject.m_Log.Write("YahooSMTP.js - composerOnloadHandler - plain");
                         var szTxtBody = mainObject.m_Email.txtBody.body.getBody();
-                        mainObject.m_HttpComms.addValuePair("Body",mainObject.escapeStr(szTxtBody));
+                        mainObject.m_HttpComms.addValuePair("Body",escape(szTxtBody));
                     }
 
                     mainObject.m_iStage++;
