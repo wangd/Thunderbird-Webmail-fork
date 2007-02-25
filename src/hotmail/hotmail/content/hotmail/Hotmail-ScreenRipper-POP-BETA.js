@@ -925,7 +925,7 @@ HotmailScreenRipperBETA.prototype =
                     this.m_Log.Write("Hotmail-SR-BETAR - emailOnloadHandler - unicode " + unicode);
 
                     Converter.charset = "utf-8";
-                    szDecoded = Converter.ConvertFromUnicode(unicode);
+                    var szDecoded = Converter.ConvertFromUnicode(unicode);
                     this.m_Log.Write("Hotmail-SR-BETAR - emailOnloadHandler - utf-8 "+szDecoded);
                     szResponse = szDecoded
                 }
