@@ -510,7 +510,7 @@ HttpComms.prototype =
             binaryStream.close();
 
             var inputStream = Components.classes["@mozilla.org/network/file-input-stream;1"];
-        	inputStream = inputStream.createInstance(Components.interfaces.nsIFileInputStream);
+            inputStream = inputStream.createInstance(Components.interfaces.nsIFileInputStream);
             inputStream.init(file, 0x01 , 0 , null);
 
             var binaryStream = Components.classes["@mozilla.org/binaryinputstream;1"];
@@ -663,6 +663,7 @@ HttpComms.prototype =
                     {
                         szLocation =  httpChannel.getResponseHeader("Location");
                         mainObject.m_Log.Write("HttpComms2.js - callback - location \n" + szLocation);
+                        szLocation = decodeURIComponent(szLocation);
                     }
                     catch(e)
                     {
@@ -673,6 +674,7 @@ HttpComms.prototype =
                     {
                         mainObject.m_Log.Write("HttpComms2.js - callback - location invalid");
                         szLocation = httpChannel.URI.prePath + szLocation;
+                        szLocation = decodeURIComponent(szLocation);
                         mainObject.setURI(szLocation);
                     }
 
