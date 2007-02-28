@@ -3,8 +3,8 @@
 <!ENTITY Servers.Panel.szTitle "Servere">
 <!ENTITY Domains.Panel.szTitle "Domener">
 <!ENTITY Logging.Panel.szTitle "Logging">
-<!ENTITY General.Panel.szTitle "Hoved">
-<!ENTITY close.button.label "Steng">
+<!ENTITY General.Panel.szTitle "Generell">
+<!ENTITY close.button.label "Lukk">
 <!ENTITY Ports.Label "Port">
 <!ENTITY Ports.POP.AccessKey "o">
 <!ENTITY Ports.SMTP.AccessKey "r">
@@ -15,11 +15,11 @@
 <!ENTITY StatusBox.size "bredde: 6em;">
 <!ENTITY StartServer.Tooltip "Start server">
 <!ENTITY StopServer.Tooltip "Stopp server">
-<!ENTITY Enable.Server.Label "Muliggjør ved oppstart">
+<!ENTITY Enable.Server.Label "Aktiver ved oppstart">
 <!ENTITY Enable.POP.AccessKey "E">
 <!ENTITY Enable.SMTP.AccessKey "n">
 <!ENTITY Enable.IMAP.AccessKey "a">
-<!ENTITY GeneralLogging.Label "Muliggjør loggføring">
+<!ENTITY GeneralLogging.Label "Aktiver loggføring">
 <!ENTITY GeneralLogging.AccessKey "E">
 <!ENTITY Location.Label "Sted">
 <!ENTITY Location.AccessKey "L">
@@ -27,7 +27,7 @@
 <!ENTITY Button.AccessKey "B">
 <!ENTITY NotePort.Label "Noen operativsystemer blokkerer porter lavere enn 1024.">
 <!ENTITY Note.Label "Disse loggene vil inneholde brukernavn og passord.">
-<!ENTITY Restart.Label "Omstart av Thunderbird er nødvendig før endring vil virke.">
-<!ENTITY RestartServer.Label "Omstart av Thunderbird er nødvendig før porten vil virke.">
+<!ENTITY Restart.Label "Du må starte Thunderbird på nytt for at endringene skal tre i kraft.">
+<!ENTITY RestartServer.Label "Du må starte Thunderbird på nytt for at forandringen skal tre i kraft.">
 <!ENTITY Domain.Label "Domene">
 <!ENTITY POP.Label "POP">
