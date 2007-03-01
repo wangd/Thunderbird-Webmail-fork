@@ -245,7 +245,9 @@ nsWebMailCookieManager.prototype =
 
             }
 
+            szCookies = szCookies.replace(/;\s$/,"");
             this.m_Log.Write("CookieManger.js - findCookie - szCookies " + szCookies);
+
             this.m_Log.Write("CookieManger.js - findCookie - END");
             return szCookies;
         }

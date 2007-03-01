@@ -663,7 +663,6 @@ HttpComms.prototype =
                     {
                         szLocation =  httpChannel.getResponseHeader("Location");
                         mainObject.m_Log.Write("HttpComms2.js - callback - location \n" + szLocation);
-                        mainObject.setURI(szLocation);
                     }
                     catch(e)
                     {
