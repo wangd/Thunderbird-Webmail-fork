@@ -159,7 +159,6 @@ nsMailDotCom.prototype =
         try
         {
             mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - START");
-         //   mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler : " +mainObject.m_iStage);
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
