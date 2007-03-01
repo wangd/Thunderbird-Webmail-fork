@@ -462,7 +462,12 @@ HotmailSMTPScreenRipperBETA.prototype =
                     mainObject.m_HttpComms.addValuePair("MsgPriority", "0");
 
                     var szBody = mainObject.m_Email.txtBody.body.getBody();
-                    var szContentType = mainObject.m_Email.headers.getContentType(0);
+                    var szContentType = null;
+                    if (mainObject.m_Email.txtBody.headers)
+                        szContentType = mainObject.m_Email.txtBody.headers.getContentType(0);
+                    else
+                        szContentType = mainObject.m_Email.headers.getContentType(0);
+                    mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler szContentType " + szContentType);
                     var szCharset = szContentType.match(/charset=(.*?)[$|;]/i)[1];
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler -szCharset " + szCharset);
                     var Converter = Components.classes["@mozilla.org/intl/scriptableunicodeconverter"]
@@ -474,7 +479,7 @@ HotmailSMTPScreenRipperBETA.prototype =
                     this.m_Log.Write("Hotmail-SR-BETAR - emailOnloadHandler - utf-8 "+szDecoded);
 
                     szBody = szDecoded;
-					mainObject.m_HttpComms.addValuePair("fMessageBody", szBody);
+                    mainObject.m_HttpComms.addValuePair("fMessageBody", szBody);
                     mainObject.m_HttpComms.addValuePair("editmessagearea", szBody);
 
                     mainObject.m_HttpComms.setURI(szURL);

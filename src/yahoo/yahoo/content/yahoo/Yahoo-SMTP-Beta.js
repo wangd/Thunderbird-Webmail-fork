@@ -438,7 +438,12 @@ YahooSMTPBETA.prototype =
                 szTXTBody = szTXTBody.replace(/>/g,"&gt;");
 
                 //convert to UTF 8
-                var szContentType = this.m_Email.headers.getContentType(0);
+                var szContentType = null;
+                if (this.m_Email.txtBody.headers)
+                    szContentType = this.m_Email.txtBody.headers.getContentType(0);
+                else
+                    szContentType = this.m_Email.headers.getContentType(0);
+                this.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler szContentType " + szContentType);
                 var szCharset = szContentType.match(/charset=(.*?)[$|;]/i)[1];
                 this.m_Log.Write("YahooSMTPBETA.js - rawMSG -szCharset " + szCharset);
                 var Converter = Components.classes["@mozilla.org/intl/scriptableunicodeconverter"]
