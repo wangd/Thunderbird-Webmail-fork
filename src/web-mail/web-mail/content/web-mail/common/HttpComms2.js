@@ -663,7 +663,7 @@ HttpComms.prototype =
                     {
                         szLocation =  httpChannel.getResponseHeader("Location");
                         mainObject.m_Log.Write("HttpComms2.js - callback - location \n" + szLocation);
-                        szLocation = decodeURIComponent(szLocation);
+                        mainObject.setURI(szLocation);
                     }
                     catch(e)
                     {
@@ -674,7 +674,6 @@ HttpComms.prototype =
                     {
                         mainObject.m_Log.Write("HttpComms2.js - callback - location invalid");
                         szLocation = httpChannel.URI.prePath + szLocation;
-                        szLocation = decodeURIComponent(szLocation);
                         mainObject.setURI(szLocation);
                     }
 
