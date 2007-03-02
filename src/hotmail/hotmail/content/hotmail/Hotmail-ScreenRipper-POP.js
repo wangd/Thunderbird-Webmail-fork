@@ -30,6 +30,7 @@ function HotmailScreenRipper(oResponseStream, oLog, oPrefData)
         this.m_iTotalSize = 0;
         this.m_szUM = null;
         this.m_iStage = 0;
+        this.m_iTimerStage = 0;
 
         this.m_szMSG = null;
         this.m_szMSGUri = null;
@@ -405,7 +406,6 @@ HotmailScreenRipper.prototype =
         try
         {
             mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - START");
-            //mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler : " + mainObject.m_iStage);
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -500,12 +500,9 @@ HotmailScreenRipper.prototype =
                     }
                     else //called by list
                     {
-                        var callback = {
-                           notify: function(timer) { this.parent.processSizes(timer)}
-                        };
-                        callback.parent = mainObject;
+                        mainObject.m_iTimerStage = 2;   //process sizes
                         mainObject.m_iHandleCount = 0;
-                        mainObject.m_Timer.initWithCallback(callback,
+                        mainObject.m_Timer.initWithCallback(mainObject,
                                                             mainObject.m_iTime,
                                                             Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
                     }
@@ -696,13 +693,10 @@ HotmailScreenRipper.prototype =
             this.m_Log.Write("Hotmail-SR - getMessageSizes - START");
 
             if (this.m_bStat)
-            {  //msg table has been donwloaded
-                var callback = {
-                   notify: function(timer) { this.parent.processSizes(timer)}
-                };
-                callback.parent = this;
+            {
+                this.m_iTimerStage = 2;  //process sizes
                 this.m_iHandleCount = 0;
-                this.m_Timer.initWithCallback(callback,
+                this.m_Timer.initWithCallback(this,
                                               this.m_iTime,
                                               Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
             }
@@ -783,12 +777,9 @@ HotmailScreenRipper.prototype =
         {
             this.m_Log.Write("Hotmail-SR - getMessageIDs - START");
 
-            var callback = {
-               notify: function(timer) { this.parent.processIDS(timer)}
-            };
-            callback.parent = this;
+            this.m_iTimerStage = 3;   //process ids
             this.m_iHandleCount = 0;
-            this.m_Timer.initWithCallback(callback,
+            this.m_Timer.initWithCallback(this,
                                           this.m_iTime,
                                           Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
 
@@ -1190,6 +1181,8 @@ HotmailScreenRipper.prototype =
                 mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
                 mainObject.m_SessionData.oComponentData.addElement("szHomeURI",mainObject.m_szHomeURI);
                 mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);
+                delete mainObject.m_SessionData;
+                delete mainObject.m_SessionManager;
             }
 
             mainObject.m_bAuthorised = false;
@@ -1251,6 +1244,33 @@ HotmailScreenRipper.prototype =
         var szEncoded = encodeURIComponent(szData);
         szEncoded = szEncoded.replace(/!/g,"%21");
         return szEncoded;
+    },
 
+
+
+    notify: function(timer)
+    {
+        this.m_Log.Write("Hotmail-SR.js - notify - START");
+
+        switch(this.m_iTimerStage)
+        {
+            case 1 : //process raw message
+                this.processMSG(timer);
+            break;
+
+            case 2 : //process messsage sizes
+                this.processSizes(timer);
+            break;
+
+            case 3: //process message ids
+                this.processIDS(timer);
+            break;
+
+            default:
+               timer.cancel();
+            break;
+        }
+
+        this.m_Log.Write("HotmailWebDav.js - notify - END");
     }
 }

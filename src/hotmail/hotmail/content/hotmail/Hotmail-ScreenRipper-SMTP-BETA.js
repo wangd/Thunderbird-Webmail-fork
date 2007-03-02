@@ -513,6 +513,8 @@ HotmailSMTPScreenRipperBETA.prototype =
                             mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
                             mainObject.m_SessionData.oComponentData.addElement("szHomeURI",mainObject.m_szHomeURI);
                             mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);
+                            delete mainObject.m_SessionData;
+                            delete mainObject.m_SessionManager;
                         }
 
                         mainObject.serverComms("250 OK\r\n");

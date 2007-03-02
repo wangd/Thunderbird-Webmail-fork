@@ -1,11 +1,11 @@
-/*****************************  Globals   *************************************/                 
+/*****************************  Globals   *************************************/
 const nsSessionDataClassID = Components.ID("{f38acaf0-35f5-11da-8cd6-0800200c9a66}");
 const nsSessionDataContactID = "@mozilla.org/SessionData;1";
 
 
 /***********************  SessionManager ********************************/
 function nsSessionData()
-{   
+{
     this.m_szUserName = null;
     this.m_oCookieManager = null;
     this.m_oHttpAuthManager = null;
@@ -17,37 +17,52 @@ function nsSessionData()
 nsSessionData.prototype =
 {
     get szUserName() {return this.m_szUserName;},
-    set szUserName(userName) {return this.m_szUserName = userName;},   
-     
+    set szUserName(userName) {return this.m_szUserName = userName;},
+
     get oCookieManager() {return this.m_oCookieManager;},
-    set oCookieManager(oCookieManager) {return this.m_oCookieManager = oCookieManager;},
-    
+    set oCookieManager(oCookieManager)
+    {
+        if (this.m_oCookieManager) delete this.m_oCookieManager;
+        this.m_oCookieManager = oCookieManager;
+        return this.m_oCookieManager
+    },
+
     get oHttpAuthManager() {return this.m_oHttpAuthManager;},
-    set oHttpAuthManager(oHttpAuthManager) {return this.m_oHttpAuthManager = oHttpAuthManager;},
+    set oHttpAuthManager(oHttpAuthManager)
+    {
+        if (this.m_oHttpAuthManager) delete this.oHttpAuthManager;
+        this.m_oHttpAuthManager = oHttpAuthManager;
+        return this.m_oHttpAuthManager;
+    },
 
     get oComponentData() {return this.m_oComponentData;},
-    set oComponentData(oComponentData) {return this.m_oComponentData = oComponentData;},
+    set oComponentData(oComponentData)
+    {
+        if (this.m_oComponentData) delete this.m_oComponentData;
+        this.m_oComponentData = oComponentData;
+        return this.m_oComponentData;
+    },
 
     get iExpiryTime() {return this.m_iExpiryTime;},
     set iExpiryTime(iExpiryTime) {return this.m_iExpiryTime = iExpiryTime;},
-    
+
     get bBlocked() {return this.m_bBlocked;},
     set bBlocked(bBlocked) {return this.m_bBlocked = bBlocked;},
 
-        
+
 /******************************************************************************/
 /***************** XPCOM  stuff ***********************************************/
 /******************************************************************************/
     QueryInterface : function (iid)
     {
-        if (!iid.equals(Components.interfaces.nsISessionData) 
-        	    && !iid.equals(Components.interfaces.nsISupports))
+        if (!iid.equals(Components.interfaces.nsISessionData)
+                && !iid.equals(Components.interfaces.nsISupports))
             throw Components.results.NS_ERROR_NO_INTERFACE;
-            
+
         return this;
     }
 }
- 
+
 
 /******************************************************************************/
 /* FACTORY*/
@@ -57,11 +72,11 @@ nsSessionDataFactory.createInstance = function (outer, iid)
 {
     if (outer != null)
         throw Components.results.NS_ERROR_NO_AGGREGATION;
-    
-    if (!iid.equals(nsSessionDataClassID) 
+
+    if (!iid.equals(nsSessionDataClassID)
                             && !iid.equals(Components.interfaces.nsISupports))
         throw Components.results.NS_ERROR_INVALID_ARG;
-    
+
     return new nsSessionData();
 }
 
@@ -75,9 +90,9 @@ nsSessionDataModule.registerSelf = function(compMgr, fileSpec, location, type)
     compMgr = compMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
     compMgr.registerFactoryLocation(nsSessionDataClassID,
                                     "Session Data",
-                                    nsSessionDataContactID, 
+                                    nsSessionDataContactID,
                                     fileSpec,
-                                    location, 
+                                    location,
                                     type);
 }
 
@@ -88,7 +103,7 @@ nsSessionDataModule.unregisterSelf = function(aCompMgr, aFileSpec, aLocation)
     aCompMgr.unregisterFactoryLocation(nsSessionDataClassID, aFileSpec);
 }
 
- 
+
 nsSessionDataModule.getClassObject = function(compMgr, cid, iid)
 {
     if (!cid.equals(nsSessionDataClassID))
@@ -110,5 +125,5 @@ nsSessionDataModule.canUnload = function(compMgr)
 
 function NSGetModule(compMgr, fileSpec)
 {
-    return nsSessionDataModule; 
+    return nsSessionDataModule;
 }

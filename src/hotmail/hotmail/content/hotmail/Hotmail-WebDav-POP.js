@@ -921,6 +921,8 @@ HotmailWebDav.prototype =
                 this.m_SessionData.oCookieManager = this.m_HttpComms.getCookieManager();
                 this.m_SessionData.oHttpAuthManager = this.m_HttpComms.getHttpAuthManager();
                 this.m_SessionManager.setSessionData(this.m_SessionData);
+                delete this.m_SessionData;
+                delete this.m_SessionManager;
             }
 
             this.m_bAuthorised = false;

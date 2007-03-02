@@ -113,7 +113,10 @@ HttpComms.prototype =
 
     setLogFile : function (log)
     {
+        if (!log) return false;
+        if (this.m_Log) delete this.m_Log;
         this.m_Log = log;
+        return true;
     },
 
     setHandleCookies : function (bState)
@@ -153,6 +156,7 @@ HttpComms.prototype =
 
             if (!szURI) return false;
 
+            if (this.m_URI) delete this.m_URI;
             this.m_URI = this.m_IOService.newURI(szURI, null, null);
 
             return true;
@@ -669,7 +673,8 @@ HttpComms.prototype =
                         throw new Error("Location header not found")
                     }
 
-                    if (!mainObject.setURI(szLocation))
+                    var bURL = mainObject.setURI(szLocation);
+                    if (!bURL)
                     {
                         mainObject.m_Log.Write("HttpComms2.js - callback - location invalid");
                         szLocation = httpChannel.URI.prePath + szLocation;

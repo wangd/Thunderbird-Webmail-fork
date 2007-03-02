@@ -54,15 +54,6 @@ nsDomainManager.prototype =
             else if (iVersion != this.m_iCurrentDBVersion)
                 this.updateDB(iVersion);
 
-            this.m_dbConn.executeSimpleSQL("PRAGMA page_size=1024");
-
-            this.m_dbConnDummy = this.m_dbService.openDatabase(fileDB);
-            this.openDummy();
-
-            this.m_dbConn.executeSimpleSQL("PRAGMA cache_size=20");
-
-            this.m_dbConn.preload();
-
             this.m_bIsReady = true;
 
             this.m_Log.Write("nsDomainManager.js - loadDataBase - END");
@@ -198,30 +189,6 @@ nsDomainManager.prototype =
                                           + "DB Error " + "\n"
                                           + err.lineNumber+ "\n"
                                           + this.m_dbConn.lastErrorString);
-            return false;
-        }
-    },
-
-
-    openDummy : function()
-    {
-        try
-        {
-            this.m_Log.Write("nsDomainManager.js - openDummy - START");
-
-            var szSQL = "SELECT id FROM dummy_table LIMIT (1)";
-            var statement = this.m_dbConnDummy.createStatement(szSQL);
-            statement.executeStep();
-
-            this.m_Log.Write("nsDomainManager.js - openDummy - END");
-        }
-        catch(e)
-        {
-            this.m_Log.DebugDump("nsDomainManager.js: openDummy : Exception : "
-                                          + e.name +
-                                          ".\nError message: "
-                                          + e.message+ "\n"
-                                          + e.lineNumber);
             return false;
         }
     },

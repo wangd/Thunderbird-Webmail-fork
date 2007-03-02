@@ -371,7 +371,6 @@ HotmailSMTPScreenRipper.prototype =
         try
         {
             mainObject.m_Log.Write("Hotmail-SR-SMTP - composerOnloadHandler - START");
-           // mainObject.m_Log.Write("Hotmail-SR-SMTP - composerOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("Hotmail-SR-SMTP - composerOnloadHandler : " + mainObject.m_iStage );
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -488,6 +487,8 @@ HotmailSMTPScreenRipper.prototype =
                             mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
                             mainObject.m_SessionData.oComponentData.addElement("szHomeURI",mainObject.m_szHomeURI);
                             mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);
+                            delete mainObject.m_SessionData;
+                            delete mainObject.m_SessionManager;
                         }
 
                         mainObject.serverComms("250 OK\r\n");

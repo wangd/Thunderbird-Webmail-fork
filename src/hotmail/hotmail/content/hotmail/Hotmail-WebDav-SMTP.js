@@ -236,6 +236,8 @@ HotmailSMTPWebDav.prototype =
                     mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
                     mainObject.m_SessionData.oHttpAuthManager = mainObject.m_HttpComms.getHttpAuthManager();
                     mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);
+                    delete mainObject.m_SessionData;
+                    delete mainObject.m_SessionManager;
                 }
 
                 mainObject.serverComms("250 OK\r\n");
