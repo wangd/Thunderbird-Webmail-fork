@@ -24,6 +24,7 @@ function HotmailWebDav(oResponseStream, oLog, oPrefData)
         this.m_iTotalSize = 0;
         this.m_szMSG = null;
         this.m_iRetries = 2;
+        this.m_iTimerStage = 0;
 
         this.m_IOS = Components.classes["@mozilla.org/network/io-service;1"];
         this.m_IOS = this.m_IOS.getService(Components.interfaces.nsIIOService);
@@ -323,12 +324,8 @@ HotmailWebDav.prototype =
             {
                 mainObject.m_Log.Write("HotmailWebDav.js - mailBoxOnloadHandler - download complete - starting delay");
                 //start timer
-                var callback = {
-                    notify: function(timer) { this.parent.processItem(timer)}
-                 };
-                callback.parent = mainObject;
-
-                mainObject.m_Timer.initWithCallback(callback,
+                mainObject.m_iTimerStage = 1;
+                mainObject.m_Timer.initWithCallback(mainObject/*callback*/,
                                                     mainObject.m_iTime,
                                                     Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
             }
@@ -350,11 +347,14 @@ HotmailWebDav.prototype =
     },
 
 
+
+
+
     processItem : function(timer)
     {
         try
         {
-            this.m_Log.Write("HotmailWebDav.js - notify - START");
+            this.m_Log.Write("HotmailWebDav.js - processItem - START");
 
             if (this.m_aRawData.length>0)
             {
@@ -393,7 +393,7 @@ HotmailWebDav.prototype =
                             szTO = this.m_szUserName;
                         }
                         oMSG.szTo = szTO;
-
+                        this.m_Log.Write("HotmailWebDav.js - processItem - To " + oMSG.szTo);
 
                         var szFrom = "";
                         try
@@ -414,7 +414,7 @@ HotmailWebDav.prototype =
                             }
                         }
                         oMSG.szFrom = szFrom;
-
+                        this.m_Log.Write("HotmailWebDav.js - processItem - From " + oMSG.szFrom);
 
                         var szSubject= "";
                         try
@@ -423,6 +423,8 @@ HotmailWebDav.prototype =
                         }
                         catch(err){}
                         oMSG.szSubject = szSubject;
+                        this.m_Log.Write("HotmailWebDav.js - processItem - Subject " + oMSG.szSubject);
+
 
                         try
                         {
@@ -437,7 +439,7 @@ HotmailWebDav.prototype =
                                                 parseInt(aszTime[1],10),  //minute
                                                 parseInt(aszTime[2],10));  //second
                             oMSG.szDate = date.toGMTString();
-                            this.m_Log.Write("HotmailWebDav.js - processItem - " + oMSG.szDate);
+                            this.m_Log.Write("HotmailWebDav.js - processItem - Date" + oMSG.szDate);
                         }
                         catch(err){}
 
@@ -450,8 +452,8 @@ HotmailWebDav.prototype =
             }
             else
             {
-                this.m_Log.Write("HotmailWebDav.js - notify - all data handled");
-                timer.cancel();
+                this.m_Log.Write("HotmailWebDav.js - processItem - all data handled");
+                this.m_Timer.cancel();
                 delete  this.m_aRawData;
 
                 if (this.m_bStat) //called by stat
@@ -461,12 +463,9 @@ HotmailWebDav.prototype =
                 }
                 else //called by list
                 {
-                     var callback = {
-                       notify: function(timer) { this.parent.processSizes(timer)}
-                    };
-                    callback.parent = mainObject;
                     this.m_iHandleCount = 0;
-                    this.m_Timer.initWithCallback(callback,
+                    this.m_iTimerStage = 2;
+                    this.m_Timer.initWithCallback(this /*callback*/,
                                                   this.m_iTime,
                                                   Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
                 }
@@ -474,7 +473,7 @@ HotmailWebDav.prototype =
 
             }
 
-            this.m_Log.Write("HotmailWebDav.js - notify - END");
+            this.m_Log.Write("HotmailWebDav.js - processItem - END");
         }
         catch(err)
         {
@@ -504,12 +503,9 @@ HotmailWebDav.prototype =
             {  //msg table has been donwloaded
                 this.m_Log.Write("HotmailWebDav.js - getMessageSizes - getting sizes");
 
-                var callback = {
-                   notify: function(timer) { this.parent.processSizes(timer)}
-                };
-                callback.parent = this;
                 this.m_iHandleCount = 0;
-                this.m_Timer.initWithCallback(callback,
+                this.m_iTimerStage = 2;
+                this.m_Timer.initWithCallback(this /*callback*/,
                                               this.m_iTime,
                                               Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
             }
@@ -565,7 +561,7 @@ HotmailWebDav.prototype =
             if (this.m_iHandleCount == this.m_aMsgDataStore.length)
             {
               this.serverComms(".\r\n");
-              timer.cancel();
+              this.m_Timer.cancel();
             }
 
             this.m_Log.Write("HotmailWebDav.js - processSizes - END");
@@ -592,12 +588,9 @@ HotmailWebDav.prototype =
         {
             this.m_Log.Write("HotmailWebDav.js - getMessageIDs - START");
 
-            var callback = {
-               notify: function(timer) { this.parent.processIDS(timer)}
-            };
-            callback.parent = this;
             this.m_iHandleCount = 0;
-            this.m_Timer.initWithCallback(callback,
+            this.m_iTimerStage = 3;
+            this.m_Timer.initWithCallback(this/*callback*/,
                                           this.m_iTime,
                                           Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
 
@@ -653,7 +646,7 @@ HotmailWebDav.prototype =
             if (this.m_iHandleCount == this.m_aMsgDataStore.length)
             {
                 this.serverComms(".\r\n");
-                timer.cancel();
+                this.m_Timer.cancel();
             }
 
             this.m_Log.Write("HotmailWebDav.js - processIDS - END");
@@ -785,7 +778,7 @@ HotmailWebDav.prototype =
                     if (szFolderName.search(/active/i)!=-1) szCleanName = "Inbox"
                     else if (szFolderName.search(/BuLkMail/i)!=-1) szCleanName = "Spam";
                     else if (szFolderName.search(/sAVeD/i)!=-1) szCleanName = "Sent Items";
-					mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - szCleanName - " + szCleanName);
+                    mainObject.m_Log.Write("HotmailWebDav.js - loginOnloadHandler - szCleanName - " + szCleanName);
                     mainObject.m_szMSG += "X-Folder: " +szCleanName+ "\r\n";
 
                     mainObject.m_szMSG +=szResponse;
@@ -947,7 +940,36 @@ HotmailWebDav.prototype =
     },
 
 
-   serverComms : function (szMsg)
+
+    notify: function(timer)
+    {
+        this.m_Log.Write("HotmailWebDav.js - notify - START");
+
+        switch(this.m_iTimerStage)
+        {
+            case 1 : //process raw message
+                this.processItem(timer);
+            break;
+
+            case 2 : //process messsage sizes
+                this.processSizes(timer);
+            break;
+
+            case 3: //process message ids
+                this.processIDS(timer);
+            break;
+
+            default:
+               timer.cancel();
+            break;
+        }
+
+        this.m_Log.Write("HotmailWebDav.js - notify - END");
+    },
+
+
+
+    serverComms : function (szMsg)
     {
         try
         {
