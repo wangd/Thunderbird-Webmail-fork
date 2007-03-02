@@ -9,6 +9,7 @@ function HotmailScreenRipperBETA(oResponseStream, oLog, oPrefData)
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-MSG.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-Prefs-Data.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-FolderList.js");
+        scriptLoader.loadSubScript("chrome://hotmail/content/HTML-escape.js");
 
         this.m_Log = oLog;
         this.m_Log.Write("Hotmail-SR-BETAR - Constructor - START");
@@ -578,6 +579,7 @@ HotmailScreenRipperBETA.prototype =
             {
                 szFrom = aTableData[1].match(patternHotmailEmailSender)[1];
                 szFrom = this.removeHTML(szFrom);
+                szFrom = new HTMLescape().decode(szFrom);
                 this.m_Log.Write("Hotmail-SR-BETAR - processMSG - Email From : " +szFrom);
             }
             catch(err){}
@@ -586,9 +588,10 @@ HotmailScreenRipperBETA.prototype =
             var szSubject= "";
             try
             {
-                szSubject= aTableData[5].match(patternHotmailEmailSubject)[1];
-                szSubject= this.removeHTML(szSubject);
-                this.m_Log.Write("Hotmail-SR-BETAR - processMSG - Email szSubject : " +szSubject);
+                szSubject = aTableData[5].match(patternHotmailEmailSubject)[1];
+                szSubject = this.removeHTML(szSubject);
+                szSubject = new HTMLescape().decode(szSubject);
+               this.m_Log.Write("Hotmail-SR-BETAR - processMSG - Email szSubject : " +szSubject);
             }
             catch(err){}
             oMSG.szSubject = szSubject;
@@ -1139,7 +1142,7 @@ HotmailScreenRipperBETA.prototype =
 
     removeHTML : function (szRaw)
     {
-        this.m_Log.Write("Hotmail-SR-BETAR - removeHTML - START");
+        this.m_Log.Write("Hotmail-SR-BETAR - removeHTML");
         var szMsg = szRaw.replace(/&lt;/g,"<");
         szMsg = szMsg.replace(/&gt;/g,">");
         szMsg = szMsg.replace(/&quot;/g, "\"");
@@ -1147,7 +1150,6 @@ HotmailScreenRipperBETA.prototype =
         szMsg = szMsg.replace(/&nbsp;/g, " ");
         szMsg = szMsg.replace(/<strong>/g, "");
         szMsg = szMsg.replace(/<\/strong>/g, "");
-        this.m_Log.Write("Hotmail-SR-BETAR - removeHTML - ENd")
         return szMsg;
     },
 
