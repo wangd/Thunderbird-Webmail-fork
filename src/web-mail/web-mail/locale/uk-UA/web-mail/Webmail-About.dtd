@@ -1,0 +1,8 @@
+<!ENTITY WebmailAbout.Title "Про Webmail">
+<!ENTITY WebmailAbout.ExtName "Web Mail">
+<!ENTITY WebmailAbout.ExtVersion "версія">
+<!ENTITY WebmailAbout.ExtDescription "Доступ до поштових скриньок через Thunderbird.">
+<!ENTITY WebmailAbout.ExtCreaterTitle "Створено:">
+<!ENTITY WebmailAbout.ExtHome "Домашня сторінка">
+<!ENTITY WebmailAbout.ExtButton "Закрити">
+<!ENTITY WebmailAbout.ExtContributorTitle "Спонсори:">

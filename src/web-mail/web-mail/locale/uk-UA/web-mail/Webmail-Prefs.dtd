@@ -1,0 +1,33 @@
+<!ENTITY Window.size "width: 46em; height: 37em">
+<!ENTITY Options.szTitle "Налаштування WebMail">
+<!ENTITY Servers.Panel.szTitle "Сервери">
+<!ENTITY Domains.Panel.szTitle "Домени">
+<!ENTITY Logging.Panel.szTitle "Вхід">
+<!ENTITY General.Panel.szTitle "Загальні">
+<!ENTITY close.button.label "Закрити">
+<!ENTITY Ports.Label "Порт">
+<!ENTITY Ports.POP.AccessKey "o">
+<!ENTITY Ports.SMTP.AccessKey "r">
+<!ENTITY Ports.IMAP.AccessKey "t">
+<!ENTITY Pop.Label "POP">
+<!ENTITY SMTP.Label "SMTP">
+<!ENTITY IMAP.Label "IMAP">
+<!ENTITY StatusBox.size "width: 6em;">
+<!ENTITY StartServer.Tooltip "Запустити сервер">
+<!ENTITY StopServer.Tooltip "Зупинити сервер">
+<!ENTITY Enable.Server.Label "Дозволити запуск при старті">
+<!ENTITY Enable.POP.AccessKey "E">
+<!ENTITY Enable.SMTP.AccessKey "n">
+<!ENTITY Enable.IMAP.AccessKey "a">
+<!ENTITY GeneralLogging.Label "Дозволити вхід">
+<!ENTITY GeneralLogging.AccessKey "E">
+<!ENTITY Location.Label "Розташування">
+<!ENTITY Location.AccessKey "L">
+<!ENTITY Button.Label "Шукати...">
+<!ENTITY Button.AccessKey "B">
+<!ENTITY NotePort.Label "Деякі операційні системи блокують порти номером нижчі ніж 1024.">
+<!ENTITY Note.Label "Ці звіти міститимуть імена користувачів й паролі.">
+<!ENTITY Restart.Label "Потрібно перезапустити Thunderbird аби зміни набули чинності.">
+<!ENTITY RestartServer.Label "Потрібно перезапустити сервер аби зміна порта набула чинності.">
+<!ENTITY Domain.Label "Домен">
+<!ENTITY POP.Label "POP">
