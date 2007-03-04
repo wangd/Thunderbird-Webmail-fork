@@ -57,15 +57,6 @@ nsIMAPFolders.prototype =
             else if (iVersion != this.m_iCurrentDBVersion)
                 this.updateDB(iVersion);
 
-            this.m_dbConn.executeSimpleSQL("PRAGMA page_size=1024");
-
-            this.m_dbConnDummy = this.m_dbService.openDatabase(fileDB);
-            this.openDummy();
-
-            this.m_dbConn.executeSimpleSQL("PRAGMA cache_size=20");
-
-            this.m_dbConn.preload();
-
             this.m_iSession = this.getSession();
 
             this.m_bIsReady = true;
@@ -356,34 +347,6 @@ nsIMAPFolders.prototype =
             return 0;
         }
     },
-
-
-
-
-    openDummy : function()
-    {
-        try
-        {
-            this.m_Log.Write("nsIMAPFolders.js - openDummy - START");
-
-            var szSQL = "SELECT id FROM dummy_table LIMIT (1)";
-            var statement = this.m_dbConnDummy.createStatement(szSQL);
-            statement.executeStep();
-
-            this.m_Log.Write("nsIMAPFolders.js - openDummy - END");
-        }
-        catch(e)
-        {
-            this.m_Log.DebugDump("nsIMAPFolders.js: openDummy : Exception : "
-                                          + e.name +
-                                          ".\nError message: "
-                                          + e.message+ "\n"
-                                          + e.lineNumber+ "\n" +
-                                          this.m_dbConn.lastErrorString);
-            return false;
-        }
-    },
-
 
 
 
