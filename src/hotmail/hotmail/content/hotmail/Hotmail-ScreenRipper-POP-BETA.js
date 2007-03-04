@@ -108,7 +108,7 @@ HotmailScreenRipperBETA.prototype =
                         if (this.m_szHomeURI)
                         {
                             this.m_Log.Write("Hotmail-SR-BETAR - logIN - Session Data Found");
-                            this.m_iStage =3;
+                            this.m_iStage =1;
                             this.m_bReEntry = true;
                             this.m_HttpComms.setURI(this.m_szHomeURI);
                         }
