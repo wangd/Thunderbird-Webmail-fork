@@ -108,7 +108,7 @@ HotmailScreenRipperBETA.prototype =
                         if (this.m_szHomeURI)
                         {
                             this.m_Log.Write("Hotmail-SR-BETAR - logIN - Session Data Found");
-                            this.m_iStage =2;
+                            this.m_iStage =3;
                             this.m_bReEntry = true;
                             this.m_HttpComms.setURI(this.m_szHomeURI);
                         }
@@ -173,52 +173,22 @@ HotmailScreenRipperBETA.prototype =
             //page code
             switch (mainObject.m_iStage)
             {
-                case 0: // redirect destination
-                    var aForm = szResponse.match(patternHotmailForm);
-                    if (!aForm) throw new Error("error parsing login page");
-                    mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler "+ aForm);
-
-                    //action
-                    var szAction = aForm[0].match(patternHotmailAction)[1];
-                    mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler "+ szAction);
-                    mainObject.m_HttpComms.setURI(szAction);
-
-                    //name value
-                    var aInput = aForm[0].match(patternHotmailInput);
-                    mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler "+ aInput);
-                    for (i=0; i<aInput.length ; i++)
-                    {
-                        var szName =  aInput[i].match(patternHotmailName)[1];
-                        mainObject.m_Log.Write("Hotmail-SR-BETAR- loginOnloadHandler "+ szName);
-                        var szValue =  aInput[i].match(patternHotmailValue)[1];
-                        mainObject.m_Log.Write("Hotmail-SR-BETAR- loginOnloadHandler "+ szValue);
-                        szValue = encodeURIComponent(szValue);
-                        mainObject.m_HttpComms.addValuePair(szName, szValue);
-                    }
-
-                    mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
-                break;
-
-
-                case 1: //login
+                case 0: //login
                     var aForm = szResponse.match(patternHotmailForm);
                     if (!aForm) throw new Error("error parsing login page");
 
                     //get form data
                     var aInput =  aForm[0].match(patternHotmailInput);
-                    mainObject.m_Log.Write("nsHotmail.js - loginOnloadHandler - form data " + aInput);
+                    mainObject.m_Log.Write("Hotmail-SR-BETAR.js - loginOnloadHandler - form data " + aInput);
 
                     for (i=0; i<aInput.length; i++)
                     {
                         var szType = aInput[i].match(patternHotmailType)[1];
-                        mainObject.m_Log.Write("nsHotmail.js - loginOnloadHandler - form type " + szType);
+                        mainObject.m_Log.Write("Hotmail-SR-BETAR.js - loginOnloadHandler - form type " + szType);
                         var szName = aInput[i].match(patternHotmailName)[1];
-                        mainObject.m_Log.Write("nsHotmail.js - loginOnloadHandler - form name " + szName);
+                        mainObject.m_Log.Write("Hotmail-SR-BETAR.js - loginOnloadHandler - form name " + szName);
                         var szValue = aInput[i].match(patternHotmailValue)[1];
-                        mainObject.m_Log.Write("nsHotmail.js - loginOnloadHandler - form value " + szValue);
+                        mainObject.m_Log.Write("nHotmail-SR-BETAR.js - loginOnloadHandler - form value " + szValue);
 
                         if (szType.search(/submit/i)==-1)
                         {
@@ -249,7 +219,7 @@ HotmailScreenRipperBETA.prototype =
                     }
 
                     var szAction = aForm[0].match(patternHotmailAction)[1];
-                    mainObject.m_Log.Write("Hotmail-SR-BETAR- loginOnloadHandler "+ szAction);
+                    mainObject.m_Log.Write("Hotmail-SR-BETAR- loginOnloadHandler action "+ szAction);
                     var szDomain = mainObject.m_szUserName.split("@")[1];
                     var szRegExp = "g_DO\\[\""+szDomain+"\"\\]=\"(.*?)\"";
                     mainObject.m_Log.Write("Hotmail-SR-BETAR- loginOnloadHandler szRegExp "+ szRegExp);
@@ -264,7 +234,7 @@ HotmailScreenRipperBETA.prototype =
                     else
                     {
                         var szQS =  szResponse.match(patternHotmailQS)[1];
-                        mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler szQuery "+ szQS);
+                        mainObject.m_Log.Write("Hotmail-SR-BETAR- loginOnloadHandler szQuery "+ szQS);
                         szURI = aszURI[1] + "?" + szQS;
                     }
                     mainObject.m_HttpComms.setURI(szURI);
@@ -276,7 +246,7 @@ HotmailScreenRipperBETA.prototype =
                 break;
 
 
-                case 2:
+                case 1:
                     //check for logout option
                     var aszLogoutURL = szResponse.match(patternHotmailLogOut);
                     mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler - logout : " + aszLogoutURL);
@@ -312,7 +282,7 @@ HotmailScreenRipperBETA.prototype =
                     //get folder manager
                     var szURI = mainObject.m_szLocationURI + szResponse.match(patternHotmailFolderManager)[1];
                     mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler - folders : "+szURI);
-                    mainObject.m_iStage =3;
+                    mainObject.m_iStage++;
                     mainObject.m_HttpComms.setURI(szURI);
                     mainObject.m_HttpComms.setRequestMethod("GET");
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
@@ -320,7 +290,7 @@ HotmailScreenRipperBETA.prototype =
                 break;
 
 
-                case 3: //other folders
+                case 2: //other folders
                     mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler - processing folders");
 
                     //inbox - 000000000001
