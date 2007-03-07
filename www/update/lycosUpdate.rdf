@@ -6,6 +6,7 @@
         <em:updates>
             <RDF:Seq>
                 <RDF:li resource="urn:mozilla:extension:{10e6e940-8a9c-11d9-9669-0800200c9a66}:1.0.5"/>
+                <RDF:li resource="urn:mozilla:extension:{10e6e940-8a9c-11d9-9669-0800200c9a66}:1.1.0"/>
             </RDF:Seq>
         </em:updates>
     </RDF:Description>
@@ -16,7 +17,7 @@
             <Description>
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id><!-- Thunderbird updates -->
                 <em:minVersion>1.4</em:minVersion>
-                <em:maxVersion>2.0</em:maxVersion>
+                <em:maxVersion>1.5.*</em:maxVersion>
                 <em:updateLink>http://download.mozdev.org/webmail/lycos-1-0-5.xpi</em:updateLink>
                 <em:updateHash>sha256:43149fc081cf524750afedd258c1311449a053cd3ed91754cf36d288ff15d260</em:updateHash>
           </Description>
@@ -28,6 +29,32 @@
                 <em:id>{3c8e8390-2cf6-11d9-9669-0800200c9a66}</em:id>
                 <em:minVersion>0.9</em:minVersion>
                 <em:maxVersion>1.0.*</em:maxVersion>
+                <em:name>WebMail</em:name>
+                <em:homepageURL>http://webmail.mozdev.org/</em:homepageURL>
+                <em:updateURL>http://webmail.mozdev.org/update/webmailUpdate.rdf</em:updateURL>
+            </Description>
+        </em:requires>
+    </RDF:Description>
+
+
+    <RDF:Description about="urn:mozilla:extension:{10e6e940-8a9c-11d9-9669-0800200c9a66}:1.1.0">
+        <em:version>1.1.0</em:version>
+        <em:targetApplication>
+            <Description>
+                <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id><!-- Thunderbird updates -->
+                <em:minVersion>2.0</em:minVersion>
+                <em:maxVersion>2.0.*</em:maxVersion>
+                <em:updateLink>http://download.mozdev.org/webmail/lycos-1-1-0.xpi</em:updateLink>
+                <em:updateHash>sha256:994717884d1b9e11a7fae5f652833fa8ddbc2d9aebfe97d2bb0ba96c0ab39d5a</em:updateHash>
+          </Description>
+        </em:targetApplication>
+
+        <em:requires>
+            <Description>
+                <!-- requires web-mail extension-->
+                <em:id>{3c8e8390-2cf6-11d9-9669-0800200c9a66}</em:id>
+                <em:minVersion>1.1.0</em:minVersion>
+                <em:maxVersion>1.1.*</em:maxVersion>
                 <em:name>WebMail</em:name>
                 <em:homepageURL>http://webmail.mozdev.org/</em:homepageURL>
                 <em:updateURL>http://webmail.mozdev.org/update/webmailUpdate.rdf</em:updateURL>
