@@ -42,7 +42,7 @@
         <em:targetApplication>
             <Description>
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id><!-- Thunderbird updates -->
-                <em:minVersion>2.0</em:minVersion>
+                <em:minVersion>2.0b2</em:minVersion>
                 <em:maxVersion>2.0.*</em:maxVersion>
                 <em:updateLink>http://download.mozdev.org/webmail/lycos-1-1-0.xpi</em:updateLink>
                 <em:updateHash>sha256:994717884d1b9e11a7fae5f652833fa8ddbc2d9aebfe97d2bb0ba96c0ab39d5a</em:updateHash>

@@ -42,7 +42,7 @@
         <em:targetApplication>
             <Description>
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id> <!-- Thunderbird updates -->
-                <em:minVersion>2.0</em:minVersion>
+                <em:minVersion>2.0b2</em:minVersion>
                 <em:maxVersion>2.0.*</em:maxVersion>
                 <em:updateLink>http://download.mozdev.org/webmail/hotmail-1-1-1.xpi</em:updateLink>
                 <em:updateHash>sha256:bfc57b391f0bfd7e5ae2061ab436ef28d33c79968f98667aeca917b187e81d7e</em:updateHash>
