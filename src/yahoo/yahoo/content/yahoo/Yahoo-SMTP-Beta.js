@@ -390,7 +390,7 @@ YahooSMTPBETA.prototype =
             var szMSGto = "";
             for (var i=0; i<aszTempTo.length; i++)
             {
-                szMSGto += "<to><email>" + aszTempTo[i] + "</email></to>";
+                szMSGto += "<to><email>" + aszTempTo[i].replace(/\s*/g,"") + "</email></to>";
             }
             szData = szData.replace(/TOADDRESS/,szMSGto);   //set TO Address
 
