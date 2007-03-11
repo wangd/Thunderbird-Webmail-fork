@@ -811,7 +811,7 @@ nsAOL.prototype =
                     mainObject.m_szMSG += szResponse.replace(/^\./mg,"..");    //bit padding
                     mainObject.m_szMSG += "\r\n.\r\n";
 
-                    if (mainObject.m_prefData.bMarkAsRead)
+                    if (!mainObject.m_prefData.bMarkAsRead)
                     {
                         var szURL = mainObject.m_szLocation + "MessageAction.aspx?";
                         szURL += "folder=" +  mainObject.m_szFolder +"&";
