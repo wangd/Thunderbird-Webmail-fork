@@ -500,8 +500,16 @@ nsDomainManager.prototype =
 
     isReady : function()
     {
-        this.m_Log.Write("nsDomainManager.js - isReady - " +this.m_bIsReady);
-        return this.m_bIsReady;
+        try
+        {
+            this.m_Log.Write("nsDomainManager.js - isReady - " +this.m_bIsReady);
+            return this.m_bIsReady;
+        }
+        catch(e)
+        {
+            return false;
+        }
+
     },
 
 
