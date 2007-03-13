@@ -6,7 +6,7 @@
         <em:updates>
             <RDF:Seq>
                 <RDF:li resource="urn:mozilla:extension:{3c8e8390-2cf6-11d9-9669-0800200c9a66}:1.0.17"/>
-                <RDF:li resource="urn:mozilla:extension:{3c8e8390-2cf6-11d9-9669-0800200c9a66}:1.1.1"/>
+                <RDF:li resource="urn:mozilla:extension:{3c8e8390-2cf6-11d9-9669-0800200c9a66}:1.1.2"/>
             </RDF:Seq>
         </em:updates>
     </RDF:Description>
@@ -24,15 +24,15 @@
         </em:targetApplication>
     </RDF:Description>
 
-    <RDF:Description about="urn:mozilla:extension:{3c8e8390-2cf6-11d9-9669-0800200c9a66}:1.1.1">
-        <em:version>1.1.1</em:version>
+    <RDF:Description about="urn:mozilla:extension:{3c8e8390-2cf6-11d9-9669-0800200c9a66}:1.1.2">
+        <em:version>1.1.2</em:version>
         <em:targetApplication>
             <Description>
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id><!-- Thunderbird updates -->
                 <em:minVersion>2.0b2</em:minVersion>
                 <em:maxVersion>2.0.*</em:maxVersion>
-                <em:updateLink>http://download.mozdev.org/webmail/web-mail-1-1-1.xpi</em:updateLink>
-                <em:updateHash>sha256:09303af28159aa4fb932f7b0352f8f304eacfe044b78b0f7eeed21b3eebb37ae</em:updateHash>
+                <em:updateLink>http://download.mozdev.org/webmail/web-mail-1-1-2.xpi</em:updateLink>
+                <em:updateHash>sha256:d00e39eefa5014cbb087b8246439e9abed2bd2d149079c4bdef284bb9ad3701f</em:updateHash>
           </Description>
         </em:targetApplication>
     </RDF:Description>
