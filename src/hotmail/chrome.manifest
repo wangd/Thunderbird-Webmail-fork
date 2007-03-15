@@ -22,3 +22,4 @@ locale  hotmail    da-DK   jar:chrome/hotmail.jar!/locale/da-DK/hotmail/
 locale  hotmail    lt-LT   jar:chrome/hotmail.jar!/locale/lt-LT/hotmail/
 locale  hotmail    ko-KR   jar:chrome/hotmail.jar!/locale/ko-KR/hotmail/
 locale  hotmail    sk-SK   jar:chrome/hotmail.jar!/locale/sk-SK/hotmail/
+locale  hotmail    pt-PT   jar:chrome/hotmail.jar!/locale/pt-PT/web-mail/
