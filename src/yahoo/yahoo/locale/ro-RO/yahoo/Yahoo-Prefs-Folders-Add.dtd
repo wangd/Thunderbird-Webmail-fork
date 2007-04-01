@@ -1,0 +1,8 @@
+<!ENTITY YahooFolderAdd.Title "Adauga folder">
+<!ENTITY YahooFolderName.Label "Nume folder">
+<!ENTITY YahooFolderName.AccessKey "F">
+<!ENTITY YahooFolders.Label "Adauga folder descarcare">
+<!ENTITY YahooFolder.ButtonOk.Label "Ok">
+<!ENTITY YahooFolder.ButtonOk.AccessKey "O">
+<!ENTITY YahooFolder.ButtonCancel.Label "Anuleaza">
+<!ENTITY YahooFolder.ButtonCancel.AccessKey "C">
