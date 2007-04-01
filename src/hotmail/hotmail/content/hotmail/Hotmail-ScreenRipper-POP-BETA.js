@@ -29,6 +29,7 @@ function HotmailScreenRipperBETA(oResponseStream, oLog, oPrefData)
         this.m_bStat = false;
         this.m_bReEntry = false;
         this.m_iTimerStage = 0;
+        this.m_szMT = null;
 
         this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"]
                                           .getService(Components.interfaces.nsISessionManager);
@@ -278,6 +279,12 @@ HotmailScreenRipperBETA.prototype =
 
                     mainObject.m_szHomeURI = httpChannel.URI.spec;
                     mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler - m_szHomeURI : "+mainObject.m_szHomeURI );
+
+                    //get cookies
+                    var szCookie = mainObject.m_HttpComms.getCookieManager().findCookie(httpChannel.URI);
+                    mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler cookies "+ szCookie);
+                    mainObject.m_szMT = szCookie.match(patternHotmailMT)[1];
+                    mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler mainObject.m_szMT "+ mainObject.m_szMT);
 
                     //get folder manager
                     var szURI = mainObject.m_szLocationURI + szResponse.match(patternHotmailFolderManager)[1];
@@ -533,7 +540,7 @@ HotmailScreenRipperBETA.prototype =
             var aTableData = szMSGData.match(patternHotmailMailBoxTableData);
             this.m_Log.Write("HotmailWebDav.js - processMSG - aTableData -" + aTableData);
 
-            var szEmailURL = aTableData[1].match(patternHotmailEMailURL)[1];
+            var szEmailURL = aTableData[4].match(patternHotmailEMailURL)[1];
             var szPath = this.m_szLocationURI + szEmailURL;
             this.m_Log.Write("Hotmail-SR-BETAR - processMSG - Email URL : " +szPath);
             oMSG.szMSGUri = szPath;
@@ -545,7 +552,7 @@ HotmailScreenRipperBETA.prototype =
             var szFrom = "";
             try
             {
-                szFrom = aTableData[1].match(patternHotmailEmailSender)[1];
+                szFrom = aTableData[4].match(patternHotmailEmailSender)[1];
                 szFrom = this.removeHTML(szFrom);
                 szFrom = new HTMLescape().decode(szFrom);
                 this.m_Log.Write("Hotmail-SR-BETAR - processMSG - Email From : " +szFrom);
@@ -982,6 +989,7 @@ HotmailScreenRipperBETA.prototype =
             this.m_HttpComms.setURI(szURL);
             this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             this.m_HttpComms.addValuePair("__VIEWSTATE",oMSG.szStatView);
+            this.m_HttpComms.addValuePair("mt",this.m_szMT);
             this.m_HttpComms.addValuePair("query","");
             this.m_HttpComms.addValuePair("MoveMessageSelector","");
             this.m_HttpComms.addValuePair("ToolbarActionItem","DeleteMessages");
@@ -1126,7 +1134,10 @@ HotmailScreenRipperBETA.prototype =
 
     },
 
-        notify: function(timer)
+
+
+
+    notify: function(timer)
     {
         this.m_Log.Write("Hotmail-SR.js - notify - START");
 

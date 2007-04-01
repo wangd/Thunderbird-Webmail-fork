@@ -73,10 +73,10 @@ const patternHotmailJSRefresh = /<html><head><script.*?>.*?\.location\.replace.*
 const patternHotmailJSRefreshAlt = /<head><meta http-equiv="REFRESH".*?content=".*?URL=(.*?)">.*?<\/head><\/html>/i;
 const patternHotmailJSBounce = /srf_uRet="(.*?)"/i;
 const patternHotmailLogOut = /<.*?"(.*?logout.aspx.*?)".*?>/gi;
-const patternHotmailViewState = /<input.*?id="__VIEWSTATE".*?value="(.*?)".*?\/>/i;
+const patternHotmailViewState = /__VIEWSTATE".*?value="(.*?)".*?\/>/i;
 const patternHotmailInboxFolderID = /<td class="dManageFoldersFolderNameCol"><a href="(.*?\?FolderID=.*?1&.*?)".*?>/i;
 const patternHotmailJunkFolderID = /<td class="dManageFoldersFolderNameCol"><a href="(.*?\?FolderID=.*?5&.*?)".*?>/i;
-const patternHotmailFolderManager = /<a href="(.*?ManageFolders.*?)">/i;
+const patternHotmailFolderManager = /<a.*?href="(.*?ManageFolders.*?)".*?>/i;
 const patternHotmailFolderList = /<td class="dManageFoldersFolderNameCol"><a.*?><\/td>/img;
 const patternHotmailFolderTitle = /<a.*?>(.*?)<\/a>/i;
 const patternHotmailFolderURL = /<a.*?"(.*?)">.*?<\/a>/i;
@@ -87,7 +87,7 @@ const patternHotmailCompose = /href="(.*?EditMessageLight.*?)"/i;
 const patternHotmailSend = /href=".*?,'(.*?SendMessageLight.*?)'.*?"/i;
 const patternHotmailAddAttachment = /href=".*?,'(.*?AddAttachmentLight.*?)'.*?"/i;
 const patternHotmailLastAttachment = /href=".*?,'(.*?EditMessageLight.*?)'.*?"/i;
-const patternHotmailNextPage = /href="\/.*?\/(.*?Next&Page.*?)"/i;
+const patternHotmailNextPage = /href="(.*?Next&.*?)"/i;
 const patternHotmailSentOK = /smcMainContentContainer/im;
 const patternHotmailMailBoxTable = /<table.*?class="dItemListContentTable".*?>[\s\S]*?<tbody([\s\S]*?)<\/tbody>[\s\S]*?<\/table>/im;
 const patternHotmailMailBoxTableRow = /<tr.*?>[\s\S]*?<\/tr>/ig;
@@ -99,3 +99,5 @@ const patternHotmailEmailSubject = /<td.*?>.*?<a href=.*?>(.*?)<\/a>.*?<\/td>/i;
 const patternHotmailEmailDate = /<td.*?>(.*?)<\/td>/i;
 const patternHotmailEMailID =/ReadMessageID=(.*?)&/i;
 const patternHotmailFolderID = /FolderID=(.*?)$/i;
+const patternHotmailFromBeta = /<select id="fromAddressDropdown".*?name="(.*?)"[\s\S]*<option value="(.*?)" selected>.*?<\/option>/igm;
+const patternHotmailMT = /mt=(.*?);/i

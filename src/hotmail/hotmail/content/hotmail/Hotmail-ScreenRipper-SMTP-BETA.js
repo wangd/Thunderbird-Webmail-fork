@@ -9,6 +9,7 @@ function HotmailSMTPScreenRipperBETA(oResponseStream, oLog, oPrefData)
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Email.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-Prefs-Data.js");
         scriptLoader.loadSubScript("chrome://global/content/strres.js");
+        scriptLoader.loadSubScript("chrome://hotmail/content/HTML-escape.js");
 
         this.m_Log = oLog;
 
@@ -30,6 +31,7 @@ function HotmailSMTPScreenRipperBETA(oResponseStream, oLog, oPrefData)
         this.m_iAttCount = 0;
         this.m_iAttUploaded = 1;
         this.m_iAttachPlaceNum = 5;
+        this.m_szMT = null;
 
         this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"]
                                           .getService(Components.interfaces.nsISessionManager);
@@ -268,6 +270,12 @@ HotmailSMTPScreenRipperBETA.prototype =
                     mainObject.m_szComposer =  mainObject.m_szLocationURI + szURL;
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA - loginOnloadHandler - m_szComposer : "+mainObject.m_szComposer );
 
+                    //get cookies
+                    var szCookie = mainObject.m_HttpComms.getCookieManager().findCookie(httpChannel.URI);
+                    mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler cookies "+ szCookie);
+                    mainObject.m_szMT = szCookie.match(patternHotmailMT)[1];
+                    mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler mainObject.m_szMT "+ mainObject.m_szMT);
+
                     //server response
                     mainObject.serverComms("235 Your In\r\n");
                     mainObject.m_bAuthorised = true;
@@ -424,10 +432,19 @@ HotmailSMTPScreenRipperBETA.prototype =
                             {
                                 szValue = "SendMessage";
                             }
+                            else if (szName.search(/mt/i)!=-1)
+                            {
+                                szValue = mainObject.m_szMT;
+                            }
                             mainObject.m_HttpComms.addValuePair(szName, szValue);
 
                         }
                     }
+
+                    var aszFromDate = szForm.match(patternHotmailFromBeta);
+                    mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler aszFromDate " + aszFromDate);
+                    mainObject.m_HttpComms.addValuePair(aszFromDate[1], aszFromDate[2]);
+
 
                     mainObject.m_HttpComms.addValuePair("MsgPriority", "0");
 
@@ -536,6 +553,10 @@ HotmailSMTPScreenRipperBETA.prototype =
                             {
                                 szValue = "AddAttachment";
                             }
+                            else if (szName.search(/mt/i)!=-1)
+                            {
+                                szValue = mainObject.m_szMT;
+                            }
                             mainObject.m_HttpComms.addValuePair(szName, szValue);
                         }
                     }
@@ -603,6 +624,15 @@ HotmailSMTPScreenRipperBETA.prototype =
                             else if (szName.search(/ToolbarActionItem/i)!=-1)
                             {
                                 mainObject.m_HttpComms.addValuePair(szName, "UploadAttachment");
+                            }
+                            else if (szName.search(/mt/i)!=-1)
+                            {
+                                mainObject.m_HttpComms.addValuePair(szName,  mainObject.m_szMT);
+                            }
+                            else if (szName.search(/AutoSavedMsgId/i)!=-1)
+                            {
+                                var szClean = new HTMLescape().decode(szValue)
+                                mainObject.m_HttpComms.addValuePair(szName,  szClean);
                             }
                             else
                                 mainObject.m_HttpComms.addValuePair(szName, szValue);
