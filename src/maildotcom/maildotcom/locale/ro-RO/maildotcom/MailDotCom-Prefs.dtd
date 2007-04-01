@@ -1,0 +1,28 @@
+<!ENTITY MailDotComPref.Window.Title "Optiuni MailDotCom">
+<!ENTITY MailDotComPref.Panel.Accounts.Title "Conturi">
+<!ENTITY MailDotComPref.Panel.Domains.Title "Domenii">
+<!ENTITY MailDotComPref.Button.Close.Label "Inchide">
+<!ENTITY MailDotComPref.Tab.POP.Title "POP">
+<!ENTITY MailDotComPref.Tab.SMTP.Title "SMTP">
+<!ENTITY MailDotComPref.POP.DownloadUnread.Label "Descarca numai mesajele necitite">
+<!ENTITY MailDotComPref.POP.DownloadUnread.AccessKey "u">
+<!ENTITY MailDotComPref.POP.EmptyTrash.Label "Goleste Trash">
+<!ENTITY MailDotComPref.POP.EmptyTrash.AccessKey "E">
+<!ENTITY MailDotComPref.POP.Folders.Label "Descarca folderele">
+<!ENTITY MailDotComPref.POP.ButtonAdd.Label "Adauga...">
+<!ENTITY MailDotComPref.POP.ButtonAdd.AccessKey "A">
+<!ENTITY MailDotComPref.POP.ButtonRemove.Label "Sterge">
+<!ENTITY MailDotComPref.POP.ButtonRemove.AccessKey "R">
+<!ENTITY MailDotComPref.SMTP.SaveSentItems.Label "Salveaza copie in Sent items">
+<!ENTITY MailDotComPref.SMTP.SaveSentItems.AccessKey "s">
+<!ENTITY MailDotComPref.SMTP.AlternativeGroup.Label "Cand trimit mesaje rich text care parte ar trebui s-o trimita extensia?">
+<!ENTITY MailDotComPref.SMTP.SendPlain.Label "Trimite text simplu">
+<!ENTITY MailDotComPref.SMTP.SendPlain.AccessKey "p">
+<!ENTITY MailDotComPref.SMTP.SendHtml.Label "Trimite text html">
+<!ENTITY MailDotComPref.SMTP.SendHtml.AccessKey "h">
+<!ENTITY MailDotComPref.AccountError.Label "Niciun cont MailDotCom gasit">
+<!ENTITY MailDotComPref.Domain.Label "Domenii suportate de extensia MailDotCom">
+<!ENTITY MailDotComPref.Domain.Button.AddDomain.Label "Adauga...">
+<!ENTITY MailDotComPref.Domain.Button.AddDomain.AccessKey "A">
+<!ENTITY MailDotComPref.Domain.Button.RemoveDomain.Label "Sterge">
+<!ENTITY MailDotComPref.Domain.Button.RemoveDomain.AccessKey "R">

@@ -1,0 +1,8 @@
+<!ENTITY MailDotComFolderAdd.Title "Adauga folder">
+<!ENTITY MailDotComFolderName.Label "Nume folder">
+<!ENTITY MailDotComFolderName.AccessKey "F">
+<!ENTITY MailDotComFolders.Label "Adauga folder de descarcat">
+<!ENTITY MailDotComFolder.ButtonOk.Label "Ok">
+<!ENTITY MailDotComFolder.ButtonOk.AccessKey "O">
+<!ENTITY MailDotComFolder.ButtonCancel.Label "Anuleaza">
+<!ENTITY MailDotComFolder.ButtonCancel.AccessKey "C">
