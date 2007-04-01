@@ -1004,15 +1004,6 @@ YahooPOPBETA.prototype =
                         var szType = szData.match(kPatternPartType)[1];
                         mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szType : " + szType);
 
-                        var szSubType = szData.match(kPatternPartSubType)[1];
-                        mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szSubType : " + szSubType);
-
-                        if (szData.search(kPatternPartTypeParams)!=-1)
-                        {
-                             var szTypeParams = szData.match(kPatternPartTypeParams)[1];
-                             mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szTypeParams : " + szTypeParams);
-                        }
-
                         if (szType.search(/header/i)!=-1)
                         {
                             //do nothing
@@ -1022,6 +1013,16 @@ YahooPOPBETA.prototype =
                             mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler -  Text part");
                             //proces headers
                             var szHeader = null;
+
+                            var szSubType = szData.match(kPatternPartSubType)[1];
+                            mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szSubType : " + szSubType);
+
+                            if (szData.search(kPatternPartTypeParams)!=-1)
+                            {
+                                 var szTypeParams = szData.match(kPatternPartTypeParams)[1];
+                                 mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szTypeParams : " + szTypeParams);
+                            }
+
                             if(szData.search(kPatternPartTypeParams)!=-1)
                             {
                                 szHeader = "Content-Type: "+szType+"/"+szSubType+"; " +szTypeParams + "\r\n";
