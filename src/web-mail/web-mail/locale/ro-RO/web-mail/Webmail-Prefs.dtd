@@ -1,0 +1,33 @@
+<!ENTITY Window.size "width: 46em; height: 37em">
+<!ENTITY Options.szTitle "WebMail Optiuni">
+<!ENTITY Servers.Panel.szTitle "Servere">
+<!ENTITY Domains.Panel.szTitle "Domenii">
+<!ENTITY Logging.Panel.szTitle "Jurnalizare">
+<!ENTITY General.Panel.szTitle "General">
+<!ENTITY close.button.label "Inchide">
+<!ENTITY Ports.Label "Port">
+<!ENTITY Ports.POP.AccessKey "o">
+<!ENTITY Ports.SMTP.AccessKey "r">
+<!ENTITY Ports.IMAP.AccessKey "t">
+<!ENTITY Pop.Label "POP">
+<!ENTITY SMTP.Label "SMTP">
+<!ENTITY IMAP.Label "IMAP">
+<!ENTITY StatusBox.size "width: 6em;">
+<!ENTITY StartServer.Tooltip "Porneste server">
+<!ENTITY StopServer.Tooltip "Opreste server">
+<!ENTITY Enable.Server.Label "Activeaza la pornire">
+<!ENTITY Enable.POP.AccessKey "E">
+<!ENTITY Enable.SMTP.AccessKey "n">
+<!ENTITY Enable.IMAP.AccessKey "a">
+<!ENTITY GeneralLogging.Label "Activeaza jurnalizarea">
+<!ENTITY GeneralLogging.AccessKey "E">
+<!ENTITY Location.Label "Locatia">
+<!ENTITY Location.AccessKey "L">
+<!ENTITY Button.Label "Rasfoieste...">
+<!ENTITY Button.AccessKey "B">
+<!ENTITY NotePort.Label "Unele sisteme de operare blocheaza porturile mai mici decat 1024.">
+<!ENTITY Note.Label "Aceste jurnale vor contine utilizatori si parole.">
+<!ENTITY Restart.Label "O repornire Thunderbird este necesara astfel ca modificarile sa aiba efect.">
+<!ENTITY RestartServer.Label "O repornire a serverului este necesara astfel ca modificarea portului sa aiba efect.">
+<!ENTITY Domain.Label "Domeniu">
+<!ENTITY POP.Label "POP">
