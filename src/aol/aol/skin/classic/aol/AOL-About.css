@@ -226,6 +226,17 @@
 }
 
 
+.flag[value="26"]/*UA*/
+{
+     -moz-image-region: rect(0px, 896px, 32px, 864px)
+}
+
+
+.flag[value="27"]/*ro*/
+{
+     -moz-image-region: rect(0px, 896px, 32px, 864px)
+}
+
 #AOLHomePage
 {
     text-align: right;

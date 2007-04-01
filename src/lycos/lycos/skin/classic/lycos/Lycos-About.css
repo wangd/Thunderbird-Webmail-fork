@@ -227,6 +227,19 @@
      -moz-image-region: rect(0px, 864px, 32px, 832px)
 }
 
+
+.flag[value="26"]/*UA*/
+{
+     -moz-image-region: rect(0px, 896px, 32px, 864px)
+}
+
+
+.flag[value="27"]/*ro*/
+{
+     -moz-image-region: rect(0px, 896px, 32px, 864px)
+}
+
+
 #LycosHomePage
 {
     text-align: right;
