@@ -15,10 +15,10 @@
 }
 
 #LionImage
-{   
+{
     margin-left: 20px;
     list-style-image: url("chrome://hotmail/skin/Dragon.png");
-    
+
 }
 
 #HotmailImage
@@ -57,7 +57,7 @@
 
 .HotmailCreatorText
 {
-    margin-top: 10px; 
+    margin-top: 10px;
     margin-left: 5px;
 }
 
@@ -227,6 +227,18 @@
 {
      -moz-image-region: rect(0px, 864px, 32px, 832px)
 }
+
+.flag[value="26"]/*UA*/
+{
+     -moz-image-region: rect(0px, 896px, 32px, 864px)
+}
+
+
+.flag[value="27"]/*ro*/
+{
+     -moz-image-region: rect(0px, 928px, 32px, 898px)
+}
+
 
 
 #HotmailHomePage

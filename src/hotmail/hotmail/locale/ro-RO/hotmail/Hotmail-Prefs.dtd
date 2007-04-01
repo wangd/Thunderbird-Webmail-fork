@@ -1,0 +1,36 @@
+<!ENTITY HotmailPref.Window.Title "Optiuni Hotmail">
+<!ENTITY HotmailPref.Panel.Accounts.Title "Conturi">
+<!ENTITY HotmailPref.Panel.Domains.Title "Domenii">
+<!ENTITY HotmailPref.Button.Close.Label "Inchide">
+<!ENTITY HotmailPref.Tab.Mode.Title "Mod">
+<!ENTITY HotmailPref.Tab.POP.Title "POP">
+<!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
+<!ENTITY HotmailPref.Mode.Label "Alege metoda de comunicatii pe care o va folosi extensia pentru conectarea la serverele Microsoft">
+<!ENTITY HotmailPref.Mode.ScreenScraper.Label "Sit Hotmail (productie)">
+<!ENTITY HotmailPref.Mode.WebDav.Label "WebDav">
+<!ENTITY HotmailPref.Mode.Beta.Label "Sit Hotmail (BETA)">
+<!ENTITY HotmailPref.POP.DownloadUnread.Label "Descarca numai mesajele necitite">
+<!ENTITY HotmailPref.POP.DownloadUnread.AccessKey "u">
+<!ENTITY HotmailPref.POP.JunkMail.Label "Descarca JunkMail">
+<!ENTITY HotmailPref.POP.JunkMail.AccessKey "J">
+<!ENTITY HotmailPref.POP.Folders.Label "Descarca folderele">
+<!ENTITY HotmailPref.POP.ButtonAdd.Label "Adauga...">
+<!ENTITY HotmailPref.POP.ButtonAdd.AccessKey "A">
+<!ENTITY HotmailPref.POP.ButtonRemove.Label "Sterge">
+<!ENTITY HotmailPref.POP.ButtonRemove.AccessKey "R">
+<!ENTITY HotmailPref.SMTP.SaveSentItems.Label "Salveaza copie in Sent items">
+<!ENTITY HotmailPref.SMTP.SaveSentItems.AccessKey "s">
+<!ENTITY HotmailPref.SMTP.AlternativeGroup.Label "Cand trimit email-uri rich text care parte ar trebui s-o trimita extensia?">
+<!ENTITY HotmailPref.SMTP.SendPlain.Label "Trimite text simplu">
+<!ENTITY HotmailPref.SMTP.SendPlain.AccessKey "p">
+<!ENTITY HotmailPref.SMTP.SendHtml.Label "Trimite text html">
+<!ENTITY HotmailPref.SMTP.SendHtml.AccessKey "h">
+<!ENTITY HotmailPref.AccountError.Label "Niciun cont Hotmail gasit">
+<!ENTITY HotmailPref.SMTP.NA.Label "Hotmail BETA nu dispune de optiune SMTP">
+<!ENTITY HotmailPref.POP.MarkAsRead.Label "Marcheaza email-urile ca citite pe server">
+<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "k">
+<!ENTITY HotmailPref.Domain.Label "Domenii suportate de extensia Hotmail">
+<!ENTITY HotmailPref.Domain.Button.AddDomain.Label "Adauga...">
+<!ENTITY HotmailPref.Domain.Button.AddDomain.AccessKey "A">
+<!ENTITY HotmailPref.Domain.Button.RemoveDomain.Label "Sterge">
+<!ENTITY HotmailPref.Domain.Button.RemoveDomain.AccessKey "R">

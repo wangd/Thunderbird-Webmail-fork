@@ -1,0 +1,8 @@
+<!ENTITY HotmailAddDomain.Title "Adauga domeniu">
+<!ENTITY HotmailAddDomain.Label "Adauga domeniu Hotmail">
+<!ENTITY HotmailAddDomainName.Label "Domeniu">
+<!ENTITY HotmailAddDomainName.AccessKey "D">
+<!ENTITY HotmailAddDomain.ButtonOk.Label "Ok">
+<!ENTITY HotmailAddDomain.ButtonOk.AccessKey "O">
+<!ENTITY HotmailAddDomain.ButtonCancel.Label "Anuleaza">
+<!ENTITY HotmailAddDomain.ButtonCancel.AccessKey "C">

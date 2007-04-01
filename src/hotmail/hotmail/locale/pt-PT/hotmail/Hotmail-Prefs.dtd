@@ -27,10 +27,10 @@
 <!ENTITY HotmailPref.SMTP.SendHtml.AccessKey "h">
 <!ENTITY HotmailPref.AccountError.Label "Não foi encontrada nenhuma conta do Hotmail">
 <!ENTITY HotmailPref.SMTP.NA.Label "não existem opções SMTP para o Hotmail BETA">
+<!ENTITY HotmailPref.POP.MarkAsRead.Label "Marcar no servidor o correio como lido">
+<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "c">
 <!ENTITY HotmailPref.Domain.Label "Domínios suportados pela extensão Hotmail">
 <!ENTITY HotmailPref.Domain.Button.AddDomain.Label "Adicionar...">
 <!ENTITY HotmailPref.Domain.Button.AddDomain.AccessKey "A">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.Label "Remover">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.AccessKey "R">
-<!ENTITY HotmailPref.POP.MarkAsRead.Label "Marcar no servidor o correio como lido">
-<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "c">

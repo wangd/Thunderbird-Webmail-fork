@@ -1,0 +1,8 @@
+<!ENTITY HotmailFolderAdd.Title "Adauga folder">
+<!ENTITY HotmailFolderName.Label "Nume folder">
+<!ENTITY HotmailFolderName.AccessKey "F">
+<!ENTITY HotmailFolders.Label "Adauga folder de descarcat">
+<!ENTITY HotmailFolder.ButtonOk.Label "Ok">
+<!ENTITY HotmailFolder.ButtonOk.AccessKey "O">
+<!ENTITY HotmailFolder.ButtonCancel.Label "Anuleaza">
+<!ENTITY HotmailFolder.ButtonCancel.AccessKey "C">
