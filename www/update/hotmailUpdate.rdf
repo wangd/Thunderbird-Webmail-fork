@@ -5,21 +5,21 @@
      <RDF:Description about="urn:mozilla:extension:{a6a33690-2c6a-11d9-9669-0800200c9a66}">
         <em:updates>
             <RDF:Seq>
-                <RDF:li resource="urn:mozilla:extension:{a6a33690-2c6a-11d9-9669-0800200c9a66}:1.0.21"/>
-                <RDF:li resource="urn:mozilla:extension:{a6a33690-2c6a-11d9-9669-0800200c9a66}:1.1.1"/>
+                <RDF:li resource="urn:mozilla:extension:{a6a33690-2c6a-11d9-9669-0800200c9a66}:1.0.22"/>
+                <RDF:li resource="urn:mozilla:extension:{a6a33690-2c6a-11d9-9669-0800200c9a66}:1.1.2"/>
             </RDF:Seq>
         </em:updates>
     </RDF:Description>
 
-    <RDF:Description about="urn:mozilla:extension:{a6a33690-2c6a-11d9-9669-0800200c9a66}:1.0.21">
-        <em:version>1.0.21</em:version>
+    <RDF:Description about="urn:mozilla:extension:{a6a33690-2c6a-11d9-9669-0800200c9a66}:1.0.22">
+        <em:version>1.0.22</em:version>
         <em:targetApplication>
             <Description>
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id> <!-- Thunderbird updates -->
                 <em:minVersion>1.4</em:minVersion>
                 <em:maxVersion>1.5.*</em:maxVersion>
-                <em:updateLink>http://download.mozdev.org/webmail/hotmail-1-0-21.xpi</em:updateLink>
-                <em:updateHash>sha256:4899f1722214ed13f8bb62f87f5f3fe553848e67da75fabd2b5a1c592495e9ad</em:updateHash>
+                <em:updateLink>http://download.mozdev.org/webmail/hotmail-1-0-22.xpi</em:updateLink>
+                <em:updateHash>sha256:d408809c30cec259fc5ada9180e7de860dcdee393768972d66ad9caafc62369a</em:updateHash>
           </Description>
         </em:targetApplication>
 
@@ -37,15 +37,15 @@
     </RDF:Description>
 
 
-    <RDF:Description about="urn:mozilla:extension:{a6a33690-2c6a-11d9-9669-0800200c9a66}:1.1.1">
-        <em:version>1.1.1</em:version>
+    <RDF:Description about="urn:mozilla:extension:{a6a33690-2c6a-11d9-9669-0800200c9a66}:1.1.2">
+        <em:version>1.1.2</em:version>
         <em:targetApplication>
             <Description>
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id> <!-- Thunderbird updates -->
                 <em:minVersion>2.0b2</em:minVersion>
                 <em:maxVersion>2.0.*</em:maxVersion>
-                <em:updateLink>http://download.mozdev.org/webmail/hotmail-1-1-1.xpi</em:updateLink>
-                <em:updateHash>sha256:bfc57b391f0bfd7e5ae2061ab436ef28d33c79968f98667aeca917b187e81d7e</em:updateHash>
+                <em:updateLink>http://download.mozdev.org/webmail/hotmail-1-1-2.xpi</em:updateLink>
+                <em:updateHash>sha256:5bf2b0ef21614b0630c30e9eced97ba5ddb9a9e03130cdeb4b1a64009372054a</em:updateHash>
           </Description>
         </em:targetApplication>
 
