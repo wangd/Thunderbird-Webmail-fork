@@ -149,7 +149,7 @@ nsAOLSMTP.prototype =
 
                     if (this.m_szHomeURI) //get home page
                     {
-                        this.m_iStage =3;
+                        this.m_iStage =4;
                         this.m_bReEntry = true;
                         this.m_HttpComms.setURI(this.m_szHomeURI);
                     }
@@ -260,7 +260,25 @@ nsAOLSMTP.prototype =
                     mainObject.m_iStage++;
                 break;
 
-                case 3://get urls
+
+                case 3://another bloody bounce
+                    var szHostURL = szResponse.match(patternAOLHost)[1];
+                    if (szHostURL == null)
+                        throw new Error("error parsing AOL login web page");
+
+                    var szSuccessPath = szResponse.match(patternAOLPath)[1];
+                    mainObject.m_Log.Write("AOLSMTP.js - loginOnloadHandler - szSuccessPath " +szSuccessPath);
+                    var szURL = "http://" + szHostURL + szSuccessPath;
+
+                    mainObject.m_HttpComms.setURI(szURL);
+                    mainObject.m_HttpComms.setRequestMethod("GET");
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
+                    if (!bResult) throw new Error("httpConnection returned false");
+                    mainObject.m_iStage++;
+                break;
+
+
+                case 4://get urls
                     if(szResponse.search(patternAOLLogout)==-1)
                     {
                         if (mainObject.m_bReEntry)

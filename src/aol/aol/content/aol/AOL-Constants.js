@@ -26,3 +26,5 @@ const patternAOLFolderNameURL = /folder=(.*?)&/i;
 const patternAOLSend =/<form.*?name="SendForm".*?>[\s\S]*?<\/form>/igm;
 const patternAOLSendCheck = /parent.HandleSendSaveResponse\(true,.*?\)/igm;
 const patternAOLBounce =/goToLoginUrl[\s\S]*?snsRedir\("(.*?)"\);[\s\S]*?\}/im;
+const patternAOLHost = /Host.*?"(.*?)";/i;
+const patternAOLPath = /gSuccessPath.*?"(.*?)";/i;
