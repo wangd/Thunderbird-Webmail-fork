@@ -461,10 +461,21 @@ HotmailScreenRipperBETA.prototype =
             //get pages uri
             if (szResponse.search(patternHotmailNextPage)!=-1)
             {
-                var aszNextPage = szResponse.match(patternHotmailNextPage);
-                mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler -aszNextPage : " +aszNextPage);
-                var szNextPage = mainObject.m_szLocationURI + aszNextPage[1];
-                mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler -next page url : " +szNextPage);
+                var szNavBlock = szResponse.match(patternHotmailNavDiv)[0];
+                mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler -szNavBlock : " +szNavBlock);
+                var aszItems = szNavBlock.split("<li>");
+                mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler -aszItems : " +aszItems);
+
+                for (var i=0; i<aszItems.length; i++)
+                {
+                    if (aszItems[i].search(patternHotmailNextPage)!=-1)
+                    {
+                        var aszNextPage = aszItems[i].match(patternHotmailNextPage);
+                        mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler -aszNextPage : " +aszNextPage);
+                        var szNextPage = mainObject.m_szLocationURI + aszNextPage[1];
+                        mainObject.m_Log.Write("Hotmail-SR-BETAR - mailBoxOnloadHandler -next page url : " +szNextPage);
+                    }
+                }
 
                 mainObject.m_HttpComms.setURI(szNextPage);
                 mainObject.m_HttpComms.setRequestMethod("GET");
