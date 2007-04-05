@@ -23,6 +23,7 @@
             <zipfileset dir="defaults" prefix="defaults" includes="**"/>
             <zipfileset dir="isp" prefix="isp" includes="**"/>
             <zipfileset dir="." includes="install.rdf"/>
+            <zipfileset dir="." includes="install.js"/>
             <zipfileset dir="." includes="chrome.manifest"/>
         </zip>
     </target>
