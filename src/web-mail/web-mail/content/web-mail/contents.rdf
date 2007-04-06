@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<RDF:RDF xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:chrome="http://www.mozilla.org/rdf/chrome#">
+
+    <RDF:Seq about="urn:mozilla:package:root">
+        <RDF:li resource="urn:mozilla:package:web-mail"/>
+    </RDF:Seq>
+
+    <RDF:Description about="urn:mozilla:package:web-mail"
+        chrome:name="web-mail"
+        chrome:displayName="WebMail"
+        chrome:author="ComodoDragon"
+        chrome:authorURL="http://webmail.mozdev.org/"
+        chrome:description="Lets Thunderbird access web mail"
+        chrome:xpcNativeWrappers="no"
+        chrome:extension="true"
+        chrome:settingsURL="chrome://web-mail/content/prefs/Webmail-Prefs.xul"
+        chrome:iconURL="chrome://web-mail/skin/Webmail-SmallIcon.png">
+    </RDF:Description>
+
+</RDF:RDF>

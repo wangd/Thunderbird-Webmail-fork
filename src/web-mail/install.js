@@ -6,7 +6,7 @@
 
 // Editable Items Begin
 var displayName         = "WebMail"; // The name displayed to the user (don't include the version)
-var version             = "1.0.17";
+var version             = "1.1.3.2";
 var name                = "web-mail"; // The leafname of the JAR file (without the .jar part)
 var guid                = "{3c8e8390-2cf6-11d9-9669-0800200c9a66}";
 
@@ -22,15 +22,12 @@ var skinDir           = "/" + name + "/"
 //var localeDir           = "/"
 var localeDir           = "/" + name + "/"
 
-var locales             = new Array( "en-US", "ca-AD", "cs-CZ", "da-DK", "de-DE", "es-AR", "es-ES", "fi-FI", "fr-FR", "it-IT", "ko-KO" ,"lt-LT", "nb-NO", "nl-NL", "pt-BR", "pt-PT", "ro-RO","ru-RU", "sk-SK", "sl-SI", "sv-SE", "tr-TR", "zh-CN" );
+var locales             = new Array( "en-US", "ca-AD", "cs-CZ", "da-DK", "de-DE", "es-AR", "es-ES", "fi-FI", "fr-FR", "it-IT", "ko-KR" ,"lt-LT", "nb-NO", "nl-NL", "pt-BR", "pt-PT", "ro-RO","ru-RU", "sk-SK", "sl-SI", "sv-SE", "tr-TR", "zh-CN" );
 var skins               = new Array( "classic" ); // "modern"
 var prefs               = new Array( "webmail.js" );
 var components          = new Array( "nsComponentData.js", "nsDomainData.js" ,"nsDomainManager.js", "nsHttpAuthManager.js", "nsIComponentData.xpt", "nsIDomainData.xpt", "nsIDomainManager.xpt", "nsIHttpAuthManager.xpt", "nsIIMAPConnectionManager.xpt", "nsIIMAPFolders.xpt", "nsIMAPConnectionManager.js", "nsIMAPFolders.js", "nsIPOPConnectionManager.xpt", "nsISMTPConnectionManager.xpt", "nsISessionData.xpt", "nsISessionManager.xpt", "nsIWebmailCookieManager.xpt", "nsPOPconnectionManger.js", "nsSMTPconnectionManger.js", "nsSessionData.js", "nsSessionManager.js", "nsWebmailCookieManager.js" );
 var searchPlugins       = new Array(  );
-
-//This file has been moved to the ISP folder.
-//Thundebird 2 can access ISP data files located in the extension folder
-// var templates           = new Array( "webmail.rdf" );
+var templates           = new Array( );
 
 // Mozilla Suite/Seamonkey stores all pref files in a single directory
 // under the application directory.  If the name of the preference file(s)

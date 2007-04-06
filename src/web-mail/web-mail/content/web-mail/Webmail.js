@@ -6,6 +6,7 @@ var gWebMail =
     m_Log : null,
     m_AccountWizard : null,
     m_timer : null,
+    m_bThunderbird : false,
 
 
     startUp : function ()
@@ -32,6 +33,7 @@ var gWebMail =
                 return;
             }
 
+            this.m_bThunderbird = true;
             this.m_AccountWizard = new WebmailAccountManager();  //create webmail.rdf file
             this.m_AccountWizard.updateISP();
             this.m_AccountWizard.register();
@@ -97,7 +99,7 @@ var gWebMail =
             }
 
             //account wizard
-            this.m_AccountWizard.unregister();
+            if (this.m_bThunderbird) this.m_AccountWizard.unregister();
             //this.m_AccountWizard.saveISP();
 
             this.m_Log.Write("Webmail.js : shutDown - END");
