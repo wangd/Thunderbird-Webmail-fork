@@ -4,6 +4,9 @@ content hotmail    jar:chrome/hotmail.jar!/content/hotmail/
 
 skin    hotmail       classic/1.0    jar:chrome/hotmail.jar!/skin/classic/hotmail/
 
+style   chrome://hotmail/content/prefs/Hotmail-Prefs.xul  chrome://messenger/skin/preferences/preferences.css
+style   chrome://hotmail/content/prefs/Hotmail-Prefs.xul  chrome://mozapps/content/preferences/preferences.css
+
 locale  hotmail    en-US   jar:chrome/hotmail.jar!/locale/en-US/hotmail/
 locale  hotmail    it-IT   jar:chrome/hotmail.jar!/locale/it-IT/hotmail/
 locale  hotmail    es-ES   jar:chrome/hotmail.jar!/locale/es-ES/hotmail/

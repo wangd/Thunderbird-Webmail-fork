@@ -239,6 +239,11 @@
      -moz-image-region: rect(0px, 928px, 32px, 898px)
 }
 
+.flag[value="28"]/*seamonkey*/
+{
+     -moz-image-region: rect(0px, 960px, 32px, 928px)
+}
+
 
 
 #HotmailHomePage
