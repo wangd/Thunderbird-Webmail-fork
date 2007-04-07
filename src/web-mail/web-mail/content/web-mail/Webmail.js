@@ -6,7 +6,6 @@ var gWebMail =
     m_Log : null,
     m_AccountWizard : null,
     m_timer : null,
-    m_bThunderbird : false,
 
 
     startUp : function ()
@@ -99,7 +98,7 @@ var gWebMail =
             }
 
             //account wizard
-            if (this.m_bThunderbird) this.m_AccountWizard.unregister();
+            this.m_AccountWizard.unregister();
             //this.m_AccountWizard.saveISP();
 
             this.m_Log.Write("Webmail.js : shutDown - END");
