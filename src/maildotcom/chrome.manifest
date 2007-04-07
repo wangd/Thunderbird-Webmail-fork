@@ -4,7 +4,10 @@ content maildotcom    jar:chrome/maildotcom.jar!/content/maildotcom/
 
 skin    maildotcom     classic/1.0     jar:chrome/maildotcom.jar!/skin/classic/maildotcom/
 
-locale    maildotcom    en-US   jar:chrome/maildotcom.jar!/locale/en-US/maildotcom/
+style   chrome://maildotcom/content/prefs/MailDotCom-Prefs.xul  chrome://messenger/skin/preferences/preferences.css
+style   chrome://maildotcom/content/prefs/MailDotCom-Prefs.xul  chrome://mozapps/content/preferences/preferences.css
+
+locale  maildotcom    en-US   jar:chrome/maildotcom.jar!/locale/en-US/maildotcom/
 locale  maildotcom    it-IT   jar:chrome/maildotcom.jar!/locale/it-IT/maildotcom/
 locale  maildotcom    es-ES   jar:chrome/maildotcom.jar!/locale/es-ES/maildotcom/
 locale  maildotcom    de-DE   jar:chrome/maildotcom.jar!/locale/de-DE/maildotcom/
