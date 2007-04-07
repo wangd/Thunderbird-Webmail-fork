@@ -4,8 +4,8 @@ content lycos    jar:chrome/lycos.jar!/content/lycos/
 
 skin    lycos     classic/1.0     jar:chrome/lycos.jar!/skin/classic/lycos/
 
-style   chrome://lycos/content/prefs/Lycos-Prefs.xul  chrome://messenger/skin/preferences/preferences.css
-style   chrome://lycos/content/prefs/Lycos-Prefs.xul  chrome://mozapps/content/preferences/preferences.css
+style   chrome://lycos/content/Lycos-Prefs.xul  chrome://messenger/skin/preferences/preferences.css
+style   chrome://lycos/content/Lycos-Prefs.xul  chrome://mozapps/content/preferences/preferences.css
 
 locale  lycos    en-US   jar:chrome/lycos.jar!/locale/en-US/lycos/
 locale  lycos    it-IT   jar:chrome/lycos.jar!/locale/it-IT/lycos/
