@@ -4,6 +4,9 @@ content aol    jar:chrome/aol.jar!/content/aol/
 
 skin    aol       classic/1.0    jar:chrome/aol.jar!/skin/classic/aol/
 
+style   chrome://aol/content/prefs/AOL-Prefs.xul  chrome://messenger/skin/preferences/preferences.css
+style   chrome://aol/content/prefs/AOL-Prefs.xul  chrome://mozapps/content/preferences/preferences.css
+
 locale    aol    en-US   jar:chrome/aol.jar!/locale/en-US/aol/
 locale    aol    es-ES   jar:chrome/aol.jar!/locale/es-ES/aol/
 locale    aol    fi-FI   jar:chrome/aol.jar!/locale/fi-FI/aol/
