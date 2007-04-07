@@ -39,7 +39,8 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
         <em:contributor>Garas (lt-LT)|22</em:contributor>
         <em:contributor>Branislav Rozbora (sk-SK)|19</em:contributor>
         <em:contributor>Kneekoo (ro-RO)|27</em:contributor>
-
+        <em:contributor>BenoitRen (SeaMonkey Compatibility)|28</em:contributor>
+        <em:contributor>Philip Chee (SeaMonkey Compatibility)|28</em:contributor>
 
         <em:targetApplication>
             <Description>
@@ -47,6 +48,13 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
                 <em:minVersion>1.4.0</em:minVersion>
                 <em:maxVersion>2.0.*</em:maxVersion>
+            </Description>
+
+            <!-- SeaMonkey -->
+            <Description>
+                <em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id>
+                <em:minVersion>1.1</em:minVersion>
+                <em:maxVersion>1.5a</em:maxVersion>
             </Description>
         </em:targetApplication>
 

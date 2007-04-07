@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+
+<RDF:RDF xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:chrome="http://www.mozilla.org/rdf/chrome#">
+
+    <RDF:Seq about="urn:mozilla:package:root">
+        <RDF:li resource="urn:mozilla:package:yahoo"/>
+    </RDF:Seq>
+
+    <RDF:Description about="urn:mozilla:package:yahoo"
+        chrome:name="yahoo"
+        chrome:displayName="WebMail - Yahoo"
+        chrome:author="ComodoDragon"
+        chrome:authorURL="http://webmail.mozdev.org/"
+        chrome:description="Yahoo component for Web-Mail extension"
+        chrome:xpcNativeWrappers="no"
+        chrome:extension="true"
+        chrome:settingsURL="chrome://yahoo/content/Yahoo-Prefs-Window.xul"
+        chrome:iconURL="chrome://yahoo/skin/Yahoo-SmallIcon.png">
+    </RDF:Description>
+
+    <RDF:Seq about="urn:mozilla:overlays">
+        <RDF:li>chrome://messenger/content/messenger.xul</RDF:li>
+        <RDF:li>chrome://messenger/content/mail3PaneWindowVertLayout.xul</RDF:li>
+    </RDF:Seq>
+
+    <RDF:Seq about="chrome://messenger/content/messenger.xul">
+        <RDF:li>chrome://yahoo/content/Yahoo-Start.xul</RDF:li>
+    </RDF:Seq>
+
+    <RDF:Seq about="chrome://messenger/content/mail3PaneWindowVertLayout.xul">
+        <RDF:li>chrome://yahoo/content/Yahoo-Start.xul</RDF:li>
+    </RDF:Seq>
+ 
+</RDF:RDF>
