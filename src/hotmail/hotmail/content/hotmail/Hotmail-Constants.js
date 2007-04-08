@@ -100,5 +100,5 @@ const patternHotmailEmailSubject = /<td.*?>.*?<a href=.*?>(.*?)<\/a>.*?<\/td>/i;
 const patternHotmailEmailDate = /<td.*?>(.*?)<\/td>/i;
 const patternHotmailEMailID =/ReadMessageID=(.*?)&/i;
 const patternHotmailFolderID = /FolderID=(.*?)$/i;
-const patternHotmailFromBeta = /<select id="fromAddressDropdown".*?name="(.*?)"[\s\S]*<option value="(.*?)" selected>.*?<\/option>/igm;
+const patternHotmailFromBeta = /<select id="fromAddressDropdown".*?name="(.*?)"[\s\S]*<option value="(.*?)" selected>.*?<\/option>/im;
 const patternHotmailMT = /mt=(.*?);/i
