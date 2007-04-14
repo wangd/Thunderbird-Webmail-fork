@@ -858,7 +858,7 @@ YahooPOPBETA.prototype =
                 throw new Error("error status " + httpChannel.responseStatus);
 
             var szHeader = szResponse.match(kPatternHeader)[1];
-            szHeader= mainObject.cleanHTML(szHeader,null);
+            szHeader= mainObject.cleanHTML(szHeader);
             mainObject.m_Log.Write("YahooPOPBETA.js - headerOnloadHandler - szHeader : " + szHeader);
 
             var szHeaderTemp  = "X-WebMail: true\r\n";
@@ -959,7 +959,7 @@ YahooPOPBETA.prototype =
                         throw new Error("Error Parsing Headers");
 
                     var szHeader = szResponse.match(kPatternHeader)[1];
-                    szHeader= mainObject.cleanHTML(szHeader, null);
+                    szHeader= mainObject.cleanHTML(szHeader);
 
                     var szHeaderTemp  = "X-WebMail: true\r\n";
                     szHeaderTemp += "X-Folder: " +mainObject.m_szBox+ "\r\n";
@@ -1043,10 +1043,11 @@ YahooPOPBETA.prototype =
 
                             //get text
                             var szText = szData.match(kPatternPartText)[1];
+                            szText= mainObject.cleanHTML(szText, szCharset);
                             var szCharset = null;
                             if (szTypeParams.search(/charset/i)!=-1)
                                 szCharset = szTypeParams.match(/charset=(.*?)(;|$|\s)/i)[1];
-                            szText= mainObject.cleanHTML(szText, szCharset);
+                            szText = mainObject.convertFromUTF8(szText, szCharset);
                             mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szText : " + szText);
                             mainObject.m_oEmail.addBody(szHeader,szText);
                         }
@@ -1131,7 +1132,7 @@ YahooPOPBETA.prototype =
                     if (szPart.search(kPatternContentId)!=-1)
                     {
                         szContentID = szPart.match(kPatternContentId)[1];
-                        szContentID = mainObject.cleanHTML(szContentID, null);
+                        szContentID = mainObject.cleanHTML(szContentID);
                     }
                     var szType = "application/octet-stream";
                     if (szPart.search(kPatternPartType)!=-1 && szPart.search(kPatternPartSubType)!=-1)
@@ -1445,30 +1446,74 @@ YahooPOPBETA.prototype =
 
 
 
-    cleanHTML : function (szRaw, szCharset)
+    cleanHTML : function (szRaw)
     {
-        this.m_Log.Write("YahooPOPBETA - cleanHTML " +szCharset );
-        var szMsg = szRaw.replace(/&lt;/g,"<");
-        szMsg = szMsg.replace(/&gt;/g,">");
-        szMsg = szMsg.replace(/&quot;/g, "\"");
-        szMsg = szMsg.replace(/&amp;/g, "&");
-        szMsg = szMsg.replace(/&nbsp;/g, " ");
-        szMsg = szMsg.replace(/&#xA;/g,"\n");
-        szMsg = szMsg.replace(/&#10;/g,"\n");
-        szMsg = szMsg.replace(/&#xD;/g,"\r");
-        szMsg = szMsg.replace(/&#13;/g,"\r");
-
-        if (szCharset)
-        {
-            var Converter = Components.classes["@mozilla.org/intl/scriptableunicodeconverter"]
-                                      .getService(Components.interfaces.nsIScriptableUnicodeConverter);
-            Converter.charset = "utf-8";
-            var unicode =  Converter.ConvertToUnicode(szMsg);
-            Converter.charset =  szCharset;
-            var szDecoded = Converter.ConvertFromUnicode(unicode);
-            this.m_Log.Write("Hotmail-SR-BETAR - cleanHTML - "+szDecoded);
-            szMsg = szDecoded;
-        }
+        this.m_Log.Write("YahooPOPBETA - cleanHTML ");
+        var szMsg = null;
+        szMsg = szRaw.replace(/&lt;/g  ,"<");
+        szMsg = szMsg.replace(/&gt;/g  ,">");
+        szMsg = szMsg.replace(/&quot;/g,"\"");
+        szMsg = szMsg.replace(/&amp;/g ,"&");
+        szMsg = szMsg.replace(/&nbsp;/g," ");
+        szMsg = szMsg.replace(/&#xA;/g ,"\n");
+        szMsg = szMsg.replace(/&#xD;/g ,"\r");
+        szMsg = szMsg.replace(/&#x9;/g ,"\t");
         return szMsg;
     },
+
+
+
+
+    convertFromUTF8 : function (szRawMSG, szCharset)
+    {
+        this.m_Log.Write("YahooPOPBETA - convertFromUTF8 START " +szCharset );
+
+        var aszCharset = new Array( "ISO-2022-CN" , "ISO-2022-JP"  , "ISO-2022-KR" , "ISO-8859-1"  , "ISO-8859-10",
+                                    "ISO-8859-11" , "ISO-8859-12"  , "ISO-8859-13" , "ISO-8859-14" , "ISO-8859-15",
+                                    "ISO-8859-16" , "ISO-8859-2"   , "ISO-8859-3"  , "ISO-8859-4"  , "ISO-8859-5" ,
+                                    "ISO-8859-6"  , "ISO-8859-6-E" , "ISO-8859-6-I", "ISO-8859-7"  , "ISO-8859-8" ,
+                                    "ISO-8859-8-E", "ISO-8859-8-I" , "ISO-8859-9"  , "ISO-IR-111"  ,
+                                    "UTF-8"       , "UTF-16"       , "UTF-16BE"    , "UTF-16LE"    , "UTF-32BE"   ,
+                                    "UTF-32LE"    , "UTF-7"        ,
+                                    "IBM850"      , "IBM852"       , "IBM855"      , "IBM857"      , "IBM862"     ,
+                                    "IBM864"      , "IBM864I"      , "IBM866"      ,
+                                    "WINDOWS-1250", "WINDOWS-1251" , "WINDOWS-1252", "WINDOWS-1253", "WINDOWS-1254",
+                                    "WINDOWS-1255", "WINDOWS-1256" , "WINDOWS-1257", "WINDOWS-1258", "WINDOWS-874" ,
+                                    "WINDOWS-936" ,
+                                    "BIG5"        , "BIG5-HKSCS"   , "EUC-JP"      , "EUC-KR"      , "GB2312"     ,
+                                    "X-GBK"       , "GB18030"      , "HZ-GB-2312"  , "ARMSCII-8"   , "GEOSTD8"    ,
+                                    "KOI8-R"      , "KOI8-U"       , "SHIFT_JIS"   , "T.61-8BIT"   , "TIS-620"    ,
+                                    "US-ASCII"    , "VIQR"         , "VISCII"      ,
+                                    "X-EUC-TW"       , "X-JOHAB"                , "X-MAC-ARABIC"          , "X-MAC-CE"       ,
+                                    "X-MAC-CROATIAN" , "X-MAC-GREEK"            , "X-MAC-HEBREW"          , "X-MAC-ROMAN"    ,
+                                    "X-MAC-TURKISH"  , "X-MAC-ICELANDIC"        , "X-U-ESCAPED"           , "X-MAC-CYRILLIC" ,
+                                    "X-MAC-UKRAINIAN", "X-MAC-ROMANIAN"         , "X-OBSOLETED-EUC-JP"    , "X-USER-DEFINED" ,
+                                    "X-VIET-VNI"     , "X-VIET-VPS"             , "X-IMAP4-MODIFIED-UTF7" , "X-VIET-TCVN5712",
+                                    "X-WINDOWS-949"  , "X-OBSOLETED-ISO-2022-JP", "X-OBSOLETED-SHIFT_JIS"
+                                  );
+
+        var szUseCharSet = "US-ASCII";
+        var i = 0;
+        var bFound = false;
+        do{
+            if (aszCharset[i] == szCharset.toUpperCase())
+            {
+                bFound = true;
+                szUseCharSet =  szCharset.toUpperCase();
+            }
+            i++;
+        }while (i<aszCharset.length && !bFound)
+        this.m_Log.Write("YahooPOPBETA - convertFromUTF8 use charset " + szUseCharSet);
+
+        var Converter = Components.classes["@mozilla.org/intl/scriptableunicodeconverter"]
+                                  .getService(Components.interfaces.nsIScriptableUnicodeConverter);
+        Converter.charset = "UTF-8";
+        var unicode =  Converter.ConvertToUnicode(szRawMSG);
+        Converter.charset =  szUseCharSet;
+        var szDecoded = Converter.ConvertFromUnicode(unicode)+ Converter.Finish();
+        this.m_Log.Write("YahooPOPBETA - convertFromUTF8 - "+szDecoded);
+
+        this.m_Log.Write("YahooPOPBETA - convertFromUTF8 END");
+        return szDecoded;
+    }
 }
