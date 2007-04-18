@@ -1,12 +1,10 @@
 <!ENTITY Window.size "width: 46em; height: 37em">
-<!ENTITY Options.szTitle "WebMail Options">
-<!ENTITY Servers.Panel.szTitle "Servers">
-<!ENTITY Domains.Panel.szTitle "Domains">
-<!ENTITY Logging.Panel.szTitle "Logging">
+<!ENTITY Options.szTitle "Implementacions de correu web">
+<!ENTITY Servers.Panel.szTitle "Servidors">
+<!ENTITY Domains.Panel.szTitle "Dominis">
+<!ENTITY Logging.Panel.szTitle "Registre">
 <!ENTITY General.Panel.szTitle "General">
-
-<!ENTITY close.button.label "Close">
-
+<!ENTITY close.button.label "Tanca">
 <!ENTITY Ports.Label "Port">
 <!ENTITY Ports.POP.AccessKey "o">
 <!ENTITY Ports.SMTP.AccessKey "r">
@@ -14,30 +12,22 @@
 <!ENTITY Pop.Label "POP">
 <!ENTITY SMTP.Label "SMTP">
 <!ENTITY IMAP.Label "IMAP">
-<!ENTITY StatusBox.size "width: 6em;">
-<!ENTITY StartServer.Tooltip "Start Server">
-<!ENTITY StopServer.Tooltip "Stop Server">
-<!ENTITY Enable.Server.Label "Enable at startup">
+<!ENTITY StatusBox.size "width:6em;">
+<!ENTITY StartServer.Tooltip "Inicia el servidor">
+<!ENTITY StopServer.Tooltip "Para el servidor">
+<!ENTITY Enable.Server.Label "Habilita a l&apos;inici">
 <!ENTITY Enable.POP.AccessKey "E">
 <!ENTITY Enable.SMTP.AccessKey "n">
 <!ENTITY Enable.IMAP.AccessKey "a">
-
-
-<!ENTITY GeneralLogging.Label "Enable logging">
+<!ENTITY GeneralLogging.Label "Habilita la identificació">
 <!ENTITY GeneralLogging.AccessKey "E">
-<!ENTITY Location.Label "Location">
+<!ENTITY Location.Label "Ubicació">
 <!ENTITY Location.AccessKey "L">
-<!ENTITY Button.Label "Browse...">
+<!ENTITY Button.Label "Navega">
 <!ENTITY Button.AccessKey "B">
-
-
-<!ENTITY NotePort.Label "Some OS's block ports below 1024.">
-<!ENTITY Note.Label "These logs will contain usernames and passwords.">
-<!ENTITY Restart.Label "A restart of Thunderbird is required before changes take effect.">
-<!ENTITY RestartServer.Label "A restart of the server is required before the port change takes effect.">
-
-
-<!ENTITY Domain.Label "Domain">
+<!ENTITY NotePort.Label "Alguns sistemes operatius bloquejen els ports per davall del 1024">
+<!ENTITY Note.Label "Aquestos registres contindran noms d&apos;usuaris i contrassenyes">
+<!ENTITY Restart.Label "És necessari reiniciar el Thunderbird per tal d&apos;aplicar els canvis">
+<!ENTITY RestartServer.Label "És necessari reiniciar el servidor per tal d&apos;aplicar els canvis de ports">
+<!ENTITY Domain.Label "Domini">
 <!ENTITY POP.Label "POP">
-<!ENTITY SMTP.Label "SMTP">
-<!ENTITY IMAP.Label "IMAP">
