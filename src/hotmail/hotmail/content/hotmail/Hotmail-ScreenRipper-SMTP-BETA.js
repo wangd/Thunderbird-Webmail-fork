@@ -69,7 +69,7 @@ HotmailSMTPScreenRipperBETA.prototype =
                                                    + " Password: " +  szPassWord
                                                    + " stream: " + this.m_oResponseStream);
             this.m_szUserName = szUserName.toLowerCase();
-            this.m_szPassWord = szPassWord;
+            this.m_szPassWord = szPassWord.substr(0,16);
 
             if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
 
