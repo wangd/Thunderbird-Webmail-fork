@@ -278,7 +278,7 @@ YahooPOPBETA.prototype =
                     mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - m_szLocationURI : "+mainObject.m_szLocationURI );
 
                     mainObject.m_iStage++;
-                    var szURI = mainObject.m_szLocationURI + "/ws/mail/v1/soap?&appid=YahooMailRC&m=ListFolders&wssid="+mainObject.m_szWssid;
+                    var szURI = mainObject.m_szLocationURI + "/ws/mail/v1/soap?appid=YahooMailRC&m=ListFolders&wssid="+mainObject.m_szWssid;
                     mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - szURI " + szURI);
                     mainObject.m_HttpComms.setURI(szURI);
                     mainObject.m_HttpComms.setRequestMethod("POST");
@@ -435,7 +435,7 @@ YahooPOPBETA.prototype =
         this.m_Log.Write("YahooPOPBETA.js - mailBox - szFolderName " + szFolderName);
         var szData = kLstMsgs.replace(/folderName/,szFolderName);
 
-        var szURI = this.m_szLocationURI + "/ws/mail/v1/soap?&appid=YahooMailRC&m=ListMessages&wssid="+this.m_szWssid;
+        var szURI = this.m_szLocationURI + "/ws/mail/v1/soap?appid=YahooMailRC&m=ListMessages&wssid="+this.m_szWssid;
         this.m_Log.Write("YahooPOPBETA.js - mailBox - szURI " + szURI);
         this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
         this.m_HttpComms.setURI(szURI);
@@ -482,11 +482,12 @@ YahooPOPBETA.prototype =
 
             if (mainObject.m_aszFolderList.length>0) //load next folder
             {
+                this.m_Log.Write("YahooPOPBETA.js - mailBoxOnloadHandler - Loading Next Folder ");
                 var szFolderName = mainObject.m_aszFolderList.shift();
                 this.m_Log.Write("YahooPOPBETA.js - mailBoxOnloadHandler - szFolderName " + szFolderName);
                 var szData = kLstMsgs.replace(/folderName/,szFolderName);
 
-                var szURI = mainObject.m_szLocationURI + "/ws/mail/v1/soap?&appid=YahooMailRC&m=ListMessages&wssid="+mainObject.m_szWssid;
+                var szURI = mainObject.m_szLocationURI + "/ws/mail/v1/soap?appid=YahooMailRC&m=ListMessages&wssid="+mainObject.m_szWssid;
                 mainObject.m_HttpComms.setURI(szURI);
                 mainObject.m_HttpComms.setRequestMethod("POST");
                 mainObject.m_HttpComms.setContentType("application/xml");
@@ -909,7 +910,7 @@ YahooPOPBETA.prototype =
             var szData = kMSGHeaders.replace(/MSGID/,oMSGData.szID).replace(/FOLDERNAME/,oMSGData.szFolder);
             this.m_Log.Write("YahooPOPBETA.js - getMessage - szData " + szData);
 
-            var szURI = this.m_szLocationURI + "/ws/mail/v1/soap?&appid=YahooMailRC&m=GetMessageRawHeader&wssid="+this.m_szWssid;
+            var szURI = this.m_szLocationURI + "/ws/mail/v1/soap?appid=YahooMailRC&m=GetMessageRawHeader&wssid="+this.m_szWssid;
             this.m_Log.Write("YahooPOPBETA.js - getMessage - szURI " + szURI);
             this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             this.m_HttpComms.setURI(szURI);
@@ -966,7 +967,7 @@ YahooPOPBETA.prototype =
                     szHeaderTemp += szHeader;
                     mainObject.m_oEmail.setEnvolpeHeaders(szHeaderTemp);
 
-                    var szURI = mainObject.m_szLocationURI + "/ws/mail/v1/soap?&appid=YahooMailRC&m=GetMessageBodyPart&wssid="+mainObject.m_szWssid;
+                    var szURI = mainObject.m_szLocationURI + "/ws/mail/v1/soap?appid=YahooMailRC&m=GetMessageBodyPart&wssid="+mainObject.m_szWssid;
                     mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szURI "+szURI);
 
                     mainObject.m_HttpComms.setURI(szURI);
@@ -1014,17 +1015,18 @@ YahooPOPBETA.prototype =
                             //proces headers
                             var szHeader = null;
 
-                            var szSubType = szData.match(kPatternPartSubType)[1];
-                            mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szSubType : " + szSubType);
+                            var szSubType = "plain";
+                            if (szData.search(kPatternPartSubType)!=-1)
+                            {
+                                szSubType = szData.match(kPatternPartSubType)[1];
+                                mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szSubType : " + szSubType);
+                            }
 
                             if (szData.search(kPatternPartTypeParams)!=-1)
                             {
-                                 var szTypeParams = szData.match(kPatternPartTypeParams)[1];
-                                 mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szTypeParams : " + szTypeParams);
-                            }
+                                var szTypeParams = szData.match(kPatternPartTypeParams)[1];
+                                mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szTypeParams : " + szTypeParams);
 
-                            if(szData.search(kPatternPartTypeParams)!=-1)
-                            {
                                 szHeader = "Content-Type: "+szType+"/"+szSubType+"; " +szTypeParams + "\r\n";
                                 szHeader += "Content-Transfer-Encoding: 7bit\r\n";
                                 if (szData.search(kPatternPartDispParam)!=-1)
@@ -1046,8 +1048,10 @@ YahooPOPBETA.prototype =
                             szText= mainObject.cleanHTML(szText, szCharset);
                             var szCharset = null;
                             if (szTypeParams.search(/charset/i)!=-1)
+                            {
                                 szCharset = szTypeParams.match(/charset=(.*?)(;|$|\s)/i)[1];
-                            szText = mainObject.convertFromUTF8(szText, szCharset);
+                                szText = mainObject.convertFromUTF8(szText, szCharset);
+                            }
                             mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szText : " + szText);
                             mainObject.m_oEmail.addBody(szHeader,szText);
                         }

@@ -44,7 +44,7 @@ const PatternYahooFolderBoxAlt = /box=(.*?)$/i;
 
 
 /******************************  BETA ***************************************/
-const kPatternWssid = /wssid.*?'(.*?)',/i;
+const kPatternWssid = /[']?wssid[']?.*?'(.*?)',/i;
 const kPatternLogOut = /exit/ig;
 
 const kListFolders = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><m:ListFolders xmlns:m=\"urn:yahoo:ymws\"><param1><greq gve=\"8\" ListFolders=\"true\" resetUnseen=\"true\"><gid>cg</gid></greq></param1></m:ListFolders></SOAP-ENV:Body></SOAP-ENV:Envelope>";
