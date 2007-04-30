@@ -446,13 +446,16 @@ YahooSMTPBETA.prototype =
                     szContentType = this.m_Email.headers.getContentType(0);
                 this.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler szContentType " + szContentType);
                 if (szContentType)
-                    szCharset = szContentType.match(/charset=(.*?)[$|;]/i)[1];
-                this.m_Log.Write("YahooSMTPBETA.js - rawMSG -szCharset " + szCharset);
+                {
+                    if (szContentType.search(/charset/i)!=-1)
+                    {
+                        szCharset = szContentType.match(/charset=(.*?)[;|\s]*$/i)[1];
+                        this.m_Log.Write("YahooSMTPBETA.js - rawMSG -szCharset " + szCharset);
 
-                var szDecoded = this.convertToUTF8(szTXTBody, szCharset);
-                this.m_Log.Write("YahooSMTPBETA.js - rawMSG - utf-8 "+szDecoded);
-
-                szTXTBody = szDecoded;
+                        szTXTBody = this.convertToUTF8(szTXTBody, szCharset);
+                        this.m_Log.Write("YahooSMTPBETA.js - rawMSG - utf-8 "+szTXTBody);
+                    }
+                }
                 szMSGBody += "<text>"+szTXTBody+"\r\n\r\n</text>";
             }
             if (this.m_Email.htmlBody)                                  //add HTML part

@@ -1049,7 +1049,7 @@ YahooPOPBETA.prototype =
                             var szCharset = null;
                             if (szTypeParams.search(/charset/i)!=-1)
                             {
-                                szCharset = szTypeParams.match(/charset=(.*?)(;|$|\s)/i)[1];
+                                szCharset = szTypeParams.match(/charset=(.*?)[;|\s]*$/i)[1];
                                 szText = mainObject.convertFromUTF8(szText, szCharset);
                             }
                             mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szText : " + szText);
