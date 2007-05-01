@@ -449,7 +449,10 @@ YahooSMTPBETA.prototype =
                 {
                     if (szContentType.search(/charset/i)!=-1)
                     {
-                        szCharset = szContentType.match(/charset=(.*?)[;|\s]*$/i)[1];
+                        if (szContentType.search(/charset=(.*?);\s/i)!=-1)
+                            szCharset = szContentType.match(/charset=(.*?);\s/i)[1];
+                        else
+                           szCharset = szContentType.match(/charset=(.*?)$/i)[1];
                         this.m_Log.Write("YahooSMTPBETA.js - rawMSG -szCharset " + szCharset);
 
                         szTXTBody = this.convertToUTF8(szTXTBody, szCharset);
