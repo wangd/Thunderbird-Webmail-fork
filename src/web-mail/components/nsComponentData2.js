@@ -122,8 +122,9 @@ nsComponentData2.prototype =
             var szSQL = "DELETE FROM webmail_components " +
                         "WHERE user_name LIKE ?1 AND component_name LIKE ?2";
             var statement = this.m_dbConn.createStatement(szSQL);
-            statement.bindStringParameter(0, szUserName);
+            statement.bindStringParameter(0, szUserName.toLowerCase());
             statement.bindStringParameter(1, szName);
+            statement.execute();
 
             this.m_Log.Write("nsComponentData.js - deleteElement - END");
             return true;
@@ -151,7 +152,8 @@ nsComponentData2.prototype =
             var szSQL = "DELETE FROM webmail_components " +
                         "WHERE user_name LIKE ?1";
             var statement = this.m_dbConn.createStatement(szSQL);
-            statement.bindStringParameter(0, szUserName);
+            statement.bindStringParameter(0, szUserName.toLowerCase());
+            statement.execute();
 
             this.m_Log.Write("nsComponentData.js - deleteElement - END");
             return true;

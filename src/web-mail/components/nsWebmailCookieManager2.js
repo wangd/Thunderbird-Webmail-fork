@@ -33,20 +33,6 @@ nsWebMailCookieManager2.prototype =
             var aszCookie = szCookie.split(/\n/);
             this.m_Log.Write("CookieManager.js - addCookie - cookie rows " + aszCookie);
 
-            var szSQL =null;
-            szSQL = "REPLACE INTO webmail_cookies (id, user_name, cookie_domain, cookie_name, cookie_value, cookie_expiry) " +
-                    "VALUES" +
-                    "(" +
-                    "   (" +
-                    "       SELECT id FROM webmail_cookies  " +
-                    "       WHERE user_name LIKE ?1 AND cookie_domain LIKE ?2 AND cookie_name LIKE ?3" +
-                    "   ), " +
-                    "   ?1," +
-                    "   ?2," +
-                    "   ?3," +
-                    "   ?4," +
-                    "   ?5" +
-                    ");"
 
             //process cookies
             var aTempCookies = new Array();
@@ -54,6 +40,21 @@ nsWebMailCookieManager2.prototype =
             {
                 var oNewCookie =this.createCookie(aszCookie[i]);
                 if (!oNewCookie.getDomain()) oNewCookie.setDomain(szDefaultDomain);
+
+                var szSQL =null;
+                szSQL = "REPLACE INTO webmail_cookies (id, user_name, cookie_domain, cookie_name, cookie_value, cookie_expiry) " +
+                        "VALUES" +
+                        "(" +
+                        "   (" +
+                        "       SELECT id FROM webmail_cookies  " +
+                        "       WHERE user_name LIKE ?1 AND cookie_domain LIKE ?2 AND cookie_name LIKE ?3" +
+                        "   ), " +
+                        "   ?1," +
+                        "   ?2," +
+                        "   ?3," +
+                        "   ?4, " +
+                        "   ?5 " +
+                        ")";
 
                 var statement = this.m_dbConn.createStatement(szSQL);
                 statement.bindStringParameter(0, szUserName.toLowerCase()); //username
@@ -92,14 +93,14 @@ nsWebMailCookieManager2.prototype =
             var szDomain = url.prePath.match(/\/\/(.*?)$/)[1]
             this.m_Log.Write("CookieManger.js - findCookie - domain - " + szDomain);
 
-            var iTimeNow = Date.now();
+            var iTimeNow = Date.now()/1000;
             this.m_Log.Write("CookieManger.js - findCookie - NOW " + iTimeNow);
 
             var szCookies = "";
             var szSQL = null;
             szSQL = "SELECT *  " +
                     "FROM webmail_cookies " +
-                    "WHERE user_name LIKE ?1 AND ?2 LIKE cookie_domain AND ((cookie_expiry>0 AND cookie_expiry < ?3) OR  cookie_expiry == -1)";
+                    "WHERE user_name LIKE ?1 AND ?2 LIKE cookie_domain AND (cookie_expiry > ?3 OR  cookie_expiry == -1)";
 
 
             var statement = this.m_dbConn.createStatement(szSQL);
@@ -161,8 +162,8 @@ nsWebMailCookieManager2.prototype =
 
             var szSQL = "DELETE FROM webmail_cookies WHERE user_name LIKE ?1";
             var statement = this.m_dbConn.createStatement(szSQL);
-            statement.bindStringParameter(0, szUserName);
-
+            statement.bindStringParameter(0, szUserName.toLowerCase());
+            statement.execute();
             this.m_Log.Write("CookieManager.js - removeCookie - END");
             return true;
         }
@@ -225,7 +226,7 @@ nsWebMailCookieManager2.prototype =
                 }
                 else if (szTempName.search(/^expires$/i)!=-1)//get expiry
                 {
-                    iExpiry = Date.parse(szTempValue.replace(/-/g," "));
+                    iExpiry = (Date.parse(szTempValue.replace(/-/g," ")))/1000;
                     this.m_Log.Write("CookieManager.js - createCookie - iExpiry " + iExpiry);
                     oCookie.setExpiry(iExpiry);
                 }
@@ -281,7 +282,7 @@ nsWebMailCookieManager2.prototype =
             }
 
             //load DB
-            /*
+/*
             var fileDB = Components.classes["@mozilla.org/file/directory_service;1"];
             fileDB = fileDB.createInstance(Components.interfaces.nsIProperties);
             fileDB = fileDB.get("ProfD", Components.interfaces.nsILocalFile);
@@ -292,7 +293,7 @@ nsWebMailCookieManager2.prototype =
             fileDB.QueryInterface(Components.interfaces.nsIFile)
             this.m_Log.Write("CookieManager.js - loadDB - fileDB "+ fileDB.path);
             this.m_dbConn = this.m_dbService.openDatabase(fileDB);
-            */
+*/
             this.m_dbConn = this.m_dbService.openSpecialDatabase("memory");
             if (!this.m_dbConn) return false;
 

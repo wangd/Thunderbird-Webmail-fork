@@ -130,8 +130,8 @@ nsHttpAuthManager2.prototype =
 
             var szSQL = "DELETE FROM webmail_auth WHERE user_name LIKE ?1";
             var statement = this.m_dbConn.createStatement(szSQL);
-            statement.bindStringParameter(0, szUserName);
-
+            statement.bindStringParameter(0, szUserName.toLowerCase());
+            statement.execute();
             this.m_Log.Write("nsHttpAuthManager.js - removeCookie - END");
             return true;
         }
