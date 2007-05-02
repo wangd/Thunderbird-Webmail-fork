@@ -5,7 +5,7 @@ function HotmailSMTPWebDav(oResponseStream, oLog, oPrefData)
         var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms3.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-Prefs-Data.js");
 
         this.m_Log = oLog;
@@ -23,11 +23,6 @@ function HotmailSMTPWebDav(oResponseStream, oLog, oPrefData)
 
         this.m_IOS = Components.classes["@mozilla.org/network/io-service;1"];
         this.m_IOS = this.m_IOS.getService(Components.interfaces.nsIIOService);
-
-        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"]
-                                          .getService(Components.interfaces.nsISessionManager);
-        this.m_SessionData = null;
-
 
         this.m_bReUseSession = oPrefData.bReUseSession;    //do i reuse the session
         this.m_bSaveCopy= oPrefData.bSaveCopy;          //do i save copy
@@ -61,20 +56,15 @@ HotmailSMTPWebDav.prototype =
             this.m_szPassWord = szPassWord;
 
             if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
-
-            if (this.m_bReUseSession)
+            if (!this.m_bReUseSession)
             {
-                this.m_Log.Write("HotmailWebDav.js - logIN - Getting Seassion Data");
-                this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
-                if (this.m_SessionData)
-                {
-                    this.m_Log.Write("HotmailWebDav.js - logIN - Session Data found");
-                    if (this.m_SessionData.oCookieManager)
-                        this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
+                var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                         .getService(Components.interfaces.nsIWebMailCookieManager2);
+                oCookies.removeCookie(this.m_szUserName);
 
-                    if (this.m_SessionData.oHttpAuthManager)
-                        this.m_HttpComms.setHttpAuthManager(this.m_SessionData.oHttpAuthManager);
-                }
+                var oAuth = Components.classes["@mozilla.org/nsWebMailAuthManager2;1"]
+                                      .getService(Components.interfaces.nsIWebMailAuthManager2);
+                oAuth.removeTokens(this.m_szUserName);
             }
 
             this.m_HttpComms.setUserName(this.m_szUserName);
@@ -107,7 +97,6 @@ HotmailSMTPWebDav.prototype =
         try
         {
             mainObject.m_Log.Write("HotmailWD-SMTP.js - loginOnloadHandler - START");
-            //mainObject.m_Log.Write("HotmailWD-SMTP.js - loginOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("HotmailWD-SMTP.js - loginOnloadHandler : " + mainObject.m_iStage);
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -148,6 +137,14 @@ HotmailSMTPWebDav.prototype =
             }
             else
             {
+                var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                         .getService(Components.interfaces.nsIWebMailCookieManager2);
+                oCookies.removeCookie(mainObject.m_szUserName);
+
+                var oAuth = Components.classes["@mozilla.org/nsWebMailAuthManager2;1"]
+                                      .getService(Components.interfaces.nsIWebMailAuthManager2);
+                oAuth.removeTokens(mainObject.m_szUserName);
+
                 mainObject.m_Log.DebugDump("HotmailWD-SMTP.js: loginHandler : Exception : "
                                           + err.name
                                           + ".\nError message: "
@@ -224,20 +221,15 @@ HotmailSMTPWebDav.prototype =
             }
             else
             {
-                if (mainObject.m_bReUseSession)
+                if (!mainObject.m_bReUseSession)
                 {
-                    mainObject.m_Log.Write("nsHotmailIMAP.js - loginOnloadHandler - Save Session Data");
-                    if (!mainObject.m_SessionData)
-                    {
-                        mainObject.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
-                        mainObject.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
-                        mainObject.m_SessionData.szUserName = mainObject.m_szUserName;
-                    }
-                    mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
-                    mainObject.m_SessionData.oHttpAuthManager = mainObject.m_HttpComms.getHttpAuthManager();
-                    mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);
-                    delete mainObject.m_SessionData;
-                    delete mainObject.m_SessionManager;
+                    var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                             .getService(Components.interfaces.nsIWebMailCookieManager2);
+                    oCookies.removeCookie(mainObject.m_szUserName);
+
+                    var oAuth = Components.classes["@mozilla.org/nsWebMailAuthManager2;1"]
+                                      .getService(Components.interfaces.nsIWebMailAuthManager2);
+                    oAuth.removeTokens(mainObject.m_szUserName);
                 }
 
                 mainObject.serverComms("250 OK\r\n");

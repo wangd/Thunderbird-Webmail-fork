@@ -13,7 +13,7 @@ function nsLycos()
         var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms3.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://lycos/content/Lycos-POPMSG.js");
 
@@ -61,10 +61,6 @@ function nsLycos()
 
         this.m_Timer = Components.classes["@mozilla.org/timer;1"];
         this.m_Timer = this.m_Timer.createInstance(Components.interfaces.nsITimer);
-
-        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"]
-                                  .getService(Components.interfaces.nsISessionManager);
-        this.m_SessionData = null;
 
         this.m_bStat = false;
         this.m_Log.Write("nsLycos.js - Constructor - END");
@@ -132,17 +128,18 @@ nsLycos.prototype =
 
             this.loadPrefs();   //get prefs
 
-            if (this.m_bReUseSession)
+            if (!this.m_bReUseSession)
             {
                 this.m_Log.Write("nsLycos.js - logIN - Looking for Session Data");
-                this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
-                if (this.m_SessionData)
-                {
-                    this.m_Log.Write("nsLycos.js - logIN - Session Data found");
-                    this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
-                    this.m_HttpComms.setHttpAuthManager(this.m_SessionData.oHttpAuthManager);
-                }
+                var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                         .getService(Components.interfaces.nsIWebMailCookieManager2);
+                oCookies.removeCookie(this.m_szUserName);
+
+                var oAuth = Components.classes["@mozilla.org/nsWebMailAuthManager2;1"]
+                                      .getService(Components.interfaces.nsIWebMailAuthManager2);
+                oAuth.removeTokens(this.m_szUserName);
             }
+
 
             this.m_HttpComms.setUserName(this.m_szUserName);
             this.m_HttpComms.setPassword(this.m_szPassWord);
@@ -243,6 +240,14 @@ nsLycos.prototype =
         }
         catch(err)
         {
+            var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                     .getService(Components.interfaces.nsIWebMailCookieManager2);
+            oCookies.removeCookie(mainObject.m_szUserName);
+
+            var oAuth = Components.classes["@mozilla.org/nsWebMailAuthManager2;1"]
+                                  .getService(Components.interfaces.nsIWebMailAuthManager2);
+            oAuth.removeTokens(mainObject.m_szUserName);
+
             mainObject.m_Log.DebugDump("nsLycos.js: loginHandler : Exception : "
                                           + err.name
                                           + ".\nError message: "
@@ -892,20 +897,16 @@ nsLycos.prototype =
         {
             this.m_Log.Write("nsLycos.js - logOUT - START");
 
-            if (this.m_bReUseSession)
+            if (!this.m_bReUseSession)
             {
-                this.m_Log.Write("Lycos.js - logOUT - saving Session Data");
-                if (!this.m_SessionData)
-                {
-                    this.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
-                    this.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
-                    this.m_SessionData.szUserName = this.m_szUserName;
-                }
-                this.m_SessionData.oCookieManager = this.m_HttpComms.getCookieManager();
-                this.m_SessionData.oHttpAuthManager = this.m_HttpComms.getHttpAuthManager();
-                this.m_SessionManager.setSessionData(this.m_SessionData);
-            }
+                var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                         .getService(Components.interfaces.nsIWebMailCookieManager2);
+                oCookies.removeCookie(this.m_szUserName);
 
+                var oAuth = Components.classes["@mozilla.org/nsWebMailAuthManager2;1"]
+                                      .getService(Components.interfaces.nsIWebMailAuthManager2);
+                oAuth.removeTokens(this.m_szUserName);
+            }
 
             if (!this.m_bEmptyTrash)
             {

@@ -9,7 +9,7 @@ function YahooSMTP(oResponseStream, oLog, oPref)
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Email.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms3.js");
         scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-SpamImage.js");
         scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-Prefs-Accounts-Data.js");
 
@@ -41,14 +41,12 @@ function YahooSMTP(oResponseStream, oLog, oPref)
         this.m_szImageVerForm = null;
         this.m_szLoginUserName = null;
 
-        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"]
-                                          .getService(Components.interfaces.nsISessionManager);
-        this.m_SessionData = null;
-
         this.m_bReEntry = false;
         this.m_aLoginForm = null;
         this.m_iLoginCount = 0;
 
+        this.m_ComponentManager = Components.classes["@mozilla.org/ComponentData2;1"]
+                                            .getService(Components.interfaces.nsIComponentData2);
         this.m_Log.Write("YahooSMTP.js - Constructor - END");
     }
     catch(e)
@@ -95,26 +93,38 @@ YahooSMTP.prototype =
             this.m_iStage = 0;
             this.m_HttpComms.setURI(this.m_szYahooMail);
             this.m_HttpComms.setRequestMethod("GET");
+            this.m_HttpComms.setUserName(this.m_szUserName);
 
             if (this.m_bReUseSession)
             {
-                this.m_Log.Write("YahooSMTP.js - logIN - Getting Session Data");
-                this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
-                if (this.m_SessionData)
+                this.m_Log.Write("YahooPOP.js - logIN - Getting Session Data");
+                this.m_szHomeURI = this.m_ComponentManager.findElement(this.m_szUserName, "szHomeURI");
+                this.m_Log.Write("YahooPOP - logIN - m_szLocation " +this.m_szLocation);
+                if (this.m_szHomeURI)
                 {
-                    this.m_Log.Write("YahooSMTP.js - logIN - Session Data FOUND");
-                    this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
-                    this.m_szHomeURI = this.m_SessionData.oComponentData.findElement("szHomeURI");
-                    this.m_Log.Write("YahooSMTPBETA.js - logIN - szHomeURI " +this.m_szHomeURI);
-                    if (this.m_szHomeURI)
-                    {
-                        this.m_Log.Write("YahooSMTP.js - logIN - Session Data Found");
-                        this.m_iStage =2;
-                        this.m_bReEntry = true;
-                        this.m_HttpComms.setURI(this.m_szHomeURI);
-                    }
+                    this.m_Log.Write("YahooPOP.js - logIN - Session Data Found");
+                    this.m_iStage =2;
+                    this.m_bReEntry = true;
+                    this.m_HttpComms.setURI(this.m_szLocation);
+                }
+                else
+                {
+                    this.m_ComponentManager.deleteAllElements(this.m_szUserName);
+
+                    var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                             .getService(Components.interfaces.nsIWebMailCookieManager2);
+                    oCookies.removeCookie(this.m_szUserName);
                 }
             }
+            else
+            {
+                this.m_ComponentManager.deleteAllElements(this.m_szUserName);
+
+                var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                         .getService(Components.interfaces.nsIWebMailCookieManager2);
+                oCookies.removeCookie(this.m_szUserName);
+            }
+
 
             var bResult = this.m_HttpComms.send(this.loginOnloadHandler,this);
             if (!bResult) throw new Error("httpConnection returned false");
@@ -142,7 +152,6 @@ YahooSMTP.prototype =
         try
         {
             mainObject.m_Log.Write("YahooSMTP.js - loginOnloadHandler - START");
-            //mainObject.m_Log.Write("YahooSMTP.js - loginOnloadHandler : \n" + szResponse);
             mainObject.m_Log.Write("YahooSMTP.js - loginOnloadHandler : " + mainObject.m_iStage );
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -249,6 +258,12 @@ YahooSMTP.prototype =
         }
         catch(err)
         {
+            mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
+
+            var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                     .getService(Components.interfaces.nsIWebMailCookieManager2);
+            oCookies.removeCookie(mainObject.m_szUserName);
+
             mainObject.m_Log.DebugDump("YahooSMTP.js: loginHandler : Exception : "
                                           + err.name
                                           + ".\nError message: "
@@ -410,22 +425,19 @@ YahooSMTP.prototype =
                         mainObject.m_Log.Write("YahooSMTP.js - composerOnloadHandler - SEND OK");
                         if (mainObject.m_bReUseSession)
                         {
-                            mainObject.m_Log.Write("YahooPOP.js - logOut - Setting Session Data");
-
-                            if (!mainObject.m_SessionData)
-                            {
-                                mainObject.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
-                                mainObject.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
-                                mainObject.m_SessionData.szUserName = mainObject.m_szUserName;
-
-                                var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
-                                componentData.QueryInterface(Components.interfaces.nsIComponentData);
-                                mainObject.m_SessionData.oComponentData = componentData;
-                            }
-                            mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
-                            mainObject.m_SessionData.oComponentData.addElement("szHomeURI",mainObject.m_szHomeURI);
-                            mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);
+                            mainObject.m_Log.Write("YahooSMTP.js - logOut - Setting Session Data");
+                            mainObject.m_ComponentManager.addElement(mainObject.m_szUserName, "szHomeURI", mainObject.m_szHomeURI);
                         }
+                        else
+                        {
+                            mainObject.m_Log.Write("YahooSMTP.js - logOUT - removing Session Data");
+                            mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
+
+                            var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                                     .getService(Components.interfaces.nsIWebMailCookieManager2);
+                            oCookies.removeCookie(mainObject.m_szUserName);
+                        }
+
 
                         mainObject.serverComms("250 OK\r\n");
                     }

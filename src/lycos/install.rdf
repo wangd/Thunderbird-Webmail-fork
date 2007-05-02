@@ -7,7 +7,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
         <em:id>{10e6e940-8a9c-11d9-9669-0800200c9a66}</em:id>
         <em:type>2</em:type>
-        <em:version>1.1.0</em:version>
+        <em:version>1.2.0b1</em:version>
 
         <em:name>WebMail - Lycos</em:name>
         <em:description>Lycos component for Web-Mail extension</em:description>
@@ -58,8 +58,8 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
             <Description>
                 <!-- requires web-mail extension-->
                 <em:id>{3c8e8390-2cf6-11d9-9669-0800200c9a66}</em:id>
-                <em:minVersion>1.1.0</em:minVersion>
-                <em:maxVersion>1.1.*</em:maxVersion>
+                <em:minVersion>1.2.0b1</em:minVersion>
+                <em:maxVersion>1.2.*</em:maxVersion>
                 <em:name>WebMail</em:name>
                 <em:homepageURL>http://webmail.mozdev.org/</em:homepageURL>
                 <em:updateURL>http://webmail.mozdev.org/update/webmailUpdate.rdf</em:updateURL>

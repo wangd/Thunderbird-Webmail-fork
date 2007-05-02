@@ -5,7 +5,7 @@ function HotmailSMTPScreenRipperBETA(oResponseStream, oLog, oPrefData)
         var scriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms3.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Email.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-Prefs-Data.js");
         scriptLoader.loadSubScript("chrome://global/content/strres.js");
@@ -33,9 +33,8 @@ function HotmailSMTPScreenRipperBETA(oResponseStream, oLog, oPrefData)
         this.m_iAttachPlaceNum = 5;
         this.m_szMT = null;
 
-        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"]
-                                          .getService(Components.interfaces.nsISessionManager);
-        this.m_SessionData = null;
+        this.m_ComponentManager = Components.classes["@mozilla.org/ComponentData2;1"]
+                                          .getService(Components.interfaces.nsIComponentData2);
 
         this.m_bReEntry = false;
 
@@ -73,6 +72,7 @@ HotmailSMTPScreenRipperBETA.prototype =
 
             if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
 
+            this.m_HttpComms.setUserName(this.m_szUserName);
             this.m_iStage= 0;
             this.m_HttpComms.setURI("http://www.hotmail.com");
 
@@ -81,26 +81,33 @@ HotmailSMTPScreenRipperBETA.prototype =
             //get session data
             if (this.m_bReUseSession)
             {
-                this.m_Log.Write("Hotmail-SR-BETAR - logIN - Getting Session Data");
-                this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
-                if (this.m_SessionData)
-                {
-                    this.m_Log.Write("nsHotmail.js - logIN - Session Data found");
-                    if (this.m_SessionData.oComponentData)
-                    {
-                        this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
-                        this.m_szHomeURI = this.m_SessionData.oComponentData.findElement("szHomeURI");
-                        this.m_Log.Write("Hotmail-SR-BETAR - logIN - szHomeURI " +this.m_szHomeURI);
+                this.m_Log.Write("Hotmail-SR-BETA - logIN - Getting Session Data");
+                this.m_szHomeURI = this.m_ComponentManager.findElement(this.m_szUserName, "szHomeURI");
+                this.m_Log.Write("Hotmail-SR-BETA - logIN - szHomeURI " +this.m_szHomeURI);
 
-                        if (this.m_szHomeURI)
-                        {
-                            this.m_Log.Write("Hotmail-SR-BETAR - logIN - Session Data Found");
-                            this.m_iStage =1;
-                            this.m_bReEntry = true;
-                            this.m_HttpComms.setURI(this.m_szHomeURI);
-                        }
-                    }
+                if (this.m_szHomeURI)
+                {
+                    this.m_Log.Write("Hotmail-SR-BETA - logIN - Session Data Found");
+                    this.m_iStage =1;
+                    this.m_bReEntry = true;
+                    this.m_HttpComms.setURI(this.m_szHomeURI);
                 }
+                else
+                {
+                    this.m_ComponentManager.deleteAllElements(this.m_szUserName);
+
+                    var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                             .getService(Components.interfaces.nsIWebMailCookieManager2);
+                    oCookies.removeCookie(this.m_szUserName);
+                }
+            }
+            else
+            {
+                this.m_ComponentManager.deleteAllElements(this.m_szUserName);
+
+                var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                         .getService(Components.interfaces.nsIWebMailCookieManager2);
+                oCookies.removeCookie(this.m_szUserName);
             }
 
             this.m_HttpComms.setRequestMethod("GET");
@@ -235,7 +242,7 @@ HotmailSMTPScreenRipperBETA.prototype =
                 case 1: //inbox
                    //check for logout option
                     var aszLogoutURL = szResponse.match(patternHotmailLogOut);
-                    mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler - logout : " + aszLogoutURL);
+                    mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler - logout : " + aszLogoutURL);
 
                     if (!aszLogoutURL)
                     {
@@ -271,10 +278,12 @@ HotmailSMTPScreenRipperBETA.prototype =
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA - loginOnloadHandler - m_szComposer : "+mainObject.m_szComposer );
 
                     //get cookies
-                    var szCookie = mainObject.m_HttpComms.getCookieManager().findCookie(httpChannel.URI);
-                    mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler cookies "+ szCookie);
+                    var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                             .getService(Components.interfaces.nsIWebMailCookieManager2);
+                    var szCookie = oCookies.findCookie(mainObject.m_szUserName, httpChannel.URI);
+                    mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler cookies "+ szCookie);
                     mainObject.m_szMT = szCookie.match(patternHotmailMT)[1];
-                    mainObject.m_Log.Write("Hotmail-SR-BETAR - loginOnloadHandler mainObject.m_szMT "+ mainObject.m_szMT);
+                    mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler mainObject.m_szMT "+ mainObject.m_szMT);
 
                     //server response
                     mainObject.serverComms("235 Your In\r\n");
@@ -292,7 +301,13 @@ HotmailSMTPScreenRipperBETA.prototype =
                                           + err.message+ "\n"
                                           + err.lineNumber);
 
-             mainObject.serverComms("502 negative vibes from " + mainObject.m_szUserName + "\r\n");
+            mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
+
+            var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                     .getService(Components.interfaces.nsIWebMailCookieManager2);
+            oCookies.removeCookie(mainObject.m_szUserName);
+
+            mainObject.serverComms("502 negative vibes from " + mainObject.m_szUserName + "\r\n");
         }
     },
 
@@ -460,7 +475,11 @@ HotmailSMTPScreenRipperBETA.prototype =
                     {
                         if (szContentType.search(/charset/i)!=-1)
                         {
-                            var szCharset = szContentType.match(/charset=(.*?)[;|\s]*$/i)[1];
+                            var szCharset = null;
+                            if (szContentType.search(/charset=(.*?);\s/i)!=-1)
+                                szCharset = szContentType.match(/charset=(.*?);\s/i)[1];
+                            else
+                               szCharset = szContentType.match(/charset=(.*?)$/i)[1];
                             mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler -szCharset " + szCharset);
                             var Converter = Components.classes["@mozilla.org/intl/scriptableunicodeconverter"]
                                                       .getService(Components.interfaces.nsIScriptableUnicodeConverter);
@@ -468,7 +487,7 @@ HotmailSMTPScreenRipperBETA.prototype =
                             var unicode =  Converter.ConvertToUnicode(szBody);
                             Converter.charset = "utf-8";
                             var szDecoded = Converter.ConvertFromUnicode(unicode);
-                            this.m_Log.Write("Hotmail-SR-BETAR - emailOnloadHandler - utf-8 "+szDecoded);
+                            this.m_Log.Write("Hotmail-SR-BETA - emailOnloadHandler - utf-8 "+szDecoded);
 
                             szBody = szDecoded;
                         }
@@ -493,23 +512,18 @@ HotmailSMTPScreenRipperBETA.prototype =
                     {
                         if (mainObject.m_bReUseSession)
                         {
-                            mainObject.m_Log.Write("Hotmail-SR-BETAR - logIN - Setting Session Data");
+                            mainObject.m_Log.Write("Hotmail-SR-BETA - composerOnloadHandler - Setting Session Data");
 
-                            if (!mainObject.m_SessionData)
-                            {
-                                mainObject.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
-                                mainObject.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
-                                mainObject.m_SessionData.szUserName = mainObject.m_szUserName;
+                            mainObject.m_ComponentManager.addElement(mainObject.m_szUserName, "szHomeURI", mainObject.m_szHomeURI);
+                        }
+                        else
+                        {
+                            mainObject.m_Log.Write("Hotmail-SR-BETA - composerOnloadHandler - removing Session Data");
+                            mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
 
-                                var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
-                                componentData.QueryInterface(Components.interfaces.nsIComponentData);
-                                mainObject.m_SessionData.oComponentData = componentData;
-                            }
-                            mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
-                            mainObject.m_SessionData.oComponentData.addElement("szHomeURI",mainObject.m_szHomeURI);
-                            mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);
-                            delete mainObject.m_SessionData;
-                            delete mainObject.m_SessionManager;
+                            var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                                     .getService(Components.interfaces.nsIWebMailCookieManager2);
+                            oCookies.removeCookie(mainObject.m_szUserName);
                         }
 
                         mainObject.serverComms("250 OK\r\n");

@@ -11,7 +11,7 @@ function nsMailDotCom()
         var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms3.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://maildotcom/content/MailDotCom-MSG.js");
 
@@ -65,9 +65,9 @@ function nsMailDotCom()
         this.m_Timer = Components.classes["@mozilla.org/timer;1"]
                                  .createInstance(Components.interfaces.nsITimer);
 
-        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"]
-                                          .getService(Components.interfaces.nsISessionManager);
-        this.m_SessionData = null;
+        this.m_ComponentManager = Components.classes["@mozilla.org/ComponentData2;1"]
+                                            .getService(Components.interfaces.nsIComponentData2);
+
         this.m_Log.Write("nsMailDotCom.js - Constructor - END");
     }
     catch(e)
@@ -114,26 +114,38 @@ nsMailDotCom.prototype =
             this.m_iStage =0;
             this.m_HttpComms.setURI("http://www.mail.com");
             this.m_HttpComms.setRequestMethod("GET");
+            this.m_HttpComms.setUserName(this.m_szUserName);
 
             if (this.m_bReUseSession)
             {
                 this.m_Log.Write("nsMailDotCom.js - logIN - Getting Session Data");
-                this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
-                if (this.m_SessionData)
+                this.m_szLocation = this.m_ComponentManager.findElement(this.m_szUserName, "szLocation");
+                this.m_Log.Write("nsMailDotCom - logIN - m_szLocation " +this.m_szLocation);
+                this.m_szFolderList =  this.m_ComponentManager.findElement(this.m_szUserName, "szFolderList");
+                this.m_Log.Write("nsMailDotCom.js - logIN - m_szFolderList - " +this.m_szFolderList);
+                if (this.m_szLocation)
                 {
-                    this.m_Log.Write("nsMailDotCom.js - logIN - Session Data FOUND");
-                    this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
-                    this.m_szLocation = this.m_SessionData.oComponentData.findElement("szLocation");
-                    this.m_Log.Write("YahooPOPBETA.js - logIN - m_szLocation " +this.m_szLocation);
-                    this.m_szFolderList =  this.m_SessionData.oComponentData.findElement("szFolderList");
-                    this.m_Log.Write("nsMailDotCom.js - logIN - m_szFolderList - " +this.m_szFolderList);
-                    if (this.m_szLocation)
-                    {
-                        this.m_iStage =4;
-                        this.m_bReEntry = true;
-                        this.m_HttpComms.setURI(this.m_szFolderList);
-                    }
+                    this.m_Log.Write("nsAOL.js - logIN - Session Data Found");
+                    this.m_iStage =4;
+                    this.m_bReEntry = true;
+                    this.m_HttpComms.setURI(this.m_szLocation);
                 }
+                else
+                {
+                    this.m_ComponentManager.deleteAllElements(this.m_szUserName);
+
+                    var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                             .getService(Components.interfaces.nsIWebMailCookieManager2);
+                    oCookies.removeCookie(this.m_szUserName);
+                }
+            }
+            else
+            {
+                this.m_ComponentManager.deleteAllElements(this.m_szUserName);
+
+                var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                         .getService(Components.interfaces.nsIWebMailCookieManager2);
+                oCookies.removeCookie(this.m_szUserName);
             }
 
             var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);
@@ -353,6 +365,12 @@ nsMailDotCom.prototype =
         }
         catch(err)
         {
+            mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
+
+            var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                     .getService(Components.interfaces.nsIWebMailCookieManager2);
+            oCookies.removeCookie(mainObject.m_szUserName);
+
             mainObject.m_Log.DebugDump("nsMailDotCom.js: loginHandler : Exception : "
                                           + err.name
                                           + ".\nError message: "
@@ -1060,21 +1078,17 @@ nsMailDotCom.prototype =
                 if (this.m_bReUseSession)
                 {
                     this.m_Log.Write("nsMailDotCom.js - logOut - Setting Session Data");
+                    this.m_ComponentManager.addElement(this.m_szUserName, "szLocation", this.m_szLocation);
+                    this.m_ComponentManager.addElement(this.m_szUserName, "szFolderList", this.m_szFolderList);
+                }
+                else
+                {
+                    this.m_Log.Write("AOLPOP.js - logOUT - removing Session Data");
+                    this.m_ComponentManager.deleteAllElements(this.m_szUserName);
 
-                    if (!this.m_SessionData)
-                    {
-                        this.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
-                        this.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
-                        this.m_SessionData.szUserName = this.m_szUserName;
-
-                        var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
-                        componentData.QueryInterface(Components.interfaces.nsIComponentData);
-                        this.m_SessionData.oComponentData = componentData;
-                    }
-                    this.m_SessionData.oCookieManager = this.m_HttpComms.getCookieManager();
-                    this.m_SessionData.oComponentData.addElement("szLocation",this.m_szLocation);
-                    this.m_SessionData.oComponentData.addElement("szFolderList", this.m_szFolderList);
-                    this.m_SessionManager.setSessionData(this.m_SessionData);
+                    var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                             .getService(Components.interfaces.nsIWebMailCookieManager2);
+                    oCookies.removeCookie(this.m_szUserName);
                 }
 
                 this.m_bAuthorised = false;
@@ -1133,23 +1147,18 @@ nsMailDotCom.prototype =
             if (mainObject.m_bReUseSession)
             {
                 mainObject.m_Log.Write("nsMailDotCom.js - logOut - Setting Session Data");
-
-                if (!mainObject.m_SessionData)
-                {
-                    mainObject.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
-                    mainObject.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
-                    mainObject.m_SessionData.szUserName = mainObject.m_szUserName;
-
-                    var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
-                    componentData.QueryInterface(Components.interfaces.nsIComponentData);
-                    mainObject.m_SessionData.oComponentData = componentData;
-                }
-                mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
-                mainObject.m_SessionData.oComponentData.addElement("szLocation",mainObject.m_szLocation);
-                mainObject.m_SessionData.oComponentData.addElement("szFolderList", mainObject.m_szFolderList);
-                mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);
+                mainObject.m_ComponentManager.addElement(mainObject.m_szUserName, "szLocation", mainObject.m_szLocation);
+                mainObject.m_ComponentManager.addElement(mainObject.m_szUserName, "szFolderList", mainObject.m_szFolderList);
             }
+            else
+            {
+                mainObject.m_Log.Write("AOLPOP.js - logOUT - removing Session Data");
+                mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
 
+                var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                         .getService(Components.interfaces.nsIWebMailCookieManager2);
+                oCookies.removeCookie(mainObject.m_szUserName);
+            }
 
             mainObject.m_bAuthorised = false;
             mainObject.serverComms("+OK Your Out\r\n");

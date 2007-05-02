@@ -11,7 +11,7 @@ function nsLycosIMAP()
         var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms3.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
 
         var date = new Date();
@@ -60,10 +60,6 @@ function nsLycosIMAP()
 
         this.m_Timer = Components.classes["@mozilla.org/timer;1"];
         this.m_Timer = this.m_Timer.createInstance(Components.interfaces.nsITimer);
-
-        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"]
-                                          .getService(Components.interfaces.nsISessionManager);
-        this.m_SessionData = null;
 
         var oPref = {Value:null};
         var  WebMailPrefAccess = new WebMailCommonPrefAccess();
@@ -147,15 +143,6 @@ nsLycosIMAP.prototype =
             else
                 throw new Error("Unknown domain");
 
-            this.m_Log.Write("nsLycos.js - logIN - Looking for Session Data");
-            this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
-            if (this.m_SessionData)
-            {
-                this.m_Log.Write("nsLycos.js - logIN - Session Data found");
-                this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
-                this.m_HttpComms.setHttpAuthManager(this.m_SessionData.oHttpAuthManager);
-            }
-
             this.m_HttpComms.setUserName(this.m_szUserName);
             this.m_HttpComms.setPassword(this.m_szPassWord);
             this.m_HttpComms.setContentType("text/xml");
@@ -200,16 +187,6 @@ nsLycosIMAP.prototype =
             mainObject.m_Log.Write("nsLycosIMAP.js - loginOnloadHandler - get folder url - " + mainObject.m_szFolderURI);
 
             mainObject.m_oIMAPData.createUser(mainObject.m_szUserName);
-
-            if (!mainObject.m_SessionData)
-            {
-                mainObject.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
-                mainObject.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
-                mainObject.m_SessionData.szUserName = mainObject.m_szUserName;
-            }
-            mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
-            mainObject.m_SessionData.oHttpAuthManager = mainObject.m_HttpComms.getHttpAuthManager();
-            mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);
 
             //server response
             mainObject.serverComms(mainObject.m_iTag +" OK Login Complete\r\n");

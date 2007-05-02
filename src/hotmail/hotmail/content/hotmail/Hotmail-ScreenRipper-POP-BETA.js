@@ -5,7 +5,7 @@ function HotmailScreenRipperBETA(oResponseStream, oLog, oPrefData)
         var scriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms3.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-MSG.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-Prefs-Data.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-FolderList.js");
@@ -28,12 +28,10 @@ function HotmailScreenRipperBETA(oResponseStream, oLog, oPrefData)
         this.m_szMSG = null;
         this.m_bStat = false;
         this.m_bReEntry = true;
-        this.m_iTimerStage = 0;
         this.m_szMT = null;
 
-        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"]
-                                          .getService(Components.interfaces.nsISessionManager);
-        this.m_SessionData = null;
+        this.m_ComponentManager = Components.classes["@mozilla.org/ComponentData2;1"]
+                                            .getService(Components.interfaces.nsIComponentData2);
 
         this.m_iTime = oPrefData.iProcessDelay;            //timer delay
         this.m_iProcessAmount =  oPrefData.iProcessAmount; //delay proccess amount
@@ -86,35 +84,42 @@ HotmailScreenRipperBETA.prototype =
 
             if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
 
+            this.m_HttpComms.setUserName(this.m_szUserName);
             //get hotmail.com webpage
             this.m_iStage= 0;
             this.m_HttpComms.setURI("http://www.hotmail.com");
             this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
 
             //get session data
-                       //get session data
             if (this.m_bReUseSession)
             {
                 this.m_Log.Write("Hotmail-SR-BETA - logIN - Getting Session Data");
-                this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
-                if (this.m_SessionData)
-                {
-                    this.m_Log.Write("Hotmail-SR-BETA - logIN - Session Data found");
-                    if (this.m_SessionData.oComponentData)
-                    {
-                        this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
-                        this.m_szHomeURI = this.m_SessionData.oComponentData.findElement("szHomeURI");
-                        this.m_Log.Write("Hotmail-SR-BETA - logIN - szHomeURI " +this.m_szHomeURI);
+                this.m_szHomeURI = this.m_ComponentManager.findElement(this.m_szUserName, "szHomeURI");
+                this.m_Log.Write("Hotmail-SR - logIN - szHomeURI " +this.m_szHomeURI);
 
-                        if (this.m_szHomeURI)
-                        {
-                            this.m_Log.Write("Hotmail-SR-BETA - logIN - Session Data Found");
-                            this.m_iStage =1;
-                            this.m_bReEntry = true;
-                            this.m_HttpComms.setURI(this.m_szHomeURI);
-                        }
-                    }
+                if (this.m_szHomeURI)
+                {
+                    this.m_Log.Write("Hotmail-SR-BETA - logIN - Session Data Found");
+                    this.m_iStage =1;
+                    this.m_bReEntry = true;
+                    this.m_HttpComms.setURI(this.m_szHomeURI);
                 }
+                else
+                {
+                    this.m_ComponentManager.deleteAllElements(this.m_szUserName);
+
+                    var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                             .getService(Components.interfaces.nsIWebMailCookieManager2);
+                    oCookies.removeCookie(this.m_szUserName);
+                }
+            }
+            else
+            {
+                this.m_ComponentManager.deleteAllElements(this.m_szUserName);
+
+                var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                         .getService(Components.interfaces.nsIWebMailCookieManager2);
+                oCookies.removeCookie(this.m_szUserName);
             }
 
             this.m_HttpComms.setRequestMethod("GET");
@@ -281,7 +286,9 @@ HotmailScreenRipperBETA.prototype =
                     mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler - m_szHomeURI : "+mainObject.m_szHomeURI );
 
                     //get cookies
-                    var szCookie = mainObject.m_HttpComms.getCookieManager().findCookie(httpChannel.URI);
+                    var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                             .getService(Components.interfaces.nsIWebMailCookieManager2);
+                    var szCookie = oCookies.findCookie(mainObject.m_szUserName, httpChannel.URI);
                     mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler cookies "+ szCookie);
                     mainObject.m_szMT = szCookie.match(patternHotmailMT)[1];
                     mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler mainObject.m_szMT "+ mainObject.m_szMT);
@@ -361,6 +368,12 @@ HotmailScreenRipperBETA.prototype =
                                           + ".\nError message: "
                                           + err.message+ "\n"
                                           + err.lineNumber);
+
+            mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
+
+            var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                     .getService(Components.interfaces.nsIWebMailCookieManager2);
+            oCookies.removeCookie(mainObject.m_szUserName);
 
             mainObject.serverComms("-ERR negative vibes from " +mainObject.m_szUserName+ "\r\n");
         }
@@ -507,7 +520,10 @@ HotmailScreenRipperBETA.prototype =
                     }
                     else //called by list
                     {
-                        mainObject.m_iTimerStage = 2;  //process sizes
+                        var callback = {
+                           notify: function(timer) { this.parent.processSizes(timer)}
+                        };
+                        callback.parent = mainObject;
                         mainObject.m_iHandleCount = 0;
                         mainObject.m_Timer.initWithCallback(callback,
                                                             mainObject.m_iTime,
@@ -636,9 +652,12 @@ HotmailScreenRipperBETA.prototype =
 
             if (this.m_bStat)
             {  //msg table has been donwloaded
-                this.m_iTimerStage = 2;  //process sizes
+                 var callback = {
+                   notify: function(timer) { this.parent.processSizes(timer)}
+                };
+                callback.parent = this;
                 this.m_iHandleCount = 0;
-                this.m_Timer.initWithCallback(this,
+                this.m_Timer.initWithCallback(callback,
                                               this.m_iTime,
                                               Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
             }
@@ -718,9 +737,12 @@ HotmailScreenRipperBETA.prototype =
         {
             this.m_Log.Write("Hotmail-SR-BETA - getMessageIDs - START");
 
-            this.m_iTimerStage = 3;  //process ids
+             var callback = {
+               notify: function(timer) { this.parent.processIDS(timer)}
+            };
+            callback.parent = this;
             this.m_iHandleCount = 0;
-            this.m_Timer.initWithCallback(this,
+            this.m_Timer.initWithCallback(callback,
                                           this.m_iTime,
                                           Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
 
@@ -1066,21 +1088,18 @@ HotmailScreenRipperBETA.prototype =
 
             if (this.m_bReUseSession)
             {
-                if (!this.m_SessionData)
-                {
-                    this.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
-                    this.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
-                    this.m_SessionData.szUserName = this.m_szUserName;
+                this.m_Log.Write("Hotmail-SR-BETA - logOUT - Setting Session Data");
 
-                    var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
-                    componentData.QueryInterface(Components.interfaces.nsIComponentData);
-                    this.m_SessionData.oComponentData = componentData;
-                }
-                this.m_SessionData.oCookieManager = this.m_HttpComms.getCookieManager();
-                this.m_SessionData.oComponentData.addElement("szHomeURI",this.m_szHomeURI);
-                this.m_SessionManager.setSessionData(this.m_SessionData);
-                delete this.m_SessionData;
-                delete this.m_SessionManager;
+                this.m_ComponentManager.addElement(this.m_szUserName, "szHomeURI", this.m_szHomeURI);
+            }
+            else
+            {
+                this.m_Log.Write("Hotmail-SR-BETA - logOUT - removing Session Data");
+                this.m_ComponentManager.deleteAllElements(this.m_szUserName);
+
+                var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                         .getService(Components.interfaces.nsIWebMailCookieManager2);
+                oCookies.removeCookie(this.m_szUserName);
             }
 
             this.m_bAuthorised = false;
@@ -1143,34 +1162,5 @@ HotmailScreenRipperBETA.prototype =
         szEncoded = szEncoded.replace(/!/g,"%21");
         return szEncoded;
 
-    },
-
-
-
-
-    notify: function(timer)
-    {
-        this.m_Log.Write("Hotmail-SR.js - notify - START");
-
-        switch(this.m_iTimerStage)
-        {
-            case 1 : //process raw message
-                this.processMSG(timer);
-            break;
-
-            case 2 : //process messsage sizes
-                this.processSizes(timer);
-            break;
-
-            case 3: //process message ids
-                this.processIDS(timer);
-            break;
-
-            default:
-               timer.cancel();
-            break;
-        }
-
-        this.m_Log.Write("HotmailWebDav.js - notify - END");
     }
 }

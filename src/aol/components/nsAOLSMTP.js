@@ -12,7 +12,7 @@ function nsAOLSMTP()
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/base64.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms3.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Email.js");
 
@@ -52,9 +52,8 @@ function nsAOLSMTP()
         this.m_Email.decodeBody(true);
         this.m_iAttCount = 0;
 
-        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"]
-                                          .getService(Components.interfaces.nsISessionManager);
-        this.m_SessionData = null;
+        this.m_ComponentManager = Components.classes["@mozilla.org/ComponentData2;1"]
+                                            .getService(Components.interfaces.nsIComponentData2);
 
         //do i reuse the session
         this.m_bReUseSession=true;
@@ -114,7 +113,7 @@ nsAOLSMTP.prototype =
             if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
 
             var szTempUserName = this.m_szUserName.split("@");
-            this.m_Log.Write("nsAOL.js - logIN - doamain " + szTempUserName);
+            this.m_Log.Write("nsAOLSMTP.js - logIN - doamain " + szTempUserName);
             var szDomain = szTempUserName[1];
             this.m_szLoginUserName =szTempUserName[0];
             var szDomain = szTempUserName[1];
@@ -127,33 +126,38 @@ nsAOLSMTP.prototype =
             this.m_iStage = 0;
             this.m_HttpComms.setURI(this.m_szAOLMail);
             this.m_HttpComms.setRequestMethod("GET");
+            this.m_HttpComms.setUserName(this.m_szUserName);
 
+            //get session data
             if (this.m_bReUseSession)
             {
-                this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName.toLowerCase());
-                if (this.m_SessionData && this.m_bReUseSession)
+                this.m_Log.Write("nsAOLSMTP.js - logIN - Session Data found");
+                this.m_szHomeURI = this.m_ComponentManager.findElement(this.m_szUserName, "szHomeURI");
+                this.m_Log.Write("Hotmail-SR - logIN - szHomeURI " +this.m_szHomeURI);
+
+                if (this.m_szHomeURI)
                 {
-                    this.m_Log.Write("AOLSMTP.js - logIN - Session Data found");
-
-                    this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
-                    this.m_szHomeURI = this.m_SessionData.oComponentData.findElement("szHomeURI");
-                    this.m_Log.Write("AOLPOP.js - logIN - m_szHomeURI " +this.m_szHomeURI);
-                    this.m_szUserId = this.m_SessionData.oComponentData.findElement("szUserId");
-                    this.m_Log.Write("AOLPOP.js - logIN - m_szUserId " +this.m_szUserId);
-                    this.m_szRealUserName = this.m_SessionData.oComponentData.findElement("szRealUserName");
-                    this.m_Log.Write("AOLPOP.js - logIN - m_szRealUserName " +this.m_szRealUserName);
-                    this.m_szVersion = this.m_SessionData.oComponentData.findElement("szVersion");
-                    this.m_Log.Write("AOLPOP.js - logIN - m_szVersion " +this.m_szVersion);
-                    this.m_szLocation = this.m_SessionData.oComponentData.findElement("szLocation");
-                    this.m_Log.Write("AOLPOP.js - logIN - .m_szLocation" +this.m_szLocation);
-
-                    if (this.m_szHomeURI) //get home page
-                    {
-                        this.m_iStage =4;
-                        this.m_bReEntry = true;
-                        this.m_HttpComms.setURI(this.m_szHomeURI);
-                    }
+                    this.m_Log.Write("nsAOLSMTP.js - logIN - Session Data Found");
+                    this.m_iStage =4;
+                    this.m_bReEntry = true;
+                    this.m_HttpComms.setURI(this.m_szHomeURI);
                 }
+                else
+                {
+                    this.m_ComponentManager.deleteAllElements(this.m_szUserName);
+
+                    var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                             .getService(Components.interfaces.nsIWebMailCookieManager2);
+                    oCookies.removeCookie(this.m_szUserName);
+                }
+            }
+            else
+            {
+                this.m_ComponentManager.deleteAllElements(this.m_szUserName);
+
+                var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                         .getService(Components.interfaces.nsIWebMailCookieManager2);
+                oCookies.removeCookie(this.m_szUserName);
             }
 
             var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);
@@ -296,7 +300,9 @@ nsAOLSMTP.prototype =
                     }
 
                     //get cookies
-                    var szCookie = mainObject.m_HttpComms.getCookieManager().findCookie(httpChannel.URI);
+                    var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                             .getService(Components.interfaces.nsIWebMailCookieManager2);
+                    var szCookie = oCookies.findCookie(mainObject.m_szUserName, httpChannel.URI);
                     this.m_Log.Write("AOLSMTP.js - loginOnloadHandler cookies "+ szCookie);
 
                     mainObject.m_szUserId = szCookie.match(patternAOLUserID)[1];
@@ -330,6 +336,12 @@ nsAOLSMTP.prototype =
         }
         catch(err)
         {
+            mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
+
+            var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                     .getService(Components.interfaces.nsIWebMailCookieManager2);
+            oCookies.removeCookie(mainObject.m_szUserName);
+
             mainObject.m_Log.DebugDump("nsAOLSMTP.js: loginHandler : Exception : "
                                           + err.name
                                           + ".\nError message: "
@@ -537,26 +549,20 @@ nsAOLSMTP.prototype =
                         return;
                     }
 
-                    if (mainObject.m_bReUseSession)
+                    if (mainObject.bReUseSession)
                     {
-                        mainObject.m_Log.Write("nsAOLSMTP.js - Logout - Setting Session Data");
-                        if (!mainObject.m_SessionData)
-                        {
-                            mainObject.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
-                            mainObject.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
-                            mainObject.m_SessionData.szUserName = mainObject.m_szUserName.toLowerCase();
+                        mainObject.m_Log.Write("nsAOLSMTP.js - composerOnloadHandler - Setting Session Data");
 
-                            var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
-                            componentData.QueryInterface(Components.interfaces.nsIComponentData);
-                            mainObject.m_SessionData.oComponentData = componentData;
-                        }
-                        mainObject.m_SessionData.oCookieManager = mainObject.m_HttpComms.getCookieManager();
-                        mainObject.m_SessionData.oComponentData.addElement("szHomeURI",mainObject.m_szHomeURI);
-                        mainObject.m_SessionData.oComponentData.addElement("szUserId",mainObject.m_szUserId);
-                        mainObject.m_SessionData.oComponentData.addElement("szRealUserName",mainObject.m_szRealUserName);
-                        mainObject.m_SessionData.oComponentData.addElement("szVersion",mainObject.m_szVersion);
-                        mainObject.m_SessionData.oComponentData.addElement("szLocation",mainObject.m_szLocation);
-                        mainObject.m_SessionManager.setSessionData(mainObject.m_SessionData);
+                        mainObject.m_ComponentManager.addElement(mainObject.m_szUserName, "szHomeURI", mainObject.m_szHomeURI);
+                    }
+                    else
+                    {
+                        mainObject.m_Log.Write("nsAOLSMTP.js - composerOnloadHandler - removing Session Data");
+                        mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
+
+                        var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                                 .getService(Components.interfaces.nsIWebMailCookieManager2);
+                        oCookies.removeCookie(mainObject.m_szUserName);
                     }
 
                     mainObject.serverComms("250 OK\r\n");

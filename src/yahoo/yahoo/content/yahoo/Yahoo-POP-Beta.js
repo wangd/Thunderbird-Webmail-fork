@@ -7,7 +7,7 @@ function YahooPOPBETA(oResponseStream, oLog, oPrefs)
         var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms3.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Header.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/base64.js");
         scriptLoader.loadSubScript("chrome://yahoo/content/YahooMSG.js");
@@ -61,9 +61,8 @@ function YahooPOPBETA(oResponseStream, oLog, oPrefs)
         this.m_Timer = Components.classes["@mozilla.org/timer;1"];
         this.m_Timer = this.m_Timer.createInstance(Components.interfaces.nsITimer);
 
-        this.m_SessionManager = Components.classes["@mozilla.org/SessionManager;1"]
-                                          .getService(Components.interfaces.nsISessionManager);
-        this.m_SessionData = null;
+        this.m_ComponentManager = Components.classes["@mozilla.org/ComponentData2;1"]
+                                            .getService(Components.interfaces.nsIComponentData2);
 
         this.m_Log.Write("YahooPOPBETA.js - Constructor - END");
     }
@@ -110,25 +109,37 @@ YahooPOPBETA.prototype =
             this.m_iStage = 0;
             this.m_HttpComms.setURI(this.m_szYahooMail);
             this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
+            this.m_HttpComms.setUserName(this.m_szUserName);
+
             //get session data
             if (this.m_bReUseSession)
             {
                 this.m_Log.Write("YahooPOPBETA.js - logIN - Getting Session Data");
-                this.m_SessionData = this.m_SessionManager.findSessionData(this.m_szUserName);
-                if (this.m_SessionData)
+                this.m_szHomeURI = this.m_ComponentManager.findElement(this.m_szUserName, "szHomeURI");
+                this.m_Log.Write("YahooPOPBETA - logIN - m_szLocation " +this.m_szLocation);
+                if (this.m_szHomeURI)
                 {
-                    this.m_Log.Write("YahooPOPBETA.js - logIN - Session Data FOUND");
-                    this.m_HttpComms.setCookieManager(this.m_SessionData.oCookieManager);
-                    this.m_szHomeURI = this.m_SessionData.oComponentData.findElement("szHomeURI");
-                    this.m_Log.Write("YahooPOPBETA.js - logIN - szHomeURI " +this.m_szHomeURI);
-                    if (this.m_szHomeURI)
-                    {
-                        this.m_Log.Write("YahooPOPBETA.js - logIN - Session Data Found");
-                        this.m_iStage =2;
-                        this.m_bReEntry = true;
-                        this.m_HttpComms.setURI(this.m_szHomeURI);
-                    }
+                    this.m_Log.Write("YahooPOPBETA.js - logIN - Session Data Found");
+                    this.m_iStage =2;
+                    this.m_bReEntry = true;
+                    this.m_HttpComms.setURI(this.m_szLocation);
                 }
+                else
+                {
+                    this.m_ComponentManager.deleteAllElements(this.m_szUserName);
+
+                    var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                             .getService(Components.interfaces.nsIWebMailCookieManager2);
+                    oCookies.removeCookie(this.m_szUserName);
+                }
+            }
+            else
+            {
+                this.m_ComponentManager.deleteAllElements(this.m_szUserName);
+
+                var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                         .getService(Components.interfaces.nsIWebMailCookieManager2);
+                oCookies.removeCookie(this.m_szUserName);
             }
 
             this.m_HttpComms.setRequestMethod("GET");
@@ -389,6 +400,12 @@ YahooPOPBETA.prototype =
         }
         catch(err)
         {
+            mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
+
+            var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                     .getService(Components.interfaces.nsIWebMailCookieManager2);
+            oCookies.removeCookie(mainObject.m_szUserName);
+
             mainObject.m_Log.DebugDump("YahooPOPBETA.js: loginHandler : Exception : "
                                           + err.name
                                           + ".\nError message: "
@@ -1294,20 +1311,16 @@ YahooPOPBETA.prototype =
             if (this.m_bReUseSession)
             {
                 this.m_Log.Write("YahooPOPBETA.js - logOut - Setting Session Data");
+                this.m_ComponentManager.addElement(this.m_szUserName, "szHomeURI", this.m_szHomeURI);
+            }
+            else
+            {
+                this.m_Log.Write("YahooPOPBETA.js - logOUT - removing Session Data");
+                this.m_ComponentManager.deleteAllElements(this.m_szUserName);
 
-                if (!this.m_SessionData)
-                {
-                    this.m_SessionData = Components.classes["@mozilla.org/SessionData;1"].createInstance();
-                    this.m_SessionData.QueryInterface(Components.interfaces.nsISessionData);
-                    this.m_SessionData.szUserName = this.m_szUserName;
-
-                    var componentData = Components.classes["@mozilla.org/ComponentData;1"].createInstance();
-                    componentData.QueryInterface(Components.interfaces.nsIComponentData);
-                    this.m_SessionData.oComponentData = componentData;
-                }
-                this.m_SessionData.oCookieManager = this.m_HttpComms.getCookieManager();
-                this.m_SessionData.oComponentData.addElement("szHomeURI",this.m_szHomeURI);
-                this.m_SessionManager.setSessionData(this.m_SessionData);
+                var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                         .getService(Components.interfaces.nsIWebMailCookieManager2);
+                oCookies.removeCookie(this.m_szUserName);
             }
 
 
