@@ -1,0 +1,13 @@
+#include "nsISupports.idl"
+
+[scriptable, uuid(422cf4ba-f75f-11db-8314-0800200c9a66)]
+interface nsIComponentData2 : nsISupports
+{
+    boolean addElement(in string szUserName, in string szName, in string szValue);
+
+    string findElement(in string szUserName, in string szName);
+
+    boolean deleteElement(in string szUserName, in string szName);
+
+    boolean deleteAllElements(in string szUserName);
+};

@@ -1,46 +1,57 @@
-function Comms(parent , log)
+function HttpComms(oLog)
 {
     try
     {
-        var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+        var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/commsData.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/CookieManager.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpAuthManager.js");
 
-        this.m_Log = log;
-        this.m_Log.Write("comms.js - constructor - START");
+        if (oLog)
+        {
+            this.m_Log = oLog;
+        }
+        else
+        {
+            var date = new Date();
+            var  szLogFileName = "HTTP Comms Log - " + date.getHours()
+                                               + "-" + date.getMinutes()
+                                               + "-" + date.getUTCMilliseconds() +" -";
+            this.m_Log = new DebugLog("webmail.logging.comms",
+                                      "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
+                                      szLogFileName);
+        }
+        this.m_Log.Write("HttpComms3.js - constructor - START");
 
         this.m_IOService = Components.classes["@mozilla.org/network/io-service;1"];
         this.m_IOService = this.m_IOService.getService(Components.interfaces.nsIIOService);
 
-        this.m_oCookies = null;
-        this.m_AuthToken =  null;
+        this.m_oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                    .getService(Components.interfaces.nsIWebMailCookieManager2);
 
+        this.m_AuthToken = Components.classes["@mozilla.org/HttpAuthManager2;1"]
+                                    .getService(Components.interfaces.nsIHttpAuthManager2);
+
+        this.m_aHeaders = new Array();
+        this.m_aFormData = new Array();
         this.m_bHandleCookie = true;
         this.m_bHandleBounce = true;
         this.m_bHandleHttpAuth = false;
         this.m_iHttpAuth = 0;
         this.m_szPassword = null;
-        this.m_szUserName = null;
+        this.m_szUserName = Date.now();
         this.m_URI = null;
-        this.m_aHeaders = new Array();
-        this.m_aFormData = new Array();
         this.m_szMethod = null;
-        this.m_CallBack = null;
-        this.m_iContentType = 0;
         this.m_szContentType = "application/x-www-form-urlencoded";
-        this.m_parent = parent;
-        this.m_szStartBoundary = null
-        this.m_szEndBoundary = null;
-        this.m_szBoundary = null;
 
-        this.m_Log.Write("comms.js - constructor - END");
+        this.m_CallBack = null;
+        this.m_Parent = null;
+
+        this.m_Log.Write("HttpComms3.js - constructor - END");
     }
     catch(e)
     {
-         DebugDump("comms.js: Constructor : Exception : "
+         DebugDump("HttpComms3.js: Constructor : Exception : "
                                       + e.name
                                       + ".\nError message: "
                                       + e.message +"\n" +
@@ -49,14 +60,14 @@ function Comms(parent , log)
 }
 
 
-Comms.prototype =
+HttpComms.prototype =
 {
-    clean : function ()
+    clear : function ()
     {
+        this.m_Log.Write("HttpComms3.js - clear - START");
+
         this.m_URI = null;
         this.m_szMethod = null;
-        this.m_CallBack = null;
-        this.m_iContentType = 0;
         this.m_szContentType = "application/x-www-form-urlencoded";
         this.m_iHttpAuth = 0;
 
@@ -65,8 +76,17 @@ Comms.prototype =
 
         delete this.m_aFormData;
         this.m_aFormData = new Array();
+
+        this.m_Log.Write("HttpComms3.js - clear - END");
     },
 
+    setLogFile : function (log)
+    {
+        if (!log) return false;
+        if (this.m_Log) delete this.m_Log;
+        this.m_Log = log;
+        return true;
+    },
 
     setHandleCookies : function (bState)
     {
@@ -78,40 +98,6 @@ Comms.prototype =
     {
         this.m_bHandleBounce = bState;
     },
-
-
-    setCookieManager : function (oCookieManager)
-    {
-        this.m_Log.Write("comms.js - setCookieManager - " + oCookieManager);
-        if (!oCookieManager) return false;
-        if (this.m_oCookies)  delete this.m_oCookies;
-        this.m_oCookies = oCookieManager;
-        return true;
-    },
-
-
-    getCookieManager: function ()
-    {
-        return this.m_oCookies;
-    },
-
-
-    setHttpAuthManager : function (oHttpAuthManager)
-    {
-        this.m_Log.Write("comms.js - setHttpAuthManager - " + oHttpAuthManager);
-        if (!oHttpAuthManager) return false;
-        if (this.m_AuthToken)  delete this.m_AuthToken;
-        this.m_AuthToken = oHttpAuthManager;
-        return true;
-    },
-
-
-    getHttpAuthManager: function ()
-    {
-        return this.m_AuthToken;
-    },
-
-
 
     setHandleHttpAuth : function (bState)
     {
@@ -135,10 +121,11 @@ Comms.prototype =
     {
         try
         {
-            this.m_Log.Write("comms.js - setURI - " + szURI);
+            this.m_Log.Write("HttpComms3.js - setURI - " + szURI);
 
             if (!szURI) return false;
 
+            if (this.m_URI) delete this.m_URI;
             this.m_URI = this.m_IOService.newURI(szURI, null, null);
 
             return true;
@@ -154,7 +141,7 @@ Comms.prototype =
     {
         try
         {
-            this.m_Log.Write("comms.js - addRequestHeader - " + szName + " "
+            this.m_Log.Write("HttpComms3.js - addRequestHeader - " + szName + " "
                                                               + szValue + " "
                                                               + bOverRide);
 
@@ -170,7 +157,7 @@ Comms.prototype =
         }
         catch(err)
         {
-            this.m_Log.DebugDump("comms.js: addRequestHeader : Exception : "
+            this.m_Log.DebugDump("HttpComms3.js: addRequestHeader : Exception : "
                                                   + err.name
                                                   + ".\nError message: "
                                                   + err.message + "\n"
@@ -185,7 +172,7 @@ Comms.prototype =
     {
         try
         {
-            this.m_Log.Write("comms.js - requestMethod - " + szMethod);
+            this.m_Log.Write("HttpComms3.js - requestMethod - " + szMethod);
             if (!szMethod) return false;
 
             this.m_szMethod = szMethod;
@@ -194,7 +181,7 @@ Comms.prototype =
         }
         catch(err)
         {
-            this.m_Log.DebugDump("comms.js: requestMethod : Exception : "
+            this.m_Log.DebugDump("HttpComms3.js: requestMethod : Exception : "
                                                   + err.name
                                                   + ".\nError message: "
                                                   + err.message + "\n"
@@ -208,13 +195,13 @@ Comms.prototype =
     {
         try
         {
-            this.m_Log.Write("comms.js - get requestMethod - "+this.m_szMethod);
+            this.m_Log.Write("HttpComms3.js - get requestMethod - "+this.m_szMethod);
             if (!this.m_szMethod) return null;
             return this.m_szMethod;
         }
         catch(err)
         {
-            this.m_Log.DebugDump("comms.js: requestMethod : Exception : "
+            this.m_Log.DebugDump("HttpComms3.js: requestMethod : Exception : "
                                                   + err.name
                                                   + ".\nError message: "
                                                   + err.message + "\n"
@@ -224,19 +211,14 @@ Comms.prototype =
     },
 
 
-    //0 = "application/x-www-form-urlencoded"
-    //1 = "multipart/form-data"
-    setContentType : function (iType)
+    // 0"application/x-www-form-urlencoded"
+    // 1"multipart/form-data"
+    setContentType : function (szContentType)
     {
-        this.m_Log.Write("comms.js - setContentType - " + iType);
-        this.m_iContentType = iType;
+        this.m_Log.Write("HttpComms3.js - setContentType - " + szContentType);
+        if (!szContentType) return false;
 
-        if (iType==0)
-            this.m_szContentType= "application/x-www-form-urlencoded";
-        else if (iType==1)
-            this.m_szContentType= "multipart/form-data";
-        else
-            this.m_szContentType= null;
+        this.m_szContentType = szContentType;
 
         return true;
     },
@@ -246,7 +228,7 @@ Comms.prototype =
     {
        try
         {
-            this.m_Log.Write("comms.js - addValuePair - " + szName + " " + szValue);
+            this.m_Log.Write("HttpComms3.js - addValuePair - " + szName + " " + szValue);
 
             var oData = new commsData();
             oData.szName = szName;
@@ -257,7 +239,7 @@ Comms.prototype =
         }
         catch(err)
         {
-            this.m_Log.DebugDump("comms.js: addValuePair : Exception : "
+            this.m_Log.DebugDump("HttpComms3.js: addValuePair : Exception : "
                                                   + err.name
                                                   + ".\nError message: "
                                                   + err.message + "\n"
@@ -272,10 +254,8 @@ Comms.prototype =
     {
        try
         {
-            this.m_Log.Write("comms.js - addFormData - START");
-            this.m_Log.Write("comms.js - addFormData - " + szName + " "
-                                                         + szFileName + " "
-                                                         + szValue);
+            this.m_Log.Write("HttpComms3.js - addFormData - START");
+            this.m_Log.Write("HttpComms3.js - addFormData - " + szName + " " + szFileName);
 
             var oData = new commsData();
             oData.szName = szName;
@@ -286,12 +266,12 @@ Comms.prototype =
 
             this.m_aFormData.push(oData);
 
-            this.m_Log.Write("comms.js - addFormData - END");
+            this.m_Log.Write("HttpComms3.js - addFormData - END");
             return true;
         }
         catch(err)
         {
-            this.m_Log.DebugDump("comms.js: addFile : Exception : "
+            this.m_Log.DebugDump("HttpComms3.js: addFile : Exception : "
                                                   + err.name
                                                   + ".\nError message: "
                                                   + err.message + "\n"
@@ -301,25 +281,24 @@ Comms.prototype =
     },
 
 
-    addData : function (szData, szContentType)
+    addData : function (szData)
     {
         try
         {
-            this.m_Log.Write("comms.js - addData - START");
-            this.m_Log.Write("comms.js - addData - " + szContentType + "\n" + szData);
+            this.m_Log.Write("HttpComms3.js - addData - START");
+            this.m_Log.Write("HttpComms3.js - addData - \n" + szData);
 
             var oData = new commsData();
             oData.szName = null;
             oData.szValue = szData;
-            this.m_szContentType = szContentType;
             this.m_aFormData.push(oData);
 
-            this.m_Log.Write("comms.js - addFormData - END");
+            this.m_Log.Write("HttpComms3.js - addFormData - END");
             return true;
         }
         catch(err)
         {
-            this.m_Log.DebugDump("comms.js: addData : Exception : "
+            this.m_Log.DebugDump("HttpComms3.js: addData : Exception : "
                                                   + err.name
                                                   + ".\nError message: "
                                                   + err.message + "\n"
@@ -328,30 +307,37 @@ Comms.prototype =
         }
     },
 
-    send : function (callback)
+    send : function (callback, parent)
     {
         try
         {
-            this.m_Log.Write("comms.js - send - START");
+            this.m_Log.Write("HttpComms3.js - send - START");
 
             this.m_CallBack = callback;
+            this.m_Parent = parent;
 
             var channel = this.m_IOService.newChannelFromURI(this.m_URI);
 
             var HttpRequest = channel.QueryInterface(Components.interfaces.nsIHttpChannel);
             HttpRequest.redirectionLimit = 0; //stops automatic redirect handling
 
-             this.m_Log.Write("comms.js - send - contenttype "+ this.m_iContentType);
-            //set headers
-
-            var szDomain = this.m_URI.prePath.match(/\/\/(.*?)$/)[1];
             //add cookies
-            if (this.m_bHandleCookie && this.m_oCookies)
+            if (this.m_bHandleCookie)
             {
-                var aszCookie = this.m_oCookies.findCookie(this.m_URI);
-                this.m_Log.Write("comms.js - send - adding cookies "+ aszCookie);
+                var aszCookie = this.m_oCookies.findCookie(this.m_szUserName, this.m_URI);
+                this.m_Log.Write("HttpComms3.js - send - adding cookies "+ aszCookie);
                 if (aszCookie)
                     HttpRequest.setRequestHeader("Cookie", aszCookie, false);
+            }
+
+            //add Http Auth
+            if (this.m_bHandleHttpAuth)
+            {
+                var szDomain = this.m_URI.prePath.match(/\/\/(.*?)$/)[1];
+                var szAuthString = this.m_AuthToken.findToken(this.m_szUserName, szDomain);
+                this.m_Log.Write("HttpComms3.js - send - adding HttpAuth "+ szAuthString);
+                if (szAuthString)
+                    HttpRequest.setRequestHeader("Authorization", szAuthString , false);
             }
 
 
@@ -359,42 +345,35 @@ Comms.prototype =
             for (i=0; i<this.m_aHeaders.length; i++)
             {
                 var oTemp = this.m_aHeaders[i];
-                this.m_Log.Write("comms.js - send - adding headers "+ oTemp.szName +" "+
+                this.m_Log.Write("HttpComms3.js - send - adding headers "+ oTemp.szName +" "+
                                                                       oTemp.szValue +" "+
                                                                       oTemp.bOverRide);
                 HttpRequest.setRequestHeader(oTemp.szName, oTemp.szValue, oTemp.bOverRide);
             }
 
 
-            //add Http Auth
-            if (this.m_bHandleHttpAuth && this.m_AuthToken )
-            {
-                var szAuthString = this.m_AuthToken.findToken(szDomain);
-                this.m_Log.Write("comms.js - send - adding HttpAuth "+ szAuthString);
-                if (szAuthString)
-                    HttpRequest.setRequestHeader("Authorization", szAuthString , false);
-            }
-
-
             //set data
+            var szContentType = this.m_szContentType;
+            this.m_Log.Write("HttpComms3.js - send - szContentType "+ szContentType);
+
             if (this.m_aFormData.length>0)
             {
-                MultiStream = Components.classes["@mozilla.org/io/multiplex-input-stream;1"];
+                var MultiStream = Components.classes["@mozilla.org/io/multiplex-input-stream;1"];
                 MultiStream = MultiStream.createInstance(Components.interfaces.nsIMultiplexInputStream);
 
-                //create boundarys
-                if (this.m_iContentType==1) this.createBoundary();
-
-
-                for (j=0; j<this.m_aFormData.length; j++)
+                if (this.m_szContentType.search(/^multipart\/form-data$/i)!=-1) //formdata
                 {
-                    var oTemp = this.m_aFormData[j];
-                    this.m_Log.Write("comms.js - send - adding data "+oTemp.szName+" "+oTemp.szValue);
+                    var szBoundary = this.createBoundary();   //create boundarys
+                    var szStartBoundary = "\r\n--"+szBoundary+"\r\n" ;
+                    var szEndBoundary = "\r\n--"+szBoundary+"--\r\n" ;
+                    szContentType += "; boundary=" +szBoundary;
+                    this.m_Log.Write("HttpComms3.js - send - update szContentType "+ szContentType);
 
-                    if (this.m_iContentType==1) //formdata
+                    for (j=0; j<this.m_aFormData.length; j++)
                     {
-                        this.m_Log.Write("comms.js - addFormData - adding start boundary");
-                        MultiStream.appendStream(this.inputStream(this.m_szStartBoundary));
+                        var oTemp = this.m_aFormData[j];
+
+                        MultiStream.appendStream(this.inputStream(szStartBoundary));
 
                         var mimeStream = Components.classes["@mozilla.org/network/mime-input-stream;1"];
                         mimeStream = mimeStream.createInstance(Components.interfaces.nsIMIMEInputStream );
@@ -403,7 +382,8 @@ Comms.prototype =
                         var szContDisp = "form-data; name=\"" + oTemp.szName + "\"; ";
                         if (oTemp.bFile)
                         {
-                            this.m_Log.Write("comms.js - send - adding file" + oTemp.szFileName);
+                            this.m_Log.Write("HttpComms3.js - send - adding data "+oTemp.szName);
+                            this.m_Log.Write("HttpComms3.js - send - adding file" + oTemp.szFileName);
                             var szContDisp = "form-data; name=\"" + oTemp.szName + "\"; ";
                             szContDisp +="filename=\"" + (oTemp.szFileName ? oTemp.szFileName : "") + "\"";
                             mimeStream.addHeader("Content-Disposition",szContDisp);
@@ -411,7 +391,7 @@ Comms.prototype =
 
                             if(oTemp.szValue)
                             {
-                                this.m_Log.Write("comms.js - send - adding binary data");
+                                this.m_Log.Write("HttpComms3.js - send - adding binary data");
                                 var binaryStream = this.binaryStream(oTemp.szValue);
                                 mimeStream.setData(binaryStream);
                             }
@@ -420,7 +400,8 @@ Comms.prototype =
                         }
                         else
                         {
-                            this.m_Log.Write("comms.js - send - adding form data");
+                            this.m_Log.Write("HttpComms3.js - send - adding data "+oTemp.szName+" "+oTemp.szValue);
+                            this.m_Log.Write("HttpComms3.js - send - adding form data");
                             var szContDisp = "form-data; name=\"" + oTemp.szName + "\"";
                             mimeStream.addHeader("Content-Disposition",szContDisp);
                             var valueStream = this.inputStream(oTemp.szValue? oTemp.szValue:"");
@@ -431,24 +412,25 @@ Comms.prototype =
 
                         if (j==this.m_aFormData.length-1)
                         {
-                            this.m_Log.Write("comms.js - send - adding end boundary");
-                            MultiStream.appendStream(this.inputStream(this.m_szEndBoundary));
+                            this.m_Log.Write("HttpComms3.js - send - adding end boundary");
+                            MultiStream.appendStream(this.inputStream(szEndBoundary));
                         }
                     }
-                    else if (this.m_iContentType==0)//urlencoded
+                }
+                else if (this.m_szContentType.search(/^application\/x-www-form-urlencoded$/i)!=-1)//urlencoded
+                {
+                    for (j=0; j<this.m_aFormData.length; j++)
                     {
+                        var oTemp = this.m_aFormData[j];
+                        this.m_Log.Write("HttpComms3.js - send - adding data "+oTemp.szName+" "+oTemp.szValue);
+
                         if (j>0) MultiStream.appendStream(this.inputStream("&"));
                         var szData = oTemp.szName + "=" + oTemp.szValue;
                         MultiStream.appendStream(this.inputStream(szData));
                     }
-                    else  //other
-                        MultiStream.appendStream(this.inputStream(oTemp.szValue));
                 }
-
-                var szContentType = this.m_szContentType;
-                if (this.m_iContentType == 1) //"application/x-www-form-urlencoded"
-                    szContentType +="; boundary=" +this.m_szBoundary;
-                this.m_Log.Write("comms.js - send - contentType "+szContentType);
+                else  //other
+                    MultiStream.appendStream(this.inputStream(this.m_aFormData[0].szValue));
 
                 var uploadChannel = channel.QueryInterface(Components.interfaces.nsIUploadChannel);
                 uploadChannel.setUploadStream(MultiStream , szContentType , -1);
@@ -459,12 +441,12 @@ Comms.prototype =
             var listener = new this.downloadListener(this.callback, this);
             channel.asyncOpen(listener, null);
 
-            this.m_Log.Write("comms.js - send - END");
+            this.m_Log.Write("HttpComms3.js - send - END");
             return true;
         }
         catch(err)
         {
-            this.m_Log.DebugDump("comms.js: send : Exception : "
+            this.m_Log.DebugDump("HttpComms3.js: send : Exception : "
                                                   + err.name
                                                   + ".\nError message: "
                                                   + err.message + "\n"
@@ -478,7 +460,7 @@ Comms.prototype =
     {
         try
         {
-            this.m_Log.Write("comms.js - binaryStream - START");
+            this.m_Log.Write("HttpComms3.js - binaryStream - START");
             var file = Components.classes["@mozilla.org/file/directory_service;1"];
             file = file.getService(Components.interfaces.nsIProperties);
             file = file.get("TmpD", Components.interfaces.nsIFile);
@@ -512,12 +494,12 @@ Comms.prototype =
             buffer = buffer.createInstance(Components.interfaces.nsIBufferedInputStream);
             buffer.init(binaryStream, 4096);
 
-            this.m_Log.Write("comms.js - binaryStream - END");
+            this.m_Log.Write("HttpComms3.js - binaryStream - END");
             return buffer;
         }
         catch(err)
         {
-            this.m_Log.DebugDump("comms.js: binaryStream : Exception : "
+            this.m_Log.DebugDump("HttpComms3.js: binaryStream : Exception : "
                                                   + err.name
                                                   + ".\nError message: "
                                                   + err.message + "\n"
@@ -529,19 +511,15 @@ Comms.prototype =
 
     createBoundary : function ()
     {
-        this.m_Log.Write("comms.js - createBondary - START");
+        this.m_Log.Write("HttpComms3.js - createBondary - START");
 
-        this.m_szBoundary = "-------------" +
-                            parseInt(Math.floor(Math.random()*100001))+
-                            parseInt(Math.floor(Math.random()*100001))+
-                            parseInt(Math.floor(Math.random()*100001));
+        var szBoundary = "-------------" +
+                        parseInt(Math.floor(Math.random()*100001))+
+                        parseInt(Math.floor(Math.random()*100001))+
+                        parseInt(Math.floor(Math.random()*100001));
 
-        this.m_Log.Write("comms.js - createBondary - boundary " + this.m_szBoundary );
-        this.m_szStartBoundary = "\r\n--"+this.m_szBoundary+"\r\n" ;
-        this.m_szEndBoundary = "\r\n--"+this.m_szBoundary+"--\r\n" ;
-
-        this.m_Log.Write("comms.js - createBondary - END");
-        return this.m_szBoundary;
+        this.m_Log.Write("HttpComms3.js - createBondary - END " + szBoundary);
+        return szBoundary;
     },
 
 
@@ -551,7 +529,7 @@ Comms.prototype =
     {
         try
         {
-            this.m_Log.Write("comms.js - inputStream - " + szValue);
+            this.m_Log.Write("HttpComms3.js - inputStream - " + szValue);
 
             var Stream = Components.classes["@mozilla.org/io/string-input-stream;1"];
             Stream = Stream.createInstance(Components.interfaces.nsIStringInputStream);
@@ -560,7 +538,7 @@ Comms.prototype =
         }
         catch(err)
         {
-            this.m_Log.DebugDump("comms.js: inputStream : Exception : "
+            this.m_Log.DebugDump("HttpComms3.js: inputStream : Exception : "
                                                   + err.name
                                                   + ".\nError message: "
                                                   + err.message + "\n"
@@ -574,8 +552,8 @@ Comms.prototype =
     {
         try
         {
-            mainObject.m_Log.Write("comms.js - callback - START");
-            mainObject.m_Log.Write("comms.js - callback : \n" + szResponse);
+            mainObject.m_Log.Write("HttpComms3.js - callback - START");
+            mainObject.m_Log.Write("HttpComms3.js - callback : \n" + szResponse);
 
             //handle repsonse
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -584,19 +562,18 @@ Comms.prototype =
             //handle cookies
             if (mainObject.m_bHandleCookie)
             {
-                mainObject.m_Log.Write("comms.js - callback - Handling cookies");
+                mainObject.m_Log.Write("HttpComms3.js - callback - checking for cookies");
 
                 //get cookies
                 try
                 {
                     var szCookies =  httpChannel.getResponseHeader("Set-Cookie");
-                    mainObject.m_Log.Write("comms.js - callback - received cookies \n" + szCookies);
-                    if (!mainObject.m_oCookies) mainObject.m_oCookies = new CookieManager();
-                    mainObject.m_oCookies.addCookie( httpChannel.URI, szCookies);
+                    mainObject.m_Log.Write("HttpComms3.js - callback - received cookies \n" + szCookies);
+                    mainObject.m_oCookies.addCookie(mainObject.m_szUserName, httpChannel.URI, szCookies);
                 }
                 catch(e)
                 {
-                    mainObject.m_Log.Write("comms.js - callback - no cookies found");
+                    mainObject.m_Log.Write("HttpComms3.js - callback - no cookies found");
                 }
             }
 
@@ -604,7 +581,7 @@ Comms.prototype =
             //handel Http auth
             if (mainObject.m_bHandleHttpAuth)
             {
-                mainObject.m_Log.Write("comms.js - callback - Handling Http Auth");
+                mainObject.m_Log.Write("HttpComms3.js - callback - Handling Http Auth");
 
                 if (httpChannel.responseStatus == 401 && mainObject.m_szUserName && mainObject.m_szPassword)
                 {
@@ -613,50 +590,51 @@ Comms.prototype =
 
                     try
                     {
-                        var szDomain = httpChannel.URI.host.match(/\.(.*?)$/)[1];
-                        mainObject.m_Log.Write("comms.js - callback - domain " +szDomain);
+                        var szDomain = "." + httpChannel.URI.host.match(/\.(.*?)$/)[1];
+                        mainObject.m_Log.Write("HttpComms3.js - callback - domain " +szDomain);
                         var szAuthenticate =  httpChannel.getResponseHeader("www-Authenticate");
-                        mainObject.m_Log.Write("comms.js - callback - www-Authenticate " + szAuthenticate);
+                        mainObject.m_Log.Write("HttpComms3.js - callback - www-Authenticate " + szAuthenticate);
 
-                        if (!mainObject.m_AuthToken) mainObject.m_AuthToken = new HttpAuthManager();
                         mainObject.m_AuthToken.addToken(szDomain,
                                                         szAuthenticate ,
                                                         httpChannel.URI.path ,
                                                         mainObject.m_szUserName,
                                                         mainObject.m_szPassword);
 
-                        var bResult = mainObject.send(mainObject.m_CallBack);
+                        var bResult = mainObject.send(mainObject.m_CallBack, mainObject.m_Parent);
                         if (!bResult) throw new Error("httpConnection returned false");
                         return;
                     }
                     catch(err)
                     {
-                        mainObject.m_Log.Write("comms.js - callback - Authentication failed");
+                        mainObject.m_Log.Write("HttpComms3.js - callback - Authentication failed");
                     }
                 }
             }
 
 
+
             //bounce handler
             if (mainObject.m_bHandleBounce)
             {
+                mainObject.m_Log.Write("HttpComms3.js - callback - Checking for Bounce");
                 if ( httpChannel.responseStatus > 300 && httpChannel.responseStatus < 400)
                 {
                     var szLocation = null;
                     try
                     {
                         szLocation =  httpChannel.getResponseHeader("Location");
-                        mainObject.m_Log.Write("comms.js - callback - location \n" + szLocation);
+                        mainObject.m_Log.Write("HttpComms3.js - callback - location \n" + szLocation);
                     }
                     catch(e)
                     {
                         throw new Error("Location header not found")
                     }
 
-                    var oCallback = mainObject.m_CallBack;
-                    if (!mainObject.setURI(szLocation))
+                    var bURL = mainObject.setURI(szLocation);
+                    if (!bURL)
                     {
-                        mainObject.m_Log.Write("comms.js - callback - location invalid");
+                        mainObject.m_Log.Write("HttpComms3.js - callback - location invalid");
                         szLocation = httpChannel.URI.prePath + szLocation;
                         mainObject.setURI(szLocation);
                     }
@@ -667,29 +645,29 @@ Comms.prototype =
                     delete mainObject.m_aFormData;
                     mainObject.m_aFormData = new Array();
 
-                    var bResult = mainObject.send(oCallback);
+                    var bResult = mainObject.send(mainObject.m_CallBack, mainObject.m_Parent);
                     if (!bResult) throw new Error("httpConnection returned false");
                     return;
                 }
             }
 
-
+            mainObject.clear();
             //let component handle response
-            mainObject.m_CallBack (szResponse, event, mainObject.m_parent);
+            mainObject.m_CallBack (szResponse, event, mainObject.m_Parent);
 
-            mainObject.m_Log.Write("comms.js - callback - END");
+            mainObject.m_Log.Write("HttpComms3.js - callback - END");
             return true;
         }
         catch(err)
         {
-            mainObject.m_Log.DebugDump("comms.js: callback : Exception : "
+            mainObject.m_Log.DebugDump("HttpComms3.js: callback : Exception : "
                                                   + err.name
                                                   + ".\nError message: "
                                                   + err.message + "\n"
                                                   + err.lineNumber);
 
             //there's a problem let component handle the response
-            mainObject.m_CallBack (szResponse, event, mainObject.m_parent);
+            mainObject.m_CallBack (szResponse, event, mainObject.m_Parent);
             return false;
         }
     },
