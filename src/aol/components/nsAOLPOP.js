@@ -65,7 +65,7 @@ function nsAOL()
         //prefs
         this.m_bDownloadUnread = false;
         this.m_bMarkAsRead = true;
-        this.m_aszFolder = null;
+        this.m_aszFolder = new Array();
         this.m_bReUseSession = null;
 
         this.m_Log.Write("nsAOL.js - Constructor - END");

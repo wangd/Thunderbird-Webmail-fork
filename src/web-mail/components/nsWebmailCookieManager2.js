@@ -130,7 +130,7 @@ nsWebMailCookieManager2.prototype =
                 this.m_Log.Write("CookieManger : findCookie - DB Reset "+ this.m_dbConn.lastErrorString);
             }
 
-            szCookies = szCookies.replace(/;\s$/,"");
+           // szCookies = szCookies.replace(/;\s$/,"");
             this.m_Log.Write("CookieManger.js - findCookie - szCookies " + szCookies);
 
             this.m_Log.Write("CookieManger.js - findCookie - END");
