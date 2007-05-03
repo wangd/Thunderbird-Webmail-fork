@@ -10,7 +10,7 @@ function nsHotmailIMAP()
         var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms2.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms3.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
 
         var date = new Date();
@@ -647,8 +647,9 @@ nsHotmailIMAP.prototype =
                     var oUID = {value:null};
                     var oMSGCount = {value:null};
                     var oUnreadCount = {value:null};
+                    var oExpungeCount = {value:null};
                     var bFolder = mainObject.m_oIMAPData.getFolderDetails(mainObject.m_szUserName, mainObject.m_szSelectFolder,
-                                                                          oHref , oUID, oMSGCount, oUnreadCount)
+                                                                          oHref , oUID, oMSGCount, oUnreadCount, oExpungeCount)
                     if (!bFolder) throw new Error("Folder not found");
 
                     this.m_Log.Write("nsHotmailIMAP.js - select - " + oHref.value + " " + oUID.value + " "
