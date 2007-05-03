@@ -6,21 +6,21 @@
     <RDF:Description about="urn:mozilla:extension:{d7103710-6112-11d9-9669-0800200c9a66}">
         <em:updates>
             <RDF:Seq>
-                <RDF:li resource="urn:mozilla:extension:{d7103710-6112-11d9-9669-0800200c9a66}:1.1.18"/>
+                <RDF:li resource="urn:mozilla:extension:{d7103710-6112-11d9-9669-0800200c9a66}:1.1.20"/>
             </RDF:Seq>
         </em:updates>
     </RDF:Description>
 
-    <RDF:Description about="urn:mozilla:extension:{d7103710-6112-11d9-9669-0800200c9a66}:1.1.18">
-        <em:version>1.1.18</em:version>
+    <RDF:Description about="urn:mozilla:extension:{d7103710-6112-11d9-9669-0800200c9a66}:1.1.20">
+        <em:version>1.1.20</em:version>
         <!-- Thunderbird updates -->
         <em:targetApplication>
             <Description>
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
                 <em:minVersion>1.4</em:minVersion>
                 <em:maxVersion>2.0</em:maxVersion>
-                <em:updateLink>http://download.mozdev.org/webmail/yahoo-1-1-18.xpi</em:updateLink>
-                <em:updateHash>sha256:6dc92b95da69c1869947a234b5875cd57722e7166bfcc95d16438eda81c3be96</em:updateHash>
+                <em:updateLink>http://download.mozdev.org/webmail/yahoo-1-1-20.xpi</em:updateLink>
+                <em:updateHash>sha256:7cd125b1cc38202aef778ba74e7553b0cf7980877cc7630b5b5fe4e240f0c440</em:updateHash>
           </Description>
         </em:targetApplication>
 
