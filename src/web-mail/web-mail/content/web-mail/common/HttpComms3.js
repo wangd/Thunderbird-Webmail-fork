@@ -356,10 +356,11 @@ HttpComms.prototype =
             var szContentType = this.m_szContentType;
             this.m_Log.Write("HttpComms3.js - send - szContentType "+ szContentType);
 
+            var MultiStream = null;
             if (this.m_aFormData.length>0)
             {
-                var MultiStream = Components.classes["@mozilla.org/io/multiplex-input-stream;1"];
-                MultiStream = MultiStream.createInstance(Components.interfaces.nsIMultiplexInputStream);
+                MultiStream = Components.classes["@mozilla.org/io/multiplex-input-stream;1"]
+                                        .createInstance(Components.interfaces.nsIMultiplexInputStream);
 
                 if (this.m_szContentType.search(/^multipart\/form-data$/i)!=-1) //formdata
                 {
@@ -373,7 +374,9 @@ HttpComms.prototype =
                     {
                         var oTemp = this.m_aFormData[j];
 
-                        MultiStream.appendStream(this.inputStream(szStartBoundary));
+                        var inStreamStartBound = this.inputStream(szStartBoundary);
+                        MultiStream.appendStream(inStreamStartBound);
+                        inStreamStartBound.close();
 
                         var mimeStream = Components.classes["@mozilla.org/network/mime-input-stream;1"];
                         mimeStream = mimeStream.createInstance(Components.interfaces.nsIMIMEInputStream );
@@ -394,9 +397,14 @@ HttpComms.prototype =
                                 this.m_Log.Write("HttpComms3.js - send - adding binary data");
                                 var binaryStream = this.binaryStream(oTemp.szValue);
                                 mimeStream.setData(binaryStream);
+                                //binaryStream.close();
                             }
                             else
-                                mimeStream.setData(this.inputStream(""));
+                            {
+                                var inStreamEmpty = this.inputStream("");
+                                mimeStream.setData(inStreamEmpty);
+                                inStreamEmpty.close();
+                            }
                         }
                         else
                         {
@@ -406,14 +414,18 @@ HttpComms.prototype =
                             mimeStream.addHeader("Content-Disposition",szContDisp);
                             var valueStream = this.inputStream(oTemp.szValue? oTemp.szValue:"");
                             mimeStream.setData(valueStream);
+                            valueStream.close();
                         }
 
                         MultiStream.appendStream(mimeStream);
+                        //mimeStream.close();
 
                         if (j==this.m_aFormData.length-1)
                         {
                             this.m_Log.Write("HttpComms3.js - send - adding end boundary");
-                            MultiStream.appendStream(this.inputStream(szEndBoundary));
+                            var inStreamEndBound = this.inputStream(szEndBoundary);
+                            MultiStream.appendStream(inStreamEndBound);
+                            inStreamEndBound.close();
                         }
                     }
                 }
@@ -424,14 +436,25 @@ HttpComms.prototype =
                         var oTemp = this.m_aFormData[j];
                         this.m_Log.Write("HttpComms3.js - send - adding data "+oTemp.szName+" "+oTemp.szValue);
 
-                        if (j>0) MultiStream.appendStream(this.inputStream("&"));
+                        if (j>0)
+                        {
+                            var inStreamAnd = this.inputStream("&");
+                            MultiStream.appendStream(inStreamAnd);
+                            inStreamAnd.close();
+                        }
+
                         var szData = oTemp.szName + "=" + oTemp.szValue;
-                        MultiStream.appendStream(this.inputStream(szData));
+                        var inStreamData = this.inputStream(szData);
+                        MultiStream.appendStream(inStreamData);
+                        inStreamData.close();
                     }
                 }
                 else  //other
-                    MultiStream.appendStream(this.inputStream(this.m_aFormData[0].szValue));
-
+                {
+                    var inStreamData = this.inputStream(this.m_aFormData[0].szValue);
+                    MultiStream.appendStream(inStreamData);
+                    inStreamData.close();
+                }
                 var uploadChannel = channel.QueryInterface(Components.interfaces.nsIUploadChannel);
                 uploadChannel.setUploadStream(MultiStream , szContentType , -1);
             }
@@ -440,6 +463,7 @@ HttpComms.prototype =
 
             var listener = new this.downloadListener(this.callback, this);
             channel.asyncOpen(listener, null);
+            //if (MultiStream)  MultiStream.close();
 
             this.m_Log.Write("HttpComms3.js - send - END");
             return true;
@@ -493,6 +517,8 @@ HttpComms.prototype =
             var buffer = Components.classes["@mozilla.org/network/buffered-input-stream;1"];
             buffer = buffer.createInstance(Components.interfaces.nsIBufferedInputStream);
             buffer.init(binaryStream, 4096);
+            //inputStream.close();
+            //binaryStream.close();
 
             this.m_Log.Write("HttpComms3.js - binaryStream - END");
             return buffer;
@@ -548,6 +574,7 @@ HttpComms.prototype =
     },
 
 
+
     callback : function(szResponse ,event , mainObject)
     {
         try
@@ -578,8 +605,8 @@ HttpComms.prototype =
             }
 
 
-            //handel Http auth
-            if (mainObject.m_bHandleHttpAuth)
+            //handel Http auth reponse
+            if (mainObject.m_bHandleHttpAuth && httpChannel.responseStatus == 401)
             {
                 mainObject.m_Log.Write("HttpComms3.js - callback - Handling Http Auth");
 
@@ -678,25 +705,33 @@ HttpComms.prototype =
     {
         return ({
             m_data : "",
+            m_Stream : null,
 
             onStartRequest : function (aRequest, aContext)
             {
+                //parent.m_Log.Write("onStartRequest");
                 this.m_data = "";
             },
 
 
             onDataAvailable : function (aRequest, aContext, aStream, aSourceOffset, aLength)
             {
-                var binaryInputStream = Components.classes["@mozilla.org/binaryinputstream;1"];
-                binaryInputStream = binaryInputStream.createInstance(Components.interfaces.nsIBinaryInputStream);
-                binaryInputStream.setInputStream (aStream);
-                this.m_data += binaryInputStream.readBytes(binaryInputStream.available());
+                //parent.m_Log.Write("onDataAvailable");
+                if (this.m_Stream == null)
+                    this.m_Stream = Components.classes["@mozilla.org/binaryinputstream;1"]
+                                            .createInstance(Components.interfaces.nsIBinaryInputStream);
+
+                this.m_Stream.setInputStream (aStream);
+                this.m_data += this.m_Stream.readBytes(this.m_Stream.available());
             },
 
 
             onStopRequest : function (aRequest, aContext, aStatus)
             {
+                //parent.m_Log.Write("onStopRequest");
                 CallbackFunc(this.m_data, aRequest, parent);
+                if (this.m_Stream) this.m_Stream.close();
+                this.m_data = null;
             },
 
 
