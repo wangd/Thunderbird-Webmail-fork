@@ -41,8 +41,8 @@ function HotmailScreenRipperBETA(oResponseStream, oLog, oPrefData)
         this.m_bMarkAsRead = oPrefData.bMarkAsRead;         //do i mark email as read
 
         this.m_iHandleCount = 0;
-        this.m_Timer = Components.classes["@mozilla.org/timer;1"];
-        this.m_Timer = this.m_Timer.createInstance(Components.interfaces.nsITimer);
+        this.m_Timer = Components.classes["@mozilla.org/timer;1"]
+                                 .createInstance(Components.interfaces.nsITimer);
 
         //process folders
         this.m_szFolderName = null;
@@ -1104,6 +1104,11 @@ HotmailScreenRipperBETA.prototype =
 
             this.m_bAuthorised = false;
             this.serverComms("+OK Your Out\r\n");
+
+            this.m_Timer.cancel();
+            delete this.m_aMsgDataStore;
+            delete this.m_aszFolders;
+            delete this.m_aszFolderURLList;
 
             this.m_Log.Write("Hotmail-SR-BETA - logOUT - END");
             return true;

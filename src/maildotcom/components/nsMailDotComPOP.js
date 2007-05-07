@@ -18,6 +18,8 @@ function nsMailDotCom()
         var date = new Date();
         var  szLogFileName = "MailDotCom Log - " + date.getHours()+ "-"
                                     + date.getMinutes() + "-"+ date.getUTCMilliseconds() +" -";
+        delete date;
+
         this.m_Log = new DebugLog("webmail.logging.comms", ExtMailDotComGuid, szLogFileName);
         this.m_Log.Write("nsMailDotCom.js - Constructor - START");
 
@@ -1092,6 +1094,11 @@ nsMailDotCom.prototype =
                 }
 
                 this.m_bAuthorised = false;
+                this.m_Timer.cancel();
+                delete this.m_aMsgDataStore;
+                delete this.m_aszFolder;
+                delete this.m_aszURI;
+
                 this.serverComms("+OK Your Out\r\n");
                 return true;
             }
@@ -1162,6 +1169,11 @@ nsMailDotCom.prototype =
 
             mainObject.m_bAuthorised = false;
             mainObject.serverComms("+OK Your Out\r\n");
+
+            mainObject.m_Timer.cancel();
+            delete mainObject.m_aMsgDataStore;
+            delete mainObject.m_aszFolder;
+            delete mainObject.m_aszURI;
 
             mainObject.m_Log.Write("nsMailDotCom.js - logOutOnloadHandler - END");
         }

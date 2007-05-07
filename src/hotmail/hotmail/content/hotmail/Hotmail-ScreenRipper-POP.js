@@ -60,8 +60,8 @@ function HotmailScreenRipper(oResponseStream, oLog, oPrefData)
 
         this.m_bStat = false;
         this.m_iHandleCount = 0;
-        this.m_Timer = Components.classes["@mozilla.org/timer;1"];
-        this.m_Timer = this.m_Timer.createInstance(Components.interfaces.nsITimer);
+        this.m_Timer = Components.classes["@mozilla.org/timer;1"]
+                                 .createInstance(Components.interfaces.nsITimer);
 
 
         this.m_Log.Write("Hotmail-SR.js - Constructor - END");
@@ -467,6 +467,7 @@ HotmailScreenRipper.prototype =
                     mainObject.m_szFolderURI = oFolder.szURI;
                     mainObject.m_szFolderName = oFolder.szName;
                     mainObject.m_iPageCount = 0; //reset array
+                    delete mainObject.m_aszPageURLS;
                     mainObject.m_aszPageURLS = new Array;
 
                     mainObject.m_HttpComms.setURI(mainObject.m_szFolderURI);
@@ -1147,7 +1148,6 @@ HotmailScreenRipper.prototype =
         try
         {
             mainObject.m_Log.Write("Hotmail-SR - logoutOnloadHandler - START");
-            //mainObject.m_Log.Write("Hotmail-SR - logoutOnloadHandler : \n" + szResponse);
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
 
@@ -1174,6 +1174,12 @@ HotmailScreenRipper.prototype =
 
             mainObject.m_bAuthorised = false;
             mainObject.serverComms("+OK Your Out\r\n");
+
+            mainObject.m_Timer.cancel();
+            delete this.m_aMsgDataStore;
+            delete this.m_aszPageURLS;
+            delete this.m_aszFolderURLList;
+            delete this.m_aszFolders;
 
             mainObject.m_Log.Write("Hotmail-SR - logoutOnloadHandler - END");
         }

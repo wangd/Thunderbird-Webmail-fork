@@ -58,8 +58,8 @@ function YahooPOPBETA(oResponseStream, oLog, oPrefs)
         this.m_iID =0;
         this.m_oEmail = null;
 
-        this.m_Timer = Components.classes["@mozilla.org/timer;1"];
-        this.m_Timer = this.m_Timer.createInstance(Components.interfaces.nsITimer);
+        this.m_Timer = Components.classes["@mozilla.org/timer;1"]
+                                 .createInstance(Components.interfaces.nsITimer);
 
         this.m_ComponentManager = Components.classes["@mozilla.org/ComponentData2;1"]
                                             .getService(Components.interfaces.nsIComponentData2);
@@ -1326,6 +1326,11 @@ YahooPOPBETA.prototype =
 
             this.m_bAuthorised = false;
             this.serverComms("+OK Your Out\r\n");
+            this.m_Timer.cancel();
+            delete this.m_aMsgDataStore;
+            delete this.m_aszFolderList;
+            delete this.m_aRawData
+            delete this.m_aDownloadFiles;
 
             this.m_Log.Write("YahooPOPBETA.js - logOUT - END");
             return true;

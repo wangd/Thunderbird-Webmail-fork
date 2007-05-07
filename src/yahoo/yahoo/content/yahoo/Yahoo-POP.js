@@ -984,6 +984,7 @@ YahooPOP.prototype =
                     var oHeaders = new headers(szResponse);
                     mainObject.m_szHeader += oHeaders.getAllHeaders();
                     mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - headers - "+mainObject.m_szHeader);
+                    delete oHeaders;
 
                     var szDest = mainObject.m_szLocationURI + mainObject.m_szMsgID.match(/.*?&/)
                                     + mainObject.m_szBox + "&bodyPart=TEXT";
@@ -1126,6 +1127,10 @@ YahooPOP.prototype =
 
             this.m_bAuthorised = false;
             this.serverComms("+OK Your Out\r\n");
+            this.m_Timer.cancel();
+            delete this.m_aMsgDataStore;
+            delete this.m_aDeleteData;
+            delete this.m_aszFolderURLList;
 
             this.m_Log.Write("YahooPOP.js - logOUT - END");
             return true;

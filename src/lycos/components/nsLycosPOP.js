@@ -22,6 +22,7 @@ function nsLycos()
         this.m_Log = new DebugLog("webmail.logging.comms",
                                   "{3c8e8390-2cf6-11d9-9669-0800200c9a66}" ,
                                   szLogFileName);
+        delete date;
 
         this.m_Log.Write("nsLycos.js - Constructor - START");
 
@@ -911,18 +912,23 @@ nsLycos.prototype =
             if (!this.m_bEmptyTrash)
             {
                 this.m_bAuthorised = false;
+                this.m_Timer.cancel();
+                delete this.m_aMsgDataStore;
+                delete this.m_aszFolderURLList;
+                delete this.m_aszFolder;
                 this.serverComms("+OK Your Out\r\n");
                 return true;
             }
-
-            //get trash
-            this.m_HttpComms.setContentType("text/xml");
-            this.m_HttpComms.setURI(this.m_szTrashURI);
-            this.m_HttpComms.setRequestMethod("PROPFIND");
-            this.m_HttpComms.addData(kLycosMailSchema);
-            var bResult = this.m_HttpComms.send(this.logoutOnloadHandler, this);
-            if (!bResult) throw new Error("httpConnection returned false");
-            this.m_iStage=0;
+            else //get trash
+            {
+                this.m_HttpComms.setContentType("text/xml");
+                this.m_HttpComms.setURI(this.m_szTrashURI);
+                this.m_HttpComms.setRequestMethod("PROPFIND");
+                this.m_HttpComms.addData(kLycosMailSchema);
+                var bResult = this.m_HttpComms.send(this.logoutOnloadHandler, this);
+                if (!bResult) throw new Error("httpConnection returned false");
+                this.m_iStage=0;
+            }
             this.m_Log.Write("nsLycos.js - logOUT - END");
             return true;
         }
@@ -974,12 +980,24 @@ nsLycos.prototype =
                     else //no messages
                     {
                         mainObject.m_bAuthorised = false;
+
+                        mainObject.m_Timer.cancel();
+                        delete mainObject.m_aMsgDataStore;
+                        delete mainObject.m_aszFolderURLList;
+                        delete mainObject.m_aszFolder;
+
                         mainObject.serverComms("+OK Your Out\r\n");
                     }
                 break;
 
                 case 1:
                     mainObject.m_bAuthorised = false;
+
+                    mainObject.m_Timer.cancel();
+                    delete mainObject.m_aMsgDataStore;
+                    delete mainObject.m_aszFolderURLList;
+                    delete mainObject.m_aszFolder;
+
                     mainObject.serverComms("+OK Your Out\r\n");
                 break;
             }
@@ -1014,7 +1032,6 @@ nsLycos.prototype =
             else
             {
                 delete this.m_aRawData;
-                this.m_aRawData = new Array();
                 timer.cancel();
             }
 

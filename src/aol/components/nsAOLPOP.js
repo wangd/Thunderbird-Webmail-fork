@@ -17,6 +17,7 @@ function nsAOL()
 
         var date = new Date();
         var  szLogFileName = "AOL Log - " + date.getHours()+ "-" + date.getMinutes() + "-"+ date.getUTCMilliseconds() +" -";
+        delete date
         this.m_Log = new DebugLog("webmail.logging.comms",
                                   "{3c8e8390-2cf6-11d9-9669-0800200c9a66}" ,
                                   szLogFileName);
@@ -766,6 +767,7 @@ nsAOL.prototype =
             szHeaders += "Subject: "+ oMSG.szSubject +"\r\n";
             var date = new Date(oMSG.iDate);
             szHeaders += "Date: " +  date +"\r\n"; // \r\n";
+            delete date;
             szHeaders = szHeaders.replace(/^\./mg,"..");    //bit padding
             szHeaders += "\r\n.\r\n";//msg end
 
@@ -1003,6 +1005,10 @@ nsAOL.prototype =
             this.m_bAuthorised = false;
             this.serverComms("+OK Your Out\r\n");
 
+            this.m_Timer.cancel();
+            delete this.m_aMsgDataStore;
+            delete this.m_aszFolderURLList;
+
             this.m_Log.Write("nsAOL.js - logOUT - END");
             return true;
         }
@@ -1100,6 +1106,7 @@ nsAOL.prototype =
             }
             this.m_Log.Write("nsAOLPOP.js - getPrefs - bUseJunkMail " + oPref.Value);
 
+            delete WebMailPrefAccess;
             this.m_Log.Write("nsAOL.js - loadPrefs - END");
             return true;
         }
