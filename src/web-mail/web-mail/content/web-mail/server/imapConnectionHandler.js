@@ -8,12 +8,14 @@ function IMAPconnectionHandler(transport)
 
         var date = new Date();
         this.iID = date.getHours()+ "-" + date.getMinutes() + "-"+ date.getUTCMilliseconds();
+        delete date;
 
         this.m_IMAPLog.Write("nsIMAPConnectionHandler.js - IMAPconnectionHandler - START - "+this.iID);
 
 
         this.transport = transport;
         this.bAuth = false;
+        this.m_DomainHandler = null;
 
         //get streams
         this.ServerRequest = this.transport.openInputStream(0,0,0);
@@ -332,6 +334,7 @@ IMAPconnectionHandler.prototype.onStopRequest = function(request, context, statu
     this.ServerResponse.close();
     this.ServerRequest.close();
     this.bRunning = false;
+    delete this.m_DomainHandler;
 
     this.m_IMAPLog.Write("nsIMAPConnectionHandler - onStopRequest - END "+this.iID);
 }
