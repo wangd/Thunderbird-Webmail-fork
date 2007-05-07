@@ -155,7 +155,7 @@ DebugLog.prototype.WriteToFile = function(msg)
         }
 
         var outputStream = Components.classes["@mozilla.org/network/file-output-stream;1"]
-                            .createInstance( Components.interfaces.nsIFileOutputStream );
+                                      .createInstance( Components.interfaces.nsIFileOutputStream );
         outputStream.init( this.oLogFile, 0x04 | 0x08 | 0x10, 420, 0 );
 
         var szTempMSG = "";
@@ -167,7 +167,7 @@ DebugLog.prototype.WriteToFile = function(msg)
         if (szTempMSG.lastIndexOf("\r\n") != szTempMSG.length-2) szTempMSG += "\r\n";
 
         outputStream.write( szTempMSG, szTempMSG.length );
-        outoutStream.flush();
+        //outputStream.flush();
         outputStream.close();
 
         return;
