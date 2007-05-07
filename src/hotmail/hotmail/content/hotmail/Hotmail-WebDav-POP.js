@@ -28,8 +28,8 @@ function HotmailWebDav(oResponseStream, oLog, oPrefData)
         this.m_IOS = Components.classes["@mozilla.org/network/io-service;1"]
                                .getService(Components.interfaces.nsIIOService);
 
-        this.m_Timer = Components.classes["@mozilla.org/timer;1"];
-        this.m_Timer = this.m_Timer.createInstance(Components.interfaces.nsITimer);
+        this.m_Timer = Components.classes["@mozilla.org/timer;1"]
+                                 .createInstance(Components.interfaces.nsITimer);
 
         this.m_iTime = oPrefData.iProcessDelay;            //timer delay
         this.m_iProcessAmount =  oPrefData.iProcessAmount; //delay proccess amount
@@ -454,7 +454,8 @@ HotmailWebDav.prototype =
             {
                 this.m_Log.Write("HotmailWebDav.js - notify - all data handled");
                 timer.cancel();
-                delete  this.m_aRawData;
+                delete this.m_aRawData;
+                this.m_aRawData = null;
 
                 if (this.m_bStat) //called by stat
                 {
@@ -931,6 +932,12 @@ HotmailWebDav.prototype =
 
             this.m_bAuthorised = false;
             this.serverComms("+OK Your Out\r\n");
+
+            this.m_Timer.cancel();
+            delete this.m_aMsgDataStore;
+            delete this.m_aszFolderURLList;
+            delete this.m_aszFolders;
+
             this.m_Log.Write("HotmailWebDav.js - logOUT - END");
             return true;
         }
