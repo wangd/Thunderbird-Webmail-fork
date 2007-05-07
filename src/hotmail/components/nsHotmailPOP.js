@@ -23,6 +23,8 @@ function nsHotmail()
         var  szLogFileName = "Hotmail Log - " + date.getHours()+ "-"
                                               + date.getMinutes() + "-"
                                               + date.getUTCMilliseconds() +" -";
+        delete date;
+
         this.m_HotmailLog = new DebugLog("webmail.logging.comms", ExtHotmailGuid, szLogFileName);
         this.m_HotmailLog.Write("nsHotmail.js - Constructor - START");
 
@@ -92,6 +94,8 @@ nsHotmail.prototype =
                 this.m_CommMethod = new HotmailScreenRipper(this.m_oResponseStream, this.m_HotmailLog, PrefData);
 
             var bResult = this.m_CommMethod.logIn(this.m_szUserName, this.m_szPassWord);
+
+            delete PrefData;
 
             this.m_HotmailLog.Write("nsHotmail.js - logIN - "+ bResult +"- END");
             return bResult;

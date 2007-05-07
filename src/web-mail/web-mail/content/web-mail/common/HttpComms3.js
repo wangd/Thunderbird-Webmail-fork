@@ -307,6 +307,8 @@ HttpComms.prototype =
         }
     },
 
+
+
     send : function (callback, parent)
     {
         try
@@ -317,9 +319,12 @@ HttpComms.prototype =
             this.m_Parent = parent;
 
             var channel = this.m_IOService.newChannelFromURI(this.m_URI);
-
             var HttpRequest = channel.QueryInterface(Components.interfaces.nsIHttpChannel);
             HttpRequest.redirectionLimit = 0; //stops automatic redirect handling
+
+            /***********/
+            //SET Headers
+            /***********/
 
             //add cookies
             if (this.m_bHandleCookie)
@@ -340,7 +345,6 @@ HttpComms.prototype =
                     HttpRequest.setRequestHeader("Authorization", szAuthString , false);
             }
 
-
             //other headers
             for (i=0; i<this.m_aHeaders.length; i++)
             {
@@ -351,119 +355,33 @@ HttpComms.prototype =
                 HttpRequest.setRequestHeader(oTemp.szName, oTemp.szValue, oTemp.bOverRide);
             }
 
+            HttpRequest.requestMethod = this.m_szMethod;
 
-            //set data
-            var szContentType = this.m_szContentType;
-            this.m_Log.Write("HttpComms3.js - send - szContentType "+ szContentType);
+            /***********/
+            //SET Body
+            /***********/
+            this.m_Log.Write("HttpComms3.js - send - szContentType "+ this.m_szContentType);
 
-            var MultiStream = null;
             if (this.m_aFormData.length>0)
             {
-                MultiStream = Components.classes["@mozilla.org/io/multiplex-input-stream;1"]
-                                        .createInstance(Components.interfaces.nsIMultiplexInputStream);
-
                 if (this.m_szContentType.search(/^multipart\/form-data$/i)!=-1) //formdata
                 {
-                    var szBoundary = this.createBoundary();   //create boundarys
-                    var szStartBoundary = "\r\n--"+szBoundary+"\r\n" ;
-                    var szEndBoundary = "\r\n--"+szBoundary+"--\r\n" ;
-                    szContentType += "; boundary=" +szBoundary;
-                    this.m_Log.Write("HttpComms3.js - send - update szContentType "+ szContentType);
-
-                    for (j=0; j<this.m_aFormData.length; j++)
-                    {
-                        var oTemp = this.m_aFormData[j];
-
-                        var inStreamStartBound = this.inputStream(szStartBoundary);
-                        MultiStream.appendStream(inStreamStartBound);
-                        inStreamStartBound.close();
-
-                        var mimeStream = Components.classes["@mozilla.org/network/mime-input-stream;1"];
-                        mimeStream = mimeStream.createInstance(Components.interfaces.nsIMIMEInputStream );
-                        mimeStream.addContentLength = false;
-
-                        var szContDisp = "form-data; name=\"" + oTemp.szName + "\"; ";
-                        if (oTemp.bFile)
-                        {
-                            this.m_Log.Write("HttpComms3.js - send - adding data "+oTemp.szName);
-                            this.m_Log.Write("HttpComms3.js - send - adding file" + oTemp.szFileName);
-                            var szContDisp = "form-data; name=\"" + oTemp.szName + "\"; ";
-                            szContDisp +="filename=\"" + (oTemp.szFileName ? oTemp.szFileName : "") + "\"";
-                            mimeStream.addHeader("Content-Disposition",szContDisp);
-                            mimeStream.addHeader("Content-Type","application/octet-stream");
-
-                            if(oTemp.szValue)
-                            {
-                                this.m_Log.Write("HttpComms3.js - send - adding binary data");
-                                var binaryStream = this.binaryStream(oTemp.szValue);
-                                mimeStream.setData(binaryStream);
-                                //binaryStream.close();
-                            }
-                            else
-                            {
-                                var inStreamEmpty = this.inputStream("");
-                                mimeStream.setData(inStreamEmpty);
-                                inStreamEmpty.close();
-                            }
-                        }
-                        else
-                        {
-                            this.m_Log.Write("HttpComms3.js - send - adding data "+oTemp.szName+" "+oTemp.szValue);
-                            this.m_Log.Write("HttpComms3.js - send - adding form data");
-                            var szContDisp = "form-data; name=\"" + oTemp.szName + "\"";
-                            mimeStream.addHeader("Content-Disposition",szContDisp);
-                            var valueStream = this.inputStream(oTemp.szValue? oTemp.szValue:"");
-                            mimeStream.setData(valueStream);
-                            valueStream.close();
-                        }
-
-                        MultiStream.appendStream(mimeStream);
-                        //mimeStream.close();
-
-                        if (j==this.m_aFormData.length-1)
-                        {
-                            this.m_Log.Write("HttpComms3.js - send - adding end boundary");
-                            var inStreamEndBound = this.inputStream(szEndBoundary);
-                            MultiStream.appendStream(inStreamEndBound);
-                            inStreamEndBound.close();
-                        }
-                    }
+                    this.multipartFormData(channel);
                 }
                 else if (this.m_szContentType.search(/^application\/x-www-form-urlencoded$/i)!=-1)//urlencoded
                 {
-                    for (j=0; j<this.m_aFormData.length; j++)
-                    {
-                        var oTemp = this.m_aFormData[j];
-                        this.m_Log.Write("HttpComms3.js - send - adding data "+oTemp.szName+" "+oTemp.szValue);
-
-                        if (j>0)
-                        {
-                            var inStreamAnd = this.inputStream("&");
-                            MultiStream.appendStream(inStreamAnd);
-                            inStreamAnd.close();
-                        }
-
-                        var szData = oTemp.szName + "=" + oTemp.szValue;
-                        var inStreamData = this.inputStream(szData);
-                        MultiStream.appendStream(inStreamData);
-                        inStreamData.close();
-                    }
+                    this.urlEncodedFormData(channel);
                 }
                 else  //other
                 {
-                    var inStreamData = this.inputStream(this.m_aFormData[0].szValue);
-                    MultiStream.appendStream(inStreamData);
-                    inStreamData.close();
+                    this.otherData(channel);
                 }
-                var uploadChannel = channel.QueryInterface(Components.interfaces.nsIUploadChannel);
-                uploadChannel.setUploadStream(MultiStream , szContentType , -1);
             }
-
-            HttpRequest.requestMethod = this.m_szMethod;
-
-            var listener = new this.downloadListener(this.callback, this);
-            channel.asyncOpen(listener, null);
-            //if (MultiStream)  MultiStream.close();
+            else  //bounce ?
+            {
+                var listener = new this.downloadListener(this.callback, this);
+                channel.asyncOpen(listener, null);
+            }
 
             this.m_Log.Write("HttpComms3.js - send - END");
             return true;
@@ -478,6 +396,170 @@ HttpComms.prototype =
             return false;
         }
     },
+
+
+
+
+    otherData : function(nsIChannel)
+    {
+        this.m_Log.Write("HttpComms3.js - otherData - Start");
+
+        var MultiStream = Components.classes["@mozilla.org/io/multiplex-input-stream;1"]
+                                    .createInstance(Components.interfaces.nsIMultiplexInputStream);
+
+        var inStreamData = this.inputStream(this.m_aFormData[0].szValue);
+        MultiStream.appendStream(inStreamData);
+        inStreamData.close();
+
+        var uploadChannel = nsIChannel.QueryInterface(Components.interfaces.nsIUploadChannel);
+        uploadChannel.setUploadStream(MultiStream , this.m_szContentType , -1);
+
+        var HttpRequest = nsIChannel.QueryInterface(Components.interfaces.nsIHttpChannel);
+        HttpRequest.requestMethod = this.m_szMethod;
+
+        var listener = new this.downloadListener(this.callback, this);
+        nsIChannel.asyncOpen(listener, null);
+
+        if (MultiStream)  MultiStream.close();
+        MultiStream = null;
+
+        this.m_Log.Write("HttpComms3.js - otherData - END");
+    },
+
+
+
+    urlEncodedFormData : function (nsIChannel)
+    {
+        this.m_Log.Write("HttpComms3.js - urlEncodedFormData - Start");
+
+        var MultiStream = Components.classes["@mozilla.org/io/multiplex-input-stream;1"]
+                                    .createInstance(Components.interfaces.nsIMultiplexInputStream);
+
+        for (j=0; j<this.m_aFormData.length; j++)
+        {
+            var oTemp = this.m_aFormData[j];
+            this.m_Log.Write("HttpComms3.js - urlencoded - adding data "+oTemp.szName+" "+oTemp.szValue);
+
+            if (j>0)
+            {
+                var inStreamAnd = this.inputStream("&");
+                MultiStream.appendStream(inStreamAnd);
+                inStreamAnd.close();
+            }
+
+            var szData = oTemp.szName + "=" + oTemp.szValue;
+            var inStreamData = this.inputStream(szData);
+            MultiStream.appendStream(inStreamData);
+            inStreamData.close();
+        }
+
+        var uploadChannel = nsIChannel.QueryInterface(Components.interfaces.nsIUploadChannel);
+        uploadChannel.setUploadStream(MultiStream , this.m_szContentType , -1);
+
+        var HttpRequest = nsIChannel.QueryInterface(Components.interfaces.nsIHttpChannel);
+        HttpRequest.requestMethod = this.m_szMethod;
+
+        var listener = new this.downloadListener(this.callback, this);
+        nsIChannel.asyncOpen(listener, null);
+
+        if (MultiStream)  MultiStream.close();
+        MultiStream = null;
+
+        this.m_Log.Write("HttpComms3.js - urlEncodedFormData - END");
+    },
+
+
+
+
+    multipartFormData : function (nsIChannel)
+    {
+        this.m_Log.Write("HttpComms3.js - multipartFormData - Start");
+
+        var MultiStream = Components.classes["@mozilla.org/io/multiplex-input-stream;1"]
+                                    .createInstance(Components.interfaces.nsIMultiplexInputStream);
+
+        var szBoundary = this.createBoundary();   //create boundarys
+        var szStartBoundary = "\r\n--"+szBoundary+"\r\n" ;
+        var szEndBoundary = "\r\n--"+szBoundary+"--\r\n" ;
+        var szContentType = this.m_szContentType;
+        szContentType += "; boundary=" +szBoundary;
+        this.m_Log.Write("HttpComms3.js - send - update szContentType "+ szContentType);
+
+        for (j=0; j<this.m_aFormData.length; j++)
+        {
+            var oTemp = this.m_aFormData[j];
+
+            var inStreamStartBound = this.inputStream(szStartBoundary);
+            MultiStream.appendStream(inStreamStartBound);
+            inStreamStartBound.close();
+
+            var mimeStream = Components.classes["@mozilla.org/network/mime-input-stream;1"];
+            mimeStream = mimeStream.createInstance(Components.interfaces.nsIMIMEInputStream );
+            mimeStream.addContentLength = false;
+
+            var szContDisp = "form-data; name=\"" + oTemp.szName + "\"; ";
+            if (oTemp.bFile)
+            {
+                this.m_Log.Write("HttpComms3.js - multipartFormData - adding data "+oTemp.szName);
+                this.m_Log.Write("HttpComms3.js - multipartFormData - adding file" + oTemp.szFileName);
+                var szContDisp = "form-data; name=\"" + oTemp.szName + "\"; ";
+                szContDisp +="filename=\"" + (oTemp.szFileName ? oTemp.szFileName : "") + "\"";
+                mimeStream.addHeader("Content-Disposition",szContDisp);
+                mimeStream.addHeader("Content-Type","application/octet-stream");
+
+                if(oTemp.szValue)
+                {
+                    this.m_Log.Write("HttpComms3.js - multipartFormData - adding binary data");
+                    var binaryStream = this.binaryStream(oTemp.szValue);
+                    mimeStream.setData(binaryStream);
+                    //binaryStream.close();
+                }
+                else
+                {
+                    var inStreamEmpty = this.inputStream("");
+                    mimeStream.setData(inStreamEmpty);
+                    inStreamEmpty.close();
+                }
+            }
+            else
+            {
+                this.m_Log.Write("HttpComms3.js - multipartFormData - adding data "+oTemp.szName+" "+oTemp.szValue);
+                this.m_Log.Write("HttpComms3.js - multipartFormData - adding form data");
+                var szContDisp = "form-data; name=\"" + oTemp.szName + "\"";
+                mimeStream.addHeader("Content-Disposition",szContDisp);
+                var valueStream = this.inputStream(oTemp.szValue? oTemp.szValue:"");
+                mimeStream.setData(valueStream);
+                valueStream.close();
+            }
+
+            MultiStream.appendStream(mimeStream);
+            //mimeStream.close();
+
+            if (j==this.m_aFormData.length-1)
+            {
+                this.m_Log.Write("HttpComms3.js - multipartFormData - adding end boundary");
+                var inStreamEndBound = this.inputStream(szEndBoundary);
+                MultiStream.appendStream(inStreamEndBound);
+                inStreamEndBound.close();
+            }
+        }
+
+        var uploadChannel = nsIChannel.QueryInterface(Components.interfaces.nsIUploadChannel);
+        uploadChannel.setUploadStream(MultiStream , szContentType , -1);
+
+        var HttpRequest = nsIChannel.QueryInterface(Components.interfaces.nsIHttpChannel);
+        HttpRequest.requestMethod = this.m_szMethod;
+
+        var listener = new this.downloadListener(this.callback, this);
+        nsIChannel.asyncOpen(listener, null);
+
+        //MultiStream.close();
+        //MultiStream = null;
+
+        this.m_Log.Write("HttpComms3.js - multipartFormData - END");
+    },
+
+
 
 
     binaryStream : function (szData)
@@ -503,8 +585,11 @@ HttpComms.prototype =
             binaryStream = binaryStream.createInstance(Components.interfaces.nsIBinaryOutputStream);
             binaryStream.setOutputStream(outputStream)
             binaryStream.writeBytes( szData, szData.length );
+            outputStream.flush();
+            binaryStream.flush();
             outputStream.close();
             binaryStream.close();
+
 
             var inputStream = Components.classes["@mozilla.org/network/file-input-stream;1"];
             inputStream = inputStream.createInstance(Components.interfaces.nsIFileInputStream);
@@ -535,6 +620,7 @@ HttpComms.prototype =
     },
 
 
+
     createBoundary : function ()
     {
         this.m_Log.Write("HttpComms3.js - createBondary - START");
@@ -547,7 +633,6 @@ HttpComms.prototype =
         this.m_Log.Write("HttpComms3.js - createBondary - END " + szBoundary);
         return szBoundary;
     },
-
 
 
 
