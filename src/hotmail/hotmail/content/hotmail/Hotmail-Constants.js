@@ -72,7 +72,7 @@ const patternHotmailSRFrom =/<tr[\S\s]*name="(.*?)"><td>/i;
 const patternHotmailJSRefresh = /<html><head><script.*?>.*?\.location\.replace.*?\("(.*?)"\).*?<\/script>.*?<\/html>/i;
 const patternHotmailJSRefreshAlt = /<head><meta http-equiv="REFRESH".*?content=".*?URL=(.*?)">.*?<\/head><\/html>/i;
 const patternHotmailJSBounce = /srf_uRet="(.*?)"/i;
-const patternHotmailLogOut = /<.*?"(.*?logout.aspx.*?)".*?>/gi;
+const patternHotmailLogOut = /"(.*?logout.aspx.*?)"/i;
 const patternHotmailViewState = /__VIEWSTATE".*?value="(.*?)".*?\/>/i;
 const patternHotmailInboxFolderID = /<td class="dManageFoldersFolderNameCol"><a href="(.*?\?FolderID=.*?1&.*?)".*?>/i;
 const patternHotmailJunkFolderID = /<td class="dManageFoldersFolderNameCol"><a href="(.*?\?FolderID=.*?5&.*?)".*?>/i;
