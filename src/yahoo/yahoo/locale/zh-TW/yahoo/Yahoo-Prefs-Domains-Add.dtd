@@ -1,0 +1,8 @@
+<!ENTITY YahooAddDomain.Title "新增網域">
+<!ENTITY YahooAddDomainName.Label "網域">
+<!ENTITY YahooAddDomainName.AccessKey "D">
+<!ENTITY YahooAddDomain.Label "新增雅虎網域">
+<!ENTITY YahooAddDomain.ButtonOk.Label "確認">
+<!ENTITY YahooAddDomain.ButtonOk.AccessKey "O">
+<!ENTITY YahooAddDomain.ButtonCancel.Label "取消">
+<!ENTITY YahooAddDomain.ButtonCancel.AccessKey "C">

@@ -244,6 +244,12 @@
      -moz-image-region: rect(0px, 960px, 32px, 928px)
 }
 
+.flag[value="29"]/*tw*/
+{
+     -moz-image-region: rect(0px, 992px, 32px, 960px)
+}
+
+
 
 
 #LycosHomePage

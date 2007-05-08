@@ -7,7 +7,7 @@
 
         <em:id>{3c8e8390-2cf6-11d9-9669-0800200c9a66}</em:id>
         <em:type>2</em:type>
-        <em:version>1.2.0b1</em:version>
+        <em:version>1.2.0b4</em:version>
 
         <em:name>WebMail</em:name>
         <em:description>Lets Thunderbird access web mail</em:description>

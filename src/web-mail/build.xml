@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <project name="web-mail" default="createxpi">
-    <property name="VERSION" value="1-2-0b1"/>
+    <property name="VERSION" value="1-2-0b4"/>
 
     <delete file="web-mail-${VERSION}.xpi"/>
     <delete file="web-mail.jar"/>

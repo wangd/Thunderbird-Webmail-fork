@@ -1,0 +1,8 @@
+<!ENTITY YahooFolderAdd.Title "新增資料夾">
+<!ENTITY YahooFolderName.Label "資料夾名稱">
+<!ENTITY YahooFolderName.AccessKey "F">
+<!ENTITY YahooFolders.Label "新增下載資料夾">
+<!ENTITY YahooFolder.ButtonOk.Label "確認">
+<!ENTITY YahooFolder.ButtonOk.AccessKey "O">
+<!ENTITY YahooFolder.ButtonCancel.Label "取消">
+<!ENTITY YahooFolder.ButtonCancel.AccessKey "C">
