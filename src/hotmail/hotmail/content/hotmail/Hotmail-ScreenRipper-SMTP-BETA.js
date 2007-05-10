@@ -397,7 +397,7 @@ HotmailSMTPScreenRipperBETA.prototype =
 
                     var szAction = szResponse.match(patternHotmailSend)[1];
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler - Action " + szAction);
-                    var szURL =  mainObject.removeHTML(mainObject.m_szLocationURI + szAction);
+                    var szURL =  mainObject.decodeHTML(mainObject.m_szLocationURI + szAction);
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA - composerOnloadHandler - szURL : " +szURL);
 
                     for (i=0; i<aszInput.length; i++)
@@ -464,6 +464,7 @@ HotmailSMTPScreenRipperBETA.prototype =
                     mainObject.m_HttpComms.addValuePair("MsgPriority", "0");
 
                     var szBody = mainObject.m_Email.txtBody.body.getBody();
+                    szBody = mainObject.encodeHTML(szBody);
 
                     var szContentType = null;
                     if (mainObject.m_Email.txtBody.headers)
@@ -545,7 +546,7 @@ HotmailSMTPScreenRipperBETA.prototype =
 
                     var szAction = szResponse.match(patternHotmailAddAttachment)[1];
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler - Action " + szAction);
-                    var szURL =  mainObject.removeHTML(mainObject.m_szLocationURI + szAction);
+                    var szURL =  mainObject.decodeHTML(mainObject.m_szLocationURI + szAction);
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA - composerOnloadHandler - szURL : " +szURL);
 
                     mainObject.m_bAttHandled = true;
@@ -606,7 +607,7 @@ HotmailSMTPScreenRipperBETA.prototype =
 
                     var szAction = szResponse.match(patternHotmailLastAttachment)[1];
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler - Action " + szAction);
-                    var szURL =  mainObject.removeHTML(mainObject.m_szLocationURI + szAction);
+                    var szURL =  mainObject.decodeHTML(mainObject.m_szLocationURI + szAction);
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA - composerOnloadHandler - szURL : " +szURL);
                     mainObject.m_HttpComms.setURI(szURL);
 
@@ -739,9 +740,9 @@ HotmailSMTPScreenRipperBETA.prototype =
     },
 
 
-    removeHTML : function (szRaw)
+    decodeHTML : function (szRaw)
     {
-        this.m_Log.Write("Hotmail-SR-SMTP-BETA - removeHTML - START");
+        this.m_Log.Write("Hotmail-SR-SMTP-BETA - decodeHTML - START");
         var szMsg = szRaw.replace(/&lt;/g,"<");
         szMsg = szMsg.replace(/&gt;/g,">");
         szMsg = szMsg.replace(/&quot;/g, "\"");
@@ -749,11 +750,22 @@ HotmailSMTPScreenRipperBETA.prototype =
         szMsg = szMsg.replace(/&nbsp;/g, " ");
         szMsg = szMsg.replace(/<strong>/g, "");
         szMsg = szMsg.replace(/<\/strong>/g, "");
-        this.m_Log.Write("Hotmail-SR-SMTP-BETA - removeHTML - ENd")
+        this.m_Log.Write("Hotmail-SR-SMTP-BETA - decodeHTML - ENd")
         return szMsg;
     },
 
 
+   encodeHTML : function (szRaw)
+   {
+        this.m_Log.Write("Hotmail-SR-SMTP-BETA - encodeHTML - START");
+        var szMsg = szRaw.replace(/&/g,"&amp;");
+        szMsg = szMsg.replace(/</g,"&lt;");
+        szMsg = szMsg.replace(/>/g,"&gt;");
+        szMsg = szMsg.replace(/\r?\n/g,"\r\n<br>");
+        this.m_Log.Write("Hotmail-SR-SMTP-BETA - encodeHTML - ENd")
+        return szMsg;
+
+   },
 
     serverComms : function (szMsg)
     {

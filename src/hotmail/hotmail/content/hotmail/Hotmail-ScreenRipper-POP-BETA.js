@@ -951,7 +951,7 @@ HotmailScreenRipperBETA.prototype =
                     if (!aTemp) throw new Error("Message START  not found");
                     var szEmail = aTemp[1].split(/<\/pre>/)[0];
                     if (!szEmail) throw new Error("Message END  not found");
-
+                    szEmail = szEmail.replace(/<\/$/,"");  //clean bad tag
                     mainObject.m_szMSG += szEmail;
 
                     //clean up msg
@@ -962,7 +962,6 @@ HotmailScreenRipperBETA.prototype =
                     if (mainObject.m_bMarkAsRead)
                     {
                         mainObject.m_iStage++;
-                      //  mainObject.m_szMSGURI = mainObject.m_szMSGURI.replace(/mail.aspx/i,"ApplicationMainReach.aspx")
                         mainObject.m_HttpComms.setURI(mainObject.m_szMSGURI);
                         mainObject.m_HttpComms.setRequestMethod("GET");
                         var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);
