@@ -17,7 +17,7 @@ PrefData.prototype.aszFolder = null;
 
 PrefData.prototype.bSendHtml = false;
 
-PrefData.prototype.iMode = 0;
+PrefData.prototype.iMode = 2;   //default Hotmail Live
 
 PrefData.prototype.iProcessDelay = 10;
 

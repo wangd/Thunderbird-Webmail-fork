@@ -48,9 +48,9 @@
                             <vbox>
                                 <label value="&HotmailPref.Mode.Label;" id="labelMode" flex="1"/>
                                 <radiogroup id="radiogroupMode" onclick ="gPrefAccounts.rgModeOnChange();"  class="radio">
-                                    <radio label="&HotmailPref.Mode.ScreenScraper.Label;" value="0"/>
+                                    <radio label="&HotmailPref.Mode.HotmailOld.Label;"    value="0"/>
                                     <radio label="&HotmailPref.Mode.WebDav.Label;"        value="1"/>
-                                    <radio label="&HotmailPref.Mode.Beta.Label;"          value="2"/>
+                                    <radio label="&HotmailPref.Mode.HotmailLive.Label;"   value="2"/>
                                 </radiogroup>
                              </vbox>
                         </vbox>
