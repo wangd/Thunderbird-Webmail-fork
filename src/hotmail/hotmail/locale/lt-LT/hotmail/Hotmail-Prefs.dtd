@@ -6,9 +6,9 @@
 <!ENTITY HotmailPref.Tab.POP.Title "POP">
 <!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
 <!ENTITY HotmailPref.Mode.Label "Pasirinkite susijungimo metodą, kurį priedas naudos prisijungdamas prie Microsoft serverių">
-<!ENTITY HotmailPref.Mode.ScreenScraper.Label "Hotmail svetainė (produkcija)">
+<!ENTITY HotmailPref.Mode.HotmailLive.Label "Hotmail Live (Nauja svetainė)">
+<!ENTITY HotmailPref.Mode.HotmailOld.Label "Hotmail (Senoji svetainė)">
 <!ENTITY HotmailPref.Mode.WebDav.Label "WebDav">
-<!ENTITY HotmailPref.Mode.Beta.Label "Hotmail Svetainė (BETA)">
 <!ENTITY HotmailPref.POP.DownloadUnread.Label "Parsiųsti tik neskaitytus laiškus">
 <!ENTITY HotmailPref.POP.DownloadUnread.AccessKey "n">
 <!ENTITY HotmailPref.POP.JunkMail.Label "Parsiųsti Šlamštą">
@@ -26,7 +26,7 @@
 <!ENTITY HotmailPref.SMTP.SendHtml.Label "Siųsti HTML tekstą">
 <!ENTITY HotmailPref.SMTP.SendHtml.AccessKey "H">
 <!ENTITY HotmailPref.AccountError.Label "Nerasta jokių Hotmail paskyrų">
-<!ENTITY HotmailPref.SMTP.NA.Label "Jokių SMTP nustatymų skirtų Hotmail BETA">
+<!ENTITY HotmailPref.SMTP.NA.Label "Jokių  nustatymų skirtų Hotmail Live">
 <!ENTITY HotmailPref.POP.MarkAsRead.Label "Serveryje pažymėti laiškus kaip perskaitytus">
 <!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "s">
 <!ENTITY HotmailPref.Domain.Label "Domenai palaikomi Hotmail priedo">

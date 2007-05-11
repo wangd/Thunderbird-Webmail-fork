@@ -6,9 +6,11 @@
 <!ENTITY HotmailPref.Tab.POP.Title "POP">
 <!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
 <!ENTITY HotmailPref.Mode.Label "Vyberte metódu, pomocou ktorej sa bude rozšírenie pripájať k serverom Microsoft">
-<!ENTITY HotmailPref.Mode.ScreenScraper.Label "Webstránka WebMail-u (produkt)">
+
 <!ENTITY HotmailPref.Mode.WebDav.Label "WebDav">
-<!ENTITY HotmailPref.Mode.Beta.Label "Webstránka WebMail-u (BETA)">
+<!ENTITY HotmailPref.Mode.HotmailLive.Label "Hotmail Live (New website)">
+<!ENTITY HotmailPref.Mode.HotmailOld.Label "Hotmail (Old website)">
+
 <!ENTITY HotmailPref.POP.DownloadUnread.Label "Sťahovať len neprečítané e-maily">
 <!ENTITY HotmailPref.POP.DownloadUnread.AccessKey "n">
 <!ENTITY HotmailPref.POP.JunkMail.Label "Sťahovať nevyžiadanú poštu">

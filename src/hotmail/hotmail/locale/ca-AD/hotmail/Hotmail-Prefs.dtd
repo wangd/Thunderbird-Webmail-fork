@@ -6,9 +6,11 @@
 <!ENTITY HotmailPref.Tab.POP.Title "POP">
 <!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
 <!ENTITY HotmailPref.Mode.Label "Escolliu el mètode de comunicació que utilitzarà l&apos;extensió per connectar-se als servidors de Microsoft">
-<!ENTITY HotmailPref.Mode.ScreenScraper.Label "Lloc web de Hotmail (producció)">
+
 <!ENTITY HotmailPref.Mode.WebDav.Label "WebDav">
-<!ENTITY HotmailPref.Mode.Beta.Label "Lloc web de Hotmail (BETA)">
+<!ENTITY HotmailPref.Mode.HotmailLive.Label "Hotmail Live (New website)">
+<!ENTITY HotmailPref.Mode.HotmailOld.Label "Hotmail (Old website)">
+
 <!ENTITY HotmailPref.POP.DownloadUnread.Label "Descarrega només els correus no llegits">
 <!ENTITY HotmailPref.POP.DownloadUnread.AccessKey "u">
 <!ENTITY HotmailPref.POP.JunkMail.Label "Descarrega el correu brossa">

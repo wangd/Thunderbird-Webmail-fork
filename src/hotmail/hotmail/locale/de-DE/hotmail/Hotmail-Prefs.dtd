@@ -6,9 +6,11 @@
 <!ENTITY HotmailPref.Tab.POP.Title "POP3">
 <!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
 <!ENTITY HotmailPref.Mode.Label "Bitte die Zugangsart auswählen mit der die WebMail-Erweiterung auf die Microsoft-Server zugreift">
-<!ENTITY HotmailPref.Mode.ScreenScraper.Label "Hotmail Website (Standard)">
+
 <!ENTITY HotmailPref.Mode.WebDav.Label "WebDAV">
-<!ENTITY HotmailPref.Mode.Beta.Label "Hotmail Website (BETA)">
+<!ENTITY HotmailPref.Mode.HotmailLive.Label "Hotmail Live (New website)">
+<!ENTITY HotmailPref.Mode.HotmailOld.Label "Hotmail (Old website)">
+
 <!ENTITY HotmailPref.POP.DownloadUnread.Label "Nur ungelesene Nachrichten herunterladen">
 <!ENTITY HotmailPref.POP.DownloadUnread.AccessKey "u">
 <!ENTITY HotmailPref.POP.JunkMail.Label "JunkMail herunterladen">

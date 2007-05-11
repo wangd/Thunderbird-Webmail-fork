@@ -6,9 +6,11 @@
 <!ENTITY HotmailPref.Tab.POP.Title "POP">
 <!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
 <!ENTITY HotmailPref.Mode.Label "Alege metoda de comunicatii pe care o va folosi extensia pentru conectarea la serverele Microsoft">
-<!ENTITY HotmailPref.Mode.ScreenScraper.Label "Sit Hotmail (productie)">
+
 <!ENTITY HotmailPref.Mode.WebDav.Label "WebDav">
-<!ENTITY HotmailPref.Mode.Beta.Label "Sit Hotmail (BETA)">
+<!ENTITY HotmailPref.Mode.HotmailLive.Label "Hotmail Live (New website)">
+<!ENTITY HotmailPref.Mode.HotmailOld.Label "Hotmail (Old website)">
+
 <!ENTITY HotmailPref.POP.DownloadUnread.Label "Descarca numai mesajele necitite">
 <!ENTITY HotmailPref.POP.DownloadUnread.AccessKey "u">
 <!ENTITY HotmailPref.POP.JunkMail.Label "Descarca JunkMail">

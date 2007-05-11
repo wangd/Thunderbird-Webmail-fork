@@ -6,9 +6,11 @@
 <!ENTITY HotmailPref.Tab.POP.Title "POP">
 <!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
 <!ENTITY HotmailPref.Mode.Label "Elija el método de comunicación que la extensión utilizará para conectarse a los servidores de Microsoft">
-<!ENTITY HotmailPref.Mode.ScreenScraper.Label "Sitio Web de Hotmail (producción)">
+
 <!ENTITY HotmailPref.Mode.WebDav.Label "WebDav">
-<!ENTITY HotmailPref.Mode.Beta.Label "Sitio Web de Hotmail (BETA)">
+<!ENTITY HotmailPref.Mode.HotmailLive.Label "Hotmail Live (New website)">
+<!ENTITY HotmailPref.Mode.HotmailOld.Label "Hotmail (Old website)">
+
 <!ENTITY HotmailPref.POP.DownloadUnread.Label "Descargar solamente los correos no leídos">
 <!ENTITY HotmailPref.POP.DownloadUnread.AccessKey "u">
 <!ENTITY HotmailPref.POP.JunkMail.Label "Descargar JunkMail">

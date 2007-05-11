@@ -6,9 +6,9 @@
 <!ENTITY HotmailPref.Tab.POP.Title "POP">
 <!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
 <!ENTITY HotmailPref.Mode.Label "마이크로소프트 서버에 접속하기 위한 연결 방식을 선택하십시오.">
-<!ENTITY HotmailPref.Mode.ScreenScraper.Label "Hotmail 웹사이트(제품)">
+<!ENTITY HotmailPref.Mode.HotmailLive.Label "Hotmail 라이브 (새 웹사이트)">
+<!ENTITY HotmailPref.Mode.HotmailOld.Label "Hotmail (이전 웹사이트)">
 <!ENTITY HotmailPref.Mode.WebDav.Label "WebDav">
-<!ENTITY HotmailPref.Mode.Beta.Label "Hotmail 웹사이트(베타)">
 <!ENTITY HotmailPref.POP.DownloadUnread.Label "읽지 않은 메일만 다운로드">
 <!ENTITY HotmailPref.POP.DownloadUnread.AccessKey "u">
 <!ENTITY HotmailPref.POP.JunkMail.Label "스팸 메일 다운로드">
