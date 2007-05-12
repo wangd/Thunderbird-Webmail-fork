@@ -6,11 +6,9 @@
 <!ENTITY HotmailPref.Tab.POP.Title "POP">
 <!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
 <!ENTITY HotmailPref.Mode.Label "Sélectionner la méthode de communication utilisée par l&apos;extension pour se connecter sur les serveurs de Microsoft">
-
+<!ENTITY HotmailPref.Mode.HotmailLive.Label "Hotmail Live (Site Web en nouvelle version)">
+<!ENTITY HotmailPref.Mode.HotmailOld.Label "Hotmail (Site Web en ancienne version)">
 <!ENTITY HotmailPref.Mode.WebDav.Label "WebDav">
-<!ENTITY HotmailPref.Mode.HotmailLive.Label "Hotmail Live (New website)">
-<!ENTITY HotmailPref.Mode.HotmailOld.Label "Hotmail (Old website)">
-
 <!ENTITY HotmailPref.POP.DownloadUnread.Label "Télécharger seulement les mails non lus">
 <!ENTITY HotmailPref.POP.DownloadUnread.AccessKey "T">
 <!ENTITY HotmailPref.POP.JunkMail.Label "Télécharger les indésirables">
