@@ -919,7 +919,6 @@ HotmailScreenRipperBETA.prototype =
             {
                 try
                 {
-
                     //Content-Type: text/html; charset=utf-16
                     var szCharset = szContentType.match(/charset=(.*?)$/i)[1]
                     var Converter = Components.classes["@mozilla.org/intl/scriptableunicodeconverter"]
@@ -929,7 +928,7 @@ HotmailScreenRipperBETA.prototype =
                     var unicode =  Converter.ConvertToUnicode(szResponse);
                     this.m_Log.Write("Hotmail-SR-BETA - emailOnloadHandler - unicode " + unicode);
 
-                    Converter.charset = "utf-8";
+                    Converter.charset = "US-ASCII";
                     var szDecoded = Converter.ConvertFromUnicode(unicode);
                     this.m_Log.Write("Hotmail-SR-BETA - emailOnloadHandler - utf-8 "+szDecoded);
                     szResponse = szDecoded
