@@ -51,6 +51,7 @@ function nsMailDotCom()
         this.m_BeforeAdsCallback = null;
         this.m_szLocation=null;
         this.m_szFolderList=null;
+        this.m_szFrontPage = null;
         this.m_aszURI = new Array();
         this.m_szTrashURI=null;
         this.m_szDeleteURI = null;
@@ -123,14 +124,16 @@ nsMailDotCom.prototype =
                 this.m_Log.Write("nsMailDotCom.js - logIN - Getting Session Data");
                 this.m_szLocation = this.m_ComponentManager.findElement(this.m_szUserName, "szLocation");
                 this.m_Log.Write("nsMailDotCom - logIN - m_szLocation " +this.m_szLocation);
+                this.m_szFrontPage = this.m_ComponentManager.findElement(this.m_szUserName, "szFrontPage");
+                this.m_Log.Write("nsMailDotCom.js - logIN - m_szFrontPage - " +this.m_szFrontPage);
                 this.m_szFolderList =  this.m_ComponentManager.findElement(this.m_szUserName, "szFolderList");
                 this.m_Log.Write("nsMailDotCom.js - logIN - m_szFolderList - " +this.m_szFolderList);
-                if (this.m_szLocation)
+                if (this.m_szFolderList)
                 {
                     this.m_Log.Write("nsAOL.js - logIN - Session Data Found");
-                    this.m_iStage =4;
+                    this.m_iStage =3;
                     this.m_bReEntry = true;
-                    this.m_HttpComms.setURI(this.m_szLocation);
+                    this.m_HttpComms.setURI(this.m_szFolderList);
                 }
                 else
                 {
@@ -193,18 +196,7 @@ nsMailDotCom.prototype =
             //page code
             switch (mainObject.m_iStage)
             {
-                case 0: //refresh page
-                    var szRefreshURI = szResponse.match(patternMailRefresh)[1];
-                    mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - Refresh URI " + szRefreshURI);
-
-                    mainObject.m_HttpComms.setURI(szRefreshURI);
-                    mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
-                break;
-
-                case 1: //login page
+                case 0: //login page
                     //get login form
                     var szForm= szResponse.match(patternMailDotComLoginForm)[0];
                     if (!szForm)
@@ -271,7 +263,7 @@ nsMailDotCom.prototype =
                     mainObject.m_iStage++;
                 break;
 
-                case 2: //frame
+                case 1: //frame
                      //get mail box
                     var szMailBox = szResponse.match(patternMailDotComFrame)[1];
                     if (!szMailBox)
@@ -286,17 +278,31 @@ nsMailDotCom.prototype =
                 break;
 
 
-                case 3://get folder list
+                case 2://get folder list
                     var szLocation = httpChannel.URI.spec;
                     mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - location "+ szLocation);
                     if (szLocation.search(/frontpage.main/)==-1)
                         throw new Error("error logging in");
 
-                    mainObject.m_szLocation = httpChannel.URI.prePath
-                    mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - location "+ mainObject.m_szLocation);
-                    var szFolder = szResponse.match(patternMailDotComFolders)[1];
-                    mainObject.m_szFolderList =  mainObject.m_szLocation + szFolder
-                    mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - folders "+ mainObject.m_szFolderList);
+                    var aszForm = szResponse.match(patternMailDotComComposeButtonForm);
+                    mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - aszForm "+ aszForm);
+                    var aInputs = aszForm[0].match(patternMailDotComInput);
+                    mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - aInputs "+ aInputs);
+                    var szComposer = null;
+                    for (i=0; i<aInputs.length; i++)
+                    {
+                       if (aInputs[i].search(/folders.mail/i)!=-1)//get folder uri
+                        {
+                            var szFolder = aInputs[i].match(patternMailDotComFolders)[1];
+                            mainObject.m_szFolderList = szFolder ;
+                            mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - folders "+ mainObject.m_szFolderList);
+                        }
+                    }
+
+                    mainObject.m_szFrontPage= httpChannel.URI.spec;
+                    mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - m_szFrontPage "+ mainObject.m_szFrontPage);
+                    mainObject.m_szLocation = httpChannel.URI.prePath;
+                    mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - m_szLocation "+ mainObject.m_szLocation);
 
                     mainObject.m_HttpComms.setURI(mainObject.m_szFolderList);
                     mainObject.m_HttpComms.setRequestMethod("GET");
@@ -307,7 +313,7 @@ nsMailDotCom.prototype =
                 break;
 
 
-                case 4: //get folder urls
+                case 3: //get folder urls
                     var aszFolderList = szResponse.match(patternMailDotComFolderList);
                     mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - folders list "+ aszFolderList);
 
@@ -1037,7 +1043,6 @@ nsMailDotCom.prototype =
         try
         {
             mainObject.m_Log.Write("nsMailDotCom.js - deleteMessageOnload - START");
-           // mainObject.m_Log.Write("nsMailDotCom.js - deleteMessageOnload :\n" + szResponse);
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
 
@@ -1082,6 +1087,7 @@ nsMailDotCom.prototype =
                     this.m_Log.Write("nsMailDotCom.js - logOut - Setting Session Data");
                     this.m_ComponentManager.addElement(this.m_szUserName, "szLocation", this.m_szLocation);
                     this.m_ComponentManager.addElement(this.m_szUserName, "szFolderList", this.m_szFolderList);
+                    this.m_ComponentManager.addElement(this.m_szUserName, "szFrontPage", this.m_szFrontPage);
                 }
                 else
                 {
@@ -1156,6 +1162,7 @@ nsMailDotCom.prototype =
                 mainObject.m_Log.Write("nsMailDotCom.js - logOut - Setting Session Data");
                 mainObject.m_ComponentManager.addElement(mainObject.m_szUserName, "szLocation", mainObject.m_szLocation);
                 mainObject.m_ComponentManager.addElement(mainObject.m_szUserName, "szFolderList", mainObject.m_szFolderList);
+                mainObject.m_ComponentManager.addElement(mainObject.m_szUserName, "szFrontPage", mainObject.m_szFrontPage);
             }
             else
             {
