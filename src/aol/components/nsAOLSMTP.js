@@ -287,6 +287,12 @@ nsAOLSMTP.prototype =
                     {
                         if (mainObject.m_bReEntry)
                         {
+                            mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
+
+                            var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                                     .getService(Components.interfaces.nsIWebMailCookieManager2);
+                            oCookies.removeCookie(mainObject.m_szUserName);
+
                             mainObject.m_bReEntry = false;
                             mainObject.m_iStage =0;
                             mainObject.m_HttpComms.setURI(mainObject.m_szAOLMail);

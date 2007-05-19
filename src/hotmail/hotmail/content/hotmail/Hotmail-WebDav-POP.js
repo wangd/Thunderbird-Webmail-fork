@@ -205,6 +205,14 @@ HotmailWebDav.prototype =
         }
         catch(err)
         {
+            var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                     .getService(Components.interfaces.nsIWebMailCookieManager2);
+            oCookies.removeCookie(mainObject.m_szUserName);
+
+            var oAuth = Components.classes["@mozilla.org/nsWebMailAuthManager2;1"]
+                                  .getService(Components.interfaces.nsIWebMailAuthManager2);
+            oAuth.removeTokens(mainObject.m_szUserName);
+
             //check for retries
             if (mainObject.m_iRetries > 0)
             {
@@ -220,14 +228,6 @@ HotmailWebDav.prototype =
             }
             else
             {
-                var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
-                                         .getService(Components.interfaces.nsIWebMailCookieManager2);
-                oCookies.removeCookie(mainObject.m_szUserName);
-
-                var oAuth = Components.classes["@mozilla.org/nsWebMailAuthManager2;1"]
-                                      .getService(Components.interfaces.nsIWebMailAuthManager2);
-                oAuth.removeTokens(mainObject.m_szUserName);
-
                 mainObject.m_Log.DebugDump("HotmailWebDav.js: loginHandler : Exception : "
                                               + err.name
                                               + ".\nError message: "

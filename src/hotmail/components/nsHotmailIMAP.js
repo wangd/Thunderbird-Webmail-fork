@@ -18,6 +18,7 @@ function nsHotmailIMAP()
         this.m_Log = new DebugLog("webmail.logging.comms",
                                   "{3c8e8390-2cf6-11d9-9669-0800200c9a66}" ,
                                   szLogFileName);
+        delete date;
         this.m_Log.Write("nsHotmailIMAP.js - Constructor - START");
 
         if (typeof kHotmailConstants == "undefined")
@@ -30,6 +31,7 @@ function nsHotmailIMAP()
         this.m_szUserName = null;
         this.m_szPassWord = null;
         this.m_oResponseStream = null;
+        this.m_iRetries = 1;
         this.m_iTag = 0;
 
         this.m_oIMAPData = Components.classes["@mozilla.org/nsIMAPFolders;1"]
@@ -161,7 +163,6 @@ nsHotmailIMAP.prototype =
                 throw new Error("return status " + httpChannel.responseStatus);
 
             mainObject.m_Log.Write("nsHotmailIMAP.js - loginOnloadHandler - get url - start");
-            mainObject.m_iAuth=0; //reset login counter
             mainObject.m_szFolderURI = szResponse.match(patternHotmailFolder)[1];
             mainObject.m_Log.Write("nsHotmailIMAP.js - loginOnloadHandler - get folder url - " + mainObject.m_szFolderURI);
 
@@ -175,13 +176,38 @@ nsHotmailIMAP.prototype =
         }
         catch(err)
         {
-            mainObject.m_Log.DebugDump("nsHotmailIMAP.js: loginHandler : Exception : "
-                                          + err.name
-                                          + ".\nError message: "
-                                          + err.message+ "\n"
-                                          + err.lineNumber);
-            mainObject.serverComms(mainObject.m_iTag + " NO Comms Error\r\n");
-            return false;
+            var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                     .getService(Components.interfaces.nsIWebMailCookieManager2);
+            oCookies.removeCookie(mainObject.m_szUserName);
+
+            var oAuth = Components.classes["@mozilla.org/nsWebMailAuthManager2;1"]
+                                  .getService(Components.interfaces.nsIWebMailAuthManager2);
+            oAuth.removeTokens(mainObject.m_szUserName);
+
+            //check for retries
+            if (mainObject.m_iRetries > 0)
+            {
+                mainObject.m_iRetries --;
+                mainObject.m_Log.Write("nsHotmailIMAP.js - loginHandler - having another go " +mainObject.m_iRetries);
+                mainObject.m_HttpComms.setUserName(mainObject.m_szUserName);
+                mainObject.m_HttpComms.setPassword(mainObject.m_szPassWord);
+                mainObject.m_HttpComms.setURI("http://oe.hotmail.com/svcs/hotmail/httpmail.asp");
+                mainObject.m_HttpComms.setRequestMethod("PROPFIND");
+                mainObject.m_HttpComms.setContentType("text/xml");
+                mainObject.m_HttpComms.addData(HotmailSchema);
+                var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
+            }
+            else
+            {
+                mainObject.m_Log.DebugDump("nsHotmailIMAP.js: loginHandler : Exception : "
+                                              + err.name
+                                              + ".\nError message: "
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
+
+                mainObject.serverComms(mainObject.m_iTag + " NO Comms Error\r\n");
+                return false;
+            }
         }
     },
 

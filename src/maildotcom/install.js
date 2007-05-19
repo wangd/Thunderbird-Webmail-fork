@@ -6,7 +6,7 @@
 
 // Editable Items Begin
 var displayName         = "WebMail - MailDotCom"; // The name displayed to the user (don't include the version)
-var version             = "1.1.1b1";
+var version             = "1.1.1b2";
 var name                = "maildotcom"; // The leafname of the JAR file (without the .jar part)
 var guid                = "{1ad5b3b0-b908-11d9-9669-0800200c9a66}";
 

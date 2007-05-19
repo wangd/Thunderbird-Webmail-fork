@@ -193,8 +193,17 @@ HotmailScreenRipperBETA.prototype =
                         mainObject.m_Log.Write("Hotmail-SR-BETA.js - loginOnloadHandler - form type " + szType);
                         var szName = aInput[i].match(patternHotmailName)[1];
                         mainObject.m_Log.Write("Hotmail-SR-BETA.js - loginOnloadHandler - form name " + szName);
-                        var szValue = aInput[i].match(patternHotmailValue)[1];
-                        mainObject.m_Log.Write("nHotmail-SR-BETA.js - loginOnloadHandler - form value " + szValue);
+
+                        var szValue = "";
+                        try
+                        {
+                            szValue = aInput[i].match(patternHotmailValue)[1];
+                            mainObject.m_Log.Write("nHotmail-SR-BETA.js - loginOnloadHandler - form value " + szValue);
+                        }
+                        catch(e)
+                        {
+                            szValue = "";
+                        }
 
                         if (szType.search(/submit/i)==-1)
                         {
@@ -261,6 +270,12 @@ HotmailScreenRipperBETA.prototype =
                     {
                         if (mainObject.m_bReEntry)
                         {
+                            mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
+
+                            var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                                     .getService(Components.interfaces.nsIWebMailCookieManager2);
+                            oCookies.removeCookie(mainObject.m_szUserName);
+
                             mainObject.m_bReEntry = false;
                             mainObject.m_iStage =0;
                             mainObject.m_HttpComms.setURI("http://www.hotmail.com");
@@ -911,33 +926,6 @@ HotmailScreenRipperBETA.prototype =
             //check status should be 200.
             if (httpChannel.responseStatus != 200)
                 throw new Error("error status " + httpChannel.responseStatus);
-
-            var szContentType = httpChannel.getResponseHeader("Content-Type");
-            mainObject.m_Log.Write("Hotmail-SR-BETA - emailOnloadHandler - szContentType :" +szContentType);
-
-            if (szContentType.search(/UTF-8/i)==-1)
-            {
-                try
-                {
-                    //Content-Type: text/html; charset=utf-16
-                    var szCharset = szContentType.match(/charset=(.*?)$/i)[1]
-                    var Converter = Components.classes["@mozilla.org/intl/scriptableunicodeconverter"]
-                                              .getService(Components.interfaces.nsIScriptableUnicodeConverter);
-
-                    Converter.charset =  szCharset;
-                    var unicode =  Converter.ConvertToUnicode(szResponse);
-                    this.m_Log.Write("Hotmail-SR-BETA - emailOnloadHandler - unicode " + unicode);
-
-                    Converter.charset = "US-ASCII";
-                    var szDecoded = Converter.ConvertFromUnicode(unicode);
-                    this.m_Log.Write("Hotmail-SR-BETA - emailOnloadHandler - utf-8 "+szDecoded);
-                    szResponse = szDecoded
-                }
-                catch(e)
-                {
-                }
-            }
-
 
             switch(mainObject.m_iStage)
             {

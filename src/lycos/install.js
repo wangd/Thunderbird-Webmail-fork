@@ -6,7 +6,7 @@
 
 // Editable Items Begin
 var displayName         = "WebMail - Lycos"; // The name displayed to the user (don't include the version)
-var version             = "1-1-0b1";
+var version             = "1-1-0b2";
 var name                = "lycos"; // The leafname of the JAR file (without the .jar part)
 var guid                = "{10e6e940-8a9c-11d9-9669-0800200c9a66}";
 
