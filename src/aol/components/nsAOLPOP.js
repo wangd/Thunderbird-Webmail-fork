@@ -54,6 +54,7 @@ function nsAOL()
         this.m_szMSG = null;
         this.iID = -1;
         this.m_aszFolderURLList = new Array();
+        this.m_aRawData = new Array();
 
         this.m_Timer = Components.classes["@mozilla.org/timer;1"];
         this.m_Timer = this.m_Timer.createInstance(Components.interfaces.nsITimer);
@@ -68,6 +69,8 @@ function nsAOL()
         this.m_bMarkAsRead = true;
         this.m_aszFolder = new Array();
         this.m_bReUseSession = null;
+        this.m_iTime = 10;            //timer delay
+        this.m_iProcessAmount =  25; //delay procc
 
         this.m_Log.Write("nsAOL.js - Constructor - END");
     }
@@ -290,7 +293,7 @@ nsAOL.prototype =
 
 
                 case 4://get urls
-                    if(szResponse.search(patternAOLLogout)==-1)
+                    if(szResponse.search(patternAOLVersion)==-1)
                     {
                         if (mainObject.m_bReEntry)
                         {
@@ -316,6 +319,8 @@ nsAOL.prototype =
                     var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
                                              .getService(Components.interfaces.nsIWebMailCookieManager2);
                     var szCookie = oCookies.findCookie(mainObject.m_szUserName, httpChannel.URI);
+                    oCookies.addCookie(mainObject.m_szUserName, httpChannel.URI, "RELOAD=false;");
+
                     this.m_Log.Write("AOLPOP.js - loginOnloadHandler cookies "+ szCookie);
 
                     mainObject.m_szUserId = szCookie.match(patternAOLUserID)[1];
@@ -334,7 +339,7 @@ nsAOL.prototype =
                     var szDirectory = nsIURI.QueryInterface(Components.interfaces.nsIURL).directory;
                     mainObject.m_Log.Write("AOLPOP - loginOnloadHandler - directory : " +szDirectory);
 
-                    mainObject.m_szLocation = httpChannel.URI.prePath + szDirectory +"RPC/";
+                    mainObject.m_szLocation = httpChannel.URI.prePath + szDirectory +"common/rpc/";
                     mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - mainObject.m_szLocation " +mainObject.m_szLocation);
 
                     mainObject.m_szHomeURI = httpChannel.URI.spec;
@@ -397,16 +402,24 @@ nsAOL.prototype =
     mailBox : function (bState)
     {
         //will always download from inbox
-        var szURL = this.m_szLocation + "GetMessageList.aspx?page=1";
-        var szData = "previousFolder=&stateToken=&newMailToken=&"
-        szData += "version="+ this.m_szVersion;
-        szData += "&user=" + this.m_szUserId;
-        var szInbox = szURL + "&folder=Inbox&" + szData;
-        this.m_Log.Write("AOLPOP.js - getNumMessages - szInboxURL " + szInbox);
+
+        var szURL = this.m_szLocation +"RPC.aspx?user=" +this.m_szUserId + "&r="+Math.random();
+
+        this.m_HttpComms.addValuePair("dojo.transport","xmlhttp");
+        this.m_HttpComms.addValuePair("automatic","false");
+        this.m_szFolder = "Inbox";
+
+        var szData = "[{\"folder\":\"Inbox\","
+        szData +=    "\"start\":0,\"count\":1000,\"indexStart\":0,\"indexMax\":1000,\"index\":false,"
+        szData +=    "\"info\":true,\"rows\":true,\"sort\":\"received\",\"sortDir\":\"descending\","
+        szData +=    "\"search\":null,\"searchIn\":null,\"seen\":[],\"action\":\"GetMessageList\"}]";
+        szData = encodeURIComponent(szData);
+        this.m_HttpComms.addValuePair("requests",szData);
 
         this.m_iStage = 0;
-        this.m_HttpComms.setURI(szInbox);
-        this.m_HttpComms.setRequestMethod("GET");
+        this.m_HttpComms.setURI(szURL);
+        this.m_HttpComms.setRequestMethod("POST");
+
         var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this);
         if (!bResult) throw new Error("httpConnection returned false");
         this.m_bStat = bState;
@@ -435,13 +448,15 @@ nsAOL.prototype =
             //get folder list
             if (mainObject.m_aszFolder)
             {
-                var aszFolderList = szResponse.match(patternAOLFolders);
+                var szFolderList = szResponse.match(patternAOLFolders)[1];
+                mainObject.m_Log.Write("AOLPOP.js - mailBoxOnloadHandler - szFolderList " + szFolderList);
+                var aszFolderList = szFolderList.match(/\[.*?\](,|$)/igm);
                 mainObject.m_Log.Write("AOLPOP.js - mailBoxOnloadHandler - aszFolderList " + aszFolderList);
 
-                var szURL = mainObject.m_szLocation + "GetMessageList.aspx?page=1";
-                var szData = "previousFolder=&stateToken=&newMailToken=&"
-                szData += "version="+ mainObject.m_szVersion;
-                szData += "&user="+ mainObject.m_szUserId;
+                var szData = "[{\"folder\":\"";
+                var szData2 ="\",\"start\":0,\"count\":1000,\"indexStart\":0,\"indexMax\":1000,\"index\":false,"
+                szData2 +=   "\"info\":true,\"rows\":true,\"sort\":\"received\",\"sortDir\":\"descending\","
+                szData2 +=   "\"search\":null,\"searchIn\":null,\"seen\":[],\"action\":\"GetMessageList\"}]";
 
                 for (var i=0; i<mainObject.m_aszFolder.length; i++)
                 {
@@ -455,9 +470,9 @@ nsAOL.prototype =
 
                         if (szFolderName.search(regExp)!=-1)
                         {
-                            var szURI = szURL + "&folder="+szFolderName+"&" + szData;
-                            mainObject.m_aszFolderURLList.push(szURI);
-                            mainObject.m_Log.Write("AOLPOP.js - mailBoxOnloadHandler - URL found : "+szURI);
+                            var szFolderData = encodeURIComponent(szData + szFolderName + szData2);
+                            mainObject.m_aszFolderURLList.push(szFolderData);
+                            mainObject.m_Log.Write("AOLPOP.js - mailBoxOnloadHandler - URL found : "+szFolderData);
                         }
                     }
                 }
@@ -466,109 +481,51 @@ nsAOL.prototype =
                 delete mainObject.m_aszFolder;
             }
 
+
             //process page
-            var aszMSGDetails = szResponse.match(patternAOLMSGData);
-            mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - aszMSGDetails : " + aszMSGDetails);
-
-            var aszSenderAddress = szResponse.match(patternAOLMSGSender);
-            mainObject.m_Log.Write("Hotmail-SR - mailBoxOnloadHandler - aszSenderAddress : " + aszSenderAddress);
-
-            if (aszMSGDetails)
+            if(szResponse.search(patternAOLMSGData)!=-1)
             {
-                for (i=0; i<aszMSGDetails.length; i++)
+                var szMSGDetails = szResponse.match(patternAOLMSGData)[1];
+                mainObject.m_Log.Write("AOl - mailBoxOnloadHandler - szMSGDetails : " + szMSGDetails);
+                var aszMSGDetails = szMSGDetails.match(/\[.*?\](,|$)/igm);
+                mainObject.m_Log.Write("AOl - mailBoxOnloadHandler - aszMSGDetails : " + aszMSGDetails);
+                if (aszMSGDetails)
                 {
-
-                    var aTempData = aszMSGDetails[i].match(patternAOLMSGDataProcess);
-                    mainObject.m_Log.Write("AOL - mailBoxOnloadHandler - aTempData : " + aTempData);
-
-                    var bRead = false;
-                    if (mainObject.m_bDownloadUnread)
-                    {
-                        bRead = parseInt(aTempData[5]); //unread
-                        mainObject.m_Log.Write("AOL.js - mailBoxOnloadHandler - bRead -" + bRead);
-                    }
-
-                    if (!bRead)
-                    {
-                        var MSGData = new AOLMSG();
-                        MSGData.iID = aTempData[1]; //ID
-                        MSGData.szSubject = aTempData[2]; //Subject
-                        MSGData.iDate = parseInt(aTempData[3]); //Date
-                        MSGData.iSize = parseInt(aTempData[4]); //size
-
-                        //sender
-                        var aTempData2= aszSenderAddress[i].match(/\((.*?)\)/)[1].split(/,/);
-                        mainObject.m_Log.Write("AOL - mailBoxOnloadHandler - aTempData2 : " + aTempData2);
-                        MSGData.szFrom = aTempData2[0].match(/"(.*?)"/)[1];
-
-                        MSGData.szTo = mainObject.m_szUserName;//me
-                        var szFolder = szLocation.match(patternAOLFolderNameURL)[1];
-                        mainObject.m_Log.Write("AOL - mailBoxOnloadHandler - szFolder : " + szFolder);
-                        MSGData.szFolder =  szFolder;
-
-                        mainObject.m_aMsgDataStore.push(MSGData);
-                        mainObject.m_iTotalSize += MSGData.iSize;
-                    }
+                    mainObject.m_aRawData.push("<FolderInfo name=\""+mainObject.m_szFolder+"\">");
+                    var aTemp = mainObject.m_aRawData.concat(aszMSGDetails);
+                    delete mainObject.m_aRawData;
+                    mainObject.m_aRawData = aTemp;
                 }
             }
 
-            //next page
-            //get number of pages
-            if (mainObject.m_iPageNum == -1)
-            {
-                var szPageNum = szResponse.match(patternAOLPageNum)[1];
-                mainObject.m_Log.Write("AOLPOP.js - mailBoxOnloadHandler - szPageNum " + szPageNum);
-                mainObject.m_iPageNum =  parseInt(szPageNum);
-            }
 
-            //get current page number
-            var szCurrentPage = szLocation.match(patternAOLURLPageNum)[1];
-            mainObject.m_Log.Write("AOLPOP - mailBoxOnloadHandler - szCurrentPage : " + szCurrentPage);
-            var iCurrentPage =  parseInt(szCurrentPage);
+            if (mainObject.m_aszFolderURLList.length>0)
+            { //get next folder
+                var szFolderData = mainObject.m_aszFolderURLList.shift();
+                mainObject.m_Log.Write("AOL - mailBoxOnloadHandler - szFolderData: " + szFolderData);
+                mainObject.m_szFolder = decodeURIComponent(szFolderData).match(/"folder":"(.*?)"/i)[1];
+                mainObject.m_Log.Write("AOL - mailBoxOnloadHandler - m_szFolder: " +  mainObject.m_szFolder);
+                mainObject.m_HttpComms.addValuePair("dojo.transport","xmlhttp");
+                mainObject.m_HttpComms.addValuePair("automatic","false");
+                mainObject.m_HttpComms.addValuePair("requests",szFolderData);
 
-            if(iCurrentPage < mainObject.m_iPageNum)
-            {
-                var szNextPage = szLocation.replace(/page.*?&/,"page="+(iCurrentPage+1)+"&");
-                mainObject.m_HttpComms.setURI(szNextPage);
-                mainObject.m_HttpComms.setRequestMethod("GET");
+                var szURL = mainObject.m_szLocation +"RPC.aspx?user=" +mainObject.m_szUserId + "&r="+Math.random();
+                mainObject.m_HttpComms.setURI(szURL);
+                mainObject.m_HttpComms.setRequestMethod("POST");
                 var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler, mainObject);
                 if (!bResult) throw new Error("httpConnection returned false");
             }
-            else
+            else  //all uri's collected
             {
-                if (mainObject.m_aszFolderURLList.length>0)
-                { //get next folder
-                    var szFolderURL = mainObject.m_aszFolderURLList.shift();
-                    mainObject.m_Log.Write("AOL - mailBoxOnloadHandler - szFolderURL: " + szFolderURL);
-
-                    mainObject.m_iPageNum = -1; //reset page count
-
-                    mainObject.m_HttpComms.setURI(szFolderURL);
-                    mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler, mainObject);
-                    if (!bResult) throw new Error("httpConnection returned false");
-                }
-                else  //all uri's collected
-                {
-                    if (mainObject.m_bStat) //called by stat
-                    {
-                        mainObject.serverComms("+OK "+ mainObject.m_aMsgDataStore.length
-                                                + " " + mainObject.m_iTotalSize + "\r\n");
-                    }
-                    else //called by list
-                    {
-                        var callback = {
-                           notify: function(timer) { this.parent.processSizes(timer)}
-                        };
-                        callback.parent = mainObject;
-                        mainObject.m_iHandleCount = 0;
-                        mainObject.m_Timer.initWithCallback(callback,
-                                                            mainObject.m_iTime,
-                                                            Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
-                    }
-                }
+                var callback = {
+                   notify: function(timer) { this.parent.processItem(timer)}
+                };
+                callback.parent = mainObject;
+                mainObject.m_iHandleCount = 0;
+                mainObject.m_Timer.initWithCallback(callback,
+                                                    mainObject.m_iTime,
+                                                    Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
             }
-
 
             mainObject.m_Log.Write("AOLPOP.js - mailBoxOnloadHandler - END");
         }
@@ -583,6 +540,99 @@ nsAOL.prototype =
             mainObject.serverComms("-ERR Comms Error from "+ mainObject.m_szUserName+"\r\n");
         }
     },
+
+
+
+    processItem : function(timer)
+    {
+        try
+        {
+            this.m_Log.Write("AOLPOP.js - processItem - START");
+
+            if (this.m_aRawData.length>0)
+            {
+                var iCount=0;
+                do{
+                    var Item = this.m_aRawData.shift();
+                    this.m_Log.Write("AOLPOP.js - processItem - Item " + Item);
+
+                    if (Item.search(kPatternFolderID)!=-1)  //folder info
+                    {
+                        this.m_szFolder = Item.match(kPatternFolderID)[1];
+                        this.m_Log.Write("AOLPOP.js - processItem - folder " +this.m_szFolder );
+                    }
+                    else  //message info
+                    {
+                        var aTempData = Item.match(patternAOLMSGDataProcess);
+                        this.m_Log.Write("AOL - mailBoxOnloadHandler - aTempData : " + aTempData);
+
+                        var bRead = false;
+                        if (this.m_bDownloadUnread)
+                        {
+                            bRead = parseInt(aTempData[6]); //unread
+                            this.m_Log.Write("AOL.js - mailBoxOnloadHandler - bRead -" + bRead);
+                        }
+
+                        if (!bRead)
+                        {
+                            var MSGData = new AOLMSG();
+                            MSGData.iID = aTempData[1]; //ID
+                            MSGData.szFrom = aTempData[2]; //sender
+                            MSGData.szSubject = aTempData[3]; //Subject
+                            MSGData.iDate = parseInt(aTempData[4]); //Date
+                            MSGData.iSize = parseInt(aTempData[5]); //size
+                            MSGData.szTo = this.m_szUserName;//me
+                            MSGData.szFolder =  this.m_szFolder;
+
+                            this.m_aMsgDataStore.push(MSGData);
+                            this.m_iTotalSize += MSGData.iSize;
+                        }
+                    }
+
+                    iCount++;
+                    this.m_Log.Write("AOLPOP.js - processItem - rawData icount " + iCount + " " + this.m_aRawData.length);
+                }while(iCount != this.m_iProcessAmount && this.m_aRawData.length!=0)
+
+            }
+            else
+            {
+                this.m_Log.Write("AOLPOP.js - processItem - all data handled");
+                timer.cancel();
+                delete  this.m_aRawData;
+
+                if (this.m_bStat) //called by stat
+                {
+                    //server response
+                    this.serverComms("+OK "+ this.m_aMsgDataStore.length + " " + this.m_iTotalSize + "\r\n");
+                }
+                else //called by list
+                {
+                    var callback = {
+                       notify: function(timer) { this.parent.processSizes(timer)}
+                    };
+                    callback.parent = this;
+                    this.m_iHandleCount = 0;
+                    this.m_Timer.initWithCallback(callback,
+                                                  this.m_iTime,
+                                                  Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
+                }
+            }
+
+            this.m_Log.Write("AOLPOP.js - processItem - END");
+        }
+        catch(err)
+        {
+            this.m_Timer.cancel();
+            this.m_Log.DebugDump("AOLPOP.js: notify : Exception : "
+                                              + err.name
+                                              + ".\nError message: "
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
+
+            this.serverComms("-ERR negative vibes from " +this.m_szUserName+ "\r\n");
+        }
+    },
+
 
 
 
@@ -770,7 +820,7 @@ nsAOL.prototype =
             szHeaders += "X-Folder: " + oMSG.szFolder + "\r\n";
             szHeaders += "To: "+ oMSG.szTo +"\r\n";
             szHeaders += "From: "+ oMSG.szFrom +"\r\n";
-            szHeaders += "Subject: "+ oMSG.szSubject +"\r\n";
+            szHeaders += "Subject: " + oMSG.szSubject.replace(/\\"/g,/"/g) + "\r\n";
             var date = new Date(oMSG.iDate);
             szHeaders += "Date: " +  date +"\r\n"; // \r\n";
             delete date;
@@ -809,7 +859,7 @@ nsAOL.prototype =
             var oMSG = this.m_aMsgDataStore[lID-1];
             this.m_szFolder = oMSG.szFolder ;
             this.iID = oMSG.iID;
-            var szURL = this.m_szLocation.replace(/rpc/i,"mail/") + "rfc822.aspx?";
+            var szURL = this.m_szLocation.replace(/common/i,"MAIL").replace(/rpc\//i,"") + "ViewSource.aspx?";
             szURL += "folder=" + this.m_szFolder +"&";
             szURL += "uid=" + oMSG.iID;
             szURL += "&user="+ this.m_szUserId;
@@ -864,18 +914,22 @@ nsAOL.prototype =
                     mainObject.m_szMSG += szResponse.replace(/^\./mg,"..");    //bit padding
                     mainObject.m_szMSG += "\r\n.\r\n";
 
-                    if (!mainObject.m_bMarkAsRead)
+                    if (mainObject.m_bMarkAsRead)
                     {
-                        var szURL = mainObject.m_szLocation + "MessageAction.aspx?";
-                        szURL += "folder=" +  mainObject.m_szFolder +"&";
-                        szURL += "action=unseen&";
-                        szURL += "version="+ mainObject.m_szVersion +"&";
-                        szURL += "uid=" + mainObject.iID +"&";
-                        szURL += "version="+ mainObject.m_szVersion;
-                        szURL += "&user="+ mainObject.m_szUserId;
+                        var szURL = mainObject.m_szLocation +"RPC.aspx?user=" +mainObject.m_szUserId + "&r="+Math.random();
+
+                        mainObject.m_HttpComms.addValuePair("dojo.transport","xmlhttp");
+                        mainObject.m_HttpComms.addValuePair("automatic","false");
+
+                        var szData = "[{\"messageAction\":\"seen\",";
+                        szData += "\"folder\":\"" + mainObject.m_szFolder+ "\",";
+                        szData += "\"uids\":[\"" + mainObject.iID  + "\"]," ;
+                        szData += "\"destFolder\":undefined,\"isSpam\":undefined,\"action\":\"MessageAction\"}]";
+
+                        mainObject.m_HttpComms.addValuePair("requests",encodeURIComponent(szData));
 
                         mainObject.m_HttpComms.setURI(szURL);
-                        mainObject.m_HttpComms.setRequestMethod("GET");
+                        mainObject.m_HttpComms.setRequestMethod("POST");
                         var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);
                         if (!bResult) throw new Error("httpConnection returned false");
                         mainObject.m_iStage++;
@@ -923,16 +977,21 @@ nsAOL.prototype =
             var oMSG = this.m_aMsgDataStore[lID-1];
             this.m_szFolder = oMSG.szFolder;
             this.iID = oMSG.iID;
-            var szURL = this.m_szLocation + "MessageAction.aspx?";
-            szURL += "folder=" + this.m_szFolder  +"&";
-            szURL += "action=delete&";
-            szURL += "version="+ this.m_szVersion +"&";
-            szURL += "uid=" + oMSG.iID;
-            szURL += "&user="+ this.m_szUserId;
+
+            var szURL = this.m_szLocation +"RPC.aspx?user=" +this.m_szUserId + "&r="+Math.random();
+
+            this.m_HttpComms.addValuePair("dojo.transport","xmlhttp");
+            this.m_HttpComms.addValuePair("automatic","false");
+
+            var szData = "[{\"messageAction\":\"delete\","
+            szData +=    "\"folder\":\"" + this.m_szFolder + "\",";
+            szData +=    "\"uids\":[\"" + oMSG.iID + "\"],"
+            szData +=    "\"destFolder\":undefined,\"isSpam\":undefined,\"action\":\"MessageAction\"}]";
+            this.m_HttpComms.addValuePair("requests",encodeURIComponent(szData));
 
             this.m_iStage = 0;
             this.m_HttpComms.setURI(szURL);
-            this.m_HttpComms.setRequestMethod("GET");
+            this.m_HttpComms.setRequestMethod("POST");
             var bResult = this.m_HttpComms.send(this.deleteMessageOnloadHandler, this);
             if (!bResult) throw new Error("httpConnection returned false");
 
@@ -966,7 +1025,10 @@ nsAOL.prototype =
             if (httpChannel.responseStatus != 200)
                 throw new Error("error status " + httpChannel.responseStatus);
 
-            mainObject.serverComms("+OK its history\r\n");
+            if (szResponse.search(/"isSuccess":true/i)!=-1)
+               mainObject.serverComms("+OK its history\r\n");
+            else
+               mainObject.serverComms("-ERR delete error\r\n");
 
             mainObject.m_Log.Write("AOLPOP.js - deleteMessageOnloadHandler - END");
         }
@@ -1111,6 +1173,17 @@ nsAOL.prototype =
                 this.m_aszFolder.push("spam");
             }
             this.m_Log.Write("nsAOLPOP.js - getPrefs - bUseJunkMail " + oPref.Value);
+
+
+            //delay processing time delay
+            oPref.Value = null;
+            if (WebMailPrefAccess.Get("int","aol.iProcessDelay",oPref))
+               this.m_iProcessDelay = oPref.Value;
+
+            //delay proccess amount
+            oPref.Value = null;
+            if (WebMailPrefAccess.Get("bool","aol.iProcessAmount",oPref))
+                this.m_iProcessAmount = oPref.Value;
 
             delete WebMailPrefAccess;
             this.m_Log.Write("nsAOL.js - loadPrefs - END");
