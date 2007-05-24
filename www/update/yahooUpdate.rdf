@@ -6,21 +6,21 @@
     <RDF:Description about="urn:mozilla:extension:{d7103710-6112-11d9-9669-0800200c9a66}">
         <em:updates>
             <RDF:Seq>
-                <RDF:li resource="urn:mozilla:extension:{d7103710-6112-11d9-9669-0800200c9a66}:1.1.20"/>
+                <RDF:li resource="urn:mozilla:extension:{d7103710-6112-11d9-9669-0800200c9a66}:1.2.0"/>
             </RDF:Seq>
         </em:updates>
     </RDF:Description>
 
-    <RDF:Description about="urn:mozilla:extension:{d7103710-6112-11d9-9669-0800200c9a66}:1.1.20">
-        <em:version>1.1.20</em:version>
+    <RDF:Description about="urn:mozilla:extension:{d7103710-6112-11d9-9669-0800200c9a66}:1.2.0">
+        <em:version>1.2.0</em:version>
         <!-- Thunderbird updates -->
         <em:targetApplication>
             <Description>
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
                 <em:minVersion>1.4</em:minVersion>
                 <em:maxVersion>2.0</em:maxVersion>
-                <em:updateLink>http://download.mozdev.org/webmail/yahoo-1-1-20.xpi</em:updateLink>
-                <em:updateHash>sha256:7cd125b1cc38202aef778ba74e7553b0cf7980877cc7630b5b5fe4e240f0c440</em:updateHash>
+                <em:updateLink>http://download.mozdev.org/webmail/yahoo-1-2-0.xpi</em:updateLink>
+                <em:updateHash>sha256:02cc38753a530db42fcd9d6a4ec38132fe1711d1fffb4ebcda03378bd8e2f72e</em:updateHash>
           </Description>
         </em:targetApplication>
 
@@ -29,8 +29,8 @@
             <Description>
                 <!-- requires web-mail extension-->
                 <em:id>{3c8e8390-2cf6-11d9-9669-0800200c9a66}</em:id>
-                <em:minVersion>0.9</em:minVersion>
-                <em:maxVersion>1.1.*</em:maxVersion>
+                <em:minVersion>1.2</em:minVersion>
+                <em:maxVersion>1.2.*</em:maxVersion>
                 <em:name>WebMail</em:name>
                 <em:homepageURL>http://webmail.mozdev.org/</em:homepageURL>
                 <em:updateURL>http://webmail.mozdev.org/update/webmailUpdate.rdf</em:updateURL>
