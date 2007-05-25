@@ -95,7 +95,7 @@ const patternHotmailMailBoxTableRow = /<tr.*?>[\s\S]*?<\/tr>/ig;
 const patternHotmailMailBoxTableData = /<td.*?>[\s\S]*?<\/td>/ig;
 const patternHotmailEMailURL = /<td .*?><a href="(.*?)".*?>.*?<\/a><\/td>/i;
 const patternHotmailEmailRead = /class="dInboxContentItemUnread">/i;
-const patternHotmailEmailSender = /<td .*?><a.*?>(.*?)<\/a><\/td>/i;
+const patternHotmailEmailSender = /<td .*?><a.*?><span>(.*?)<\/span><\/a><\/td>/i;
 const patternHotmailEmailSubject = /<td.*?>.*?<a href=.*?>(.*?)<\/a>.*?<\/td>/i;
 const patternHotmailEmailDate = /<td.*?>(.*?)<\/td>/i;
 const patternHotmailEMailID =/ReadMessageID=(.*?)&/i;
