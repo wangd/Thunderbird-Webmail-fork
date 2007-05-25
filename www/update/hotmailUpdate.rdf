@@ -18,7 +18,7 @@
                 <em:minVersion>2.0b2</em:minVersion>
                 <em:maxVersion>2.0.*</em:maxVersion>
                 <em:updateLink>http://download.mozdev.org/webmail/hotmail-1-2-0.xpi</em:updateLink>
-                <em:updateHash>sha256:ceacc842a9c5b1cecfd8a2ae0cddc489bff94941cc39871ea820e756ad44ea60</em:updateHash>
+                <em:updateHash>sha256:ceacc842a9c5b1cecfd8a2ae0cddc489bff94941cc39871ea820e756ad44ea60[1]</em:updateHash>
           </Description>
         </em:targetApplication>
 
