@@ -450,14 +450,14 @@ HotmailSMTPScreenRipper.prototype =
                     {
                         mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - plain");
                         var szTxtBody = mainObject.m_Email.txtBody.body.getBody();
-                        mainObject.m_HttpComms.addValuePair("body",escape(szTxtBody));
+                        mainObject.m_HttpComms.addValuePair("body",mainObject.escapeStr(szTxtBody));
                     }
                     else if (mainObject.m_Email.htmlBody && mainObject.m_bSendHtml || !mainObject.m_Email.txtBody)
                     {
                         mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - html");
                         var szHTMLBody = mainObject.m_Email.htmlBody.body.getBody();
                         szHTMLBody = szHTMLBody.match(/<html>[\s\S]*<\/html>/)[0];
-                        mainObject.m_HttpComms.addValuePair("body",encodeURIComponent(szHTMLBody));
+                        mainObject.m_HttpComms.addValuePair("body",mainObject.escapeStr(szHTMLBody));
                     }
 
                     mainObject.m_HttpComms.setRequestMethod("POST");
@@ -802,6 +802,12 @@ HotmailSMTPScreenRipper.prototype =
     },
 
 
+    escapeStr : function(szMSG)
+    {
+        var szEncode = encodeURIComponent(szMSG);
+        szEncode = szEncode.replace(/%20/gm,"+"); //replace space
+        return szEncode;
+    },
 
 
     openSpamWindow : function(szPath)
