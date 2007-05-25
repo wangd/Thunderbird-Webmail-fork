@@ -6,7 +6,7 @@
     <RDF:Description about="urn:mozilla:extension:{d7103710-6112-11d9-9669-0800200c9a66}">
         <em:updates>
             <RDF:Seq>
-                <RDF:li resource="urn:mozilla:extension:{d7103710-6112-11d9-9669-0800200c9a66}:1.2.0"/>
+                <RDF:li resource="urn:mozilla:extension:{d7103710-6112-11d9-9669-0800200c9a66}:1.0.0"/>
             </RDF:Seq>
         </em:updates>
     </RDF:Description>
