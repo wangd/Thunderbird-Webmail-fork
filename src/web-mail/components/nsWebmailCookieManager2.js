@@ -26,8 +26,10 @@ nsWebMailCookieManager2.prototype =
             this.m_Log.Write("CookieManager.js - addCookie - cookie " + szCookie);
             if (!szCookie) return false;
 
-            var szDefaultDomain = url.prePath.match(/\/\/(.*?)$/)[1];
+            var szDefaultDomain = url.host;
             this.m_Log.Write("CookieManager.js - addCookie - default domain " + szDefaultDomain);
+            var Host  = url.host;
+            this.m_Log.Write("CookieManager.js - addCookie - default Host " + Host);
 
             //split into rows
             var aszCookie = szCookie.split(/\n/);
@@ -58,7 +60,7 @@ nsWebMailCookieManager2.prototype =
 
                 var statement = this.m_dbConn.createStatement(szSQL);
                 statement.bindStringParameter(0, szUserName.toLowerCase()); //username
-                var tempDomain = oNewCookie.getDomain().replace(/^\./,"%.");
+                var tempDomain = oNewCookie.getDomain();//.replace(/^\./,"%.");
                 statement.bindStringParameter(1, tempDomain);   //cookie domain
                 statement.bindStringParameter(2, oNewCookie.getName());     //cookie name
                 statement.bindStringParameter(3, oNewCookie.getValue());    //cookie value
@@ -90,7 +92,7 @@ nsWebMailCookieManager2.prototype =
         try
         {
             this.m_Log.Write("CookieManger.js - findCookie - START " + szUserName);
-            var szDomain = url.prePath.match(/\/\/(.*?)$/)[1]
+            var szDomain = url.host;
             this.m_Log.Write("CookieManger.js - findCookie - domain - " + szDomain);
 
             var iTimeNow = Date.now()/1000;
@@ -100,13 +102,12 @@ nsWebMailCookieManager2.prototype =
             var szSQL = null;
             szSQL = "SELECT *  " +
                     "FROM webmail_cookies " +
-                    "WHERE user_name LIKE ?1 AND ?2 LIKE cookie_domain AND (cookie_expiry > ?3 OR  cookie_expiry == -1)";
+                    "WHERE user_name LIKE ?1 AND (cookie_expiry > ?2 OR  cookie_expiry == -1)";
 
 
             var statement = this.m_dbConn.createStatement(szSQL);
             statement.bindStringParameter(0, szUserName.toLowerCase()); //username
-            statement.bindStringParameter(1, szDomain);   //cookie domain
-            statement.bindStringParameter(2, iTimeNow);                 //time now
+            statement.bindStringParameter(1, iTimeNow);                 //time now
 
             try
             {
@@ -115,13 +116,17 @@ nsWebMailCookieManager2.prototype =
                 wStatement.initialize(statement);
                 while (wStatement.step())
                 {
-                    var szName = wStatement.row["cookie_name"];
-                    var szValue = wStatement.row["cookie_value"];
-                    this.m_Log.Write("CookieManger.js - findCookie - cookie - found " + szName + " " + szValue );
-                    szCookies +=  szName;
-                    szCookies += "=";
-                    szCookies +=  szValue;
-                    szCookies +=  "; " ;
+                    var szCookieDomain = wStatement.row["cookie_domain"]
+                    if (this.domainCheck(szCookieDomain,szDomain))
+                    {
+                        var szName = wStatement.row["cookie_name"];
+                        var szValue = wStatement.row["cookie_value"];
+                        this.m_Log.Write("CookieManger.js - findCookie - cookie - found " + szName + " " + szValue );
+                        szCookies +=  szName;
+                        szCookies += "=";
+                        szCookies +=  szValue;
+                        szCookies +=  "; " ;
+                    }
                 }
             }
             finally
@@ -129,9 +134,7 @@ nsWebMailCookieManager2.prototype =
                 statement.reset();
                 this.m_Log.Write("CookieManger : findCookie - DB Reset "+ this.m_dbConn.lastErrorString);
             }
-
-           // szCookies = szCookies.replace(/;\s$/,"");
-            this.m_Log.Write("CookieManger.js - findCookie - szCookies " + szCookies);
+           this.m_Log.Write("CookieManger.js - findCookie - szCookies " + szCookies);
 
             this.m_Log.Write("CookieManger.js - findCookie - END");
             return szCookies;
@@ -149,6 +152,46 @@ nsWebMailCookieManager2.prototype =
         }
     },
 
+
+
+    domainCheck : function (szCookieDomain, szWantedDomain)
+    {
+        try
+        {
+            this.m_Log.Write("CookieManger.js - domainCheck - cookie "+szCookieDomain + " wanted " + szWantedDomain);
+
+            var regexp = null;
+            var szSubject = null;
+            if (szWantedDomain.length > szCookieDomain.length)
+            {
+                szSubject = szWantedDomain;
+                var tempDomain = szCookieDomain.replace(/^\./,"");
+                regexp =  new RegExp(tempDomain+"$", "i");
+            }
+            else
+            {
+                szSubject = szCookieDomain;
+                var tempDomain = szWantedDomain.replace(/^\./,"");
+                regexp = new RegExp(tempDomain+"$", "i");
+            }
+
+            var bFound = false;
+            if (szSubject.search(regexp)!=-1)bFound =  true;
+
+            this.m_Log.Write("CookieManger.js - domainCheck END " +bFound);
+            return bFound;
+        }
+        catch(err)
+        {
+            this.m_Log.Write("CookieManger.js: domainCheck : Exception : "
+                                          + err.name
+                                          + ".\nError message: "
+                                          + err.message + " \n"
+                                          + err.lineNumber);
+
+            return false;
+        }
+    },
 
 
 
