@@ -20,6 +20,7 @@
             <label value="&HotmailPref.Domain.Label;" id="labelDomain"/>
             <hbox align="center">
                 <spacer flex="1"/>
+
                 <richlistbox  id="listDomain"
                               class="listDomainbox"
                               onselect="gHotmailDomain.onSelect();"/>

@@ -34,7 +34,7 @@ nsHotmailDomains.prototype =
         {
             this.m_Log.Write("nsHotmailDomains.js - addDomain - START " + szDomain);
 
-            if ( szDomain.search(/[^a-zA-Z0-9\.]+/i)!=-1 ||
+            if ( szDomain.search(/[^a-zA-Z0-9\.\-]+/i)!=-1 ||
                  szDomain.search(/\s/)!=-1 ||
                  szDomain.search(/\./)==-1 ||
                  szDomain.search(/^\./)!=-1 ||
@@ -44,13 +44,9 @@ nsHotmailDomains.prototype =
                 return false;
             }
 
-            var bADD = false;
-
-            if (!this.domainCheck(szDomain, "POP", "@mozilla.org/HotmailPOP;1"))
-                bADD = this.domainAdd(szDomain, "POP", "@mozilla.org/HotmailPOP;1")
-
-            if (!this.domainCheck(szDomain, "SMTP", "@mozilla.org/HotmailSMTP;1"))
-                bADD = this.domainAdd(szDomain, "SMTP", "@mozilla.org/HotmailSMTP;1")
+            this.domainAdd(szDomain, "POP", "@mozilla.org/HotmailPOP;1");
+            this.domainAdd(szDomain, "SMTP", "@mozilla.org/HotmailSMTP;1");
+            this.domainAdd(szDomain, "IMAP", "@mozilla.org/HotmailIMAP;1");
 
             var bFound = false;
             //custom
@@ -89,8 +85,8 @@ nsHotmailDomains.prototype =
 
             this.m_bChange = true;
 
-            this.m_Log.Write("nsHotmailDomains.js - addDomain - END");
-            return bADD;
+            this.m_Log.Write("nsHotmailDomains.js - addDomain - END ");
+            return bAdd;
         }
         catch(err)
         {
@@ -112,7 +108,7 @@ nsHotmailDomains.prototype =
         {
             this.m_Log.Write("nsHotmailDomains.js - removeDomain - START " + szDomain);
 
-            if ( szDomain.search(/[^a-zA-Z0-9\.]+/i)!=-1 ||
+            if ( szDomain.search(/[^a-zA-Z0-9\.\-]+/i)!=-1 ||
                  szDomain.search(/\s/)!=-1 ||
                  szDomain.search(/\./)==-1 ||
                  szDomain.search(/^\./)!=-1 ||
@@ -179,6 +175,7 @@ nsHotmailDomains.prototype =
                 this.m_Log.Write("nsHotmailDomains.js - removeDomain - found");
                 this.m_DomainManager.removeDomainForProtocol(szDomain, "POP");
                 this.m_DomainManager.removeDomainForProtocol(szDomain, "SMTP");
+                this.m_DomainManager.removeDomainForProtocol(szDomain, "IMAP");
                 bFound = true;
             }
 
