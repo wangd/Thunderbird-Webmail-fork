@@ -7,7 +7,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
         <em:id>{a6a33690-2c6a-11d9-9669-0800200c9a66}</em:id>
         <em:type>2</em:type>
-        <em:version>1.2.1</em:version>
+        <em:version>1.2.2b1</em:version>
 
         <em:name>WebMail - Hotmail</em:name>
         <em:description>Hotmail component for Web-Mail extension</em:description>
