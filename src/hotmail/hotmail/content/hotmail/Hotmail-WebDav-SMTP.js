@@ -62,8 +62,8 @@ HotmailSMTPWebDav.prototype =
                                          .getService(Components.interfaces.nsIWebMailCookieManager2);
                 oCookies.removeCookie(this.m_szUserName);
 
-                var oAuth = Components.classes["@mozilla.org/nsWebMailAuthManager2;1"]
-                                      .getService(Components.interfaces.nsIWebMailAuthManager2);
+                var oAuth = Components.classes["@mozilla.org/HttpAuthManager2;1"]
+                                      .getService(Components.interfaces.nsIHttpAuthManager2);
                 oAuth.removeTokens(this.m_szUserName);
             }
 
@@ -126,8 +126,8 @@ HotmailSMTPWebDav.prototype =
                                      .getService(Components.interfaces.nsIWebMailCookieManager2);
             oCookies.removeCookie(mainObject.m_szUserName);
 
-            var oAuth = Components.classes["@mozilla.org/nsWebMailAuthManager2;1"]
-                                  .getService(Components.interfaces.nsIWebMailAuthManager2);
+            var oAuth = Components.classes["@mozilla.org/HttpAuthManager2;1"]
+                                  .getService(Components.interfaces.nsIHttpAuthManager2);
             oAuth.removeTokens(mainObject.m_szUserName);
 
             //check for retries
@@ -227,8 +227,8 @@ HotmailSMTPWebDav.prototype =
                                              .getService(Components.interfaces.nsIWebMailCookieManager2);
                     oCookies.removeCookie(mainObject.m_szUserName);
 
-                    var oAuth = Components.classes["@mozilla.org/nsWebMailAuthManager2;1"]
-                                      .getService(Components.interfaces.nsIWebMailAuthManager2);
+                    var oAuth = Components.classes["@mozilla.org/HttpAuthManager2;1"]
+                                      .getService(Components.interfaces.nsIHttpAuthManager2);
                     oAuth.removeTokens(mainObject.m_szUserName);
                 }
 
