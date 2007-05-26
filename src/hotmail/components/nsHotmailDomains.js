@@ -86,7 +86,7 @@ nsHotmailDomains.prototype =
             this.m_bChange = true;
 
             this.m_Log.Write("nsHotmailDomains.js - addDomain - END ");
-            return bAdd;
+            return true;
         }
         catch(err)
         {
