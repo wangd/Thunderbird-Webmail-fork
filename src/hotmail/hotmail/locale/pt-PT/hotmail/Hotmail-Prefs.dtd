@@ -5,13 +5,13 @@
 <!ENTITY HotmailPref.Tab.Mode.Title "Modo">
 <!ENTITY HotmailPref.Tab.POP.Title "POP">
 <!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
-<!ENTITY HotmailPref.Mode.Label "Seleccione o método de comunicações que a extensão utilizará ao ligar-se aos servidores da Microsoft">
+<!ENTITY HotmailPref.Mode.Label "Seleccione o método de comunicação que a extensão vai usar ao ligar aos servidores da Microsoft">
 <!ENTITY HotmailPref.Mode.HotmailLive.Label "Hotmail Live (Novo sítio Web)">
 <!ENTITY HotmailPref.Mode.HotmailOld.Label "Hotmail (sítio web antigo)">
 <!ENTITY HotmailPref.Mode.WebDav.Label "WebDav">
 <!ENTITY HotmailPref.POP.DownloadUnread.Label "Transferir apenas correio não lido">
 <!ENTITY HotmailPref.POP.DownloadUnread.AccessKey "i">
-<!ENTITY HotmailPref.POP.JunkMail.Label "Transferir Lixoelectrónico">
+<!ENTITY HotmailPref.POP.JunkMail.Label "Transferir Lixo electrónico">
 <!ENTITY HotmailPref.POP.JunkMail.AccessKey "L">
 <!ENTITY HotmailPref.POP.Folders.Label "Transferir pastas">
 <!ENTITY HotmailPref.POP.ButtonAdd.Label "Adicionar...">
@@ -26,7 +26,7 @@
 <!ENTITY HotmailPref.SMTP.SendHtml.Label "Enviar em html">
 <!ENTITY HotmailPref.SMTP.SendHtml.AccessKey "h">
 <!ENTITY HotmailPref.AccountError.Label "Não foi encontrada nenhuma conta do Hotmail">
-<!ENTITY HotmailPref.SMTP.NA.Label "Não existem opções SMTP para o Hotmail BETA">
+<!ENTITY HotmailPref.SMTP.NA.Label "Não existem opções SMTP para o Hotmail Live">
 <!ENTITY HotmailPref.POP.MarkAsRead.Label "Marcar no servidor o correio como lido">
 <!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "c">
 <!ENTITY HotmailPref.Domain.Label "Domínios suportados pela extensão Hotmail">
