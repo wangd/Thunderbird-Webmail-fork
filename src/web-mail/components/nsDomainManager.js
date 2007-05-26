@@ -482,6 +482,7 @@ nsDomainManager.prototype =
 
             var statement = this.m_dbConn.createStatement(szSQL);
             statement.bindStringParameter(0, szAddress);
+            statement.execute();
 
             this.m_Log.Write("nsDomainManager.js - removeDomainForProtocol -  END" );
             return true;
