@@ -18,8 +18,8 @@
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
                 <em:minVersion>1.4</em:minVersion>
                 <em:maxVersion>2.0</em:maxVersion>
-                <em:updateLink>http://download.mozdev.org/webmail/gmail-0-5-7.xpi</em:updateLink>
-                <em:updateHash>sha256:53bbdf15b8b1deb8bfec6d57daa4f5f3447a70c4734dad07ca5fdb38524e2794</em:updateHash>
+                <em:updateLink>http://download.mozdev.org/webmail/gmail-0-5-7-1.xpi</em:updateLink>
+                <em:updateHash>sha256:14992e14c127c510ef5bd8d571024d6f9c7e9797a98a16a4416f8334bef14d3a</em:updateHash>
           </Description>
         </em:targetApplication>
 
