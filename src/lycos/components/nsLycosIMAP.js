@@ -201,7 +201,7 @@ nsLycosIMAP.prototype =
 
             var oAuth = Components.classes["@mozilla.org/nsWebMailAuthManager2;1"]
                                   .getService(Components.interfaces.nsIWebMailAuthManager2);
-            oAuth.removeTokens(mainObject.m_szUserName);
+            oAuth.removeToken(mainObject.m_szUserName);
 
             mainObject.m_Log.DebugDump("nsLycosIMAP.js: loginHandler : Exception : "
                                           + err.name

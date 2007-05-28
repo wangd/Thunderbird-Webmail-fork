@@ -94,7 +94,7 @@ HotmailWebDav.prototype =
 
                 var oAuth = Components.classes["@mozilla.org/HttpAuthManager2;1"]
                                       .getService(Components.interfaces.nsIHttpAuthManager2);
-                oAuth.removeTokens(this.m_szUserName);
+                oAuth.removeToken(this.m_szUserName);
             }
 
             this.m_iStage=0;
@@ -211,7 +211,7 @@ HotmailWebDav.prototype =
 
             var oAuth = Components.classes["@mozilla.org/HttpAuthManager2;1"]
                                   .getService(Components.interfaces.nsIHttpAuthManager2);
-            oAuth.removeTokens(mainObject.m_szUserName);
+            oAuth.removeToken(mainObject.m_szUserName);
 
             //check for retries
             if (mainObject.m_iRetries > 0)
@@ -927,7 +927,7 @@ HotmailWebDav.prototype =
 
                 var oAuth = Components.classes["@mozilla.org/HttpAuthManager2;1"]
                                       .getService(Components.interfaces.nsIHttpAuthManager2);
-                oAuth.removeTokens(this.m_szUserName);
+                oAuth.removeToken(this.m_szUserName);
             }
 
             this.m_bAuthorised = false;

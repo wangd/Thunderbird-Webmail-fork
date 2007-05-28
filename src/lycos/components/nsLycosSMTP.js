@@ -123,7 +123,7 @@ nsLycosSMTP.prototype =
 
                 var oAuth = Components.classes["@mozilla.org/nsWebMailAuthManager2;1"]
                                       .getService(Components.interfaces.nsIWebMailAuthManager2);
-                oAuth.removeTokens(this.m_szUserName);
+                oAuth.removeToken(this.m_szUserName);
             }
 
             this.m_HttpComms.setUserName(this.m_szUserName);
@@ -184,7 +184,7 @@ nsLycosSMTP.prototype =
 
             var oAuth = Components.classes["@mozilla.org/nsWebMailAuthManager2;1"]
                                   .getService(Components.interfaces.nsIWebMailAuthManager2);
-            oAuth.removeTokens(mainObject.m_szUserName);
+            oAuth.removeToken(mainObject.m_szUserName);
 
             mainObject.m_Log.DebugDump("nsLycosSMTP.js: loginHandler : Exception : "
                                           + err.name
@@ -267,7 +267,7 @@ nsLycosSMTP.prototype =
 
                     var oAuth = Components.classes["@mozilla.org/nsWebMailAuthManager2;1"]
                                       .getService(Components.interfaces.nsIWebMailAuthManager2);
-                    oAuth.removeTokens(mainObject.m_szUserName);
+                    oAuth.removeToken(mainObject.m_szUserName);
                 }
 
                 mainObject.serverComms("250 OK\r\n");
