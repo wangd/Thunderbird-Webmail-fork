@@ -414,7 +414,7 @@ YahooSMTP.prototype =
                     {
                         mainObject.m_Log.Write("YahooSMTP.js - composerOnloadHandler - plain");
                         var szTxtBody = mainObject.m_Email.txtBody.body.getBody();
-                        mainObject.m_HttpComms.addValuePair("Body",escape(szTxtBody));
+                        mainObject.m_HttpComms.addValuePair("Body",mainObject.escapeStr(szTxtBody));
                     }
 
                     mainObject.m_iStage++;
@@ -703,7 +703,7 @@ YahooSMTP.prototype =
     escapeStr : function(szMSG)
     {
         var szEncode = encodeURIComponent(szMSG);
-        //szEncode = szEncode.replace(/%20/gm,"+"); //replace space
+        szEncode = szEncode.replace(/%20/gm,"+"); //replace space
         return szEncode;
     },
 
