@@ -46,7 +46,9 @@
                     <tabpanels flex="1" >
                         <vbox id="modePanel" class="panel" flex="1">
                             <vbox>
-                                <label value="&HotmailPref.Mode.Label;" id="labelMode" flex="1"/>
+                               <description id="labelMode">
+                                    &HotmailPref.Mode.Label;
+                                </description>
                                 <radiogroup id="radiogroupMode" onclick ="gPrefAccounts.rgModeOnChange();"  class="radio">
                                     <radio label="&HotmailPref.Mode.HotmailOld.Label;"    value="0"/>
                                     <radio label="&HotmailPref.Mode.WebDav.Label;"        value="1"/>

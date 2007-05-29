@@ -8,6 +8,7 @@
             id="prefsWindow"
             title="&HotmailPref.Window.Title;"
             xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+            style="&HotmailPref.Window.size;"
             lastSelected="paneAccounts"
             instantApply="true"
             buttons="extra1"
