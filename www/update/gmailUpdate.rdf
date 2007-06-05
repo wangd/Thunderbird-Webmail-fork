@@ -16,8 +16,8 @@
         <em:targetApplication>
             <Description>
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
-                <em:minVersion>1.4</em:minVersion>
-                <em:maxVersion>2.0</em:maxVersion>
+                <em:minVersion>2.0</em:minVersion>
+                <em:maxVersion>2.0.*</em:maxVersion>
                 <em:updateLink>http://download.mozdev.org/webmail/gmail-0-5-8.xpi</em:updateLink>
                 <em:updateHash>sha256:af83bfca764dadadda286642c12565285f11cff916d617b369d6ddd4e6359184</em:updateHash>
           </Description>

@@ -15,8 +15,8 @@
         <em:targetApplication>
             <Description>
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id> <!-- Thunderbird updates -->
-                <em:minVersion>1.4</em:minVersion>
-                <em:maxVersion>2.0</em:maxVersion>
+                <em:minVersion>2.0</em:minVersion>
+                <em:maxVersion>2.0.*</em:maxVersion>
                 <em:updateLink>http://download.mozdev.org/webmail/aol-1-2-0.xpi</em:updateLink>
                 <em:updateHash>sha256:19bfd47ae61d7e5f733081deb9b064945a98887d1b608387403fd734345976b2</em:updateHash>
           </Description>
