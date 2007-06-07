@@ -12,7 +12,7 @@ const patternYahooFile = /<input.*?type="*file"*.*?name=.*?>/igm;
 const patternYahooNameAlt = /name=['|"]*([\S]*)['|"]*/;
 const patternYahooAltValue = /value=['|"]*([\S\s]*)['|"]*[\s]*>/;
 const patternYahooRedirect = /<a href=['|"]*(.*?)['|"]*>/;
-const patternYahooCompose = /location="*(http:\/\/.*?Compose\?YY=.*?)"*/i;
+const patternYahooCompose = /location=['|"](http:\/\/.*?Compose\?YY=.*?)['|"]/i;
 const patternYahooComposeForm = /<form.*?name="*Compose"*.*?>[\S\s]*?<\/form>/igm;
 const patternYahooAttachmentForm = /<form.*?name="*Attachments"*.*?>[\S\s]*?<\/form>/igm;
 const patternYahooAttachCheck = /javascript\:VirusScanResults\(0\)/igm;
