@@ -18,7 +18,7 @@ function YahooSMTP(oResponseStream, oLog, oPref)
 
         //prfs
         this.m_bReUseSession = oPref.bReUseSession;    //reuse session
-        this.m_bSaveCopy = oPref.bSaveSentItem;        // save copy in sent items
+        this.m_bSaveCopy = oPref.bSaveCopy;        // save copy in sent items
 
         //comms
         this.m_oResponseStream = oResponseStream;
@@ -105,7 +105,7 @@ YahooSMTP.prototype =
                     this.m_Log.Write("YahooPOP.js - logIN - Session Data Found");
                     this.m_iStage =2;
                     this.m_bReEntry = true;
-                    this.m_HttpComms.setURI(this.m_szLocation);
+                    this.m_HttpComms.setURI(this.m_szHomeURI);
                 }
                 else
                 {
