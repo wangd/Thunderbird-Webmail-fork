@@ -245,7 +245,7 @@ nsHotmailDomains.prototype =
             if (!this.m_oStandardFile.exists())
             {   //create file
                 this.m_Log.Write("nsHotmailDomains.js - loadStandardData - creating file");
-                this.m_oStandardFile.create(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 420);
+                this.m_oStandardFile.create(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 0764);
             }
 
             //open file
@@ -297,13 +297,15 @@ nsHotmailDomains.prototype =
                                       createInstance(Components.interfaces.nsIProperties).
                                       get("ProfD", Components.interfaces.nsIFile);
             this.m_oCustomFile.append("WebmailData");          //goto data folder
+            if (!this.m_oCustomFile.exists() || !this.m_oCustomFile.isDirectory()) //check folder exist
+                 this.m_oCustomFile.create(Components.interfaces.nsIFile.DIRECTORY_TYPE, 0764);
             this.m_oCustomFile.append("HotmailDomains.txt");       //goto domains
 
             //check file exist
             if (!this.m_oCustomFile.exists())
             {   //create file
                 this.m_Log.Write("nsHotmailDomains.js - loadCustomData - creating file");
-                this.m_oCustomFile.create(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 420);
+                this.m_oCustomFile.create(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 0764);
             }
 
             //open file
