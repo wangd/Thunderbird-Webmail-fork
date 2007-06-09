@@ -208,35 +208,39 @@ nsMailDotComSMTP.prototype =
                     //login data
                     for (i=0; i<aszLoginInput.length; i++)
                     {
-                        var szName=aszLoginInput[i].match(patternMailDotComName)[1];
-                        mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - name " + szName);
+                        mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - aszLoginInput[i] " + aszLoginInput[i]);
+                        if (aszLoginInput[i].search(/name/i)!=-1)
+                        {
+                            var szName=aszLoginInput[i].match(patternMailDotComName)[1];
+                            mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - name " + szName);
 
-                        if (szName.search(/^login$/i)!=-1)
-                        {
-                            var szUserName =  encodeURI(mainObject.m_szUserName);
-                            mainObject.m_HttpComms.addValuePair(szName, szUserName);
-                        }
-                        else if (szName.search(/password/i)!=-1)
-                        {
-                            var szPassword =  encodeURI(mainObject.m_szPassWord);
-                            mainObject.m_HttpComms.addValuePair(szName, szPassword);
-                        }
-                        else if (szName.search(/siteselected/i)!=-1)
-                        {
-                            if(aszLoginInput[i].search(/checked/i)!=-1)
+                            if (szName.search(/^login$/i)!=-1)
+                            {
+                                var szUserName =  encodeURI(mainObject.m_szUserName);
+                                mainObject.m_HttpComms.addValuePair(szName, szUserName);
+                            }
+                            else if (szName.search(/password/i)!=-1)
+                            {
+                                var szPassword =  encodeURI(mainObject.m_szPassWord);
+                                mainObject.m_HttpComms.addValuePair(szName, szPassword);
+                            }
+                            else if (szName.search(/siteselected/i)!=-1)
+                            {
+                                if(aszLoginInput[i].search(/checked/i)!=-1)
+                                {
+                                    var szValue=aszLoginInput[i].match(patternMailDotComValue)[1];
+                                    szValue = encodeURI(szValue);
+                                    mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - value " + szValue);
+                                    mainObject.m_HttpComms.addValuePair(szName, szValue);
+                                }
+                            }
+                            else
                             {
                                 var szValue=aszLoginInput[i].match(patternMailDotComValue)[1];
                                 szValue = encodeURI(szValue);
                                 mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - value " + szValue);
                                 mainObject.m_HttpComms.addValuePair(szName, szValue);
                             }
-                        }
-                        else
-                        {
-                            var szValue=aszLoginInput[i].match(patternMailDotComValue)[1];
-                            szValue = encodeURI(szValue);
-                            mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - value " + szValue);
-                            mainObject.m_HttpComms.addValuePair(szName, szValue);
                         }
                     }
 
