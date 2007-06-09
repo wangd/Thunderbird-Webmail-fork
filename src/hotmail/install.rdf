@@ -7,7 +7,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
         <em:id>{a6a33690-2c6a-11d9-9669-0800200c9a66}</em:id>
         <em:type>2</em:type>
-        <em:version>1.2.2b1</em:version>
+        <em:version>1.2.2</em:version>
 
         <em:name>WebMail - Hotmail</em:name>
         <em:description>Hotmail component for Web-Mail extension</em:description>
@@ -24,6 +24,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
         <em:contributor>Matthieu Durand (fr-FR)|2</em:contributor>
         <em:contributor>Proyecto NAVE (es-ES)|1</em:contributor>
         <em:contributor>Albert Feller (de-DE)|3</em:contributor>
+        <em:contributor>Andreas Kleinert (de-DE)|3</em:contributor>
         <em:contributor>Softcatal&#195; (ca-AD)|4</em:contributor>
         <em:contributor>Asterxx (RF) (nl-NL)|5</em:contributor>
         <em:contributor>George C. Tsoi (zh-CN)|7</em:contributor>
@@ -49,7 +50,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
             <Description>
                 <!-- Mozilla Thunderbird -->
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
-                <em:minVersion>2.0</em:minVersion>
+                <em:minVersion>1.5</em:minVersion>
                 <em:maxVersion>2.0.*</em:maxVersion>
             </Description>
 
