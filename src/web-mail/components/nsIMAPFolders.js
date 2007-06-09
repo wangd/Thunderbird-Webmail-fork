@@ -41,8 +41,11 @@ nsIMAPFolders.prototype =
             fileDB = fileDB.createInstance(Components.interfaces.nsIProperties);
             fileDB = fileDB.get("ProfD", Components.interfaces.nsILocalFile);
             fileDB.append("WebmailData");         //add folder
-            if (!fileDB.exists())    //check folder exist
-                fileDB.create(Components.interfaces.nsIFile.DIRECTORY_TYPE, 0664);
+            if (!fileDB.exists() || !fileDB.isDirectory())    //check folder exist
+                fileDB.create(Components.interfaces.nsIFile.DIRECTORY_TYPE, 0764);
+            if (fileDB.exists() && fileDB.isDirectory()) //check permissions
+                fileDB.permissions = 0764;
+
             fileDB.append("imapdata.db3");         //sqlite database
             fileDB.QueryInterface(Components.interfaces.nsIFile)
             this.m_Log.Write("nsIMAPFolders.js - loadDB - fileDB "+ fileDB.path);
