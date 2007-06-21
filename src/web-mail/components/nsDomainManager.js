@@ -40,8 +40,21 @@ nsDomainManager.prototype =
             fileDB.append("WebmailData");         //add folder
             if (!fileDB.exists() || !fileDB.isDirectory())    //check folder exist
                 fileDB.create(Components.interfaces.nsIFile.DIRECTORY_TYPE, 0764);
-            if (fileDB.exists() && fileDB.isDirectory()) //check permissions
-                fileDB.permissions = 0764;
+            if (fileDB.exists() && fileDB.isDirectory() && fileDB.permissions != 0764) //check permissions
+            {
+                this.m_Log.Write("nsDomainManager.js - loadDB - updating file permissions");
+                try
+                {
+                    fileDB.permissions = 0764;
+                }
+                catch(e)
+                {
+                    this.m_Log.Write("nsDomainManager.js: loadDataBase : permissions exception : "
+                                          + e.name
+                                          + ".\nError message: "
+                                          + e.message);
+                }
+            }
             fileDB.append("domains.db3");         //sqlite database
             fileDB.QueryInterface(Components.interfaces.nsIFile)
             this.m_Log.Write("nsDataBaseManager.js - loadDB - fileDB "+ fileDB.path);
