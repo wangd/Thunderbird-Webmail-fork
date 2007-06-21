@@ -438,6 +438,7 @@ nsAOLSMTP.prototype =
                 szRichText =this.m_Email.htmlBody.body.getBody();
                 szRichText = szRichText.match(/<body.*?>([\s\S]*?)<\/body>/i)[1];
                 szRichText = szRichText.replace(/\r?\n/g,"\\n");
+                szRichText = szRichText.replace(/"/g,"\\\"");
             }
 
             szMsg    += "\"RichBody\":\""+ szRichText +"\",";
