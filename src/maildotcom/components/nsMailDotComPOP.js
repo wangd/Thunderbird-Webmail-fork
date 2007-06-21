@@ -510,15 +510,17 @@ nsMailDotCom.prototype =
                             }
                             catch(err){}
                             data.szFrom = szFrom;
-
+                            mainObject.m_Log.Write("nsMailDotCom.js - mailBoxOnloadHandler - from "+data.szFrom);
 
                             var szSubject= "";
                             try
                             {
                                 szSubject= aszData[1].match(/<b>(.*?)<\/b>/i)[1];
+                                szSubject = szSubject.replace(/<b>/i,"").replace(/<\/b>/i,"");
                             }
                             catch(err){}
                             data.szSubject = szSubject;
+                            mainObject.m_Log.Write("nsMailDotCom.js - mailBoxOnloadHandler - subject "+data.szSubject);
 
                             try
                             {
