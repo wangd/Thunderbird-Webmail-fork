@@ -952,7 +952,6 @@ HotmailScreenRipper.prototype =
         try
         {
             mainObject.m_Log.Write("Hotmail-SR - emailOnloadHandler - START");
-            //mainObject.m_Log.Write("Hotmail-SR - emailOnloadHandler : \n" + szResponse);
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             mainObject.m_Log.Write("Hotmail-SR - emailOnloadHandler - msg :" + httpChannel.responseStatus);

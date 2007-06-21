@@ -181,7 +181,7 @@ nsPOPConnectionManager.prototype.onSocketAccepted = function(serverSocket, trans
 
 nsPOPConnectionManager.prototype.onStopListening = function(serverSocket, status)
 {
-   this.m_Log.Write("nsPOPConnectionManager - onStopListening - START");
+   this.m_Log.Write("nsPOPConnectionManager - onStopListening - START " + status);
    this.m_iStatus = 0;
    this.m_Log.Write("nsPOPConnectionManager - onStopListening - END");
 }
