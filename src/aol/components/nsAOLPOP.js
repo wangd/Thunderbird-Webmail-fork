@@ -274,15 +274,14 @@ nsAOL.prototype =
                 break;
 
 
-
                 case 3://another bloody bounce
-                    var szHostURL = szResponse.match(patternAOLHost)[1];
+                    var szHostURL = szResponse.match(patternAOLPreferredHost)[1];
                     if (szHostURL == null)
                         throw new Error("error parsing AOL login web page");
 
-                    var szSuccessPath = szResponse.match(patternAOLPath)[1];
-                    mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - szSuccessPath " +szSuccessPath);
-                    var szURL = "http://" + szHostURL + szSuccessPath;
+                    var szSuccessURL = szResponse.match(patternAOLPath)[1];
+                    mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - szSuccessURL " +szSuccessURL);
+                    var szURL = "http://" + szHostURL + encodeURI(szSuccessURL);
 
                     mainObject.m_HttpComms.setURI(szURL);
                     mainObject.m_HttpComms.setRequestMethod("GET");
