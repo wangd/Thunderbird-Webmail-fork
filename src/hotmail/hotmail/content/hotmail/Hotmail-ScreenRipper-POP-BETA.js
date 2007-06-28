@@ -29,6 +29,7 @@ function HotmailScreenRipperBETA(oResponseStream, oLog, oPrefData)
         this.m_bStat = false;
         this.m_bReEntry = true;
         this.m_szMT = null;
+        this.m_bDownloadRetry = true;
 
         this.m_ComponentManager = Components.classes["@mozilla.org/ComponentData2;1"]
                                             .getService(Components.interfaces.nsIComponentData2);
@@ -262,13 +263,31 @@ HotmailScreenRipperBETA.prototype =
 
 
                 case 1:
+                    //get urls for later use
+                    var IOService = Components.classes["@mozilla.org/network/io-service;1"];
+                    IOService = IOService.getService(Components.interfaces.nsIIOService);
+                    var nsIURI = IOService.newURI(httpChannel.URI.spec, null, null);
+                    var szDirectory = nsIURI.QueryInterface(Components.interfaces.nsIURL).directory;
+                    this.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler - directory : " +szDirectory);
+
                     //check for logout option
                     var aszLogoutURL = szResponse.match(patternHotmailLogOut);
                     mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler - logout : " + aszLogoutURL);
 
                     if (!aszLogoutURL)
                     {
-                        if (mainObject.m_bReEntry)
+                        //check for complex hotmail site
+                        if (szResponse.search(patternHotmailFrame)!=-1)
+                        {
+                            mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler - frame found");
+                            mainObject.m_iStage = 1;
+                            mainObject.m_HttpComms.setURI(httpChannel.URI.prePath + szDirectory + "TodayLight.aspx?YouChoose=true");
+                            mainObject.m_HttpComms.setRequestMethod("GET");
+                            var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
+                            if (!bResult) throw new Error("httpConnection returned false");
+                            return;
+                        }
+                        else if (mainObject.m_bReEntry)//something has gone wrong retry
                         {
                             mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
 
@@ -288,15 +307,8 @@ HotmailScreenRipperBETA.prototype =
                             throw new Error("error logging in");
                     }
 
-                    //get urls for later use
-                    var IOService = Components.classes["@mozilla.org/network/io-service;1"];
-                    IOService = IOService.getService(Components.interfaces.nsIIOService);
-                    var nsIURI = IOService.newURI(httpChannel.URI.spec, null, null);
-                    var szDirectory = nsIURI.QueryInterface(Components.interfaces.nsIURL).directory;
-                    this.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler - directory : " +szDirectory);
                     mainObject.m_szLocationURI = httpChannel.URI.prePath + szDirectory;
                     mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler - m_szLocationURI : "+mainObject.m_szLocationURI );
-
                     mainObject.m_szHomeURI = httpChannel.URI.spec;
                     mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler - m_szHomeURI : "+mainObject.m_szHomeURI );
 
@@ -888,6 +900,7 @@ HotmailScreenRipperBETA.prototype =
 
             this.m_szFolderName = oMSG.szFolderName;
             this.m_iStage = 0;
+            this.m_bDownloadRetry = true;
 
             this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
 
@@ -974,13 +987,30 @@ HotmailScreenRipperBETA.prototype =
         }
         catch(err)
         {
-            mainObject.m_Log.DebugDump("Hotmail-SR-BETA: emailOnloadHandler : Exception : "
-                                          + err.name
-                                          + ".\nError message: "
-                                          + err.message+ "\n"
-                                          + err.lineNumber);
+            if (mainObject.m_bDownloadRetry == true && mainObject.m_iStage == 0)
+            {
+                var szMSGID = mainObject.m_szMSGURI.match(patternHotmailEMailID)[1];
+                var szMsgURI = mainObject.m_szLocationURI + "GetMessageSource.aspx?msgid=" + szMSGID;
+                mainObject.m_Log.Write("Hotmail-SR-BETA - getMessage - msg uri" + szMsgURI);
 
-            mainObject.serverComms("-ERR negative vibes from " +mainObject.m_szUserName+ "\r\n");
+                mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
+
+                mainObject.m_HttpComms.setURI(szMsgURI);
+                mainObject.m_HttpComms.setRequestMethod("GET");
+
+                var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);
+                mainObject.m_bDownloadRetry = false;
+            }
+            else
+            {
+                mainObject.m_Log.DebugDump("Hotmail-SR-BETA: emailOnloadHandler : Exception : "
+                                              + err.name
+                                              + ".\nError message: "
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
+
+                mainObject.serverComms("-ERR negative vibes from " +mainObject.m_szUserName+ "\r\n");
+            }
         }
     },
 

@@ -100,11 +100,12 @@
 
                         <vbox id="smptPanel" class="panel" flex="1">
                             <vbox id="vboxSmtpItems">
-                                <checkbox label="&HotmailPref.SMTP.SaveSentItems.Label;"
-                                          accesskey="&HotmailPref.SMTP.SaveSentItems.AccessKey;"
-                                          id="chkSentItems"
-                                          onclick ="gPrefAccounts.chkSentItemsOnChange();"/>
-
+                                <vbox id="vboxSentItems">
+                                    <checkbox label="&HotmailPref.SMTP.SaveSentItems.Label;"
+                                              accesskey="&HotmailPref.SMTP.SaveSentItems.AccessKey;"
+                                              id="chkSentItems"
+                                              onclick ="gPrefAccounts.chkSentItemsOnChange();"/>
+                                </vbox>
                                 <vbox id="vboxAlt">
                                     <label value="&HotmailPref.SMTP.AlternativeGroup.Label;" id="labelAlt" flex="1"/>
                                     <radiogroup id="radiogroupAlt" onclick ="gPrefAccounts.rgAltOnChange();" class="radio">
@@ -118,16 +119,6 @@
                                                value = "1"
                                                id="rdSendHtml"/>
                                     </radiogroup>
-                                </vbox>
-                            </vbox>
-                            <vbox id="vboxSmtpNA">
-                                <hbox pack="center">
-                                    <image id="imageNA" />
-                                </hbox>
-                                <vbox align="center">
-                                    <label id="labelError"
-                                           flex="1"
-                                           value="&HotmailPref.SMTP.NA.Label;"/>
                                 </vbox>
                             </vbox>
                         </vbox>

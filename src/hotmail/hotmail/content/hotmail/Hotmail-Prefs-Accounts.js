@@ -162,28 +162,25 @@ var gPrefAccounts =
                 this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - selectUserName - iMode " + oPref.Value);
                 document.getElementById("radiogroupMode").selectedIndex  = oPref.Value;
 
-                if (oPref.Value == 2)  //Hotmail Beta
+                //hid AlternativeGroup
+                if (oPref.Value==0 || oPref.Value == 2)  //enable alt part  --  Old site || Beta Site
                 {
-                    document.getElementById("vboxSmtpItems").setAttribute("hidden", true);
-                    document.getElementById("vboxSmtpNA").setAttribute("hidden", false);
-                }
-                else
-                {
-                    document.getElementById("vboxSmtpNA").setAttribute("hidden", true);
-                    document.getElementById("vboxSmtpItems").setAttribute("hidden", false);
+                    this.m_DebugLog.Write("Hotmail-Pref-Accounts : selectUserName -  show  AlternativeGroup");
+                    document.getElementById("vboxAlt").setAttribute("hidden", false);
 
-                    //hid AlternativeGroup
-                    if (oPref.Value==0)  //enable alt part  -- ScreenRipper
-                    {
-                        this.m_DebugLog.Write("Hotmail-Pref-Accounts : selectUserName -  show  AlternativeGroup");
-                        document.getElementById("vboxAlt").setAttribute("hidden", false);
-                    }
-                    else                //disable alt part  -- Webdav
-                    {
-                        this.m_DebugLog.Write("Hotmail-Pref-Accounts : selectUserName -  Hide  AlternativeGroup");
-                        document.getElementById("vboxAlt").setAttribute("hidden", true);
-                    }
+                    //save in sent items
+                    if (oPref.Value == 2)  //new site
+                        document.getElementById("vboxSentItems").setAttribute("hidden", true);
+                    else                  //old site
+                        document.getElementById("vboxSentItems").setAttribute("hidden", false);
                 }
+                else                                    //disable alt part  -- Webdav
+                {
+                    this.m_DebugLog.Write("Hotmail-Pref-Accounts : selectUserName -  Hide  AlternativeGroup");
+                    document.getElementById("vboxAlt").setAttribute("hidden", true);
+                    document.getElementById("vboxSentItems").setAttribute("hidden", false);
+                }
+
 
                 //download unread
                 if (!prefAccess.Get("bool","hotmail.Account."+szUserName+".bDownloadUnread",oPref))
@@ -337,30 +334,24 @@ var gPrefAccounts =
         var prefAccess = new WebMailCommonPrefAccess();
         prefAccess.Set("int","hotmail.Account."+szUserName+".iMode",iMode);
 
-
-        if (iMode == 2)  //Hotmail Beta
+        //hid AlternativeGroup
+        if (iMode == 0 || iMode ==2 )  //enable alt part  -- Old Site || new site
         {
-            document.getElementById("vboxSmtpItems").setAttribute("hidden", true);
-            document.getElementById("vboxSmtpNA").setAttribute("hidden", false);
+            this.m_DebugLog.Write("Hotmail-Pref-Accounts : userClick -  show  AlternativeGroup");
+            document.getElementById("vboxAlt").setAttribute("hidden", false);
+
+            //save in sent items
+            if (iMode == 2)  //new site
+                document.getElementById("vboxSentItems").setAttribute("hidden", true);
+            else            //old site
+                document.getElementById("vboxSentItems").setAttribute("hidden", false);
         }
-        else
+        else                //disable alt part  -- Webdav
         {
-            document.getElementById("vboxSmtpNA").setAttribute("hidden", true);
-            document.getElementById("vboxSmtpItems").setAttribute("hidden", false);
-
-            //hid AlternativeGroup
-            if (iMode == 0)  //enable alt part  -- ScreenRipper
-            {
-                this.m_DebugLog.Write("Hotmail-Pref-Accounts : userClick -  show  AlternativeGroup");
-                document.getElementById("vboxAlt").setAttribute("hidden", false);
-            }
-            else                //disable alt part  -- Webdav
-            {
-                this.m_DebugLog.Write("Hotmail-Pref-Accounts : userClick -  Hide  AlternativeGroup");
-                document.getElementById("vboxAlt").setAttribute("hidden", true);
-            }
+            this.m_DebugLog.Write("Hotmail-Pref-Accounts : userClick -  Hide  AlternativeGroup");
+            document.getElementById("vboxAlt").setAttribute("hidden", true);
+            document.getElementById("vboxSentItems").setAttribute("hidden", false);
         }
-
 
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : rgModeOnChange - END");
     },

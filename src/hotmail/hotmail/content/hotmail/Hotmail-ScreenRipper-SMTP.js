@@ -804,8 +804,10 @@ HotmailSMTPScreenRipper.prototype =
 
     escapeStr : function(szMSG)
     {
-        var szEncode = encodeURIComponent(szMSG);
+        this.m_Log.Write("Hotmail-SR-SMTP.js - escapeStr - " + szMSG);
+        var szEncode = escape(szMSG)//encodeURIComponent(szMSG);
         szEncode = szEncode.replace(/%20/gm,"+"); //replace space
+      //  szEncode = szEncode.replace(/%C2/gm,""); //remove first char from encoded uft-8
         return szEncode;
     },
 

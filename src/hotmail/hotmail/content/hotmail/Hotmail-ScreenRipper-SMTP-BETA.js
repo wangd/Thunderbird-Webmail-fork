@@ -250,13 +250,32 @@ HotmailSMTPScreenRipperBETA.prototype =
 
 
                 case 1: //inbox
-                   //check for logout option
+                    //get urls for later use
+                    var IOService = Components.classes["@mozilla.org/network/io-service;1"];
+                    IOService = IOService.getService(Components.interfaces.nsIIOService);
+                    var nsIURI = IOService.newURI(httpChannel.URI.spec, null, null);
+                    var szDirectory = nsIURI.QueryInterface(Components.interfaces.nsIURL).directory;
+                    this.m_Log.Write("Hotmail-SR-BETA-SMTP - loginOnloadHandler - directory : " +szDirectory);
+
+
+                    //check for logout option
                     var aszLogoutURL = szResponse.match(patternHotmailLogOut);
                     mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler - logout : " + aszLogoutURL);
 
                     if (!aszLogoutURL)
                     {
-                        if (mainObject.m_bReEntry)
+                        //check for complex hotmail site
+                        if (szResponse.search(patternHotmailFrame)!=-1)
+                        {
+                            mainObject.m_Log.Write("Hotmail-SR-BETA-SMTP - loginOnloadHandler - frame found");
+                            mainObject.m_iStage = 1;
+                            mainObject.m_HttpComms.setURI(httpChannel.URI.prePath + szDirectory + "TodayLight.aspx?YouChoose=true");
+                            mainObject.m_HttpComms.setRequestMethod("GET");
+                            var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
+                            if (!bResult) throw new Error("httpConnection returned false");
+                            return;
+                        }
+                        else if (mainObject.m_bReEntry)//something has gone wrong retry
                         {
                             mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
 
@@ -276,12 +295,7 @@ HotmailSMTPScreenRipperBETA.prototype =
                             throw new Error("error logging in");
                     }
 
-                    //get urls for later use
-                    var IOService = Components.classes["@mozilla.org/network/io-service;1"];
-                    IOService = IOService.getService(Components.interfaces.nsIIOService);
-                    var nsIURI = IOService.newURI(httpChannel.URI.spec, null, null);
-                    var szDirectory = nsIURI.QueryInterface(Components.interfaces.nsIURL).directory;
-                    this.m_Log.Write("Hotmail-SR-BETA-SMTP - loginOnloadHandler - directory : " +szDirectory);
+
                     mainObject.m_szLocationURI = httpChannel.URI.prePath + szDirectory;
                     mainObject.m_Log.Write("Hotmail-SR-BETA-SMTP - loginOnloadHandler - m_szLocationURI : "+mainObject.m_szLocationURI );
 
@@ -340,17 +354,7 @@ HotmailSMTPScreenRipperBETA.prototype =
             this.m_aszTo = aszTo;
             this.m_szFrom = szFrom;
 
-            if (!this.m_Email.txtBody)
-            {
-                var stringBundle =srGetStrBundle("chrome://hotmail/locale/Hotmail-SMTP.properties");
-                var szError = stringBundle.GetStringFromName("HtmlError");
-
-                this.serverComms("502 "+ szError + "\r\n");
-                return false;
-            }
-
             this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
-
             this.m_iStage=0;
             this.m_HttpComms.setURI(this.m_szComposer);
             this.m_HttpComms.setRequestMethod("GET");
@@ -437,38 +441,40 @@ HotmailSMTPScreenRipperBETA.prototype =
                             }
                             catch(err){}
 
-                            if (szName.search(/fTo/i)!=-1)
+                            if (szName.search(/fMessageBody/i)==-1)
                             {
-                                szValue = mainObject.m_Email.headers.getTo();
+                                if (szName.search(/fTo/i)!=-1)
+                                {
+                                    szValue = mainObject.m_Email.headers.getTo();
 
+                                }
+                                else if (szName.search(/fCc/i)!=-1)
+                                {
+                                    var szCc = mainObject.m_Email.headers.getCc();
+                                    szValue = szCc? szCc : "";
+                                }
+                                else if (szName.search(/fBcc/i)!=-1)
+                                {
+                                    var szTo = mainObject.m_Email.headers.getTo();
+                                    var szCc = mainObject.m_Email.headers.getCc();
+                                    var szBCC =  mainObject.getBcc(szTo, szCc);
+                                    szValue = szBCC? szBCC : "";
+                                }
+                                else if (szName.search(/fSubject/i)!=-1)
+                                {
+                                    var szSubject = mainObject.m_Email.headers.getSubject();
+                                    szValue = szSubject? szSubject : "";
+                                }
+                                else if (szName.search(/ToolbarActionItem/i)!=-1)
+                                {
+                                    szValue = "SendMessage";
+                                }
+                                else if (szName.search(/mt/i)!=-1)
+                                {
+                                    szValue = mainObject.m_szMT;
+                                }
+                                mainObject.m_HttpComms.addValuePair(szName, szValue);
                             }
-                            else if (szName.search(/fCc/i)!=-1)
-                            {
-                                var szCc = mainObject.m_Email.headers.getCc();
-                                szValue = szCc? szCc : "";
-                            }
-                            else if (szName.search(/fBcc/i)!=-1)
-                            {
-                                var szTo = mainObject.m_Email.headers.getTo();
-                                var szCc = mainObject.m_Email.headers.getCc();
-                                var szBCC =  mainObject.getBcc(szTo, szCc);
-                                szValue = szBCC? szBCC : "";
-                            }
-                            else if (szName.search(/fSubject/i)!=-1)
-                            {
-                                var szSubject = mainObject.m_Email.headers.getSubject();
-                                szValue = szSubject? szSubject : "";
-                            }
-                            else if (szName.search(/ToolbarActionItem/i)!=-1)
-                            {
-                                szValue = "SendMessage";
-                            }
-                            else if (szName.search(/mt/i)!=-1)
-                            {
-                                szValue = mainObject.m_szMT;
-                            }
-                            mainObject.m_HttpComms.addValuePair(szName, szValue);
-
                         }
                     }
 
@@ -479,39 +485,54 @@ HotmailSMTPScreenRipperBETA.prototype =
 
                     mainObject.m_HttpComms.addValuePair("MsgPriority", "0");
 
-                    var szBody = mainObject.m_Email.txtBody.body.getBody();
-                    szBody = mainObject.encodeHTML(szBody);
-
-                    var szContentType = null;
-                    if (mainObject.m_Email.txtBody.headers)
-                        szContentType = mainObject.m_Email.txtBody.headers.getContentType(0);
-                    else
-                        szContentType = mainObject.m_Email.headers.getContentType(0);
-                    mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler szContentType " + szContentType);
-                    if (szContentType)
+                    if (mainObject.m_Email.txtBody && !mainObject.m_bSendHtml || !mainObject.m_Email.htmlBody)
                     {
-                        if (szContentType.search(/charset/i)!=-1)
+                        mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - plain");
+                        var szBody = mainObject.m_Email.txtBody.body.getBody();
+                        szBody = mainObject.encodeHTML(szBody);
+
+                        var szContentType = null;
+                        if (mainObject.m_Email.txtBody.headers)
+                            szContentType = mainObject.m_Email.txtBody.headers.getContentType(0);
+                        else
+                            szContentType = mainObject.m_Email.headers.getContentType(0);
+                        mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler szContentType " + szContentType);
+                        if (szContentType)
                         {
-                            var szCharset = null;
-                            if (szContentType.search(/charset=(.*?);\s/i)!=-1)
-                                szCharset = szContentType.match(/charset=(.*?);\s/i)[1];
-                            else
-                               szCharset = szContentType.match(/charset=(.*?)$/i)[1];
-                            mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler -szCharset " + szCharset);
-                            var Converter = Components.classes["@mozilla.org/intl/scriptableunicodeconverter"]
-                                                      .getService(Components.interfaces.nsIScriptableUnicodeConverter);
-                            Converter.charset =  szCharset;
-                            var unicode =  Converter.ConvertToUnicode(szBody);
-                            Converter.charset = "utf-8";
-                            var szDecoded = Converter.ConvertFromUnicode(unicode);
-                            this.m_Log.Write("Hotmail-SR-BETA - emailOnloadHandler - utf-8 "+szDecoded);
+                            if (szContentType.search(/charset/i)!=-1)
+                            {
+                                var szCharset = null;
+                                if (szContentType.search(/charset=(.*?);\s/i)!=-1)
+                                    szCharset = szContentType.match(/charset=(.*?);\s/i)[1];
+                                else
+                                   szCharset = szContentType.match(/charset=(.*?)$/i)[1];
+                                mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler -szCharset " + szCharset);
+                                var Converter = Components.classes["@mozilla.org/intl/scriptableunicodeconverter"]
+                                                          .getService(Components.interfaces.nsIScriptableUnicodeConverter);
+                                Converter.charset =  szCharset;
+                                var unicode =  Converter.ConvertToUnicode(szBody);
+                                Converter.charset = "utf-8";
+                                var szDecoded = Converter.ConvertFromUnicode(unicode);
+                                this.m_Log.Write("Hotmail-SR-BETA - emailOnloadHandler - utf-8 "+szDecoded);
 
-                            szBody = szDecoded;
+                                szBody = szDecoded;
+                            }
                         }
-                    }
 
-                    mainObject.m_HttpComms.addValuePair("fMessageBody", szBody);
-                    mainObject.m_HttpComms.addValuePair("editmessagearea", szBody);
+                        mainObject.m_HttpComms.addValuePair("fMessageBody", szBody);
+                        mainObject.m_HttpComms.addValuePair("editmessagearea", szBody);
+                    }
+                    else if (mainObject.m_Email.htmlBody && mainObject.m_bSendHtml || !mainObject.m_Email.txtBody)
+                    {
+                        mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - html");
+                        var szHTMLBody = mainObject.m_Email.htmlBody.body.getBody();
+                        //var szHTMLBody = "<font size=\"7\">another test</font><br><big>test</big><br>test"
+                        szHTMLBody = szHTMLBody.match(/<body.*?>[\s\S]*<\/body>/)[0];
+                        szHTMLBody = szHTMLBody.replace(/body/ig,"span");
+                        szHTMLBody = szHTMLBody.replace(/\r?\n/g,"<br>");
+                        mainObject.m_HttpComms.addValuePair("fMessageBody", szHTMLBody);
+                        mainObject.m_HttpComms.addValuePair("editmessagearea", szHTMLBody);
+                    }
 
                     mainObject.m_HttpComms.setURI(szURL);
                     mainObject.m_HttpComms.setRequestMethod("POST");
