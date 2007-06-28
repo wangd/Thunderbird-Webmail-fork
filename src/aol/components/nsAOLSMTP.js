@@ -241,10 +241,10 @@ nsAOLSMTP.prototype =
                     mainObject.m_HttpComms.addValuePair("password",szPass);
 
                     var szAction = szLoginForm[0].match(patternAOLAction)[1];
-                    var szLoginURL = httpChannel.URI.prePath + szAction;
-                    mainObject.m_Log.Write("AOLSMTP.js - loginOnloadHandler - szLoginURL : "+szLoginURL);
+                    mainObject.m_Log.Write("AOLSMTP.js - loginOnloadHandler - szAction : "+szAction);
+                    if (!mainObject.m_HttpComms.setURI(szAction))
+                        mainObject.m_HttpComms.setURI(httpChannel.URI.prePath + szAction);
 
-                    mainObject.m_HttpComms.setURI(szLoginURL);
                     mainObject.m_HttpComms.setRequestMethod("POST");
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
                     if (!bResult) throw new Error("httpConnection returned false");
