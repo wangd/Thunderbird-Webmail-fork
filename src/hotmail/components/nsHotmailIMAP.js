@@ -56,6 +56,7 @@ function nsHotmailIMAP()
         this.m_iUID = 0;
         this.m_szDestinationFolder = null;
         this.m_iListType = 0;
+        this.m_szMSG = null;
 
         this.m_Timer = Components.classes["@mozilla.org/timer;1"];
         this.m_Timer = this.m_Timer.createInstance(Components.interfaces.nsITimer);
@@ -1516,16 +1517,38 @@ nsHotmailIMAP.prototype =
             if (httpChannel.responseStatus != 200 && httpChannel.responseStatus != 207)
                 throw new Error("return status " + httpChannel.responseStatus);
 
-            var szMsg = "* " + 1 +" FETCH (UID " + mainObject.m_iUID ; //id
-            szMsg += " RFC822.SIZE " + szResponse.length ; //size
-            szMsg += " BODY[] ";
-            szMsg += "{" + szResponse.length + "}\r\n";
-            szMsg += szResponse + ")\r\n";
-            szMsg += "* FETCH (FLAGS (\\Seen \\Recent))\r\n" ; //flags
-            szMsg += mainObject.m_iTag +" OK UID FETCH complete\r\n"
-            mainObject.serverComms(szMsg);
+            switch(mainObject.m_iStage)
+            {
+                case 0: //download message           
+                    mainObject.m_szMSG = "* " + 1 +" FETCH (UID " + mainObject.m_iUID ; //id
+                    mainObject.m_szMSG += " RFC822.SIZE " + szResponse.length ; //size
+                    mainObject.m_szMSG += " BODY[] ";
+                    mainObject.m_szMSG += "{" + szResponse.length + "}\r\n";
+                    mainObject.m_szMSG += szResponse + ")\r\n";
+                    mainObject.m_szMSG += "* FETCH (FLAGS (\\Seen \\Recent))\r\n" ; //flags
+                    mainObject.m_szMSG += mainObject.m_iTag +" OK UID FETCH complete\r\n";
+                    
+					var szUri = httpChannel.URI.spec;
+                    mainObject.m_Log.Write("nsHotmailIMAP - loginOnloadHandler - szUri - " + szUri);
 
-            mainObject.m_oIMAPData.setMSGSeenFlag(mainObject.m_szUserName, mainObject.m_szSelectFolder, mainObject.m_iUID, true);
+	                //mark email as read
+	                mainObject.m_HttpComms.setContentType("text/xml");
+	                mainObject.m_HttpComms.setURI(szUri);
+	                mainObject.m_HttpComms.setRequestMethod("PROPPATCH");
+	                mainObject.m_HttpComms.addData(HotmailReadSchema);
+	                var bResult = mainObject.m_HttpComms.send(mainObject.fetchBodyOnloadHandler, mainObject);
+	                mainObject.m_iStage++;
+                break;
+                
+                case 1: //marked as read
+                    mainObject.serverComms(mainObject.m_szMSG);
+                    delete mainObject.m_szMSG;
+                    mainObject.m_szMSG = null;
+                    mainObject.m_oIMAPData.setMSGSeenFlag(mainObject.m_szUserName, 
+                                                          mainObject.m_szSelectFolder, 
+                                                          mainObject.m_iUID, true);
+                break;
+            }
             mainObject.m_Log.Write("nsHotmailIMAP.js - fetchBodyOnloadHandler - END");
             return true;
         }
