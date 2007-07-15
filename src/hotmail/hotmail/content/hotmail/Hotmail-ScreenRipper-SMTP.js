@@ -71,6 +71,7 @@ HotmailSMTPScreenRipper.prototype =
             if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
 
             this.m_HttpComms.setUserName(this.m_szUserName);
+            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             this.m_iStage= 0;
             this.m_HttpComms.setURI("http://www.hotmail.com");
 
@@ -141,6 +142,8 @@ HotmailSMTPScreenRipper.prototype =
             if (httpChannel.responseStatus != 200 )
                 throw new Error("return status " + httpChannel.responseStatus);
 
+            mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);   
+            
             //page code
             switch (mainObject.m_iStage)
             {
@@ -345,6 +348,7 @@ HotmailSMTPScreenRipper.prototype =
             var szUri = this.m_szLocationURI + this.m_szComposer + this.m_szUM;
             this.m_HttpComms.setURI(szUri);
             this.m_HttpComms.setRequestMethod("GET");
+            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             var bResult = this.m_HttpComms.send(this.composerOnloadHandler, this);
             if (!bResult) throw new Error("httpConnection returned false");
 
@@ -383,6 +387,8 @@ HotmailSMTPScreenRipper.prototype =
             if (mainObject.m_Email.attachments.length>0 && !mainObject.m_bAttHandled)
                 mainObject.m_iStage = 2;
 
+            mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
+            
             //page code
             switch (mainObject.m_iStage)
             {
@@ -402,48 +408,47 @@ HotmailSMTPScreenRipper.prototype =
                     {
                         var szName = aInput[i].match(patternHotmailName)[1];
 
-                        var szValue = null;
-                        try
+                        if (szName.search(/outgoing/i)==-1)
                         {
-                            szValue = aInput[i].match(patternHotmailValue)[1];
+                            var szValue = null;
+                            try
+                            {
+                                szValue = aInput[i].match(patternHotmailValue)[1];
+                            }
+                            catch(err)
+                            {
+                                szValue = "";
+                            }
+    
+                            if (szName.search(/^to$/i)!=-1|| szName.search(/^encodedto$/i)!=-1)
+                            {
+                                var szTo = mainObject.m_Email.headers.getTo();
+                                szValue = szTo? encodeURIComponent(szTo):"";
+                            }
+                            else if (szName.search(/^cc$/i)!=-1|| szName.search(/^encodedcc$/i)!=-1)
+                            {
+                                var szCc = mainObject.m_Email.headers.getCc();
+                                szValue = szCc? encodeURIComponent(szCc):"";
+                            }
+                            else if (szName.search(/^bcc$/i)!=-1 || szName.search(/^encodedbcc$/i)!=-1)
+                            {
+                                var szTo = mainObject.m_Email.headers.getTo();
+                                var szCc = mainObject.m_Email.headers.getCc();
+                                var szBcc = mainObject.getBcc(szTo, szCc);
+                                szValue = szBcc? encodeURIComponent(szBcc):"";
+                            }
+                            else if (szName.search(/subject/i)!=-1)
+                            {
+                                var szSubject = mainObject.m_Email.headers.getSubject();
+                                szValue = szSubject? encodeURIComponent(szSubject) : "%20";
+                            }
+                            else if (szName.search(/_HMaction/i)!=-1)
+                            {
+                                szValue = "Send";
+                            }
+    
+                            mainObject.m_HttpComms.addValuePair(szName,szValue);
                         }
-                        catch(err)
-                        {
-                            szValue = "";
-                        }
-
-                        if (szName.search(/^to$/i)!=-1|| szName.search(/^encodedto$/i)!=-1)
-                        {
-                            var szTo = mainObject.m_Email.headers.getTo();
-                            szValue = szTo? encodeURIComponent(szTo):"";
-                        }
-                        else if (szName.search(/^cc$/i)!=-1|| szName.search(/^encodedcc$/i)!=-1)
-                        {
-                            var szCc = mainObject.m_Email.headers.getCc();
-                            szValue = szCc? encodeURIComponent(szCc):"";
-                        }
-                        else if (szName.search(/^bcc$/i)!=-1 || szName.search(/^encodedbcc$/i)!=-1)
-                        {
-                            var szTo = mainObject.m_Email.headers.getTo();
-                            var szCc = mainObject.m_Email.headers.getCc();
-                            var szBcc = mainObject.getBcc(szTo, szCc);
-                            szValue = szBcc? encodeURIComponent(szBcc):"";
-                        }
-                        else if (szName.search(/subject/i)!=-1)
-                        {
-                            var szSubject = mainObject.m_Email.headers.getSubject();
-                            szValue = szSubject? encodeURIComponent(szSubject) : "%20";
-                        }
-                        else if (szName.search(/outgoing/i)!=-1)
-                        {
-                            szValue = mainObject.m_bSaveCopy? "on":"off";
-                        }
-                        else if (szName.search(/_HMaction/i)!=-1)
-                        {
-                            szValue = "Send";
-                        }
-
-                        mainObject.m_HttpComms.addValuePair(szName,szValue);
                     }
 
                     if (mainObject.m_Email.txtBody && !mainObject.m_bSendHtml || !mainObject.m_Email.htmlBody)
@@ -459,6 +464,10 @@ HotmailSMTPScreenRipper.prototype =
                         szHTMLBody = szHTMLBody.match(/<html>[\s\S]*<\/html>/)[0];
                         mainObject.m_HttpComms.addValuePair("body",mainObject.escapeStr(szHTMLBody));
                     }
+                    
+                    
+                    if (mainObject.m_bSaveCopy)
+                        mainObject.m_HttpComms.addValuePair("outgoing","on");
 
                     mainObject.m_HttpComms.setRequestMethod("POST");
                     var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler, mainObject);
@@ -806,8 +815,8 @@ HotmailSMTPScreenRipper.prototype =
     {
         this.m_Log.Write("Hotmail-SR-SMTP.js - escapeStr - " + szMSG);
         var szEncode = escape(szMSG)//encodeURIComponent(szMSG);
-        szEncode = szEncode.replace(/%20/gm,"+"); //replace space
-      //  szEncode = szEncode.replace(/%C2/gm,""); //remove first char from encoded uft-8
+        szEncode = szEncode.replace(/\+/gm,"%2B"); //replace +  
+        szEncode = szEncode.replace(/%20/gm,"+"); //replace space  
         return szEncode;
     },
 
