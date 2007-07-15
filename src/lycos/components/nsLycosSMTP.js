@@ -182,8 +182,8 @@ nsLycosSMTP.prototype =
                                      .getService(Components.interfaces.nsIWebMailCookieManager2);
             oCookies.removeCookie(mainObject.m_szUserName);
 
-            var oAuth = Components.classes["@mozilla.org/nsWebMailAuthManager2;1"]
-                                  .getService(Components.interfaces.nsIWebMailAuthManager2);
+            var oAuth = Components.classes["@mozilla.org/HttpAuthManager2;1"]
+                                  .getService(Components.interfaces.nsIHttpAuthManager2);
             oAuth.removeToken(mainObject.m_szUserName);
 
             mainObject.m_Log.DebugDump("nsLycosSMTP.js: loginHandler : Exception : "
