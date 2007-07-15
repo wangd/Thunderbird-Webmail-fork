@@ -187,7 +187,7 @@ emailBuilder.prototype.build = function ()
                     var szAltBoundary = "--AltPartYExt080703070009060604010001"
                     var szStartAltBoundary = "\r\n--"+szAltBoundary + "\r\n";
                     var szEndAltBoundary = "\r\n--"+szAltBoundary + "--\r\n\r\n";
-                    szEmail += "Content-Type: multipart/alternative; boundary=\"" +szAltBoundary +"\"\r\n\r\n\r\n";
+                    szEmail += "Content-Type: multipart/alternative; boundary=\"" +szAltBoundary +"\"\r\n\r\n";
 
                     var aTemp = new Array()
                     aTemp = aTemp.concat(this.m_aoBodyPart);
