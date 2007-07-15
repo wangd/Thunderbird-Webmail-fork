@@ -702,7 +702,8 @@ YahooSMTP.prototype =
 
     escapeStr : function(szMSG)
     {
-        var szEncode = encodeURIComponent(szMSG);
+        var szEncode = escape(szMSG);
+        szEncode = szEncode.replace(/\+/gm,"%2B"); //replace +  
         szEncode = szEncode.replace(/%20/gm,"+"); //replace space
         return szEncode;
     },
