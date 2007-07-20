@@ -25,25 +25,15 @@ nsSMTPConnectionManager.prototype.Start = function()
 
         if(this.m_iStatus != 2 && this.m_iStatus != 1)  //enter here if server is not running
         {
-            if (!this.m_bGarbage)
-            {//start garbage collection
-                this.m_GarbageTimer.initWithCallback(this,
-                                                   20000, //20 seconds
-                                                   Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
-                this.m_bGarbage = true;
-            }
-
             if (!this.m_serverSocket)
             {
                 this.m_serverSocket = Components.classes["@mozilla.org/network/server-socket;1"]
                                                 .createInstance(Components.interfaces.nsIServerSocket);
             }
 
-
             //get pref settings
             var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-            var oPref = new Object();
-            oPref.Value = null;
+            var oPref = {Value:null};
             if (! WebMailPrefAccess.Get("int", "webmail.server.port.smtp", oPref))
             {
                 this.m_Log.Write("nsSMTPConnectionManager.js - Start - webmail.server.port.SMTP failed. Set to default 25");
@@ -51,8 +41,8 @@ nsSMTPConnectionManager.prototype.Start = function()
             }
             this.m_Log.Write("nsSMTPConnectionManager.js - Start - SMTP port value "+ oPref.Value);
             this.m_iSMTPPort = oPref.Value;
-
             delete WebMailPrefAccess;
+            
             //create listener
             //connect only to this machine, 10 Queue
             this.m_serverSocket.init(this.m_iSMTPPort, true, 10);
@@ -113,9 +103,7 @@ nsSMTPConnectionManager.prototype.GetStatus = function ()
 {
     try
     {
-        this.m_Log.Write("nsSMTPConnectionManager.js - GetStatus - START");
-        this.m_Log.Write("nsSMTPConnectionManager.js - status = " + this.m_iStatus);
-        this.m_Log.Write("nsSMTPConnectionManager.js - GetStatus -  END");
+        this.m_Log.Write("nsSMTPConnectionManager.js - GetStatus = " + this.m_iStatus);
         return this.m_iStatus;
     }
     catch(e)
@@ -135,9 +123,7 @@ nsSMTPConnectionManager.prototype.GetPort = function ()
 {
     try
     {
-        this.m_Log.Write("nsPOPConnectionManager.js - GetPort - START");
-        this.m_Log.Write("nsPOPConnectionManager.js - port = " + this.m_iSMTPPort);
-        this.m_Log.Write("nsPOPConnectionManager.js - GetPort -  END");
+        this.m_Log.Write("nsPOPConnectionManager.js - GetPort = " + this.m_iSMTPPort);
         return this.m_iSMTPPort;
     }
     catch(e)
@@ -238,14 +224,18 @@ nsSMTPConnectionManager.prototype.observe = function(aSubject, aTopic, aData)
                             getService(Components.interfaces.nsIObserverService);
             obsSvc.addObserver(this, "profile-after-change", false);
             obsSvc.addObserver(this, "quit-application", false);
-            obsSvc.addObserver(this, "network:offline-status-changed", false);
 
             this.m_scriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-                                    .getService(Components.interfaces.mozIJSSubScriptLoader);
+                                            .getService(Components.interfaces.mozIJSSubScriptLoader);
 
             this.m_GarbageTimer = Components.classes["@mozilla.org/timer;1"]
-                                    .createInstance(Components.interfaces.nsITimer);
+                                            .createInstance(Components.interfaces.nsITimer);
 
+            this.m_GarbageTimer.initWithCallback(this,
+                                                 20000, //20 seconds
+                                                 Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
+            this.m_bGarbage = true;
+            
             this.m_serverSocket = Components.classes["@mozilla.org/network/server-socket;1"]
                                     .createInstance(Components.interfaces.nsIServerSocket);
         break;
@@ -259,7 +249,34 @@ nsSMTPConnectionManager.prototype.observe = function(aSubject, aTopic, aData)
             this.m_Log = new DebugLog("webmail.logging.comms",
                                       "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
                                       "SMTPServerlog");
-            this.intial();
+                                      
+            var obsSvc = Components.classes["@mozilla.org/observer-service;1"]
+                                   .getService(Components.interfaces.nsIObserverService);
+            obsSvc.addObserver(this, "network:offline-status-changed", false);
+            
+            var ioService = Components.classes["@mozilla.org/network/io-service;1"]
+                                      .getService(Components.interfaces.nsIIOService);
+            var bOffline = ioService.offline;
+            this.m_Log.Write("nsSMTPConnectionManager :profile-after-change - offline " + bOffline);
+            
+            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+            var oPref = {Value:null};
+            if (! WebMailPrefAccess.Get("int", "webmail.server.port.smtp", oPref))
+            {
+                this.m_Log.Write("nsSMTPConnectionManager.js : profile-after-change  - Set to default 25");
+                oPref.Value = 25;
+            }
+            this.m_Log.Write("nsSMTPConnectionManager.js : profile-after-change - SMTP port value "+ oPref.Value);
+            this.m_iSMTPPort = oPref.Value;
+            
+            var bStart = false;
+            oPref.Value = null;
+            WebMailPrefAccess.Get("bool","webmail.bUseSMTPServer",oPref);
+            if (oPref.Value) bStart = true;
+            this.m_Log.Write("nsSMTPConnectionManager : profile-after-change - bStart " + bStart);
+            delete WebMailPrefAccess;
+            
+            if (!bOffline && bStart) this.Start();
         break;
 
         case "quit-application": // shutdown code here
@@ -272,6 +289,11 @@ nsSMTPConnectionManager.prototype.observe = function(aSubject, aTopic, aData)
         case "network:offline-status-changed":
             this.m_Log.Write("nsSMTPConnectionManager : network:offline-status-changed " + aData);
 
+            var ioService = Components.classes["@mozilla.org/network/io-service;1"]
+                                      .getService(Components.interfaces.nsIIOService);
+            var bOffline = ioService.offline;
+            this.m_Log.Write("nsSMTPConnectionManager : bOffline " + bOffline );
+                        
             if (aData.search(/online/)!=-1)
             {
                 this.m_Log.Write("nsSMTPConnectionManager : going  Online");
@@ -281,12 +303,12 @@ nsSMTPConnectionManager.prototype.observe = function(aSubject, aTopic, aData)
                 WebMailPrefAccess.Get("bool","webmail.bUseSMTPServer",oPref);
                 if (oPref.Value)
                 {
-                    this.m_Log.Write("nsPOPConnectionManager : SMTP server wanted");
+                    this.m_Log.Write("nsSMTPConnectionManager : SMTP server wanted");
                     if (this.Start())
-                        this.m_Log.Write("nsPOPConnectionManager : SMTP server started");
+                        this.m_Log.Write("nsSMTPConnectionManager : SMTP server started");
                 }
             }
-            else
+            else if (aData.search(/offline/)!=-1 && bOffline)
             {
                 this.m_Log.Write("nsSMTPConnectionManager : going Offline");
                 this.Stop();
@@ -299,49 +321,6 @@ nsSMTPConnectionManager.prototype.observe = function(aSubject, aTopic, aData)
     }
 }
 
-
-nsSMTPConnectionManager.prototype.intial = function ()
-{
-    try
-    {
-        this.m_Log.Write("nsSMTPConnectionManager : intial - START");
-
-        var oPref = new Object();
-        oPref.Value = null;
-
-        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-        WebMailPrefAccess.Get("bool","webmail.bUseSMTPServer",oPref);
-        if (oPref.Value)
-        {
-            this.m_Log.Write("nsPOPConnectionManager : intial - SMTP server wanted");
-            if (this.Start())
-                this.m_Log.Write("nsPOPConnectionManager : intial - SMTP server started");
-            else
-                this.m_Log.Write("nsPOPConnectionManager : intial - SMTP server not started");
-        }
-
-        oPref.Value = null;
-        if (! WebMailPrefAccess.Get("int", "webmail.server.port.smtp", oPref))
-        {
-            this.m_Log.Write("nsSMTPConnectionManager.js - intial - webmail.server.port.SMTP failed. Set to default 25");
-            oPref.Value = 25;
-        }
-        this.m_Log.Write("nsSMTPConnectionManager.js - intial - SMTP port value "+ oPref.Value);
-        this.m_iSMTPPort = oPref.Value;
-
-        delete WebMailPrefAccess;
-
-        this.m_Log.Write("nsSMTPConnectionManager : intial - END");
-    }
-    catch(e)
-    {
-        this.m_Log.Write("nsSMTPConnectionManager :  Exception in intial "
-                                        + e.name +
-                                        ".\nError message: "
-                                        + e.message + "\n"
-                                        + e.lineNumber);
-    }
-}
 
 /******************************************************************************/
 /***************** XPCOM  stuff ***********************************************/

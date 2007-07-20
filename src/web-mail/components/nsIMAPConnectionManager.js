@@ -23,25 +23,15 @@ nsIMAPConnectionManager.prototype.Start = function()
 
         if(this.m_iStatus != 2 && this.m_iStatus != 1)  //enter here if server is not running
         {
-            if (!this.m_bGarbage)
-            {//start garbage collection
-                this.m_GarbageTimer.initWithCallback(this,
-                                                   20000, //20 seconds
-                                                   Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
-                this.m_bGarbage = true;
-            }
-
             if (!this.m_serverSocket)
             {
                 this.m_serverSocket = Components.classes["@mozilla.org/network/server-socket;1"]
                                                 .createInstance(Components.interfaces.nsIServerSocket);
             }
 
-
             //get pref settings
             var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-            var oPref = new Object();
-            oPref.Value = null;
+            var oPref = {Value:null};
             if (! WebMailPrefAccess.Get("int", "webmail.server.port.imap", oPref))
             {
                 this.m_Log.Write("nsIMAPConnectionManager.js - Start - webmail.server.port.imap failed. Set to default 143");
@@ -82,7 +72,6 @@ nsIMAPConnectionManager.prototype.Stop = function()
     {
         this.m_Log.Write("nsIMAPConnectionManager.js - Stop - START");
 
-         this.m_Log.Write("nsIMAPConnectionManager.js - Stop - "+ this.m_iStatus);
         if (this.m_iStatus != 0 && this.m_iStatus!=-1) //only enter if server has not stopped
         {
             this.m_Log.Write("nsIMAPConnectionManager.js - Stop - stopping");
@@ -114,9 +103,7 @@ nsIMAPConnectionManager.prototype.GetStatus = function ()
 {
     try
     {
-        this.m_Log.Write("nsIMAPConnectionManager.js - GetStatus - START");
         this.m_Log.Write("nsIMAPConnectionManager.js - status = " + this.m_iStatus);
-        this.m_Log.Write("nsIMAPConnectionManager.js - GetStatus -  END");
         return this.m_iStatus;
     }
     catch(e)
@@ -136,9 +123,7 @@ nsIMAPConnectionManager.prototype.GetPort = function ()
 {
     try
     {
-        this.m_Log.Write("nsIMAPConnectionManager.js - GetPort - START");
         this.m_Log.Write("nsIMAPConnectionManager.js - port = " + this.m_iIMAPPort);
-        this.m_Log.Write("nsIMAPConnectionManager.js - GetPort -  END");
         return this.m_iIMAPPort;
     }
     catch(e)
@@ -241,14 +226,18 @@ nsIMAPConnectionManager.prototype.observe = function(aSubject, aTopic, aData)
                             getService(Components.interfaces.nsIObserverService);
             obsSvc.addObserver(this, "profile-after-change", false);
             obsSvc.addObserver(this, "quit-application", false);
-            obsSvc.addObserver(this, "network:offline-status-changed", false);
 
             this.m_scriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                                     .getService(Components.interfaces.mozIJSSubScriptLoader);
 
             this.m_GarbageTimer = Components.classes["@mozilla.org/timer;1"]
                                     .createInstance(Components.interfaces.nsITimer);
-
+            
+            this.m_GarbageTimer.initWithCallback(this,
+                                                 20000, //20 seconds
+                                                 Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
+            this.m_bGarbage = true;
+                
             this.m_serverSocket = Components.classes["@mozilla.org/network/server-socket;1"]
                                     .createInstance(Components.interfaces.nsIServerSocket);
         break;
@@ -256,13 +245,40 @@ nsIMAPConnectionManager.prototype.observe = function(aSubject, aTopic, aData)
         case "profile-after-change":
             // This happens after profile has been loaded and user preferences have been read.
             // startup code here
-            this.m_scriptLoader .loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-            this.m_scriptLoader .loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
-            this.m_scriptLoader .loadSubScript("chrome://web-mail/content/server/imapConnectionHandler.js");
+            this.m_scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
+            this.m_scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
+            this.m_scriptLoader.loadSubScript("chrome://web-mail/content/server/imapConnectionHandler.js");
             this.m_Log = new DebugLog("webmail.logging.comms",
                                       "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
                                       "imapServerlog");
-            this.intial();
+                                      
+            var obsSvc = Components.classes["@mozilla.org/observer-service;1"]
+                                   .getService(Components.interfaces.nsIObserverService);
+            obsSvc.addObserver(this, "network:offline-status-changed", false);
+            
+            var ioService = Components.classes["@mozilla.org/network/io-service;1"]
+                                      .getService(Components.interfaces.nsIIOService);
+            var bOffline = ioService.offline;
+            this.m_Log.Write("nsIMAPConnectionManager :profile-after-change - offline " + bOffline);
+            
+            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+            var oPref = {Value:null};
+            if (! WebMailPrefAccess.Get("int", "webmail.server.port.imap", oPref))
+            {
+                this.m_Log.Write("nsIMAPConnectionManager.js - profile-after-change - Set to default 143");
+                oPref.Value = 143;
+            }
+            this.m_Log.Write("nsIMAPConnectionManager.js - profile-after-change - IMAP port value "+ oPref.Value);
+            this.m_iIMAPPort = oPref.Value;
+            
+            var bStart = false;
+            oPref.Value = null;
+            WebMailPrefAccess.Get("bool","webmail.bUseIMAPServer",oPref);
+            if (oPref.Value) bStart = true;
+            this.m_Log.Write("nsIMAPConnectionManager : profile-after-change - bStart " + bStart);
+            delete WebMailPrefAccess;
+            
+            if (!bOffline && bStart) this.Start();
         break;
 
         case "quit-application": // shutdown code here
@@ -275,6 +291,11 @@ nsIMAPConnectionManager.prototype.observe = function(aSubject, aTopic, aData)
         case "network:offline-status-changed":
             this.m_Log.Write("nsIMAPConnectionManager : network:offline-status-changed " + aData);
 
+            var ioService = Components.classes["@mozilla.org/network/io-service;1"]
+                                      .getService(Components.interfaces.nsIIOService);
+            var bOffline = ioService.offline;
+            this.m_Log.Write("nsIMAPConnectionManager : bOffline " + bOffline );
+                                            
             if (aData.search(/online/)!=-1)
             {
                 this.m_Log.Write("nsIMAPConnectionManager : going  Online");
@@ -289,7 +310,7 @@ nsIMAPConnectionManager.prototype.observe = function(aSubject, aTopic, aData)
                         this.m_Log.Write("nsPOPConnectionManager : IMAP server started");
                 }
             }
-            else
+            else if (aData.search(/offline/)!=-1 && bOffline)
             {
                 this.m_Log.Write("nsIMAPConnectionManager : going Offline");
                 this.Stop();
@@ -302,46 +323,6 @@ nsIMAPConnectionManager.prototype.observe = function(aSubject, aTopic, aData)
     }
 }
 
-
-nsIMAPConnectionManager.prototype.intial = function ()
-{
-    try
-    {
-        this.m_Log.Write("nsIMAPConnectionManager : intial - START");
-
-        var oPref = {Value :null};
-        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-        WebMailPrefAccess.Get("bool","webmail.bUseIMAPServer",oPref);
-        if (oPref.Value)
-        {
-            this.m_Log.Write("nsIMAPConnectionManager : intial - IMAP server wanted");
-            if (this.Start())
-                this.m_Log.Write("nsIMAPConnectionManager : intial - IMAP server started");
-            else
-                this.m_Log.Write("nsIMAPConnectionManager : intial - IMAP server not started");
-        }
-
-        oPref.Value = null;
-        if (! WebMailPrefAccess.Get("int", "webmail.server.port.imap", oPref))
-        {
-            this.m_Log.Write("nsIMAPConnectionManager.js - intial - webmail.server.port.imap failed. Set to default 143");
-            oPref.Value = 143;
-        }
-        this.m_Log.Write("nsIMAPConnectionManager.js - intial - IMAP port value "+ oPref.Value);
-        this.m_iIMAPPort = oPref.Value;
-        delete WebMailPrefAccess
-
-        this.m_Log.Write("nsIMAPConnectionManager : intial - END");
-    }
-    catch(e)
-    {
-        this.m_Log.Write("nsIMAPConnectionManager :  Exception in intial "
-                                        + e.name +
-                                        ".\nError message: "
-                                        + e.message + "\n"
-                                        + e.lineNumber);
-    }
-}
 
 
 /******************************************************************************/

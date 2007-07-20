@@ -15,7 +15,6 @@ function nsPOPConnectionManager()
     this.m_Log = null;
     this.m_iStatus = 0;   //-1 error , 0 = stopped ,1 = waiting, 2= ruuning
     this.m_aPOPConnections = new Array();
-    this.m_bGarbage = false;
     this.m_iPopPort = 0;
 }
 
@@ -28,24 +27,15 @@ nsPOPConnectionManager.prototype.Start = function()
 
         if(this.m_iStatus != 2 && this.m_iStatus != 1)  //enter here if server is not running
         {
-            if (!this.m_bGarbage)
-            {//start garbage collection
-                this.m_GarbageTimer.initWithCallback(this,
-                                                   20000,  //20 seconds
-                                                   Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
-                this.m_bGarbage = true;
-            }
-
             if (!this.m_serverSocket)
             {
                 this.m_serverSocket = Components.classes["@mozilla.org/network/server-socket;1"]
                                                 .createInstance(Components.interfaces.nsIServerSocket);
             }
-
+            
             //get pref settings
             var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-            var oPref = new Object();
-            oPref.Value = null;
+            var oPref = {Value:null};
             if (! WebMailPrefAccess.Get("int", "webmail.server.port.pop", oPref))
             {
                 this.m_Log.Write("nsPOPConnectionManager - Start - webmail.server.port.pop failed. Set to default 110");
@@ -117,9 +107,7 @@ nsPOPConnectionManager.prototype.GetStatus = function ()
 {
     try
     {
-        this.m_Log.Write("nsPOPConnectionManager - GetStatus - START");
-        this.m_Log.Write("nsPOPConnectionManager - status = " + this.m_iStatus);
-        this.m_Log.Write("nsPOPConnectionManager - GetStatus -  END");
+        this.m_Log.Write("nsPOPConnectionManager - GetStatus = " + this.m_iStatus);
         return this.m_iStatus;
     }
     catch(e)
@@ -141,9 +129,7 @@ nsPOPConnectionManager.prototype.GetPort = function ()
 {
     try
     {
-        this.m_Log.Write("nsPOPConnectionManager.js - GetPort - START");
-        this.m_Log.Write("nsPOPConnectionManager.js - port = " + this.m_iPopPort);
-        this.m_Log.Write("nsPOPConnectionManager.js - GetPort -  END");
+        this.m_Log.Write("nsPOPConnectionManager.js - GetPort = " + this.m_iPopPort);
         return this.m_iPopPort;
     }
     catch(e)
@@ -241,32 +227,60 @@ nsPOPConnectionManager.prototype.observe = function(aSubject, aTopic, aData)
         case "xpcom-startup":
             // this is run very early, right after XPCOM is initialized, but before
             // user profile information is applied.
-            var obsSvc = Components.classes["@mozilla.org/observer-service;1"].
-                            getService(Components.interfaces.nsIObserverService);
+            var obsSvc = Components.classes["@mozilla.org/observer-service;1"]
+                                   .getService(Components.interfaces.nsIObserverService);
             obsSvc.addObserver(this, "profile-after-change", false);
             obsSvc.addObserver(this, "quit-application", false);
-            obsSvc.addObserver(this, "network:offline-status-changed", false);
 
             this.m_scriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-                                    .getService(Components.interfaces.mozIJSSubScriptLoader);
-
+                                            .getService(Components.interfaces.mozIJSSubScriptLoader);
+                                      
             this.m_GarbageTimer = Components.classes["@mozilla.org/timer;1"]
-                                    .createInstance(Components.interfaces.nsITimer);
-
-            this.m_serverSocket = Components.classes["@mozilla.org/network/server-socket;1"]
-                                    .createInstance(Components.interfaces.nsIServerSocket);
+                                            .createInstance(Components.interfaces.nsITimer);
+                                    
+            this.m_GarbageTimer.initWithCallback(this,
+                                                 20000,  //20 seconds
+                                                 Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
+            this.m_bGarbage = true;
         break;
 
         case "profile-after-change":
             // This happens after profile has been loaded and user preferences have been read.
             // startup code here
-            this.m_scriptLoader .loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-            this.m_scriptLoader .loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
-            this.m_scriptLoader .loadSubScript("chrome://web-mail/content/server/popConnectionHandler.js");
+            this.m_scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
+            this.m_scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
+            this.m_scriptLoader.loadSubScript("chrome://web-mail/content/server/popConnectionHandler.js");
             this.m_Log = new DebugLog("webmail.logging.comms",
                                       "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
                                       "popServerlog");
-            this.intial();
+                                      
+            var obsSvc = Components.classes["@mozilla.org/observer-service;1"]
+                                   .getService(Components.interfaces.nsIObserverService);
+            obsSvc.addObserver(this, "network:offline-status-changed", false);
+            
+            var ioService = Components.classes["@mozilla.org/network/io-service;1"]
+                                      .getService(Components.interfaces.nsIIOService);
+            var bOffline = ioService.offline;
+            this.m_Log.Write("nsPOPConnectionManager :profile-after-change - offline " + bOffline);
+            
+            var  WebMailPrefAccess = new WebMailCommonPrefAccess();
+            var oPref = {Value:null};
+            if (! WebMailPrefAccess.Get("int", "webmail.server.port.pop", oPref))
+            {
+                this.m_Log.Write("nsPOPConnectionManager : profile-after-change - Set to default 110");
+                oPref.Value = 110;
+            }
+            this.m_Log.Write("nsPOPConnectionManager : profile-after-change  - POP port value "+ oPref.Value);
+            this.m_iPopPort = oPref.Value;
+            
+            var bStart = false;
+            oPref.Value = null;
+            WebMailPrefAccess.Get("bool","webmail.bUsePOPServer",oPref);
+            if (oPref.Value) bStart = true;
+            this.m_Log.Write("nsPOPConnectionManager : profile-after-change - bStart " + bStart);
+            delete WebMailPrefAccess;
+            
+            if (!bOffline && bStart) this.Start();
         break;
 
         case "quit-application": // shutdown code here
@@ -275,8 +289,13 @@ nsPOPConnectionManager.prototype.observe = function(aSubject, aTopic, aData)
         break;
 
         case "network:offline-status-changed":
-            this.m_Log.Write("nsPOPConnectionManager : network:offline-status-changed " + aData);
-
+            this.m_Log.Write("nsPOPConnectionManager : network:offline-status-changed " + aData );
+            
+            var ioService = Components.classes["@mozilla.org/network/io-service;1"]
+                                      .getService(Components.interfaces.nsIIOService);
+            var bOffline = ioService.offline;
+            this.m_Log.Write("nsPOPConnectionManager : bOffline " + bOffline );
+                        
             if (aData.search(/online/)!=-1)
             {
                 this.m_Log.Write("nsPOPConnectionManager : going  Online");
@@ -291,7 +310,7 @@ nsPOPConnectionManager.prototype.observe = function(aSubject, aTopic, aData)
                         this.m_Log.Write("nsPOPConnectionManager : pop server started");
                 }
             }
-            else
+            else if (aData.search(/offline/)!=-1 && bOffline)
             {
                 this.m_Log.Write("nsPOPConnectionManager : going Offline");
                 this.Stop();
@@ -303,47 +322,6 @@ nsPOPConnectionManager.prototype.observe = function(aSubject, aTopic, aData)
 
         default:
             throw Components.Exception("Unknown topic: " + aTopic);
-    }
-}
-
-
-nsPOPConnectionManager.prototype.intial = function ()
-{
-    try
-    {
-        this.m_Log.Write("nsPOPConnectionManager : intial - START");
-
-        var oPref = {Value :null};
-
-        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
-        WebMailPrefAccess.Get("bool","webmail.bUsePOPServer",oPref);
-        if (oPref.Value)
-        {
-            this.m_Log.Write("nsPOPConnectionManager : intial - POP server wanted");
-            if (this.Start())
-                this.m_Log.Write("nsPOPConnectionManager : intial - pop server started");
-            else
-                this.m_Log.Write("nsPOPConnectionManager : intial - pop server not started");
-        }
-
-         if (! WebMailPrefAccess.Get("int", "webmail.server.port.pop", oPref))
-        {
-            this.m_Log.Write("nsPOPConnectionManager - intial - webmail.server.port.pop failed. Set to default 110");
-            oPref.Value = 110;
-        }
-        this.m_Log.Write("nsPOPConnectionManager - intial - POP port value "+ oPref.Value);
-        this.m_iPopPort = oPref.Value;
-        delete WebMailPrefAccess
-
-        this.m_Log.Write("nsPOPConnectionManager : intial - END");
-    }
-    catch(e)
-    {
-        this.m_Log.Write("nsPOPConnectionManager :  Exception in intial "
-                                        + e.name +
-                                        ".\nError message: "
-                                        + e.message + "\n"
-                                        + e.lineNumber);
     }
 }
 
