@@ -196,6 +196,17 @@ SMTPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
                 break;
 
 
+                case "rset":
+                    this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - rset - START "+ this.iID);
+                    this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - rset -\n"+ aCommand);
+
+                    var szResponse = "221 OK\r\n";
+                    this.ServerResponse.write(szResponse, szResponse.length);
+
+                    this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - rset - END "+ this.iID);
+                break;
+
+
                 case "quit":
                     this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - quit - START "+ this.iID);
                     this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - quit -\n"+ aCommand);
