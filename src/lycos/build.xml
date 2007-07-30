@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <project name="lycos" default="createxpi">
-    <property name="VERSION" value="1-2-1"/>
+    <property name="VERSION" value="1-2-2"/>
 
     <delete file="lycos-${VERSION}.xpi"/>
     <delete file="lycos.jar"/>
