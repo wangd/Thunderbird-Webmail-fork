@@ -25,6 +25,7 @@ nsPOPConnectionManager.prototype.Start = function()
    {
         this.m_Log.Write("nsPOPConnectionManager - Start - START");
 
+        this.m_Log.Write("nsPOPConnectionManager - Start - this.m_iStatus " + this.m_iStatus);
         if(this.m_iStatus != 2 && this.m_iStatus != 1)  //enter here if server is not running
         {
             if (!this.m_serverSocket)
@@ -76,6 +77,7 @@ nsPOPConnectionManager.prototype.Stop = function()
     {
         this.m_Log.Write("nsPOPConnectionManager - Stop - START");
 
+        this.m_Log.Write("nsPOPConnectionManager - Start - this.m_iStatus " + this.m_iStatus);
         if (this.m_iStatus != 0 && this.m_iStatus != -1) //only enter if server has not stopped
         {
             this.m_Log.Write("nsPOPConnectionManager - Stop - stopping");
