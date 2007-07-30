@@ -213,6 +213,8 @@ SMTPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
 
                     var szResponse = "221 OK\r\n";
                     this.ServerResponse.write(szResponse, szResponse.length);
+                    this.ServerResponse.close();
+                    this.ServerRequest.close();
 
                     this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - quit - END "+ this.iID);
                 break;
