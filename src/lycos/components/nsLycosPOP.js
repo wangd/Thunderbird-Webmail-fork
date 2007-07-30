@@ -136,8 +136,8 @@ nsLycos.prototype =
                                          .getService(Components.interfaces.nsIWebMailCookieManager2);
                 oCookies.removeCookie(this.m_szUserName);
 
-                var oAuth = Components.classes["@mozilla.org/nsWebMailAuthManager2;1"]
-                                      .getService(Components.interfaces.nsIWebMailAuthManager2);
+                var oAuth = Components.classes["@mozilla.org/HttpAuthManager2;1"]
+                                      .getService(Components.interfaces.nsIHttpAuthManager2);
                 oAuth.removeToken(this.m_szUserName);
             }
 
@@ -468,7 +468,7 @@ nsLycos.prototype =
                     var callback = {
                        notify: function(timer) { this.parent.processSizes(timer)}
                     };
-                    callback.parent = mainObject;
+                    callback.parent = this;
                     this.m_iHandleCount = 0;
                     this.m_Timer.initWithCallback(callback,
                                                   this.m_iTime,
@@ -904,8 +904,8 @@ nsLycos.prototype =
                                          .getService(Components.interfaces.nsIWebMailCookieManager2);
                 oCookies.removeCookie(this.m_szUserName);
 
-                var oAuth = Components.classes["@mozilla.org/nsWebMailAuthManager2;1"]
-                                      .getService(Components.interfaces.nsIWebMailAuthManager2);
+                var oAuth = Components.classes["@mozilla.org/HttpAuthManager2;1"]
+                                  .getService(Components.interfaces.nsIHttpAuthManager2);
                 oAuth.removeToken(this.m_szUserName);
             }
 
