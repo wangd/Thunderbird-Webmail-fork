@@ -140,7 +140,7 @@ emailBuilder.prototype.build = function ()
         else  //muilt part email
         {
             szEmail += this.m_oHeader.getAllHeaders();
-            szEmail += "This email was created By Yahoo Webmail Extension\r\n";
+            szEmail += "This email was created By Yahoo Webmail Extension.";
 
             var szBaseBoundary = this.m_oHeader.getContentType(3); //get boundary
             var szStartBoundary = "\r\n--" + szBaseBoundary + "\r\n";
