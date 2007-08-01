@@ -1,5 +1,5 @@
-<!ENTITY HotmailSpam.Window.Title "Imagem anti-spam do Hotmail">
+<!ENTITY HotmailSpam.Window.Title "Imagem Anti-Spam do Hotmail">
 <!ENTITY HotmailSpam.Button.OK.Label "OK">
 <!ENTITY HotmailSpam.Title "Hotmail">
-<!ENTITY HotmailSpam.Decription "Verificação anti-spam">
-<!ENTITY HotmailSpam.Label "Digite o que você enxerga na imagem acima.">
+<!ENTITY HotmailSpam.Decription "Verificação de Spam">
+<!ENTITY HotmailSpam.Label "Digite o que você vê na imagem acima">

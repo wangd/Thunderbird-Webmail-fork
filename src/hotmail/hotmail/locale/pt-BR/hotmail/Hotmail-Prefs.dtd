@@ -1,39 +1,36 @@
-<!ENTITY HotmailPref.Window.Title "Opções do Hotmail">
-<!ENTITY HotmailPref.Window.size "width: 45em; height: 38em">
+<!ENTITY HotmailPref.Window.Title "Opções Hotmail">
 <!ENTITY HotmailPref.Panel.Accounts.Title "Contas">
 <!ENTITY HotmailPref.Panel.Domains.Title "Domínios">
-<!ENTITY HotmailPref.Button.Close.Label "Close">
+<!ENTITY HotmailPref.Button.Close.Label "Fechar">
 <!ENTITY HotmailPref.Tab.Mode.Title "Modo">
 <!ENTITY HotmailPref.Tab.POP.Title "POP">
 <!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
-<!ENTITY HotmailPref.Mode.Label "Selecione o método de comunicação que a extensão usará para conectar-se aos servidores da Microsoft">
-
+<!ENTITY HotmailPref.Mode.Label "Selecione o método de comunicação que a extensão irá utilizar para se conectar aos servidores da Microsoft">
+<!ENTITY HotmailPref.Mode.HotmailLive.Label "Hotmail Live (Novo website)">
+<!ENTITY HotmailPref.Mode.HotmailOld.Label "Hotmail (website antigo)">
 <!ENTITY HotmailPref.Mode.WebDav.Label "WebDav">
-<!ENTITY HotmailPref.Mode.HotmailLive.Label "Hotmail Live (New website)">
-<!ENTITY HotmailPref.Mode.HotmailOld.Label "Hotmail (Old website)">
-
-<!ENTITY HotmailPref.POP.DownloadUnread.Label "Baixar somente mensagens não-lidas">
-<!ENTITY HotmailPref.POP.DownloadUnread.AccessKey "N">
-<!ENTITY HotmailPref.POP.JunkMail.Label "Baixar Lixo Eletrônico">
-<!ENTITY HotmailPref.POP.JunkMail.AccessKey "L">
+<!ENTITY HotmailPref.POP.DownloadUnread.Label "Baixar apenas e-mails não lidos">
+<!ENTITY HotmailPref.POP.DownloadUnread.AccessKey "u">
+<!ENTITY HotmailPref.POP.JunkMail.Label "Baixar JunkMail">
+<!ENTITY HotmailPref.POP.JunkMail.AccessKey "J">
 <!ENTITY HotmailPref.POP.Folders.Label "Baixar pastas">
 <!ENTITY HotmailPref.POP.ButtonAdd.Label "Adicionar...">
 <!ENTITY HotmailPref.POP.ButtonAdd.AccessKey "A">
 <!ENTITY HotmailPref.POP.ButtonRemove.Label "Remover">
 <!ENTITY HotmailPref.POP.ButtonRemove.AccessKey "R">
-<!ENTITY HotmailPref.SMTP.SaveSentItems.Label "Salvar cópia em Mensagens Enviadas">
-<!ENTITY HotmailPref.SMTP.SaveSentItems.AccessKey "S">
-<!ENTITY HotmailPref.SMTP.AlternativeGroup.Label "Ao enviar mensagens com formatação, que parte a extensão deve enviar?">
-<!ENTITY HotmailPref.SMTP.SendPlain.Label "Enviar texto puro">
-<!ENTITY HotmailPref.SMTP.SendPlain.AccessKey "P">
-<!ENTITY HotmailPref.SMTP.SendHtml.Label "Enviar texto HTML">
-<!ENTITY HotmailPref.SMTP.SendHtml.AccessKey "H">
-<!ENTITY HotmailPref.AccountError.Label "Nenhuma conta do Hotmail encontrada">
-<!ENTITY HotmailPref.SMTP.NA.Label "Não há opções SMTP para o Hotmail BETA">
-<!ENTITY HotmailPref.Domain.Label "Domínio suportados pela extensão Hotmail">
-<!ENTITY HotmailPref.Domain.Button.AddDomain.Label "Adicionar...">
+<!ENTITY HotmailPref.SMTP.SaveSentItems.Label "Salvar cópia nos ítens enviados.">
+<!ENTITY HotmailPref.SMTP.SaveSentItems.AccessKey "s">
+<!ENTITY HotmailPref.SMTP.AlternativeGroup.Label "Ao enviar e-mails com RTF(Formato de texto rico), a extensão deve enviar qual parte?">
+<!ENTITY HotmailPref.SMTP.SendPlain.Label "Enviar apenas texto">
+<!ENTITY HotmailPref.SMTP.SendPlain.AccessKey "p">
+<!ENTITY HotmailPref.SMTP.SendHtml.Label "Enviar texto em formato HTML">
+<!ENTITY HotmailPref.SMTP.SendHtml.AccessKey "h">
+<!ENTITY HotmailPref.AccountError.Label "Não foram encontradas contas do Hotmail">
+<!ENTITY HotmailPref.SMTP.NA.Label "Sem opções para Hotmail Live">
+<!ENTITY HotmailPref.POP.MarkAsRead.Label "Marcar e-mails como lidos no servidor">
+<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "k">
+<!ENTITY HotmailPref.Domain.Label "Domínios suportados pela extensão Hotmail">
+<!ENTITY HotmailPref.Domain.Button.AddDomain.Label "Adicionar..">
 <!ENTITY HotmailPref.Domain.Button.AddDomain.AccessKey "A">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.Label "Remover">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.AccessKey "R">
-<!ENTITY HotmailPref.POP.MarkAsRead.Label "Marcar mensagens como lidas no servidor">
-<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "L">
