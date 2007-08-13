@@ -73,7 +73,7 @@ HotmailSMTPScreenRipper.prototype =
             this.m_HttpComms.setUserName(this.m_szUserName);
             this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             this.m_iStage= 0;
-            this.m_HttpComms.setURI("http://www.hotmail.com");
+            this.m_HttpComms.setURI("http://mail.live.com");
 
             //get session data
             if (this.m_bReUseSession)
@@ -85,7 +85,7 @@ HotmailSMTPScreenRipper.prototype =
                 if (this.m_szHomeURI)
                 {
                     this.m_Log.Write("Hotmail-SR - logIN - Session Data Found");
-                    this.m_iStage =2;
+                    this.m_iStage =1;
                     this.m_bReEntry = true;
                     this.m_HttpComms.setURI(this.m_szHomeURI);
                 }
@@ -144,131 +144,62 @@ HotmailSMTPScreenRipper.prototype =
 
             mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);   
             
+            var aRefresh = szResponse.match(patternHotmailJavaRefresh);
+            if (!aRefresh)
+                aRefresh = szResponse.match(patternHotmailRefresh2);   
+            mainObject.m_Log.Write("Hotmail-SR-SMTP - loginOnloadHandler refresh "+ aRefresh);
+            if (aRefresh)
+            {
+                mainObject.m_HttpComms.setURI(aRefresh[1]);
+                mainObject.m_HttpComms.setRequestMethod("GET");
+
+                var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
+                if (!bResult) throw new Error("httpConnection returned false");
+                return;
+            }
+            
             //page code
             switch (mainObject.m_iStage)
             {
                 case 0: //login
-                    var aForm = szResponse.match(patternHotmailForm);
-                    if (!aForm) throw new Error("error parsing login page");
+                    var szURL = szResponse.match(patternHotmailLoginURL)[1];            
+                    mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler - szURL :" +szURL);
+                    if (!szURL) throw new Error("error parsing login page");
 
                     //get form data
-                    var aInput =  aForm[0].match(patternHotmailInput);
-                    mainObject.m_Log.Write("Hotmail-SR-SMTP.js - loginOnloadHandler - form data " + aInput);
+                    mainObject.m_HttpComms.addValuePair("idsbho","1");
+                    
+                    var szPasswordPadding = "IfYouAreReadingThisYouHaveTooMuchFreeTime";
+                    var lPad=szPasswordPadding.length-mainObject.m_szPassWord.length;
+                    szData = szPasswordPadding.substr(0,(lPad<0)?0:lPad);
+                    mainObject.m_HttpComms.addValuePair("PwdPad",szData);
+                    
+                    mainObject.m_HttpComms.addValuePair("loginOptions","2");
+                    mainObject.m_HttpComms.addValuePair("CS","");
+                    mainObject.m_HttpComms.addValuePair("FedState","");
+                    
+                    var szBlob = szResponse.match(patternHotmailSRBlob)[1];   
+                    mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler - szBlob :" +szBlob);
+                    mainObject.m_HttpComms.addValuePair("PPSX",szBlob);
+                   
+                    mainObject.m_HttpComms.addValuePair("login",mainObject.urlEncode(mainObject.m_szUserName));
+                    mainObject.m_HttpComms.addValuePair("passwd",mainObject.urlEncode(mainObject.m_szPassWord));       
+                    mainObject.m_HttpComms.addValuePair("remMe","1");
+                    mainObject.m_HttpComms.addValuePair("NewUser","1");
+                    
+                    var szSFT = szResponse.match(patternHotmailSFT)[1];   
+                    mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler - szSFT :" +szSFT);
+                    mainObject.m_HttpComms.addValuePair("PPFT",szSFT);
 
-                    for (i=0; i<aInput.length; i++)
-                    {
-                        var szType = aInput[i].match(patternHotmailType)[1];
-                        mainObject.m_Log.Write("Hotmail-SR-SMTP.js - loginOnloadHandler - form type " + szType);
-                        var szName = aInput[i].match(patternHotmailName)[1];
-                        mainObject.m_Log.Write("Hotmail-SR-SMTP.js - loginOnloadHandler - form name " + szName);
-
-                        var szValue = "";
-                        try
-                        {
-                            szValue = aInput[i].match(patternHotmailValue)[1];
-                            mainObject.m_Log.Write("nHotmail-SR-SMTP.js - loginOnloadHandler - form value " + szValue);
-                        }
-                        catch(e)
-                        {
-                            szValue = "";
-                        }
-
-
-                        if (szType.search(/submit/i)==-1)
-                        {
-                            if (szType.search(/radio/i)!=-1)
-                            {
-                                if (aInput[i].search(/checked/i)!=-1)
-                                    mainObject.m_HttpComms.addValuePair(szName,szValue);
-                            }
-                            else
-                            {
-                                var szData = null;
-                                if (szName.search(/login/i)!=-1)
-                                    szData = encodeURIComponent(mainObject.m_szUserName);
-                                else if (szName.search(/passwd/i)!=-1)
-                                    szData = encodeURIComponent(mainObject.m_szPassWord);
-                                else if (szName.search(/PwdPad/i)!=-1)
-                                {
-                                    var szPasswordPadding = "IfYouAreReadingThisYouHaveTooMuchFreeTime";
-                                    var lPad=szPasswordPadding.length-mainObject.m_szPassWord.length;
-                                    szData += szPasswordPadding.substr(0,(lPad<0)?0:lPad);
-                                }
-                                else
-                                    szData = encodeURIComponent(szValue);
-
-                                mainObject.m_HttpComms.addValuePair(szName,szData);
-                            }
-                        }
-                    }
-
-                    var szAction = aForm[0].match(patternHotmailAction)[1];
-                    mainObject.m_Log.Write("Hotmail-SR-SMTP- loginOnloadHandler "+ szAction);
-                    var szDomain = mainObject.m_szUserName.split("@")[1];
-                    var szRegExp = "g_DO\\[\""+szDomain+"\"\\]=\"(.*?)\"";
-                    mainObject.m_Log.Write("Hotmail-SR-SMTP- loginOnloadHandler szRegExp "+ szRegExp);
-                    var regExp = new RegExp(szRegExp,"i");
-                    var aszURI = szResponse.match(regExp);
-                    mainObject.m_Log.Write("Hotmail-SR-SMTP- loginOnloadHandler aszURI "+ aszURI);
-                    var szURI = null;
-                    if (!aszURI)
-                    {
-                        szURI = szAction;
-                    }
-                    else
-                    {
-                        var szQS =  szResponse.match(patternHotmailQS)[1];
-                        mainObject.m_Log.Write("Hotmail-SR-SMTP- loginOnloadHandler szQuery "+ szQS);
-                        szURI = aszURI[1] + "?" + szQS;
-                    }
-                    mainObject.m_HttpComms.setURI(szURI);
-
+                    mainObject.m_HttpComms.setURI(szURL);
                     mainObject.m_HttpComms.setRequestMethod("POST");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler,mainObject);
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
-                break;
-
-                case 1: //refresh
-                   var aRefresh = szResponse.match(patternHotmailForm);
-                    mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler - refresh "+ aRefresh);
-
-                    if (aRefresh)
-                    {
-                        //action
-                        var szAction = aRefresh[0].match(patternHotmailAction)[1];
-                        mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler "+ szAction);
-                        mainObject.m_HttpComms.setURI(szAction);
-
-                        //form data
-                        var aInput =  aRefresh[0].match(patternHotmailInput);
-                        mainObject.m_Log.Write("Hotmail-SR- loginOnloadHandler "+ aInput);
-                        var szName =  aInput[0].match(patternHotmailName)[1];
-                        var szValue =  aInput[0].match(patternHotmailValue)[1];
-                        szValue = encodeURIComponent(szValue);
-                        mainObject.m_HttpComms.addValuePair(szName,szValue);
-                        mainObject.m_HttpComms.setRequestMethod("POST");
-                    }
-                    else
-                    {
-                        aRefresh = szResponse.match(patternHotmailRefresh);
-
-                        if (!aRefresh)
-                            aRefresh = szResponse.match(patternHotmailJavaRefresh);
-
-                        mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler refresh "+ aRefresh);
-                        if (aRefresh == null) throw new Error("error parsing login page");
-
-                        mainObject.m_HttpComms.setURI(aRefresh[1]);
-                        mainObject.m_HttpComms.setRequestMethod("GET");
-                    }
-
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
 
-                case 2:
+
+                case 1:
                     if (szResponse.search(patternHotmailMailbox) == -1)
                     {
                         if (mainObject.m_bReEntry)

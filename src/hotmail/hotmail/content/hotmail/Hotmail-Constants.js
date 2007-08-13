@@ -32,14 +32,18 @@ const UserAgent = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.3)
 // "Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.4) Gecko/20070515 Firefox/2.0.0.4";
 
 /************************Screen Rippper constants******************************/
-const patternHotmailForm = /<form.*?>[\S\s]*?<\/form>/;
-const patternHotmailAction = /<form.*?action="(.*?)".*?>/;
+const patternHotmailLoginURL = /srf_uPost=['|"](.*?)["|']/i;
+const patternHotmailSRBlob = /srf_sRBlob=['|"](.*?)["|']/i;
+const patternHotmailSFT =/srf_sFT=.*?value=['|"](.*?)["|']/i;
+const patternHotmailJavaRefresh = /location\.replace\("(.*?)"\)/i;
+const patternHotmailRefresh2 = /window\.location=['|"](.*?)['|"]/i;
+
+const patternHotmailForm = /<form[\S\s]*?>[\S\s]*?<\/form>/i;
+const patternHotmailAction = /<form.*?action="(.*?)".*?>/i;
 const patternHotmailInput = /<input[\s\S]*?>/igm;
 const patternHotmailType = /type="(.*?)"/i;
 const patternHotmailName = /name="(.*?)"/i;
 const patternHotmailValue = /value="(.*?)"/i;
-const patternHotmailRefresh =/<META.*?HTTP-EQUIV="REFRESH".*?URL=(.*?)".*?>/i;
-const patternHotmailJavaRefresh = /location\.replace\("(.*?)"\)/i;
 const patternHotmailUM = /_UM="(.*?)"/;
 const patternHotmailQS = /g_QS="(.*?)"/i;
 const patternHotmailComposer = /onclick="G\('(.*?compose\?.*?)'\);"/i;
