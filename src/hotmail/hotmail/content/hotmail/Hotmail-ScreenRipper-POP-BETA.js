@@ -908,6 +908,8 @@ HotmailScreenRipperBETA.prototype =
                     var szEmail = aTemp[1].split(/<\/pre>/)[0];
                     if (!szEmail) throw new Error("Message END  not found");
                     szEmail = szEmail.replace(/<\/$/,"");  //clean bad tag
+                    szEmail = szEmail.replace(/<\/pr$/,"");  //clean bad tag
+                    szEmail = new HTMLescape().decode(szEmail);                   
                     mainObject.m_szMSG += szEmail;
 
                     //clean up msg
