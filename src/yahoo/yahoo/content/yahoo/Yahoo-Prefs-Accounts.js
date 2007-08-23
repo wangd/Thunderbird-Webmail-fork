@@ -75,12 +75,14 @@ var gPrefAccounts =
                 if (currentServer.type.search(/pop3/i)!=-1)  //found pop account
                 {
                     var szUserName = currentServer.realUsername;
+                    szUserName = szUserName.replace(/\s/,"");  //removes non print chars
                     this.m_DebugLog.Write("Yahoo-Pref-Accounts : getUserNames - userName " + szUserName);
                     if (szUserName)
                     {
                         if (szUserName.search(/@/)==-1)
                         {
                             szUserName = currentServer.username ;
+                            szUserName = szUserName.replace(/\s/,"");  //removes non print chars
                             this.m_DebugLog.Write("Yahoo-Pref-Accounts  : getUserNames - realuserName " + szUserName);
                         }
 
