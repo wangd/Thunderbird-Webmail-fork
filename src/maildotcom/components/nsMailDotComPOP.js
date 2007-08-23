@@ -205,6 +205,7 @@ nsMailDotCom.prototype =
 
                     //get login URI
                     var szLoginURI= szForm.match(patternMailDotComLoginURI)[1];
+                    szLoginURI = mainObject.removeHTML(szLoginURI);
                     mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - login uri " + szLoginURI);
 
                     //get login input form
@@ -1270,12 +1271,26 @@ nsMailDotCom.prototype =
     },
 
 
+    removeHTML : function (szRaw)
+    {
+        this.m_Log.Write("nsMailDotCom - removeHTML - START");
+        var szMsg = szRaw.replace(/&lt;/g,"<");
+        szMsg = szMsg.replace(/&gt;/g,">");
+        szMsg = szMsg.replace(/&quot;/g, "\"");
+        szMsg = szMsg.replace(/&amp;/g, "&");
+        szMsg = szMsg.replace(/&nbsp;/g, " ");
+        szMsg = szMsg.replace(/\r/g, "");
+        szMsg = szMsg.replace(/\n/g, "\r\n");
+        this.m_Log.Write("nsMailDotCom - removeHTML - ENd")
+        return szMsg;
+    },
+
 
     loadPrefs : function()
     {
         try
         {
-            this.m_Log.Write("nsMailDotCom.js - loadPrefs - START");
+            this.m_Log.Write(".js - loadPrefs - START");
 
             //get user prefs
             var oPref = {Value:null};

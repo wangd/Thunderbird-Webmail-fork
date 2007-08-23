@@ -199,6 +199,7 @@ nsMailDotComSMTP.prototype =
 
                     //get login URI
                     var szLoginURI= szForm.match(patternMailDotComLoginURI)[1];
+                    szLoginURI = mainObject.removeHTML(szLoginURI);
                     mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - login uri " + szLoginURI);
 
                     //get login input form
