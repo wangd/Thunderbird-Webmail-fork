@@ -83,7 +83,7 @@ IMAPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
                 var szDomain = aCommand[2].substring(1,aCommand[2].length-1);
                 var szPassWord = aCommand[3].substring(1,aCommand[3].length-1);
 
-                var aszDomain = szDomain.split("@");     //split username and domain
+                var aszDomain = szDomain.replace(/\s/,"").split("@");     //split username and domain
                 if (this.getDomainHandler(aszDomain[0], aszDomain[1]))
                 {
                     this.m_DomainHandler.ResponseStream = this.ServerResponse;

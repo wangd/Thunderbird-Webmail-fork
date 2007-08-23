@@ -124,7 +124,7 @@ SMTPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
                             var aszDecoded =  oBase64.decode(aCommand[2]).split("\0");
                             this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - decoded -" +aszDecoded);
 
-                            var aszUserName = aszDecoded[1].split("@");
+                            var aszUserName = aszDecoded[1].replace(/\s/,"").split("@");                        
                             var szPassword = aszDecoded[2];
 
                             if (this.getDomainHandler(aszUserName[0], aszUserName[1]))
@@ -285,7 +285,7 @@ SMTPconnectionHandler.prototype.getDomainHandler = function(szUserName, szDomain
         DomainManager.QueryInterface(Components.interfaces.nsIDomainManager);
         var szContentID = new Object;
 
-
+        
         //get domain handler contentid and interfaceid
         this.m_SMTPLog.Write("SMTPconnectionHandler - getDomainHandler - Domain "
                                               + szUserName

@@ -72,7 +72,7 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
             case "user":
                 this.m_POPLog.Write("POPconnectionHandler - onDataWritable - user - START - "+ this.iID);
 
-                var aszDomain = aCommand[1].split("@");     //split username and domain
+                var aszDomain = aCommand[1].replace(/\s/,"").split("@");     //split username and domain
                 if (this.getDomainHandler(aszDomain[0], aszDomain[1]))
                 {
                     this.m_POPLog.Write("POPconnectionHandler - onDataWritable - user "
