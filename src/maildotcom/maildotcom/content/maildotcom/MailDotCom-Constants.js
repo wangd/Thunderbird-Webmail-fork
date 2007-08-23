@@ -1,6 +1,6 @@
 const kMailDotComConstants = true;
 
-const patternMailDotComLoginForm =/<form.*?>[\S\s]*?<\/form>/igm;
+const patternMailDotComLoginForm =/<form.*?id="mailcom".*?>[\S\s]*?<\/form>/igm;
 const patternMailDotComLoginURI = /<form.*?action=["]?(.*?)["]?\s.*?>/;
 const patternMailDotComLoginInput = /<input.*?type=(?!"submit").*?>/igm;
 const patternMailDotComType = /type="(.*?)"/i;
