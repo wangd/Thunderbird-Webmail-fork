@@ -163,6 +163,23 @@ HotmailSMTPScreenRipperBETA.prototype =
                 return;
             }
 
+            var aForm = szResponse.match(patternHotmailLoginForm);
+            mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler aForm "+ aForm);
+            if (aForm)
+            {
+                var szURL = aForm[0].match(patternHotmailAction);
+                mainObject.m_HttpComms.setURI(szURL[1]);
+                mainObject.m_HttpComms.setRequestMethod("POST");
+                var szInput = aForm[0].match(patternHotmailInput);
+                var szName = szInput[0].match(patternHotmailName)[1];
+                var szValue = szInput[0].match(patternHotmailValue)[1];
+                mainObject.m_HttpComms.addValuePair(szName, szValue);
+
+                var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
+                if (!bResult) throw new Error("httpConnection returned false");
+                return;
+            }
+            
             //page code
             switch (mainObject.m_iStage)
             {
@@ -365,7 +382,15 @@ HotmailSMTPScreenRipperBETA.prototype =
                 case 0:  //MSG handler
 
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler - Send MSG");
-                    var szForm = szResponse.match(patternHotmailForm)[0];
+                    var szForm;
+                    try
+                    {
+                        szForm = szResponse.match(patternHotmailSMTPForm)[0];
+                    }
+                    catch(err)
+                    {
+                        szForm = szResponse.match(patternHotmailForm)[0];  
+                    }
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler - Form " + szForm);
 
                     var aszInput = szForm.match(patternHotmailInput);
@@ -436,7 +461,8 @@ HotmailSMTPScreenRipperBETA.prototype =
 
                     var aszFromDate = szForm.match(patternHotmailFromBeta);
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler aszFromDate " + aszFromDate);
-                    mainObject.m_HttpComms.addValuePair(aszFromDate[1], aszFromDate[2]);
+                    var szSenderAddress = new HTMLescape().decode(aszFromDate[2]) 
+                    mainObject.m_HttpComms.addValuePair(aszFromDate[1], szSenderAddress);
 
 
                     mainObject.m_HttpComms.addValuePair("MsgPriority", "0");
@@ -533,7 +559,7 @@ HotmailSMTPScreenRipperBETA.prototype =
                 case 2: //Add Attachment Request
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler - Attach Request");
 
-                    var szForm = szResponse.match(patternHotmailForm)[0];
+                    var szForm = szResponse.match(patternHotmailSMTPForm)[0];
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler - Form " + szForm);
 
                     var aszInput = szForm.match(patternHotmailInput);
@@ -580,7 +606,7 @@ HotmailSMTPScreenRipperBETA.prototype =
                     }
 
                     mainObject.m_HttpComms.addValuePair("fMessageBody", "");
-
+                    
                     mainObject.m_HttpComms.setURI(szURL);
                     mainObject.m_HttpComms.setRequestMethod("POST");
                     mainObject.m_HttpComms.setContentType("multipart/form-data");
@@ -594,7 +620,7 @@ HotmailSMTPScreenRipperBETA.prototype =
                 case 3: //Add Attach
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler - Add Files");
 
-                    var szForm = szResponse.match(patternHotmailForm)[0];
+                    var szForm = szResponse.match(patternHotmailSMTPForm)[0];
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler - Form " + szForm);
 
                     var aszInput = szForm.match(patternHotmailInput);
@@ -762,6 +788,14 @@ HotmailSMTPScreenRipperBETA.prototype =
 
    },
 
+    urlEncode : function (szData)
+    {
+        var szEncoded = encodeURIComponent(szData);
+        szEncoded = szEncoded.replace(/!/g,"%21");
+        return szEncoded;
+
+    },
+    
     serverComms : function (szMsg)
     {
         try

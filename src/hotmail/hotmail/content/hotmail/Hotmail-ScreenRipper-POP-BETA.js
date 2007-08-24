@@ -177,6 +177,23 @@ HotmailScreenRipperBETA.prototype =
                 return;
             }
             
+            var aForm = szResponse.match(patternHotmailLoginForm);
+            mainObject.m_Log.Write("Hotmail-SR-BETA-POP - loginOnloadHandler aForm "+ aForm);
+            if (aForm)
+            {
+                var szURL = aForm[0].match(patternHotmailAction);
+                mainObject.m_HttpComms.setURI(szURL[1]);
+                mainObject.m_HttpComms.setRequestMethod("POST");
+                var szInput = aForm[0].match(patternHotmailInput);
+                var szName = szInput[0].match(patternHotmailName)[1];
+                var szValue = szInput[0].match(patternHotmailValue)[1];
+                mainObject.m_HttpComms.addValuePair(szName, szValue);
+
+                var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
+                if (!bResult) throw new Error("httpConnection returned false");
+                return;
+            }
+            
             //page code
             switch (mainObject.m_iStage)
             {
