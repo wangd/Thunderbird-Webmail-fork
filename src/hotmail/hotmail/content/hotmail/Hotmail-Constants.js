@@ -38,6 +38,7 @@ const patternHotmailSFT =/srf_sFT=.*?value=['|"](.*?)["|']/i;
 const patternHotmailJavaRefresh = /location\.replace\("(.*?)"\)/i;
 const patternHotmailRefresh2 = /window\.location=['|"](.*?)['|"]/i;
 
+const patternHotmailLoginForm = /<form.*?name="fmHF".*?>[\S\s]*?<\/form>/i;
 const patternHotmailForm = /<form[\S\s]*?>[\S\s]*?<\/form>/i;
 const patternHotmailAction = /<form.*?action="(.*?)".*?>/i;
 const patternHotmailInput = /<input[\s\S]*?>/igm;
@@ -75,6 +76,7 @@ const patternHotmailSRFrom =/<tr[\S\s]*name="(.*?)"><td>/i;
 
 
 /*********BETA**********/
+const patternHotmailSMTPForm = /<form.*?name="aspnetForm".*?>[\S\s]*?<\/form>/i;
 const patternHotmailJSRefresh = /<html><head><script.*?>.*?\.location\.replace.*?\("(.*?)"\).*?<\/script>.*?<\/html>/i;
 const patternHotmailJSRefreshAlt = /<head><meta http-equiv="REFRESH".*?content=".*?URL=(.*?)">.*?<\/head><\/html>/i;
 const patternHotmailJSBounce = /srf_uRet="(.*?)"/i;
@@ -101,7 +103,7 @@ const patternHotmailMailBoxTableRow = /<tr.*?>[\s\S]*?<\/tr>/ig;
 const patternHotmailMailBoxTableData = /<td.*?>[\s\S]*?<\/td>/ig;
 const patternHotmailEMailURL = /<td .*?><a href="(.*?)".*?>.*?<\/a><\/td>/i;
 const patternHotmailEmailRead = /class="dInboxContentItemUnread">/i;
-const patternHotmailEmailSender = /<td .*?><a.*?><span>(.*?)<\/span><\/a><\/td>/i;
+const patternHotmailEmailSender = /<td .*?><a.*?><div class="truncateFrom">(.*?)<\/div><\/a><\/td>/i;
 const patternHotmailEmailSubject = /<td.*?>.*?<a href=.*?>(.*?)<\/a>.*?<\/td>/i;
 const patternHotmailEmailDate = /<td.*?>(.*?)<\/td>/i;
 const patternHotmailEMailID =/ReadMessageID=(.*?)&/i;
