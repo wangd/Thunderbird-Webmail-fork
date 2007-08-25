@@ -233,7 +233,7 @@ nsDomainManager.prototype =
                 szSQL = "SELECT content_id FROM imap_domains WHERE domain LIKE ?1 LIMIT (1)";
 
             var statement = this.m_dbConn.createStatement(szSQL);
-            statement.bindStringParameter(0, szAddress.toLowerCase());
+            statement.bindStringParameter(0, szAddress.toLowerCase().replace(/\s/,""));
 
             try
             {
@@ -318,8 +318,8 @@ nsDomainManager.prototype =
 
             this.m_Log.Write("nsDomainManager : newDomainForProtocol - sql "  + szSQL);
             var statement = this.m_dbConn.createStatement(szSQL);
-            statement.bindStringParameter(0, szAddress.toLowerCase());
-            statement.bindStringParameter(1, szAddress.toLowerCase());
+            statement.bindStringParameter(0, szAddress.toLowerCase().replace(/\s/,""));
+            statement.bindStringParameter(1, szAddress.toLowerCase().replace(/\s/,""));
             statement.bindStringParameter(2, szContentID);
             statement.execute();
 
@@ -496,7 +496,7 @@ nsDomainManager.prototype =
                 szSQL = "DELETE FROM imap_domains WHERE domain LIKE ?1";
 
             var statement = this.m_dbConn.createStatement(szSQL);
-            statement.bindStringParameter(0, szAddress);
+            statement.bindStringParameter(0, szAddress.toLowerCase().replace(/\s/,""));
             statement.execute();
 
             this.m_Log.Write("nsDomainManager.js - removeDomainForProtocol -  END" );
