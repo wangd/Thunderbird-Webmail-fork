@@ -1525,7 +1525,7 @@ nsHotmailIMAP.prototype =
                     mainObject.m_szMSG += " BODY[] ";
                     mainObject.m_szMSG += "{" + szResponse.length + "}\r\n";
                     mainObject.m_szMSG += szResponse + ")\r\n";
-                    mainObject.m_szMSG += "* FETCH (FLAGS (\\Seen \\Recent))\r\n" ; //flags
+//                    mainObject.m_szMSG += "* FETCH (FLAGS (\\Seen \\Recent))\r\n" ; //flags
                     mainObject.m_szMSG += mainObject.m_iTag +" OK UID FETCH complete\r\n";
                     
 					var szUri = httpChannel.URI.spec;
@@ -1695,9 +1695,6 @@ nsHotmailIMAP.prototype =
                                                            oHref, oRead, oDelete, oSeqNum);
 
 
-
-            mainObject.serverComms(szResponse);
-
             if (mainObject.m_bStoreDelete)
             {
                 mainObject.m_Log.Write("nsHotmailIMAP.js - storeOnloadHandler - marks as deleted");
@@ -1710,6 +1707,7 @@ nsHotmailIMAP.prototype =
                 szResponse+= oRead.value? "\\Seen ":"";
                 szResponse+= oDelete.value? "\\Deleted ":"";
                 szResponse+= "))\r\n";
+                mainObject.serverComms(szResponse);
             }
 
             if (mainObject.m_aRawData.length>0)
