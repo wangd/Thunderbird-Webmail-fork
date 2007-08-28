@@ -67,8 +67,8 @@ const kPatternHeader = /<rawheaders>([\s\S]*?)<\/rawheaders>/im;
 
 const kMSG = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><m:GetMessage xmlns:m=\"urn:yahoo:ymws\"><fid>FOLDERNAME<\/fid><message><mid>MSGID</mid><\/message><truncateAt>102400000</truncateAt></m:GetMessage></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 const kPatternLstBodyPartResponse = /<GetMessageResponse>([\s\S]*?)<\/GetMessageResponse>/i;
-const kPatternPart =/<part.*?>[\s\S]*?<\/part>/img;
-const kPatterShortPart = /<part.*?\/>/igm;
+const kPatternLongPart =/<part.*?>[\s\S]*?<\/part>/img;
+const kPatternShortPart = /<part.*?\/>/igm;
 const kPatternPartID = /partId="(.*?)"/i;
 const kPatternPartText = /<text>([\s\S]*?)<\/text>/im;
 const kPatternPartType =/ type="(.*?)"/i;
