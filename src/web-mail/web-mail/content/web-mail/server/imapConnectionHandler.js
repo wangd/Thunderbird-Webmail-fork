@@ -183,7 +183,7 @@ IMAPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
                 {
                     this.m_IMAPLog.Write("nsIMAPConnectionHandler - onDataWritable - copy");
                     this.m_DomainHandler.tag = aCommand[0];
-                    var szDestination = aCommand[4].substring(1,aCommand[4].length-1);
+                    var szDestination = aStream[0].substring( aStream[0].indexOf("\"")+1,aStream[0].lastIndexOf("\""));
                     this.m_DomainHandler.copy(aCommand[3],szDestination);
                 }
                 else if (aCommand[2].toLowerCase() == "store")

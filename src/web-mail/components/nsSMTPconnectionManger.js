@@ -73,7 +73,7 @@ nsSMTPConnectionManager.prototype.Stop = function()
     {
         this.m_Log.Write("nsSMTPConnectionManager.js - Stop - START");
 
-        if (this.m_iStatus != 0 && this.m_iStatus != -1) //only enter is not stopped
+        if (this.m_iStatus != 0 && this.m_iStatus != -1 && this.m_serverSocket) //only enter is not stopped
         {
             this.m_Log.Write("nsSMTPConnectionManager.js - Stop - stopping");
             this.m_serverSocket.close();  //stop new conections
