@@ -22,7 +22,8 @@ function YahooPOP(oResponseStream, oLog, oPrefs)
         this.m_bUseShortID = oPrefs.bUseShortID;
         this.m_iTime = oPrefs.iProcessDelay;            //timer delay
         this.m_iProcessAmount =  oPrefs.iProcessAmount; //delay proccess amount
-
+        this.m_bMarkAsRead = oPrefs.bMarkAsRead;
+        
         //login data
         this.m_bAuthorised = false;
         this.m_szUserName = null;
@@ -40,7 +41,7 @@ function YahooPOP(oResponseStream, oLog, oPrefs)
         this.m_szDeleteURL = null;
         this.m_bJunkChecked = false;
         this.m_iTotalSize = 0;
-        this.m_szHeader = null;
+        this.m_szMessage = null;
         this.m_iMSGCount = 0;
         this.m_szMsgID = null;
         this.m_szBox = null;
@@ -762,11 +763,11 @@ YahooPOP.prototype =
             }
             this.m_Log.Write("YahooPOP.js - getHeaders - msg box" + this.m_szBox);
 
-            this.m_bUnread = oMSGData.bUnread;
-            this.m_Log.Write("YahooPOP.js - getHeaders - msg box" + this.m_bUnread);
+          //  this.m_bUnread = oMSGData.bUnread;
+          //  this.m_Log.Write("YahooPOP.js - getHeaders - msg box" + this.m_bUnread);
 
             //get headers
-            var szDest = this.m_szLocationURI + this.m_szMsgID.match(/.*?&/) + this.m_szBox +"&bodyPart=HEADER";
+            var szDest = this.m_szLocationURI + "/ya/download?" + this.m_szMsgID.match(/MsgId.*?&/) + this.m_szBox +"&bodyPart=HEADER";
             this.m_Log.Write("YahooPOP.js - getHeaders - url - "+ szDest);
             this.m_iStage = 0;
 
@@ -809,58 +810,16 @@ YahooPOP.prototype =
             var szUri = httpChannel.URI.spec;
             mainObject.m_Log.Write("YahooPOP.js - headerOnloadHandler - uri : " + szUri);
 
-            switch(mainObject.m_iStage)
-            {
-                case 0://process header
-                    mainObject.m_szHeader  = "X-WebMail: true\r\n";
-                    var szFolder = mainObject.m_szBox.match(PatternYahooFolderBoxAlt)[1];
-                    mainObject.m_szHeader += "X-Folder: " +szFolder+ "\r\n";
-                    mainObject.m_szHeader += szResponse;
-                    mainObject.m_szHeader = mainObject.m_szHeader.replace(/^\./mg,"..");    //bit padding
-                    mainObject.m_szHeader += ".\r\n";//msg end
+            mainObject.m_szHeader  = "X-WebMail: true\r\n";
+            var szFolder = mainObject.m_szBox.match(PatternYahooFolderBoxAlt)[1];
+            mainObject.m_szHeader += "X-Folder: " +szFolder+ "\r\n";
+            mainObject.m_szHeader += szResponse;
+            mainObject.m_szHeader = mainObject.m_szHeader.replace(/^\./mg,"..");    //bit padding
+            mainObject.m_szHeader += ".\r\n";//msg end
 
-                    if (mainObject.m_bUnread)
-                    {
-                        var oMSGData = mainObject.m_aMsgDataStore[ mainObject.m_iID];
-                        mainObject.m_szMsgID = oMSGData.szMSGUri;
-                        var szPath = mainObject.m_szLocationURI + oMSGData.szDeleteUri;
-                        mainObject.m_Log.Write("YahooPOP.js - headerOnloadHandler - url - "+ szPath);
-
-                        for(i=0; i<oMSGData.aData.length; i++ )
-                        {
-                            var oData = oMSGData.aData[i];
-                            if (oData.szName.search(/^DEL$/i)!=-1)
-                                oData.szValue = "";
-                            else if (oData.szName.search(/FLG/i)!=-1)
-                                oData.szValue = 1;
-                            else if (oData.szName.search(/flags/i)!=-1)
-                                oData.szValue ="unread";
-
-                            mainObject.m_HttpComms.addValuePair(oData.szName, oData.szValue);
-                        }
-                        mainObject.m_HttpComms.addValuePair("Mid", oMSGData.szMSGUri.match(PatternYahooID)[1]);
-
-                        //send request
-                        mainObject.m_HttpComms.setURI(szPath);
-                        mainObject.m_HttpComms.setRequestMethod("POST");
-                        var bResult = mainObject.m_HttpComms.send(mainObject.headerOnloadHandler, mainObject);
-                        mainObject.m_iStage ++;
-                        if (!bResult) throw new Error("httpConnection returned false");
-                    }
-                    else
-                    {
-                        var  szServerResponse = "+OK " +mainObject.m_szHeader.length + "\r\n";
-                        szServerResponse += mainObject.m_szHeader
-                        mainObject.serverComms(szServerResponse);
-                    }
-                break;
-
-                case 1: //marked as unread
-                    var  szServerResponse = "+OK " +mainObject.m_szHeader.length + "\r\n";
-                    szServerResponse += mainObject.m_szHeader
-                    mainObject.serverComms(szServerResponse);
-                break;
-            }
+            var  szServerResponse = "+OK " +mainObject.m_szHeader.length + "\r\n";
+            szServerResponse += mainObject.m_szHeader
+            mainObject.serverComms(szServerResponse);
             mainObject.m_Log.Write("YahooPOP.js - headerOnloadHandler - END");
         }
         catch(err)
@@ -887,6 +846,7 @@ YahooPOP.prototype =
             this.m_Log.Write("YahooPOP.js - getMessage - msg num" + lID);
 
             //get msg id
+            this.m_iID = lID-1;
             var oMSGData = this.m_aMsgDataStore[lID-1]
             this.m_szMsgID = oMSGData.szMSGUri;
             this.m_Log.Write("YahooPOP.js - getMessage - msg id" + this.m_szMsgID);
@@ -902,7 +862,7 @@ YahooPOP.prototype =
             this.m_Log.Write("YahooPOP.js - getMessage - msg box" + this.m_szBox);
 
             //get headers
-            var szDest = this.m_szLocationURI + this.m_szMsgID.match(/.*?&/) + this.m_szBox +"&bodyPart=HEADER";
+            var szDest = this.m_szLocationURI + "/ya/download?" + this.m_szMsgID.match(/MsgId.*?&/) + this.m_szBox +"&bodyPart=HEADER";
             this.m_Log.Write("YahooPOP.js - getMessage - url - "+ szDest);
             this.m_iStage = 0;
 
@@ -933,7 +893,8 @@ YahooPOP.prototype =
         {
             mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - START");
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
-
+            mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - mainObject.m_iStage :" + mainObject.m_iStage);
+            
             //check status should be 200.
             mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - msg :" + httpChannel.responseStatus);
             if (httpChannel.responseStatus != 200)
@@ -941,59 +902,67 @@ YahooPOP.prototype =
 
             var szUri = httpChannel.URI.spec;
             mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - uri : " + szUri);
-
-            //Content-Type: text/html  == very bad
+            
+            var szContetnType = "";
             try
             {
                 var szContetnType =  httpChannel.getResponseHeader("Content-Type");
                 mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - szContetnType "+szContetnType);
-                if (szContetnType.search(/text\/html/i)!=-1)
-                {
-                    mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - error download msg ");
-                    if (mainObject.m_iMSGCount == 2)
-                    {
-                        throw new Error("download failed");
-                    }
-                    else//try again
-                    {
-                        mainObject.m_iMSGCount++;
-                        mainObject.m_HttpComms.setURI(szUri);
-                        mainObject.m_HttpComms.setRequestMethod("GET");
-                        var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);
-                        if (!bResult) throw new Error("httpConnection returned false");
-                        return;
-                    }
-                }
             }
-            catch(err)
-            {
-                mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - download : Exception : "
-                                          + err.name
-                                          + ".\nError message: "
-                                          + err.message+ "\n"
-                                          + err.lineNumber);
-
-                if ( mainObject.m_iMSGCount == 2) throw new Error("download error ran out of retries")
+            catch(e)
+            { 
+                szContetnType = " "   
             }
-            mainObject.m_iMSGCount = 0;
-
-
+            
             switch(mainObject.m_iStage)
             {
                 case 0:  ///header
-                    mainObject.m_szHeader = "X-WebMail: true\r\n";
+                    mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - HEADERS ");
+                    
+                    try
+                    {
+                        if (szContetnType.search(/text\/html/i)!=-1)
+                        {
+                            mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - error download msg ");
+                            if (mainObject.m_iMSGCount == 2)
+                            {
+                                throw new Error("download failed");
+                            }
+                            else//try again
+                            {
+                                mainObject.m_iMSGCount++;
+                                mainObject.m_HttpComms.setURI(szUri);
+                                mainObject.m_HttpComms.setRequestMethod("GET");
+                                var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);
+                                if (!bResult) throw new Error("httpConnection returned false");
+                                return;
+                            }
+                        }
+                    }
+                    catch(err)
+                    {
+                        mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - download : Exception : "
+                                                  + err.name
+                                                  + ".\nError message: "
+                                                  + err.message+ "\n"
+                                                  + err.lineNumber);
+        
+                        if ( mainObject.m_iMSGCount == 2) throw new Error("download error ran out of retries")
+                    }
+                    mainObject.m_iMSGCount = 0;
+                    mainObject.m_szMessage = "X-WebMail: true\r\n";
                     var szFolder = mainObject.m_szBox.match(PatternYahooFolderBoxAlt)[1];
-                    mainObject.m_szHeader += "X-Folder: " + szFolder + "\r\n";
+                    mainObject.m_szMessage += "X-Folder: " + szFolder + "\r\n";
 
                     //remove quoted printable header
                     szResponse = szResponse.replace(/content-transfer-Encoding:.*?quoted-printable.*?/i,"");
                     var oHeaders = new headers(szResponse);
-                    mainObject.m_szHeader += oHeaders.getAllHeaders();
-                    mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - headers - "+mainObject.m_szHeader);
+                    mainObject.m_szMessage += oHeaders.getAllHeaders();
+                    mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - headers - "+mainObject.m_szMessage);
                     delete oHeaders;
-
-                    var szDest = mainObject.m_szLocationURI + mainObject.m_szMsgID.match(/.*?&/)
-                                    + mainObject.m_szBox + "&bodyPart=TEXT";
+                    
+                    var szDest = mainObject.m_szLocationURI + "/ya/download?" + mainObject.m_szMsgID.match(/MsgId.*?&/)
+                                                            + mainObject.m_szBox + "&bodyPart=TEXT";
                     mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - url - "+ szDest);
 
                     //get msg from yahoo
@@ -1005,19 +974,58 @@ YahooPOP.prototype =
                 break;
 
                 case 1: //body
-                    var szMsg =  mainObject.m_szHeader;
-                    szMsg += szResponse;
-                    szMsg = szMsg.replace(/^\./mg,"..");    //bit padding
+                    mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - BODY ");                    
+                    mainObject.m_szMessage += szResponse;
+                    szEmail = null;
+                    mainObject.m_szMessage = mainObject.m_szMessage.replace(/^\./mg,"..");    //bit padding
+        
+                    var iMsgLength = mainObject.m_szMessage.length-1;
+                    var iLastIndex = mainObject.m_szMessage.lastIndexOf("\n")
+                    mainObject.m_szMessage += "\r\n.\r\n";  //msg end
+                    
+                    if (!mainObject.m_bMarkAsRead)
+                    {
+                        var szPOPResponse = "+OK " + mainObject.m_szMessage.length + "\r\n";
+                        szPOPResponse += mainObject.m_szMessage;
+                        mainObject.serverComms(szPOPResponse);  
+                        mainObject.m_szMessage = null;
+                    }
+                    else //mark as read
+                    {
+                        mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - Mark as read - ");
+                        var oMSGData = mainObject.m_aMsgDataStore[ mainObject.m_iID];
+                        var szPath = mainObject.m_szLocationURI + oMSGData.szDeleteUri;
+                        mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - URL - "+ szPath);
 
-                    var iMsgLength = szMsg.length-1;
-                    var iLastIndex = szMsg.lastIndexOf("\n")
-                    szMsg += "\r\n.\r\n";  //msg end
+                        for(i=0; i<oMSGData.aData.length; i++ )
+                        {
+                            var oData = oMSGData.aData[i];
+                            if (oData.szName.search(/^DEL$/i)!=-1)
+                                oData.szValue = "";
+                            else if (oData.szName.search(/FLG/i)!=-1)
+                                oData.szValue = 1;
+                            else if (oData.szName.search(/flags/i)!=-1)
+                                oData.szValue ="read";
 
-                    var szPOPResponse = "+OK " + szMsg.length + "\r\n";
-                    szPOPResponse += szMsg;
+                            mainObject.m_HttpComms.addValuePair(oData.szName, oData.szValue);
+                        }
+                        mainObject.m_HttpComms.addValuePair("Mid", oMSGData.szMSGUri.match(PatternYahooID)[1]);
 
-                    mainObject.serverComms(szPOPResponse);
-
+                        //send request
+                        mainObject.m_HttpComms.setURI(szPath);
+                        mainObject.m_HttpComms.setRequestMethod("POST");
+                        var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);
+                        mainObject.m_iStage ++;
+                        if (!bResult) throw new Error("httpConnection returned false");
+                    }
+                break;
+                
+                case 2: //marked as read
+                     mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - marked as read ");
+                     var szPOPResponse = "+OK " + mainObject.m_szMessage.length + "\r\n";
+                     szPOPResponse += mainObject.m_szMessage;
+                     mainObject.serverComms(szPOPResponse);  
+                     mainObject.m_szMessage = null;
                 break;
             }
 
@@ -1054,6 +1062,8 @@ YahooPOP.prototype =
             for(i=0; i<oMSGData.aData.length; i++ )
             {
                 var oData = oMSGData.aData[i];
+                if (oData.szName.search(/^DEL$/i)!=-1) oData.szValue = "1";
+                
                 this.m_HttpComms.addValuePair(oData.szName, oData.szValue);
             }
             this.m_HttpComms.addValuePair("Mid", oMSGData.szMSGUri.match(PatternYahooID)[1]);
