@@ -15,8 +15,8 @@
         <script type="application/x-javascript" src="chrome://hotmail/content/Hotmail-Prefs-Accounts.js"/>
 
         <preferences id="HotmailPrefs">
-            <preference id="selectedTabIndex" name="hotmail.selectedTabIndex" type="int" instantApply="true"/>
-            <preference id="selectedUserName" name="hotmail.selectedUserName" type="string" instantApply="true"/>
+            <preference id="selectedTabIndex"    name="hotmail.selectedTabIndex"    type="int"    instantApply="true"/>
+            <preference id="selectedUserName"    name="hotmail.selectedUserName"    type="string" instantApply="true"/>
         </preferences>
 
 
@@ -39,11 +39,11 @@
 
                 <tabbox  flex="1" id="tabsAccount" onselect="gPrefAccounts.tabSelectionChanged();">
                     <tabs>
-                        <tab label="&HotmailPref.Tab.Mode.Title;"/>
-                        <tab label="&HotmailPref.Tab.POP.Title;"/>
-                        <tab label="&HotmailPref.Tab.SMTP.Title;"/>
+                        <tab label="&HotmailPref.Tab.Mode.Title;" id="tabMode"/>
+                        <tab label="&HotmailPref.Tab.POP.Title;"  id="tabPOP"/>
+                        <tab label="&HotmailPref.Tab.SMTP.Title;" id="tabSMTP"/>
                     </tabs>
-                    <tabpanels flex="1" >
+                    <tabpanels flex="1" id="tabPanels">
                         <vbox id="modePanel" class="panel" flex="1">
                             <vbox>
                                <description id="labelMode">
