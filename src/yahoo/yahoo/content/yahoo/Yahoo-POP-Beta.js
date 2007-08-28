@@ -891,8 +891,6 @@ YahooPOPBETA.prototype =
             mainObject.m_szHeader = szHeaderTemp.replace(/^\./mg,"..");    //bit padding
             mainObject.m_szHeader += ".\r\n";//msg end
 
-            //this.m_szMsgID
-            //this.m_szBox
             var szServerResponse = "+OK " +mainObject.m_szHeader.length + "\r\n";
             szServerResponse += mainObject.m_szHeader;
             mainObject.serverComms(szServerResponse);
@@ -1009,11 +1007,17 @@ YahooPOPBETA.prototype =
                     if (szResponse.search(kPatternLstBodyPartResponse)==-1)
                         throw new Error("Error Parsing Body");
 
-                    var aszShortParts = szResponse.match(kPatterShortPart);
+                    var aszShortParts = szResponse.match(kPatternShortPart);
                     mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - aszShortParts : " + aszShortParts);
-                    var szCleanedParts = szResponse.replace(kPatterShortPart,"");
-                    var aszComplexParts = szCleanedParts.match(kPatternPart);
+                    var aszComplexParts = szResponse.match(kPatternLongPart);
                     mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - aszComplexParts : " + aszComplexParts);
+                    if (aszComplexParts.length>0)
+                    {
+                        var aszCleanParts =  aszComplexParts[0].replace(kPatternShortPart,"");
+                        delete aszComplexParts;
+                        aszComplexParts = aszCleanParts;
+                        mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szCleanedParts : " + aszComplexParts);                     
+                    }
                     var aszParts = aszShortParts.concat(aszComplexParts);
                     delete aszShortParts;
                     delete aszComplexParts;
