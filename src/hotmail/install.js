@@ -6,7 +6,7 @@
 
 // Editable Items Begin
 var displayName         = "WebMail - Hotmail"; // The name displayed to the user (don't include the version)
-var version             = "1-2-8";
+var version             = "1-2-9";
 var name                = "hotmail"; // The leafname of the JAR file (without the .jar part)
 var guid                = "{a6a33690-2c6a-11d9-9669-0800200c9a66}";
 
