@@ -491,6 +491,10 @@ nsHotmailIMAP.prototype =
             {
                 szHiererchy = "INBOX.Trash"
             }
+            else if (szDisplayName.search(/sentitems/i)!=-1)
+            {
+                szHiererchy = "INBOX.Sent"
+            }
             else
             {//not inbox
                 szHiererchy = "INBOX." + szDisplayName;
