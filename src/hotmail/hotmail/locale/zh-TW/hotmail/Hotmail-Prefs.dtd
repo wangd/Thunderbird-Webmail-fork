@@ -1,0 +1,36 @@
+<!ENTITY HotmailPref.Window.Title "Hotmail 選項">
+<!ENTITY HotmailPref.Panel.Accounts.Title "帳號">
+<!ENTITY HotmailPref.Panel.Domains.Title "域名">
+<!ENTITY HotmailPref.Button.Close.Label "關閉">
+<!ENTITY HotmailPref.Tab.Mode.Title "模式">
+<!ENTITY HotmailPref.Tab.POP.Title "POP">
+<!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
+<!ENTITY HotmailPref.Mode.Label "選擇此擴充套件用來連接 Microsoft 伺服器的通訊方式">
+<!ENTITY HotmailPref.Mode.HotmailLive.Label "Hotmail Live (新網站)">
+<!ENTITY HotmailPref.Mode.HotmailOld.Label "Hotmail (舊網站)">
+<!ENTITY HotmailPref.Mode.WebDav.Label "WebDav">
+<!ENTITY HotmailPref.POP.DownloadUnread.Label "僅下載未閱讀郵件">
+<!ENTITY HotmailPref.POP.DownloadUnread.AccessKey "u">
+<!ENTITY HotmailPref.POP.JunkMail.Label "下載垃圾郵件">
+<!ENTITY HotmailPref.POP.JunkMail.AccessKey "J">
+<!ENTITY HotmailPref.POP.Folders.Label "下載資料夾">
+<!ENTITY HotmailPref.POP.ButtonAdd.Label "新增...">
+<!ENTITY HotmailPref.POP.ButtonAdd.AccessKey "A">
+<!ENTITY HotmailPref.POP.ButtonRemove.Label "移除">
+<!ENTITY HotmailPref.POP.ButtonRemove.AccessKey "R">
+<!ENTITY HotmailPref.SMTP.SaveSentItems.Label "在寄件備份中儲存備份。">
+<!ENTITY HotmailPref.SMTP.SaveSentItems.AccessKey "s">
+<!ENTITY HotmailPref.SMTP.AlternativeGroup.Label "在寄出 HTML 格式郵件時，要擴充套件寄出哪一部分:">
+<!ENTITY HotmailPref.SMTP.SendPlain.Label "寄出純文字格式">
+<!ENTITY HotmailPref.SMTP.SendPlain.AccessKey "p">
+<!ENTITY HotmailPref.SMTP.SendHtml.Label "寄出 HTML 格式">
+<!ENTITY HotmailPref.SMTP.SendHtml.AccessKey "h">
+<!ENTITY HotmailPref.AccountError.Label "未發現 Hotmail 帳號">
+<!ENTITY HotmailPref.SMTP.NA.Label "沒有 Hotmail Live 可設定的選項">
+<!ENTITY HotmailPref.POP.MarkAsRead.Label "將伺服器上的郵件標示成已閱讀">
+<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "k">
+<!ENTITY HotmailPref.Domain.Label "Hotmail 擴充套件支援的域名:">
+<!ENTITY HotmailPref.Domain.Button.AddDomain.Label "新增...">
+<!ENTITY HotmailPref.Domain.Button.AddDomain.AccessKey "A">
+<!ENTITY HotmailPref.Domain.Button.RemoveDomain.Label "移除">
+<!ENTITY HotmailPref.Domain.Button.RemoveDomain.AccessKey "R">

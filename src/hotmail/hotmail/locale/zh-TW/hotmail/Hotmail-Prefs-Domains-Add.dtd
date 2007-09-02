@@ -1,0 +1,8 @@
+<!ENTITY HotmailAddDomain.Title "新增域名">
+<!ENTITY HotmailAddDomain.Label "新增 Hotmail 域名">
+<!ENTITY HotmailAddDomainName.Label "域名">
+<!ENTITY HotmailAddDomainName.AccessKey "D">
+<!ENTITY HotmailAddDomain.ButtonOk.Label "確定">
+<!ENTITY HotmailAddDomain.ButtonOk.AccessKey "O">
+<!ENTITY HotmailAddDomain.ButtonCancel.Label "取消">
+<!ENTITY HotmailAddDomain.ButtonCancel.AccessKey "C">
