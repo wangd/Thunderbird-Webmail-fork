@@ -926,28 +926,10 @@ HotmailScreenRipperBETA.prototype =
                     if (!szEmail) throw new Error("Message END  not found");
                     szEmail = szEmail.replace(/<\/$/,"");  //clean bad tag
                     szEmail = szEmail.replace(/<\/pr$/,"");  //clean bad tag
-                    szEmail = new HTMLescape().decode(szEmail);                   
-                    mainObject.m_szMSG += szEmail;
+                    szEmail = szEmail.replace(/<\/pre$/,"");  //clean bad tag - Why can't MS get this right
 
-                    //clean up msg
-                    mainObject.m_szMSG = mainObject.removeHTML(mainObject.m_szMSG);
-                    mainObject.m_szMSG = mainObject.m_szMSG.replace(/^\./mg,"..");    //bit padding
-                    mainObject.m_szMSG += "\r\n.\r\n";
-
-                    if (mainObject.m_bMarkAsRead)
-                    {
-                        mainObject.m_iStage++;
-                        mainObject.m_HttpComms.setURI(mainObject.m_szMSGURI);
-                        mainObject.m_HttpComms.setRequestMethod("GET");
-                        var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);
-                        if (!bResult) throw new Error("httpConnection returned false");
-                    }
-                    else
-                    {
-                        var szPOPResponse = "+OK " +  mainObject.m_szMSG.length + "\r\n";
-                        szPOPResponse +=  mainObject.m_szMSG;
-                        mainObject.serverComms(szPOPResponse);
-                    }
+                    if (!new HTMLescape().largeDecode(szEmail, mainObject.emailCleanCallback, mainObject)) 
+                        throw new Error ("email clean failed")
                 break;
 
                 case 1: //mark as read
@@ -990,6 +972,37 @@ HotmailScreenRipperBETA.prototype =
     },
 
 
+    emailCleanCallback : function (szMSG, mainObject)
+    {
+        try
+        {                                  
+            mainObject.m_szMSG += szMSG;
+
+            //clean up msg
+            mainObject.m_szMSG = mainObject.removeHTML(mainObject.m_szMSG);
+            mainObject.m_szMSG = mainObject.m_szMSG.replace(/^\./mg,"..");    //bit padding
+            mainObject.m_szMSG += "\r\n.\r\n";
+
+            if (mainObject.m_bMarkAsRead)
+            {
+                mainObject.m_iStage++;
+                mainObject.m_HttpComms.setURI(mainObject.m_szMSGURI);
+                mainObject.m_HttpComms.setRequestMethod("GET");
+                var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);
+                if (!bResult) throw new Error("httpConnection returned false");
+            }
+            else
+            {
+                var szPOPResponse = "+OK " +  mainObject.m_szMSG.length + "\r\n";
+                szPOPResponse +=  mainObject.m_szMSG;
+                mainObject.serverComms(szPOPResponse);
+            }
+        }
+        catch(e)
+        {
+            
+        }                
+    },
 
 
     //dele
