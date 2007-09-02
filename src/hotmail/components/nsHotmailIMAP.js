@@ -860,6 +860,7 @@ nsHotmailIMAP.prototype =
                 szTO = this.m_szUserName;
             }
         }
+        szTO = this.removeHTML(szTO);
         this.m_Log.Write("nsHotmailIMAP.js - processMSG - szTO -" + szTO);
 
 
@@ -881,6 +882,7 @@ nsHotmailIMAP.prototype =
                 szFrom = this.m_szUserName;
             }
         }
+        szFrom = this.removeHTML(szFrom);   
         this.m_Log.Write("nsHotmailIMAP.js - processMSG - szFrom -" + szFrom);
 
         var szSubject= "";
@@ -889,6 +891,7 @@ nsHotmailIMAP.prototype =
             szSubject= Item.match(patternHotmailSubject)[1];
         }
         catch(err){}
+        szSubject = this.removeHTML(szSubject);
         this.m_Log.Write("nsHotmailIMAP.js - processMSG - szSubject -" + szSubject);
 
         var szDate = "";
@@ -913,6 +916,18 @@ nsHotmailIMAP.prototype =
         this.m_Log.Write("nsHotmailIMAP.js - processMSG - END");
     },
 
+
+    removeHTML : function (szRaw)
+    {
+        this.m_Log.Write("nsHotMail.js: removeHTML");
+        var szMsg = szRaw.replace(/&lt;/g,"<");
+        szMsg = szMsg.replace(/&gt;/g,">");
+        szMsg = szMsg.replace(/&quot;/g, "\"");
+        szMsg = szMsg.replace(/&amp;/g, "&");
+        szMsg = szMsg.replace(/&nbsp;/g, " ");
+        szMsg = szMsg.replace(/&apos;/g, "\'");
+        return szMsg;
+    },
 
 
 
