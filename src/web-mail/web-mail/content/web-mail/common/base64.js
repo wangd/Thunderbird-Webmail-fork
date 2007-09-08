@@ -1,16 +1,45 @@
 // Base64
-// if encoding/decoding fails, return old content
+// parts taken from mozilla code base
+
 function base64()
 {   
+    var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
+    scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
+    scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
+    
+    var  szLogFileName = "Base64 Log ";
+    this.m_Log = new DebugLog("webmail.logging.comms", "", szLogFileName);
+    
     this.m_hShellService = Components.classes["@mozilla.org/appshell/appShellService;1"].
                                      getService(Components.interfaces.nsIAppShellService);
                                      
     this.m_HiddenWindow = this.m_hShellService.hiddenDOMWindow;
+    
+    this.m_Timer = Components.classes["@mozilla.org/timer;1"]
+                             .createInstance(Components.interfaces.nsITimer); 
+    this.m_callback= null;
+    this.m_parent = null;
+    this.m_inStream = null;
+    this.m_szOutMSG = "";
+    this.m_iCount = 0;
+    this.m_iType = 0;
+    this.m_kBlockSize = 10000;
+   
+    
+    this.m_kBase64chars = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',   //  0 to  7
+                           'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',   //  8 to 15
+                           'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',   // 16 to 23
+                           'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',   // 24 to 31
+                           'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',   // 32 to 39
+                           'o', 'p', 'q', 'r', 's', 't', 'u', 'v',   // 40 to 47
+                           'w', 'x', 'y', 'z', '0', '1', '2', '3',   // 48 to 55
+                           '4', '5', '6', '7', '8', '9', '+', '/' ]; // 56 to 63
 }
+
 
 base64.prototype.bLineBreak = false;
 
-base64.prototype.iLineBreak = 74;
+base64.prototype.iLineBreak = 70;
 
 base64.prototype.encode = function(szMsg)
 {
@@ -41,7 +70,190 @@ base64.prototype.encode = function(szMsg)
 
 
 
+base64.prototype.encodeAsync = function (aBytes, callback, parent)
+{
+    try
+    {
+        this.m_Log.Write("base64.js - encodeAsync - START"); 
+        
+        this.m_callback = callback;
+        this.m_parent = parent;
+        this.m_iType = 0; //encode
+        this.m_szOutMSG = "";
+        
+        this.m_inStream = this.binaryStream(aBytes);
+        
+        this.m_Timer.initWithCallback(this,
+                                      50,
+                                      Components.interfaces.nsITimer.TYPE_REPEATING_SLACK); 
+                                      
+        this.m_Log.Write("base64.js - encodeAsync - END"); 
+    }
+    catch(err)
+    {
+         this.m_Log.DebugDump("base64.js: largeDecode : Exception : "
+                                          + err.name
+                                          + ".\nError message: "
+                                          + err.message +"\n"
+                                          + err.lineNumber);
+        return aBytes;
+    }
+}
+
+
 base64.prototype.decode = function(szMsg)
 {
     return this.m_HiddenWindow.atob(szMsg);
+}
+
+
+
+
+base64.prototype.decodeAsync = function(szMsg, callback, parent)
+{
+    return this.m_HiddenWindow.atob(szMsg);
+}
+
+
+base64.prototype.notify = function (timer)
+{
+    try
+    {
+        this.m_Log.Write("base64.js - notify - START ");
+        
+        switch(this.m_iType)
+        {
+            case 0: //encode
+                this.m_Log.Write("base64.js - notify - decode ");
+                var iCurrentStream = this.m_inStream.available();
+                var iBlock = iCurrentStream > this.m_kBlockSize ? this.m_kBlockSize : iCurrentStream;
+                this.m_Log.Write("base64.js - notify - size " + iCurrentStream + " " + iBlock); 
+
+                
+                var i=0;
+                while (iBlock>i)
+                {
+                    this.m_iCount+=3;
+                    i+=3;
+                    if (this.m_inStream.available()>=3)
+                    {   
+                        var chr1 = this.m_inStream.readByteArray(1);
+                        var chr2 = this.m_inStream.readByteArray(1);
+                        var chr3 = this.m_inStream.readByteArray(1);
+                        
+                        var enc1 = chr1 >> 2;
+                        var enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+                        var enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+                        var enc4 = chr3 & 63;
+                        
+                        this.m_szOutMSG += this.m_kBase64chars[enc1] +  this.m_kBase64chars[enc2] + 
+                                           this.m_kBase64chars[enc3] +  this.m_kBase64chars[enc4];
+                    }
+                    
+                    if (this.bLineBreak && (this.m_iCount >= this.iLineBreak))
+                    {
+                        this.m_szOutMSG +=  "\r\n"
+                        this.m_iCount = 0;
+                    }
+            
+                    if (this.m_inStream.available()<=2)
+                    {
+                        switch (this.m_inStream.available())
+                        {
+                            case 2:
+                               chr1 = this.m_inStream.readByteArray(1);
+                               chr2 = this.m_inStream.readByteArray(1);
+                               this.m_szOutMSG += this.m_kBase64chars[(chr1>>2) & 0x3F];
+                               this.m_szOutMSG += this.m_kBase64chars[((chr1 & 0x03) << 4) | ((chr2 >> 4) & 0x0F)];
+                               this.m_szOutMSG += this.m_kBase64chars[((chr2 & 0x0F) << 2)];
+                               this.m_szOutMSG += "=";
+                            break;
+                    
+                            case 1:
+                               chr1 = this.m_inStream.readByteArray(1); 
+                               this.m_szOutMSG += this.m_kBase64chars[(chr1>>2) & 0x3F];
+                               this.m_szOutMSG += this.m_kBase64chars[(chr1 & 0x03) << 4];
+                               this.m_szOutMSG += "==";
+                            break;
+                        }
+                    }
+                }
+
+                this.m_Log.Write("base64.js - notify - this.m_szOutMSG \n" + this.m_szOutMSG );
+                
+                if (this.m_inStream.available() == 0)
+                {
+                    timer.cancel();
+                    
+                    this.m_inStream.close();
+                    this.m_inStream = null;
+
+                    this.m_callback( this.m_szOutMSG, this.m_parent );
+                    this.m_szOutMSG = null;
+                }
+            break;
+        }    
+          
+        this.m_Log.Write("base64.js - notify - END");
+    }
+    catch(err)
+    {
+         this.m_Log.DebugDump("base64.js: notify : Exception : "
+                                          + err.name
+                                          + ".\nError message: "
+                                          + err.message +"\n"
+                                          + err.lineNumber);
+         timer.cancel();
+         this.m_callback(null, this.m_parent );
+    }
+}
+
+
+
+base64.prototype.binaryStream = function (szData)
+{
+    try
+    {
+        var file = Components.classes["@mozilla.org/file/directory_service;1"];
+        file = file.getService(Components.interfaces.nsIProperties);
+        file = file.get("TmpD", Components.interfaces.nsIFile);
+        file.append("suggestedName.tmp");
+        file.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 420);
+
+        var deletefile = Components.classes["@mozilla.org/uriloader/external-helper-app-service;1"];
+        deletefile = deletefile.getService(Components.interfaces.nsPIExternalAppLauncher);
+        deletefile.deleteTemporaryFileOnExit(file);
+
+        var outputStream = Components.classes["@mozilla.org/network/file-output-stream;1"];
+        outputStream = outputStream.createInstance( Components.interfaces.nsIFileOutputStream );
+        outputStream.init( file, 0x04 | 0x08 | 0x10, 420, 0 );
+
+        var binaryStream = Components.classes["@mozilla.org/binaryoutputstream;1"];
+        binaryStream = binaryStream.createInstance(Components.interfaces.nsIBinaryOutputStream);
+        binaryStream.setOutputStream(outputStream)
+        binaryStream.writeBytes( szData, szData.length );
+        outputStream.flush();
+        binaryStream.flush();
+        outputStream.close();
+        binaryStream.close();
+
+        var inputStream = Components.classes["@mozilla.org/network/file-input-stream;1"];
+        inputStream = inputStream.createInstance(Components.interfaces.nsIFileInputStream);
+        inputStream.init(file, 0x01 , 0 , null);
+
+        var binaryStream = Components.classes["@mozilla.org/binaryinputstream;1"];
+        binaryStream = binaryStream.createInstance(Components.interfaces.nsIBinaryInputStream);
+        binaryStream.setInputStream(inputStream);
+
+        return binaryStream;
+    }
+    catch(err)
+    {
+        DebugDump("base64.js: binaryStream : Exception : "
+                                              + err.name
+                                              + ".\nError message: "
+                                              + err.message + "\n"
+                                              + err.lineNumber);
+        return null;
+    }
 }
