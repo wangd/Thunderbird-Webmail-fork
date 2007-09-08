@@ -431,14 +431,16 @@ HotmailWebDav.prototype =
                             var aszDateTime = Item.match(patternHotmailDate);
                             var aszDate = aszDateTime[1].split("-");
                             var aszTime = aszDateTime[2].split(":");
-                            this.m_Log.Write("HotmailWebDav.js - processItem - "+aszDate+" "+aszTime);
-                            var date = new Date(parseInt(aszDate[0],10),  //year
-                                                parseInt(aszDate[1],10)-1,  //month
-                                                parseInt(aszDate[2],10),  //day
-                                                parseInt(aszTime[0],10)+1,  //hour
-                                                parseInt(aszTime[1],10),  //minute
-                                                parseInt(aszTime[2],10));  //second
-                            oMSG.szDate = date.toGMTString();
+                
+                            var date = new Date(Date.UTC(parseInt(aszDate[0],10),  //year
+                                             parseInt(aszDate[1],10)-1,  //month
+                                             parseInt(aszDate[2],10),  //day
+                                             parseInt(aszTime[0],10),  //hour
+                                             parseInt(aszTime[1],10),  //minute
+                                             parseInt(aszTime[2],10)));  //second
+                            szDate = date.toUTCString();
+                            
+                            
                             this.m_Log.Write("HotmailWebDav.js - processItem - " + oMSG.szDate);
                         }
                         catch(err){}

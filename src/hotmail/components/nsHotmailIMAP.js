@@ -901,13 +901,13 @@ nsHotmailIMAP.prototype =
             var aszDate = aszDateTime[1].split("-");
             var aszTime = aszDateTime[2].split(":");
 
-            var date = new Date(parseInt(aszDate[0],10),  //year
+            var date = new Date(Date.UTC(parseInt(aszDate[0],10),  //year
                              parseInt(aszDate[1],10)-1,  //month
                              parseInt(aszDate[2],10),  //day
                              parseInt(aszTime[0],10),  //hour
                              parseInt(aszTime[1],10),  //minute
-                             parseInt(aszTime[2],10));  //second
-            szDate = date.toGMTString();
+                             parseInt(aszTime[2],10)));  //second
+            szDate = date.toUTCString();
         }
         catch(err){}
         this.m_Log.Write("nsHotmailIMAP.js - processMSG - szDate -" + szDate);

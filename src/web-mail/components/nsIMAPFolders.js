@@ -1489,12 +1489,12 @@ nsIMAPFolders.prototype =
                    this.m_Log.Write("nsIMAPFolder.js : aTime - " +aTime);
 
                    var oDate = new Date ();
-                   oDate.setFullYear(aDate[0]);
-                   oDate.setMonth(aDate[1]-1);
-                   oDate.setDate(aDate[2]);
-                   oDate.setHours(aTime[0]);
-                   oDate.setMinutes(aTime[1]);
-                   oDate.setSeconds(aTime[2]);
+                   oDate.setUTCFullYear(aDate[0]);
+                   oDate.setUTCMonth(aDate[1]-1);
+                   oDate.setUTCDate(aDate[2]);
+                   oDate.setUTCHours(aTime[0]);
+                   oDate.setUTCMinutes(aTime[1]);
+                   oDate.setUTCSeconds(aTime[2]);
 
                    iDate = Date.parse(oDate);
                 }
@@ -1560,12 +1560,12 @@ nsIMAPFolders.prototype =
                    this.m_Log.Write("nsIMAPFolder.js : aTime - " +aTime);
 
                    var oDate = new Date ();
-                   oDate.setFullYear(aDate[0]);
-                   oDate.setMonth(aDate[1]-1);
-                   oDate.setDate(aDate[2]);
-                   oDate.setHours(aTime[0]);
-                   oDate.setMinutes(aTime[1]);
-                   oDate.setSeconds(aTime[2]);
+                   oDate.setUTCFullYear(aDate[0]);
+                   oDate.setUTCMonth(aDate[1]-1);
+                   oDate.setUTCDate(aDate[2]);
+                   oDate.setUTCHours(aTime[0]);
+                   oDate.setUTCMinutes(aTime[1]);
+                   oDate.setUTCSeconds(aTime[2]);
 
                    iDate = Date.parse(oDate);
                 }
