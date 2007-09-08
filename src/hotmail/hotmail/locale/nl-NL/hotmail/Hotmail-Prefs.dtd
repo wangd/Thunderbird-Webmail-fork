@@ -1,5 +1,4 @@
 <!ENTITY HotmailPref.Window.Title "Hotmail Opties">
-<!ENTITY HotmailPref.Window.size "width: 45em; height: 38em">
 <!ENTITY HotmailPref.Panel.Accounts.Title "Accounts">
 <!ENTITY HotmailPref.Panel.Domains.Title "Domeinen">
 <!ENTITY HotmailPref.Button.Close.Label "Close">
@@ -7,11 +6,9 @@
 <!ENTITY HotmailPref.Tab.POP.Title "POP">
 <!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
 <!ENTITY HotmailPref.Mode.Label "Selecteer de communicatiemethode die de extensie moet gebruiken om met de Microsoft&apos;s servers te communiceren">
-
-<!ENTITY HotmailPref.Mode.WebDav.Label "WebDav">
 <!ENTITY HotmailPref.Mode.HotmailLive.Label "Hotmail Live (New website)">
 <!ENTITY HotmailPref.Mode.HotmailOld.Label "Hotmail (Old website)">
-
+<!ENTITY HotmailPref.Mode.WebDav.Label "WebDav">
 <!ENTITY HotmailPref.POP.DownloadUnread.Label "Download alleen ongelezen emails">
 <!ENTITY HotmailPref.POP.DownloadUnread.AccessKey "u">
 <!ENTITY HotmailPref.POP.JunkMail.Label "Download JunkMail">
@@ -30,11 +27,10 @@
 <!ENTITY HotmailPref.SMTP.SendHtml.AccessKey "h">
 <!ENTITY HotmailPref.AccountError.Label "Geen Hotmail Accounts gevonden">
 <!ENTITY HotmailPref.SMTP.NA.Label "Geen SMPT opties voor Hotmail BETA">
+<!ENTITY HotmailPref.POP.MarkAsRead.Label "Mark emails as read on server">
+<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "k">
 <!ENTITY HotmailPref.Domain.Label "Ondersteunde domeinen door Hotmail extensie">
 <!ENTITY HotmailPref.Domain.Button.AddDomain.Label "Toevoegen...">
 <!ENTITY HotmailPref.Domain.Button.AddDomain.AccessKey "T">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.Label "Verwijderen">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.AccessKey "V">
-
-<!ENTITY HotmailPref.POP.MarkAsRead.Label "Mark emails as read on server">
-<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "k">

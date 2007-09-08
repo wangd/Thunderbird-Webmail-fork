@@ -1,13 +1,12 @@
 <!ENTITY LycosPref.Window.Title "Lycos opties">
 <!ENTITY LycosPref.Panel.Accounts.Title "Accounts">
 <!ENTITY LycosPref.Panel.Domains.Title "Domeinen">
-<!ENTITY LycosPref.Button.Ok.Label "OK">
-<!ENTITY LycosPref.Button.Close.Label "Close">
+<!ENTITY LycosPref.Button.Close.Label "Sluiten">
 <!ENTITY LycosPref.Tab.POP.Title "POP">
 <!ENTITY LycosPref.Tab.SMTP.Title "SMTP">
 <!ENTITY LycosPref.POP.DownloadUnread.Label "Download alleen ongelezen emails">
 <!ENTITY LycosPref.POP.DownloadUnread.AccessKey "o">
-<!ENTITY LycosPref.POP.EmptyTrash.Label "Prullebak leegmaken">
+<!ENTITY LycosPref.POP.EmptyTrash.Label "Prullenbak leegmaken">
 <!ENTITY LycosPref.POP.EmptyTrash.AccessKey "P">
 <!ENTITY LycosPref.POP.JunkMail.Label "Download Junkmail">
 <!ENTITY LycosPref.POP.JunkMail.AccessKey "J">
@@ -19,6 +18,5 @@
 <!ENTITY LycosPref.SMTP.SaveSentItems.Label "Bewaar kopie in verzonden items">
 <!ENTITY LycosPref.SMTP.SaveSentItems.AccessKey "b">
 <!ENTITY LycosPref.AccountError.Label "Geen Lycos account gevonden">
-
 <!ENTITY LycosPref.POP.MarkAsRead.Label "Mark emails as read on server">
 <!ENTITY LycosPref.POP.MarkAsRead.AccessKey "k">
