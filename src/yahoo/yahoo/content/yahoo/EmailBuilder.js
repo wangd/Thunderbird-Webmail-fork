@@ -67,12 +67,12 @@ emailBuilder.prototype.addBody = function (szHeader, szBody)
             {
                 this.m_Log.Write("emailBuilder.js - addBody - not file");
                 var szSubType = oPart.headers.getContentType(2);
-                if (szSubType.search(/plain/,i)!=-1)
+                if (szSubType.search(/plain/i)!=-1)
                 {
                     this.m_Log.Write("emailBuilder.js - addBody - plain");
                     this.m_bPlain = true;
                 }
-                else if (szSubType.search(/html/,i)!=-1)
+                else if (szSubType.search(/html/i)!=-1)
                 {
                     this.m_Log.Write("emailBuilder.js - addBody - html");
                     this.m_bHTML = true;
