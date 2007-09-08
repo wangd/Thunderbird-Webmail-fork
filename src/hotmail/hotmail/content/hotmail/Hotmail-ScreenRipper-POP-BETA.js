@@ -29,7 +29,7 @@ function HotmailScreenRipperBETA(oResponseStream, oLog, oPrefData)
         this.m_bStat = false;
         this.m_bReEntry = true;
         this.m_szMT = null;
-        this.m_bDownloadRetry = true;
+        this.m_iDownloadRetry = 3;
 
         this.m_ComponentManager = Components.classes["@mozilla.org/ComponentData2;1"]
                                             .getService(Components.interfaces.nsIComponentData2);
@@ -563,7 +563,8 @@ HotmailScreenRipperBETA.prototype =
         if (bRead)
         {
             oMSG = new HotmailMSG();
-
+            var oEscape = HTMLescape();
+            
             var aTableData = szMSGData.match(patternHotmailMailBoxTableData);
             this.m_Log.Write("HotmailWebDav.js - processMSG - aTableData -" + aTableData);
 
@@ -580,8 +581,7 @@ HotmailScreenRipperBETA.prototype =
             try
             {
                 szFrom = aTableData[4].match(patternHotmailEmailSender)[1];
-                szFrom = this.removeHTML(szFrom);
-                szFrom = new HTMLescape().decode(szFrom);
+                szFrom = oEscape.decode(szFrom);
                 this.m_Log.Write("Hotmail-SR-BETA - processMSG - Email From : " +szFrom);
             }
             catch(err){}
@@ -591,14 +591,14 @@ HotmailScreenRipperBETA.prototype =
             try
             {
                 szSubject = aTableData[5].match(patternHotmailEmailSubject)[1];
-                szSubject = this.removeHTML(szSubject);
-                szSubject = new HTMLescape().decode(szSubject);
+                szSubject = oEscape.decode(szSubject);
                this.m_Log.Write("Hotmail-SR-BETA - processMSG - Email szSubject : " +szSubject);
             }
             catch(err){}
             oMSG.szSubject = szSubject;
-
-
+            
+            delete oEscape;
+    
             try
             {
                 var szRawDate = aTableData[6].match(patternHotmailEmailDate)[1];
@@ -872,7 +872,7 @@ HotmailScreenRipperBETA.prototype =
 
             this.m_szFolderName = oMSG.szFolderName;
             this.m_iStage = 0;
-            this.m_bDownloadRetry = true;
+            this.m_iDownloadRetry = 3;
 
             this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
 
@@ -910,7 +910,7 @@ HotmailScreenRipperBETA.prototype =
 
             //check status should be 200.
             if (httpChannel.responseStatus != 200)
-                if (mainObject.m_bDownloadRetry == true)
+                if (mainObject.m_iDownloadRetry > 0 && mainObject.m_iStage == 0)
                 {
                     var szMSGID = mainObject.m_szMsgURI.match(patternHotmailEMailID)[1];
                     var szURI = mainObject.m_szLocationURI + "GetMessageSource.aspx?msgid=" + szMSGID;
@@ -921,7 +921,8 @@ HotmailScreenRipperBETA.prototype =
                     mainObject.m_HttpComms.setRequestMethod("GET");
     
                     var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);
-                    mainObject.m_bDownloadRetry = false;
+                    mainObject.m_iDownloadRetry--;
+                    return ;
                 }
                 else
                     throw new Error("error status " + httpChannel.responseStatus);
@@ -941,7 +942,8 @@ HotmailScreenRipperBETA.prototype =
                     szEmail = szEmail.replace(/<\/pr$/,"");  //clean bad tag
                     szEmail = szEmail.replace(/<\/pre$/,"");  //clean bad tag - Why can't MS get this right
 
-                    if (!new HTMLescape().largeDecode(szEmail, mainObject.emailCleanCallback, mainObject)) 
+                    var oEscape = new HTMLescape();
+                    if (!oEscape.decodeAsync(szEmail, mainObject.emailCleanCallback, mainObject)) 
                         throw new Error ("email clean failed")
                 break;
 
@@ -966,15 +968,16 @@ HotmailScreenRipperBETA.prototype =
     },
 
 
+
+
     emailCleanCallback : function (szMSG, mainObject)
     {
         try
-        {                                  
-            mainObject.m_szMSG += szMSG;
-
+        {      
+            mainObject.m_Log.Write("Hotmail-SR-BETA - emailCleanCallback - START");
+                                            
             //clean up msg
-            mainObject.m_szMSG = mainObject.removeHTML(mainObject.m_szMSG);
-            mainObject.m_szMSG = mainObject.m_szMSG.replace(/^\./mg,"..");    //bit padding
+            mainObject.m_szMSG = szMSG.replace(/^\./mg,"..");    //bit padding
             mainObject.m_szMSG += "\r\n.\r\n";
 
             if (mainObject.m_bMarkAsRead)
@@ -991,10 +994,17 @@ HotmailScreenRipperBETA.prototype =
                 szPOPResponse +=  mainObject.m_szMSG;
                 mainObject.serverComms(szPOPResponse);
             }
+            
+            mainObject.m_Log.Write("Hotmail-SR-BETA - emailCleanCallback - END");    
         }
         catch(e)
         {
-            
+            mainObject.m_Log.DebugDump("Hotmail-SR-BETA: emailCleanCallback : Exception : "
+                                          + e.name +
+                                          ".\nError message: "
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
+            mainObject.serverComms("-ERR negative vibes from " +mainObject.m_szUserName+ "\r\n");
         }                
     },
 
@@ -1144,20 +1154,6 @@ HotmailScreenRipperBETA.prototype =
                                               + e.lineNumber);
         }
     },
-
-    removeHTML : function (szRaw)
-    {
-        this.m_Log.Write("Hotmail-SR-BETA - removeHTML");
-        var szMsg = szRaw.replace(/&lt;/g,"<");
-        szMsg = szMsg.replace(/&gt;/g,">");
-        szMsg = szMsg.replace(/&quot;/g, "\"");
-        szMsg = szMsg.replace(/&amp;/g, "&");
-        szMsg = szMsg.replace(/&nbsp;/g, " ");
-        szMsg = szMsg.replace(/<strong>/g, "");
-        szMsg = szMsg.replace(/<\/strong>/g, "");
-        return szMsg;
-    },
-
 
     urlEncode : function (szData)
     {
