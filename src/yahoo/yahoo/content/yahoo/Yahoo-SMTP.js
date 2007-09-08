@@ -94,7 +94,8 @@ YahooSMTP.prototype =
             this.m_HttpComms.setURI(this.m_szYahooMail);
             this.m_HttpComms.setRequestMethod("GET");
             this.m_HttpComms.setUserName(this.m_szUserName);
-
+            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
+            
             if (this.m_bReUseSession)
             {
                 this.m_Log.Write("YahooPOP.js - logIN - Getting Session Data");
@@ -162,6 +163,8 @@ YahooSMTP.prototype =
                 throw new Error("return status " + httpChannel.responseStatus);
 
 
+            mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
+            
             //page code
             switch (mainObject.m_iStage)
             {
@@ -293,6 +296,8 @@ YahooSMTP.prototype =
 
             if (!this.m_Email.parse(szEmail)) throw new Error ("Parse Failed")
 
+            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
+            
             //get composer page
             this.m_HttpComms.setURI(this.m_szComposeURI);
             this.m_HttpComms.setRequestMethod("GET");
@@ -334,6 +339,8 @@ YahooSMTP.prototype =
             if (mainObject.m_Email.attachments.length>0 && !mainObject.m_bAttHandled)
                 mainObject.m_iStage = 2;
 
+            mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
+            
             switch(mainObject.m_iStage)
             {
                 case 0: //MSG handler
