@@ -563,7 +563,7 @@ HotmailScreenRipperBETA.prototype =
         if (bRead)
         {
             oMSG = new HotmailMSG();
-            var oEscape = HTMLescape();
+            var oEscape = new HTMLescape();
             
             var aTableData = szMSGData.match(patternHotmailMailBoxTableData);
             this.m_Log.Write("HotmailWebDav.js - processMSG - aTableData -" + aTableData);
@@ -607,9 +607,14 @@ HotmailScreenRipperBETA.prototype =
 
                 if (szRawDate.search(/:/)!=-1)//check for time
                 {
-                    var aTime = szRawDate.split(/:/);
+                    var aTime = szRawDate.split(/:|\s/);
                     this.m_Log.Write("Hotmail-SR-BETA.js - processMSG - time "+aTime);
                     today.setHours(aTime[0]);
+                    if (aTime[2] == 'PM') 
+                        today.setHours(aTime[0]+12);
+                    else
+                        today.setHours(aTime[0]);
+                        
                     today.setMinutes(aTime[1]);
                 }
                 else if (szRawDate.search(/\//)!=-1)   //date
