@@ -80,6 +80,8 @@ HTMLescape.prototype.decode = function(rawMSG)
         if (szMSG.search(/&#125;/g)!=-1) szMSG = szMSG.replace(/&#125;/gm, "}");
         if (szMSG.search(/&#126;/g)!=-1) szMSG = szMSG.replace(/&#126;/gm, "~");
 
+        if (szMSG.search(/&#x200F;/g)!=-1) szMSG = szMSG.replace(/&#x200F;/gm, ""); //right-to-left mark ???
+
         //some more MS use
         if (szMSG.search(/&lt;/g)!=-1) szMSG = szMSG.replace(/&lt;/gm,"<");
         if (szMSG.search(/&gt;/g)!=-1) szMSG = szMSG.replace(/&gt;/gm,">");
