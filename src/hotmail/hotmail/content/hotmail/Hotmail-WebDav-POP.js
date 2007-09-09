@@ -438,8 +438,7 @@ HotmailWebDav.prototype =
                                              parseInt(aszTime[0],10),  //hour
                                              parseInt(aszTime[1],10),  //minute
                                              parseInt(aszTime[2],10)));  //second
-                            szDate = date.toUTCString();
-                            
+                            oMSG.szDate = date.toUTCString();
                             
                             this.m_Log.Write("HotmailWebDav.js - processItem - " + oMSG.szDate);
                         }
