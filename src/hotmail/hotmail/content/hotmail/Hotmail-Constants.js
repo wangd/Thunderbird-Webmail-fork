@@ -111,3 +111,4 @@ const patternHotmailFolderID = /FolderID=(.*?)$/i;
 const patternHotmailFromBeta = /<select id="fromAddressDropdown".*?name="(.*?)"[\s\S]*<option value="(.*?)" selected>.*?<\/option>/im;
 const patternHotmailMT = /mt=(.*?);/i;
 const patternHotmailLight = /"(.*?Light.aspx.*?)"/i;
+const patternHotmailLocale = /culture=(.*?)"/i;
