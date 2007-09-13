@@ -1213,16 +1213,14 @@ YahooPOPBETA.prototype =
                         szContentID = szPart.match(kPatternContentId)[1];
                         szContentID = mainObject.cleanHTML(szContentID);
                     }
+                    
                     var szType = "application/octet-stream";
-                    var szSubType = "";
                     if (szPart.search(kPatternPartType)!=-1 && szPart.search(kPatternPartSubType)!=-1)
-                    {
-                        szSubType = szPart.match(kPatternPartSubType)[1];
-                        szType = szPart.match(kPatternPartType)[1] +"/" + szSubType;
-                    }
+                        szType = szPart.match(kPatternPartType)[1] +"/" + szPart.match(kPatternPartSubType)[1];
+
                     var szHeader = "Content-Type: "+szType+"; ";
                     szHeader +=  szName?szName:"";
-                    if (szSubType.search(/rfc822/i)!=-1)
+                    if (szType.search(/rfc822/i)!=-1 || szType.search(/message/i)!=-1)
                         szHeader += "\r\nContent-Transfer-Encoding: 7bit\r\n";
                     else    
                         szHeader += "\r\nContent-Transfer-Encoding: base64\r\n";
@@ -1232,7 +1230,7 @@ YahooPOPBETA.prototype =
                     szHeader += "Content-Disposition: " + szFileType +"; fileName=\"" +szFileName + "\"\r\n\r\n";
                     mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szHeader : " + szHeader);
 
-                    if (szSubType.search(/rfc822/i)!=-1)
+                    if (szType.search(/rfc822/i)!=-1 || szType.search(/message/i)!=-1)
                     {
                         mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - base 64 NOT needed ");
                         mainObject.m_oEmail.addBody(szHeader,szResponse);
