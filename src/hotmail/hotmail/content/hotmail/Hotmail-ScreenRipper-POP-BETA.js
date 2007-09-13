@@ -935,10 +935,6 @@ HotmailScreenRipperBETA.prototype =
             switch(mainObject.m_iStage)
             {
                 case 0: //get email
-                    mainObject.m_szMSG = "X-WebMail: true\r\n";
-                    mainObject.m_szMSG += "X-Folder: " + mainObject.m_szFolderName + "\r\n";
-
-                    //get msg
                     var aTemp = szResponse.split(/<pre>/);
                     if (!aTemp) throw new Error("Message START  not found");
                     var szEmail = aTemp[1].split(/<\/pre>/)[0];
@@ -982,7 +978,10 @@ HotmailScreenRipperBETA.prototype =
             mainObject.m_Log.Write("Hotmail-SR-BETA - emailCleanCallback - START");
                                             
             //clean up msg
-            mainObject.m_szMSG = szMSG.replace(/^\./mg,"..");    //bit padding
+            mainObject.m_szMSG = "X-WebMail: true\r\n";
+            mainObject.m_szMSG += "X-Folder: " + mainObject.m_szFolderName + "\r\n";
+            mainObject.m_szMSG += szMSG;
+            mainObject.m_szMSG =  mainObject.m_szMSG.replace(/^\./mg,"..");    //bit padding
             mainObject.m_szMSG += "\r\n.\r\n";
 
             if (mainObject.m_bMarkAsRead)

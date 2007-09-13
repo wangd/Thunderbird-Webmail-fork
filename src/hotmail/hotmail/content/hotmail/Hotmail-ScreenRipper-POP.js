@@ -920,23 +920,16 @@ HotmailScreenRipper.prototype =
             switch (mainObject.m_iStage)
             {
                 case 0: //construct msg
-                    mainObject.m_szMSG = "X-WebMail: true\r\n";
-                    mainObject.m_szMSG += "X-Folder: " + mainObject.m_szFolderName+ "\r\n";
-
-                    //get msg
                     var aTemp = szResponse.split(/<pre>\s+/);
                     if (aTemp.length == 0)
                         throw new Error("Message START  not found");
                     var szEmail = aTemp[1].split(/<\/pre>/)[0];
                     if (szEmail.length == 0)
                         throw new Error("Message END  not found");
-
-                    mainObject.m_szMSG += szEmail;
-
+                        
                     //clean up msg
                     var oEscape = new HTMLescape();
-                    oEscape.decodeAsync(mainObject.m_szMSG, mainObject.emailCleanCallback, mainObject );
-
+                    oEscape.decodeAsync(szEmail, mainObject.emailCleanCallback, mainObject );
                 break;
 
                 case 1:  //marked as read
@@ -978,8 +971,11 @@ HotmailScreenRipper.prototype =
             //clean headers
             var oHeaders = new headers(oHeaders.value);
             var szHeaders = oHeaders.getAllHeaders();
+            
             //reconstruct email
-            mainObject.m_szMSG = szHeaders + oBody.value;
+            mainObject.m_szMSG = "X-WebMail: true\r\n";
+            mainObject.m_szMSG += "X-Folder: " + mainObject.m_szFolderName+ "\r\n";            
+            mainObject.m_szMSG += szHeaders + oBody.value;
             mainObject.m_szMSG =  mainObject.m_szMSG.replace(/^\./mg,"..");    //bit padding
             mainObject.m_szMSG += "\r\n.\r\n";
 
