@@ -110,4 +110,4 @@ const patternHotmailEMailID =/ReadMessageID=(.*?)&/i;
 const patternHotmailFolderID = /FolderID=(.*?)$/i;
 const patternHotmailFromBeta = /<select id="fromAddressDropdown".*?name="(.*?)"[\s\S]*<option value="(.*?)" selected>.*?<\/option>/im;
 const patternHotmailMT = /mt=(.*?);/i;
-const patternHotmailLight = /"(.*?TodayLight.aspx.*?)"/i;
+const patternHotmailLight = /"(.*?Light.aspx.*?)"/i;
