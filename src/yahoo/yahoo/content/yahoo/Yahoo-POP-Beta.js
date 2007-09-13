@@ -1037,19 +1037,53 @@ YahooPOPBETA.prototype =
                     delete aszShortParts;
                     delete aszComplexParts;
 
-                    var i=0;
-                    var iLength = aszParts.length;
                     do{
                         var szData = aszParts.shift();
                         mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - aszParts[i] : " + szData);
                         var szPartID = szData.match(kPatternPartID)[1];
-
+                        mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szPartID : " + szPartID);
+                        
                         var szType = szData.match(kPatternPartType)[1];
                         mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szType : " + szType);
 
-                        if (szType.search(/header/i)!=-1)
+                        if (szType.search(/x-unknown/i)!=-1)
                         {
-                            //do nothing
+                            mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - x-unknown : ");
+                            var aszNumber = szPartID.match(/(\d)\..*?/);  //numerical part of id
+                            if (aszNumber)
+                            {
+                                var iPartId = parseInt(aszNumber[1]);
+                                mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - iPartId : " + iPartId);
+                                var iLength = aszParts.length;
+                                var i = 0;
+                                do{  //remove find subpart
+                                    var szTemp = aszParts.shift();
+                                    var szTempPartID = szTemp.match(kPatternPartID)[1];
+                                    mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szTempPartID : " + szTempPartID);
+                                    var aszTempNumber = szTempPartID.match(/(\d)\..*?/);
+                                    if (aszTempNumber)
+                                    {
+                                        var iTempPartId = parseInt(aszTempNumber[1]);
+                                        mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - iTempPartId : " + iTempPartId);
+                                        if (iTempPartId == iPartId) //remove part
+                                        {                                        
+                                            mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - removing part : ");
+                                            delete szTemp;                                            
+                                        }
+                                        else
+                                        {
+                                            mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - keeping part : ");
+                                            aszParts.push(szTemp);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - keeping part : ");
+                                        aszParts.push(szTemp);  
+                                    }
+                                    i++
+                                }while(iLength!=i);
+                            }                            
                         }
                         else if(szType.search(/text/i)!=-1)
                         {  //process text/htlm message part
@@ -1107,8 +1141,7 @@ YahooPOPBETA.prototype =
                                 mainObject.m_aDownloadFiles.push(szData);
                             }
                         }
-                        i++;
-                    }while(i!=iLength);
+                    }while(aszParts.length!=0);
 
                     if (mainObject.m_aDownloadFiles.length==0 && mainObject.m_bMarkAsRead) //no files 
                     {
@@ -1181,29 +1214,82 @@ YahooPOPBETA.prototype =
                         szContentID = mainObject.cleanHTML(szContentID);
                     }
                     var szType = "application/octet-stream";
+                    var szSubType = "";
                     if (szPart.search(kPatternPartType)!=-1 && szPart.search(kPatternPartSubType)!=-1)
-                        szType = szPart.match(kPatternPartType)[1] +"/" + szPart.match(kPatternPartSubType)[1];
+                    {
+                        szSubType = szPart.match(kPatternPartSubType)[1];
+                        szType = szPart.match(kPatternPartType)[1] +"/" + szSubType;
+                    }
                     var szHeader = "Content-Type: "+szType+"; ";
                     szHeader +=  szName?szName:"";
-                    szHeader += "\r\nContent-Transfer-Encoding: base64\r\n";
+                    if (szSubType.search(/rfc822/i)!=-1)
+                        szHeader += "\r\nContent-Transfer-Encoding: 7bit\r\n";
+                    else    
+                        szHeader += "\r\nContent-Transfer-Encoding: base64\r\n";
                     if (szContentID) mainObject.m_szHeader += "Content-ID: "+ szContentID + "\r\n";
                     var szFileType = "attachment";
                     if (szPart.search(/disposition="inline"/i)!=-1) szFileType = "inline";
                     szHeader += "Content-Disposition: " + szFileType +"; fileName=\"" +szFileName + "\"\r\n\r\n";
                     mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szHeader : " + szHeader);
 
-                    var oPart = new mimePart (szHeader, szResponse);
-                    mainObject.m_aFileData.push(oPart);
-              
+                    if (szSubType.search(/rfc822/i)!=-1)
+                    {
+                        mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - base 64 NOT needed ");
+                        mainObject.m_oEmail.addBody(szHeader,szResponse);
+                    }
+                    else
+                    {
+                        mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - base 64 needed ");
+                        var oPart = new mimePart (szHeader, szResponse);
+                        mainObject.m_aFileData.push(oPart);
+                    }
+                    
                     if (mainObject.m_aDownloadFiles.length==0) //all files downloaded process them
                     {
                         mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - all files downloaded ");
-                        //base64 file
-                        var oB64 = new base64();
-                        oB64.bLineBreak = true;
-                        oB64.encodeAsync(mainObject.m_aFileData[0].body.getBody(), 
-                                         mainObject.downloadAttachmentCallback, 
-                                         mainObject);
+                       
+                        if (mainObject.m_aFileData.length==0) //no more files
+                        {
+                            mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - all file done"); 
+                            if (mainObject.m_bMarkAsRead)   //mark as read
+                            {
+                                mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - marking as read"); 
+                                var szURI = mainObject.m_szLocationURI + 
+                                            "/ws/mail/v1/soap?&appid=YahooMailRC&m=FlagMessages&wssid=" 
+                                            + mainObject.m_szWssid;
+                                mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szURI " +szURI);
+                
+                                mainObject.m_HttpComms.setURI(szURI);
+                                mainObject.m_HttpComms.setRequestMethod("POST");
+                                mainObject.m_HttpComms.setContentType("application/xml");
+                                var szData = kSeen.replace(/MSGID/,mainObject.m_szMsgID).replace(/FOLDERNAME/,mainObject.m_szBox);
+                                mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szData " +szData);
+                                mainObject.m_HttpComms.addData(szData);
+                                var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);
+                                if (!bResult) throw new Error("httpConnection returned false");
+                                mainObject.m_iStage = 2;
+                            }
+                            else   //done. send email to Thunderbird
+                            {
+                                mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - start base64'ing"); 
+                                //base64 file                        
+                                var oB64 = new base64();
+                                oB64.bLineBreak = true;
+                                oB64.encodeAsync(mainObject.m_aFileData[0].body.getBody(), 
+                                                 mainObject.downloadAttachmentCallback, 
+                                                 mainObject);
+                            }
+                        }
+                        else
+                        {
+                            mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - start base64'ing"); 
+                            //base64 file                        
+                            var oB64 = new base64();
+                            oB64.bLineBreak = true;
+                            oB64.encodeAsync(mainObject.m_aFileData[0].body.getBody(), 
+                                             mainObject.downloadAttachmentCallback, 
+                                             mainObject);  
+                        }
                     }   
                     else   //download next file in list
                     {  
