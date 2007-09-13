@@ -30,6 +30,7 @@ function HotmailScreenRipperBETA(oResponseStream, oLog, oPrefData)
         this.m_bReEntry = true;
         this.m_szMT = null;
         this.m_iDownloadRetry = 3;
+        this.m_szLocale = null;
 
         this.m_ComponentManager = Components.classes["@mozilla.org/ComponentData2;1"]
                                             .getService(Components.interfaces.nsIComponentData2);
@@ -454,6 +455,10 @@ HotmailScreenRipperBETA.prototype =
                 var szStatView = szResponse.match(patternHotmailViewState)[1];
                 mainObject.m_Log.Write("Hotmail-SR-BETA - mailBoxOnloadHandler - szViewState : " +szStatView);
 
+                //get locale
+                mainObject.m_szLocale = szResponse.match(patternHotmailLocale)[1];
+                mainObject.m_Log.Write("Hotmail-SR-BETA - mailBoxOnloadHandler - szLocale : " +mainObject.m_szLocale);
+
                 //get msg urls
                 var szMsgTable = szResponse.match(patternHotmailMailBoxTable)[1];
                 mainObject.m_Log.Write("Hotmail-SR-BETA - mailBoxOnloadHandler -msg table : " +szMsgTable);
@@ -609,7 +614,6 @@ HotmailScreenRipperBETA.prototype =
                 {
                     var aTime = szRawDate.split(/:|\s/);
                     this.m_Log.Write("Hotmail-SR-BETA.js - processMSG - time "+aTime);
-                    today.setHours(aTime[0]);
                     if (aTime[2] == 'PM') 
                         today.setHours(aTime[0]+12);
                     else
@@ -619,11 +623,20 @@ HotmailScreenRipperBETA.prototype =
                 }
                 else if (szRawDate.search(/\//)!=-1)   //date
                 {
+                    today.setFullYear("20" + aDate[2]);   //Hotmail uses YY
+                    
                     var aDate = szRawDate.split(/\//);
                     this.m_Log.Write("Hotmail-SR-BETA.js - processMSG - date "+aDate);
-                    today.setDate(aDate[0]);
-                    today.setMonth(aDate[1]-1);
-                    today.setFullYear(aDate[2]);
+                    if (this.m_szLocale == "en-US") 
+                    {
+                        today.setMonth(aDate[0]-1);
+                        today.setDate(aDate[1]);
+                    }
+                    else
+                    {
+                        today.setMonth(aDate[1]-1);
+                        today.setDate(aDate[0]);
+                    }
                 }
                 else  //yesterday
                 {
