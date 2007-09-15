@@ -970,8 +970,9 @@ YahooPOP.prototype =
                     mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - headers - "+mainObject.m_szMessage);
                     delete oHeaders;
                     
-                    var szDest = mainObject.m_szLocationURI + "/ya/download?" + mainObject.m_szMsgID.match(/MsgId.*?&/)
-                                                            + mainObject.m_szBox + "&bodyPart=TEXT";
+                    var szDest = mainObject.m_szLocationURI + "/ya/download?" + 
+                                 mainObject.m_szMsgID.match(/MsgId.*?&/) + 
+                                 mainObject.m_szBox + "&bodyPart=TEXT";
                     mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - url - "+ szDest);
 
                     //get msg from yahoo
