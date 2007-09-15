@@ -623,9 +623,9 @@ HotmailScreenRipperBETA.prototype =
                 }
                 else if (szRawDate.search(/\//)!=-1)   //date
                 {
-                    today.setFullYear("20" + aDate[2]);   //Hotmail uses YY
-                    
                     var aDate = szRawDate.split(/\//);
+                    today.setFullYear("20" + aDate[2]);   //Hotmail uses YY
+                   
                     this.m_Log.Write("Hotmail-SR-BETA.js - processMSG - date "+aDate);
                     if (this.m_szLocale == "en-US") 
                     {
