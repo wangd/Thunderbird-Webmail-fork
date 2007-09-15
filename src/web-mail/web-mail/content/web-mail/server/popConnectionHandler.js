@@ -133,6 +133,7 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                         this.m_POPLog.Write("POPconnectionHandler - onDataWritable - pass " + szTemp);
                         this.ServerResponse.write(szTemp,szTemp.length);
                     }
+                    
                     this.ServerResponse.close();
                     this.ServerRequest.close();
 
@@ -161,7 +162,8 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                 }
                 catch(e)
                 {
-                    this.ServerResponse.write(szERR,szERR.length);
+                    var szTemp = "-ERR Unknown error in STAT\r\n"
+                    this.ServerResponse.write(szTemp,szTemp.length);
                     this.m_POPLog.DebugDump("popHandler.js: stat : Exception : "
                                                       + e.name
                                                       + ".\nError message: "
@@ -185,7 +187,8 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                 }
                 catch(e)
                 {
-                    this.ServerResponse.write(szERR,szERR.length);
+                    var szTemp = "-ERR Unknown error in LIST\r\n"
+                    this.ServerResponse.write(szTemp,szTemp.length);
                     this.m_POPLog.DebugDump("popHandler.js: list : Exception : "
                                                   + e.name
                                                   + ".\nError message: "
@@ -209,7 +212,8 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                 }
                 catch(e)
                 {
-                    this.ServerResponse.write(szERR,szERR.length);
+                    var szTemp = "-ERR Unknown error in UIDL\r\n"
+                    this.ServerResponse.write(szTemp,szTemp.length);
                     this.m_POPLog.DebugDump("popHandler.js: uidl : Exception : "
                                                   + e.name
                                                   + ".\nError message: "
@@ -234,7 +238,8 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                     }
                     catch(e)
                     {
-                        this.ServerResponse.write(szERR,szERR.length);
+                        var szTemp = "-ERR TOP not supported\r\n"
+                        this.ServerResponse.write(szTemp,szTemp.length);
                         this.m_POPLog.Write("POPconnectionHandler - onDataWritable - top - Not Supported");
                         this.m_POPLog.Write("popHandler.js: top : Exception : "
                                                   + e.name
@@ -247,6 +252,7 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                 }
                 catch(e)
                 {
+                    var szTemp = "-ERR Unknown error in top\r\n"
                     this.ServerResponse.write(szERR,szERR.length);
                     this.m_POPLog.Write("popHandler.js: top : Exception : "
                                                   + e.name
@@ -272,7 +278,8 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                 }
                 catch(e)
                 {
-                    this.ServerResponse.write(szERR,szERR.length);
+                    var szTemp = "-ERR Unknown error in retr\r\n"
+                    this.ServerResponse.write(szTemp,szTemp.length);
                     this.m_POPLog.DebugDump("popHandler.js: retr : Exception : "
                                                   + e.name
                                                   + ".\nError message: "
@@ -298,6 +305,7 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                 }
                 catch(e)
                 {
+                    var szTemp = "-ERR Unknown error in delete\r\n"
                     this.ServerResponse.write(szERR,szERR.length);
                     this.m_POPLog.DebugDump("popHandler.js: dele : Exception : "
                                                   + e.name
@@ -324,7 +332,8 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                 }
                 catch(e)
                 {
-                    this.ServerResponse.write(szERR,szERR.length);
+                    var szTemp = "-ERR Unknown error in quit\r\n"
+                    this.ServerResponse.write(szTemp,szTemp.length);
                     this.m_POPLog.DebugDump("popHandler.js: quit : Exception : "
                                                   + e.name
                                                   + ".\nError message: "
@@ -351,7 +360,8 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
 
             //all unsupported commands
             default:
-                this.ServerResponse.write(szERR,szERR.length);
+                var szTemp = "-ERR unsupported command\r\n"
+                this.ServerResponse.write(szTemp,szTemp.length);
                 this.m_POPLog.Write("POPconnectionHandler - onDataWritable - default "
                                                    + szStream
                                                    + szERR);
