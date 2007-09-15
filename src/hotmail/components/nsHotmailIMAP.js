@@ -885,6 +885,15 @@ nsHotmailIMAP.prototype =
         szFrom = this.removeHTML(szFrom);   
         this.m_Log.Write("nsHotmailIMAP.js - processMSG - szFrom -" + szFrom);
 
+        var szFromAddr= null;
+        try
+        {
+            szFromAddr= Item.match(patternHotmailFromAddr)[1];
+        }
+        catch(err){}
+        this.m_Log.Write("nsHotmailIMAP.js - processMSG - szFromAddr -" + szFromAddr);   
+        if (szFromAddr) szFrom = szFrom + " <" + szFromAddr +">";
+
         var szSubject= "";
         try
         {
