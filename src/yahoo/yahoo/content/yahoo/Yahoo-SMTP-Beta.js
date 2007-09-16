@@ -403,7 +403,12 @@ YahooSMTPBETA.prototype =
             //construct email
             var szData = kSendMessge;
             szData = szData.replace(/FROMADDRESS/g,szFrom.toLowerCase());   //set from address
-
+            var szFromName = this.m_Email.headers.getHeader("From").split('<');
+            if (szFromName.length > 1)
+                szData = szData.replace(/FROMNAME/g,szFromName[0]);   //set from name
+            else
+                szData = szData.replace(/FROMNAME/g,"");   
+                          
             //get subject
             var szSubject = this.m_Email.headers.getSubject();
             this.m_Log.Write("YahooSMTPBETA.js - rawMSG - szSubject " + szSubject);
