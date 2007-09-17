@@ -881,14 +881,14 @@ YahooPOPBETA.prototype =
             szHeader= mainObject.cleanHTML(szHeader);
             mainObject.m_Log.Write("YahooPOPBETA.js - headerOnloadHandler - szHeader : " + szHeader);
 
-            var szHeader  = "X-WebMail: true\r\n";
-            szHeader += "X-Folder: " +mainObject.m_szBox+ "\r\n";
-            szHeader += szHeader;
-            szHeader = szHeader.replace(/^\./mg,"..");    //bit padding
-            szHeader += ".\r\n";//msg end
+            var szEmail = "X-WebMail: true\r\n";
+            szEmail += "X-Folder: " +mainObject.m_szBox+ "\r\n";
+            szEmail += szHeader;
+            szEmail = szEmail.replace(/^\./mg,"..");    //bit padding
+            szEmail += ".\r\n";//msg end
 
-            var szServerResponse = "+OK " + szHeader.length + "\r\n";
-            szServerResponse += szHeader;
+            var szServerResponse = "+OK " + szEmail.length + "\r\n";
+            szServerResponse += szEmail;
             mainObject.serverComms(szServerResponse);
             mainObject.m_Log.Write("YahooPOPBETA.js - headerOnloadHandler - END");
         }
