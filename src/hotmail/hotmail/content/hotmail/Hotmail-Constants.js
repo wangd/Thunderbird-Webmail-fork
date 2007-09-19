@@ -25,7 +25,7 @@ const patternHotmailUnreadCount = /<hm:unreadcount>(.*?)<\/hm:unreadcount>/;
 const patternHotmailMsgCount = /<D:visiblecount>(.*?)<\/D:visiblecount>/;
 const patternHotmailTrash = /<hm:deleteditems>(.*?)<\/hm:deleteditems>/;
 const patternHotmailFolderName = /folders\/(.*?)\//i;
-const patternHotmailFrame = /src="(loading.*?)"/;
+
 
 const UserAgent = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.3) Gecko/20070515 Firefox/2.0.0.4";
 // "1.5.0 on Mac OS X Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.0.4) Gecko/20061213 Firefox/1.0.2";
@@ -113,3 +113,4 @@ const patternHotmailFromBeta = /<select id="fromAddressDropdown".*?name="(.*?)"[
 const patternHotmailMT = /mt=(.*?);/i;
 const patternHotmailLight = /"(.*?Light.aspx.*?)"/i;
 const patternHotmailLocale = /culture=(.*?)"/i;
+const patternHotmailFrame = /frameset id="app_frameset"/i;
