@@ -23,184 +23,29 @@ var gHotmailStartUp =
                 return;
             }
 
-
             //convert prefs
             var WebMailPrefAccess = new WebMailCommonPrefAccess();
             var oPref = {Value : null};
-
-            if (!WebMailPrefAccess.Get("bool","hotmail.Account.updated",oPref))
-            {
+            
+            if (!WebMailPrefAccess.Get("int","hotmail.version",oPref))
+            {               
                 //get user name list
                 var aszUserList = this.getUserNames();
                 for (var i=0; i<aszUserList.length; i++)
                 {
-                    var szOldUserName = aszUserList[i].replace(/\./g,"_");
-                    this.m_Log.Write("nsHotmail.js - init - szOldUserName " +szOldUserName);
-                    var szNewUserName = aszUserList[i].replace(/\./g,"~");
-                    this.m_Log.Write("nsHotmail.js - init - szNewUserName " +szNewUserName);
+                    var szUserName = aszUserList[i].replace(/\./g,"~");
+                    this.m_Log.Write("nsHotmail.js - init - szUserName " +szUserName);
 
-                    if (WebMailPrefAccess.Get("int","hotmail.Account."+szOldUserName+".iMode",oPref))
+                    //check for old accounts without mode setting
+                    if (!WebMailPrefAccess.Get("int","hotmail.Account."+szUserName+".iMode",oPref))
                     {
-                        this.m_Log.Write("nsHotmail.js - init - iMode " + oPref.Value);
-                        WebMailPrefAccess.Set("int","hotmail.Account."+szNewUserName+".iMode",oPref.Value)
-                    }
-
-                    oPref.Value = null;
-                    if (WebMailPrefAccess.Get("bool","hotmail.Account."+szOldUserName+".bUseJunkMail",oPref))
-                    {
-                        this.m_Log.Write("nsHotmail.js - init - bUseJunkMail " + oPref.Value);
-                        WebMailPrefAccess.Set("bool","hotmail.Account."+szNewUserName+".bUseJunkMail",oPref.Value)
-                    }
-
-                    //get unread
-                    oPref.Value = null;
-                    if (WebMailPrefAccess.Get("bool","hotmail.Account."+szOldUserName+".bDownloadUnread",oPref))
-                    {
-                        this.m_Log.Write("nsHotmail.js - init - bDownloadUnread " + oPref.Value);
-                        WebMailPrefAccess.Set("bool","hotmail.Account."+szNewUserName+".bDownloadUnread",oPref.Value)
-                    }
-
-                    //mark as read
-                    oPref.Value = null;
-                    if (WebMailPrefAccess.Get("bool","hotmail.Account."+szOldUserName+".bMarkAsRead",oPref))
-                    {
-                        this.m_Log.Write("nsHotmail.js - init - bMarkAsRead " + oPref.Value);
-                        WebMailPrefAccess.Set("bool","hotmail.Account."+szNewUserName+".bMarkAsRead",oPref.Value)
-                    }
-
-                    //get folders
-                    oPref.Value = null;
-                    if (WebMailPrefAccess.Get("char","hotmail.Account."+szOldUserName+".szFolders",oPref))
-                    {
-                        this.m_Log.Write("nsHotmail.js - init - szFolders " + oPref.Value);
-                        WebMailPrefAccess.Set("char","hotmail.Account."+szNewUserName+".szFolders",oPref.Value)
-                    }
-
-                    // save copy
-                    oPref.Value = null;
-                    if (WebMailPrefAccess.Get("bool","hotmail.Account."+szOldUserName+".bSaveCopy",oPref))
-                    {
-                        this.m_Log.Write("nsHotmailSMTP.js - init - bSaveCopy " + oPref.Value);
-                        WebMailPrefAccess.Set("bool","hotmail.Account."+szNewUserName+".bSaveCopy",oPref.Value)
-                    }
-
-
-                    //what do i do with alternative parts
-                    oPref.Value = null;
-                    if (WebMailPrefAccess.Get("bool","hotmail.Account."+szOldUserName+".bSendHtml",oPref))
-                    {
-                        this.m_Log.Write("nsHotmailSMTP.js - init - bSendHtml " + oPref.Value);
-                        WebMailPrefAccess.Set("bool","hotmail.Account."+szNewUserName+".bSendHtml",oPref.Value)
-                    }
-
-                    var aszUserName = szOldUserName.split(/@/);
-                    if (aszUserName[0].search(/_/g)==-1)
-                    {
-                        WebMailPrefAccess.DeleteBranch("hotmail.Account."+szOldUserName+".iMode");
-                        WebMailPrefAccess.DeleteBranch("hotmail.Account."+szOldUserName+".bUseJunkMail");
-                        WebMailPrefAccess.DeleteBranch("hotmail.Account."+szOldUserName+".bDownloadUnread");
-                        WebMailPrefAccess.DeleteBranch("hotmail.Account."+szOldUserName+".bMarkAsRead");
-                        WebMailPrefAccess.DeleteBranch("hotmail.Account."+szOldUserName+".szFolders");
-                        WebMailPrefAccess.DeleteBranch("hotmail.Account."+szOldUserName+".bSaveCopy");
-                        WebMailPrefAccess.DeleteBranch("hotmail.Account."+szOldUserName+".bSendHtml");
+                        this.m_Log.Write("nsHotmail.js - init - set to old default value ");
+                        WebMailPrefAccess.Set("int","hotmail.Account."+szUserName+".iMode",0);
                     }
                 }
-
-                WebMailPrefAccess.Set("bool","hotmail.Account.updated",true);
+                WebMailPrefAccess.DeleteBranch("hotmail.Account.updated");
+                WebMailPrefAccess.Set("int","hotmail.version", 1); 
             }
-
-            oPref.Value = null;
-            if (WebMailPrefAccess.Get("int","hotmail.Account.Num",oPref))
-            {
-                //convert to new keys
-                var iNum = oPref.Value;
-                this.m_Log.Write("Hotmail.js : - init - iNum " + iNum);
-
-                for (var i=0; i<iNum; i++)
-                {
-                    oPref.Value = null;
-                    if (WebMailPrefAccess.Get("char","hotmail.Account."+i+".user",oPref))
-                    {
-                        this.m_Log.Write("Hotmail.js : - init - userName " + oPref.Value);
-                        var szUserName =  oPref.Value;
-                        szUserName = szUserName.replace(/\./g,"~");
-                        szUserName = szUserName.toLowerCase();
-
-                        oPref.Value = null;
-                        if (WebMailPrefAccess.Get("int","hotmail.Account."+i+".iMode",oPref))
-                        {
-                            this.m_Log.Write("nsHotmail.js - init - iMode " + oPref.Value);
-                            WebMailPrefAccess.Set("int","hotmail.Account."+szUserName+".iMode",oPref.Value)
-                        }
-
-                        oPref.Value = null;
-                        if (WebMailPrefAccess.Get("bool","hotmail.Account."+i+".bUseJunkMail",oPref))
-                        {
-                            this.m_Log.Write("nsHotmail.js - init - bUseJunkMail " + oPref.Value);
-                            WebMailPrefAccess.Set("bool","hotmail.Account."+szUserName+".bUseJunkMail",oPref.Value)
-                        }
-
-                        //get unread
-                        oPref.Value = null;
-                        if (WebMailPrefAccess.Get("bool","hotmail.Account."+i+".bDownloadUnread",oPref))
-                        {
-                            this.m_Log.Write("nsHotmail.js - init - bDownloadUnread " + oPref.Value);
-                            WebMailPrefAccess.Set("bool","hotmail.Account."+szUserName+".bDownloadUnread",oPref.Value)
-                        }
-
-                        //mark as read
-                        oPref.Value = null;
-                        if (WebMailPrefAccess.Get("bool","hotmail.Account."+i+".bMarkAsRead",oPref))
-                        {
-                            this.m_Log.Write("nsHotmail.js - init - bMarkAsRead " + oPref.Value);
-                            WebMailPrefAccess.Set("bool","hotmail.Account."+szUserName+".bMarkAsRead",oPref.Value)
-                        }
-
-                        //get folders
-                        oPref.Value = null;
-                        if (WebMailPrefAccess.Get("char","hotmail.Account."+i+".szFolders",oPref))
-                        {
-                            this.m_Log.Write("nsHotmail.js - init - szFolders " + oPref.Value);
-                            WebMailPrefAccess.Set("char","hotmail.Account."+szUserName+".szFolders",oPref.Value)
-                        }
-
-                        // save copy
-                        oPref.Value = null;
-                        if (WebMailPrefAccess.Get("bool","hotmail.Account."+i+".bSaveCopy",oPref))
-                        {
-                            this.m_Log.Write("nsHotmailSMTP.js - init - bSaveCopy " + oPref.Value);
-                            WebMailPrefAccess.Set("bool","hotmail.Account."+szUserName+".bSaveCopy",oPref.Value)
-                        }
-
-
-                        //what do i do with alternative parts
-                        oPref.Value = null;
-                        if (WebMailPrefAccess.Get("bool","hotmail.Account."+i+".bSendHtml",oPref))
-                        {
-                            this.m_Log.Write("nsHotmailSMTP.js - init - bSendHtml " + oPref.Value);
-                            WebMailPrefAccess.Set("bool","hotmail.Account."+szUserName+".bSendHtml",oPref.Value)
-                        }
-
-                        WebMailPrefAccess.DeleteBranch("hotmail.Account."+i+".user");
-                        WebMailPrefAccess.DeleteBranch("hotmail.Account."+i+".iMode");
-                        WebMailPrefAccess.DeleteBranch("hotmail.Account."+i+".bUseJunkMail");
-                        WebMailPrefAccess.DeleteBranch("hotmail.Account."+i+".bDownloadUnread");
-                        WebMailPrefAccess.DeleteBranch("hotmail.Account."+i+".bMarkAsRead");
-                        WebMailPrefAccess.DeleteBranch("hotmail.Account."+i+".szFolders");
-                        WebMailPrefAccess.DeleteBranch("hotmail.Account."+i+".bSaveCopy");
-                        WebMailPrefAccess.DeleteBranch("hotmail.Account."+i+".bSendHtml");
-                    }
-                }
-                WebMailPrefAccess.DeleteBranch("hotmail.Account.Num");
-                WebMailPrefAccess.Set("bool","hotmail.Account.updated",true);
-            }
-
-            //delete unused keys
-            WebMailPrefAccess.DeleteBranch("hotmail.bDownloadUnread");
-            WebMailPrefAccess.DeleteBranch("hotmail.bSaveCopy");
-            WebMailPrefAccess.DeleteBranch("hotmail.bSendHtml");
-            WebMailPrefAccess.DeleteBranch("hotmail.bUseJunkMail");
-            delete WebMailPrefAccess;
 
             window.removeEventListener("load", function() {gHotmailStartUp.init();} , false);
 
