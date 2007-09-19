@@ -47,43 +47,20 @@ HTMLescape.prototype.decode = function(rawMSG)
         //&#127;-&#159;              Unused
         //&#160;-&#255               Unlikely
         
+       
         //most likely
-        szMSG = szMSG.replace(/&#9;/gm, "\t")         .replace(/&#09;/gm, "\t")
-                     .replace(/&#13;&#10;/gm, "\r\n") .replace(/&#34;/gm, "\"")
-                     .replace(/&#58;/gm, ":")         .replace(/&#59;/gm, ";")
-                     .replace(/&#61;/gm, "=");
+        szMSG = szMSG.replace(/&#9;/gm, "\t").replace(/&#09;/gm, "\t").replace(/&#13;&#10;/gm, "\r\n");
                      
         //might be there
-        if (szMSG.search(/&#33;/g)!=-1) szMSG = szMSG.replace(/&#33;/gm, "!");        
-        if (szMSG.search(/&#35;/g)!=-1) szMSG = szMSG.replace(/&#35;/gm, "#");
-        if (szMSG.search(/&#36;/g)!=-1) szMSG = szMSG.replace(/&#36;/gm, "$"); 
-        if (szMSG.search(/&#37;/g)!=-1) szMSG = szMSG.replace(/&#37;/gm, "%");
-        if (szMSG.search(/&#38;/g)!=-1) szMSG = szMSG.replace(/&#38;/gm, "&");
-        if (szMSG.search(/&#39;/g)!=-1) szMSG = szMSG.replace(/&#39;/gm, "'");
-        if (szMSG.search(/&#40;/g)!=-1) szMSG = szMSG.replace(/&#40;/gm, "(");
-        if (szMSG.search(/&#41;/g)!=-1) szMSG = szMSG.replace(/&#41;/gm, ")");
-        if (szMSG.search(/&#42;/g)!=-1) szMSG = szMSG.replace(/&#42;/gm, "*");
-        if (szMSG.search(/&#43;/g)!=-1) szMSG = szMSG.replace(/&#43;/gm, "+");
-        if (szMSG.search(/&#47;/g)!=-1) szMSG = szMSG.replace(/&#47;/gm, "/");
-        if (szMSG.search(/&#60;/g)!=-1) szMSG = szMSG.replace(/&#60;/gm, "<");
-        if (szMSG.search(/&#62;/g)!=-1) szMSG = szMSG.replace(/&#62;/gm, ">");
-        if (szMSG.search(/&#63;/g)!=-1) szMSG = szMSG.replace(/&#63;/gm, "?");
-        if (szMSG.search(/&#64;/g)!=-1) szMSG = szMSG.replace(/&#64;/gm, "@");
-        if (szMSG.search(/&#91;/g)!=-1) szMSG = szMSG.replace(/&#91;/gm, "[");
-        if (szMSG.search(/&#92;/g)!=-1) szMSG = szMSG.replace(/&#92;/gm, "\\");
-        if (szMSG.search(/&#93;/g)!=-1) szMSG = szMSG.replace(/&#93;/gm, "]");
-        if (szMSG.search(/&#94;/g)!=-1) szMSG = szMSG.replace(/&#94;/gm, "^");
-        if (szMSG.search(/&#95;/g)!=-1) szMSG = szMSG.replace(/&#95;/gm, "_");
-        if (szMSG.search(/&#96;/g)!=-1) szMSG = szMSG.replace(/&#96;/gm, "`");
-        if (szMSG.search(/&#123;/g)!=-1) szMSG = szMSG.replace(/&#123;/gm, "{");
-        if (szMSG.search(/&#124;/g)!=-1) szMSG = szMSG.replace(/&#124;/gm, "|");
-        if (szMSG.search(/&#125;/g)!=-1) szMSG = szMSG.replace(/&#125;/gm, "}");
-        if (szMSG.search(/&#126;/g)!=-1) szMSG = szMSG.replace(/&#126;/gm, "~");
-
-        if (szMSG.search(/&#x200F;/ig)!=-1) szMSG = szMSG.replace(/&#x200F;/igm, ""); //right-to-left mark ???
         if (szMSG.search(/&#27;/g)!=-1) szMSG = szMSG.replace(/&#27;/gm, String.fromCharCode(27)); //esc  ?
+        if (szMSG.search(/&#x200F;/ig)!=-1) szMSG = szMSG.replace(/&#x200F;/igm, ""); //right-to-left mark ?
         
-        
+        for (var i=33; i<255; i++)
+        {
+            var regexp = new RegExp("&#"+i+";", "gm");
+            if (szMSG.search(regexp)!=-1) szMSG = szMSG.replace(regexp, String.fromCharCode(i)); 
+        }
+  
         //some more MS use
         if (szMSG.search(/&lt;/g)!=-1) szMSG = szMSG.replace(/&lt;/gm,"<");
         if (szMSG.search(/&gt;/g)!=-1) szMSG = szMSG.replace(/&gt;/gm,">");
