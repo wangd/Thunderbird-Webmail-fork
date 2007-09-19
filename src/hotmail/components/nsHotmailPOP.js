@@ -87,11 +87,12 @@ nsHotmail.prototype =
 
             if (PrefData.iMode==1) ///webdav
                 this.m_CommMethod = new HotmailWebDav(this.m_oResponseStream, this.m_HotmailLog, PrefData);
-            else if (PrefData.iMode==2) //new WebSite
+            else if (PrefData.iMode==0) //old WebSite
+                this.m_CommMethod = new HotmailScreenRipper(this.m_oResponseStream, this.m_HotmailLog, PrefData);
+
+            if (!this.m_CommMethod) //default to new website
                 this.m_CommMethod = new HotmailScreenRipperBETA(this.m_oResponseStream, this.m_HotmailLog, PrefData);
 
-            if (!this.m_CommMethod) //default to old website
-                this.m_CommMethod = new HotmailScreenRipper(this.m_oResponseStream, this.m_HotmailLog, PrefData);
 
 
             var bResult = this.m_CommMethod.logIn(this.m_szUserName, this.m_szPassWord);

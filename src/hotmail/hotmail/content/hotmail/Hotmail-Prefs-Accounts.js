@@ -172,7 +172,7 @@ var gPrefAccounts =
 
                 //get iMode
                 if (!prefAccess.Get("int","hotmail.Account."+szUserName+".iMode",oPref))
-                   oPref.Value = 0 //Default to production account
+                   oPref.Value = 2 //Default to Live account
                 this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - selectUserName - iMode " + oPref.Value);
                 document.getElementById("radiogroupMode").selectedIndex  = oPref.Value;
 
