@@ -3,13 +3,6 @@
 
 function base64()
 {   
-    var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
-    scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
-    scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-    
-    var  szLogFileName = "Base64 Log ";
-    this.m_Log = new DebugLog("webmail.logging.comms", "", szLogFileName);
-    
     this.m_hShellService = Components.classes["@mozilla.org/appshell/appShellService;1"].
                                      getService(Components.interfaces.nsIAppShellService);
                                      
@@ -74,7 +67,6 @@ base64.prototype.encodeAsync = function (aBytes, callback, parent)
 {
     try
     {
-        this.m_Log.Write("base64.js - encodeAsync - START"); 
         
         this.m_callback = callback;
         this.m_parent = parent;
@@ -86,16 +78,9 @@ base64.prototype.encodeAsync = function (aBytes, callback, parent)
         this.m_Timer.initWithCallback(this,
                                       50,
                                       Components.interfaces.nsITimer.TYPE_REPEATING_SLACK); 
-                                      
-        this.m_Log.Write("base64.js - encodeAsync - END"); 
     }
     catch(err)
     {
-         this.m_Log.DebugDump("base64.js: largeDecode : Exception : "
-                                          + err.name
-                                          + ".\nError message: "
-                                          + err.message +"\n"
-                                          + err.lineNumber);
         return aBytes;
     }
 }
@@ -119,15 +104,12 @@ base64.prototype.notify = function (timer)
 {
     try
     {
-        this.m_Log.Write("base64.js - notify - START ");
         
         switch(this.m_iType)
         {
             case 0: //encode
-                this.m_Log.Write("base64.js - notify - decode ");
                 var iCurrentStream = this.m_inStream.available();
                 var iBlock = iCurrentStream > this.m_kBlockSize ? this.m_kBlockSize : iCurrentStream;
-                this.m_Log.Write("base64.js - notify - size " + iCurrentStream + " " + iBlock); 
 
                 
                 var i=0;
@@ -179,7 +161,6 @@ base64.prototype.notify = function (timer)
                     }
                 }
 
-                this.m_Log.Write("base64.js - notify - this.m_szOutMSG \n" + this.m_szOutMSG );
                 
                 if (this.m_inStream.available() == 0)
                 {
@@ -193,16 +174,9 @@ base64.prototype.notify = function (timer)
                 }
             break;
         }    
-          
-        this.m_Log.Write("base64.js - notify - END");
     }
     catch(err)
     {
-         this.m_Log.DebugDump("base64.js: notify : Exception : "
-                                          + err.name
-                                          + ".\nError message: "
-                                          + err.message +"\n"
-                                          + err.lineNumber);
          timer.cancel();
          this.m_callback(null, this.m_parent );
     }
@@ -249,11 +223,6 @@ base64.prototype.binaryStream = function (szData)
     }
     catch(err)
     {
-        DebugDump("base64.js: binaryStream : Exception : "
-                                              + err.name
-                                              + ".\nError message: "
-                                              + err.message + "\n"
-                                              + err.lineNumber);
         return null;
     }
 }
