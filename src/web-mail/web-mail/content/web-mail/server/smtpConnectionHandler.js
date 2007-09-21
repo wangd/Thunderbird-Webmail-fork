@@ -305,8 +305,6 @@ SMTPconnectionHandler.prototype.getDomainHandler = function(szUserName, szDomain
         if (typeof(Components.classes[szContentID.value]) == "undefined")
         {
             delete szContentID;
-            //delete bad record
-            DomainManager.removeDomainForProtocol(szDomain,"smtp");
             this.m_SMTPLog.Write("SMTPconnectionHandler - getDomainHandler - DomainHandler does not exist");
             return false;
         }

@@ -437,8 +437,6 @@ POPconnectionHandler.prototype.getDomainHandler = function(szUserName, szDomain)
         if (typeof(Components.classes[szContentID.value]) == "undefined")
         {
             delete szContentID;
-            //delete bad record
-            DomainManager.removeDomainForProtocol(szDomain, "pop");
             this.m_POPLog.Write("POPconnectionHandler - getDomainHandler - DomainHandler does not exist");
             return false;
         }

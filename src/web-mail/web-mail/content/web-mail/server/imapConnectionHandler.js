@@ -383,8 +383,6 @@ IMAPconnectionHandler.prototype.getDomainHandler = function(szUserName, szDomain
         if (typeof(Components.classes[szContentID.value]) == "undefined")
         {
             delete szContentID;
-            //delete bad record
-            DomainManager.removeDomainForProtocol(szDomain, "imap");
             this.m_IMAPLog.Write("IMAPconnectionHandler - getDomainHandler - DomainHandler does not exist");
             return false;
         }
