@@ -10,7 +10,7 @@ function nsDomainManager()
     this.m_dbService = null;
     this.m_dbConn = null;
     this.m_dbConnDummy = null;
-    this.m_iCurrentDBVersion = 1;
+    this.m_iCurrentDBVersion = 2;
     this.m_bIsReady = false;
 }
 
@@ -68,7 +68,9 @@ nsDomainManager.prototype =
                 this.createDB();
             else if (iVersion != this.m_iCurrentDBVersion)
                 this.updateDB(iVersion);
-
+            
+            this.domainHandlerCheck();
+            
             this.m_bIsReady = true;
 
             this.m_Log.Write("nsDomainManager.js - loadDataBase - END");
@@ -135,7 +137,91 @@ nsDomainManager.prototype =
     },
 
 
+    updateDB : function (iVersion)
+    {
+        try
+        {
+            this.m_Log.Write("nsDataBaseManager.js - updateDB - START");
+            
+            if (iVersion == 1)
+            {
+                //get contents ids
+                var aContentID = new Array();
+                szSQL  = "SELECT content_id FROM smtp_domains UNION ";
+                szSQL += "SELECT content_id FROM pop_domains UNION ";
+                szSQL += "SELECT content_id FROM imap_domains ";
+                szSQL += "ORDER BY content_id ASC";
+                var statement = this.m_dbConn.createStatement(szSQL);
+                var wStatement = Components.classes["@mozilla.org/storage/statement-wrapper;1"]
+                                           .createInstance(Components.interfaces.mozIStorageStatementWrapper);
+                try
+                {
+                    wStatement.initialize(statement);
+                    while (wStatement.step())
+                    {
+                        var szContentId = wStatement.row["content_id"];
+                        this.m_Log.Write("nsDomainManager : updateDB - " +szContentId );                           
+                        aContentID.push(szContentId);
+                    }
+                }
+                finally
+                {
+                    statement.reset();
+                    this.m_Log.Write("nsDomainManager : updateDB - DB Reset "+ this.m_dbConn.lastErrorString);
+                }
+                
+                this.m_dbConn.beginTransaction();
 
+                //add new table domain_handler
+                var szSQL = null;
+                szSQL  = "CREATE TABLE domain_handler ";
+                szSQL += "( ";
+                szSQL +=    "id INTEGER PRIMARY KEY, ";
+                szSQL +=    "content_id  TEXT, ";
+                szSQL +=    "enabled     BOOLEAN ";
+                szSQL += ")";
+                this.m_Log.Write("nsDataBaseManager.js - updateDB - szSQL " + szSQL);
+                this.m_dbConn.executeSimpleSQL(szSQL);
+                
+                //update version number                
+                szSQL = "DELETE FROM webmail_schema_version; INSERT INTO webmail_schema_version VALUES (2);"
+                this.m_Log.Write("nsDataBaseManager.js - updateDB - szSQL " + szSQL);
+                this.m_dbConn.executeSimpleSQL(szSQL);
+                               
+                //add content ids to new table
+                szSQL  = "INSERT INTO domain_handler (content_id, enabled) "
+                szSQL += "VALUES "
+                szSQL += "( "
+                szSQL +=    "?1, "
+                szSQL +=    "\"true\""
+                szSQL += ");"
+                statement = this.m_dbConn.createStatement(szSQL);
+                
+                for (var i =0; i<aContentID.length; i++)
+                {
+                    statement.bindStringParameter(0, aContentID[i]);
+                    statement.execute();
+                }
+                
+                this.m_dbConn.commitTransaction();
+            }
+                
+            this.m_Log.Write("nsDataBaseManager.js - updateDB - END");
+        }
+        catch(err)
+        {
+            this.m_Log.DebugDump("nsDataBaseManager.js: updateDB : Exception : "
+                              + err.name +
+                              "\nError message: "
+                              + err.message +"\n"
+                              + "DB Error " + "\n"
+                              + err.lineNumber+ "\n"
+                              + this.m_dbConn.lastErrorString);            
+        }
+    },
+    
+
+    
     createDB : function ()
     {
         try
@@ -180,6 +266,15 @@ nsDomainManager.prototype =
             this.m_dbConn.executeSimpleSQL(szSQL);
 
 
+            szSQL  = "CREATE TABLE domain_handler ";
+            szSQL += "( ";
+            szSQL +=    "id INTEGER PRIMARY KEY, ";
+            szSQL +=    "content_id  TEXT, ";
+            szSQL +=    "enabled     BOOLEAN ";
+            szSQL += ")";
+            this.m_Log.Write("nsDataBaseManager.js - createDB - szSQL " + szSQL);
+            this.m_dbConn.executeSimpleSQL(szSQL);
+
             //dummy table
             szSQL = "CREATE TABLE dummy_table (id INTEGER PRIMARY KEY);";
             this.m_Log.Write("nsDataBaseManager.js - createDB - szSQL " + szSQL);
@@ -206,6 +301,89 @@ nsDomainManager.prototype =
                                           + this.m_dbConn.lastErrorString);
             return false;
         }
+    },
+
+
+
+    domainHandlerCheck : function ()
+    {
+        try
+        {
+            this.m_Log.Write("nsDataBaseManager.js - domainHandlerCheck - START");
+            
+            //get domain handler list
+            var aDomains = new Array();
+            var szSQL = null;
+            szSQL  = "SELECT * FROM domain_handler "
+            var statement = this.m_dbConn.createStatement(szSQL);
+            var wStatement = Components.classes["@mozilla.org/storage/statement-wrapper;1"]
+                                       .createInstance(Components.interfaces.mozIStorageStatementWrapper);
+            try
+            {
+                wStatement.initialize(statement);
+                while (wStatement.step())
+                {
+                    var oData = new domainData();
+                    oData.iId = wStatement.row["id"];
+                    oData.szContentId = wStatement.row["content_id"];
+                    this.m_Log.Write("nsDomainManager : domainHandlerCheck - " + oData.szContentId );                                     
+                    aDomains.push(oData);
+                }
+            }
+            finally
+            {
+                statement.reset();
+                this.m_Log.Write("nsDomainManager : domainHandlerCheck - DB Reset "+ this.m_dbConn.lastErrorString);
+            }
+            
+            //load domain handler
+
+            for (var i=0; i<aDomains.length; i++)
+            {
+                if (typeof(Components.classes[aDomains[i].szContentId]) == "undefined")
+                   aDomains[i].bEnabled = false;
+                else
+                   aDomains[i].bEnabled = true;  
+                this.m_Log.Write("nsDomainManager : domainHandlerCheck - szContentId "+ aDomains[i].szContentId 
+                                                                         + " bEnabled " + aDomains[i].bEnabled );   
+            }
+            
+            //update domain handler list
+            this.m_dbConn.beginTransaction();
+            
+            szSQL = "REPLACE INTO domain_handler (id, content_id, enabled) ";
+            szSQL+= "VALUES ";
+            szSQL+= "(" ;
+            szSQL+=     "?1,";
+            szSQL+=     "?2,";
+            szSQL+=     "?3";
+            szSQL+= ");";
+         
+            for (var i =0; i<aDomains.length; i++)
+            {
+                statement = this.m_dbConn.createStatement(szSQL);
+                statement.bindStringParameter(0, aDomains[i].iId);
+                statement.bindStringParameter(1, aDomains[i].szContentId);
+                statement.bindStringParameter(2, aDomains[i].bEnabled);
+                statement.execute();
+            }
+            delete aContentID;
+                        
+            this.m_dbConn.commitTransaction();
+            
+            this.m_Log.Write("nsDataBaseManager.js - domainHandlerCheck - END");
+        }
+        catch(err)
+        {
+            this.m_Log.DebugDump("nsDataBaseManager.js: domainHandlerCheck : Exception : "
+                              + err.name +
+                              "\nError message: "
+                              + err.message +"\n"
+                              + "DB Error " + "\n"
+                              + err.lineNumber+ "\n"
+                              + this.m_dbConn.lastErrorString);
+            return false;
+        }       
     },
 
 
@@ -274,7 +452,7 @@ nsDomainManager.prototype =
         try
         {
             this.m_Log.Write("nsDomainManager.js - newDomainForProtocol -  START" );
-            this.m_Log.Write("nsDomainManager.js - newDomainForProtocol -  " +  "address " + szAddress
+            this.m_Log.Write("nsDomainManager.js - newDomainForProtocol -   address " + szAddress
                                                                             + " Content " + szContentID
                                                                             + " protocol " + szProtocol);
 
@@ -284,7 +462,22 @@ nsDomainManager.prototype =
                 return false;
             }
 
+            //update domain handler table
             var szSQL;
+            szSQL  = "REPLACE INTO domain_handler (id, content_id, enabled) ";
+            szSQL += "VALUES ";
+            szSQL += "( ";
+            szSQL += "  (SELECT id FROM domain_handler WHERE content_id LIKE ?1),";
+            szSQL += "   ?1,";
+            szSQL += "   \"true\"";
+            szSQL += ");";
+            this.m_Log.Write("nsDomainManager : newDomainForProtocol - sql "  + szSQL);
+            var statement = this.m_dbConn.createStatement(szSQL);
+            statement.bindStringParameter(0, content_id);
+            statement.execute();
+             
+            
+            //updtae domain
             if (szProtocol.search(/pop/i)!=-1)
             {
                 szSQL = "REPLACE INTO pop_domains (id,domain,content_id) ";
@@ -317,7 +510,7 @@ nsDomainManager.prototype =
             }
 
             this.m_Log.Write("nsDomainManager : newDomainForProtocol - sql "  + szSQL);
-            var statement = this.m_dbConn.createStatement(szSQL);
+            statement = this.m_dbConn.createStatement(szSQL);
             statement.bindStringParameter(0, szAddress.toLowerCase().replace(/\s/,""));
             statement.bindStringParameter(1, szAddress.toLowerCase().replace(/\s/,""));
             statement.bindStringParameter(2, szContentID);
@@ -355,12 +548,33 @@ nsDomainManager.prototype =
             var aResult = new Array();
             var szSQL;
             if (szProtocol.search(/pop/i)!=-1)
-               szSQL = "SELECT domain FROM pop_domains ORDER BY domain ASC";
+            {
+               szSQL  = "SELECT pop_domains.domain, pop_domains.content_id, " +
+                        "       domain_handler.content_id, domain_handler.enabled "
+               szSQL += "FROM pop_domains, domain_handler ";
+               szSQL += "WHERE pop_domains.content_id = domain_handler.content_id " +
+                        "      AND domain_handler.enabled =\"true\" ";
+               szSQL += "ORDER BY domain ASC ";
+            }
             if (szProtocol.search(/smtp/i)!=-1)
-               szSQL = "SELECT domain FROM smtp_domains ORDER BY domain ASC";
+            {
+               szSQL  = "SELECT smtp_domains.domain, smtp_domains.content_id, " +
+                        "       domain_handler.content_id, domain_handler.enabled "
+               szSQL += "FROM smtp_domains, domain_handler ";
+               szSQL += "WHERE smtp_domains.content_id = domain_handler.content_id " +
+                        "      AND domain_handler.enabled =\"true\" ";
+               szSQL += "ORDER BY domain ASC ";
+            }
             if (szProtocol.search(/imap/i)!=-1)
-               szSQL = "SELECT domain FROM imap_domains ORDER BY domain ASC";
-
+            {
+               szSQL  = "SELECT imap_domains.domain, imap_domains.content_id, " +
+                        "       domain_handler.content_id, domain_handler.enabled "
+               szSQL += "FROM imap_domains, domain_handler ";
+               szSQL += "WHERE imap_domains.content_id = domain_handler.content_id " +
+                        "      AND domain_handler.enabled =\"true\" ";
+               szSQL += "ORDER BY domain ASC ";
+            }
+            
             var statement = this.m_dbConn.createStatement(szSQL);
 
             try
@@ -411,15 +625,24 @@ nsDomainManager.prototype =
             var szSQL = "SELECT domain AS domain, ";
                 szSQL+= "(CASE " +
                         "     WHEN (SELECT pop_domains.domain " +
-                        "           FROM pop_domains WHERE pop_domains.domain = view_all_domain.domain)<>0 THEN 1 ELSE 0 " +
+                        "           FROM pop_domains, domain_handler " +
+                        "           WHERE pop_domains.domain = view_all_domain.domain "  +
+                        "                 AND domain_handler.enabled =\"true\" " +
+                        "                 AND pop_domains.content_id =  domain_handler.content_id  ) <> 0 THEN 1 ELSE 0 " +
                         "END) AS pop, ";
                 szSQL+= "(CASE " +
                         "      WHEN (SELECT smtp_domains.domain " +
-                        "            FROM smtp_domains WHERE smtp_domains.domain =view_all_domain. domain) <> 0 THEN 1 ELSE 0 " +
+                        "            FROM smtp_domains, domain_handler" +
+                        "            WHERE smtp_domains.domain =view_all_domain.domain " +
+                        "                  AND domain_handler.enabled =\"true\" " +
+                        "                  AND smtp_domains.content_id =  domain_handler.content_id  ) <> 0 THEN 1 ELSE 0 " +
                         "END)  AS smtp, ";
                 szSQL+="(CASE " +
                         "      WHEN (SELECT imap_domains.domain " +
-                        "            FROM imap_domains WHERE  imap_domains.domain=view_all_domain.domain ) <> 0 THEN 1 ELSE 0 " +
+                        "            FROM imap_domains, domain_handler " +
+                        "            WHERE imap_domains.domain=view_all_domain.domain " +
+                        "                  AND domain_handler.enabled =\"true\" " +
+                        "                  AND imap_domains.content_id = domain_handler.content_id  ) <> 0 THEN 1 ELSE 0 " +
                         "END) AS imap ";
                 szSQL+="FROM view_all_domain";
 
@@ -436,15 +659,15 @@ nsDomainManager.prototype =
                                                .QueryInterface(Components.interfaces.nsIDomainData);
 
                     domainData.szDomain = wStatement.row["domain"];
-                    this.m_Log.Write("nsDomainManager : getAllDomains - " +domainData.szDomain );
                     domainData.bPOP = wStatement.row["pop"]? true : false;
-                    this.m_Log.Write("nsDomainManager : getAllDomains - " +domainData.bPOP );
                     domainData.bSMTP = wStatement.row["smtp"]? true : false;
-                    this.m_Log.Write("nsDomainManager : getAllDomains - " +domainData.bSMTP );
                     domainData.bIMAP = wStatement.row["imap"]? true : false;
-                    this.m_Log.Write("nsDomainManager : getAllDomains - " +domainData.bIMAP);
-
-                    aResult.push(domainData);
+                    this.m_Log.Write("nsDomainManager : getAllDomains - " +domainData.szDomain 
+                                                                    + " " + domainData.bPOP 
+                                                                    + " " + domainData.bSMTP
+                                                                    + " " + domainData.bIMAP);
+                    if (domainData.bPOP ||domainData.bSMTP || domainData.bIMAP)
+                        aResult.push(domainData);
                 }
             }
             finally
@@ -455,7 +678,7 @@ nsDomainManager.prototype =
 
             iCount.value = aResult.length;
             aszDomains.value = aResult;
-            this.m_Log.Write("nsDomainManager.js - getAllDomains - " + iCount.value + " " + aszDomains.value);
+            this.m_Log.Write("nsDomainManager.js - getAllDomains - " + iCount.value);
 
             this.m_Log.Write("nsDomainManager.js - getAllDomains -  END" );
             return true;
@@ -551,7 +774,8 @@ nsDomainManager.prototype =
                 // startup code here
                 this.m_scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
                 this.m_scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-
+                this.m_scriptLoader.loadSubScript("chrome://web-mail/content/common/domainData.js");
+                
                 this.m_Log = new DebugLog("webmail.logging.comms",
                                           "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
                                           "Domainlog");
