@@ -615,7 +615,7 @@ HotmailScreenRipperBETA.prototype =
                     var aTime = szRawDate.split(/:|\s/);
                     this.m_Log.Write("Hotmail-SR-BETA.js - processMSG - time "+aTime);
                     if (aTime[2] == 'PM') 
-                        today.setHours(aTime[0]+12);
+                        today.setHours(parseInt(aTime[0])+12);
                     else
                         today.setHours(aTime[0]);
                         
