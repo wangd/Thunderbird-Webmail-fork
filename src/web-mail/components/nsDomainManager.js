@@ -404,11 +404,26 @@ nsDomainManager.prototype =
 
             var szSQL
             if (szProtocol.search(/pop/i)!=-1)
-                szSQL = "SELECT content_id FROM pop_domains WHERE domain LIKE ?1 LIMIT (1)";
+                szSQL = "SELECT pop_domains.content_id " +
+                        "FROM pop_domains, domain_handler " +
+                        "WHERE domain LIKE ?1 " +
+                        "      AND domain_handler.content_id = pop_domains.content_id " +
+                        "      AND domain_handler.enabled = \"true\"" +
+                        "LIMIT (1)";
             if (szProtocol.search(/smtp/i)!=-1)
-                szSQL = "SELECT content_id FROM smtp_domains WHERE domain LIKE ?1 LIMIT (1)";
+                szSQL = "SELECT smtp_domains.content_id " +
+                        "FROM smtp_domains, domain_handler  " +
+                        "WHERE domain LIKE ?1 " +
+                        "      AND domain_handler.content_id = smtp_domains.content_id " +
+                        "      AND domain_handler.enabled = \"true\"" +
+                        "LIMIT (1)";
             if (szProtocol.search(/imap/i)!=-1)
-                szSQL = "SELECT content_id FROM imap_domains WHERE domain LIKE ?1 LIMIT (1)";
+                szSQL = "SELECT imap_domains.content_id " +
+                        "FROM imap_domains, domain_handler  " +
+                        "WHERE domain LIKE ?1 " +
+                        "      AND domain_handler.content_id = imap_domains.content_id " +
+                        "      AND domain_handler.enabled = \"true\"" +
+                        "LIMIT (1)";
 
             var statement = this.m_dbConn.createStatement(szSQL);
             statement.bindStringParameter(0, szAddress.toLowerCase().replace(/\s/,""));
