@@ -24,10 +24,4 @@
     <prefpane id="paneDomains"
               label="&YahooPref.Panel.Domains.Title;"
               src="chrome://yahoo/content/Yahoo-Prefs-Domains.xul"/>
-
-    <!-- Globals -->
-    <prefpane id="paneGlobals"
-              label="&YahooPref.Panel.Globals.Title;"
-              src="chrome://yahoo/content/Yahoo-Prefs-Globals.xul"/>
-
 </prefwindow>

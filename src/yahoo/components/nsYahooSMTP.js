@@ -160,7 +160,7 @@ nsYahooSMTP.prototype =
 
 
             //do i reuse the session
-            if (WebMailPrefAccess.Get("bool","yahoo.bReUseSession",oPref))
+            if (WebMailPrefAccess.Get("bool","yahoo.Account."+szUserName +"bReUseSession",oPref))
                 oData.bReUseSession = oPref.Value;
 
             //do i save copy

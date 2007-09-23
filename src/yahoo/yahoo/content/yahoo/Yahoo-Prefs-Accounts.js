@@ -161,14 +161,18 @@ var gPrefAccounts =
                 this.m_DebugLog.Write("Yahoo-Pref-Accounts : userClick -  data.bBeta "+ oPref.Value);
                 document.getElementById("radiogroupMode").selectedIndex = oPref.Value? 1 : 0;
 
-                if (oPref.Value)
+                if (oPref.Value)  //beta account type
                 {
+                    document.getElementById("tabSMTP").collapsed = true;// hide smtp
                     document.getElementById("vboxSmtpItems").setAttribute("hidden", true);
-                    document.getElementById("vboxSmtpNA").setAttribute("hidden", false);
+                    
+                    //check if SMTP selected
+                    if (document.getElementById("tabsAccount").selectedIndex == 2)
+                        document.getElementById("tabsAccount").selectedIndex = 1; //POP
                 }
-                else
+                else            //current account
                 {
-                    document.getElementById("vboxSmtpNA").setAttribute("hidden", true);
+                    document.getElementById("tabSMTP").collapsed = false;// show smtp
                     document.getElementById("vboxSmtpItems").setAttribute("hidden", false);
                 }
 
@@ -177,6 +181,18 @@ var gPrefAccounts =
                    oPref.Value = false; //Default
                 this.m_DebugLog.Write("Yahoo-Pref-Accounts : selectUserName -  bUnread "+ oPref.Value);
                 document.getElementById("chkDownloadUnread").checked = oPref.Value;
+                if (oPref.Value)
+                {
+                    document.getElementById("chkMarkAsRead").checked = true;
+                    document.getElementById("chkMarkAsRead").setAttribute("disabled", true);
+                }
+
+                //mark asread
+                if (!prefAccess.Get("bool","yahoo.Account."+szUserName+".bMarkAsRead",oPref))
+                   oPref.Value = true; //Default
+                this.m_DebugLog.Write("Yohoo-Pref-Accounts.js - selectUserName - bMarkAsRead " + oPref.Value);
+                document.getElementById("chkMarkAsRead").checked = oPref.Value;
+
 
                 //download junk mail
                 if (!prefAccess.Get("bool","yahoo.Account."+szUserName+".bUseJunkMail",oPref))
@@ -216,6 +232,18 @@ var gPrefAccounts =
                    oPref.Value = false; //Default
                 this.m_DebugLog.Write("Yahoo-Pref-Accounts : selectUserName -  bSaveCopy "+ oPref.Value);
                 document.getElementById("chkSentItems").checked = oPref.Value;
+                               
+                //set seasion id
+                if (!prefAccess.Get("bool","yahoo.Account."+szUserName+".bUseShortID",oPref))
+                   oPref.Value = false; //Default
+                this.m_DebugLog.Write("Yahoo-Pref-Accounts : selectUserName -  bUseShortID "+ oPref.Value);
+                document.getElementById("chkShortID").checked = oPref.Value;     
+                
+                //set seasion id
+                if (!prefAccess.Get("bool","yahoo.Account."+szUserName+".bReUseSession",oPref))
+                   oPref.Value = false; //Default
+                this.m_DebugLog.Write("Yahoo-Pref-Accounts : selectUserName -  bReUseSession "+ oPref.Value);
+                document.getElementById("chkReUseSession").checked = oPref.Value;
             }
             this.m_DebugLog.Write("Yahoo-Pref-Accounts : userClick - END");
         }
@@ -332,22 +360,50 @@ var gPrefAccounts =
 /**********************************************************************/
     chkDownloadUreadOnChange : function ()
     {
-        this.m_DebugLog.Write("YYahoo-Pref-Accounts : chkDownloadUreadOnChange - START");
+        this.m_DebugLog.Write("Yahoo-Pref-Accounts : chkDownloadUreadOnChange - START");
 
         var bUnread = document.getElementById("chkDownloadUnread").checked ? false : true;
         this.m_DebugLog.Write("Yahoo-Pref-Accounts : chkDownloadUreadOnChange -  bUnread "+ bUnread);
 
         var szUserName = this.m_aszUserList[this.m_iIndex].toLowerCase();
         szUserName = szUserName.replace(/\./g,"~");
-        szUserName = szUserName.toLowerCase();
-        this.m_DebugLog.Write("Hotmail-Pref-Accounts : chkDownloadUreadOnChange -  username "+ szUserName);
+        this.m_DebugLog.Write("Yahoo-Pref-Accounts : chkDownloadUreadOnChange -  username "+ szUserName);
 
         //write pref
         var prefAccess = new WebMailCommonPrefAccess();
         prefAccess.Set("bool","yahoo.Account."+szUserName+".bDownloadUnread",bUnread);
+        
+        if (bUnread)
+        {
+            document.getElementById("chkMarkAsRead").checked = true;
+            prefAccess.Set("bool","yahoo.Account."+szUserName+".bMarkAsRead",true);
+            document.getElementById("chkMarkAsRead").setAttribute("disabled", true);
+        }
+        else
+            document.getElementById("chkMarkAsRead").setAttribute("disabled", false);
 
-        this.m_DebugLog.Write("YYahoo-Pref-Accounts : chkDownloadUreadOnChange - END");
+        this.m_DebugLog.Write("Yahoo-Pref-Accounts : chkDownloadUreadOnChange - END");
     },
+
+
+    chkMarkAsReadOnChange : function ()
+    {
+        this.m_DebugLog.Write("Yahoo-Pref-Accounts : chkMarkAsReadOnChange - START");
+
+        var bMarkAsRead = document.getElementById("chkMarkAsRead").checked ? false : true;
+        this.m_DebugLog.Write("Yahoo-Pref-Accounts : chkMarkAsReadOnChange -  bMarkAsRead "+ bMarkAsRead);
+
+        var szUserName = this.m_aszUserList[this.m_iIndex].toLowerCase();
+        szUserName = szUserName.replace(/\./g,"~");
+        this.m_DebugLog.Write("Yahoo-Pref-Accounts : chkMarkAsReadOnChange -  username "+ szUserName);
+
+        var prefAccess = new WebMailCommonPrefAccess();
+        prefAccess.Set("bool","yahoo.Account."+szUserName+".bMarkAsRead",bMarkAsRead);
+
+        this.m_DebugLog.Write("Yahoo-Pref-Accounts : chkMarkAsReadOnChange - END");
+    },
+
+
 
 
     chkJunkMailOnChange : function ()
@@ -605,5 +661,45 @@ var gPrefAccounts =
         prefAccess.Set("bool","yahoo.Account."+szUserName+".bSaveCopy",bSaveItem);
 
         this.m_DebugLog.Write("Yahoo-Pref-Accounts : chkSentItemsOnChange - END");
+    },
+
+/**********************************************************************/
+//Deck Adv Panel
+/**********************************************************************/
+    chkShortIdOnChange : function ()
+    {
+        this.m_DebugLog.Write("Yahoo-Pref-Accounts : chkShortIdOnChange - START");
+
+        var bUnread = document.getElementById("chkShortID").checked ? false : true;
+        this.m_DebugLog.Write("Yahoo-Pref-Accounts : chkShortIdOnChange -  bUnread "+ bUnread);
+
+        var szUserName = this.m_aszUserList[this.m_iIndex].toLowerCase();
+        szUserName = szUserName.replace(/\./g,"~");
+        this.m_DebugLog.Write("Yahoo-Pref-Accounts : chkShortIdOnChange -  username "+ szUserName);
+
+        //write pref
+        var prefAccess = new WebMailCommonPrefAccess();
+        prefAccess.Set("bool","yahoo.Account."+szUserName+".bUseShortID",bUnread);
+        
+
+        this.m_DebugLog.Write("Yahoo-Pref-Accounts : chkShortIdOnChange - END");
+    },
+
+
+    chkReuseSessionOnChange : function ()
+    {
+        this.m_DebugLog.Write("Yahoo-Pref-Accounts : chkReuseSessionOnChange - START");
+
+        var bMarkAsRead = document.getElementById("chkReUseSession").checked ? false : true;
+        this.m_DebugLog.Write("Yahoo-Pref-Accounts : chkReuseSessionOnChange -  bMarkAsRead "+ bMarkAsRead);
+
+        var szUserName = this.m_aszUserList[this.m_iIndex].toLowerCase();
+        szUserName = szUserName.replace(/\./g,"~");
+        this.m_DebugLog.Write("Yahoo-Pref-Accounts : chkReuseSessionOnChange -  username "+ szUserName);
+
+        var prefAccess = new WebMailCommonPrefAccess();
+        prefAccess.Set("bool","yahoo.Account."+szUserName+".bReUseSession",bMarkAsRead);
+
+        this.m_DebugLog.Write("Yahoo-Pref-Accounts : chkReuseSessionOnChange - END");
     },
 }

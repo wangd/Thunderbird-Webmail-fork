@@ -27,145 +27,37 @@ var gYahooStartUp =
             //convert prefs
             var WebMailPrefAccess = new WebMailCommonPrefAccess();
             var oPref = {Value : null};
-            if (!WebMailPrefAccess.Get("bool","yahoo.Account.updated",oPref))
+            if (!WebMailPrefAccess.Get("int","yahoo.version",oPref))
             {
-                //get user name list
+                var bReuseSession = true;
+                if (WebMailPrefAccess.Get("bool","yahoo.bReUseSession",oPref))
+                    bReuseSession = oPref.Value;
+                
+                var bShortId = false;   
+                if (WebMailPrefAccess.Get("bool","yahoo.bUseShortID",oPref))
+                    bShortId = oPref.Value;
+
+                
                 var aszUserList = this.getUserNames();
                 for (var i=0; i<aszUserList.length; i++)
                 {
-                    var szOldUserName = aszUserList[i].replace(/\./g,"_");
-                    this.m_Log.Write("yahoo.js - init - szOldUserName " +szOldUserName);
-                    var szNewUserName = aszUserList[i].replace(/\./g,"~");
-                    this.m_Log.Write("yahoo.js - init - szNewUserName " +szNewUserName);
-
-                    if (WebMailPrefAccess.Get("bool","yahoo.Account."+szOldUserName+".bBeta",oPref))
-                    {
-                        this.m_Log.Write("yahoo.js - init - iMode " + oPref.Value);
-                        WebMailPrefAccess.Set("bool","yahoo.Account."+szNewUserName+".bBeta",oPref.Value)
-                    }
-
-                    oPref.Value = null;
-                    if (WebMailPrefAccess.Get("bool","yahoo.Account."+szOldUserName+".bUseJunkMail",oPref))
-                    {
-                        this.m_Log.Write("yahoo.js - init - bUseJunkMail " + oPref.Value);
-                        WebMailPrefAccess.Set("bool","yahoo.Account."+szNewUserName+".bUseJunkMail",oPref.Value)
-                    }
-
-                    //get unread
-                    oPref.Value = null;
-                    if (WebMailPrefAccess.Get("bool","yahoo.Account."+szOldUserName+".bDownloadUnread",oPref))
-                    {
-                        this.m_Log.Write("yahoo.js - init - bDownloadUnread " + oPref.Value);
-                        WebMailPrefAccess.Set("bool","yahoo.Account."+szNewUserName+".bDownloadUnread",oPref.Value)
-                    }
-
-                    //get folders
-                    oPref.Value = null;
-                    if (WebMailPrefAccess.Get("char","yahoo.Account."+szOldUserName+".szFolders",oPref))
-                    {
-                        this.m_Log.Write("yahoo.js - init - szFolders " + oPref.Value);
-                        WebMailPrefAccess.Set("char","yahoo.Account."+szNewUserName+".szFolders",oPref.Value)
-                    }
-
-                    // save copy
-                    oPref.Value = null;
-                    if (WebMailPrefAccess.Get("bool","yahoo.Account."+szOldUserName+".bSaveCopy",oPref))
-                    {
-                        this.m_Log.Write("yahoo.js - init - bSaveCopy " + oPref.Value);
-                        WebMailPrefAccess.Set("bool","yahoo.Account."+szNewUserName+".bSaveCopy",oPref.Value)
-                    }
-
-                    var aszUserName = szOldUserName.split(/@/);
-                    if (aszUserName[0].search(/_/g)==-1)
-                    {
-                        WebMailPrefAccess.DeleteBranch("yahoo.Account."+szOldUserName+".bBeta");
-                        WebMailPrefAccess.DeleteBranch("yahoo.Account."+szOldUserName+".bUseJunkMail");
-                        WebMailPrefAccess.DeleteBranch("yahoo.Account."+szOldUserName+".bDownloadUnread");
-                        WebMailPrefAccess.DeleteBranch("yahoo.Account."+szOldUserName+".bMarkAsRead");
-                        WebMailPrefAccess.DeleteBranch("yahoo.Account."+szOldUserName+".szFolders");
-                        WebMailPrefAccess.DeleteBranch("yahoo.Account."+szOldUserName+".bSaveCopy");
-                    }
+                    var szUserName = aszUserList[i].replace(/\./g,"~");
+                    this.m_Log.Write("yahoo.js - init - szUserName " +szUserName + 
+                                                        " bShortId " + bShortId +
+                                                   " bReUseSession " + bReuseSession);
+                    
+                    WebMailPrefAccess.Set("bool","yahoo.Account."+szUserName+".bReUseSession",bReuseSession);
+                    WebMailPrefAccess.Set("bool","yahoo.Account."+szUserName+".bUseShortID",bShortId);
                 }
-
-                WebMailPrefAccess.Set("bool","yahoo.Account.updated",true);
+                
+                WebMailPrefAccess.Set("int","yahoo.version",1);
+                
+                //delete unused keys
+                WebMailPrefAccess.DeleteBranch("yahoo.Account.updated");
+                WebMailPrefAccess.DeleteBranch("yahoo.bReUseSession");
+                WebMailPrefAccess.DeleteBranch("yahoo.bUseShortID");
+                delete WebMailPrefAccess;   
             }
-
-
-
-            oPref.Value = null;
-            if (WebMailPrefAccess.Get("int","yahoo.Account.Num",oPref))
-            {
-                //convert to new keys
-                var iNum = oPref.Value;
-                this.m_Log.Write("Yahoo.js : - init - iNum " + iNum);
-
-                for (var i=0; i<iNum; i++)
-                {
-                    oPref.Value = null;
-                    if (WebMailPrefAccess.Get("char","yahoo.Account."+i+".user",oPref))
-                    {
-                        this.m_Log.Write("Yahoo.js : - init - userName " + oPref.Value);
-                        var szUserName =  oPref.Value;
-                        szUserName = szUserName.replace(/\./g,"~");
-                        szUserName = szUserName.toLowerCase();
-
-                        oPref.Value = null;
-                        if (WebMailPrefAccess.Get("bool","yahoo.Account."+i+".bBeta",oPref))
-                        {
-                            this.m_Log.Write("yahoo.js - init - iMode " + oPref.Value);
-                            WebMailPrefAccess.Set("bool","yahoo.Account."+szUserName+".bBeta",oPref.Value)
-                        }
-
-                        oPref.Value = null;
-                        if (WebMailPrefAccess.Get("bool","yahoo.Account."+i+".bUseJunkMail",oPref))
-                        {
-                            this.m_Log.Write("yahoo.js - init - bUseJunkMail " + oPref.Value);
-                            WebMailPrefAccess.Set("bool","yahoo.Account."+szUserName+".bUseJunkMail",oPref.Value)
-                        }
-
-                        //get unread
-                        oPref.Value = null;
-                        if (WebMailPrefAccess.Get("bool","yahoo.Account."+i+".bDownloadUnread",oPref))
-                        {
-                            this.m_Log.Write("yahoo.js - init - bDownloadUnread " + oPref.Value);
-                            WebMailPrefAccess.Set("bool","yahoo.Account."+szUserName+".bDownloadUnread",oPref.Value)
-                        }
-
-                        //get folders
-                        oPref.Value = null;
-                        if (WebMailPrefAccess.Get("char","yahoo.Account."+i+".szFolders",oPref))
-                        {
-                            this.m_Log.Write("yahoo.js - init - szFolders " + oPref.Value);
-                            WebMailPrefAccess.Set("char","yahoo.Account."+szUserName+".szFolders",oPref.Value)
-                        }
-
-                        // save copy
-                        oPref.Value = null;
-                        if (WebMailPrefAccess.Get("bool","yahoo.Account."+i+".bSaveCopy",oPref))
-                        {
-                            this.m_Log.Write("yahoo.js - init - bSaveCopy " + oPref.Value);
-                            WebMailPrefAccess.Set("bool","yahoo.Account."+szUserName+".bSaveCopy",oPref.Value)
-                        }
-
-                        WebMailPrefAccess.DeleteBranch("yahoo.Account."+i+".user");
-                        WebMailPrefAccess.DeleteBranch("yahoo.Account."+i+".bBeta");
-                        WebMailPrefAccess.DeleteBranch("yahoo.Account."+i+".bUseJunkMail");
-                        WebMailPrefAccess.DeleteBranch("yahoo.Account."+i+".bDownloadUnread");
-                        WebMailPrefAccess.DeleteBranch("yahoo.Account."+i+".bMarkAsRead");
-                        WebMailPrefAccess.DeleteBranch("yahoo.Account."+i+".szFolders");
-                        WebMailPrefAccess.DeleteBranch("yahoo.Account."+i+".bSaveCopy");
-                    }
-                }
-                WebMailPrefAccess.DeleteBranch("yahoo.Account.Num");
-                WebMailPrefAccess.Set("bool","yahoo.Account.updated",true);
-            }
-
-            //delete unused keys
-            WebMailPrefAccess.DeleteBranch("yahoo.bDownloadUnread");
-            WebMailPrefAccess.DeleteBranch("yahoo.bSaveCopy");
-            WebMailPrefAccess.DeleteBranch("yahoo.bUseJunkMail");
-            delete WebMailPrefAccess;
-
             this.m_Log.Write("Yahoo.js : YahooStartUP - END ");
         }
         catch(e)

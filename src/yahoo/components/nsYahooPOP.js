@@ -297,7 +297,7 @@ nsYahoo.prototype =
             szUserName = szUserName.toLowerCase();
 
             //do i reuse the session
-            if (WebMailPrefAccess.Get("bool","yahoo.bReUseSession",oPref))
+            if (WebMailPrefAccess.Get("bool","yahoo.Account."+szUserName +"bReUseSession",oPref))
                 oData.bReUseSession = oPref.Value;
 
             //delay processing time delay
@@ -313,7 +313,7 @@ nsYahoo.prototype =
 
             //use short id
             oPref.Value = null;
-            if (WebMailPrefAccess.Get("bool","yahoo.bUseShortID",oPref))
+            if (WebMailPrefAccess.Get("bool","yahoo.Account."+szUserName +".bUseShortID",oPref))
                oData.bUseShortID = oPref.Value;
             this.m_Log.Write("nsYahoo.js - loadPrefs - bUseShortID " + oPref.Value);
 

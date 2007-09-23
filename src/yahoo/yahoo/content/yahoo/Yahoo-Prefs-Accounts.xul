@@ -39,11 +39,12 @@
                 <tabbox  flex="1" id="tabsAccount" onselect="gPrefAccounts.tabSelectionChanged();">
                     <tabs>
                         <tab label="&YahooPref.Tab.Mode.Title;" id ="tabMode"/>
-                        <tab label="&YahooPref.Tab.POP.Title;" id ="tabPOP"/>
+                        <tab label="&YahooPref.Tab.POP.Title;"  id ="tabPOP"/>
                         <tab label="&YahooPref.Tab.SMTP.Title;" id ="tabSMTP"/>
+                        <tab label="&YahooPref.Tab.Adv.Title;"  id ="tabAdv"/>
                     </tabs>
                     <tabpanels flex="1" >
-                        <vbox id="modePanel" class="panel">
+                        <vbox id="modePanel" class="panel" flex="1">
                             <vbox>
                                 <label value="&YahooPref.Mode.Label;" id="labelMode" flex="1"/>
                                 <radiogroup id="radiogroupMode" onclick ="gPrefAccounts.rgModeOnChange();"  class="radio">
@@ -53,12 +54,17 @@
                              </vbox>
                         </vbox>
 
-                        <vbox id="popPanel" class="panel">
+                        <vbox id="popPanel" class="panel" flex="1">
                             <checkbox label="&YahooPref.POP.DownloadUnread.Label;"
                                       accesskey="&YahooPref.POP.DownloadUnread.AccessKey;"
                                       id="chkDownloadUnread"
                                       onclick ="gPrefAccounts.chkDownloadUreadOnChange();"/>
 
+                            <checkbox label="&YahooPref.POP.MarkAsRead.Label;"
+                                      accesskey="&YahooPref.POP.MarkAsRead.AccessKey;"
+                                      id="chkMarkAsRead"
+                                      onclick ="gPrefAccounts.chkMarkAsReadOnChange();"/>
+                                      
                             <checkbox label="&YahooPref.POP.JunkMail.Label;"
                                       accesskey="&YahooPref.POP.JunkMail.AccessKey;"
                                       id="chkJunkMail"
@@ -88,23 +94,36 @@
                             </vbox>
                         </vbox>
 
-                        <vbox id="smptPanel" class="panel">
+                        <vbox id="smptPanel" class="panel" flex="1">
                             <vbox id="vboxSmtpItems">
                                 <checkbox label="&YahooPref.SMTP.SaveSentItems.Label;"
                                           accesskey="&YahooPref.SMTP.SaveSentItems.AccessKey;"
                                           id="chkSentItems"
                                           onclick ="gPrefAccounts.chkSentItemsOnChange();"/>
                             </vbox>
-                            <vbox id="vboxSmtpNA">
-                                <hbox pack="center">
-                                    <image id="imageNA" />
-                                </hbox>
-                                <vbox align="center">
-                                    <label id="labelError"
-                                           flex="1"
-                                           value="&YahooPref.SMTP.NA.Label;"/>
-                                </vbox>
-                            </vbox>
+                        </vbox>
+                        
+                        <vbox id="advPanel" class="panel">
+				            <checkbox label= "&YahooPref.Adv.ShortID.Label;"
+				                      accesskey= "&YahooPref.Adv.ShortID.AccessKey;"
+				                      id="chkShortID"
+				                      onclick ="gPrefAccounts.chkShortIdOnChange();"/>
+				            <vbox id="ShortIDInfo">
+				                <hbox>
+				                    <image id ="iconMessage"/>
+				                </hbox>
+				                <hbox >
+				                    <vbox flex="1" >
+				                        <description style="margin-left: 25px">
+				                            &YahooPref.AdvInfo.Label;
+				                        </description>
+				                    </vbox>
+				                </hbox>
+				            </vbox>
+				            <checkbox label="&YahooPref.Adv.ReUseSession.Label;"
+				                      accesskey="&YahooPref.Adv.ReUseSession.AccessKey;"
+				                      id="chkReUseSession"
+				                      onclick ="gPrefAccounts.chkReuseSessionOnChange();"/>
                         </vbox>
                     </tabpanels>
                 </tabbox>

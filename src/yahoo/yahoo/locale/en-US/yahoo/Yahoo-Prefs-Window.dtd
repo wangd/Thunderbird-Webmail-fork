@@ -1,12 +1,12 @@
 <!ENTITY YahooPref.Window.Title "Yahoo Options">
 <!ENTITY YahooPref.Panel.Accounts.Title "Accounts">
 <!ENTITY YahooPref.Panel.Domains.Title "Domains">
-<!ENTITY YahooPref.Panel.Globals.Title "Globals">
 <!ENTITY YahooPref.Button.Close.Label "Close">
 
 <!ENTITY YahooPref.Tab.Mode.Title "Mode">
 <!ENTITY YahooPref.Tab.POP.Title "POP">
 <!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
+<!ENTITY YahooPref.Tab.Adv.Title "Advanced">
 
 <!ENTITY YahooPref.Mode.Label "Select website the extension will use">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Production Website">
@@ -21,22 +21,22 @@
 <!ENTITY YahooPref.POP.ButtonAdd.AccessKey "A">
 <!ENTITY YahooPref.POP.ButtonRemove.Label "Remove">
 <!ENTITY YahooPref.POP.ButtonRemove.AccessKey "R">
+<!ENTITY YahooPref.POP.MarkAsRead.Label "Mark emails as read on server">
+<!ENTITY YahooPref.POP.MarkAsRead.AccessKey "k">
 
 <!ENTITY YahooPref.SMTP.SaveSentItems.Label "Save copy in sent items.">
 <!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "s">
 
+<!ENTITY YahooPref.Adv.ShortID.Label "Use Short ID">
+<!ENTITY YahooPref.Adv.ShortID.AccessKey "I">
+<!ENTITY YahooPref.Adv.ReUseSession.Label "Reuse http session data.">
+<!ENTITY YahooPref.Adv.ReUseSession.AccessKey "S">
+<!ENTITY YahooPref.AdvInfo.Label "Changing the Short Id option will result in your entire mailbox being downloaded">
+
 <!ENTITY YahooPref.AccountError.Label "No Yahoo Accounts Found">
-<!ENTITY YahooPref.SMTP.NA.Label "No SMTP options for Yahoo BETA">
 
 <!ENTITY YahooPref.Domain.Label "Domains supported by Yahoo extension">
 <!ENTITY YahooPref.Domain.Button.AddDomain.Label "Add...">
 <!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "A">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Remove">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "R">
-
-
-<!ENTITY YahooPref.Globals.ShortID.Label "Use Short ID">
-<!ENTITY YahooPref.Globals.ShortID.AccessKey "I">
-<!ENTITY YahooPref.Globals.ReUseSession.Label "Reuse http session data.">
-<!ENTITY YahooPref.Globals.ReUseSession.AccessKey "S">
-<!ENTITY YahooPref.GlobalsInfo.Label "Changing the Short Id option will result in your entire mailbox being downloaded">
