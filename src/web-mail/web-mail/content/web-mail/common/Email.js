@@ -172,6 +172,7 @@ email.prototype.process = function (oHeaders , oBody)
         var szSubType = oHeaders.getContentType(2);
         this.m_Log.Write("email.js - process - subtype "+ szSubType);
         var szFileName = oHeaders.getContentDisposition(1);
+        if (!szFileName) szFileName = oHeaders.getContentType(4);
         this.m_Log.Write("email.js - process - FileName "+ szFileName);
         var bFile = szFileName ? true : false;
 
