@@ -440,6 +440,12 @@ nsYahooDomains.prototype =
                 return;
             }
 
+            if (this.m_iCount == 0)  //register content_id and extension guid
+            {
+                this.m_DomainManager.registerDomainHandler("@mozilla.org/YahooPOP;1", nsYahooExtGUID);
+                this.m_DomainManager.registerDomainHandler("@mozilla.org/YahooSMTP;1",nsYahooExtGUID);
+            }
+
             var aszDomain = this.m_aszStandardDomains.concat(this.m_aszCustomDomains);
             if (this.m_iCount<aszDomain.length)
             {
@@ -626,6 +632,7 @@ nsYahooDomains.prototype =
                 { 
                     this.m_Log.Write("nsYahooDomains.js - yahoo.domains.version -  not found");
                     prefAccess.Set("int","yahoo.domains.version",this.m_iDomainsVersion);
+                    
                     this.loadStandardData();
                 }
                 else
