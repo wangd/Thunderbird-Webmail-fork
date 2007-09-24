@@ -13,26 +13,38 @@ interface nsIDomainManager : nsISupports
     // 0 = error
     // 1 = ok
 
+    
+    //register domain handler 
+    long registerDomainHandler(in string szContentID, in string szGUID);
+    
     //protocol = pop, imap, smtp
 
     //gets domainhandler id for give domain
-    long getDomainForProtocol(in string Address,in string szProtocol , out string contentID );
+    long getDomainForProtocol(in string Address,in string szProtocol , out string contentID );   
+    long getDomain(in string Address,in string szProtocol , out string contentID, out boolean bDefault);
 
 
     //adds new doamin
     long newDomainForProtocol(in string Address, in string szProtocol, in string contentID);
-
+    long newDomain(in string Address, in string szProtocol, in string contentID, in boolean bDefault);
 
     //removes given domain
     long removeDomainForProtocol(in string szAddrees, in string szProtocol);
 
 
+    //get domains for extension guid
+    long getDomainForExtension(in string szGUID, 
+                               out PRUint32 iCount, 
+                               [array, size_is(iCount)] out nsIDomainData aDomains);
+                               
+                               
     //gets all domains
     long getAllDomainsForProtocol(in string szProtocol,
                                   out PRUint32 count,
                                   [array, size_is(count)] out string Domains);
 
-        //gets all domains
+    
+    //gets all domains
     long getAllDomains(out PRUint32 count,
                        [array, size_is(count)] out nsIDomainData Domains);
 };
