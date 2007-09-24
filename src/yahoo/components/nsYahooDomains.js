@@ -1,7 +1,7 @@
 /*****************************  Globals   *************************************/
 const nsYahooDomainsClassID = Components.ID("{10796650-dbc6-11da-a94d-0800200c9a66}");
 const nsYahooDomainsContactID = "@mozilla.org/YahooDomains;1";
-
+const nsYahooExtGUID = "{d7103710-6112-11d9-9669-0800200c9a66}";
 
 /***********************  UriManager ********************************/
 function nsYahooDomains()
@@ -18,6 +18,7 @@ function nsYahooDomains()
     this.m_bChange = false;
     this.m_bReady = false;
     this.m_iCount = 0;
+    this.m_iDomainsVersion = 1;
 }
 
 nsYahooDomains.prototype =
@@ -590,13 +591,14 @@ nsYahooDomains.prototype =
                 // this is run very early, right after XPCOM is initialized, but before
                 // user profile information is applied. Register ourselves as an observer
                 // for 'profile-after-change' and 'quit-application'.
-                var obsSvc = Components.classes["@mozilla.org/observer-service;1"].
-                                getService(Components.interfaces.nsIObserverService);
+                var obsSvc = Components.classes["@mozilla.org/observer-service;1"]
+                                       .getService(Components.interfaces.nsIObserverService);
                 obsSvc.addObserver(this, "profile-after-change", false);
                 obsSvc.addObserver(this, "quit-application", false);
+                obsSvc.addObserver(this, "em-action-requested", false);
 
                 this.m_scriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-                                        .getService(Components.interfaces.mozIJSSubScriptLoader);
+                                                .getService(Components.interfaces.mozIJSSubScriptLoader);
             break;
 
             case "profile-after-change":
@@ -609,21 +611,58 @@ nsYahooDomains.prototype =
                                           "YahooDomainsLog");
                 try
                 {
-                    this.m_DomainManager = Components.classes["@mozilla.org/DomainManager;1"].
-                                          getService().
-                                           QueryInterface(Components.interfaces.nsIDomainManager);
+                    this.m_DomainManager = Components.classes["@mozilla.org/DomainManager;1"]
+                                                     .getService()
+                                                     .QueryInterface(Components.interfaces.nsIDomainManager);
                 }
                 catch(err)
                 {
                     this.m_Log.Write("nsYahooDomains.js - domainmanager not found");
                 }
 
-                this.loadStandardData();
+                var prefAccess = new WebMailCommonPrefAccess();
+                var oPref = {Value : null};
+                if (!prefAccess.Get("int","yahoo.domains.version",oPref))
+                { 
+                    this.m_Log.Write("nsYahooDomains.js - yahoo.domains.version -  not found");
+                    prefAccess.Set("int","yahoo.domains.version",this.m_iDomainsVersion);
+                    this.loadStandardData();
+                }
+                else
+                {                    
+                    this.m_Log.Write("nsYahooDomains.js - yahoo.domains.version -  found");
+                    if (oPref.Value != this.m_iDomainsVersion)
+                    {
+                        this.m_Log.Write("nsYahooDomains.js - yahoo.domains.version -  old version");
+                        prefAccess.Set("int","yahoo.domains.version",this.m_iDomainsVersion);
+                        this.loadStandardData();
+                    }
+                }
             break;
+
+
+            case "em-action-requested":
+                this.m_Log.Write("nsYahooDomains.js - em-action-requested ");
+                aSubject.QueryInterface(Components.interfaces.nsIUpdateItem);
+                
+                if (aData == "item-uninstalled" && aSubject.id == nsYahooExtGUID)
+                {
+                    this.m_Log.Write("nsYahooDomains.js - Yahoo is being uninstalled ");
+                    var prefAccess = new WebMailCommonPrefAccess();
+                    prefAccess.DeleteBranch("yahoo.domains.version");
+                }
+            break;
+
 
             case "quit-application":
                 this.m_Log.Write("nsYahooDomains.js - quit-application ");
                 if (this.m_bChange) this.saveData();
+                
+                var obsSvc = Components.classes["@mozilla.org/observer-service;1"]
+                                       .getService(Components.interfaces.nsIObserverService);
+                obsSvc.removeObserver(this, "profile-after-change");
+                obsSvc.removeObserver(this, "quit-application");
+                obsSvc.removeObserver(this, "em-action-requested");
             break;
 
             case "app-startup":
@@ -704,7 +743,7 @@ nsYahooDomainsModule.unregisterSelf = function(aCompMgr, aFileSpec, aLocation)
 
     catman.deleteCategoryEntry("xpcom-startup", "Yahoo Domains", true);
     catman.deleteCategoryEntry("app-startup", "Yahoo Domains", true);
-
+    
     aCompMgr = aCompMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
     aCompMgr.unregisterFactoryLocation(nsYahooDomainsClassID, aFileSpec);
 }
