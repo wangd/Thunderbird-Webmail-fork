@@ -446,7 +446,8 @@ nsDomainManager.prototype =
                     var oData = new domainData();
                     oData.iId = wStatement.row["id"];
                     oData.szContentId = wStatement.row["content_id"];
-                    this.m_Log.Write("nsDomainManager : domainHandlerCheck - " + oData.szContentId );                                     
+                    this.m_Log.Write("nsDomainManager : domainHandlerCheck - " + oData.szContentId );  
+                    oData.szGUID = wStatement.row["extension_guid"];                         
                     aDomains.push(oData);
                 }
             }
@@ -471,12 +472,13 @@ nsDomainManager.prototype =
             //update domain handler list
             this.m_dbConn.beginTransaction();
             
-            szSQL = "REPLACE INTO domain_handler (id, content_id, enabled) ";
+            szSQL = "REPLACE INTO domain_handler (id, content_id, enabled, extension_guid) ";
             szSQL+= "VALUES ";
             szSQL+= "(" ;
             szSQL+=     "?1,";
             szSQL+=     "?2,";
-            szSQL+=     "?3";
+            szSQL+=     "?3,";
+            szSQL+=     "?4 ";
             szSQL+= ");";
          
             for (var i =0; i<aDomains.length; i++)
@@ -485,6 +487,7 @@ nsDomainManager.prototype =
                 statement.bindStringParameter(0, aDomains[i].iId);
                 statement.bindStringParameter(1, aDomains[i].szContentId);
                 statement.bindStringParameter(2, aDomains[i].bEnabled);
+                statement.bindStringParameter(3, aDomains[i].szGUID);
                 statement.execute();
             }
             delete aContentID;
@@ -624,7 +627,6 @@ nsDomainManager.prototype =
     
     getDomainForProtocol : function(szAddress, szProtocol , szContentID )
     {   
-        this.m_Log.Write("nsDomainManager.js - getDomainForProtocol -  deprecated ");
         var bDefault = new Object;
         return this.getDomain(szAddress, szProtocol, szContentID, bDefault);
     },
@@ -654,7 +656,7 @@ nsDomainManager.prototype =
             szSQL += "  (SELECT id FROM domain_handler WHERE content_id LIKE ?1),";
             szSQL += "   ?1,";
             szSQL += "   \"true\",";
-            szSQL += "   (SELECT extension_guid FROM domain_handler WHERE content_id LIKE ?1),"
+            szSQL += "   (SELECT extension_guid FROM domain_handler WHERE content_id LIKE ?1)"
             szSQL += ");";
             var statement = this.m_dbConn.createStatement(szSQL);
             statement.bindStringParameter(0, szContentID);
@@ -722,7 +724,6 @@ nsDomainManager.prototype =
     
     newDomainForProtocol : function(szAddress, szProtocol, szContentID)
     {
-        this.m_Log.Write("nsDomainManager.js - newDomainForProtocol -  deprecated ");
         return this.newDomain(szAddress, szProtocol, szContentID, false);
     },
 
@@ -745,6 +746,11 @@ nsDomainManager.prototype =
                         "                 AND domain_handler.extension_guid = ?1 ) <> 0 THEN 1 ELSE 0 " +
                         "END) AS pop, ";
                 szSQL+= "(CASE " +
+                        "     WHEN (SELECT pop_domains.domain " +
+                        "           FROM pop_domains " +
+                        "           WHERE pop_domains.default_domain = \"true\" ) <> 0 THEN 1 ELSE 0 " +
+                        "END) AS pop_default, ";        
+                szSQL+= "(CASE " +
                         "      WHEN (SELECT smtp_domains.domain " +
                         "            FROM smtp_domains, domain_handler" +
                         "            WHERE smtp_domains.domain =view_all_domain.domain " +
@@ -752,6 +758,11 @@ nsDomainManager.prototype =
                         "                  AND smtp_domains.content_id =  domain_handler.content_id " +
                         "                  AND domain_handler.extension_guid = ?1 ) <> 0 THEN 1 ELSE 0 " +
                         "END)  AS smtp, ";
+                szSQL+= "(CASE " +
+                        "     WHEN (SELECT smtp_domains.domain " +
+                        "           FROM smtp_domains " +
+                        "           WHERE smtp_domains.default_domain = \"true\" ) <> 0 THEN 1 ELSE 0 " +
+                        "END) AS smtp_default, ";        
                 szSQL+="(CASE " +
                         "      WHEN (SELECT imap_domains.domain " +
                         "            FROM imap_domains, domain_handler " +
@@ -759,11 +770,17 @@ nsDomainManager.prototype =
                         "                  AND domain_handler.enabled =\"true\" " +
                         "                  AND imap_domains.content_id = domain_handler.content_id " +
                         "                  AND domain_handler.extension_guid = ?1 ) <> 0 THEN 1 ELSE 0 " +
-                        "END) AS imap ";
+                        "END) AS imap, ";
+                szSQL+= "(CASE " +
+                        "     WHEN (SELECT imap_domains.domain " +
+                        "           FROM imap_domains " +
+                        "           WHERE imap_domains.default_domain = \"true\" ) <> 0 THEN 1 ELSE 0 " +
+                        "END) AS imap_default ";        
                 szSQL+="FROM view_all_domain";
 
 
             var statement = this.m_dbConn.createStatement(szSQL);
+            statement.bindStringParameter(0, szGUID);
             var wStatement = Components.classes["@mozilla.org/storage/statement-wrapper;1"]
                                        .createInstance(Components.interfaces.mozIStorageStatementWrapper);
             try
@@ -776,8 +793,11 @@ nsDomainManager.prototype =
 
                     domainData.szDomain = wStatement.row["domain"];
                     domainData.bPOP = wStatement.row["pop"]? true : false;
+                    domainData.bPOPDefault = wStatement.row["pop_default"]? true : false;
                     domainData.bSMTP = wStatement.row["smtp"]? true : false;
+                    domainData.bSMTPDefault = wStatement.row["smtp_default"]? true : false;
                     domainData.bIMAP = wStatement.row["imap"]? true : false;
+                    domainData.bIMAPDefault = wStatement.row["imap_default"]? true : false;   
                     this.m_Log.Write("nsDomainManager : getDomainForExtension - " +domainData.szDomain 
                                                                             + " " + domainData.bPOP 
                                                                             + " " + domainData.bSMTP

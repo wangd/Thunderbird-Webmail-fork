@@ -10,6 +10,9 @@ function nsDomainData()
     this.m_bPOP = false;
     this.m_bSMTP = false;
     this.m_bIMAP = false;
+    this.m_bPOPDefault = false;
+    this.m_bSMTPDefault = false;
+    this.m_bIMAPDefault = false;
 }
 
 nsDomainData.prototype =
@@ -19,12 +22,23 @@ nsDomainData.prototype =
 
     get bPOP() {return this.m_bPOP;},
     set bPOP(pop) {return this.m_bPOP = pop;},
+    
+    get bPOPDefault() {return this.m_bPOPDefault;},
+    set bPOPDefault(bDefault) {return this.m_bPOPDefault = bDefault;},
 
     get bSMTP() {return this.m_bSMTP;},
     set bSMTP(smtp) {return this.m_bSMTP = smtp;},
 
+    get bSMTPDefault() {return this.m_bSMTPDefault;},
+    set bSMTPDefault(bDefault) {return this.m_bSMTPDefault = bDefault;},
+    
     get bIMAP() {return this.m_bIMAP;},
     set bIMAP(imap) {return this.m_bIMAP = imap;},
+    
+    get bIMAPDefault() {return this.m_bIMAPPDefault;},
+    set bIMAPDefault(bDefault) {return this.m_bIMAPDefault = bDefault;},
+    
+
 
 /******************************************************************************/
 /***************** XPCOM  stuff ***********************************************/
