@@ -1,9 +1,8 @@
 var gYahooDomain = 
 {
-    m_DebugLog : new DebugLog("webmail.logging.comms", 
-                              "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
-                              "YahooPrefs"),
-    m_Domains : null,
+    m_DebugLog : new DebugLog("webmail.logging.comms","", "YahooPrefs"),
+    m_DomainManager : null,
+    m_cExtGUID : "{d7103710-6112-11d9-9669-0800200c9a66}",
                                   
     init : function ()
     {
@@ -11,21 +10,19 @@ var gYahooDomain =
         {
             this.m_DebugLog.Write("Yahoo-Prefs-Domains : Init - START");
             
-            this.m_Domains = Components.classes["@mozilla.org/YahooDomains;1"].
-                             getService().
-                             QueryInterface(Components.interfaces.nsIDomains);
-            
-            var aszDomains = {value : null};
+            this.m_DomainManager = Components.classes["@mozilla.org/DomainManager;1"]
+                                             .getService()
+                                             .QueryInterface(Components.interfaces.nsIDomainManager);
+
+            var aDomains = {value : null};
             var iCount = {value : null }; 
-            if (this.m_Domains.getAllDomains(iCount,aszDomains))
+            if (this.m_DomainManager.getDomainForExtension(this.m_cExtGUID,iCount,aDomains))
             {
-                if (aszDomains.value.length > 0)
-                {
-                    aszDomains.value.sort();
-                    
-                    for (var i=0; i<aszDomains.value.length; i++)
+                if (aDomains.value.length > 0)
+                {                    
+                    for (var i=0; i<aDomains.value.length; i++)
                     {
-                        this.domainList(aszDomains.value[i]);
+                        this.domainList(aDomains.value[i].szDomain, aDomains.value[i].bPOPDefault);
                     }
                 }
                 else
@@ -47,9 +44,9 @@ var gYahooDomain =
     },
     
     
-    domainList : function (szDomain)
+    domainList : function (szDomain, bDefault)
     {
-        this.m_DebugLog.Write("Yahoo-Prefs-Domains : domainList - START " +szDomain);
+        this.m_DebugLog.Write("Yahoo-Prefs-Domains : domainList - START " +szDomain + " " + bDefault);
         
         var list = document.getElementById("listDomain");
             
@@ -183,17 +180,30 @@ var gYahooDomain =
             if (oResult.value!=-1)
             {
                 this.m_DebugLog.Write("Yahoo-Prefs-Domains : onAdd oParam.szDomain " + oParam.szDomain);
-                //add item to list
-                if (this.m_Domains.addDomain(oParam.szDomain))
-                {
-                    //remove error message
-                    var listView = document.getElementById("listDomain");  
-                    var item = listView.getItemAtIndex(0);
-                    var szError = item.getAttribute("id");
-                    if (szError.search(/error/i)!=-1)
-                        listView.removeChild(item);    
-                   
-                    this.domainList(oParam.szDomain);
+              
+                var bFound = false
+                var oContentID = new Object();
+                if (this.m_DomainManager.getDomainForProtocol(oParam.szDomain, "POP" , oContentID))
+                {  //domain found
+                   //check contentid
+                   if (oContentID.value == "@mozilla.org/YahooPOP;1") bFound = true;
+                }
+                
+                if (bFound == false)  //not found add
+                {    //add item to list
+                    var bPOP = this.m_DomainManager.newDomainForProtocol(oParam.szDomain, "POP", "@mozilla.org/YahooPOP;1");
+                    var bSMTP = this.m_DomainManager.newDomainForProtocol(oParam.szDomain, "SMTP", "@mozilla.org/YahooSMTP;1");
+                    if (bPOP || bSMTP);
+                    {
+                        //remove error message
+                        var listView = document.getElementById("listDomain");  
+                        var item = listView.getItemAtIndex(0);
+                        var szError = item.getAttribute("id");
+                        if (szError.search(/error/i)!=-1)
+                            listView.removeChild(item);    
+                       
+                        this.domainList(oParam.szDomain);
+                    }
                 }
                 
                 var event = document.createEvent("Events");
@@ -224,13 +234,35 @@ var gYahooDomain =
             var iIndex = listView.selectedIndex;
             this.m_DebugLog.Write("Yahoo-Prefs-Domains : doRemove - iIndex "+iIndex);
             
-            //remove for display
             var item = listView.getItemAtIndex(iIndex);
             var szDomain = item.getAttribute("id");
             this.m_DebugLog.Write("Yahoo-Prefs-Domains : doRemove -  "+szDomain);
             
-            if (this.m_Domains.removeDomain(szDomain))
+            //check for bad chars
+            if ( szDomain.search(/[^a-zA-Z0-9\.]+/i)!=-1 ||
+                 szDomain.search(/\s/)!=-1 ||
+                 szDomain.search(/\./)==-1 ||
+                 szDomain.search(/^\./)!=-1 ||
+                 szDomain.search(/\.$/)!=-1)
             {
+                this.m_Log.Write("nsYahooDomains.js - removeDomain - domain invalid ");
+                return false;
+            }
+            
+            
+            //check domain exists
+            var oContentID = new Object();
+            if (this.m_DomainManager.getDomainForProtocol(szDomain, "POP" , oContentID))
+            {  //domain found
+               //check contentid
+               if (oContentID.value == "@mozilla.org/YahooPOP;1") bFound = true;
+            } 
+            
+            if (bFound) //remove for display
+            { 
+                this.m_DomainManager.removeDomainForProtocol(szDomain, "POP");
+                this.m_DomainManager.removeDomainForProtocol(szDomain, "SMTP");
+    
                 this.m_DebugLog.Write("Yahoo-Prefs-Domains : Removeed -  DB");
                 listView.removeChild(item);
         
