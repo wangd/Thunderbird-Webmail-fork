@@ -892,7 +892,7 @@ nsHotmailIMAP.prototype =
         }
         catch(err){}
         this.m_Log.Write("nsHotmailIMAP.js - processMSG - szFromAddr -" + szFromAddr);   
-        if (szFromAddr) szFrom = szFrom + " <" + szFromAddr +">";
+        if (szFromAddr) szFrom = "\""+szFrom + "\" <" + szFromAddr +">";
 
         var szSubject= "";
         try
