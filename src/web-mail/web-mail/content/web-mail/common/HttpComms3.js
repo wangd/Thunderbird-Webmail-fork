@@ -355,6 +355,9 @@ HttpComms.prototype =
                 HttpRequest.setRequestHeader(oTemp.szName, oTemp.szValue, oTemp.bOverRide);
             }
 
+            if (this.m_szMethod == "GET")
+                HttpRequest.setRequestHeader("Cache-control","max-age=0",false);
+
             HttpRequest.requestMethod = this.m_szMethod;
 
             /***********/
