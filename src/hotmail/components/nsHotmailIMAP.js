@@ -69,6 +69,12 @@ function nsHotmailIMAP()
             this.m_iTime=10;
 
         oPref.Value = null;
+        if (WebMailPrefAccess.Get("int","hotmail.iProcessAmount",oPref))
+            this.m_iProcessAmount = oPref.Value;
+        else
+            this.m_iProcessAmount = 25;
+
+        oPref.Value = null;
         if (WebMailPrefAccess.Get("int","hotmail.iFolderBiff",oPref))
             this.m_iFolderBiff = oPref.Value;
         else
@@ -1294,8 +1300,13 @@ nsHotmailIMAP.prototype =
 
             if (this.m_aRawData.length>0)
             {
+              var iCount = 0;
+              do 
+                {
+                  iCount++;
                 var Item = this.m_aRawData.shift();
                 this.processMSGItem(Item);
+                } while (iCount < this.m_iProcessAmount & this.m_aRawData.length>0)
             }
             else
             {
