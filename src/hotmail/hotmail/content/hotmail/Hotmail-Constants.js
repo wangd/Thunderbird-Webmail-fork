@@ -108,6 +108,7 @@ const patternHotmailEmailSender = /<td .*?><a.*?><div class="truncateFrom">(.*?)
 const patternHotmailEmailSubject = /<td.*?>.*?<a href=.*?>(.*?)<\/a>.*?<\/td>/i;
 const patternHotmailEmailDate = /<td.*?>(.*?)<\/td>/i;
 const patternHotmailEMailID =/ReadMessageID=(.*?)&/i;
+const patternHotmailSentEMailID =/DraftID=(.*?)&/i;
 const patternHotmailFolderID = /FolderID=(.*?)$/i;
 const patternHotmailFromBeta = /<select id="fromAddressDropdown".*?name="(.*?)"[\s\S]*<option value="(.*?)" selected>.*?<\/option>/im;
 const patternHotmailMT = /mt=(.*?);/i;

@@ -562,7 +562,7 @@ HotmailScreenRipperBETA.prototype =
         if (this.m_bDownloadUnread)
         {
             bRead = (szMSGData.search(patternHotmailEmailRead)!=-1) ? true : false;
-            this.m_Log.Write("HotmailWebDav.js - processMSG - bRead -" + bRead);
+            this.m_Log.Write("Hotmail-SR-BETA.js - processMSG - bRead -" + bRead);
         }
 
         if (bRead)
@@ -571,7 +571,7 @@ HotmailScreenRipperBETA.prototype =
             var oEscape = new HTMLescape();
             
             var aTableData = szMSGData.match(patternHotmailMailBoxTableData);
-            this.m_Log.Write("HotmailWebDav.js - processMSG - aTableData -" + aTableData);
+            this.m_Log.Write("Hotmail-SR-BETA..js - processMSG - aTableData -" + aTableData);
 
             var szEmailURL = aTableData[4].match(patternHotmailEMailURL)[1];
             var szPath = this.m_szLocationURI + szEmailURL;
@@ -798,8 +798,12 @@ HotmailScreenRipperBETA.prototype =
                 do{
                     var szEmailURL = this.m_aMsgDataStore[this.m_iHandleCount].szMSGUri;
                     this.m_Log.Write("Hotmail-SR-BETA - getMessageIDs - Email URL : " +szEmailURL);
-
-                    var szEmailID = szEmailURL.match(patternHotmailEMailID)[1];
+                    
+                    var szEmailID = null; 
+                    if (szEmailURL.search(patternHotmailEMailID)!=-1)   
+                        szEmailID = szEmailURL.match(patternHotmailEMailID)[1];
+                    else
+                        szEmailID = szEmailURL.match(patternHotmailSentEMailID)[1];
 
                     this.serverComms((this.m_iHandleCount+1) + " " + szEmailID + "\r\n");
                     this.m_iHandleCount++;
@@ -820,7 +824,7 @@ HotmailScreenRipperBETA.prototype =
         catch(err)
         {
             this.m_Timer.cancel();
-            this.m_Log.DebugDump("HotmailWebDav.js: processIDS : Exception : "
+            this.m_Log.DebugDump("Hotmail-SR-BETA..js: processIDS : Exception : "
                                               + err.name
                                               + ".\nError message: "
                                               + err.message+ "\n"
@@ -884,7 +888,13 @@ HotmailScreenRipperBETA.prototype =
             //get msg id
             var oMSG = this.m_aMsgDataStore[lID-1];
             this.m_szMsgURI = oMSG.szMSGUri;
-            var szMSGID = this.m_szMsgURI.match(patternHotmailEMailID)[1];
+            
+            var szMSGID = null;
+            if (this.m_szMsgURI.search(patternHotmailEMailID)!=-1)   
+                szMSGID = this.m_szMsgURI.match(patternHotmailEMailID)[1];
+            else
+                szMSGID = this.m_szMsgURI.match(patternHotmailSentEMailID)[1];
+                
             var szURI = this.m_szLocationURI + "GetMessageSource.aspx?msgid=" + szMSGID;
             this.m_Log.Write("Hotmail-SR-BETA - getMessage - msg uri" + szURI);
 
@@ -930,7 +940,12 @@ HotmailScreenRipperBETA.prototype =
             if (httpChannel.responseStatus != 200)
                 if (mainObject.m_iDownloadRetry > 0 && mainObject.m_iStage == 0)
                 {
-                    var szMSGID = mainObject.m_szMsgURI.match(patternHotmailEMailID)[1];
+                    var szMSGID = null;
+                    if (mainObject.m_szMsgURI.search(patternHotmailEMailID)!=-1)   
+                        szMSGID = mainObject.m_szMsgURI.match(patternHotmailEMailID)[1];
+                    else
+                        szMSGID = mainObject.m_szMsgURI.match(patternHotmailSentEMailID)[1];
+
                     var szURI = mainObject.m_szLocationURI + "GetMessageSource.aspx?msgid=" + szMSGID;
                     mainObject.m_Log.Write("Hotmail-SR-BETA - getMessage - msg uri" + szURI); 
                     mainObject.m_HttpComms.setURI(szURI);
@@ -1035,7 +1050,12 @@ HotmailScreenRipperBETA.prototype =
             this.m_Log.Write("Hotmail-SR-BETA - deleteMessage - id " + lID );
 
             var oMSG = this.m_aMsgDataStore[lID-1];
-            var szID = oMSG.szMSGUri.match(patternHotmailEMailID)[1]; //msg id
+
+            var szID = null;
+            if (oMSG.szMSGUri.search(patternHotmailEMailID)!=-1)   
+                szID = oMSG.szMSGUri.match(patternHotmailEMailID)[1];
+            else
+                szID = oMSG.szMSGUri.match(patternHotmailSentEMailID)[1];
             this.m_Log.Write("Hotmail-SR-BETA - deleteMessage - MSGid " + szID );
 
             this.m_HttpComms.setContentType("multipart/form-data");
