@@ -18,7 +18,8 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
         <em:aboutURL>chrome://lycos/content/Lycos-About.xul</em:aboutURL>
         <em:optionsURL>chrome://lycos/content/Lycos-Prefs.xul</em:optionsURL>
         <em:updateURL>http://webmail.mozdev.org/update/lycosUpdate.rdf</em:updateURL>
-
+        <em:updateKey>MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDaztkR8L8IYFQ/n09pCOQ2+6AtSn6yf6VZrTT9AF770ITvZZUh0jfvl1VYliNayVfDTuYL1t87ThWk7Vz1cVk9ulQLxrCQ79gIt4baCL5dz77IlNUgKuUl14z4N7yzGKmCCvQBzZF2R7kAcxHMeFPuELWndNcgCCvFNrEeB57HZwIDAQAB</em:updateKey>
+       
         <em:contributor>MatrixIsAllOver by BabelZilla.org (it-IT)|0</em:contributor>
         <em:contributor>Guillaume Perrin (fr-FR)|2</em:contributor>
         <em:contributor>Matthieu Durand (fr-FR)|2</em:contributor>

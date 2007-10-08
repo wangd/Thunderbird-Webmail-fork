@@ -18,7 +18,8 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
         <em:aboutURL>chrome://aol/content/AOL-About.xul</em:aboutURL>
         <em:optionsURL>chrome://aol/content/AOL-Prefs.xul</em:optionsURL>
         <em:updateURL>http://webmail.mozdev.org/update/aolUpdate.rdf</em:updateURL>
-
+        <em:updateKey>MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDa5h//MMDsS3ysh/uMATFcTwZhMwBxoEvLOqaEa1FYmG2jUZVslMQQXCccZNTUWFV2KpZUSQBzquSNcOlM1Gt22fRQU0SELqAC5yv9Qfly76kXT4uMxV24VkSGNL342WEZ8JYSbYI1vcgQImQQRKRao8m25c/6dlrjeUIIoQUA6QIDAQAB</em:updateKey>
+        
         <em:contributor>Dagobert_78 (fr-FR)|2</em:contributor>
         <em:contributor>Akilles (fi-FI)|14</em:contributor>
         <em:contributor>MatrixIsAllOver by BabelZilla.org (it-IT)|0</em:contributor>

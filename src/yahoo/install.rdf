@@ -6,7 +6,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
     <Description about="urn:mozilla:install-manifest">
 
         <em:id>{d7103710-6112-11d9-9669-0800200c9a66}</em:id>
-        <em:version>1.3.0</em:version>
+        <em:version>1.3.1a2</em:version>
         <em:type>2</em:type>
 
         <em:name>WebMail - Yahoo</em:name>
@@ -18,6 +18,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
         <em:aboutURL>chrome://yahoo/content/Yahoo-About.xul</em:aboutURL>
         <em:optionsURL>chrome://yahoo/content/Yahoo-Prefs-Window.xul</em:optionsURL>
         <em:updateURL>http://webmail.mozdev.org/update/yahooUpdate.rdf</em:updateURL>
+        <em:updateKey>MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDT9+wBYAN8h34WuGiH6M23mOeahGmk+4QwElxrDJ2ootOKqoaMmqvg8IUoXbniCKZkTFtNkWaOXV6qZZY0MrHbcPYeVnxoEBguKinpVSQbqBKd+B4BQPyOtH4rm8AN23SAhGt9MMMeO8ukq7N8PKVgBsPNhdyx2w5rt9vZkH2U2QIDAQAB</em:updateKey>
 
         <em:contributor>MatrixIsAllOver by BabelZilla.org (it-IT)|0</em:contributor>
         <em:contributor>Guillaume Perrin et Matthieu Durand (fr-FR)|2</em:contributor>
