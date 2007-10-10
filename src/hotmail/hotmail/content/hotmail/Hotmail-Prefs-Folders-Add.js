@@ -54,7 +54,7 @@ var gHotmailFoldersAdd =
             document.getElementById("labelFolderName").click();
         }
         else if (szValue.search(/^inbox$/i)!=-1 || szValue.search(/^trash$/i)!=-1 ||
-                 szValue.search(/^sent$/i)!=-1 || szValue.search(/^draft$/i)!=-1)
+                                                            szValue.search(/^draft$/i)!=-1)
         {
             this.m_DebugLog.Write("Hotmail-Prefs-Folders-Add : folder check failed");
     
