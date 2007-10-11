@@ -1,7 +1,5 @@
 const kYahooConstants = true;
 
-const UserAgent = "1.5.7 on Mac OS X — Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-us) Gecko/20060516 Firefox/1.5.7";
-
 const patternYahooSecure = /<a href="(.*?https.*?login.*?)".*?>/;
 const patternYahooLoginForm = /<form.*?name="login_form".*?>[\S\s]*?<\/form>/gm;
 const patternYahooAction = /<form.*?action="(.*?)".*?>/;

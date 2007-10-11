@@ -32,6 +32,8 @@ function YahooPOP(oResponseStream, oLog, oPrefs)
 
         //comms
         this.m_HttpComms = new HttpComms(this.m_Log);
+        this.m_HttpComms.setUserAgentOverride(true);
+        
         this.m_szLoginUserName = null;
         this.m_szYahooMail = null;
         this.m_szHomeURI = null;
@@ -138,8 +140,6 @@ YahooPOP.prototype =
                 oCookies.removeCookie(this.m_szUserName);
             }
 
-
-            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             this.m_HttpComms.setRequestMethod("GET");
             var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);
             if (!bResult) throw new Error("httpConnection returned false");
@@ -172,8 +172,6 @@ YahooPOP.prototype =
             mainObject.m_Log.Write("YahooPOP.js - loginOnloadHandler - status :" +httpChannel.responseStatus );
             if (httpChannel.responseStatus != 200)
                 throw new Error("return status " + httpChannel.responseStatus);
-
-            mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
 
             //page code
             switch (mainObject.m_iStage)
@@ -361,7 +359,6 @@ YahooPOP.prototype =
         var szMailboxURI = this.m_aszFolderURLList.shift();
         this.m_Log.Write("YahooPOP.js - getNumMessages - mail box url " + szMailboxURI);
 
-        this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
         this.m_HttpComms.setURI(szMailboxURI);
         this.m_HttpComms.setRequestMethod("GET");
         var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this);
@@ -387,8 +384,6 @@ YahooPOP.prototype =
             mainObject.m_Log.Write("YahooPOP.js - mailBoxOnloadHandler - Mailbox :" + httpChannel.responseStatus);
             if (httpChannel.responseStatus != 200 )
                 throw new Error("error status " + httpChannel.responseStatus);
-
-            mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             
             //get data for deleting
             if (mainObject.m_aDeleteData.length==0)
@@ -778,7 +773,6 @@ YahooPOP.prototype =
 
             //get msg from yahoo
             this.m_HttpComms.setURI(szDest);
-            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             this.m_HttpComms.setRequestMethod("GET");
             var bResult = this.m_HttpComms.send(this.headerOnloadHandler, this);
             if (!bResult) throw new Error("httpConnection returned false");
@@ -873,7 +867,6 @@ YahooPOP.prototype =
             this.m_iStage = 0;
 
             //get msg from yahoo
-            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             this.m_HttpComms.setURI(szDest);
             this.m_HttpComms.setRequestMethod("GET");
             var bResult = this.m_HttpComms.send(this.emailOnloadHandler, this);
@@ -906,8 +899,6 @@ YahooPOP.prototype =
             mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - msg :" + httpChannel.responseStatus);
             if (httpChannel.responseStatus != 200)
                 throw new Error("error status " + httpChannel.responseStatus);
-
-            mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             
             var szUri = httpChannel.URI.spec;
             mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - uri : " + szUri);
@@ -965,6 +956,7 @@ YahooPOP.prototype =
 
                     //remove quoted printable header
                     szResponse = szResponse.replace(/content-transfer-Encoding:.*?quoted-printable.*?/i,"");
+                    szResponse = szResponse.replace(/content-transfer-Encoding:.*?base64.*?/i,"");
                     var oHeaders = new headers(szResponse);
                     mainObject.m_szMessage += oHeaders.getAllHeaders();
                     mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - headers - "+mainObject.m_szMessage);
@@ -1079,7 +1071,6 @@ YahooPOP.prototype =
             this.m_HttpComms.addValuePair("Mid", oMSGData.szMSGUri.match(PatternYahooID)[1]);
 
             //send request
-            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             this.m_HttpComms.setURI(szPath);
             this.m_HttpComms.setRequestMethod("POST");
             var bResult = this.m_HttpComms.send(this.deleteMessageOnloadHandler, this);

@@ -32,6 +32,8 @@ function YahooPOPBETA(oResponseStream, oLog, oPrefs)
 
         //comms
         this.m_HttpComms = new HttpComms(this.m_Log);
+        this.m_HttpComms.setUserAgentOverride(true);
+        
         this.m_szLoginUserName = null;
         this.m_aLoginForm = null;
         this.m_bReEntry = false;
@@ -104,7 +106,6 @@ YahooPOPBETA.prototype =
             this.m_Log.Write("YahooPOPBETA.js - logIN - default " +this.m_szYahooMail);
             this.m_iStage = 0;
             this.m_HttpComms.setURI(this.m_szYahooMail);
-            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             this.m_HttpComms.setUserName(this.m_szUserName);
 
             //get session data
@@ -170,8 +171,6 @@ YahooPOPBETA.prototype =
             mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - status :" +httpChannel.responseStatus );
             if (httpChannel.responseStatus != 200)
                 throw new Error("return status " + httpChannel.responseStatus);
-
-            mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
 
             if (szResponse.search(patternYahooLoginForm)!=-1)
             {
@@ -456,7 +455,6 @@ YahooPOPBETA.prototype =
 
         var szURI = this.m_szLocationURI + "/ws/mail/v1/soap?appid=YahooMailRC&m=ListMessages&wssid="+this.m_szWssid;
         this.m_Log.Write("YahooPOPBETA.js - mailBox - szURI " + szURI);
-        this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
         this.m_HttpComms.setURI(szURI);
         this.m_HttpComms.setRequestMethod("POST");
         this.m_HttpComms.setContentType("application/xml");
@@ -485,7 +483,6 @@ YahooPOPBETA.prototype =
             if (httpChannel.responseStatus != 200 )
                 throw new Error("error status " + httpChannel.responseStatus);
 
-            mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             var aszResponses = szResponse.match(kPatternInfo);
             mainObject.m_Log.Write("YahooPOPBETA.js - mailBoxOnloadHandler - mailbox - " + aszResponses);
             if (aszResponses)
@@ -928,7 +925,6 @@ YahooPOPBETA.prototype =
             szURI += "&pid=HEADER";
             this.m_Log.Write("YahooPOPBETA.js - getMessage - szURI " + szURI);
             
-            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             this.m_HttpComms.setURI(szURI);
             this.m_HttpComms.setRequestMethod("GET");
 
@@ -962,8 +958,7 @@ YahooPOPBETA.prototype =
             mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - msg :" + httpChannel.responseStatus);
             if (httpChannel.responseStatus != 200)
                 throw new Error("error status " + httpChannel.responseStatus);
-
-            mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
+                
             var szUri = httpChannel.URI.spec;
             mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - uri : " + szUri);
 
@@ -1108,7 +1103,6 @@ YahooPOPBETA.prototype =
             var szURI = this.m_szLocationURI + "/ws/mail/v1/soap?&appid=YahooMailRC&";
             szURI += "m=MoveMessages&src="+oMSGData.szFolder+"&dst=Trash&count=1&wssid="+this.m_szWssid;
             this.m_Log.Write("YahooPOPBETA.js - deleteMessage - szURI " +szURI);
-            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             this.m_HttpComms.setURI(szURI);
             this.m_HttpComms.setRequestMethod("POST");
             this.m_HttpComms.setContentType("application/xml");
