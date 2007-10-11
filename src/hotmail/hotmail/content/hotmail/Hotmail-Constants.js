@@ -26,12 +26,6 @@ const patternHotmailMsgCount = /<D:visiblecount>(.*?)<\/D:visiblecount>/;
 const patternHotmailTrash = /<hm:deleteditems>(.*?)<\/hm:deleteditems>/;
 const patternHotmailFolderName = /folders\/(.*?)\//i;
 
-
-const UserAgent = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.3) Gecko/20070515 Firefox/2.0.0.4";
-// "1.5.0 on Mac OS X Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.0.4) Gecko/20061213 Firefox/1.0.2";
-// "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.4) Gecko/20070515 Firefox/2.0.0.4";
-// "Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.4) Gecko/20070515 Firefox/2.0.0.4";
-
 /************************Screen Rippper constants******************************/
 const patternHotmailLoginURL = /srf_uPost=['|"](.*?)["|']/i;
 const patternHotmailSRBlob = /srf_sRBlob=['|"](.*?)["|']/i;

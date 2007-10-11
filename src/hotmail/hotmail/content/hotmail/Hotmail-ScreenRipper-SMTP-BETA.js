@@ -19,6 +19,8 @@ function HotmailSMTPScreenRipperBETA(oResponseStream, oLog, oPrefData)
         this.m_szPassWord =null;
         this.m_oResponseStream = oResponseStream;
         this.m_HttpComms = new HttpComms(this.m_Log);
+        this.m_HttpComms.setUserAgentOverride(true);
+                    
         this.m_szLocationURI = null;
         this.m_szHomeURI = null;
         this.m_szComposer = null;
@@ -75,8 +77,6 @@ HotmailSMTPScreenRipperBETA.prototype =
             this.m_HttpComms.setUserName(this.m_szUserName);
             this.m_iStage= 0;
             this.m_HttpComms.setURI("http://mail.live.com");
-
-            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
 
             //get session data
             if (this.m_bReUseSession)
@@ -142,8 +142,6 @@ HotmailSMTPScreenRipperBETA.prototype =
             //if this fails we've gone somewhere new
             if (httpChannel.responseStatus != 200 )
                 throw new Error("return status " + httpChannel.responseStatus);
-
-            mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
 
             //check for java refresh
             var aRefresh = szResponse.match(patternHotmailJSRefresh);
@@ -327,7 +325,6 @@ HotmailSMTPScreenRipperBETA.prototype =
             this.m_aszTo = aszTo;
             this.m_szFrom = szFrom;
 
-            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             this.m_iStage=0;
             this.m_HttpComms.setURI(this.m_szComposer);
             this.m_HttpComms.setRequestMethod("GET");
@@ -369,12 +366,8 @@ HotmailSMTPScreenRipperBETA.prototype =
             if (szResponse.search(/GlobalError.aspx/i)!=-1)
                 throw new Error("Error parsing page");
 
-
-            mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
-
             if (mainObject.m_Email.attachments.length>0 && !mainObject.m_bAttHandled)
                 mainObject.m_iStage = 2;
-
 
             //page code
             switch (mainObject.m_iStage)

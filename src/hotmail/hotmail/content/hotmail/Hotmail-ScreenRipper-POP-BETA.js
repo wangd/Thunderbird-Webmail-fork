@@ -18,6 +18,8 @@ function HotmailScreenRipperBETA(oResponseStream, oLog, oPrefData)
         this.m_szPassWord = null;
         this.m_oResponseStream = oResponseStream;
         this.m_HttpComms = new HttpComms(this.m_Log);
+        this.m_HttpComms.setUserAgentOverride(true);
+        
         this.m_szLocationURI = null;
         this.m_szFolderURL = null;
         this.m_aMsgDataStore = new Array();
@@ -90,7 +92,6 @@ HotmailScreenRipperBETA.prototype =
             //get hotmail.com webpage
             this.m_iStage= 0;
             this.m_HttpComms.setURI("http://mail.live.com");
-            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
 
             //get session data
             if (this.m_bReUseSession)
@@ -157,8 +158,6 @@ HotmailScreenRipperBETA.prototype =
             //if this fails we've gone somewhere new
             if (httpChannel.responseStatus != 200 )
                 throw new Error("return status " + httpChannel.responseStatus);
-
-            mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
 
             //check for java refresh
             var aRefresh = szResponse.match(patternHotmailJSRefresh);
@@ -418,7 +417,6 @@ HotmailScreenRipperBETA.prototype =
         this.m_szFolderURL = oFolder.szURI;
         this.m_Log.Write("Hotmail-SR-BETA - getNumMessages - mail box "+this.m_szFolderName + "  url " + oFolder.szURI);
         this.m_HttpComms.setURI(oFolder.szURI);
-        this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
         this.m_HttpComms.setRequestMethod("GET");
 
         var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this);
@@ -440,8 +438,6 @@ HotmailScreenRipperBETA.prototype =
             //check status should be 200.
             if (httpChannel.responseStatus != 200 )
                 throw new Error("error status " + httpChannel.responseStatus);
-
-            mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
 
             if (szResponse.search(patternHotmailInboxContent)==-1)
                 throw new Error("Error Parsing Web Page");
@@ -902,8 +898,6 @@ HotmailScreenRipperBETA.prototype =
             this.m_iStage = 0;
             this.m_iDownloadRetry = 3;
 
-            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
-
             //get msg from hotmail
             this.m_HttpComms.setURI(szURI);
             this.m_HttpComms.setRequestMethod("GET");
@@ -949,8 +943,6 @@ HotmailScreenRipperBETA.prototype =
                     var szURI = mainObject.m_szLocationURI + "GetMessageSource.aspx?msgid=" + szMSGID;
                     mainObject.m_Log.Write("Hotmail-SR-BETA - getMessage - msg uri" + szURI); 
                     mainObject.m_HttpComms.setURI(szURI);
-                                     
-                    mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
                     mainObject.m_HttpComms.setRequestMethod("GET");
     
                     var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);
@@ -1065,7 +1057,6 @@ HotmailScreenRipperBETA.prototype =
             this.m_Log.Write("Hotmail-SR-BETA - deleteMessage - szURL " + szURL );
 
             this.m_HttpComms.setURI(szURL);
-            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             this.m_HttpComms.addValuePair("__VIEWSTATE",oMSG.szStatView);
             this.m_HttpComms.addValuePair("mt",this.m_szMT);
             this.m_HttpComms.addValuePair("query","");

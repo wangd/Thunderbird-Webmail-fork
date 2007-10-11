@@ -17,6 +17,8 @@ function HotmailSMTPScreenRipper(oResponseStream, oLog, oPrefData)
         this.m_szPassWord =null;
         this.m_oResponseStream = oResponseStream;
         this.m_HttpComms = new HttpComms(this.m_Log);
+        this.m_HttpComms.setUserAgentOverride(true);
+        
         this.m_szUM = null;
         this.m_szLocationURI = null;
         this.m_szHomeURI = null;
@@ -71,7 +73,6 @@ HotmailSMTPScreenRipper.prototype =
             if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
 
             this.m_HttpComms.setUserName(this.m_szUserName);
-            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             this.m_iStage= 0;
             this.m_HttpComms.setURI("http://mail.live.com");
 
@@ -141,8 +142,6 @@ HotmailSMTPScreenRipper.prototype =
             //if this fails we've gone somewhere new
             if (httpChannel.responseStatus != 200 )
                 throw new Error("return status " + httpChannel.responseStatus);
-
-            mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);   
             
             var aRefresh = szResponse.match(patternHotmailJavaRefresh);
             if (!aRefresh)
@@ -296,7 +295,6 @@ HotmailSMTPScreenRipper.prototype =
             var szUri = this.m_szLocationURI + this.m_szComposer + this.m_szUM;
             this.m_HttpComms.setURI(szUri);
             this.m_HttpComms.setRequestMethod("GET");
-            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             var bResult = this.m_HttpComms.send(this.composerOnloadHandler, this);
             if (!bResult) throw new Error("httpConnection returned false");
 
@@ -334,8 +332,6 @@ HotmailSMTPScreenRipper.prototype =
 
             if (mainObject.m_Email.attachments.length>0 && !mainObject.m_bAttHandled)
                 mainObject.m_iStage = 2;
-
-            mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             
             //page code
             switch (mainObject.m_iStage)

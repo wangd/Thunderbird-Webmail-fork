@@ -20,6 +20,8 @@ function HotmailScreenRipper(oResponseStream, oLog, oPrefData)
         this.m_szPassWord = null;
         this.m_oResponseStream = oResponseStream;
         this.m_HttpComms = new HttpComms(this.m_Log);
+        this.m_HttpComms.setUserAgentOverride(true);
+        
         this.m_szLogOutURI = null;
         this.m_szLocationURI = null;
         this.m_aMsgDataStore = new Array();
@@ -96,7 +98,7 @@ HotmailScreenRipper.prototype =
             if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
 
             this.m_HttpComms.setUserName(this.m_szUserName);
-            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
+            
             //get hotmail.com webpage
             this.m_iStage= 0;
             this.m_HttpComms.setURI("http://mail.live.com");
@@ -165,8 +167,6 @@ HotmailScreenRipper.prototype =
             //if this fails we've gone somewhere new
             if (httpChannel.responseStatus != 200 )
                 throw new Error("return status " + httpChannel.responseStatus);
-
-            mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             
             var aRefresh = szResponse.match(patternHotmailJavaRefresh);
             if (!aRefresh)
@@ -341,7 +341,6 @@ HotmailScreenRipper.prototype =
         this.m_iStage = 0;
         this.m_HttpComms.setURI(this.m_szFolderURI);
         this.m_HttpComms.setRequestMethod("GET");
-        this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
         var bResult = this.m_HttpComms.send(this.mailBoxOnloadHandler, this);
         if (!bResult) throw new Error("httpConnection returned false");
         this.m_bStat = bState;
@@ -366,8 +365,6 @@ HotmailScreenRipper.prototype =
 
             // get folder uri's
             if (mainObject.bNeedFolderUri) mainObject.processFolder(szResponse)
-
-            mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             
             //get pages uri
             if (mainObject.m_aszPageURLS.length==0)
@@ -882,7 +879,6 @@ HotmailScreenRipper.prototype =
             //get msg from hotmail
             this.m_HttpComms.setURI(szMsgURI);
             this.m_HttpComms.setRequestMethod("GET");
-            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);   
             var bResult = this.m_HttpComms.send(this.emailOnloadHandler, this);
             if (!bResult) throw new Error("httpConnection returned false");
 
@@ -914,8 +910,6 @@ HotmailScreenRipper.prototype =
             //check status should be 200.
             if (httpChannel.responseStatus != 200)
                 throw new Error("error status " + httpChannel.responseStatus);
-
-            mainObject.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             
             switch (mainObject.m_iStage)
             {
@@ -1040,7 +1034,6 @@ HotmailScreenRipper.prototype =
             var szPath = this.m_szLocationURI + "/cgi-bin/HoTMaiL" ;
             this.m_Log.Write("Hotmail-SR - deleteMessage - szPath " + szPath);
             
-            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             this.m_HttpComms.setRequestMethod("POST");
             this.m_HttpComms.setURI(szPath);
             this.m_HttpComms.addValuePair("curmbox",szFolderID);
@@ -1113,7 +1106,6 @@ HotmailScreenRipper.prototype =
 
             this.m_HttpComms.setURI(szMailboxURI);
             this.m_HttpComms.setRequestMethod("GET");
-            this.m_HttpComms.addRequestHeader("User-Agent", UserAgent, true);
             var bResult = this.m_HttpComms.send(this.logoutOnloadHandler, this);
             if (!bResult) throw new Error("httpConnection returned false");
 
