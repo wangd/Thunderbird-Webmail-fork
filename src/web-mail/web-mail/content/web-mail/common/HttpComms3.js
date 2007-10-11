@@ -6,7 +6,8 @@ function HttpComms(oLog)
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/commsData.js");
-
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
+        
         if (oLog)
         {
             this.m_Log = oLog;
@@ -43,7 +44,15 @@ function HttpComms(oLog)
         this.m_URI = null;
         this.m_szMethod = null;
         this.m_szContentType = "application/x-www-form-urlencoded";
-
+        this.m_bOverRideUserAgent = false;
+        
+        var prefs = new WebMailCommonPrefAccess();
+        var oPref = {Value : null};
+        this.m_szUserAgent = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.3) Gecko/20070815 Firefox/2.0.0.6";
+        prefs.Get("char","hotmail.Account."+szUserName+".szFolders",oPref);
+        this.m_Log.Write("nsHotmail.js - getPrefs - szFolders " + oPref.Value);
+        if (oPref.Value) this.m_szUserAgent =oPref.Value
+                 
         this.m_CallBack = null;
         this.m_Parent = null;
 
@@ -114,6 +123,17 @@ HttpComms.prototype =
     setPassword : function (szPassword)
     {
         this.m_szPassword = szPassword;
+    },
+
+
+    setUserAgentOverride : function (bOverride)
+    {
+        this.m_bOverRideUserAgent = bOverride;  
+    },
+
+    setUserAgent : function (szUseragent)
+    {
+        this.m_szUserAgent = szUseragent;  
     },
 
 
@@ -346,6 +366,12 @@ HttpComms.prototype =
             }
 
             //other headers
+            if (this.m_bOverRideUserAgent)
+            {
+                this.m_Log.Write("HttpComms3.js - send - setting UserAgent " + this.m_szUserAgent);
+                HttpRequest.setRequestHeader("User-Agent", this.m_szUserAgent, true);
+            }
+            
             for (i=0; i<this.m_aHeaders.length; i++)
             {
                 var oTemp = this.m_aHeaders[i];
