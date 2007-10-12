@@ -49,8 +49,8 @@ function HttpComms(oLog)
         var prefs = new WebMailCommonPrefAccess();
         var oPref = {Value : null};
         this.m_szUserAgent = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.3) Gecko/20070815 Firefox/2.0.0.6";
-        prefs.Get("char","hotmail.Account."+szUserName+".szFolders",oPref);
-        this.m_Log.Write("nsHotmail.js - getPrefs - szFolders " + oPref.Value);
+        prefs.Get("char","webmail.UserAgent",oPref);
+        this.m_Log.Write("HttpComms3.js - useragent " + oPref.Value);
         if (oPref.Value) this.m_szUserAgent =oPref.Value
                  
         this.m_CallBack = null;
