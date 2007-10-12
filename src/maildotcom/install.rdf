@@ -18,7 +18,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
         <em:aboutURL>chrome://maildotcom/content/MailDotCom-About.xul</em:aboutURL>
         <em:optionsURL>chrome://maildotcom/content/MailDotCom-Prefs.xul</em:optionsURL>
         <em:updateURL>http://webmail.mozdev.org/update/maildotcomUpdate.rdf</em:updateURL>
-        <em:updateKey>MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDAQ3efjg43osd9Rdg4vxN97hxUm3vfY8lkw9L2qPMewDakmk1z/UOkfyvGkkhwdzgB1R10fJr+3cBeA02xGnpahiXVp2uNQNGrBhTmhluTX3U+bTZpRqmba1VhW/UovuUgcVwHN5m3KHnBj+qOGI2LCGtau515n+7MpOVG4zrg8wIDAQAB<em:updateKey>
+        <em:updateKey>MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDAQ3efjg43osd9Rdg4vxN97hxUm3vfY8lkw9L2qPMewDakmk1z/UOkfyvGkkhwdzgB1R10fJr+3cBeA02xGnpahiXVp2uNQNGrBhTmhluTX3U+bTZpRqmba1VhW/UovuUgcVwHN5m3KHnBj+qOGI2LCGtau515n+7MpOVG4zrg8wIDAQAB</em:updateKey>
 
         <em:contributor>MatrixIsAllOver by BabelZilla.org (it-IT)|0</em:contributor>
         <em:contributor>Guillaume Perrin (fr-FR)|2</em:contributor>
