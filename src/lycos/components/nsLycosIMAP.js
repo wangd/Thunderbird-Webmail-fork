@@ -1056,7 +1056,7 @@ nsLycosIMAP.prototype =
             //send select ok message back to TB
             var szSelectResponse= "* " +  oMSGCount.value + " EXISTS\r\n";
             szSelectResponse+= "* " + oUnreadCount.value + " RECENT\r\n";
-            szSelectResponse+= "* " + oExpungeCount.value + " EXPUNGE\r\n";
+          //  szSelectResponse+= "* " + oExpungeCount.value + " EXPUNGE\r\n";
             szSelectResponse+= this.m_iTag +" OK NOOP COMPLETE\r\n";
 
             this.serverComms(szSelectResponse);
