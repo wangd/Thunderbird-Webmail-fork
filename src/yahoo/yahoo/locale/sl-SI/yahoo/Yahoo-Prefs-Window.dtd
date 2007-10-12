@@ -1,34 +1,35 @@
-<!ENTITY YahooPref.Window.Title "MoÅ¾nosti Yahoo">
-<!ENTITY YahooPref.Panel.Accounts.Title "RaÄ�uni">
+<!ENTITY YahooPref.Window.Title "Možnosti Yahoo">
+<!ENTITY YahooPref.Panel.Accounts.Title "Računi">
 <!ENTITY YahooPref.Panel.Domains.Title "Domene">
-<!ENTITY YahooPref.Panel.Globals.Title "Globalno">
-<!ENTITY YahooPref.Button.Close.Label "Close">
-<!ENTITY YahooPref.Tab.Mode.Title "NaÄ�in">
+<!ENTITY YahooPref.Button.Close.Label "Zapri">
+<!ENTITY YahooPref.Tab.Mode.Title "Način">
 <!ENTITY YahooPref.Tab.POP.Title "POP">
 <!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
-<!ENTITY YahooPref.Mode.Label "Izberite spletno mesto, ki ga bo uporabljala razÅ¡iritev">
+<!ENTITY YahooPref.Tab.Adv.Title "Napredno">
+<!ENTITY YahooPref.Mode.Label "Izberite spletno mesto, ki ga bo uporabljala razširitev">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Produkcijsko spletno mesto">
 <!ENTITY YahooPref.Mode.Beta.Label "Spletno mesto BETA">
-<!ENTITY YahooPref.POP.DownloadUnread.Label "Prenesi le neprebrano poÅ¡to">
+<!ENTITY YahooPref.POP.DownloadUnread.Label "Prenesi le neprebrano pošto">
 <!ENTITY YahooPref.POP.DownloadUnread.AccessKey "n">
-<!ENTITY YahooPref.POP.JunkMail.Label "Prenesi neÅ¾eleno poÅ¡to">
-<!ENTITY YahooPref.POP.JunkMail.AccessKey "Å¾">
+<!ENTITY YahooPref.POP.JunkMail.Label "Prenesi neželeno pošto">
+<!ENTITY YahooPref.POP.JunkMail.AccessKey "ž">
 <!ENTITY YahooPref.POP.Folders.Label "Prenesi mape">
 <!ENTITY YahooPref.POP.ButtonAdd.Label "Dodaj ...">
 <!ENTITY YahooPref.POP.ButtonAdd.AccessKey "D">
 <!ENTITY YahooPref.POP.ButtonRemove.Label "Odstrani">
 <!ENTITY YahooPref.POP.ButtonRemove.AccessKey "O">
+<!ENTITY YahooPref.POP.MarkAsRead.Label "Označi pošto na strežniku kot prebrano">
+<!ENTITY YahooPref.POP.MarkAsRead.AccessKey "č">
 <!ENTITY YahooPref.SMTP.SaveSentItems.Label "Shrani kopijo med poslano.">
 <!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "S">
-<!ENTITY YahooPref.AccountError.Label "Ni najdenih raÄ�unov Yahoo">
-<!ENTITY YahooPref.SMTP.NA.Label "Ni moÅ¾nosti SMPT za Yahoo BETA">
-<!ENTITY YahooPref.Domain.Label "Domene, ki jih podpira razÅ¡iritev Yahoo">
+<!ENTITY YahooPref.Adv.ShortID.Label "Uporabi kratki ID">
+<!ENTITY YahooPref.Adv.ShortID.AccessKey "I">
+<!ENTITY YahooPref.Adv.ReUseSession.Label "Ponovno uporabi podatke seje http.">
+<!ENTITY YahooPref.Adv.ReUseSession.AccessKey "s">
+<!ENTITY YahooPref.AdvInfo.Label "S spreminjanjem možnosti Kratki ID boste povzročili prenos vsebine svojega poštnega predala v celoti">
+<!ENTITY YahooPref.AccountError.Label "Ni najdenih računov Yahoo">
+<!ENTITY YahooPref.Domain.Label "Domene, ki jih podpira razširitev Yahoo">
 <!ENTITY YahooPref.Domain.Button.AddDomain.Label "Dodaj ...">
 <!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "D">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Odstrani">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "O">
-<!ENTITY YahooPref.Globals.ShortID.Label "Uporabi kratki ID">
-<!ENTITY YahooPref.Globals.ShortID.AccessKey "I">
-<!ENTITY YahooPref.Globals.ReUseSession.Label "Ponovno uporabi podatke seje.">
-<!ENTITY YahooPref.Globals.ReUseSession.AccessKey "S">
-<!ENTITY YahooPref.GlobalsInfo.Label "Sprememba nastavitve za kratki ID povzroÄ�i prenos celotne poÅ¡tne mape na raÄ�unalnik">

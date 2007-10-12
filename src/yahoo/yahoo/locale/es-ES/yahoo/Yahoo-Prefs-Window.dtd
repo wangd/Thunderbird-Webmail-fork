@@ -1,11 +1,11 @@
-<!ENTITY YahooPref.Window.Title "Opciones Yahoo">
+<!ENTITY YahooPref.Window.Title "Yahoo - Opciones">
 <!ENTITY YahooPref.Panel.Accounts.Title "Cuentas">
 <!ENTITY YahooPref.Panel.Domains.Title "Dominios">
-<!ENTITY YahooPref.Panel.Globals.Title "Globales">
 <!ENTITY YahooPref.Button.Close.Label "Cerrar">
 <!ENTITY YahooPref.Tab.Mode.Title "Modo">
 <!ENTITY YahooPref.Tab.POP.Title "POP">
 <!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
+<!ENTITY YahooPref.Tab.Adv.Title "Avanzado">
 <!ENTITY YahooPref.Mode.Label "Seleccione la página que usará la extensión">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Página web actual">
 <!ENTITY YahooPref.Mode.Beta.Label "Página web BETA">
@@ -18,17 +18,18 @@
 <!ENTITY YahooPref.POP.ButtonAdd.AccessKey "A">
 <!ENTITY YahooPref.POP.ButtonRemove.Label "Borrar">
 <!ENTITY YahooPref.POP.ButtonRemove.AccessKey "B">
+<!ENTITY YahooPref.POP.MarkAsRead.Label "Marcar los correos como leídos en el servidor">
+<!ENTITY YahooPref.POP.MarkAsRead.AccessKey "M">
 <!ENTITY YahooPref.SMTP.SaveSentItems.Label "Guardar una copia en la carpeta enviados">
 <!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "G">
+<!ENTITY YahooPref.Adv.ShortID.Label "Usar identificador corto">
+<!ENTITY YahooPref.Adv.ShortID.AccessKey "i">
+<!ENTITY YahooPref.Adv.ReUseSession.Label "Reutilizar los datos de la sesión http">
+<!ENTITY YahooPref.Adv.ReUseSession.AccessKey "R">
+<!ENTITY YahooPref.AdvInfo.Label "Cambiar la opción del identificador corto hará que se vuelvan a descargar todos sus mensajes">
 <!ENTITY YahooPref.AccountError.Label "No se han encontrado cuentas yahoo">
-<!ENTITY YahooPref.SMTP.NA.Label "No SMPT options for Yahoo BETA">
 <!ENTITY YahooPref.Domain.Label "Dominios soportados por la extensión">
 <!ENTITY YahooPref.Domain.Button.AddDomain.Label "Añadir...">
 <!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "A">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Borrar">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "B">
-<!ENTITY YahooPref.Globals.ShortID.Label "Usar ID abreviado">
-<!ENTITY YahooPref.Globals.ShortID.AccessKey "I">
-<!ENTITY YahooPref.Globals.ReUseSession.Label "Reutilizar datos de la sesión http.">
-<!ENTITY YahooPref.Globals.ReUseSession.AccessKey "S">
-<!ENTITY YahooPref.GlobalsInfo.Label "Cambiar la opción de ID abreviado puede originar que se descargen todos sus mensajes">

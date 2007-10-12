@@ -1,11 +1,11 @@
 <!ENTITY YahooPref.Window.Title "Options de Yahoo">
 <!ENTITY YahooPref.Panel.Accounts.Title "Comptes">
 <!ENTITY YahooPref.Panel.Domains.Title "Domaines">
-<!ENTITY YahooPref.Panel.Globals.Title "Globalités">
 <!ENTITY YahooPref.Button.Close.Label "Fermer">
 <!ENTITY YahooPref.Tab.Mode.Title "Mode">
 <!ENTITY YahooPref.Tab.POP.Title "POP">
 <!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
+<!ENTITY YahooPref.Tab.Adv.Title "Avancé">
 <!ENTITY YahooPref.Mode.Label "Sélectionner le site Web, que l&apos;extension va utiliser">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Site Web de production">
 <!ENTITY YahooPref.Mode.Beta.Label "Site Web BETA">
@@ -18,17 +18,18 @@
 <!ENTITY YahooPref.POP.ButtonAdd.AccessKey "A">
 <!ENTITY YahooPref.POP.ButtonRemove.Label "Enlever">
 <!ENTITY YahooPref.POP.ButtonRemove.AccessKey "E">
+<!ENTITY YahooPref.POP.MarkAsRead.Label "Marquer comme lus les mails sur le serveur">
+<!ENTITY YahooPref.POP.MarkAsRead.AccessKey "q">
 <!ENTITY YahooPref.SMTP.SaveSentItems.Label "Garder une copie dans la boîte d&apos;envoi">
 <!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "d">
+<!ENTITY YahooPref.Adv.ShortID.Label "Utiliser une ID courte">
+<!ENTITY YahooPref.Adv.ShortID.AccessKey "c">
+<!ENTITY YahooPref.Adv.ReUseSession.Label "Réutiliser les données de la session http">
+<!ENTITY YahooPref.Adv.ReUseSession.AccessKey "l">
+<!ENTITY YahooPref.AdvInfo.Label "Activer l&apos;option &apos;ID courte&apos; retéléchargera entièrement votre boîte de courrier">
 <!ENTITY YahooPref.AccountError.Label "Aucun compte Yahoo trouvé">
-<!ENTITY YahooPref.SMTP.NA.Label "Aucune option SMTP pour Yahoo BETA">
 <!ENTITY YahooPref.Domain.Label "Domaines acceptés par l&apos;extension Yahoo">
 <!ENTITY YahooPref.Domain.Button.AddDomain.Label "Ajouter ...">
 <!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "A">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Enlever">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "E">
-<!ENTITY YahooPref.Globals.ShortID.Label "Utiliser une ID courte">
-<!ENTITY YahooPref.Globals.ShortID.AccessKey "I">
-<!ENTITY YahooPref.Globals.ReUseSession.Label "Réutiliser les données d&apos;une session HTTP">
-<!ENTITY YahooPref.Globals.ReUseSession.AccessKey "s">
-<!ENTITY YahooPref.GlobalsInfo.Label "Changer l&apos;option avec l&apos;ID courte provoquera le téléchargement de votre boîte aux lettres entièrement">

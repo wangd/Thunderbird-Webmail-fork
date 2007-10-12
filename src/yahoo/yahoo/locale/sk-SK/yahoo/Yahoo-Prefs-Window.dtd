@@ -1,11 +1,11 @@
 <!ENTITY YahooPref.Window.Title "Možnosti komponentu Yahoo">
 <!ENTITY YahooPref.Panel.Accounts.Title "Účty">
 <!ENTITY YahooPref.Panel.Domains.Title "Domény">
-<!ENTITY YahooPref.Panel.Globals.Title "Všeobecné">
 <!ENTITY YahooPref.Button.Close.Label "Zavrieť">
 <!ENTITY YahooPref.Tab.Mode.Title "Režim">
 <!ENTITY YahooPref.Tab.POP.Title "POP">
 <!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
+<!ENTITY YahooPref.Tab.Adv.Title "Pokročilé">
 <!ENTITY YahooPref.Mode.Label "Vyberte webovú stránku, ktorú má rozšírenie používať">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Webová stránka služby">
 <!ENTITY YahooPref.Mode.Beta.Label "Webová stránka (BETA verzia)">
@@ -18,17 +18,18 @@
 <!ENTITY YahooPref.POP.ButtonAdd.AccessKey "P">
 <!ENTITY YahooPref.POP.ButtonRemove.Label "Odstrániť">
 <!ENTITY YahooPref.POP.ButtonRemove.AccessKey "d">
+<!ENTITY YahooPref.POP.MarkAsRead.Label "Označiť e-maily na serveri ako prečítané">
+<!ENTITY YahooPref.POP.MarkAsRead.AccessKey "r">
 <!ENTITY YahooPref.SMTP.SaveSentItems.Label "Ukladať kópie v odoslaných položkách">
 <!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "U">
+<!ENTITY YahooPref.Adv.ShortID.Label "Použiť Skrátené ID">
+<!ENTITY YahooPref.Adv.ShortID.AccessKey "s">
+<!ENTITY YahooPref.Adv.ReUseSession.Label "Znovu použiť údaje http relácie.">
+<!ENTITY YahooPref.Adv.ReUseSession.AccessKey "n">
+<!ENTITY YahooPref.AdvInfo.Label "Zmena možnosti Skráteného ID spôsobí stiahnutie celého obsahu schránky">
 <!ENTITY YahooPref.AccountError.Label "Neboli nájdené žiadne účty Yahoo">
-<!ENTITY YahooPref.SMTP.NA.Label "Pre Yahoo BETA nie sú dostupné žiadne možnosti pre SMTP">
 <!ENTITY YahooPref.Domain.Label "Domény podporované rozšírením Yahoo">
 <!ENTITY YahooPref.Domain.Button.AddDomain.Label "Pridať...">
 <!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "P">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Odstrániť">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "s">
-<!ENTITY YahooPref.Globals.ShortID.Label "Použiť Krátke ID">
-<!ENTITY YahooPref.Globals.ShortID.AccessKey "I">
-<!ENTITY YahooPref.Globals.ReUseSession.Label "Znovu použiť http dáta relácie">
-<!ENTITY YahooPref.Globals.ReUseSession.AccessKey "t">
-<!ENTITY YahooPref.GlobalsInfo.Label "Zmena možnosti Krátke ID spôsobí stiahnutie celého obsahu schránky.">

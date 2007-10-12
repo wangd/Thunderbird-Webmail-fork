@@ -1,11 +1,11 @@
 <!ENTITY YahooPref.Window.Title "Yahoo nustatymai">
 <!ENTITY YahooPref.Panel.Accounts.Title "Paskyros">
 <!ENTITY YahooPref.Panel.Domains.Title "Domenai">
-<!ENTITY YahooPref.Panel.Globals.Title "Bendra">
 <!ENTITY YahooPref.Button.Close.Label "Užverti">
 <!ENTITY YahooPref.Tab.Mode.Title "Režimas">
 <!ENTITY YahooPref.Tab.POP.Title "POP">
 <!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
+<!ENTITY YahooPref.Tab.Adv.Title "Išsamiau">
 <!ENTITY YahooPref.Mode.Label "Pasirinkite svetainę, kurią naudos priedas">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Produkcijos svetainė">
 <!ENTITY YahooPref.Mode.Beta.Label "BETA svetainė">
@@ -18,17 +18,18 @@
 <!ENTITY YahooPref.POP.ButtonAdd.AccessKey "P">
 <!ENTITY YahooPref.POP.ButtonRemove.Label "Pašalinti">
 <!ENTITY YahooPref.POP.ButtonRemove.AccessKey "P">
+<!ENTITY YahooPref.POP.MarkAsRead.Label "Serveryje pažymėti laiškus kaip perskaitytus">
+<!ENTITY YahooPref.POP.MarkAsRead.AccessKey "s">
 <!ENTITY YahooPref.SMTP.SaveSentItems.Label "Saugoti kopiją išsiųstų laiškų aplanke">
 <!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "k">
+<!ENTITY YahooPref.Adv.ShortID.Label "Naudoti trumpąjį ID">
+<!ENTITY YahooPref.Adv.ShortID.AccessKey "I">
+<!ENTITY YahooPref.Adv.ReUseSession.Label "Pakartotinai panaudoti HTTP sesijų duomenis.">
+<!ENTITY YahooPref.Adv.ReUseSession.AccessKey "H">
+<!ENTITY YahooPref.AdvInfo.Label "Pakeitus trumpojo ID pasirinktį bus parsiųsta visa pašto dėžutė">
 <!ENTITY YahooPref.AccountError.Label "Nerasta jokių Yahoo paskyrų">
-<!ENTITY YahooPref.SMTP.NA.Label "Jokių SMTP nustatymų skirtų Yahoo BETA">
 <!ENTITY YahooPref.Domain.Label "Domenai palaikomi Yahoo priedo">
 <!ENTITY YahooPref.Domain.Button.AddDomain.Label "Pridėti...">
 <!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "P">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Pašalinti">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "P">
-<!ENTITY YahooPref.Globals.ShortID.Label "Naudoti trumpajį ID">
-<!ENTITY YahooPref.Globals.ShortID.AccessKey "I">
-<!ENTITY YahooPref.Globals.ReUseSession.Label "Pakartotinai panaudoti HTTP sesijos duomenis.">
-<!ENTITY YahooPref.Globals.ReUseSession.AccessKey "H">
-<!ENTITY YahooPref.GlobalsInfo.Label "Pakeitus Trumpojo ID pasirinktį, bus atsiųsta visa pašto dėžutė.">

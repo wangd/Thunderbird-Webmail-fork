@@ -1,11 +1,11 @@
 <!ENTITY YahooPref.Window.Title "Yahoo-innstillinger">
 <!ENTITY YahooPref.Panel.Accounts.Title "Kontoer">
 <!ENTITY YahooPref.Panel.Domains.Title "Domener">
-<!ENTITY YahooPref.Panel.Globals.Title "Globaler">
 <!ENTITY YahooPref.Button.Close.Label "Close">
 <!ENTITY YahooPref.Tab.Mode.Title "Modus">
 <!ENTITY YahooPref.Tab.POP.Title "POP">
 <!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
+<!ENTITY YahooPref.Tab.Adv.Title "Avansert">
 <!ENTITY YahooPref.Mode.Label "Velg nettside som utvidelsen vil bruke">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Produksjonsnettside">
 <!ENTITY YahooPref.Mode.Beta.Label "BETA-nettside">
@@ -18,17 +18,18 @@
 <!ENTITY YahooPref.POP.ButtonAdd.AccessKey "A">
 <!ENTITY YahooPref.POP.ButtonRemove.Label "Fjern">
 <!ENTITY YahooPref.POP.ButtonRemove.AccessKey "R">
+<!ENTITY YahooPref.POP.MarkAsRead.Label "Vis e-post som lest på serveren">
+<!ENTITY YahooPref.POP.MarkAsRead.AccessKey "k">
 <!ENTITY YahooPref.SMTP.SaveSentItems.Label "Lagre kopi i sendte objekter">
 <!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "s">
+<!ENTITY YahooPref.Adv.ShortID.Label "Bruk Short ID">
+<!ENTITY YahooPref.Adv.ShortID.AccessKey "I">
+<!ENTITY YahooPref.Adv.ReUseSession.Label "Bruk http data fra tidligere besøk.">
+<!ENTITY YahooPref.Adv.ReUseSession.AccessKey "S">
+<!ENTITY YahooPref.AdvInfo.Label "Endringer av Short ID-innstillingene vil føre til at hele din postboks vil bli lastet ned">
 <!ENTITY YahooPref.AccountError.Label "Ingen Yahoo-kontoer funnet">
-<!ENTITY YahooPref.SMTP.NA.Label "Ingen SMTP-innstillinger for Yahoo BETA">
 <!ENTITY YahooPref.Domain.Label "Domener støttet av Yahoo-utvidelsen">
 <!ENTITY YahooPref.Domain.Button.AddDomain.Label "Legg til...">
 <!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "A">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Fjern">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "R">
-<!ENTITY YahooPref.Globals.ShortID.Label "Bruk kort-ID">
-<!ENTITY YahooPref.Globals.ShortID.AccessKey "I">
-<!ENTITY YahooPref.Globals.ReUseSession.Label "Gjenbruk http-sesjon-data">
-<!ENTITY YahooPref.Globals.ReUseSession.AccessKey "S">
-<!ENTITY YahooPref.GlobalsInfo.Label "Å bytte kort-ID-innstillingen vil bety at din fulle innboks blir lastet ned">
