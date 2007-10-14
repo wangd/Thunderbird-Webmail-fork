@@ -51,8 +51,6 @@ var gServersPane =
     },
 
 
-
-
     close : function ()
     {
         try
@@ -74,132 +72,75 @@ var gServersPane =
     },
 
 
+    //value : -1 = ERROR (RED); 0 = Stopped (GREY); 1 = WAITING (AMBER)2 = Running (GREEN)
+    updateGUI : function (oServer, btnStart, btnStop, imgStatus, txtStatus)
+    {
+        try
+        {   
+            this.m_DebugLog.Write("Webmail-Prefs-Servers : updateGUI - START");
+            
+            var iValue = -1;
+            this.m_DebugLog.Write("Webmail-Prefs-Servers : updateGUI - getting pop status");
+            if (oServer)
+            {
+                iValue = oServer.GetStatus();
+                this.m_DebugLog.Write("Webmail-Prefs-Servers : updateGUI - GetStatus()" + iValue);
+            }
 
-//value : -1 = ERROR (RED); 0 = Stopped (GREY); 1 = WAITING (AMBER)2 = Running (GREEN)
+            if (iValue == -1 ||iValue == 0)  //error -  stop
+            {
+                document.getElementById(btnStart).setAttribute("imageID",2); //enable start
+                document.getElementById(btnStop).setAttribute("imageID",-1); //disable stop
+                document.getElementById(btnStop).setAttribute("disabled","true");
+                document.getElementById(btnStart).setAttribute("disabled","false");
+            }
+            else if (iValue == 1)   //waiting
+            {
+                document.getElementById(btnStart).setAttribute("imageID",-2); //disable start
+                document.getElementById(btnStart).setAttribute("disabled","true");
+                document.getElementById(btnStop).setAttribute("disabled","true");
+                document.getElementById(btnStop).setAttribute("imageID",-1); //disable stop
+            }
+            else if (iValue == 2)   //running
+            {
+                document.getElementById(btnStart).setAttribute("imageID",-2); //disable start
+                document.getElementById(btnStart).setAttribute("disabled","true");
+                document.getElementById(btnStop).setAttribute("disabled","false");
+                document.getElementById(btnStop).setAttribute("imageID",1); //enable stop
+            }
+
+            document.getElementById(imgStatus).setAttribute("value",iValue); //set pop status colour
+            document.getElementById(txtStatus).value =this.StatusText(iValue); //set status text
+            
+            this.m_DebugLog.Write("Webmail-Prefs-Servers : updateGUI - END"); 
+        }
+        catch(e)
+        {
+            this.m_DebugLog.DebugDump("Webmail-Prefs-Servers : Exception in updateGUI : "
+                                      + e.name +
+                                      ".\nError message: "
+                                      + e.message + "\n" +
+                                      e.lineNumber);
+        }
+    },
+
+
+
     updateStatus : function ()
     {
         try
         {
             this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - START");
 
-            //pop status
-            var iPOPvalue = -1;
-            this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - getting pop status");
-            if (this.m_POPServer)
-            {
-                iPOPvalue = this.m_POPServer.GetStatus();
-                this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - this.m_POPServer.GetStatus()" + iPOPvalue);
-            }
-            else
-            {
-                this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - this.m_POPServer == null");
-            }
-
-
-            if (iPOPvalue == -1 ||iPOPvalue == 0)  //error -  stop
-            {
-                document.getElementById("btnPOPStart").setAttribute("imageID",2); //enable start
-                document.getElementById("btnPOPStop").setAttribute("imageID",-1); //disable stop
-                document.getElementById("btnPOPStop").setAttribute("disabled","true");
-                document.getElementById("btnPOPStart").setAttribute("disabled","false");
-            }
-            else if (iPOPvalue == 1)   //waiting
-            {
-                document.getElementById("btnPOPStart").setAttribute("imageID",-2); //disable start
-                document.getElementById("btnPOPStart").setAttribute("disabled","true");
-                document.getElementById("btnPOPStop").setAttribute("disabled","true");
-                document.getElementById("btnPOPStop").setAttribute("imageID",-1); //disable stop
-            }
-            else if (iPOPvalue == 2)   //running
-            {
-                document.getElementById("btnPOPStart").setAttribute("imageID",-2); //disable start
-                document.getElementById("btnPOPStart").setAttribute("disabled","true");
-                document.getElementById("btnPOPStop").setAttribute("disabled","false");
-                document.getElementById("btnPOPStop").setAttribute("imageID",1); //enable stop
-            }
-
-            document.getElementById("imgPopStatus").setAttribute("value",iPOPvalue); //set pop status colour
-            document.getElementById("txtPopStatus").value =this.StatusText(iPOPvalue); //set status text
-
+            //pop
+            this.updateGUI(this.m_POPServer, "btnPOPStart", "btnPOPStop", "imgPopStatus", "txtPopStatus");
+            
             //SMTP
-            var iSMTPvalue = -1;
-            this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - getting smtp status");
-            if (this.m_SMTPServer)
-            {
-                iSMTPvalue = this.m_SMTPServer.GetStatus();
-                this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - this.m_SMTPServer.GetStatus()" + iSMTPvalue);
-            }
-            else
-            {
-                this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - this.m_SMTPServer == null");
-            }
-
-            if (iSMTPvalue == -1 ||iSMTPvalue == 0)  //error -  stop
-            {
-                document.getElementById("btnSMTPStart").setAttribute("imageID",2); //enable start
-                document.getElementById("btnSMTPStop").setAttribute("imageID",-1); //disable stop
-                document.getElementById("btnSMTPStop").setAttribute("disabled","true");
-                document.getElementById("btnSMTPStart").setAttribute("disabled","false");
-            }
-            else if (iSMTPvalue == 1)   //waiting
-            {
-                document.getElementById("btnSMTPStart").setAttribute("imageID",-2); //disable start
-                document.getElementById("btnSMTPStart").setAttribute("disabled","true");
-                document.getElementById("btnSMTPStop").setAttribute("disabled","true");
-                document.getElementById("btnSMTPStop").setAttribute("imageID",-1); //disable stop
-            }
-            else if (iSMTPvalue == 2)   //running
-            {
-                document.getElementById("btnSMTPStart").setAttribute("imageID",-2); //disable start
-                document.getElementById("btnSMTPStart").setAttribute("disabled","true");
-                document.getElementById("btnSMTPStop").setAttribute("disabled","false");
-                document.getElementById("btnSMTPStop").setAttribute("imageID",1); //enable stop
-            }
-
-
-            document.getElementById("imgSMTPStatus").setAttribute("value",iSMTPvalue); //set SMTP status colour
-            document.getElementById("txtSMTPStatus").value = this.StatusText(iSMTPvalue); //set status text
-
-
+            this.updateGUI(this.m_SMTPServer, "btnSMTPStart", "btnSMTPStop", "imgSMTPStatus", "txtSMTPStatus");
+            
             //IMAP
-            var iIMAPvalue = -1;
-            this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - getting IMAP status");
-            if (this.m_IMAPServer)
-            {
-                iIMAPvalue = this.m_IMAPServer.GetStatus();
-                this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - this.m_IMAPServer.GetStatus()" + iIMAPvalue);
-            }
-            else
-            {
-                this.m_DebugLog.Write("Webmail-Prefs-Servers : updataStatus - this.m_IMAPServer == null");
-            }
-
-
-            if (iIMAPvalue == -1 ||iIMAPvalue == 0)  //error -  stop
-            {
-                document.getElementById("btnIMAPStart").setAttribute("imageID",2); //enable start
-                document.getElementById("btnIMAPStop").setAttribute("imageID",-1); //disable stop
-                document.getElementById("btnIMAPStop").setAttribute("disabled","true");
-                document.getElementById("btnIMAPStart").setAttribute("disabled","false");
-            }
-            else if (iIMAPvalue == 1)   //waiting
-            {
-                document.getElementById("btnIMAPStart").setAttribute("imageID",-2); //disable start
-                document.getElementById("btnIMAPStart").setAttribute("disabled","true");
-                document.getElementById("btnIMAPStop").setAttribute("disabled","true");
-                document.getElementById("btnIMAPStop").setAttribute("imageID",-1); //disable stop
-            }
-            else if (iIMAPvalue == 2)   //running
-            {
-                document.getElementById("btnIMAPStart").setAttribute("imageID",-2); //disable start
-                document.getElementById("btnIMAPStart").setAttribute("disabled","true");
-                document.getElementById("btnIMAPStop").setAttribute("disabled","false");
-                document.getElementById("btnIMAPStop").setAttribute("imageID",1); //enable stop
-            }
-
-            document.getElementById("imgIMAPStatus").setAttribute("value",iIMAPvalue); //set pop status colour
-            document.getElementById("txtIMAPStatus").value = this.StatusText(iIMAPvalue); //set status text
-
+            this.updateGUI(this.m_IMAPServer, "btnIMAPStart", "btnIMAPStop", "imgIMAPStatus", "txtIMAPStatus");
+            
             //check port number
             var iServerPort= this.m_POPServer.GetPort();
             var iPrefPort =  document.getElementById("txtPopPort").value;
@@ -248,7 +189,6 @@ var gServersPane =
                                       e.lineNumber);
         }
     },
-
 
 
     StatusText : function (iValue)

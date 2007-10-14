@@ -510,7 +510,7 @@ var gWebMailStatusBar =
     {
         try
         {
-            this.m_Log.Write("WebmailAccountManager.js - register - START");
+            this.m_Log.Write("Webmail.js - register - START");
 
             var prefService = Components.classes["@mozilla.org/preferences-service;1"]
                                         .getService(Components.interfaces.nsIPrefService);
@@ -518,11 +518,11 @@ var gWebMailStatusBar =
             this.m_prefBranch.QueryInterface(Components.interfaces.nsIPrefBranch2);
             this.m_prefBranch.addObserver("", this, false);
 
-            this.m_Log.Write("WebmailAccountManager.js - register - END");
+            this.m_Log.Write("Webmail.js .js - register - END");
         }
         catch(err)
         {
-            this.m_Log.DebugDump("WebmailAccountManager.js : updateISP"
+            this.m_Log.DebugDump("WebmailStatusbar.js .js : updateISP"
                                     + err.name +
                                     ".\nError message: "
                                     + err.message + "\n"
@@ -536,16 +536,16 @@ var gWebMailStatusBar =
     {
         try
         {
-            this.m_Log.Write("WebmailAccountManager.js - unregister - START");
+            this.m_Log.Write("WebmailStatusbar.js - unregister - START");
 
             if(!this.m_prefBranch) return;
             this.m_prefBranch.removeObserver("", this);
 
-            this.m_Log.Write("WebmailAccountManager.js - unregister - END");
+            this.m_Log.Write("WebmailStatusbar.js - unregister - END");
         }
         catch(err)
         {
-            this.m_Log.DebugDump("WebmailAccountManager.js : updateISP"
+            this.m_Log.DebugDump("WebmailStatusbar.js : updateISP"
                                     + err.name +
                                     ".\nError message: "
                                     + err.message + "\n"
