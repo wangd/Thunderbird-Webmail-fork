@@ -1,0 +1,80 @@
+/* status indicators*/
+#colourStatus
+{
+    list-style-image: url("chrome://web-mail/skin/StatusColourStatusbar.png");
+}
+
+
+/* red - error*/
+.status[value="-1"]
+{
+    -moz-image-region: rect(0px 56px 14px 42px);
+}
+
+
+/* grey - off*/
+.status[value="0"]
+{
+    -moz-image-region: rect(0px 14px 14px 0px);
+}
+
+
+/* amber - waiting*/
+.status[value="1"]
+{
+    -moz-image-region: rect(0px 28px 14px 14px);
+}
+
+
+/* green - go */
+.status[value= "2"]
+{
+    -moz-image-region: rect(0px 42px 14px 28px);
+}
+
+
+.imageButton
+{
+    list-style-image: url("chrome://web-mail/skin/Webmail-SmallToolbar.png");
+    -moz-appearance: none;
+    border: none !important;
+    padding: 5px;
+}
+
+
+
+/* standard*/
+.imageButton[imageID = "1"]  /*stop */
+{
+    -moz-image-region: rect(16px, 16px, 32px, 0px)
+}
+
+.imageButton[imageID = "2"]   /* go */
+{
+    -moz-image-region: rect(16px,  32px, 32px, 16px)
+}
+
+
+/* hover */
+.imageButton[imageID = "1"]:hover /*stop*/
+{
+    -moz-image-region: rect(0px, 16px, 16px, 0px)
+}
+
+.imageButton[imageID = "2"]:hover /*go*/
+{
+    -moz-image-region: rect(0px, 32px, 16px, 16px)
+}
+
+
+/* disabled */
+.imageButton[imageID = "-1"]  /*stop */
+{
+    -moz-image-region: rect(32px, 16px, 48px, 0px)
+}
+
+
+.imageButton[imageID = "-2"]   /* go */
+{
+    -moz-image-region: rect(32px,  32px, 48px, 16px)
+}

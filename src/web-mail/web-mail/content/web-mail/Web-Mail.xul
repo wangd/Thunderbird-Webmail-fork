@@ -1,9 +1,24 @@
 <?xml version = "1.0" ?>
 
+<?xml-stylesheet href="chrome://web-mail/skin/Webmail-Statusbar.css" type="text/css"?>
+
 <overlay id = "Web-Mail"
          xmlns = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-
-    <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
+         
     <script type="application/x-javascript" src="chrome://web-mail/content/Webmail.js"/>     
+    <script type="application/x-javascript" src="chrome://web-mail/content/WebmailStatusBar.js"/> 
+        
+    <popupset>
+         <menupopup id="statusWebmailMenu">
+		    <menuitem id ="enableWebmailServer" 
+		              class = "menuitem-iconic imageButton"
+		              label="Enable"
+		              imageID = "-2"/>
+		    <menuitem id ="disableWebmailServer" 
+		              class = "menuitem-iconic imageButton"
+		              label="Disable"
+		              imageID = "-1"/>
+	     </menupopup>
+    </popupset>
     
 </overlay> 

@@ -8,7 +8,7 @@
 <overlay id="paneServersOverlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-    <prefpane id = "paneServers" onpaneload= "gServersPane.init();" flex="1" onclose="alert('test')">
+    <prefpane id = "paneServers" onpaneload= "gServersPane.init();" flex="1">
 
         <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
         <script type="application/x-javascript" src="chrome://web-mail/content/prefs/Webmail-Prefs-Servers.js"/>
@@ -22,6 +22,7 @@
             <preference id="enablePOP"  name="webmail.bUsePOPServer"    type="bool" instantApply="true"/>
             <preference id="enableSMTP" name="webmail.bUseSMTPServer"   type="bool" instantApply="true"/>
             <preference id="enableIMAP" name="webmail.bUseIMAPServer"   type="bool" instantApply="true"/>
+            <preference id="statusBar"  name="webmail.server.statusbar" type="bool" instantApply="true"/>
         </preferences>
 
         <vbox flex="1">
@@ -277,6 +278,11 @@
                 <spacer flex="1"/>
             </hbox>
 
+            <spacer flex="1"/>
+            <checkbox label="&ShowInStatusbar.Label;"
+                      accesskey="&ShowInStatusbar.AccessKey;"
+                      id = "chkStatusbar"
+                      preference="statusBar"/>
             <spacer flex="1"/>
 
             <!-- information -->
