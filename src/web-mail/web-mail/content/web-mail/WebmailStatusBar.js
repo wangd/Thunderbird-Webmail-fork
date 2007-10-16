@@ -4,14 +4,12 @@ window.addEventListener("unload", function () {gWebMailStatusBar.shutDown();},  
 var gWebMailStatusBar =
 {
     m_Log : null,
-    m_AccountWizard : null,
-    m_timer : null,
     m_POPServer : null,
     m_SMTPServer : null,
     m_IMAPServer : null, 
-    m_Timer : null,
     m_prefBranch : null, 
     m_stringBundle : null,
+    m_nsObserver : null,
 
 
     startUp : function ()
@@ -22,22 +20,22 @@ var gWebMailStatusBar =
             scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
             scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
             scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
-            scriptLoader.loadSubScript("chrome://global/content/strres.js");    
 
             //create debug log global
             this.m_Log = new DebugLog("webmail.logging.comms",
                                       "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
                                       "statusbar");
 
-            this.m_Log.Write("Webmail.js : startUp - START");
+            this.m_Log.Write("WebmailStatusbar.js : startUp - START");
 
             var iCount = this.windowCount();
             if (iCount >1)
             {
-                this.m_Log.Write("Webmail.js : another window - END");
+                this.m_Log.Write("WebmailStatusbar.js : another window - END");
                 return;
             }
            
+            //load strings
             var strBundleService = Components.classes["@mozilla.org/intl/stringbundle;1"]
                                              .getService(Components.interfaces.nsIStringBundleService);
             this.m_stringbundle = strBundleService.createBundle("chrome://web-mail/locale/Webmail-AccountWizard.properties");                                 
@@ -54,21 +52,24 @@ var gWebMailStatusBar =
             this.m_IMAPServer = Components.classes["@mozilla.org/IMAPConnectionManager;1"].getService()
                                           .QueryInterface(Components.interfaces.nsIIMAPConnectionManager);
            
-           
-          
+                   
             //watch for pref change
-            this.register();
+            this.registerObservers();
             
             this.createStatusbar();
             
             var bShow = this.getPref();
             bShow ? this.showStatusbar() :  this.hideStatusbar();
-                        
-            this.m_Log.Write("Webmail.js : startUp - END ");
+              
+            this.updateStatus(this.m_POPServer.GetStatus(), "pop-status");
+            this.updateStatus(this.m_SMTPServer.GetStatus(), "smtp-status");
+            this.updateStatus(this.m_IMAPServer.GetStatus(), "imap-status");
+
+            this.m_Log.Write("WebmailStatusbar.js : startUp - END ");
         }
         catch(e)
         {
-            DebugDump("Webmail.js : Exception in startUp "
+            DebugDump("WebmailStatusbar.js : Exception in startUp "
                                             + e.name
                                             + ".\nError message: "
                                             + e.message + "\n"
@@ -79,7 +80,7 @@ var gWebMailStatusBar =
 
     getPref : function()
     {
-        this.m_Log.Write("Webmail.js -getPref - Start");
+        this.m_Log.Write("WebmailStatusbar.js -getPref - Start");
         
         var oPref = new Object();
         oPref.Value = null;
@@ -88,7 +89,7 @@ var gWebMailStatusBar =
             oPref.Value = false;
         delete PrefAccess;
         
-        this.m_Log.Write("Webmail.js - getPref - End " + oPref.Value );
+        this.m_Log.Write("WebmailStatusbar.js - getPref - End " + oPref.Value );
         return oPref.Value;
     },
     
@@ -97,7 +98,7 @@ var gWebMailStatusBar =
     {
         try
         {
-            this.m_Log.Write("Webmail.js : createstatubar - START");
+            this.m_Log.Write("WebmailStatusbar.js : createstatubar - START");
 
             //pop
             var newPOPItem = document.createElement("statusbarpanel");
@@ -136,11 +137,11 @@ var gWebMailStatusBar =
            
             statusTextBox.insertBefore(hbox, offline.nextSibling);
             
-            this.m_Log.Write("Webmail.js : createstatubar - END");
+            this.m_Log.Write("WebmailStatusbar.js : createstatubar - END");
         }
         catch(e)
         {
-            this.m_Log.DebugDump("Webmail.js : Exception in createstatubar "
+            this.m_Log.DebugDump("WebmailStatusbar.js : Exception in createstatubar "
                                             + e.name
                                             + ".\nError message: "
                                             + e.message + "\n"
@@ -151,27 +152,9 @@ var gWebMailStatusBar =
 
     showStatusbar : function ()
     {
-        try
-        {
-            //status update timer
-            if (this.m_Timer) delete this.m_Timer;
-            
-            this.m_Timer = Components.classes["@mozilla.org/timer;1"]
-                                     .createInstance(Components.interfaces.nsITimer);
-            this.m_Timer.initWithCallback(this,
-                                          10000,
-                                          Components.interfaces.nsITimer.TYPE_REPEATING_SLACK); 
-                                          
-            document.getElementById("pop-status").setAttribute("hidden", "false");
-            document.getElementById("smtp-status").setAttribute("hidden", "false");
-            document.getElementById("imap-status").setAttribute("hidden", "false");
-            
-            this.updateStatus()
-        } 
-        catch(e)
-        {
-            
-        }
+        document.getElementById("pop-status").setAttribute("hidden", "false");
+        document.getElementById("smtp-status").setAttribute("hidden", "false");
+        document.getElementById("imap-status").setAttribute("hidden", "false");            
     },
 
     
@@ -179,23 +162,17 @@ var gWebMailStatusBar =
     {
         try
         {
-            this.m_Log.Write("Webmail.js : hideStatusbar - START");
-            
-            if (this.m_Timer) 
-            {   
-                this.m_Timer.cancel();
-                delete this.m_Timer;   
-            }
-            
+            this.m_Log.Write("WebmailStatusbar.js : hideStatusbar - START");
+                        
             document.getElementById("pop-status").setAttribute("hidden", "true");
             document.getElementById("smtp-status").setAttribute("hidden", "true");
             document.getElementById("imap-status").setAttribute("hidden", "true");
                         
-            this.m_Log.Write("Webmail.js : hideStatusbar - ENd");
+            this.m_Log.Write("WebmailStatusbar.js : hideStatusbar - ENd");
         }
         catch(e)
         {
-            this.m_Log.DebugDump("Webmail.js : Exception in hideStatusbar "
+            this.m_Log.DebugDump("WebmailStatusbar.js : Exception in hideStatusbar "
                                             + e.name
                                             + ".\nError message: "
                                             + e.message + "\n"
@@ -208,10 +185,8 @@ var gWebMailStatusBar =
     {
         try
         {
-            this.m_Log.Write("Webmail.js : showMenu - START " + id);
-            
-            this.updateStatus();
-             
+            this.m_Log.Write("WebmailStatusbar.js : showMenu - START " + id);
+                         
             var menu = document.getElementById("statusWebmailMenu");
             menu.showPopup(document.getElementById(id),-1,-1,"popup","topleft","bottomleft"); 
             var strbundle =srGetStrBundle("chrome://web-mail/locale/Webmail-Statusbar.properties");
@@ -271,11 +246,11 @@ var gWebMailStatusBar =
                 document.getElementById("enableWebmailServer").setAttribute("oncommand",""); 
             }
             
-            this.m_Log.Write("Webmail.js : showMenu - END");
+            this.m_Log.Write("WebmailStatusbar.js : showMenu - END");
         }
         catch(e)
         {
-            this.m_Log.DebugDump("Webmail.js : Exception in showMenu "
+            this.m_Log.DebugDump("WebmailStatusbar.js : Exception in showMenu "
                                             + e.name
                                             + ".\nError message: "
                                             + e.message + "\n"
@@ -288,7 +263,7 @@ var gWebMailStatusBar =
     {
         try
         {
-            this.m_Log.Write("Webmail.js : startServer - START "  + id);
+            this.m_Log.Write("WebmailStatusbar.js : startServer - START "  + id);
             
             if (id == "pop-status")
                  this.m_POPServer.Start();
@@ -296,14 +271,12 @@ var gWebMailStatusBar =
                  this.m_SMTPServer.Start();
             else if (id == "imap-status")
                  this.m_IMAPServer.Start(); 
-
-            this.updateStatus();
                              
-            this.m_Log.Write("Webmail.js : startServer - END");    
+            this.m_Log.Write("WebmailStatusbar.js : startServer - END");    
         }
         catch(e)
         {
-            this.m_Log.DebugDump("Webmail.js : Exception in startServer "
+            this.m_Log.DebugDump("WebmailStatusbar.js : Exception in startServer "
                                             + e.name
                                             + ".\nError message: "
                                             + e.message + "\n"
@@ -316,7 +289,7 @@ var gWebMailStatusBar =
     {
         try
         {
-            this.m_Log.Write("Webmail.js : stopServer - START " +id);
+            this.m_Log.Write("WebmailStatusbar.js : stopServer - START " +id);
             
             if (id == "pop-status")
                  this.m_POPServer.Stop();
@@ -324,27 +297,26 @@ var gWebMailStatusBar =
                  this.m_SMTPServer.Stop();
             else if (id == "imap-status")
                  this.m_IMAPServer.Stop();
-                 
-            this.updateStatus();
-                  
-            this.m_Log.Write("Webmail.js : stopServer - END");    
+                                   
+            this.m_Log.Write("WebmailStatusbar.js : stopServer - END");    
         }
         catch(e)
         {
-            this.m_Log.DebugDump("Webmail.js : Exception in showMenu "
+            this.m_Log.DebugDump("WebmailStatusbar.js : Exception in showMenu "
                                             + e.name
                                             + ".\nError message: "
                                             + e.message + "\n"
                                             + e.lineNumber);
         }
     },
+
     
     
     windowCount : function()
     {
         try
         {
-            this.m_Log.Write("Webmail.js : windowCount - START");
+            this.m_Log.Write("WebmailStatusbar.js : windowCount - START");
 
             var iWindowCount = 0;
             var winman = Components.classes["@mozilla.org/appshell/window-mediator;1"];
@@ -361,12 +333,12 @@ var gWebMailStatusBar =
                 if (szValue =="messengerWindow")iWindowCount++;
             }
 
-            this.m_Log.Write("Webmail.js : windowCount - "+ iWindowCount +" END ");
+            this.m_Log.Write("WebmailStatusbar.js : windowCount - "+ iWindowCount +" END ");
             return iWindowCount;
         }
         catch(e)
         {
-            this.m_Log.DebugDump("Webmail.js : Exception in shutDown "
+            this.m_Log.DebugDump("WebmailStatusbar.js : Exception in shutDown "
                                             + e.name
                                             + ".\nError message: "
                                             + e.message);
@@ -374,11 +346,12 @@ var gWebMailStatusBar =
     },
 
 
+
     shutDown : function ()
     {
         try
         {
-            this.m_Log.Write("Webmail.js : shutDown - START");
+            this.m_Log.Write("WebmailStatusbar.js : shutDown - START");
 
             var iCount = this.windowCount();
             if (iCount !=0)
@@ -387,19 +360,13 @@ var gWebMailStatusBar =
                 return;
             }
             
-            if (this.m_Timer) 
-            {   
-                this.m_Timer.cancel();
-                delete this.m_Timer;   
-            }
-
-            this.unregister();
+            this.unregisterObservers();
             
-            this.m_Log.Write("Webmail.js : shutDown - END");
+            this.m_Log.Write("WebmailStatusbar.js : shutDown - END");
         }
         catch(e)
         {
-            this.m_Log.DebugDump("Webmail.js : Exception in shutDown "
+            this.m_Log.DebugDump("WebmailStatusbar.js : Exception in shutDown "
                                             + e.name
                                             + ".\nError message: "
                                             + e.message);
@@ -407,19 +374,21 @@ var gWebMailStatusBar =
     },
     
     
-    notify: function(timer)
+    
+    updateStatus : function (iStatusValue, szStatusID)
     {
         try
         {
-            this.m_Log.Write("Webmail : notify -  START");
+            this.m_Log.Write("WebmailStatusbar : updateStatus -  START");
+            document.getElementById(szStatusID).setAttribute("value",iStatusValue); //set status colour
+            var szTooltip = this.statusText(parseInt(iStatusValue), szStatusID)
+            document.getElementById(szStatusID).setAttribute("tooltiptext", szTooltip )//set tooltiptext
 
-            this.updateStatus();
-            
-            this.m_Log.Write("Webmail : notify - END");
+            this.m_Log.Write("WebmailStatusbar : updateStatus - END");
         }
         catch(e)
         {
-            this.m_Log.DebugDump("Webmail : notify - Exception in notify : "
+            this.m_Log.DebugDump("WebmailStatusbar : updateStatus - Exception in updateStatus : "
                                         + e.name +
                                         ".\nError message: "
                                         + e.message+ "\n"
@@ -427,55 +396,11 @@ var gWebMailStatusBar =
         }
     },
     
-    
-    updateStatus : function ()
-    {
-        try
-        {
-            this.m_Log.Write("Webmail : updateStatus -  START");
-            
-            var aStatusID = new Array ("pop-status","smtp-status", "imap-status");
-            
-            for (var i=0; i<aStatusID.length; i++)
-            {   
-                this.m_Log.Write("Webmail : updateStatus -  aStatusID " + aStatusID[i]);
-                
-                var iStatusValue = -1;
-                if (aStatusID[i] == "pop-status")
-                {
-                   iStatusValue = this.m_POPServer.GetStatus(); 
-                }
-                else if (aStatusID[i] == "smtp-status")
-                {
-                   iStatusValue = this.m_SMTPServer.GetStatus(); 
-                }
-                else if (aStatusID[i] == "imap-status")
-                {
-                   iStatusValue = this.m_IMAPServer.GetStatus();
-                }
-        
-                document.getElementById(aStatusID[i]).setAttribute("value",iStatusValue); //set status colour
-                var szTooltip = this.statusText(iStatusValue, aStatusID[i])
-                document.getElementById(aStatusID[i]).setAttribute("tooltiptext", szTooltip )//set tooltiptext
-            }
-            
-            
-            this.m_Log.Write("Webmail : updateStatus - END");
-        }
-        catch(e)
-        {
-            this.m_Log.DebugDump("Webmail : updateStatus - Exception in updateStatus : "
-                                        + e.name +
-                                        ".\nError message: "
-                                        + e.message+ "\n"
-                                        + e.lineNumber);
-        }
-    },
     
     
     statusText : function (iValue, szServerID)
     {
-        this.m_Log.Write("Webmail : StatusText - " + iValue + " " + szServerID + "- START");
+        this.m_Log.Write("WebmailStatusbar : StatusText - " + iValue + " " + szServerID + "- START");
         
         var strbundle =srGetStrBundle("chrome://web-mail/locale/Webmail-Statusbar.properties");
         var szStatus="";
@@ -500,29 +425,37 @@ var gWebMailStatusBar =
         
         var szResult = szStatus.replace(/\%1/,szServer);
         
-        this.m_Log.Write("Webmail : StatusText - " + szResult + " END");
+        this.m_Log.Write("WebmailStatusbar : StatusText - " + szResult + " END");
         return szResult;
     },
     
     
     
-    register: function()
+    registerObservers: function()
     {
         try
         {
-            this.m_Log.Write("Webmail.js - register - START");
+            this.m_Log.Write("WebmailStatusbar.js - register - START");
 
+            //pop
+            this.m_nsObserver = Components.classes["@mozilla.org/observer-service;1"]
+                                          .getService(Components.interfaces.nsIObserverService);
+            this.m_nsObserver.addObserver(this, "webmail-pop-status-change", false); 
+            this.m_nsObserver.addObserver(this, "webmail-smtp-status-change", false); 
+            this.m_nsObserver.addObserver(this, "webmail-imap-status-change", false); 
+            
+            //prefs
             var prefService = Components.classes["@mozilla.org/preferences-service;1"]
                                         .getService(Components.interfaces.nsIPrefService);
             this.m_prefBranch = prefService.getBranch("webmail.server.statusbar");
             this.m_prefBranch.QueryInterface(Components.interfaces.nsIPrefBranch2);
             this.m_prefBranch.addObserver("", this, false);
 
-            this.m_Log.Write("Webmail.js .js - register - END");
+            this.m_Log.Write("WebmailStatusbar.js - register - END");
         }
         catch(err)
         {
-            this.m_Log.DebugDump("WebmailStatusbar.js .js : updateISP"
+            this.m_Log.DebugDump("WebmailStatusbar.js : register"
                                     + err.name +
                                     ".\nError message: "
                                     + err.message + "\n"
@@ -532,15 +465,21 @@ var gWebMailStatusBar =
 
 
 
-    unregister: function()
+    unregisterObservers: function()
     {
         try
         {
             this.m_Log.Write("WebmailStatusbar.js - unregister - START");
 
-            if(!this.m_prefBranch) return;
-            this.m_prefBranch.removeObserver("", this);
-
+            if (this.m_prefBranch)
+                this.m_prefBranch.removeObserver("", this);  
+            
+            if (this.m_nsObserver) 
+            {
+                this.m_nsObserver.removeObserver(this, "webmail-pop-status-change");
+                this.m_nsObserver.removeObserver(this, "webmail-smtp-status-change");
+                this.m_nsObserver.removeObserver(this, "webmail-imap-status-change");
+            }
             this.m_Log.Write("WebmailStatusbar.js - unregister - END");
         }
         catch(err)
@@ -554,13 +493,20 @@ var gWebMailStatusBar =
     },
 
 
-    observe: function(aSubject, aTopic, aData)
+
+    observe : function(aSubject, aTopic, aData)
     {
-        this.m_Log.Write("WebmailAccountManager.js - observe - aTopic " + aTopic + " " + aData);
-        if(aTopic != "nsPref:changed") return;
+        this.m_Log.Write("WebmailStatusbar.js - observe - aTopic " + aTopic + " " + aData);
         
-        var bShow = this.getPref();
-        bShow ? this.showStatusbar() :  this.hideStatusbar();
+        if(aTopic == "webmail-pop-status-change")  this.updateStatus(aData, "pop-status"); 
+        if(aTopic == "webmail-smtp-status-change") this.updateStatus(aData, "smtp-status");
+        if(aTopic == "webmail-imap-status-change") this.updateStatus(aData, "imap-status");  
         
+        if (aTopic == "nsPref:changed") 
+        {
+            var bShow = this.getPref();
+            bShow ? this.showStatusbar() : this.hideStatusbar();
+        }
+        return;  
     }
 };
