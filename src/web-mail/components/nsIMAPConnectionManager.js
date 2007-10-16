@@ -46,7 +46,7 @@ nsIMAPConnectionManager.prototype.Start = function()
             this.m_serverSocket.init(this.m_iIMAPPort, true, 10);
             this.m_serverSocket.asyncListen(this);
 
-            this.m_iStatus = 2;  //started
+            this.updateStatus(2);  //started
         }
         this.m_Log.Write("nsIMAPConnectionManager.js - Start - END");
 
@@ -60,7 +60,7 @@ nsIMAPConnectionManager.prototype.Start = function()
                                           + e.message + "\n"
                                           + e.lineNumber);
 
-        this.m_iStatus = -1;  //error
+        this.updateStatus(-1);  //error
         return false;
     }
 }
@@ -78,7 +78,7 @@ nsIMAPConnectionManager.prototype.Stop = function()
             this.m_serverSocket.close();  //stop new conections
             delete this.m_serverSocket;
             this.m_serverSocket = null;
-            this.m_iStatus = 1;  //set status to waiting = 1
+            this.updateStatus(1);  //set status to waiting = 1
         }
 
         this.m_Log.Write("nsIMAPConnectionManager.js - Stop - END");
@@ -92,7 +92,7 @@ nsIMAPConnectionManager.prototype.Stop = function()
                                       + e.message+ "\n"
                                       + e.lineNumber);
 
-        this.m_iStatus = -1;  //error
+        this.updateStatus(-1);  //error
         return false;
     }
 }
@@ -113,7 +113,7 @@ nsIMAPConnectionManager.prototype.GetStatus = function ()
                                       + ".\nError message: "
                                       + e.message+ "\n"
                                       + e.lineNumber);
-        this.m_iStatus = -1;  //error
+        this.updateStatus(-1);  //error
         return this.m_iStatus;
     }
 }
@@ -162,9 +162,24 @@ nsIMAPConnectionManager.prototype.onSocketAccepted = function(serverSocket, tran
 nsIMAPConnectionManager.prototype.onStopListening = function(serverSocket, status)
 {
    this.m_Log.Write("nsIMAPConnectionManager.js - onStopListening - START");
-   this.m_iStatus = 0;
+   this.updateStatus(0);
    this.m_Log.Write("nsIMAPConnectionManager.js - onStopListening - END");
 }
+
+
+
+nsIMAPConnectionManager.prototype.updateStatus = function(iStatus)
+{
+   this.m_Log.Write("nsIMAPConnectionManager - updateStatus - START " + iStatus);
+   this.m_iStatus = iStatus;
+   
+   Components.classes["@mozilla.org/observer-service;1"]
+             .getService(Components.interfaces.nsIObserverService)
+             .notifyObservers(null, "webmail-imap-status-change", this.m_iStatus.toString());
+             
+   this.m_Log.Write("nsIMAPConnectionManager - updateStatus - END");
+}
+
 
 
 //garbage collection

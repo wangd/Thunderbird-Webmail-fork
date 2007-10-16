@@ -51,7 +51,7 @@ nsPOPConnectionManager.prototype.Start = function()
             this.m_serverSocket.init(this.m_iPopPort, true, 10);
             this.m_serverSocket.asyncListen(this);
 
-            this.m_iStatus = 2;  //started
+            this.updateStatus(2);  //started
         }
         this.m_Log.Write("nsPOPConnectionManager - Start - END");
 
@@ -65,7 +65,7 @@ nsPOPConnectionManager.prototype.Start = function()
                                           + e.message +"\n"
                                           + e.lineNumber);
 
-        this.m_iStatus = -1;  //error
+        this.updateStatus(-1);  //error
         return false;
     }
 }
@@ -84,7 +84,7 @@ nsPOPConnectionManager.prototype.Stop = function()
             this.m_serverSocket.close();  //stop new conections
             delete this.m_serverSocket;
             this.m_serverSocket = null;
-            this.m_iStatus = 1;  //set status to waiting = 1
+            this.updateStatus(1);  //set status to waiting = 1
         }
 
         this.m_Log.Write("nsPOPConnectionManager - Stop - END");
@@ -97,7 +97,7 @@ nsPOPConnectionManager.prototype.Stop = function()
                                       + ".\nError message: "
                                       + e.message+"\n"
                                       + e.lineNumber);
-        this.m_iStatus = -1;  //error
+        this.updateStatus(-1);  //error
 
         return false;
     }
@@ -120,7 +120,7 @@ nsPOPConnectionManager.prototype.GetStatus = function ()
                                       + e.message +"\n"
                                       + e.lineNumber);
 
-        this.m_iStatus = -1;  //error
+        this.updateStatus(-1);  //error
         return this.m_iStatus;
     }
 }
@@ -167,12 +167,29 @@ nsPOPConnectionManager.prototype.onSocketAccepted = function(serverSocket, trans
 }
 
 
+
+
 nsPOPConnectionManager.prototype.onStopListening = function(serverSocket, status)
 {
    this.m_Log.Write("nsPOPConnectionManager - onStopListening - START " + status);
-   this.m_iStatus = 0;
+   this.updateStatus(0);
    this.m_Log.Write("nsPOPConnectionManager - onStopListening - END");
 }
+
+
+
+nsPOPConnectionManager.prototype.updateStatus = function(iStatus)
+{
+   this.m_Log.Write("nsPOPConnectionManager - updateStatus - START " + iStatus);
+   this.m_iStatus = iStatus;
+   
+   Components.classes["@mozilla.org/observer-service;1"]
+             .getService(Components.interfaces.nsIObserverService)
+             .notifyObservers(null, "webmail-pop-status-change", this.m_iStatus.toString());
+             
+   this.m_Log.Write("nsPOPConnectionManager - updateStatus - END");
+}
+
 
 
 //garbage collection

@@ -48,7 +48,7 @@ nsSMTPConnectionManager.prototype.Start = function()
             this.m_serverSocket.init(this.m_iSMTPPort, true, 10);
             this.m_serverSocket.asyncListen(this);
 
-            this.m_iStatus = 2;  //started
+            this.updateStatus(2);  //started
         }
         this.m_Log.Write("nsSMTPConnectionManager.js - Start - END");
 
@@ -61,7 +61,7 @@ nsSMTPConnectionManager.prototype.Start = function()
                                           + ".\nError message: "
                                           + e.message);
 
-        this.m_iStatus = -1;  //error
+        this.updateStatus(-1);  //error
         return false;
     }
 }
@@ -79,7 +79,7 @@ nsSMTPConnectionManager.prototype.Stop = function()
             this.m_serverSocket.close();  //stop new conections
             delete this.m_serverSocket;
             this.m_serverSocket = null;
-            this.m_iStatus = 1;  //set status to waiting = 1
+            this.updateStatus(1);  //set status to waiting = 1
         }
 
         this.m_Log.Write("nsSMTPConnectionManager.js - Stop - END");
@@ -91,7 +91,7 @@ nsSMTPConnectionManager.prototype.Stop = function()
                                       + e.name
                                       + ".\nError message: "
                                       + e.message);
-        this.m_iStatus = -1;  //error
+        this.updateStatus(-1);  //error
 
         return false;
     }
@@ -112,7 +112,7 @@ nsSMTPConnectionManager.prototype.GetStatus = function ()
                                       + e.name
                                       + ".\nError message: "
                                       + e.message);
-        this.m_iStatus = -1;  //error
+        this.updateStatus(-1);  //error
         return this.m_iStatus;
     }
 }
@@ -162,7 +162,7 @@ nsSMTPConnectionManager.prototype.onSocketAccepted = function(serverSocket, tran
 nsSMTPConnectionManager.prototype.onStopListening = function(serverSocket, status)
 {
    this.m_Log.Write("nsSMTPConnectionManager.js - onStopListening - START");
-   this.m_iStatus = 0;
+   this.updateStatus(0);
    this.m_Log.Write("nsSMTPConnectionManager.js - onStopListening - END");
 }
 
@@ -211,6 +211,20 @@ nsSMTPConnectionManager.prototype.notify = function()
                                       + e.message);
     }
 }
+
+
+nsSMTPConnectionManager.prototype.updateStatus = function(iStatus)
+{
+   this.m_Log.Write("nsSMTPConnectionManager - updateStatus - START " + iStatus);
+   this.m_iStatus = iStatus;
+   
+   Components.classes["@mozilla.org/observer-service;1"]
+             .getService(Components.interfaces.nsIObserverService)
+             .notifyObservers(null, "webmail-smtp-status-change", this.m_iStatus.toString());
+             
+   this.m_Log.Write("nsSMTPConnectionManager - updateStatus - END");
+}
+
 
 
 nsSMTPConnectionManager.prototype.observe = function(aSubject, aTopic, aData)
