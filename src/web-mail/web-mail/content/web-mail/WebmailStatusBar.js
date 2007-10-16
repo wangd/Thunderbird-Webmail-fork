@@ -498,9 +498,9 @@ var gWebMailStatusBar =
     {
         this.m_Log.Write("WebmailStatusbar.js - observe - aTopic " + aTopic + " " + aData);
         
-        if(aTopic == "webmail-pop-status-change")  this.updateStatus(aData, "pop-status"); 
-        if(aTopic == "webmail-smtp-status-change") this.updateStatus(aData, "smtp-status");
-        if(aTopic == "webmail-imap-status-change") this.updateStatus(aData, "imap-status");  
+        if(aTopic == "webmail-pop-status-change")  this.updateStatus(parseInt(aData), "pop-status"); 
+        if(aTopic == "webmail-smtp-status-change") this.updateStatus(parseInt(aData), "smtp-status");
+        if(aTopic == "webmail-imap-status-change") this.updateStatus(parseInt(aData), "imap-status");  
         
         if (aTopic == "nsPref:changed") 
         {
