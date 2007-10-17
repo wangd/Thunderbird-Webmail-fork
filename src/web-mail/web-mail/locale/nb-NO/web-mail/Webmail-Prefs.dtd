@@ -1,4 +1,4 @@
-<!ENTITY Window.size "bredde: 46em; høyde: 37em">
+<!ENTITY Window.size "width: 46em; height: 37em">
 <!ENTITY Options.szTitle "WebMail-innstillinger">
 <!ENTITY Servers.Panel.szTitle "Servere">
 <!ENTITY Domains.Panel.szTitle "Domener">
@@ -31,3 +31,5 @@
 <!ENTITY RestartServer.Label "Du må starte Thunderbird på nytt for at forandringen skal tre i kraft.">
 <!ENTITY Domain.Label "Domene">
 <!ENTITY POP.Label "POP">
+<!ENTITY ShowInStatusbar.AccessKey "s">
+<!ENTITY ShowInStatusbar.Label "Show server status in statusbar">

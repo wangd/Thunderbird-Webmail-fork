@@ -19,6 +19,8 @@
 <!ENTITY Enable.POP.AccessKey "h">
 <!ENTITY Enable.SMTP.AccessKey "n">
 <!ENTITY Enable.IMAP.AccessKey "a">
+<!ENTITY ShowInStatusbar.AccessKey "m">
+<!ENTITY ShowInStatusbar.Label "Mostrar estado del servidor en la barra de estado">
 <!ENTITY GeneralLogging.Label "Habilitar registro">
 <!ENTITY GeneralLogging.AccessKey "H">
 <!ENTITY Location.Label "Ubicación">

@@ -2,7 +2,7 @@
 <!ENTITY Options.szTitle "Opções do WebMail">
 <!ENTITY Servers.Panel.szTitle "Servidores">
 <!ENTITY Domains.Panel.szTitle "Domínios">
-<!ENTITY Logging.Panel.szTitle "Logging">
+<!ENTITY Logging.Panel.szTitle "Registo">
 <!ENTITY General.Panel.szTitle "Geral">
 <!ENTITY close.button.label "Fechar">
 <!ENTITY Ports.Label "Porta">
@@ -19,7 +19,9 @@
 <!ENTITY Enable.POP.AccessKey "A">
 <!ENTITY Enable.SMTP.AccessKey "c">
 <!ENTITY Enable.IMAP.AccessKey "t">
-<!ENTITY GeneralLogging.Label "Activar logging">
+<!ENTITY ShowInStatusbar.AccessKey "s">
+<!ENTITY ShowInStatusbar.Label "Mostrar estado do servidor na barra de estado">
+<!ENTITY GeneralLogging.Label "Activar registo">
 <!ENTITY GeneralLogging.AccessKey "i">
 <!ENTITY Location.Label "Localização">
 <!ENTITY Location.AccessKey "L">

@@ -4,14 +4,12 @@
 <!ENTITY Domains.Panel.szTitle "Websites">
 <!ENTITY Logging.Panel.szTitle "Protokoll">
 <!ENTITY General.Panel.szTitle "Allgemein">
-
 <!ENTITY close.button.label "Schließen">
-
 <!ENTITY Ports.Label "Port">
 <!ENTITY Ports.POP.AccessKey "o">
 <!ENTITY Ports.SMTP.AccessKey "r">
 <!ENTITY Ports.IMAP.AccessKey "t">
-<!ENTITY Pop.Label "POP">
+<!ENTITY Pop.Label "POP3">
 <!ENTITY SMTP.Label "SMTP">
 <!ENTITY IMAP.Label "IMAP">
 <!ENTITY StatusBox.size "width: 6em;">
@@ -21,23 +19,17 @@
 <!ENTITY Enable.POP.AccessKey "B">
 <!ENTITY Enable.SMTP.AccessKey "n">
 <!ENTITY Enable.IMAP.AccessKey "a">
-
-
+<!ENTITY ShowInStatusbar.AccessKey "s">
+<!ENTITY ShowInStatusbar.Label "Server-Status in der Statusleiste anzeigen">
 <!ENTITY GeneralLogging.Label "Protokollierung aktivieren">
 <!ENTITY GeneralLogging.AccessKey "P">
 <!ENTITY Location.Label "Pfad">
 <!ENTITY Location.AccessKey "f">
 <!ENTITY Button.Label "Durchsuchen...">
 <!ENTITY Button.AccessKey "D">
-
-
 <!ENTITY NotePort.Label "Einige Betriebssystem sperren Ports unterhalb von 1024">
 <!ENTITY Note.Label "Protokolldatei enthält Benutzernamen und Passwörter">
-<!ENTITY Restart.Label "Damit die Einstellungen wirksam werden muß Thunderbird neu gestartet werden">
-<!ENTITY RestartServer.Label "Damit die Einstellungen wirksam werden muß der Server neu gestartet werden">
-
-
+<!ENTITY Restart.Label "Damit die Einstellungen wirksam werden muss Thunderbird neu gestartet werden">
+<!ENTITY RestartServer.Label "Damit die Einstellungen wirksam werden muss der Server neu gestartet werden">
 <!ENTITY Domain.Label "Domain">
-<!ENTITY POP.Label "POP">
-<!ENTITY SMTP.Label "SMTP">
-<!ENTITY IMAP.Label "IMAP">
+<!ENTITY POP.Label "POP3">

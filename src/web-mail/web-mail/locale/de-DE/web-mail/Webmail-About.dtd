@@ -1,7 +1,7 @@
 <!ENTITY WebmailAbout.Title "Über WebMail">
 <!ENTITY WebmailAbout.ExtName "WebMail">
 <!ENTITY WebmailAbout.ExtVersion "Version">
-<!ENTITY WebmailAbout.ExtDescription "Zugriff auf WebMail-Konten mit Thunderbird.">
+<!ENTITY WebmailAbout.ExtDescription "Zugriff auf WebMail-Konten mit Thunderbird">
 <!ENTITY WebmailAbout.ExtCreaterTitle "Erstellt von:">
 <!ENTITY WebmailAbout.ExtHome "Homepage">
 <!ENTITY WebmailAbout.ExtButton "Schließen">

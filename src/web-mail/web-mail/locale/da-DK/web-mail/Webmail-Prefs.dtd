@@ -31,3 +31,5 @@
 <!ENTITY RestartServer.Label "En genstart af serveren er påkrævet før portændringerne træder i kraft.">
 <!ENTITY Domain.Label "Domæne">
 <!ENTITY POP.Label "POP">
+<!ENTITY ShowInStatusbar.AccessKey "s">
+<!ENTITY ShowInStatusbar.Label "Show server status in statusbar">

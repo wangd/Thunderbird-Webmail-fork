@@ -19,6 +19,8 @@
 <!ENTITY Enable.POP.AccessKey "Z">
 <!ENTITY Enable.SMTP.AccessKey "n">
 <!ENTITY Enable.IMAP.AccessKey "a">
+<!ENTITY ShowInStatusbar.AccessKey "S">
+<!ENTITY ShowInStatusbar.Label "Zobraziť stav servera v stavovom riadku">
 <!ENTITY GeneralLogging.Label "Zapnúť prihlásenie">
 <!ENTITY GeneralLogging.AccessKey "P">
 <!ENTITY Location.Label "Umiestnenie">

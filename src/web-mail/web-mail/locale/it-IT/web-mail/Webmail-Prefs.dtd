@@ -31,3 +31,5 @@
 <!ENTITY RestartServer.Label "Riavviare il server per rendere effettive le modifiche">
 <!ENTITY Domain.Label "Dominio">
 <!ENTITY POP.Label "POP">
+<!ENTITY ShowInStatusbar.AccessKey "s">
+<!ENTITY ShowInStatusbar.Label "Show server status in statusbar">

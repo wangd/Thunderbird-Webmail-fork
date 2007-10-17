@@ -19,6 +19,8 @@
 <!ENTITY Enable.POP.AccessKey "E">
 <!ENTITY Enable.SMTP.AccessKey "n">
 <!ENTITY Enable.IMAP.AccessKey "a">
+<!ENTITY ShowInStatusbar.AccessKey "S">
+<!ENTITY ShowInStatusbar.Label "Arata statutul serverului in bara de stare">
 <!ENTITY GeneralLogging.Label "Activeaza jurnalizarea">
 <!ENTITY GeneralLogging.AccessKey "E">
 <!ENTITY Location.Label "Locatia">

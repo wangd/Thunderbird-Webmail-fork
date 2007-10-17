@@ -31,3 +31,5 @@
 <!ENTITY RestartServer.Label "Palvelimen uudelleenkäynnistys vaaditaan, jotta muutokset tulevat voimaan.">
 <!ENTITY Domain.Label "Verkkotunnus">
 <!ENTITY POP.Label "POP">
+<!ENTITY ShowInStatusbar.AccessKey "s">
+<!ENTITY ShowInStatusbar.Label "Show server status in statusbar">

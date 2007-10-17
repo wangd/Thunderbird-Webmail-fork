@@ -31,3 +31,5 @@
 <!ENTITY RestartServer.Label "Uma reinicialização do servidor é necessária para que a mudança de porta faça efeito.">
 <!ENTITY Domain.Label "Domínio">
 <!ENTITY POP.Label "POP">
+<!ENTITY ShowInStatusbar.AccessKey "s">
+<!ENTITY ShowInStatusbar.Label "Show server status in statusbar">

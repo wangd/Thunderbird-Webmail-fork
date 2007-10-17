@@ -19,6 +19,8 @@
 <!ENTITY Enable.POP.AccessKey "a">
 <!ENTITY Enable.SMTP.AccessKey "c">
 <!ENTITY Enable.IMAP.AccessKey "t">
+<!ENTITY ShowInStatusbar.AccessKey "b">
+<!ENTITY ShowInStatusbar.Label "Afficher l&apos;état du serveur dans la barre d&apos;état">
 <!ENTITY GeneralLogging.Label "Activer le journal">
 <!ENTITY GeneralLogging.AccessKey "A">
 <!ENTITY Location.Label "Emplacement">

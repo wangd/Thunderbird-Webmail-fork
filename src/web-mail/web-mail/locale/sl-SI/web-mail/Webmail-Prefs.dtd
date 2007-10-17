@@ -19,6 +19,8 @@
 <!ENTITY Enable.POP.AccessKey "O">
 <!ENTITY Enable.SMTP.AccessKey "m">
 <!ENTITY Enable.IMAP.AccessKey "g">
+<!ENTITY ShowInStatusbar.AccessKey "s">
+<!ENTITY ShowInStatusbar.Label "Pokaži stanje strežnika v vrstici stanja">
 <!ENTITY GeneralLogging.Label "Omogoči beleženje">
 <!ENTITY GeneralLogging.AccessKey "b">
 <!ENTITY Location.Label "Mesto">

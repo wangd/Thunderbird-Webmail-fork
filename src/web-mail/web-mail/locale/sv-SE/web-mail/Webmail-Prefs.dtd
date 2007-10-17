@@ -21,7 +21,8 @@
 <!ENTITY Enable.POP.AccessKey "E">
 <!ENTITY Enable.SMTP.AccessKey "n">
 <!ENTITY Enable.IMAP.AccessKey "a">
-
+<!ENTITY ShowInStatusbar.AccessKey "s">
+<!ENTITY ShowInStatusbar.Label "Show server status in statusbar">
 
 <!ENTITY GeneralLogging.Label "Enable logging">
 <!ENTITY GeneralLogging.AccessKey "E">

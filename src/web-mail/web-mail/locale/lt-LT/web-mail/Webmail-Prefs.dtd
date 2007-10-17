@@ -19,6 +19,8 @@
 <!ENTITY Enable.POP.AccessKey "P">
 <!ENTITY Enable.SMTP.AccessKey "S">
 <!ENTITY Enable.IMAP.AccessKey "I">
+<!ENTITY ShowInStatusbar.AccessKey "R">
+<!ENTITY ShowInStatusbar.Label "Rodyti serverio būseną būsenos juostoje">
 <!ENTITY GeneralLogging.Label "Įjungti registravimą">
 <!ENTITY GeneralLogging.AccessKey "r">
 <!ENTITY Location.Label "Vieta">

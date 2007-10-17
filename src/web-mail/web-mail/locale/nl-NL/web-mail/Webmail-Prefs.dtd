@@ -31,3 +31,5 @@
 <!ENTITY RestartServer.Label "Een herstart van de server is benodigd voordat de gewijzigde poort actief wordt.">
 <!ENTITY Domain.Label "Domein">
 <!ENTITY POP.Label "POP">
+<!ENTITY ShowInStatusbar.AccessKey "s">
+<!ENTITY ShowInStatusbar.Label "Show server status in statusbar">
