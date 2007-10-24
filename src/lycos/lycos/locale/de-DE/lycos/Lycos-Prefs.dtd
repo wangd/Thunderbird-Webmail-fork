@@ -1,11 +1,9 @@
 <!ENTITY LycosPref.Window.Title "Lycos Einstellung">
 <!ENTITY LycosPref.Panel.Accounts.Title "Konten">
 <!ENTITY LycosPref.Panel.Domains.Title "Websites">
-<!ENTITY LycosPref.Button.Close.Label "Close">
-
+<!ENTITY LycosPref.Button.Close.Label "Schließen">
 <!ENTITY LycosPref.Tab.POP.Title "POP3">
 <!ENTITY LycosPref.Tab.SMTP.Title "SMTP">
-
 <!ENTITY LycosPref.POP.DownloadUnread.Label "Nur ungelesene Nachrichten herunterladen">
 <!ENTITY LycosPref.POP.DownloadUnread.AccessKey "u">
 <!ENTITY LycosPref.POP.EmptyTrash.Label "Papierkorb leeren">
@@ -17,12 +15,8 @@
 <!ENTITY LycosPref.POP.ButtonAdd.AccessKey "H">
 <!ENTITY LycosPref.POP.ButtonRemove.Label "Entfernen">
 <!ENTITY LycosPref.POP.ButtonRemove.AccessKey "E">
-
 <!ENTITY LycosPref.SMTP.SaveSentItems.Label "Eine Kopie im &quot;Gesendet&quot;-Ordner speichern.">
 <!ENTITY LycosPref.SMTP.SaveSentItems.AccessKey "K">
-
 <!ENTITY LycosPref.AccountError.Label "Keine Lycos-Konten gefunden">
-
-
 <!ENTITY LycosPref.POP.MarkAsRead.Label "Nachrichten auf dem Server als gelesen markieren">
 <!ENTITY LycosPref.POP.MarkAsRead.AccessKey "g">

@@ -1,12 +1,10 @@
 <!ENTITY Window.size "width: 46em; height: 37em">
-<!ENTITY Options.szTitle "WebMail Options">
-<!ENTITY Servers.Panel.szTitle "Servers">
-<!ENTITY Domains.Panel.szTitle "Domains">
-<!ENTITY Logging.Panel.szTitle "Logging">
-<!ENTITY General.Panel.szTitle "General">
-
-<!ENTITY close.button.label "Close">
-
+<!ENTITY Options.szTitle "Nastavení WebMail">
+<!ENTITY Servers.Panel.szTitle "Servery">
+<!ENTITY Domains.Panel.szTitle "Domény">
+<!ENTITY Logging.Panel.szTitle "Logování">
+<!ENTITY General.Panel.szTitle "Obecné">
+<!ENTITY close.button.label "Zavřít">
 <!ENTITY Ports.Label "Port">
 <!ENTITY Ports.POP.AccessKey "o">
 <!ENTITY Ports.SMTP.AccessKey "r">
@@ -15,30 +13,23 @@
 <!ENTITY SMTP.Label "SMTP">
 <!ENTITY IMAP.Label "IMAP">
 <!ENTITY StatusBox.size "width: 6em;">
-<!ENTITY StartServer.Tooltip "Start Server">
-<!ENTITY StopServer.Tooltip "Stop Server">
-<!ENTITY Enable.Server.Label "Enable at startup">
+<!ENTITY StartServer.Tooltip "Spustit server">
+<!ENTITY StopServer.Tooltip "Zastavit server">
+<!ENTITY Enable.Server.Label "Povolit při startu">
 <!ENTITY Enable.POP.AccessKey "E">
 <!ENTITY Enable.SMTP.AccessKey "n">
 <!ENTITY Enable.IMAP.AccessKey "a">
 <!ENTITY ShowInStatusbar.AccessKey "s">
-<!ENTITY ShowInStatusbar.Label "Show server status in statusbar">
-
-<!ENTITY GeneralLogging.Label "Enable logging">
-<!ENTITY GeneralLogging.AccessKey "E">
-<!ENTITY Location.Label "Location">
-<!ENTITY Location.AccessKey "L">
-<!ENTITY Button.Label "Browse...">
-<!ENTITY Button.AccessKey "B">
-
-
-<!ENTITY NotePort.Label "Some OS's block ports below 1024.">
-<!ENTITY Note.Label "These logs will contain usernames and passwords.">
-<!ENTITY Restart.Label "A restart of Thunderbird is required before changes take effect.">
-<!ENTITY RestartServer.Label "A restart of the server is required before the port change takes effect.">
-
-
-<!ENTITY Domain.Label "Domain">
+<!ENTITY ShowInStatusbar.Label "Zobrazit stav serveru ve stavovém řádku">
+<!ENTITY GeneralLogging.Label "Povolit logování">
+<!ENTITY GeneralLogging.AccessKey "l">
+<!ENTITY Location.Label "Umístění">
+<!ENTITY Location.AccessKey "U">
+<!ENTITY Button.Label "Procházet...">
+<!ENTITY Button.AccessKey "P">
+<!ENTITY NotePort.Label "Některé operační systémy blokují porty menší než 1024.">
+<!ENTITY Note.Label "Tyto logy budou obsahovat uživ. jména a hesla.">
+<!ENTITY Restart.Label "Restartování Thunderbirdu je nutné pro provedení změn.">
+<!ENTITY RestartServer.Label "Restartování serveru je nutné pro provedení změny portu.">
+<!ENTITY Domain.Label "Doména">
 <!ENTITY POP.Label "POP">
-<!ENTITY SMTP.Label "SMTP">
-<!ENTITY IMAP.Label "IMAP">

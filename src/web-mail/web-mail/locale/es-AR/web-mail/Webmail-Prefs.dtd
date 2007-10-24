@@ -19,6 +19,8 @@
 <!ENTITY Enable.POP.AccessKey "E">
 <!ENTITY Enable.SMTP.AccessKey "n">
 <!ENTITY Enable.IMAP.AccessKey "a">
+<!ENTITY ShowInStatusbar.AccessKey "S">
+<!ENTITY ShowInStatusbar.Label "Mostrar el estado del servidor en la barra de estado">
 <!ENTITY GeneralLogging.Label "Habilitar registro">
 <!ENTITY GeneralLogging.AccessKey "E">
 <!ENTITY Location.Label "Ubicación">
@@ -31,5 +33,3 @@
 <!ENTITY RestartServer.Label "Se requiere reiniciar el servidor para que los cambios en los puertos tengan efecto.">
 <!ENTITY Domain.Label "Dominio">
 <!ENTITY POP.Label "POP">
-<!ENTITY ShowInStatusbar.AccessKey "s">
-<!ENTITY ShowInStatusbar.Label "Show server status in statusbar">

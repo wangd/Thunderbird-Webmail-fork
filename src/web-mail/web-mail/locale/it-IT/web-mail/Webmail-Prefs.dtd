@@ -19,6 +19,8 @@
 <!ENTITY Enable.POP.AccessKey "A">
 <!ENTITY Enable.SMTP.AccessKey "t">
 <!ENTITY Enable.IMAP.AccessKey "v">
+<!ENTITY ShowInStatusbar.AccessKey "s">
+<!ENTITY ShowInStatusbar.Label "Mostra lo stato del server nella barra di stato">
 <!ENTITY GeneralLogging.Label "Attiva le registrazioni">
 <!ENTITY GeneralLogging.AccessKey "A">
 <!ENTITY Location.Label "Cartella">
@@ -31,5 +33,3 @@
 <!ENTITY RestartServer.Label "Riavviare il server per rendere effettive le modifiche">
 <!ENTITY Domain.Label "Dominio">
 <!ENTITY POP.Label "POP">
-<!ENTITY ShowInStatusbar.AccessKey "s">
-<!ENTITY ShowInStatusbar.Label "Show server status in statusbar">
