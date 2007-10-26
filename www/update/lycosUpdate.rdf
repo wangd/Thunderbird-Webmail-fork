@@ -5,35 +5,35 @@
     <RDF:Description about="urn:mozilla:extension:{10e6e940-8a9c-11d9-9669-0800200c9a66}">
         <em:updates>
             <RDF:Seq>
-                <RDF:li resource="urn:mozilla:extension:{10e6e940-8a9c-11d9-9669-0800200c9a66}:1.2.2"/>
+                <RDF:li>
+                     <RDF:Description>
+                        <em:version>1.2.3</em:version>
+                        <em:targetApplication>
+                            <Description>
+                                <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id> <!-- Thunderbird updates -->
+                                <em:minVersion>2.0</em:minVersion>
+                                <em:maxVersion>2.0.*</em:maxVersion>
+                                <em:updateLink>http://download.mozdev.org/webmail/lycos-1-2-3.xpi</em:updateLink>
+                                <em:updateHash>sha256:0204cefbb82d3a5d03d44968048c25c48b0ed5169fe95a1d567ef315b7f49f30</em:updateHash>
+                          </Description>
+                        </em:targetApplication>
+                        <em:requires>
+                            <Description>
+                                <!-- requires web-mail extension-->
+                                <em:id>{3c8e8390-2cf6-11d9-9669-0800200c9a66}</em:id>
+                                <em:minVersion>1.2</em:minVersion>
+                                <em:maxVersion>1.3.*</em:maxVersion>
+                                <em:name>WebMail</em:name>
+                                <em:homepageURL>http://webmail.mozdev.org/</em:homepageURL>
+                                <em:updateURL>http://webmail.mozdev.org/update/webmailUpdate.rdf</em:updateURL>
+                            </Description>
+                        </em:requires>
+                    </RDF:Description>
+                </RDF:li>
             </RDF:Seq>
         </em:updates>
+        
+       <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBAG4Q0RR0/RmYaGqsv3N5ds/qv+6a2gjdMNNA9WpPVYcjbKl1YhduljrJIfUwUFu3Xz96OXzwEMn0FNMp789SBnQvde+bVQ6+Or/ucfLxSo8n1e5WQi0DX9hSpcrI7SCkircVDNsA2oR59VV7xeDifHGACm4oxeGtMPUc3YaUdQ3E</em:signature>
+    
     </RDF:Description>
-
-    <RDF:Description about="urn:mozilla:extension:{10e6e940-8a9c-11d9-9669-0800200c9a66}:1.2.2">
-        <em:version>1.2.2</em:version>
-        <em:targetApplication>
-            <Description>
-                <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id><!-- Thunderbird updates -->
-                <em:minVersion>2.0b2</em:minVersion>
-                <em:maxVersion>2.0.*</em:maxVersion>
-                <em:updateLink>http://download.mozdev.org/webmail/lycos-1-2-2.xpi</em:updateLink>
-                <em:updateHash>sha256:67b0c896273815584bae7afbedb78a46fadbb6b591a06a81204d10d90ebf9291</em:updateHash>
-          </Description>
-        </em:targetApplication>
-
-        <em:requires>
-            <Description>
-                <!-- requires web-mail extension-->
-                <em:id>{3c8e8390-2cf6-11d9-9669-0800200c9a66}</em:id>
-                <em:minVersion>1.2</em:minVersion>
-                <em:maxVersion>1.2.*</em:maxVersion>
-                <em:name>WebMail</em:name>
-                <em:homepageURL>http://webmail.mozdev.org/</em:homepageURL>
-                <em:updateURL>http://webmail.mozdev.org/update/webmailUpdate.rdf</em:updateURL>
-            </Description>
-        </em:requires>
-    </RDF:Description>
-
 </RDF:RDF>
-
