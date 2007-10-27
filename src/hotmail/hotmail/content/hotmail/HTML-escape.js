@@ -11,6 +11,7 @@ function HTMLescape()
                              .createInstance(Components.interfaces.nsITimer); 
                              
     this.kBlockSize = 5000;
+    this.m_iTimer = 30;
     this.kTerminator = "&#13;&#10;";
     this.kTerminatorAlt = "\r\n";
     this.m_iCurrentRead = 0;
@@ -109,7 +110,7 @@ HTMLescape.prototype.decodeAsync = function(rawMSG, callback, parent)
         this.m_Log.Write("HTMLescape.js - largeDecode - Size " + this.m_inStream.available());
         
         this.m_Timer.initWithCallback(this,
-                                      10,
+                                      this.m_iTimer,
                                       Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
        
         this.m_Log.Write("HTMLescape.js - largeDecode - END");
