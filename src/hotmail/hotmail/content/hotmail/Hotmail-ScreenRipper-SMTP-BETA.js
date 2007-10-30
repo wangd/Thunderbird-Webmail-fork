@@ -464,10 +464,7 @@ HotmailSMTPScreenRipperBETA.prototype =
                     {
                         mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - plain");
                         var szBody = mainObject.m_Email.txtBody.body.getBody();
-                        //szBody = szBody.replace(/&/g,"&amp;");
-                        //szBody = szBody.replace(/</g,"&lt;");
-                        //szBody = szBody.replace(/>/g,"&gt;");
-                        szBody = szBody.replace(/\r?\n/g,"\r\n<br>");
+                        szBody = szBody.replace(/\r?\n/g,"<br>");
 
                         var szContentType = null;
                         if (mainObject.m_Email.txtBody.headers)
