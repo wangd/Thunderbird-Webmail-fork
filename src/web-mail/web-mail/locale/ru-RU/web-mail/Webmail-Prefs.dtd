@@ -19,6 +19,8 @@
 <!ENTITY Enable.POP.AccessKey "В">
 <!ENTITY Enable.SMTP.AccessKey "к">
 <!ENTITY Enable.IMAP.AccessKey "л">
+<!ENTITY ShowInStatusbar.AccessKey "s">
+<!ENTITY ShowInStatusbar.Label "Show server status in statusbar">
 <!ENTITY GeneralLogging.Label "Включить журналирование">
 <!ENTITY GeneralLogging.AccessKey "В">
 <!ENTITY Location.Label "Расположение">

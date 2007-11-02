@@ -19,6 +19,8 @@
 <!ENTITY Enable.POP.AccessKey "t">
 <!ENTITY Enable.SMTP.AccessKey "k">
 <!ENTITY Enable.IMAP.AccessKey "a">
+<!ENTITY ShowInStatusbar.AccessKey "n">
+<!ENTITY ShowInStatusbar.Label "Näytä palvelimen tila tilarivillä">
 <!ENTITY GeneralLogging.Label "Ota kirjaaminen käyttöön">
 <!ENTITY GeneralLogging.AccessKey "O">
 <!ENTITY Location.Label "Sijainti">
@@ -31,5 +33,3 @@
 <!ENTITY RestartServer.Label "Palvelimen uudelleenkäynnistys vaaditaan, jotta muutokset tulevat voimaan.">
 <!ENTITY Domain.Label "Verkkotunnus">
 <!ENTITY POP.Label "POP">
-<!ENTITY ShowInStatusbar.AccessKey "s">
-<!ENTITY ShowInStatusbar.Label "Show server status in statusbar">

@@ -4,9 +4,7 @@
 <!ENTITY Domains.Panel.szTitle "Domains">
 <!ENTITY Logging.Panel.szTitle "Logging">
 <!ENTITY General.Panel.szTitle "General">
-
 <!ENTITY close.button.label "Close">
-
 <!ENTITY Ports.Label "Port">
 <!ENTITY Ports.POP.AccessKey "o">
 <!ENTITY Ports.SMTP.AccessKey "r">
@@ -23,22 +21,15 @@
 <!ENTITY Enable.IMAP.AccessKey "a">
 <!ENTITY ShowInStatusbar.AccessKey "s">
 <!ENTITY ShowInStatusbar.Label "Show server status in statusbar">
-
 <!ENTITY GeneralLogging.Label "Enable logging">
 <!ENTITY GeneralLogging.AccessKey "E">
 <!ENTITY Location.Label "Location">
 <!ENTITY Location.AccessKey "L">
 <!ENTITY Button.Label "Browse...">
 <!ENTITY Button.AccessKey "B">
-
-
-<!ENTITY NotePort.Label "Some OS's block ports below 1024.">
+<!ENTITY NotePort.Label "Some OS&apos;s block ports below 1024.">
 <!ENTITY Note.Label "These logs will contain usernames and passwords.">
 <!ENTITY Restart.Label "A restart of Thunderbird is required before changes take effect.">
 <!ENTITY RestartServer.Label "A restart of the server is required before the port change takes effect.">
-
-
 <!ENTITY Domain.Label "Domain">
 <!ENTITY POP.Label "POP">
-<!ENTITY SMTP.Label "SMTP">
-<!ENTITY IMAP.Label "IMAP">

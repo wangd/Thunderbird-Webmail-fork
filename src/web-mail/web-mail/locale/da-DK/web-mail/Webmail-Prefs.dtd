@@ -19,6 +19,8 @@
 <!ENTITY Enable.POP.AccessKey "A">
 <!ENTITY Enable.SMTP.AccessKey "k">
 <!ENTITY Enable.IMAP.AccessKey "t">
+<!ENTITY ShowInStatusbar.AccessKey "s">
+<!ENTITY ShowInStatusbar.Label "Show server status in statusbar">
 <!ENTITY GeneralLogging.Label "Aktiver logning">
 <!ENTITY GeneralLogging.AccessKey "e">
 <!ENTITY Location.Label "Lokation">
@@ -31,5 +33,3 @@
 <!ENTITY RestartServer.Label "En genstart af serveren er påkrævet før portændringerne træder i kraft.">
 <!ENTITY Domain.Label "Domæne">
 <!ENTITY POP.Label "POP">
-<!ENTITY ShowInStatusbar.AccessKey "s">
-<!ENTITY ShowInStatusbar.Label "Show server status in statusbar">
