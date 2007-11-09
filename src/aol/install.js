@@ -6,7 +6,7 @@
 
 // Editable Items Begin
 var displayName         = "WebMail - AOL / Netscape"; // The name displayed to the user (don't include the version)
-var version             = "1-2-4";
+var version             = "1-2-5";
 var name                = "aol"; // The leafname of the JAR file (without the .jar part)
 var guid                = "{268d7420-9032-11da-a72b-0800200c9a66}";
 
