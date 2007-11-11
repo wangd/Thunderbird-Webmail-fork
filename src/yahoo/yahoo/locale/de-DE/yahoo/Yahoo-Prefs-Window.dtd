@@ -5,6 +5,7 @@
 <!ENTITY YahooPref.Tab.Mode.Title "Zugangsart">
 <!ENTITY YahooPref.Tab.POP.Title "POP3">
 <!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
+<!ENTITY YahooPref.Tab.Adv.Title "Erweitert">
 <!ENTITY YahooPref.Mode.Label "Bitte Website auswählen">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Website (Standard)">
 <!ENTITY YahooPref.Mode.Beta.Label "Website (BETA)">
@@ -17,28 +18,18 @@
 <!ENTITY YahooPref.POP.ButtonAdd.AccessKey "H">
 <!ENTITY YahooPref.POP.ButtonRemove.Label "Entfernen">
 <!ENTITY YahooPref.POP.ButtonRemove.AccessKey "E">
+<!ENTITY YahooPref.POP.MarkAsRead.Label "E-Mails auf dem Server als gelesen markieren.">
+<!ENTITY YahooPref.POP.MarkAsRead.AccessKey "g">
 <!ENTITY YahooPref.SMTP.SaveSentItems.Label "Eine Kopie im &quot;Gesendet&quot;-Ordner speichern.">
 <!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "K">
+<!ENTITY YahooPref.Adv.ShortID.Label "Kurze ID verwenden">
+<!ENTITY YahooPref.Adv.ShortID.AccessKey "I">
+<!ENTITY YahooPref.Adv.ReUseSession.Label "HTTP-Sitzungsdaten wiederverwenden.">
+<!ENTITY YahooPref.Adv.ReUseSession.AccessKey "S">
+<!ENTITY YahooPref.AdvInfo.Label "Das Ändern der Short ID Einstellung führt zum vollständigen Herunterladen der Mailbox.">
 <!ENTITY YahooPref.AccountError.Label "Keine Yahoo-Konten gefunden">
-<!ENTITY YahooPref.SMTP.NA.Label "Keine SMPT-Einstellungen für Yahoo BETA">
 <!ENTITY YahooPref.Domain.Label "Von der Yahoo-Komponente unterstützte Websites">
 <!ENTITY YahooPref.Domain.Button.AddDomain.Label "Hinzufügen...">
 <!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "H">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Entfernen">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "E">
-
-<!ENTITY YahooPref.Panel.Globals.Title "Globals">
-<!ENTITY YahooPref.Globals.ShortID.Label "Use Short ID">
-<!ENTITY YahooPref.Globals.ShortID.AccessKey "I">
-<!ENTITY YahooPref.Globals.ReUseSession.Label "Reuse http session data.">
-<!ENTITY YahooPref.Globals.ReUseSession.AccessKey "S">
-<!ENTITY YahooPref.GlobalsInfo.Label "Changing the Short Id option will result in your entire mailbox being downloaded">
-
-<!ENTITY YahooPref.Tab.Adv.Title "Advanced">
-<!ENTITY YahooPref.Adv.ShortID.Label "Use Short ID">
-<!ENTITY YahooPref.Adv.ShortID.AccessKey "I">
-<!ENTITY YahooPref.Adv.ReUseSession.Label "Reuse http session data.">
-<!ENTITY YahooPref.Adv.ReUseSession.AccessKey "S">
-<!ENTITY YahooPref.AdvInfo.Label "Changing the Short Id option will result in your entire mailbox being downloaded">
-<!ENTITY YahooPref.POP.MarkAsRead.Label "Mark emails as read on server">
-<!ENTITY YahooPref.POP.MarkAsRead.AccessKey "k">
