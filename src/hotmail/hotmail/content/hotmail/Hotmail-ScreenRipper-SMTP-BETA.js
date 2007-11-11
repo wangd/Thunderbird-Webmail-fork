@@ -145,9 +145,9 @@ HotmailSMTPScreenRipperBETA.prototype =
 
             //check for java refresh
             var aRefresh = szResponse.match(patternHotmailJSRefresh);
-            mainObject.m_Log.Write("Hotmail-SR-BETA-SMTP - loginOnloadHandler aRefresh "+ aRefresh);
             if (!aRefresh) aRefresh = szResponse.match(patternHotmailJSRefreshAlt);
-            if (!aRefresh) aRefresh = szResponse.match(patternHotmailRefresh2);   
+            if (!aRefresh) aRefresh = szResponse.match(patternHotmailRefresh2);  
+            //if (!aRefresh) aRefresh = szResponse.match(patternHotmailJSRefreshAlt2);             
             mainObject.m_Log.Write("Hotmail-SR-BETA-SMTP - loginOnloadHandler aRefresh "+ aRefresh);
             if (aRefresh)
             {
@@ -231,11 +231,9 @@ HotmailSMTPScreenRipperBETA.prototype =
                                              .getService(Components.interfaces.nsIWebMailCookieManager2);
                                              
                     //check for logout option
-                    var aszLogoutURL = szResponse.match(patternHotmailLogOut);
-                    mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler - logout : " + aszLogoutURL);
-
-                    if (!aszLogoutURL)
+                    if (szResponse.search(patternHotmailLogOut)==-1)
                     {
+                        mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler - logout not found : ");
                         //check for complex hotmail site
                         if (szResponse.search(patternHotmailFrame)!=-1)
                         {
@@ -258,7 +256,7 @@ HotmailSMTPScreenRipperBETA.prototype =
 
                             mainObject.m_bReEntry = false;
                             mainObject.m_iStage =0;
-                            mainObject.m_HttpComms.setURI("http://www.hotmail.com");
+                            mainObject.m_HttpComms.setURI("http://mail.live.com");
                             mainObject.m_HttpComms.setRequestMethod("GET");
                             var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
                             if (!bResult) throw new Error("httpConnection returned false");
