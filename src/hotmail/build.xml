@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <project name="hotmail" default="createxpi">
-    <property name="VERSION" value="1-2-10"/>
+    <property name="VERSION" value="1-2-11"/>
 
     <delete file="hotmail-${VERSION}.xpi"/>
     <delete file="hotmail.jar"/>
