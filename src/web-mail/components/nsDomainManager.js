@@ -82,7 +82,8 @@ nsDomainManager.prototype =
                                           + err.name
                                           + ".\nError message: "
                                           + err.message + "\n"
-                                          + err.lineNumber);
+                                          + err.lineNumber +"\n"
+                                          + "DB Reset "+ this.m_dbConn.lastErrorString);
 
             return false;
         }
@@ -234,6 +235,7 @@ nsDomainManager.prototype =
                 statement.bindStringParameter(0, aContentID[i]);
                 statement.execute();
             }
+            statement.reset();
             
             this.m_dbConn.commitTransaction();
                 
@@ -276,12 +278,7 @@ nsDomainManager.prototype =
             szSQL += "ADD COLUMN default_domain BOOLEAN"
             this.m_Log.Write("nsDataBaseManager.js - updateV2toV3 - szSQL " + szSQL);
             this.m_dbConn.executeSimpleSQL(szSQL);
-            
-            szSQL  = "ALTER TABLE domain_handler "
-            szSQL += "ADD COLUMN extension_guid TEXT"
-            this.m_Log.Write("nsDataBaseManager.js - updateV2toV3 - szSQL " + szSQL);
-            this.m_dbConn.executeSimpleSQL(szSQL);
-            
+                        
             //update version number                
             szSQL = "DELETE FROM webmail_schema_version; INSERT INTO webmail_schema_version VALUES (3);"
             this.m_Log.Write("nsDataBaseManager.js - updateV2toV3 - szSQL " + szSQL);
@@ -351,7 +348,7 @@ nsDomainManager.prototype =
             szSQL +="(";
             szSQL +=    "id INTEGER PRIMARY KEY, ";
             szSQL +=    "domain TEXT, ";
-            szSQL +=    "content_id TEXT ";
+            szSQL +=    "content_id TEXT, ";
             szSQL +=    "default_domain BOOLEAN ";
             szSQL +=");";
             this.m_Log.Write("nsDataBaseManager.js - createDB - szSQL " + szSQL);
@@ -361,7 +358,7 @@ nsDomainManager.prototype =
             szSQL +="(";
             szSQL +=    "id INTEGER PRIMARY KEY, ";
             szSQL +=    "domain TEXT, ";
-            szSQL +=    "content_id TEXT ";
+            szSQL +=    "content_id TEXT, ";
             szSQL +=    "default_domain BOOLEAN ";
             szSQL +=");";
             this.m_Log.Write("nsDataBaseManager.js - createDB - szSQL " + szSQL);
@@ -371,7 +368,7 @@ nsDomainManager.prototype =
             szSQL +="(";
             szSQL +=    "id INTEGER PRIMARY KEY, ";
             szSQL +=    "domain TEXT, ";
-            szSQL +=    "content_id TEXT ";
+            szSQL +=    "content_id TEXT, ";
             szSQL +=    "default_domain BOOLEAN ";
             szSQL +=");";
             this.m_Log.Write("nsDataBaseManager.js - createDB - szSQL " + szSQL);
@@ -390,7 +387,7 @@ nsDomainManager.prototype =
             szSQL += "( ";
             szSQL +=    "id INTEGER PRIMARY KEY, ";
             szSQL +=    "content_id  TEXT, ";
-            szSQL +=    "extension_guid TEXT ";
+            szSQL +=    "extension_guid TEXT, ";
             szSQL +=    "enabled BOOLEAN ";
             szSQL += ")";
             this.m_Log.Write("nsDataBaseManager.js - createDB - szSQL " + szSQL);
@@ -407,7 +404,7 @@ nsDomainManager.prototype =
             //Version table
             szSQL = "CREATE TABLE webmail_schema_version (version INTEGER);";
             this.m_dbConn.executeSimpleSQL(szSQL);
-            szSQL = "INSERT INTO webmail_schema_version VALUES(3);";
+            szSQL = "INSERT INTO webmail_schema_version VALUES(4);";
             this.m_dbConn.executeSimpleSQL(szSQL);
             this.m_Log.Write("nsDataBaseManager.js - createDB - END");
         }
@@ -481,7 +478,7 @@ nsDomainManager.prototype =
             szSQL+=     "?4 ";
             szSQL+= ");";
          
-            for (var i =0; i<aDomains.length; i++)
+            for (var i = 0; i < aDomains.length; i++) 
             {
                 statement = this.m_dbConn.createStatement(szSQL);
                 statement.bindStringParameter(0, aDomains[i].iId);
@@ -528,11 +525,12 @@ nsDomainManager.prototype =
             szSQL += "   \"true\",";
             szSQL += "   ?2";
             szSQL += ");";
+            
             var statement = this.m_dbConn.createStatement(szSQL);
             statement.bindStringParameter(0, szContentId);
             statement.bindStringParameter(1, szGUID);
             statement.execute();
-            
+        
             this.m_Log.Write("nsDomainManager.js - registerDomainHandler - END");   
             return 1;      
         }
@@ -542,7 +540,8 @@ nsDomainManager.prototype =
                                           + e.name +
                                           ".\nError message: "
                                           + e.message+ "\n"
-                                          + e.lineNumber);
+                                          + e.lineNumber+"\n"
+                                          + "DB Reset "+ this.m_dbConn.lastErrorString);
             return false;   
         }
     },
@@ -618,7 +617,8 @@ nsDomainManager.prototype =
                                           + e.name +
                                           ".\nError message: "
                                           + e.message+ "\n"
-                                          + e.lineNumber);
+                                          + e.lineNumber+"\n"
+                                          + "DB Reset "+ this.m_dbConn.lastErrorString);
             return false;
         }
         
@@ -715,7 +715,8 @@ nsDomainManager.prototype =
                                           + e.name +
                                           ".\nError message: "
                                           + e.message+ "\n"
-                                          + e.lineNumber);
+                                          + e.lineNumber+"\n"
+                                          + "DB Reset "+ this.m_dbConn.lastErrorString);
             return false;
         }
         
@@ -825,7 +826,8 @@ nsDomainManager.prototype =
                                           + e.name +
                                           ".\nError message: "
                                           + e.message+ "\n"
-                                          + e.lineNumber);
+                                          + e.lineNumber+"\n"
+                                          + "DB Reset "+ this.m_dbConn.lastErrorString);
 
             return false;
         }
@@ -907,7 +909,8 @@ nsDomainManager.prototype =
                                           + e.name +
                                           ".\nError message: "
                                           + e.message+ "\n"
-                                          + e.lineNumber);
+                                          + e.lineNumber+"\n"
+                                          + "DB Reset "+ this.m_dbConn.lastErrorString);
 
             return false;
         }
@@ -988,7 +991,8 @@ nsDomainManager.prototype =
                                           + e.name +
                                           ".\nError message: "
                                           + e.message+ "\n"
-                                          + e.lineNumber);
+                                          + e.lineNumber+"\n"
+                                          + "DB Reset "+ this.m_dbConn.lastErrorString);
 
             return false;
         }
@@ -1029,7 +1033,8 @@ nsDomainManager.prototype =
                                           + e.name +
                                           ".\nError message: "
                                           + e.message+ "\n"
-                                          + e.lineNumber);
+                                          + e.lineNumber+"\n"
+                                          + "DB Reset "+ this.m_dbConn.lastErrorString);
             return false;
         }
     },
