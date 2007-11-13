@@ -810,7 +810,15 @@ nsMailDotCom.prototype =
             szHeaders += "X-Folder: " +szFolderName+ "\r\n";
             szHeaders += "To: "+ oMSG.szTo +"\r\n";
             szHeaders += "From: "+ oMSG.szFrom +"\r\n";
-            szHeaders += "Subject: "+ oMSG.szSubject +"\r\n";
+            
+            var szSubject = oMSG.szSubject.replace(/<B>/g,"");
+            szSubject = szSubject.replace(/<\/B>/g,"");
+            szSubject = szSubject.replace(/<BR>/g,"");
+            szSubject = szSubject.replace(/&#34;/g,"\"");
+            szSubject = szSubject.replace(/&lt;/g,"<");
+            szSubject = szSubject.replace(/&gt;/g,">");
+            
+            szHeaders += "Subject: "+ szSubject +"\r\n";
             szHeaders += "Date: " + oMSG.szDate +"\r\n"; // \r\n";
             szHeaders += "\r\n.\r\n";//msg end
 

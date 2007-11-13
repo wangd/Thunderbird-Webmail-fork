@@ -859,7 +859,18 @@ nsMailDotComSMTP.prototype =
     },
 
 
-
+    removeHTML : function (szRaw)
+    {
+        this.m_Log.Write("nsMailDotComSMTP - removeHTML - START");
+        var szMsg = szRaw.replace(/&lt;/g,"<");
+        szMsg = szMsg.replace(/&gt;/g,">");
+        szMsg = szMsg.replace(/&quot;/g, "\"");
+        szMsg = szMsg.replace(/&amp;/g, "&");
+        szMsg = szMsg.replace(/&nbsp;/g, " ");
+        szMsg = szMsg.replace(/\r/g, "");
+        szMsg = szMsg.replace(/\n/g, "\r\n");
+        return szMsg;
+    },
 
 
     loadPrefs : function()
