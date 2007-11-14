@@ -13,10 +13,11 @@ function nsYahooDomains()
     this.m_iCount = 0;
     this.m_iDomainsVersion = 1;  
     this.m_aszDomain = ["yahoo.com"   , "yahoo.com.cn", "yahoo.com.au"  , "yahoo.com.hk",
-                        "yahoo.com.sg", "yahoo.com.ar", "yahoo.com.ar"  , "yahoo.es",
-                        "yahoo.se"    , "yahoo.it"    , "yahoo.fr"      , "yahoo.de",
-                        "yahoo.ca"    , "yahoo.ie"    , "yahoo.co.jp"   , "yahoo.co.uk",
-                        "yahoo.co.in" , "talk21.com"  , "btinternet.com", "btopenworld.com"];
+                        "yahoo.com.sg", "yahoo.com.ar", "yahoo.com.ar"  , "yahoo.com.br", 
+                        "yahoo.es",    "yahoo.se"     , "yahoo.it"      , "yahoo.fr", 
+                        "yahoo.de",    "yahoo.ca"    , "yahoo.ie"       , "yahoo.co.jp", 
+                        "yahoo.co.uk", "yahoo.co.in" , "talk21.com"  , "btinternet.com", 
+                        "btopenworld.com"];
 }
 
 
