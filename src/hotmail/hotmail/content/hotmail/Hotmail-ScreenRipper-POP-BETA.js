@@ -581,9 +581,18 @@ HotmailScreenRipperBETA.prototype =
                 var szFrom = "";
                 try
                 {
-                    szFrom = aTableData[4].match(patternHotmailEmailSender)[1];
-                    szFrom = oEscape.decode(szFrom);
-                    this.m_Log.Write("Hotmail-SR-BETA - processMSG - Email From : " +szFrom);
+                    if (aTableData[4].search(patternHotmailEmailSenderAlt) != -1) 
+                    {
+                        szFrom = aTableData[4].match(patternHotmailEmailSenderAlt)[1];
+                        szFrom = oEscape.decode(szFrom);
+                        this.m_Log.Write("Hotmail-SR-BETA - processMSG - Email Alt From : " + szFrom);
+                    }
+                    else 
+                    {
+                        szFrom = aTableData[4].match(patternHotmailEmailSender)[1];
+                        szFrom = oEscape.decode(szFrom);
+                        this.m_Log.Write("Hotmail-SR-BETA - processMSG - Email From : " + szFrom);
+                    }
                 }
                 catch(err){}
                 oMSG.szFrom = szFrom;

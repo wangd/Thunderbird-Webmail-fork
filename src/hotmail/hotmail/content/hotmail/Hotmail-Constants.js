@@ -101,6 +101,7 @@ const patternHotmailMailBoxTableData = /<td.*?>[\s\S]*?<\/td>/ig;
 const patternHotmailEMailURL = /<td .*?><a href="(.*?)".*?>.*?<\/a><\/td>/i;
 const patternHotmailEmailRead = /class="[\S]?InboxContentItemUnread">/i;
 const patternHotmailEmailSender = /<td .*?><a.*?><div class="truncateFrom">(.*?)<\/div><\/a><\/td>/i;
+const patternHotmailEmailSenderAlt= /<td .*?><a.*?"TruncateFrom">(.*?)<\/a><\/td>/i
 const patternHotmailEmailSubject = /<td.*?>.*?<a href=.*?>(.*?)<\/a>.*?<\/td>/i;
 const patternHotmailEmailDate = /<td.*?>(.*?)<\/td>/i;
 const patternHotmailEMailID =/ReadMessageID=(.*?)&/i;
