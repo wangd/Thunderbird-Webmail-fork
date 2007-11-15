@@ -748,8 +748,10 @@ nsDomainManager.prototype =
                         "END) AS pop, ";
                 szSQL+= "(CASE " +
                         "     WHEN (SELECT pop_domains.domain " +
-                        "           FROM pop_domains " +
-                        "           WHERE pop_domains.default_domain = \"true\" ) <> 0 THEN 1 ELSE 0 " +
+                        "           FROM pop_domains, domain_handler " +
+                        "           WHERE pop_domains.domain = view_all_domain.domain " +
+                        "                 AND pop_domains.content_id =  domain_handler.content_id "+ 
+                        "                 AND pop_domains.default_domain = \"true\" ) <> 0 THEN 1 ELSE 0 "+ 
                         "END) AS pop_default, ";        
                 szSQL+= "(CASE " +
                         "      WHEN (SELECT smtp_domains.domain " +
@@ -761,8 +763,10 @@ nsDomainManager.prototype =
                         "END)  AS smtp, ";
                 szSQL+= "(CASE " +
                         "     WHEN (SELECT smtp_domains.domain " +
-                        "           FROM smtp_domains " +
-                        "           WHERE smtp_domains.default_domain = \"true\" ) <> 0 THEN 1 ELSE 0 " +
+                        "           FROM smtp_domains, domain_handler  " +
+                        "           WHERE smtp_domains.domain = view_all_domain.domain " +
+                        "                 AND smtp_domains.content_id =  domain_handler.content_id "+ 
+                        "                 AND smtp_domains.default_domain = \"true\" ) <> 0 THEN 1 ELSE 0 "+ 
                         "END) AS smtp_default, ";        
                 szSQL+="(CASE " +
                         "      WHEN (SELECT imap_domains.domain " +
@@ -774,8 +778,10 @@ nsDomainManager.prototype =
                         "END) AS imap, ";
                 szSQL+= "(CASE " +
                         "     WHEN (SELECT imap_domains.domain " +
-                        "           FROM imap_domains " +
-                        "           WHERE imap_domains.default_domain = \"true\" ) <> 0 THEN 1 ELSE 0 " +
+                        "           FROM imap_domains, domain_handler  " +
+                        "           WHERE imap_domains.domain = view_all_domain.domain " +
+                        "                 AND imap_domains.content_id =  domain_handler.content_id "+ 
+                        "                 AND imap_domains.default_domain = \"true\" ) <> 0 THEN 1 ELSE 0 "+ 
                         "END) AS imap_default ";        
                 szSQL+="FROM view_all_domain";
 
@@ -802,7 +808,8 @@ nsDomainManager.prototype =
                     this.m_Log.Write("nsDomainManager : getDomainForExtension - " +domainData.szDomain 
                                                                             + " " + domainData.bPOP 
                                                                             + " " + domainData.bSMTP
-                                                                            + " " + domainData.bIMAP);
+                                                                            + " " + domainData.bIMAP
+                                                                            + " " + domainData.bPOPDefault);
                     if (domainData.bPOP ||domainData.bSMTP || domainData.bIMAP)
                         aResult.push(domainData);
                 }
