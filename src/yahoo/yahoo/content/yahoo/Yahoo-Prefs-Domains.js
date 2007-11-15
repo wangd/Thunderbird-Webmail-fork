@@ -56,6 +56,8 @@ var gYahooDomain =
         newItem.setAttribute("allowEvents", "true");
         newItem.setAttribute("selected","false"); 
         newItem.setAttribute("align", "center");
+        newItem.setAttribute("bDefaultDomain", bDefault);
+        newItem.setAttribute("disabled",  bDefault);
         
         //image
         var space = document.createElement("spacer")
@@ -142,6 +144,11 @@ var gYahooDomain =
             var listView = document.getElementById("listDomain");   //click item
             var iIndex = listView.selectedIndex;
             this.m_DebugLog.Write("Yahoo-Prefs-Domains : onSelect - iIndex "+iIndex);
+            
+            var item = listView.getItemAtIndex(iIndex);
+            var bDefaultDomain = item.getAttribute("bDefaultDomain");
+            this.m_DebugLog.Write("Yahoo-Prefs-Domains : onSelect - bDefaultDomain "+bDefaultDomain); 
+            iIndex = bDefaultDomain=="true"? -1: iIndex;
             
             var buttonRemove = document.getElementById("remove");   
             buttonRemove.setAttribute("disabled", iIndex!=-1? false : true);
