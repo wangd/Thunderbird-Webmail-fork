@@ -3,12 +3,15 @@ var gYahooDomain =
     m_DebugLog : new DebugLog("webmail.logging.comms","", "YahooPrefs"),
     m_DomainManager : null,
     m_cExtGUID : "{d7103710-6112-11d9-9669-0800200c9a66}",
+    m_strBundle : null,
                                   
     init : function ()
     {
         try
         {
             this.m_DebugLog.Write("Yahoo-Prefs-Domains : Init - START");
+            
+            this.m_strBundle = document.getElementById("stringsYahooDomainWindow");
             
             this.m_DomainManager = Components.classes["@mozilla.org/DomainManager;1"]
                                              .getService()
@@ -78,8 +81,9 @@ var gYahooDomain =
         labelDomain.setAttribute("value",szDomain); 
         labelDomain.setAttribute("class","domain");
         newItem.appendChild(labelDomain);
+         
         list.appendChild(newItem);
-        
+               
         this.m_DebugLog.Write("Yahoo-Prefs-Domains : domainList - END");        
     },
     
@@ -104,8 +108,7 @@ var gYahooDomain =
         space1.setAttribute("flex","1");
         vBox.appendChild(space1);
           
-        var strBundle = document.getElementById("stringsYahooDomainWindow");
-        var szMSG = strBundle.getString("errorMsg");
+        var szMSG = this.m_strBundle.getString("errorMsg");
         var aszMSG = szMSG.split(/\s/);
                    
         //message
@@ -120,7 +123,6 @@ var gYahooDomain =
         var newItem = document.createElement("richlistitem"); 
         newItem.setAttribute("id", "error");
         newItem.setAttribute("class", "listError");
-        newItem.setAttribute("tabIndex",0);
         newItem.setAttribute("allowEvents", "false");
         newItem.setAttribute("selected","false"); 
         newItem.setAttribute("align", "center");
@@ -131,8 +133,6 @@ var gYahooDomain =
         
         this.m_DebugLog.Write("Yahoo-Prefs-Domains : errorList - END");
     },
-     
-     
      
      
     onSelect : function ()
@@ -166,8 +166,6 @@ var gYahooDomain =
         }
     
     }, 
-     
-     
      
     onAdd : function ()
     {
@@ -209,7 +207,7 @@ var gYahooDomain =
                         if (szError.search(/error/i)!=-1)
                             listView.removeChild(item);    
                        
-                        this.domainList(oParam.szDomain);
+                        this.domainList(oParam.szDomain, false);
                     }
                 }
                 
@@ -242,54 +240,56 @@ var gYahooDomain =
             this.m_DebugLog.Write("Yahoo-Prefs-Domains : doRemove - iIndex "+iIndex);
             
             var item = listView.getItemAtIndex(iIndex);
-            var szDomain = item.getAttribute("id");
-            this.m_DebugLog.Write("Yahoo-Prefs-Domains : doRemove -  "+szDomain);
-            
-            //check for bad chars
-            if ( szDomain.search(/[^a-zA-Z0-9\.]+/i)!=-1 ||
-                 szDomain.search(/\s/)!=-1 ||
-                 szDomain.search(/\./)==-1 ||
-                 szDomain.search(/^\./)!=-1 ||
-                 szDomain.search(/\.$/)!=-1)
+            var bDefaultDomain = item.getAttribute("bDefaultDomain");
+            this.m_DebugLog.Write("Yahoo-Prefs-Domains : onSelect - bDefaultDomain "+bDefaultDomain); 
+            if (bDefaultDomain == "false") 
             {
-                this.m_Log.Write("nsYahooDomains.js - removeDomain - domain invalid ");
-                return false;
-            }
-            
-            
-            //check domain exists
-            var oContentID = new Object();
-            if (this.m_DomainManager.getDomainForProtocol(szDomain, "POP" , oContentID))
-            {  //domain found
-               //check contentid
-               if (oContentID.value == "@mozilla.org/YahooPOP;1") bFound = true;
-            } 
-            
-            if (bFound) //remove for display
-            { 
-                this.m_DomainManager.removeDomainForProtocol(szDomain, "POP");
-                this.m_DomainManager.removeDomainForProtocol(szDomain, "SMTP");
-    
-                this.m_DebugLog.Write("Yahoo-Prefs-Domains : Removeed -  DB");
-                listView.removeChild(item);
-        
-                if (listView.getRowCount()>0) 
+                var szDomain = item.getAttribute("id");
+                this.m_DebugLog.Write("Yahoo-Prefs-Domains : doRemove -  " + szDomain);
+                
+                //check for bad chars
+                if (szDomain.search(/[^a-zA-Z0-9\.]+/i) != -1 ||
+                szDomain.search(/\s/) != -1 ||
+                szDomain.search(/\./) == -1 ||
+                szDomain.search(/^\./) != -1 ||
+                szDomain.search(/\.$/) != -1) 
                 {
-                    if (iIndex>listView.getRowCount()-1)
-                        listView.selectedIndex = iIndex-1;  //select one above
-                    else
-                        listView.selectedIndex = iIndex;  
+                    this.m_Log.Write("nsYahooDomains.js - removeDomain - domain invalid ");
+                    return false;
                 }
-                else  
+                
+                
+                //check domain exists
+                var oContentID = new Object();
+                if (this.m_DomainManager.getDomainForProtocol(szDomain, "POP", oContentID)) 
+                { //domain found
+                    //check contentid
+                    if (oContentID.value == "@mozilla.org/YahooPOP;1") bFound = true;
+                }
+                
+                if (bFound) //remove for display
                 {
-                    document.getElementById("remove").setAttribute("disabled",true);
-                    this.errorList();
+                    this.m_DomainManager.removeDomainForProtocol(szDomain, "POP");
+                    this.m_DomainManager.removeDomainForProtocol(szDomain, "SMTP");
+                    
+                    this.m_DebugLog.Write("Yahoo-Prefs-Domains : Removeed -  DB");
+                    listView.removeChild(item);
+                    
+                    if (listView.getRowCount() > 0) 
+                    {
+                        if (iIndex > listView.getRowCount() - 1) listView.selectedIndex = iIndex - 1; //select one above
+                        else listView.selectedIndex = iIndex;
+                    }
+                    else 
+                    {
+                        document.getElementById("remove").setAttribute("disabled", true);
+                        this.errorList();
+                    }
                 }
+                var event = document.createEvent("Events");
+                event.initEvent("change", false, true);
+                document.getElementById("listDomain").dispatchEvent(event);
             }
-            var event = document.createEvent("Events");
-            event.initEvent("change", false, true);
-            document.getElementById("listDomain").dispatchEvent(event);
-                   
             this.m_DebugLog.Write("Yahoo-Prefs-Domains: doRemove - END");
             return true;
         }

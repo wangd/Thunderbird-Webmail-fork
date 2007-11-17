@@ -22,9 +22,11 @@
                 <spacer flex="1"/>
                 <richlistbox  id="listDomain"
                               class="listDomainbox"
+                              allowEvents="true"
+                              flex ="1"
                               onselect="gYahooDomain.onSelect();"/>
 
-                <vbox align="center" pack="center">
+                <vbox align="top" pack="top">
                     <button id="add"
                             label="&YahooPref.Domain.Button.AddDomain.Label;"
                             accesskey="&YahooPref.Domain.Button.AddDomain.AccessKey;"
