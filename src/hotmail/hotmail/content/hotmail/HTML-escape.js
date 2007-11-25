@@ -50,18 +50,10 @@ HTMLescape.prototype.decode = function(rawMSG)
         
        
         //most likely
-        szMSG = szMSG.replace(/&#9;/gm, "\t").replace(/&#09;/gm, "\t").replace(/&#13;&#10;/gm, "\r\n");
-                     
-        //might be there
-        if (szMSG.search(/&#27;/g)!=-1) szMSG = szMSG.replace(/&#27;/gm, String.fromCharCode(27)); //esc  ?
+        szMSG = szMSG.replace(/&#(\d+);/g,function(){return String.fromCharCode(RegExp.$1);});
         if (szMSG.search(/&#x200F;/ig)!=-1) szMSG = szMSG.replace(/&#x200F;/igm, ""); //right-to-left mark ?
         
-        for (var i=33; i<255; i++)
-        {
-            var regexp = new RegExp("&#"+i+";", "gm");
-            if (szMSG.search(regexp)!=-1) szMSG = szMSG.replace(regexp, String.fromCharCode(i)); 
-        }
-  
+          
         //some more MS use
         if (szMSG.search(/&lt;/g)!=-1) szMSG = szMSG.replace(/&lt;/gm,"<");
         if (szMSG.search(/&gt;/g)!=-1) szMSG = szMSG.replace(/&gt;/gm,">");
