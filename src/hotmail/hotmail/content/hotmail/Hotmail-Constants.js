@@ -31,7 +31,8 @@ const patternHotmailLoginURL = /srf_uPost=['|"](.*?)["|']/i;
 const patternHotmailSRBlob = /srf_sRBlob=['|"](.*?)["|']/i;
 const patternHotmailSFT =/srf_sFT=.*?value=['|"](.*?)["|']/i;
 const patternHotmailJavaRefresh = /location\.replace\("(.*?)"\)/i;
-const patternHotmailRefresh2 = /window\.location=['|"](.*?)['|"]/i;
+const patternHotmailRefresh2 = /window\.location=['|"](.*?)['|"][\s\S]*?src=['|"](.*?)['|"]/i;
+const patternHotmailRefresh3 = /window\.location/i;
 
 const patternHotmailLoginForm = /<form.*?name="fmHF".*?>[\S\s]*?<\/form>/i;
 const patternHotmailForm = /<form[\S\s]*?>[\S\s]*?<\/form>/i;

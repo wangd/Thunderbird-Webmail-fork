@@ -27,6 +27,7 @@ function HotmailScreenRipper(oResponseStream, oLog, oPrefData)
         this.m_aMsgDataStore = new Array();
         this.m_aszPageURLS = new Array();
         this.m_szHomeURI = null;
+        this.m_szLoginURI = null;  
         this.m_szFolderURI = null;
         this.m_szFolderName = null;
         this.m_iPageCount =0;
@@ -168,15 +169,49 @@ HotmailScreenRipper.prototype =
             if (httpChannel.responseStatus != 200 )
                 throw new Error("return status " + httpChannel.responseStatus);
             
-            var aRefresh = szResponse.match(patternHotmailJavaRefresh);
-            if (!aRefresh)
-                aRefresh = szResponse.match(patternHotmailRefresh2);   
-            mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler refresh "+ aRefresh);
-            if (aRefresh)
+            if (szResponse.search(patternHotmailRefresh3) != -1) 
             {
-                mainObject.m_HttpComms.setURI(aRefresh[1]);
+                var oEscape = new HTMLescape();
+                var szPage = oEscape.decode(szResponse);
+                delete oEsacpe;
+                
+                var aRefresh = szPage.match(patternHotmailJavaRefresh)
+                if (!aRefresh) aRefresh = szPage.match(patternHotmailRefresh2);
+                mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler refresh " + aRefresh);
+                if (aRefresh) 
+                {
+                    if (aRefresh.length == 3) 
+                    {
+                        mainObject.m_HttpComms.setURI(aRefresh[2]); //download cookies
+                        mainObject.m_szLoginURI = aRefresh[1];
+                        
+                        //clean hex code
+                        mainObject.m_szLoginURI = aRefresh[1];
+                        mainObject.m_szLoginURI = mainObject.m_szLoginURI.replace(/\\x3a/g,":");
+                        mainObject.m_szLoginURI = mainObject.m_szLoginURI.replace(/\\x3d/g,"=");
+                        mainObject.m_szLoginURI = mainObject.m_szLoginURI.replace(/\\x2f/g,"/");
+                        mainObject.m_szLoginURI = mainObject.m_szLoginURI.replace(/\\x26/g,"&");
+                        mainObject.m_szLoginURI = mainObject.m_szLoginURI.replace(/\\x3f/g,"?");
+                        mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler m_szLoginURI " + mainObject.m_szLoginURI);
+                    }
+                    else 
+                        mainObject.m_HttpComms.setURI(aRefresh[1]);
+                    mainObject.m_HttpComms.setRequestMethod("GET");
+                    
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
+                    if (!bResult) throw new Error("httpConnection returned false");
+                    return;
+                }
+            }
+            
+            
+            if (mainObject.m_szLoginURI)
+            {
+                mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler mainObject.m_szLoginURI "+ mainObject.m_szLoginURI);
+                mainObject.m_HttpComms.setURI(mainObject.m_szLoginURI);
                 mainObject.m_HttpComms.setRequestMethod("GET");
-
+                mainObject.m_szLoginURI = null;
+                
                 var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
                 if (!bResult) throw new Error("httpConnection returned false");
                 return;
@@ -238,7 +273,6 @@ HotmailScreenRipper.prototype =
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
-
 
                 case 1:
                     if (szResponse.search(patternHotmailMailbox) == -1)
