@@ -13,7 +13,7 @@ function HotmailScreenRipperBETA(oResponseStream, oLog, oPrefData)
 
         this.m_Log = oLog;
         this.m_Log.Write("Hotmail-SR-BETA - Constructor - START");
-
+                
         this.m_szUserName = null;
         this.m_szPassWord = null;
         this.m_oResponseStream = oResponseStream;

@@ -498,7 +498,7 @@ HotmailSMTPScreenRipperBETA.prototype =
                         //var szHTMLBody = "<font size=\"7\">another test</font><br><big>test</big><br>test"
                         szHTMLBody = szHTMLBody.match(/<body.*?>[\s\S]*<\/body>/)[0];
                         szHTMLBody = szHTMLBody.replace(/body/ig,"span");
-                        szHTMLBody = szHTMLBody.replace(/\r?\n/g,"");
+                        //szHTMLBody = szHTMLBody.replace(/\r?\n/g,"");
                         mainObject.m_HttpComms.addValuePair("fMessageBody", szHTMLBody);
                         mainObject.m_HttpComms.addValuePair("editmessagearea", szHTMLBody);
                     }
