@@ -309,10 +309,14 @@ nsDomainManager.prototype =
                               
             this.m_dbConn.beginTransaction();
             
-            szSQL  = "ALTER TABLE domain_handler "
-            szSQL += "ADD COLUMN extension_guid TEXT"
-            this.m_Log.Write("nsDataBaseManager.js - updateV3toV4 - szSQL " + szSQL);
-            this.m_dbConn.executeSimpleSQL(szSQL);
+            try
+            {
+                szSQL  = "ALTER TABLE domain_handler "
+                szSQL += "ADD COLUMN extension_guid TEXT"
+                this.m_Log.Write("nsDataBaseManager.js - updateV3toV4 - szSQL " + szSQL);
+                this.m_dbConn.executeSimpleSQL(szSQL);
+            }
+            catch(e){}
             
             //update version number                
             szSQL = "DELETE FROM webmail_schema_version; INSERT INTO webmail_schema_version VALUES (4);"
