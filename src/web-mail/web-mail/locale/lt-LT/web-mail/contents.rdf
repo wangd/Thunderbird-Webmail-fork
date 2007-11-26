@@ -16,3 +16,6 @@
        chrome:previewURL="">
    <chrome:packages>
       <RDF:Seq about="urn:mozilla:locale:lt-LT:packages">
+    </chrome:packages>
+</RDF:Description>
+</RDF:RDF>
