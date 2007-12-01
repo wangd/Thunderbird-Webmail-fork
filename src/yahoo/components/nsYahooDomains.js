@@ -171,25 +171,7 @@ nsYahooDomains.prototype =
                     this.m_Log.Write("nsYahooDomains.js - domainmanager not found");
                 }
 
-                var prefAccess = new WebMailCommonPrefAccess();
-                var oPref = {Value : null};
-                if (!prefAccess.Get("int","yahoo.domains.version",oPref))
-                { 
-                    this.m_Log.Write("nsYahooDomains.js - yahoo.domains.version -  not found");
-                    prefAccess.Set("int","yahoo.domains.version",this.m_iDomainsVersion);
-                    
-                    this.loadStandardData();
-                }
-                else
-                {                    
-                    this.m_Log.Write("nsYahooDomains.js - yahoo.domains.version -  found");
-                    if (oPref.Value != this.m_iDomainsVersion)
-                    {
-                        this.m_Log.Write("nsYahooDomains.js - yahoo.domains.version -  old version");
-                        prefAccess.Set("int","yahoo.domains.version",this.m_iDomainsVersion);
-                        this.loadStandardData();
-                    }
-                }
+                this.loadStandardData();
             break;
 
 
