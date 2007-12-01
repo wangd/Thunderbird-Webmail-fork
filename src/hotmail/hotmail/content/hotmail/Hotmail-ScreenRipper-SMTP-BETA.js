@@ -457,52 +457,52 @@ HotmailSMTPScreenRipperBETA.prototype =
 
 
                     mainObject.m_HttpComms.addValuePair("MsgPriority", "0");
-
+                    
+                    var szBody = "";     
+                    var szContentType = null;               
                     if (mainObject.m_Email.txtBody && !mainObject.m_bSendHtml || !mainObject.m_Email.htmlBody)
                     {
                         mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - plain");
-                        var szBody = mainObject.m_Email.txtBody.body.getBody();
-                        szBody = szBody.replace(/\r?\n/g,"<br>");
-
-                        var szContentType = null;
                         if (mainObject.m_Email.txtBody.headers)
                             szContentType = mainObject.m_Email.txtBody.headers.getContentType(0);
                         else
                             szContentType = mainObject.m_Email.headers.getContentType(0);
-                        mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler szContentType " + szContentType);
-                        if (szContentType)
-                        {
-                            if (szContentType.search(/charset/i)!=-1)
-                            {
-                                var szCharset = null;
-                                if (szContentType.search(/charset=['|"]*(.*?)['|"]*;\s/i)!=-1)
-                                    szCharset = szContentType.match(/charset=['|"]*(.*?)['|"]*;\s/i)[1];
-                                else
-                                   szCharset = szContentType.match(/charset=['|"]*(.*?)['|"]*$/i)[1];
-                                mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler -szCharset " + szCharset);
-                                if (szCharset)
-                                {
-                                    szBody = mainObject.convertToUTF8(szBody,szCharset);                                 
-                                    mainObject.m_Log.Write("Hotmail-SR-BETA - emailOnloadHandler - utf-8 "+szBody);
-                                }
-                            }
-                        }
-
-                        mainObject.m_HttpComms.addValuePair("fMessageBody", szBody);
-                        mainObject.m_HttpComms.addValuePair("editmessagearea", szBody);
+                        szBody = mainObject.m_Email.txtBody.body.getBody();
+                        szBody = szBody.replace(/\r?\n/g,"<br>");
                     }
                     else if (mainObject.m_Email.htmlBody && mainObject.m_bSendHtml || !mainObject.m_Email.txtBody)
                     {
                         mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - html");
-                        var szHTMLBody = mainObject.m_Email.htmlBody.body.getBody();
+                        szContentType = mainObject.m_Email.headers.getContentType(0);
+                        szBody = mainObject.m_Email.htmlBody.body.getBody();
                         //var szHTMLBody = "<font size=\"7\">another test</font><br><big>test</big><br>test"
-                        szHTMLBody = szHTMLBody.match(/<body.*?>[\s\S]*<\/body>/)[0];
-                        szHTMLBody = szHTMLBody.replace(/body/ig,"span");
-                        //szHTMLBody = szHTMLBody.replace(/\r?\n/g,"");
-                        mainObject.m_HttpComms.addValuePair("fMessageBody", szHTMLBody);
-                        mainObject.m_HttpComms.addValuePair("editmessagearea", szHTMLBody);
+                        szBody = szBody.match(/<body.*?>[\s\S]*<\/body>/)[0];
+                        szBody = szBody.replace(/body/ig,"span");
                     }
-
+                    
+                    mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler szContentType " + szContentType);
+                    if (szContentType)
+                    {
+                        if (szContentType.search(/charset/i)!=-1)
+                        {
+                            var szCharset = null;
+                            if (szContentType.search(/charset=['|"]*(.*?)['|"]*;\s/i)!=-1)
+                                szCharset = szContentType.match(/charset=['|"]*(.*?)['|"]*;\s/i)[1];
+                            else
+                               szCharset = szContentType.match(/charset=['|"]*(.*?)['|"]*$/i)[1];
+                            mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler -szCharset " + szCharset);
+                            if (szCharset)
+                            {
+                                szBody = mainObject.convertToUTF8(szBody,szCharset);                                 
+                                mainObject.m_Log.Write("Hotmail-SR-BETA - emailOnloadHandler - utf-8 "+szBody);
+                            }
+                        }
+                    }
+                    
+                    
+                    mainObject.m_HttpComms.addValuePair("fMessageBody", szBody);
+                    mainObject.m_HttpComms.addValuePair("editmessagearea", szBody);
+                    
                     mainObject.m_HttpComms.setURI(szURL);
                     mainObject.m_HttpComms.setRequestMethod("POST");
                     mainObject.m_HttpComms.setContentType("multipart/form-data");
