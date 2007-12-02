@@ -7,7 +7,7 @@
         <RDF:li resource="urn:mozilla:locale:pt-BR"/>
     </RDF:Seq>
 
-    <RDF:Description about="urn:mozilla:locale:en-US" chrome:name="pt-BR">
+    <RDF:Description about="urn:mozilla:locale:pt-BR" chrome:name="pt-BR">
         <chrome:packages>
             <RDF:Seq about="urn:mozilla:locale:pt-BR:packages">
                 <RDF:li resource="urn:mozilla:locale:pt-BR:hotmail"/>
