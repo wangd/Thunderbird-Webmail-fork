@@ -1096,7 +1096,6 @@ YahooPOP.prototype =
         try
         {
             mainObject.m_Log.Write("YahooPOP.js - deleteMessageOnload - START");
-           // mainObject.m_Log.Write("YahooPOP.js - deleteMessageOnload : \n" + szResponse);
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
 
             //check status should be 200.
