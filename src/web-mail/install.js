@@ -22,7 +22,7 @@ var skinDir           = "/" + name + "/"
 //var localeDir           = "/"
 var localeDir           = "/" + name + "/"
 
-var locales             = new Array( "en-US", "ca-AD", "cs-CZ", "da-DK", "de-DE", "es-AR", "es-ES", "fi-FI", "fr-FR", "it-IT", "ko-KR" ,"lt-LT", "nb-NO", "nl-NL", "pt-BR", "pt-PT", "ro-RO","ru-RU", "sk-SK", "sl-SI", "sv-SE", "tr-TR", "zh-CN" );
+var locales             = new Array( "en-US", "ca-AD", "cs-CZ", "da-DK", "de-DE", "es-AR", "es-ES", "fi-FI", "fr-FR", "it-IT", "ko-KR" ,"lt-LT", "nb-NO", "nl-NL", "pt-BR", "pt-PT", "ro-RO","ru-RU", "sk-SK", "sl-SI", "sv-SE", "tr-TR", "uk-UA" ,"zh-CN" );
 var skins               = new Array( "classic" ); // "modern"
 var prefs               = new Array( "webmail.js" );
 var components          = new Array( "nsComponentData2.js", "nsDomainData.js" ,"nsDomainManager.js", "nsHttpAuthManager2.js", "nsIMAPConnectionManager.js", "nsIMAPFolders.js", "nsPOPconnectionManger.js", "nsSMTPconnectionManger.js", "nsWebmailCookieManager2.js","nsIComponentData2.xpt", "nsIDomainData.xpt", "nsIDomainManager.xpt", "nsIHttpAuthManager2.xpt", "nsIIMAPConnectionManager.xpt", "nsIIMAPFolders.xpt", "nsIPOPConnectionManager.xpt", "nsISMTPConnectionManager.xpt", "nsIWebmailCookieManager2.xpt" );

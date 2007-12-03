@@ -7,14 +7,14 @@
             <RDF:Seq>
                 <RDF:li>
                     <RDF:Description>
-                        <em:version>1.2.11</em:version>
+                        <em:version>1.2.13</em:version>
                         <em:targetApplication>
                             <Description>
                                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id> <!-- Thunderbird updates -->
                                 <em:minVersion>2.0b2</em:minVersion>
                                 <em:maxVersion>2.0.*</em:maxVersion>
-                                <em:updateLink>http://download.mozdev.org/webmail/hotmail-1-2-11.xpi</em:updateLink>
-                                <em:updateHash>sha256:b58a470dc0dde94dd133056b3cd73ddb461215ebd943e18e2bad88211a28845f</em:updateHash>
+                                <em:updateLink>http://download.mozdev.org/webmail/hotmail-1-2-13.xpi</em:updateLink>
+                                <em:updateHash>sha256:845cf43893cb91c2d6f54fcf2c076f9dd96b1300385638c86c28ef8f229c5955</em:updateHash>
                           </Description>
                         </em:targetApplication>
                 
@@ -34,7 +34,7 @@
             </RDF:Seq>
         </em:updates>
         
-       <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBAKS2ZdEvazyJhIWVoWyH/SorMwcLzgb48ZA31GU4KbIVtbZijCXq/S5tGdtLC4yS629ZIV2mkCt9kxFagYh9gFfIm0oSHo2OGTn9hS547Jdm6eO/imaHUOcMnX5Dp5gddkTDMcQClZ1IBNOqDqVz4vUA9k5tZgjRfimMNd3lA250</em:signature>
+       <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBABHYv9oPBwSbsKUo3eZTiM/nzRWNjIE8DgzusPsYoipqHSKGAva+c17qq6GgkgRDKWVsQJLR/m5KKGWtj8ww2M9aavWkUX8o6nFz9x5uZeJlN6zgKaAIcmuJR0HJ6QRC4XvnKBqkv9Mn0vxEwKIrt/HmHDVP+LL0apKSO+Eru0KC</em:signature>
 
     
     </RDF:Description>
