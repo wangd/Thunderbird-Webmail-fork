@@ -239,7 +239,16 @@ YahooPOP.prototype =
                     mainObject.m_Log.Write("YahooPOP.js - loginOnloadHandler - page check : " + szLocation );
                     if (szResponse.search(patternYahooShowFolder)== -1)
                     {
-                        if (mainObject.m_bReEntry)
+                        if (szLocation.search(/try_mail/i)!=-1)
+                        {
+                             mainObject.m_HttpComms.addValuePair("newStatus", "1");
+                             mainObject.m_HttpComms.setURI(szLocation);
+                             mainObject.m_HttpComms.setRequestMethod("POST");
+                             var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
+                             if (!bResult) throw new Error("httpConnection returned false");
+                             return;
+                        }
+                        else if (mainObject.m_bReEntry)
                         {
                             mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
 
