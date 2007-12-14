@@ -1,0 +1,5 @@
+<!ENTITY Options.szTitle "Možnosti GMail">
+<!ENTITY POP.Panel.szTitle "POP">
+<!ENTITY SMTP.Panel.szTitle "SMTP">
+<!ENTITY IMAP.Panel.szTitle "IMAP">
+<!ENTITY Window.size "šírka: 27em; výška: 20em">

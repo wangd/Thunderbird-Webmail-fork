@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<project name="gmail" default="createxpi">
+    <property name="VERSION" value="0-5-14b1"/>
+
+    <delete file="gmail-${VERSION}.xpi"/>
+    <delete file="gmail.jar"/>
+
+    <target name="createjar">
+        <zip destfile="gmail.jar" compress="false">
+            <fileset dir="gmail">
+                <include name="locale/**" />
+                <include name="skin/**"/>
+                <include name="content/**"/>
+                <exclude name="**/*.db"/>
+            </fileset>
+        </zip>
+    </target>
+
+    <target name="createxpi" depends="createjar">
+        <zip destfile="gmail-${VERSION}.xpi" >
+            <zipfileset dir="." includes="gmail.jar" prefix="chrome"/>
+            <zipfileset dir="components" prefix="components" includes="**" excludes="*.idl *.bat"/>
+            <zipfileset dir="defaults" prefix="defaults" includes="**"/>
+            <zipfileset dir="." includes="install.rdf"/>
+            <zipfileset dir="." includes="install.js"/>
+            <zipfileset dir="." includes="chrome.manifest"/>
+            <zipfileset dir="." includes="domains.txt"/>
+        </zip>
+    </target>
+
+</project>

@@ -1,0 +1,10 @@
+<!ENTITY GMailAbout.Title "Über GMail">
+<!ENTITY GMailAbout.ExtName "GMail">
+<!ENTITY GMailAbout.ExtVersion "Version 0.5.4">
+<!ENTITY GMailAbout.ExtDescription "GMail-Komponente der WebMail-Erweiterung.">
+<!ENTITY GMailAbout.ExtCreaterTitle "Erstellt von:">
+<!ENTITY GMailAbout.ExtCreator "Luigi Capriotti">
+<!ENTITY GMailAbout.ExtHome "Homepage">
+<!ENTITY GMailAbout.ExtHomeURL "http://webmail.mozdev.org/">
+<!ENTITY GMailAbout.ExtButton "Schließen">
+<!ENTITY GMailAbout.ExtContributorTitle "Mitwirkende:">

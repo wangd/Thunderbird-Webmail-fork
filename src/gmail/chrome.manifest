@@ -1,0 +1,14 @@
+overlay chrome://messenger/content/messenger.xul    chrome://gmail/content/GMail-Start.xul
+
+content gmail    jar:chrome/gmail.jar!/content/gmail/
+
+skin	gmail	  classic/1.0     jar:chrome/gmail.jar!/skin/classic/gmail/
+
+locale	gmail    en-US   jar:chrome/gmail.jar!/locale/en-US/gmail/
+locale  gmail    it-IT   jar:chrome/gmail.jar!/locale/it-IT/gmail/
+locale  gmail    es-ES   jar:chrome/gmail.jar!/locale/es-ES/gmail/
+locale  gmail    fr-FR   jar:chrome/gmail.jar!/locale/fr-FR/gmail/
+locale  gmail    de-DE   jar:chrome/gmail.jar!/locale/de-DE/gmail/
+locale  gmail    ca-AD   jar:chrome/gmail.jar!/locale/ca-AD/gmail/
+locale  gmail    nl-NL   jar:chrome/gmail.jar!/locale/nl-NL/gmail/
+locale  gmail    sk      jar:chrome/gmail.jar!/locale/sk/gmail/

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/global.css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://gmail/locale/GMail-Prefs-SMTP.dtd">
+
+
+<overlay id="paneSMTPOverlay"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+	<prefpane id = "paneSMTP" onpaneload= "" flex="1"> 
+		<preferences>
+			<preference id="saveSentItems" name="gmail.bSaveCopy" type="bool"/>
+		</preferences>
+	
+		<vbox>
+			<text value="&Placeholder.Label;" id = "PlaceholderLabel"/>
+			
+			<!--
+			<checkbox label="&SaveSentItems.Label;" 
+				accesskey="&SaveSentItems.AccessKey;"
+				preference = "saveSentItems"
+				id="chkSentItems"/>
+			-->
+		</vbox>
+
+	</prefpane>
+</overlay>

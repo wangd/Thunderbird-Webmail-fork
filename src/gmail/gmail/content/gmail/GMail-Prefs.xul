@@ -1,0 +1,36 @@
+<?xml version="1.0"?> 
+
+<?xml-stylesheet href="chrome://global/skin/global.css"?>
+<?xml-stylesheet href="chrome://messenger/skin/preferences/preferences.css"?>
+<?xml-stylesheet href="chrome://mozapps/content/preferences/preferences.css"?>
+
+<?xml-stylesheet href="chrome://gmail/content/GMail-Prefs.css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://gmail/locale/GMail-Prefs.dtd">
+
+
+<prefwindow type="prefwindow"
+            id="GMail-Prefs"
+            title="&Options.szTitle;"
+            xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+            style="&Window.size;"
+            lastSelected = "panePOP"
+            buttons="accept, cancel">
+  
+      
+    <!-- POP --> 
+    <prefpane id="panePOP" 
+              label="&POP.Panel.szTitle;"
+              src="chrome://gmail/content/GMail-Prefs-POP.xul"/>  
+    
+    <!--IMAP-->    
+    <!--
+    <prefpane id="paneIMAP" 
+              label="&IMAP.Panel.szTitle;"
+              src="chrome://gmail/content/Yahoo-Prefs-IMAP.xul"/>    
+    -->
+    <!--SMTP-->
+    <prefpane id="paneSMTP" 
+              label="&SMTP.Panel.szTitle;"
+              src="chrome://gmail/content/GMail-Prefs-SMTP.xul"/> 
+</prefwindow>

@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/global.css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://gmail/locale/GMail-Prefs-POP.dtd">
+
+
+<overlay id="panePOPOverlay"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+	<prefpane id = "panePOP" onpaneload= "" flex="1"> 
+
+		<preferences>
+			<preference id="DownloadUnread" name="gmail.bDownloadUnread" type="bool"/>
+			</preferences>
+	
+		<vbox>
+			<!--download unread emails only-->
+			<checkbox label="&DownloadUnread.Label;" 
+				accesskey="&DownloadUnread.AccessKey;"
+				preference = "DownloadUnread"
+				id="chkDownloadUnread"/> 
+	
+			<spacer flex="2"/>
+		</vbox>
+
+	</prefpane>
+</overlay>
+
+
