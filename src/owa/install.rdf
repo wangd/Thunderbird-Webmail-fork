@@ -10,13 +10,14 @@
         	
         <em:name>WebMail - OWA</em:name>
 		<em:description>OWA component for Web-Mail extension</em:description>
-		<em:creator></em:creator>
-		<em:homepageURL></em:homepageURL>
+        <em:creator>ComodoDragon</em:creator>
+        <em:homepageURL>http://webmail.mozdev.org</em:homepageURL>
 	
     	<em:iconURL>chrome://owa/skin/OWA-SmallIcon.png</em:iconURL>
 		<em:aboutURL>chrome://owa/content/OWA-About.xul</em:aboutURL>
 		<em:optionsURL>chrome://owa/content/OWA-Prefs.xul</em:optionsURL>
-		<em:updateURL></em:updateURL>
+        <em:updateKey>MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC0l8rvgYUo82qnFbsuWNBIqSwn2DDfE1sS2bm8pXoDQvPWwWv1QR5w5WRpABdsfF0N5dQ0Wwlh3TxPiMBGuPxj7Cvpuh5QoaETshZ2VL2oAmXy6F8X8m2jaUctfjuIo4IF92x4NqfFmRyFDAk+SzuMYPetYWG2Ic9SLsK2u19fEQIDAQAB</em:updateKey>
+        <em:updateURL>http://webmail.mozdev.org/update/owaUpdate.rdf</em:updateURL>
 		
         <em:targetApplication>
 			<Description>

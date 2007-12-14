@@ -1,11 +1,8 @@
 <!ENTITY OWAAbout.Title "OWA - About">
 <!ENTITY OWAAbout.ExtName "WebMail - OWA">
-<!ENTITY OWAAbout.ExtVersion "version 0.1.0">
+<!ENTITY OWAAbout.ExtVersion "version:">
 <!ENTITY OWAAbout.ExtDescription "OWA component for the WebMail extension.">
 <!ENTITY OWAAbout.ExtCreaterTitle "Created By:">
-<!ENTITY OWAAbout.ExtCreator "">
 <!ENTITY OWAAbout.ExtHome "Home Page">
-<!ENTITY OWAAbout.ExtHomeURL "">
 <!ENTITY OWAAbout.ExtButton "Close">
 <!ENTITY OWAAbout.ExtContributorTitle "Contributors:">
-

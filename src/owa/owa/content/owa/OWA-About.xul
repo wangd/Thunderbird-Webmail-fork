@@ -8,33 +8,30 @@
         title= "&OWAAbout.Title;"
         orient="vertical"
         autostretch="always"
-        onload="AddNamesOWAListItems();sizeToContent()"
+        onload="gOWAAbout.init();sizeToContent()"
+        onunload ="gOWAAbout.stop()"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         id = "OWAAboutDialog">
      
-     <stringbundleset>
-	   <stringbundle id="stringsOWAAbout" src="chrome://owa/locale/OWA-About.properties"/>
-	</stringbundleset>
-	
     <script type="application/x-javascript" src="chrome://owa/content/OWA-About.js"/>
-        
-    <groupbox align="center" orient="horizontal">
+       
+    <groupbox align="center" orient="horizontal"> 
         <vbox>
             <image id="OWA"/>
-            <text value="&OWAAbout.ExtVersion;" id = "OWAVersion"/>
+            <hbox>
+                <text value="&OWAAbout.ExtVersion;" id = "OWAVersionTitle" class="OWAVersion"/>
+                <text id = "OWAVersionNumber" class="OWAVersion"/>
+            </hbox>
             <text value="&OWAAbout.ExtDescription;" id = "OWADescription"/>
             <text value="&OWAAbout.ExtCreaterTitle;" id = "OWACreatorLabel"/>
             <hbox>
                 <image id="LionImage"/>
-                <text value="&OWAAbout.ExtCreator;" class = "OWACreatorText"/>
+                <text id="OWACreator" class = "OWACreatorText"/>
             </hbox>
             <text value="&OWAAbout.ExtContributorTitle;" id = "OWAContributorLabel"/>
             <vbox flex="1" id="OWAContributorBox"/>
-            <text value="&OWAAbout.ExtHome;" 
-                  id = "OWAHomePage"
-                  onclick="window.opener.openURL('&OWAAbout.ExtHomeURL;');"/>
-        </vbox>
-       
+            <text value="&OWAAbout.ExtHome;"  id = "OWAHomePage"/>
+        </vbox>       
     </groupbox>
 
     <hbox>
