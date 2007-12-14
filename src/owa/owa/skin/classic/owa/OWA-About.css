@@ -1,0 +1,125 @@
+#OWAAboutDialog
+{
+    padding: 0px 0px 0px 0px;
+    background-color: #FFFFFF;
+    color: #000000;
+}
+
+
+#OWA
+{
+    list-style-image: url("chrome://owa/skin/OWA.png");
+    margin-bottom: 9px;
+}
+
+
+#OWAName
+{
+    font-size: x-large;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 9px;
+}
+
+
+#OWAVersion
+{
+    color: #909090;
+    margin-bottom: 3px;
+}
+
+#OWADescription
+{
+    color: #404040;
+}
+
+
+#OWACreatorLabel
+{
+    border-top: 2px solid #C0C0C0;
+    padding: 5px 0px 3px 0px;
+    margin-top: 3px;
+    font-weight: bold;
+}
+
+#OWAContributorLabel
+{
+    padding: 5px 0px 3px 0px;
+    margin-top: 3px;
+    font-weight: bold;
+}
+
+
+#LionImage
+{   
+    margin-left: 20px;
+    /*list-style-image: url("chrome://owa/skin/Dragon.png");*/
+    
+}
+
+
+.OWACreatorText
+{
+    margin-top: 10px; 
+    margin-left: 5px;
+}
+
+
+.OWAContributorText
+{
+    margin-top: 10px;
+}
+
+
+#flagImage
+{
+    margin-left: 20px;
+    list-style-image: url("chrome://owa/skin/flags.png");
+}
+
+
+.flag/*world*/
+{
+     -moz-image-region: rect(0px, 32px, 32px, 0px)
+}
+
+
+.flag[value="0"] /*italy*/
+{
+    -moz-image-region: rect(0px, 64px, 32px, 32px)
+}
+
+.flag[value="1"]/*spain*/
+{
+     -moz-image-region: rect(0px, 96px, 32px, 64px)
+}
+
+.flag[value="2"]/*france*/
+{
+     -moz-image-region: rect(0px, 128px, 32px, 96px)
+}
+
+.flag[value="3"]/*germany*/
+{
+     -moz-image-region: rect(0px, 160px, 32px, 128px)
+}
+
+
+.flag[value="4"]/*Catalan*/
+{
+     -moz-image-region: rect(0px, 192px, 32px, 160px)
+}
+
+.flag[value="5"]/*Netherlands*/
+{
+     -moz-image-region: rect(0px, 224px, 32px, 192px)
+}
+
+#OWAHomePage
+{
+    text-align: right;
+    color: #0000FF;
+    text-decoration: underline !important;
+    cursor: pointer;
+    margin-top: 30px;
+}

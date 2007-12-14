@@ -1,0 +1,46 @@
+#listDomain
+{
+    width: 25em;
+    height: 25em;
+}
+
+#labelDomain
+{
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+
+.listItemDomain
+{
+    padding: 4px 4px 4px 4px;
+    min-height: 25px !important;
+    border-bottom: 1px dotted #C0C0C0;
+}
+
+
+#OWAImage
+{
+    list-style-image: url("chrome://owa/skin/worldIcon.png");
+    margin-left: 5px;
+}
+
+
+.listError
+{
+    padding-top: 4px;
+}
+
+
+#imageError
+{
+    list-style-image: url("chrome://owa/skin/error.png");
+}
+
+.errorMSG
+{
+    font-weight: bold;
+    font-size: medium;
+    letter-spacing: 0.3ex;
+    line-height: 2em;
+}

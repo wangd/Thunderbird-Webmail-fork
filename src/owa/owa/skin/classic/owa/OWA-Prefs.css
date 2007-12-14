@@ -1,0 +1,14 @@
+radio[pane]
+{
+    list-style-image: url("chrome://owa/skin/OWA-Prefs-Window.png");
+}
+
+radio[pane=paneAccounts]
+{
+    -moz-image-region: rect(0px, 32px, 32px, 0px)
+}
+
+radio[pane=paneDomains]
+{
+    -moz-image-region: rect(0px, 64px, 32px, 32px)
+}

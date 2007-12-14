@@ -1,0 +1,32 @@
+<?xml version="1.0" ?>
+<project name="OWA Components">
+    <property name="gecko_sdk_path" location="C:\gecko-sdk"/>
+    <property name="xpidl_exe" location="${gecko_sdk_path}/bin/xpidl.exe" />
+    <property name="IDLs_path" location="${gecko_sdk_path}/idl" />
+
+    <delete>
+        <fileset dir="." includes="*.xpt"/>
+    </delete>
+
+    <target name="compileIDL">
+        <exec executable="${xpidl_exe}">
+            <arg line="-m typelib -w -v -I ${IDLs_path} nsIPOPOWA.idl" />
+        </exec>
+
+        <exec executable="${xpidl_exe}">
+            <arg line="-m typelib -w -v -I ${IDLs_path} nsISMTPOWA.idl" />
+        </exec>
+
+        <exec executable="${xpidl_exe}">
+            <arg line="-m typelib -w -v -I ${IDLs_path} nsIDomainsOWA.idl" />
+        </exec>
+
+        <copy file="nsIPOPOWA.idl" todir="${IDLs_path}"/>
+        <copy file="nsISMTPOWA.idl" todir="${IDLs_path}"/>
+        <copy file="nsIDomainsOWA.idl" todir="${IDLs_path}"/>
+
+        <delete file="${IDLs_path}/nsIPOPOWA.idl"/>
+        <delete file="${IDLs_path}/nsISMTPOWA.idl"/>
+        <delete file="${IDLs_path}/nsIDomainsOWA.idl"/>
+    </target>
+</project>

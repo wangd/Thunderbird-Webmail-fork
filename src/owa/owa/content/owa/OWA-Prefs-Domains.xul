@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/global.css"?>
+<?xml-stylesheet href="chrome://OWA/skin/OWA-Prefs-Domains.css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://OWA/locale/OWA-Prefs-Domains.dtd">
+
+
+<overlay id="paneDomainsOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+           
+    <prefpane id = "paneDomains" onpaneload= "gOWADomains.init();" flex="1"> 
+        <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
+        <script type="application/x-javascript" src="chrome://OWA/content/OWA-Prefs-Domains.js"/>
+        
+        <stringbundle id="stringsOWAPrefs-Domains" src="chrome://OWA/locale/OWA-Prefs-Domains.properties"/>        
+                 
+        <vbox id="vboxDomains" flex="1">
+            <label value="&OWAPref.Domain.Label;" id="labelDomain"/>
+            <hbox align="center">
+                <spacer flex="1"/>
+                <richlistbox  id="listDomain"
+                              class="listDomainbox"
+                              allowEvents="true"
+                              flex ="1"
+                              onselect="gOWADomains.onSelect();"/>
+
+                <vbox align="top" pack="top">
+                    <button id="add"
+                            label="&Add.label;" 
+                            oncommand ="gOWADomains.add();"
+                            accesskey="&Add.AccessKey;"/>
+                    <button id="edit" 
+                            label="&Edit.label;" 
+                            oncommand ="gOWADomains.edit();"
+                            disabled="true"
+                            accesskey="&Edit.AccessKey;"/>
+                    <button id="remove"
+                            label="&Remove.label;" 
+                            disabled="true"
+                            accesskey="&Remove.AccessKey;"
+                            oncommand ="gOWADomains.remove();"/>
+                </vbox>
+                <spacer flex="1"/>
+            </hbox>          
+        </vbox>     
+    </prefpane>
+    
+</overlay>

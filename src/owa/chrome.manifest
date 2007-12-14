@@ -1,0 +1,6 @@
+content owa    jar:chrome/owa.jar!/content/owa/
+
+skin	owa	 classic/1.0     jar:chrome/owa.jar!/skin/classic/owa/
+
+locale	owa    en-US   jar:chrome/owa.jar!/locale/en-US/owa/
+

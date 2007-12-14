@@ -1,0 +1,15 @@
+#include "nsISupports.idl"
+
+[scriptable, uuid(3baf9d5c-a8fa-11dc-8314-0800200c9a66)]
+interface nsIOWADomains : nsISupports
+{  
+    long addDomain(in string szDomain, 
+                   in string szURL);
+      
+    long removeDomain(in string szDomain);
+           
+    string getURL(in string szDomain);
+    
+    long getAllDomains(out PRUint32 count,
+                       [array, size_is(count)] out string Domains);
+};

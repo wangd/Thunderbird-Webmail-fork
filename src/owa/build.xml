@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<project name="owa" default="createxpi">
+    <property name="VERSION" value="0-6-0"/>
+
+    <delete file="owa-${VERSION}.xpi"/>
+    <delete file="owa.jar"/>
+
+    <target name="createjar">
+        <zip destfile="owa.jar" compress="false">
+            <fileset dir="owa">
+                <include name="locale/**" />
+                <include name="skin/**"/>
+                <include name="content/**"/>
+                <exclude name="**/*.db"/>
+            </fileset>
+        </zip>
+    </target>
+
+    <target name="createxpi" depends="createjar">
+        <zip destfile="owa-${VERSION}.xpi" >
+            <zipfileset dir="." includes="owa.jar" prefix="chrome"/>
+            <zipfileset dir="components" prefix="components" includes="**" excludes="*.idl *.bat *.xml"/>
+            <zipfileset dir="defaults" prefix="defaults" includes="**"/>
+            <zipfileset dir="." includes="install.rdf"/>
+            <zipfileset dir="." includes="install.js"/>
+            <zipfileset dir="." includes="chrome.manifest"/>
+            <zipfileset dir="." includes="domains.txt"/>
+        </zip>
+    </target>
+
+</project>

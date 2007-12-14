@@ -1,0 +1,8 @@
+<!ENTITY OWAPref.Domain.Label "Supported domains">
+<!ENTITY Domain.label "Domain">
+<!ENTITY Remove.label "Remove">
+<!ENTITY Remove.AccessKey "R">
+<!ENTITY Add.label "Add">
+<!ENTITY Add.AccessKey "A">
+<!ENTITY Edit.label "Edit">
+<!ENTITY Edit.AccessKey "E">

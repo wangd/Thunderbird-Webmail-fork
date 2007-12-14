@@ -1,0 +1,14 @@
+<database>
+    <entry>
+        <domain>test.com</domain>
+        <url>http://test.com/webmail</url>
+    </entry>
+    <entry>
+        <domain>testw.com</domain>
+        <url>http://testw.com/webmail/</url>
+    </entry>
+    <entry>
+        <domain>pmp-marketing.com</domain>
+        <url>https://webmail.pmp-marketing.com/</url>
+    </entry>
+</database>

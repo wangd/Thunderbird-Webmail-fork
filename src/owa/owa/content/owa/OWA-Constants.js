@@ -1,0 +1,16 @@
+const kOWAConstants = true;
+const kOWAForm = /(<FORM[\s\S]*?<\/FORM>)/i;
+const kOWAInput =/<INPUT.*?>/gmi;
+const kOWAAction = /<FORM[\s\S]*?action=['|"](.*?)['|"][\s\S]*?>/i;
+const kOWAType = /type=['|"](.*?)['|"]/i;
+const kOWAName = /name=["|'](.*?)['|"]/i;
+const kOWAValue = /value=["|'](.*?)['|"]/i;
+const kBaseURL = /<BASE href="(.*?)">/i;
+const kMailBoxURL = /<FRAME.*?title="Contents".*?src="(.*?)".*?>/i;
+const kMSGData = /<TR><TD class=List.*?><INPUT TYPE=checkbox.*?NAME=MsgID value=".*?"><\/TD>.*?<\/TR>/gi;
+const KMSGURL = /href="(.*?")/i;
+const KMSGID = /<INPUT.*?NAME=MsgID.*?value="(.*?)">/i;
+const KMSGSize = /[<b>]?(\d*?)&nbsp;(\SB)[<\/b>]?/i;
+const KNextPage = /<A href="(.*?Page=.*?)".*?Next.*?>/i;
+const KTextArea = /<TEXTAREA.*?>([\s\S]*?)<\/TEXTAREA>/gi;
+const kPageNum = /<TD.*?&nbsp;Page:&nbsp;.*?&nbsp;of&nbsp;([\d]*).*?<\/B>.*?<\/TD>/i;
