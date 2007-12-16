@@ -24,6 +24,7 @@
             <zipfileset dir="." includes="install.rdf"/>
             <zipfileset dir="." includes="install.js"/>
             <zipfileset dir="." includes="chrome.manifest"/>
+            <zipfileset dir="." includes="Example of domains.txt"/>
             <zipfileset dir="." includes="domains.txt"/>
         </zip>
     </target>
