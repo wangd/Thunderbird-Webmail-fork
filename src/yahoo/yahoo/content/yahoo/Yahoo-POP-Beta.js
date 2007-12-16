@@ -1051,7 +1051,7 @@ YahooPOPBETA.prototype =
                         if (!bResult) throw new Error("httpConnection returned false");
                         mainObject.m_iStage = 2;
                     }
-                    else if (mainObject.m_aDownloadFiles.length==0 && !mainObject.m_bMarkAsRead )
+                    else if (!mainObject.m_bMarkAsRead )
                     {
                         mainObject.m_szEmail = mainObject.m_szEmail.replace(/^\./mg,"..");    //bit padding
                         mainObject.m_szEmail += "\r\n.\r\n";  //msg end
@@ -1186,7 +1186,6 @@ YahooPOPBETA.prototype =
             delete this.m_aMsgDataStore;
             delete this.m_aszFolderList;
             delete this.m_aRawData
-            delete this.m_aDownloadFiles;
 
             this.m_Log.Write("YahooPOPBETA.js - logOUT - END");
             return true;
