@@ -349,9 +349,9 @@ nsGMail.prototype =
                             {
                                 mainObject.m_Log.Write("nsGMailPOP.js - mailBoxOnloadHandler - aMSGRow :" + aMSGRows[j]);
                                 
-                                var aszData = aMSGRows[j].match(PatternGMailMSGData);                                                         
-                                mainObject.m_Log.Write("nsGMailPOP.js - mailBoxOnloadHandler - unread : " + aszData[2]);
-                                
+                                var aszData = aMSGRows[j].match(PatternGMailMSGData);    
+                                mainObject.m_Log.Write("nsGMailPOP.js - mailBoxOnloadHandler -  : " + aszData);
+                                                                                     
                                 var bRead = true;
                                 if (mainObject.m_bDownloadUnread)
                                 {
@@ -362,10 +362,11 @@ nsGMail.prototype =
                                 if (bRead)
                                 {                               
                                     //check for thread
+                                    var iThreadNum = aszData[4].search(/\(\d*?\)/);
                                     var aIDs = aMSGRows[j].match(PatternGMailThreadID);
-                                    mainObject.m_Log.Write("nsGMailPOP.js - mailBoxOnloadHandler -  : " + aIDs[1] + " " + aIDs[2]);
+                                    mainObject.m_Log.Write("nsGMailPOP.js - mailBoxOnloadHandler -  : " + aIDs[1] + " " + aIDs[2] + " " +iThreadNum);
                                     
-                                    if (aIDs[1]!=aIDs[2])
+                                    if (aIDs[1]!=aIDs[2] || iThreadNum!=-1)
                                     {//thread found                                    
                                          mainObject.m_Log.Write("nsGMailPOP.js - mailBoxOnloadHandler - thread found");
                                          var szThreadURI = "http://mail.google.com/mail?ui=1&view=cv&search=inbox&th="+ aszData[1];
@@ -375,7 +376,7 @@ nsGMail.prototype =
                                     }
                                     else   
                                     { //no thread
-                                        mainObject.m_Log.Write("nsGMailPOP.js - mailBoxOnloadHandler - NO thread found");
+                                        mainObject.m_Log.Write("nsGMailPOP.js - mailBoxOnloadHandler - NO THREAD ");
                                         
                                         var data = new GMailMSG();
                                         data.szMsgID = aszData[1];
@@ -483,8 +484,11 @@ nsGMail.prototype =
                           
                         if (parseInt(aEmailData[1])!= 384 && parseInt(aEmailData[1])!= 392) //384/392 are deleted emails ?
                         {
-                            //check your not sender
-                            if (parseInt(aEmailData[1]) < 8)//sent items?
+                            //check your not sender                         
+                            //aEmailData[5] sender's email address != account email
+                            mainObject.m_szUserName
+                            var regExp = new RegExp(aEmailData[5]);
+                            if ( mainObject.m_szUserName.search(regExp)==-1)//sent items?
                             { 
                                 var data = new GMailMSG();
                                 data.szMsgID = aEmailData[3];
