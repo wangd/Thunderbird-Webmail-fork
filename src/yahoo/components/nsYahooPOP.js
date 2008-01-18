@@ -338,7 +338,9 @@ nsYahoo.prototype =
                 for (j=0; j<aszFolders.length; j++)
                 {
                     this.m_Log.Write("nsYahoo - loadPRefs - aszFolders[j] " + aszFolders[j]);
-                    oData.aszFolder.push(encodeURIComponent(aszFolders[j]));
+                    var szEncoded = encodeURIComponent(aszFolders[j])
+                    szEncoded = szEncoded.replace(/-/,"%2d")
+                    oData.aszFolder.push(szEncoded);
                 }
             }
 
