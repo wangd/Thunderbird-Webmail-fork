@@ -1157,7 +1157,7 @@ nsAOL.prototype =
             if (WebMailPrefAccess.Get("bool","aol.Account."+szUserName+".bUseJunkMail",oPref))
             {
                 this.m_bUseJunkMail = oPref.Value;
-                this.m_aszFolder.push("spam");
+                if (this.m_bUseJunkMail) this.m_aszFolder.push("spam");
             }
             this.m_Log.Write("nsAOLPOP.js - getPrefs - bUseJunkMail " + oPref.Value);
 
