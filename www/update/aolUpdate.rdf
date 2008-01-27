@@ -14,7 +14,7 @@
                                 <em:minVersion>2.0</em:minVersion>
                                 <em:maxVersion>2.0.*</em:maxVersion>
                                 <em:updateLink>http://download.mozdev.org/webmail/aol-1-2-6.xpi</em:updateLink>
-                                <em:updateHash>sha256:8c4118570d0dd10c69efaea1b0f15689d1fa75db83eb9ce31c8cd1dbf7a93c71</em:updateHash>
+                                <em:updateHash>sha256:86c1e18961607955206e8e19e40657acf4b0d01ca724ad8a9632a45a5f79d97c</em:updateHash>
                           </Description>
                         </em:targetApplication>
                         <em:requires>
@@ -33,7 +33,7 @@
             </RDF:Seq>
         </em:updates>
         
-       <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBAMHvPSiqqiIeWNT7iJqBdm7+6kisdAknLVZogcS/NDHMKapOEa8fDQMa/UmHx9wxb5vpZeVrvuEVm3xObL+33qul7lVG5qzm1kBqsLUzKEPR2zS2TlWmlS2E89MNpSegSzfAojLYwofx69Webyt+eixIAf3sBFESpqgoHBeuh2zV</em:signature>
+       <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBAAA20asJuYEUH38QG6f5HuiOCA8CFurY6qCV95pWSMbwHrq8e9aDPcqh30HGLUMtbD5oBmxwXn1sJSFYO7nlLDaPiYh4cOYVqKPedV4tvvmjagldHmtH7Hovp8J9TzJqyy0Lj19r1WhpshVctGdYGMZUV5JbATM8j4okoFk/7Nwy</em:signature>
     
     </RDF:Description>
 </RDF:RDF>

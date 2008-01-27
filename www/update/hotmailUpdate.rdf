@@ -14,7 +14,7 @@
                                 <em:minVersion>2.0b2</em:minVersion>
                                 <em:maxVersion>2.0.*</em:maxVersion>
                                 <em:updateLink>http://download.mozdev.org/webmail/hotmail-1-2-14.xpi</em:updateLink>
-                                <em:updateHash>sha256:845cf43893cb91c2d6f54fcf2c076f9dd96b1300385638c86c28ef8f229c5955</em:updateHash>
+                                <em:updateHash>sha256:2e5288005a03d5fa04e9d7ae6062fd0e76b48ebb1b15a6f4d561e1b3c801c43e</em:updateHash>
                           </Description>
                         </em:targetApplication>
                 
@@ -34,7 +34,7 @@
             </RDF:Seq>
         </em:updates>
         
-       <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBALe+1eJayEPyxA9eDLFwdNS/5Y3CKIs8fC8IqX/yzb6GndkQVdnr38XOMaZd9cZCgbbOF5WCisXRUb5R0fdL4lrxL/FBZSJoo4ScQqchx8fX3HYX33f3Mx5/LRgOZ67b0SY8EW1t0swM12Dc60JizyDxUW+DdkgZIZ0FGH1l/ld7</em:signature>
+       <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBAMNq+3oLpAOdEg7r///rW7gM6HqYdoW5Tbo1TErLXAJWzMx2x6VXo+phD8lVcaEnnpEdcM7P2Z+peaVNcEtjJ5p0BmfZk4qmWssiIE+cALaFUZCm6Q0ArtG+3g07/so5jXiK4emXIIBtmX3wieWS0mvnF2dDmerIaDPCmpnZ7c+G</em:signature>
 
     
     </RDF:Description>

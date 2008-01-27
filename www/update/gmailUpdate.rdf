@@ -15,7 +15,7 @@
                                 <em:minVersion>2.0</em:minVersion>
                                 <em:maxVersion>2.0.*</em:maxVersion>
                                 <em:updateLink>http://download.mozdev.org/webmail/gmail-0-5-14.xpi</em:updateLink>
-                                <em:updateHash>sha256:0b51345a4a296bb6b1918c75221d0bae16ed94eb917429346d1186c44de7d331</em:updateHash>
+                                <em:updateHash>sha256:69fd37bfd926fc7bb20357ec75fbd26fe72cce712f9b833073808a3c2dc5acad</em:updateHash>
                           </Description>
                         </em:targetApplication>
                 
@@ -35,7 +35,7 @@
             </RDF:Seq>
         </em:updates>
         
-        <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBAA/fqg005+nMkIEr26r3EHy+pIOI8uTMbTGfyEjaN/TFvGs2i2Vymg+zhynz8jBFnOOHgI7CU9BX/Bv1qV/SG8jM1/I4eySCP5mhfiV2RaxLSYc5WLb2uQ3ztYXtux5QUz8IxaiiCnDbyEL3E/qel1rxNrttZAnaJzhDdDpijpea</em:signature>
+        <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBAFncUZwOik+BDAUdDndVLq+nehcJ1Kuh0CQK+jT8kOJ7GU3aC0LIDy9OMh/M7zukbLLivyGBDQ+p0TVgZ6+0fwQCQS5ayr2ao2MG2mZ7454Bl/k8fTjXRJfuVJ+bcYDtMaGNnSGxWgoMpIjs6W1WSGM0b0LRUvFhh6C9jaFJ4cMP</em:signature>
 
     </RDF:Description>
 </RDF:RDF>
