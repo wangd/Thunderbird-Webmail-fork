@@ -30,4 +30,8 @@
               label="&Logging.Panel.szTitle;"
               src="chrome://web-mail/content/prefs/Webmail-Prefs-Logging.xul"/>
 
+    <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
+    <script type="application/x-javascript" src="chrome://web-mail/content/prefs/Webmail-Prefs-Servers.js"/>
+    <script type="application/x-javascript" src="chrome://web-mail/content/prefs/Webmail-Prefs-Domains.js"/>
+    <script type="application/x-javascript" src="chrome://web-mail/content/prefs/Webmail-Prefs-Logging.js"/>
 </prefwindow>

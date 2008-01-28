@@ -438,7 +438,7 @@ HttpComms.prototype =
 
         var inStreamData = this.inputStream(this.m_aFormData[0].szValue);
         MultiStream.appendStream(inStreamData);
-        inStreamData.close();
+        //inStreamData.close();
 
         var uploadChannel = nsIChannel.QueryInterface(Components.interfaces.nsIUploadChannel);
         uploadChannel.setUploadStream(MultiStream , this.m_szContentType , -1);
@@ -449,8 +449,7 @@ HttpComms.prototype =
         var listener = new this.downloadListener(this.callback, this);
         nsIChannel.asyncOpen(listener, null);
 
-        if (MultiStream)  MultiStream.close();
-        MultiStream = null;
+        //if (MultiStream)  MultiStream.close();
 
         this.m_Log.Write("HttpComms3.js - otherData - END");
     },
@@ -473,13 +472,13 @@ HttpComms.prototype =
             {
                 var inStreamAnd = this.inputStream("&");
                 MultiStream.appendStream(inStreamAnd);
-                inStreamAnd.close();
+                //inStreamAnd.close();
             }
 
             var szData = oTemp.szName + "=" + oTemp.szValue;
             var inStreamData = this.inputStream(szData);
             MultiStream.appendStream(inStreamData);
-            inStreamData.close();
+            //inStreamData.close();
         }
 
         var uploadChannel = nsIChannel.QueryInterface(Components.interfaces.nsIUploadChannel);
@@ -491,7 +490,7 @@ HttpComms.prototype =
         var listener = new this.downloadListener(this.callback, this);
         nsIChannel.asyncOpen(listener, null);
 
-        if (MultiStream)  MultiStream.close();
+        //if (MultiStream)  MultiStream.close();
         MultiStream = null;
 
         this.m_Log.Write("HttpComms3.js - urlEncodedFormData - END");
@@ -520,7 +519,7 @@ HttpComms.prototype =
 
             var inStreamStartBound = this.inputStream(szStartBoundary);
             MultiStream.appendStream(inStreamStartBound);
-            inStreamStartBound.close();
+            //inStreamStartBound.close();
 
             var mimeStream = Components.classes["@mozilla.org/network/mime-input-stream;1"];
             mimeStream = mimeStream.createInstance(Components.interfaces.nsIMIMEInputStream );
@@ -547,7 +546,7 @@ HttpComms.prototype =
                 {
                     var inStreamEmpty = this.inputStream("");
                     mimeStream.setData(inStreamEmpty);
-                    inStreamEmpty.close();
+                    //inStreamEmpty.close();
                 }
             }
             else
@@ -558,7 +557,7 @@ HttpComms.prototype =
                 mimeStream.addHeader("Content-Disposition",szContDisp);
                 var valueStream = this.inputStream(oTemp.szValue? oTemp.szValue:"");
                 mimeStream.setData(valueStream);
-                valueStream.close();
+                //valueStream.close();
             }
 
             MultiStream.appendStream(mimeStream);
@@ -569,7 +568,7 @@ HttpComms.prototype =
                 this.m_Log.Write("HttpComms3.js - multipartFormData - adding end boundary");
                 var inStreamEndBound = this.inputStream(szEndBoundary);
                 MultiStream.appendStream(inStreamEndBound);
-                inStreamEndBound.close();
+                //inStreamEndBound.close();
             }
         }
 
