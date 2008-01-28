@@ -15,7 +15,6 @@ function nsOWASMTP()
         scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms3.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Email.js");
         scriptLoader.loadSubScript("chrome://global/content/strres.js");
-        scriptLoader.loadSubScript("chrome://owa/content/OWA-MSG.js");
 
         var date = new Date();
         var szLogFileName = "OWA SMTP Log - " + date.getHours()+ "-" + date.getMinutes() + "-"+ date.getUTCMilliseconds() +" -";
@@ -38,12 +37,14 @@ function nsOWASMTP()
         this.m_szPassWord = null;
         this.m_oResponseStream = null;
         this.m_HttpComms = new HttpComms(this.m_Log);
-        this.m_aszTo = new Array;
+        this.m_aszTo = new Array();
         this.m_szFrom = null;
         this.m_iStage = 0;
         this.m_szBaseURL = null;
         this.m_szMailBox = null;
-        this.m_Email = new email("");
+        this.m_bAttHandled = false;
+        this.m_iAttCount = 0;
+        this.m_Email = new email(this.m_Log);
         this.m_Email.decodeBody(true);
         this.m_Log.Write("nsOWASMTP.js - Constructor - END");
     }
@@ -147,7 +148,7 @@ nsOWASMTP.prototype =
                     {
                         mainObject.m_Log.Write("nsOWASMTP - loginOnloadHandler - aszInput :" +aszInput[i]);
                         
-                        if (aszInput[i].search(/submit/i)==-1 && aszInput[i].search(/radio/i) == -1)
+                        if (aszInput[i].search(/submit/i)==-1 && aszInput[i].search(/radio/i) == -1 && aszInput[i].search(/check/i) == -1)
                         { 
                             var szName = aszInput[i].match(kOWAName)[1];
                             
@@ -259,9 +260,13 @@ nsOWASMTP.prototype =
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             
+            if (mainObject.m_Email.attachments.length>0 && !mainObject.m_bAttHandled)
+                mainObject.m_iStage = 2;
+            
             switch(mainObject.m_iStage)
             {
-                case 0:
+                case 0:  //send message
+                    mainObject.m_Log.Write("nsOWASMTP.js - composerOnloadHandler - send message");
                     var szAction = szResponse.match(kOWAAction)[1];            
                     mainObject.m_Log.Write("nsOWASMTP - composerOnloadHandler - szAction :" +szAction);
                 
@@ -317,7 +322,8 @@ nsOWASMTP.prototype =
                     //email body
                     var szValue = mainObject.m_Email.txtBody.body.getBody();
                     mainObject.m_HttpComms.addValuePair("urn:schemas:httpmail:textdescription", szValue);
-                     
+                    
+                    mainObject.m_bAttHandled = true;
                     mainObject.m_HttpComms.setURI(szAction);
                     mainObject.m_HttpComms.setRequestMethod("POST");
                     mainObject.m_iStage ++;
@@ -327,7 +333,118 @@ nsOWASMTP.prototype =
                 
                 case 1:
                     mainObject.serverComms("250 OK\r\n"); //message sent
-                break;                              
+                break;     
+                
+                
+                case 2: // get upload attachment page
+                    mainObject.m_Log.Write("nsOWASMTP.js - composerOnloadHandler - get upload attachment page");
+                    var szAction = szResponse.match(kOWAAction)[1];    
+                    szAction = szAction.replace(/^\.\//,"");  //clean up url        
+                    mainObject.m_Log.Write("nsOWASMTP - composerOnloadHandler - szAction :" +szAction);
+                
+                    var szForm = szResponse.match(kOWAForm)[1];
+                    mainObject.m_Log.Write("nsOWASMTP - composerOnloadHandler - szForm :" +szForm);
+                            
+                    var aszInput = szForm.match(kOWAInput);         
+                    for (var i = 0; i < aszInput.length; i++) 
+                    {
+                        mainObject.m_Log.Write("nsOWASMTP - composerOnloadHandler - aszInput :" + aszInput[i]);
+                        
+                        var szName = aszInput[i].match(kOWAName)[1];
+                        var szValue = "";
+                        try 
+                        {
+                            szValue = aszInput[i].match(kOWAValue)[1];
+                        } 
+                        catch (err) 
+                        {
+                        }
+                        
+                        if (szName.search(/^cmd$/i) != -1) szValue = "editattach";
+                       
+                        mainObject.m_HttpComms.addValuePair(szName, szValue);
+                    }
+                    
+                    mainObject.m_HttpComms.addValuePair("urn:schemas:httpmail:textdescription", "");
+                    mainObject.m_bAttHandled = true;
+                     
+                    mainObject.m_HttpComms.setURI(szAction);
+                    mainObject.m_HttpComms.setRequestMethod("POST");
+                    mainObject.m_iStage ++;
+                    var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler, mainObject);
+                    if (!bResult) throw new Error("httpConnection returned false");                    
+                break; 
+                
+                case 3: //upload attachment
+                    mainObject.m_Log.Write("nsOWASMTP.js - composerOnloadHandler - upload attachment");
+                    if (szResponse.search(kOWAAttchForm)==-1)
+                    {
+                        mainObject.m_Log.Write("nsOWASMTP.js - composerOnloadHandler - attach check failed");
+                        mainObject.serverComms("502 Error Sending Email\r\n");
+                        return;
+                    }
+                                        
+                    if (mainObject.m_iAttCount > mainObject.m_Email.attachments.length) 
+                    {
+                        mainObject.m_Log.Write("nsOWASMTP.js - composerOnloadHandler - Done uploading attachment");
+                        var szURL = szResponse.match(kOWAEdit)[1]; 
+                        if (!mainObject.m_HttpComms.setURI(szURL)) 
+                            mainObject.m_HttpComms.setURI(mainObject.m_szBaseURL + szURL)
+                        mainObject.m_HttpComms.setRequestMethod("GET");
+                        mainObject.m_iStage = 0;
+                        var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler, mainObject);
+                        if (!bResult) throw new Error("httpConnection returned false");
+                    }
+                    else 
+                    {
+                        mainObject.m_Log.Write("nsOWASMTP.js - composerOnloadHandler - uploading file");
+                        var szForm = szResponse.match(kOWAAttchForm);
+                        mainObject.m_Log.Write("nsOWASMTP - composerOnloadHandler - szForm :" + szForm);
+                        
+                        var szAction = szForm[0].match(kOWAAction2)[1];
+                        mainObject.m_Log.Write("nsOWASMTP - composerOnloadHandler - szAction :" + szAction);
+                        
+                        if (!mainObject.m_HttpComms.setURI(szAction)) 
+                            mainObject.m_HttpComms.setURI(mainObject.m_szBaseURL + szAction)
+                        
+                        var aszInput = szForm[0].match(kOWAInput);
+                        for (var i = 0; i < aszInput.length; i++) 
+                        {
+                            mainObject.m_Log.Write("nsOWASMTP - composerOnloadHandler - aszInput :" + aszInput[i]);
+                            
+                            if (aszInput[i].search(kOWAName)!= -1) 
+                            {
+                                var szName = aszInput[i].match(kOWAName)[1];
+                                var szValue = "";
+                                try 
+                                {
+                                    szValue = aszInput[i].match(kOWAValue)[1];
+                                } 
+                                catch (err) 
+                                {
+                                }
+                                
+                                if (szName.search(/^attachFile/i) != -1) 
+                                {
+                                    var oAttach = mainObject.m_Email.attachments[mainObject.m_iAttCount];
+                                    var szFileName = oAttach.headers.getContentType(4);
+                                    if (!szFileName) szFileName = "";
+                                    
+                                    //body
+                                    var szBody = oAttach.body.getBody();
+                                    mainObject.m_HttpComms.addFile(szName, szFileName, szBody);
+                                    mainObject.m_iAttCount++;
+                                }
+                            }
+                        }
+                        
+                        mainObject.m_iStage = 3;
+                        mainObject.m_HttpComms.setRequestMethod("POST");
+                        mainObject.m_HttpComms.setContentType("multipart/form-data");
+                        var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler, mainObject);
+                        if (!bResult) throw new Error("httpConnection returned false");
+                    }
+                break;                       
             }
 
             mainObject.m_Log.Write("nsOWASMTP.js - composerOnloadHandler - END");
