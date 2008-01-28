@@ -129,8 +129,8 @@ nsOWA.prototype =
             if (httpChannel.responseStatus != 200)
                 throw new Error("return status " + httpChannel.responseStatus);
            
-           switch(mainObject.m_iStage)
-           {
+            switch(mainObject.m_iStage)
+            {
                 case 0: //login form
                     var szAction = szResponse.match(kOWAAction)[1];            
                     mainObject.m_Log.Write("nsOWA - loginOnloadHandler - szAction :" +szAction);
@@ -146,7 +146,7 @@ nsOWA.prototype =
                     {
                         mainObject.m_Log.Write("nsOWA - loginOnloadHandler - aszInput :" +aszInput[i]);
                         
-                        if (aszInput[i].search(/submit/i)==-1 && aszInput[i].search(/radio/i) == -1)
+                        if (aszInput[i].search(/submit/i)==-1 && aszInput[i].search(/radio/i) == -1 && aszInput[i].search(/check/i) == -1)
                         { 
                             var szName = aszInput[i].match(kOWAName)[1];
                             
@@ -163,7 +163,6 @@ nsOWA.prototype =
                                 szValue = mainObject.m_szPassWord;
                                 szValue = encodeURIComponent(szValue);
                             }
-
                             
                             mainObject.m_HttpComms.addValuePair(szName,szValue);
                         }                
@@ -257,17 +256,20 @@ nsOWA.prototype =
 
             //process mail box
             var aszRawData = szResponse.match(kMSGData);
-            if (aszRawData.length > 0) 
+            if (aszRawData) 
             {
-                var aTemp = mainObject.m_aRawData.concat(aszRawData);
-                delete mainObject.m_aRawData;
-                mainObject.m_aRawData = aTemp;
+                if (aszRawData.length > 0) 
+                {
+                    var aTemp = mainObject.m_aRawData.concat(aszRawData);
+                    delete mainObject.m_aRawData;
+                    mainObject.m_aRawData = aTemp;
+                }
             }
             
             //check for more pages
             if (mainObject.m_iNumPages == -1)  //get max page number
             {
-                var szPageNum = szResponse.match(kPageNum)[1];  
+                var szPageNum = szResponse.match(kOWAPageNum)[1];  
                 mainObject.m_Log.Write("nsOWA.js - MailBoxOnload - szPageNum " + szPageNum); 
                 mainObject.m_iNumPages = parseInt(szPageNum);
                 mainObject.m_Log.Write("nsOWA.js - MailBoxOnload - m_iNumPages" + mainObject.m_iNumPages);
@@ -331,13 +333,20 @@ nsOWA.prototype =
                     //email url 
                     var data = new OWAMSG();
                     
-                    data.szMSGUri = Item.match(KMSGURL)[1];
+                    data.szMSGUri = Item.match(kOWAMSGURL)[1];
                     this.m_Log.Write("nsOWA.js - loginOnloadHandler - szMSGUri " + data.szMSGUri);
                     
-                    data.szID = Item.match(KMSGID)[1];
+                    data.szID = Item.match(kOWAMSGID)[1];
                     this.m_Log.Write("nsOWA.js - loginOnloadHandler - szMSGID " + data.szID);
                     
-                    data.iSize = Item.match(KMSGSize)[1];
+                    try
+                    {
+                        data.iSize = Item.match(kOWAMSGSize)[1];
+                    }
+                    catch(e)
+                    {
+                    }
+                    
                     if (Item.match(KMSGSize)[2].search(/k/i) !=-1) data.iSize *= 1000;
                     if (Item.match(KMSGSize)[2].search(/g/i) !=-1) data.iSize *= 1000000;
                     this.m_Log.Write("nsOWA.js - loginOnloadHandler - iSize " + data.iSize);
