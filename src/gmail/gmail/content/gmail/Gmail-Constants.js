@@ -11,6 +11,6 @@ const PatternGMailThread = /.*?\((\d+)\)/;
 const PatternGMailNewMessagesIDsStep1 = /\[\"([\da-fA-F]*)\"/g
 const PatternGMailNewMessagesIDsStep2 = /\[\"([\da-fA-F]*)\"/
 const patternGMailLoginRedirect = /CheckCookie\?continue=(.*?)';/i
-const patternGMailLoginBounce = /<meta http-equiv="Refresh".*?content="0;URL=(.*?)".*?>/;
+const patternGMailLoginBounce = /<meta http-equiv="Refresh".*?content="0;URL=(.*?)".*?[\/]?>/;
 const PatternGMailRFCMsg = /X-Gmail-Received.*/;
 const PatternGmailConstants = true;
