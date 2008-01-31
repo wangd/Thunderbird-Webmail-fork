@@ -3,7 +3,6 @@ const nsOWAClassID = Components.ID("{112ebca0-0109-11da-8cd6-0800200c9a66}");
 const nsOWAContactID = "@mozilla.org/POPOWA;1";
 const ExtOWAGuid = "{3d82b2c0-0109-11da-8cd6-0800200c9a66}";
 
-
 /******************************  OWA ***************************************/
 
 
@@ -342,13 +341,14 @@ nsOWA.prototype =
                     try
                     {
                         data.iSize = Item.match(kOWAMSGSize)[1];
+                        if (Item.match(kOWAMSGSize)[2].search(/k/i) !=-1) data.iSize *= 1000;
+                        if (Item.match(kOWAMSGSize)[2].search(/g/i) !=-1) data.iSize *= 1000000;
                     }
                     catch(e)
                     {
+                        data.iSize = 1000;
                     }
                     
-                    if (Item.match(KMSGSize)[2].search(/k/i) !=-1) data.iSize *= 1000;
-                    if (Item.match(KMSGSize)[2].search(/g/i) !=-1) data.iSize *= 1000000;
                     this.m_Log.Write("nsOWA.js - loginOnloadHandler - iSize " + data.iSize);
                     this.m_iTotalSize +=  parseInt(data.iSize);
                     
