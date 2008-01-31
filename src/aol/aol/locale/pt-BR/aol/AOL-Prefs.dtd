@@ -1,16 +1,22 @@
-<!ENTITY AOLPref.Window.Title "Opções do AOL / Netscape">
+<!ENTITY AOLPref.Window.Title "Opções AOL/Netscape">
 <!ENTITY AOLPref.Panel.Accounts.Title "Contas">
-<!ENTITY AOLPref.Button.Close.Label "Close">
+<!ENTITY AOLPref.Panel.Domains.Title "Domínios">
+<!ENTITY AOLPref.Button.Close.Label "Fechar">
 <!ENTITY AOLPref.Tab.POP.Title "POP">
-<!ENTITY AOLPref.POP.DownloadUnread.Label "Baixar apenas e-mails não lidos">
+<!ENTITY AOLPref.POP.DownloadUnread.Label "Baixar somente os emails não lidos">
 <!ENTITY AOLPref.POP.DownloadUnread.AccessKey "n">
-<!ENTITY AOLPref.POP.JunkMail.Label "Baixar lixo eletrônico">
-<!ENTITY AOLPref.POP.JunkMail.AccessKey "l">
+<!ENTITY AOLPref.POP.JunkMail.Label "Baixar Spam">
+<!ENTITY AOLPref.POP.JunkMail.AccessKey "S">
 <!ENTITY AOLPref.POP.Folders.Label "Baixar pastas">
 <!ENTITY AOLPref.POP.ButtonAdd.Label "Adicionar...">
 <!ENTITY AOLPref.POP.ButtonAdd.AccessKey "A">
 <!ENTITY AOLPref.POP.ButtonRemove.Label "Remover">
 <!ENTITY AOLPref.POP.ButtonRemove.AccessKey "R">
-<!ENTITY AOLPref.AccountError.Label "Nenhuma conta do AOL encontrada">
-<!ENTITY AOLPref.POP.MarkAsRead.Label "Marcar e-mails como lidos no servidor">
+<!ENTITY AOLPref.AccountError.Label "Nenhuma conta AOL encontrada">
+<!ENTITY AOLPref.POP.MarkAsRead.Label "Marcar emails como lidos no servidor">
 <!ENTITY AOLPref.POP.MarkAsRead.AccessKey "c">
+<!ENTITY AOLPref.Domain.Label "Domínios suportados pela extensão AOL">
+<!ENTITY AOLPref.Domain.Button.AddDomain.Label "Adicionar...">
+<!ENTITY AOLPref.Domain.Button.AddDomain.AccessKey "A">
+<!ENTITY AOLPref.Domain.Button.RemoveDomain.Label "Remover">
+<!ENTITY AOLPref.Domain.Button.RemoveDomain.AccessKey "R">
