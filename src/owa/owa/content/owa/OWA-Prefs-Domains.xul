@@ -9,9 +9,6 @@
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
            
     <prefpane id = "paneDomains" onpaneload= "gOWADomains.init();" flex="1"> 
-        <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
-        <script type="application/x-javascript" src="chrome://OWA/content/OWA-Prefs-Domains.js"/>
-        
         <stringbundle id="stringsOWAPrefs-Domains" src="chrome://OWA/locale/OWA-Prefs-Domains.properties"/>        
                  
         <vbox id="vboxDomains" flex="1">

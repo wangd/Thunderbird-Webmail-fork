@@ -29,4 +29,6 @@
               label="&OWAPref.Panel.Domains.Title;"
               src="chrome://owa/content/OWA-Prefs-Domains.xul"/>
     
+    <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
+    <script type="application/x-javascript" src="chrome://OWA/content/OWA-Prefs-Domains.js"/>       
 </prefwindow>

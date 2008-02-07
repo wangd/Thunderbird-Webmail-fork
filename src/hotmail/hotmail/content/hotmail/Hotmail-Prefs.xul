@@ -25,4 +25,8 @@
               label="&HotmailPref.Panel.Domains.Title;"
               src="chrome://hotmail/content/Hotmail-Prefs-Domains.xul"/>
 
+    <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
+    <script type="application/x-javascript" src="chrome://hotmail/content/Hotmail-Prefs-Domains.js"/>
+    <script type="application/x-javascript" src="chrome://web-mail/content/common/CommonPrefs.js"/>
+    <script type="application/x-javascript" src="chrome://hotmail/content/Hotmail-Prefs-Accounts.js"/>
 </prefwindow>

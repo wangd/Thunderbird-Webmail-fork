@@ -24,4 +24,10 @@
     <prefpane id="paneDomains"
               label="&YahooPref.Panel.Domains.Title;"
               src="chrome://yahoo/content/Yahoo-Prefs-Domains.xul"/>
+
+
+    <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
+    <script type="application/x-javascript" src="chrome://web-mail/content/common/CommonPrefs.js"/>
+    <script type="application/x-javascript" src="chrome://yahoo/content/Yahoo-Prefs-Accounts.js"/>
+    <script type="application/x-javascript" src="chrome://yahoo/content/Yahoo-Prefs-Domains.js"/>
 </prefwindow>

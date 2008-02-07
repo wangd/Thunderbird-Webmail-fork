@@ -19,4 +19,7 @@
               label="&LycosPref.Panel.Accounts.Title;"
               src="chrome://lycos/content/Lycos-Prefs-Accounts.xul"/>
 
+    <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
+    <script type="application/x-javascript" src="chrome://web-mail/content/common/CommonPrefs.js"/>
+    <script type="application/x-javascript" src="chrome://lycos/content/Lycos-Prefs-Accounts.js"/>
 </prefwindow>

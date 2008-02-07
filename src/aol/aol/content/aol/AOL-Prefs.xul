@@ -25,4 +25,9 @@
               label="&AOLPref.Panel.Domains.Title;"
               src="chrome://aol/content/AOL-Prefs-Domains.xul"/>
 
+    <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
+    <script type="application/x-javascript" src="chrome://aol/content/AOL-Prefs-Domains.js"/>
+    <script type="application/x-javascript" src="chrome://web-mail/content/common/CommonPrefs.js"/>
+    <script type="application/x-javascript" src="chrome://aol/content/AOL-Prefs-Accounts.js"/>
+    <script type="application/x-javascript" src="chrome://aol/content/AOL-Prefs-Data.js"/>
 </prefwindow>

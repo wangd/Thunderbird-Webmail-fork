@@ -10,10 +10,6 @@
 
     <prefpane id = "paneAccounts" onpaneload="gPrefAccounts.init()" flex="1">
 
-        <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
-        <script type="application/x-javascript" src="chrome://web-mail/content/common/CommonPrefs.js"/>
-        <script type="application/x-javascript" src="chrome://lycos/content/Lycos-Prefs-Accounts.js"/>
-
         <preferences id="LycosPrefs">
             <preference id="selectedTabIndex" name="lycos.selectedTabIndex" type="int" instantApply="true"/>
             <preference id="selectedUserName" name="lycos.selectedUserName" type="string" instantApply="true"/>

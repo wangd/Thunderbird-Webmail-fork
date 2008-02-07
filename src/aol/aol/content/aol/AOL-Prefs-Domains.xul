@@ -8,10 +8,6 @@
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
     <prefpane id = "paneDomains" onpaneload="gAOLDomain.init()" flex="1">
-
-        <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
-        <script type="application/x-javascript" src="chrome://aol/content/AOL-Prefs-Domains.js"/>
-
         <stringbundleset>
             <stringbundle id="stringsAOLDomainWindow" src="chrome://aol/locale/AOL-Prefs-Domains.properties"/>
         </stringbundleset>

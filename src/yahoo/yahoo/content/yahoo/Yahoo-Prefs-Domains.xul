@@ -9,9 +9,6 @@
 
     <prefpane id = "paneDomains" onpaneload="gYahooDomain.init()" flex="1">
 
-        <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
-        <script type="application/x-javascript" src="chrome://yahoo/content/Yahoo-Prefs-Domains.js"/>
-
         <stringbundleset>
             <stringbundle id="stringsYahooDomainWindow" src="chrome://yahoo/locale/Yahoo-Prefs-Domains.properties"/>
         </stringbundleset>
