@@ -1,0 +1,15 @@
+#include "nsISupports.idl"
+
+[scriptable, uuid(5bb1ae60-d693-11dc-95ff-0800200c9a66)]
+interface nsIGMailDomains : nsISupports
+{  
+    long addDomain(in string szDomain, 
+                   in string szURL);
+      
+    long removeDomain(in string szDomain);
+           
+    string getURL(in string szDomain);
+    
+    long getAllDomains(out PRUint32 count,
+                       [array, size_is(count)] out string Domains);
+};
