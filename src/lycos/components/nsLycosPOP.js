@@ -383,7 +383,7 @@ nsLycos.prototype =
                     if (this.m_bDownloadUnread)
                     {
                         bRead = parseInt(Item.match(kLycosRead)[1]) ? false : true;
-                        mainObject.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - bRead -" + bRead);
+                        this.m_Log.Write("nsLycos.js - mailBoxOnloadHandler - bRead -" + bRead);
                     }
 
                     if (bRead)
