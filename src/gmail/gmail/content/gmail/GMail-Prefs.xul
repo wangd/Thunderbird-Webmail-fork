@@ -4,7 +4,7 @@
 <?xml-stylesheet href="chrome://messenger/skin/preferences/preferences.css"?>
 <?xml-stylesheet href="chrome://mozapps/content/preferences/preferences.css"?>
 
-<?xml-stylesheet href="chrome://gmail/content/GMail-Prefs.css"?>
+<?xml-stylesheet href="chrome://gmail/skin/GMail-Prefs.css"?>
 
 <!DOCTYPE dialog SYSTEM "chrome://gmail/locale/GMail-Prefs.dtd">
 
@@ -16,21 +16,22 @@
             style="&Window.size;"
             lastSelected = "panePOP"
             buttons="accept, cancel">
-  
-      
+       
     <!-- POP --> 
     <prefpane id="panePOP" 
               label="&POP.Panel.szTitle;"
               src="chrome://gmail/content/GMail-Prefs-POP.xul"/>  
     
-    <!--IMAP-->    
-    <!--
-    <prefpane id="paneIMAP" 
-              label="&IMAP.Panel.szTitle;"
-              src="chrome://gmail/content/Yahoo-Prefs-IMAP.xul"/>    
-    -->
     <!--SMTP-->
     <prefpane id="paneSMTP" 
               label="&SMTP.Panel.szTitle;"
               src="chrome://gmail/content/GMail-Prefs-SMTP.xul"/> 
+
+    <!-- Domains -->
+    <prefpane id="paneDomains"
+              label="&Domains.Panel.szTitle;"
+              src="chrome://gmail/content/GMail-Prefs-Domains.xul"/>
+    
+    <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
+    <script type="application/x-javascript" src="chrome://gmail/content/GMail-Prefs-Domains.js"/>       
 </prefwindow>
