@@ -31,6 +31,11 @@ function nsGMail()
             scriptLoader.loadSubScript("chrome://gmail/content/Gmail-Constants.js");
         }
 
+        this.m_DomainManager =  Components.classes["@mozilla.org/GMailDomains;1"]
+                                          .getService()
+                                          .QueryInterface(Components.interfaces.nsIGMailDomains);       
+
+
         this.m_szMailURL = "http://mail.google.com/mail/"
         this.m_bAuthorised = false;
         this.m_szUserName = null;
@@ -115,8 +120,10 @@ nsGMail.prototype =
 
             if (!this.m_szUserName || !this.m_oResponseStream  || !this.m_szPassWord) return false;
 
-            // get login webPage
-            var loginURL = 'https://www.google.com/accounts/ServiceLoginBoxAuth';
+            // get login webPage     
+            var szDomain = this.m_szUserName.match(/.*?@(.*?)$/)[1].toLowerCase();
+            var loginURL = this.m_DomainManager.getURL(szDomain);
+            if (!loginURL) loginURL = 'https://www.google.com/accounts/ServiceLoginBoxAuth';
 
             this.m_HttpComms.setUserName(this.m_szUserName);
 

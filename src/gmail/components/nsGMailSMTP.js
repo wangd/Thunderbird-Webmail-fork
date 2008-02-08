@@ -32,6 +32,10 @@ function nsGMailSMTP()
             scriptLoader.loadSubScript("chrome://gmail/content/Gmail-Constants.js");
         }
 
+        this.m_DomainManager =  Components.classes["@mozilla.org/GMailDomains;1"]
+                                          .getService()
+                                          .QueryInterface(Components.interfaces.nsIGMailDomains);       
+
         this.m_szMailURL = "http://mail.google.com/mail/"
         this.m_bAuthorised = false;
         this.m_szUserName = null;
@@ -119,20 +123,23 @@ nsGMailSMTP.prototype =
             if (!this.m_szUserName || !this.m_oResponseStream  || !this.m_szPassWord) return false;
 
             // get login webPage
-            var loginURL = 'https://www.google.com/accounts/ServiceLoginBoxAuth';
-            // var szArray = this.m_szUserName.split('@');
-            // var szUsername = encodeURIComponent(szArray[0]);
+            var szDomain = this.m_szUserName.match(/.*?@(.*?)$/)[1].toLowerCase();
+            var loginURL = this.m_DomainManager.getURL(szDomain);
+            if (!loginURL) loginURL = 'https://www.google.com/accounts/ServiceLoginBoxAuth';
 
-            // this.m_Log.Write("nsGMailSMTP.js - logIN - HELLO");
+
             this.m_HttpComms.setUserName(this.m_szUserName);
 
-           var bSessionStored = this.m_ComponentManager.findElement(this.m_szUserName, "bSessionStored");
-            if ( bSessionStored && this.m_bReUseSession ) {
+            var bSessionStored = this.m_ComponentManager.findElement(this.m_szUserName, "bSessionStored");
+            if ( bSessionStored && this.m_bReUseSession ) 
+            {
                 this.m_Log.Write("nsGMailSMTP.js - logIN - Session Data found");
 
                 this.serverComms("+OK Your in\r\n");
                 this.m_bAuthorised = true;
-            } else {
+            } 
+            else 
+            {
                 this.m_Log.Write("nsGMailSMTP.js - logIN - No Session Data found");
                 var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
                                          .getService(Components.interfaces.nsIWebMailCookieManager2);
