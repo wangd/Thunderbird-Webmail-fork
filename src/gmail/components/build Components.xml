@@ -1,0 +1,32 @@
+<?xml version="1.0" ?>
+<project name="GMail Components">
+    <property name="gecko_sdk_path" location="C:\gecko-sdk"/>
+    <property name="xpidl_exe" location="${gecko_sdk_path}/bin/xpidl.exe" />
+    <property name="IDLs_path" location="${gecko_sdk_path}/idl" />
+
+    <delete>
+        <fileset dir="." includes="*.xpt"/>
+    </delete>
+
+    <target name="compileIDL">
+        <exec executable="${xpidl_exe}">
+            <arg line="-m typelib -w -v -I ${IDLs_path} nsIGMailPOP.idl" />
+        </exec>
+
+        <exec executable="${xpidl_exe}">
+            <arg line="-m typelib -w -v -I ${IDLs_path} nsIGMailSMTP.idl" />
+        </exec>
+
+        <exec executable="${xpidl_exe}">
+            <arg line="-m typelib -w -v -I ${IDLs_path} nsIGMailDomains.idl" />
+        </exec>
+
+        <copy file="nsIGMailPOP.idl" todir="${IDLs_path}"/>
+        <copy file="nsIGMailSMTP.idl" todir="${IDLs_path}"/>
+        <copy file="nsIGMailDomains.idl" todir="${IDLs_path}"/>
+
+        <delete file="${IDLs_path}/nsIGMailPOP.idl"/>
+        <delete file="${IDLs_path}/nsIGMailSMTP.idl"/>
+        <delete file="${IDLs_path}/nsIGMailDomains.idl"/>
+    </target>
+</project>
