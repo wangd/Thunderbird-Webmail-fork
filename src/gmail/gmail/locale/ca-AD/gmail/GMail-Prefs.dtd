@@ -2,4 +2,5 @@
 <!ENTITY POP.Panel.szTitle "POP">
 <!ENTITY SMTP.Panel.szTitle "SMTP">
 <!ENTITY IMAP.Panel.szTitle "IMAP">
-<!ENTITY Window.size "width: 27em; height: 20em">
+<!ENTITY Domains.Panel.szTitle "Domains">
+<!ENTITY Window.size "width: 46em; height: 30em">
