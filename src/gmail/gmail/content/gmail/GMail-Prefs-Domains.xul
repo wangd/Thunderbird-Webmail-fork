@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/global.css"?>
+<?xml-stylesheet href="chrome://gmail/skin/GMail-Prefs-Domains.css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://gmail/locale/GMail-Prefs-Domains.dtd">
+
+
+<overlay id="paneDomainsOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+           
+    <prefpane id = "paneDomains" onpaneload= "gGMailDomains.init();" flex="1"> 
+        <stringbundle id="stringsGMailPrefs-Domains" src="chrome://gmail/locale/GMail-Prefs-Domains.properties"/>        
+                 
+        <vbox id="vboxDomains" flex="1">
+            <label value="&GMailPref.Domain.Label;" id="labelDomain"/>
+            <hbox align="center">
+                <spacer flex="1"/>
+                <richlistbox  id="listDomain"
+                              class="listDomainbox"
+                              allowEvents="true"
+                              flex ="1"
+                              onselect="gGMailDomains.onSelect();"/>
+
+                <vbox align="top" pack="top">
+                    <button id="add"
+                            label="&Add.label;" 
+                            oncommand ="gGMailDomains.add();"
+                            accesskey="&Add.AccessKey;"/>
+                    <button id="edit" 
+                            label="&Edit.label;" 
+                            oncommand ="gGMailDomains.edit();"
+                            disabled="true"
+                            accesskey="&Edit.AccessKey;"/>
+                    <button id="remove"
+                            label="&Remove.label;" 
+                            disabled="true"
+                            accesskey="&Remove.AccessKey;"
+                            oncommand ="gGMailDomains.remove();"/>
+                </vbox>
+                <spacer flex="1"/>
+            </hbox>          
+        </vbox>     
+    </prefpane>
+    
+</overlay>

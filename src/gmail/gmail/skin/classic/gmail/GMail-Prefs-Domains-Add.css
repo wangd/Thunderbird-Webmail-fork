@@ -1,0 +1,26 @@
+#domainImage
+{
+    margin-top: 10px;
+    margin-bottom: 10px;    
+    margin-left: 10px;
+    list-style-image: url("chrome://gmail/skin/domain.png");
+}
+
+.domain[value="false"]/*add*/
+{
+     -moz-image-region: rect(0px, 32px, 32px, 0px)
+}
+
+
+.domain[value="true"] /*edit*/
+{
+    -moz-image-region: rect(0px, 64px, 32px, 32px)
+}
+
+#modeID
+{
+    margin-top: 15px;
+    margin-bottom: 10px;    
+    margin-left: 10px; 
+    font-size: large;
+}
