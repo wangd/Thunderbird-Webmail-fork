@@ -360,7 +360,7 @@ nsOWADomains.prototype =
             var bFound = false;
             var szContentID = new Object;
             var bDefault = new Object;
-            if (this.m_DomainManager.newDomain(szDomain,szProtocol, szContentID, bDefault))
+            if (this.m_DomainManager.getDomain(szDomain,szProtocol, szContentID, bDefault))
             {
                 //check content id and defalut status
                 if (szContentID.value == szOWAContentID)
@@ -436,6 +436,9 @@ nsOWADomains.prototype =
             var statement = this.m_dbConn.createStatement(szSQL);
             statement.bindStringParameter(0, szDomain.toLowerCase().replace(/\s/,""));
             statement.execute();
+
+            this.m_DomainManager.removeDomainForProtocol(szDomain, "POP");
+            this.m_DomainManager.removeDomainForProtocol(szDomain, "SMTP");
 
             this.m_Log.Write("nsOWADomains.js - removeDomain - END " );
             return 1;

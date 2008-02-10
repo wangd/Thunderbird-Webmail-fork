@@ -360,7 +360,7 @@ nsGMailDomains.prototype =
             var bFound = false;
             var szContentID = new Object;
             var bDefault = new Object;
-            if (this.m_DomainManager.newDomain(szDomain,szProtocol, szContentID, bDefault))
+            if (this.m_DomainManager.getDomain(szDomain,szProtocol, szContentID, bDefault))
             {
                 //check content id and defalut status
                 if (szContentID.value == szGMailContentID)
@@ -391,10 +391,10 @@ nsGMailDomains.prototype =
             this.m_Log.Write("nsGMailDomains.js - addDomain - START " + szDomain + " " + szURL);
 
             //add domains to webmail database
-            if (!this.domainCheck( szDomain, "POP", "@mozilla.org/POPGMail;1"))
-                this.m_DomainManager.newDomain(szDomain, "POP", "@mozilla.org/POPGMail;1","false");
-            if (!this.domainCheck(szDomain, "SMTP", "@mozilla.org/SMTPGMail;1"))
-                this.m_DomainManager.newDomain(szDomain, "SMTP", "@mozilla.org/SMTPGMail;1","false");
+            if (!this.domainCheck( szDomain, "POP", "@mozilla.org/GMailPOP;1"))
+                this.m_DomainManager.newDomain(szDomain, "POP", "@mozilla.org/GMailPOP;1","false");
+            if (!this.domainCheck(szDomain, "SMTP", "@mozilla.org/GMailSMTP;1"))
+                this.m_DomainManager.newDomain(szDomain, "SMTP", "@mozilla.org/GMailSMTP;1","false");
 
             var szSQL;
             szSQL  = "REPLACE INTO domains (id, domain, url) ";
@@ -437,6 +437,9 @@ nsGMailDomains.prototype =
             statement.bindStringParameter(0, szDomain.toLowerCase().replace(/\s/,""));
             statement.execute();
 
+            this.m_DomainManager.removeDomainForProtocol(szDomain, "POP");
+            this.m_DomainManager.removeDomainForProtocol(szDomain, "SMTP");
+            
             this.m_Log.Write("nsGMailDomains.js - removeDomain - END " );
             return 1;
         }
