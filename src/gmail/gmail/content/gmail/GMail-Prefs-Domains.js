@@ -3,7 +3,6 @@ var gGMailDomains =
     m_DebugLog : null,
     m_strBundle : null,
     m_UriManager : null,
-    m_DomainManager : null,
     m_szSelectedDomain : null,
     m_iSelectedIndex : -1,
     
@@ -24,10 +23,6 @@ var gGMailDomains =
                                           .getService()
                                           .QueryInterface(Components.interfaces.nsIGMailDomains);   
              
-            this.m_DomainManager = Components.classes["@mozilla.org/DomainManager;1"]
-                                             .getService()
-                                             .QueryInterface(Components.interfaces.nsIDomainManager); 
-               
             this.updateList();
                             
             this.m_DebugLog.Write("GMail-Prefs-Domains : init - END");
@@ -241,8 +236,6 @@ var gGMailDomains =
                 this.m_DebugLog.Write("GMail-Prefs-Domains : add - szDomains "+ oData.szDomain + " " + oData.szURL);
                 
                 this.m_UriManager.addDomain(oData.szDomain, oData.szURL);      
-                this.m_DomainManager.newDomainForProtocol(oData.szDomain, "POP", "@mozilla.org/POPGMail;1");
-                this.m_DomainManager.newDomainForProtocol(oData.szDomain, "SMTP", "@mozilla.org/SMTPGMail;1");
 
                 this.clearList();
                 this.updateList();
@@ -300,13 +293,8 @@ var gGMailDomains =
                 
                 //remove old entry
                 this.m_UriManager.removeDomain(szDomain);                
-                this.m_DomainManager.removeDomainForProtocol(szDomain, "POP");
-                this.m_DomainManager.removeDomainForProtocol(szDomain, "SMTP");
-
                 //add new one
                 this.m_UriManager.addDomain(oData.szDomain, oData.szURL);      
-                this.m_DomainManager.newDomainForProtocol(oData.szDomain, "POP", "@mozilla.org/POPGMail;1");
-                this.m_DomainManager.newDomainForProtocol(oData.szDomain, "SMTP", "@mozilla.org/SMTPGMail;1");
   
                 this.clearList();
                 this.updateList();
@@ -348,9 +336,7 @@ var gGMailDomains =
             this.m_DebugLog.Write("GMail-Prefs-Domains : remove -  " + szDomain);
             
             this.m_UriManager.removeDomain(szDomain);                
-            this.m_DomainManager.removeDomainForProtocol(szDomain, "POP");
-            this.m_DomainManager.removeDomainForProtocol(szDomain, "SMTP");
-            
+
             this.m_DebugLog.Write("GMail-Prefs-Domains : remove -  DB");
             listView.removeChild(item);
             

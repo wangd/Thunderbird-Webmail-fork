@@ -3,7 +3,6 @@ var gOWADomains =
     m_DebugLog : null,
     m_strBundle : null,
     m_UriManager : null,
-    m_DomainManager : null,
     m_szSelectedDomain : null,
     m_iSelectedIndex : -1,
     
@@ -23,10 +22,6 @@ var gOWADomains =
             this.m_UriManager = Components.classes["@mozilla.org/OWADomains;1"]
                                           .getService()
                                           .QueryInterface(Components.interfaces.nsIOWADomains);   
-             
-            this.m_DomainManager = Components.classes["@mozilla.org/DomainManager;1"]
-                                             .getService()
-                                             .QueryInterface(Components.interfaces.nsIDomainManager); 
                
             this.updateList();
                             
@@ -241,8 +236,6 @@ var gOWADomains =
                 this.m_DebugLog.Write("OWA-Prefs-Domains : add - szDomains "+ oData.szDomain + " " + oData.szURL);
                 
                 this.m_UriManager.addDomain(oData.szDomain, oData.szURL);      
-                this.m_DomainManager.newDomainForProtocol(oData.szDomain, "POP", "@mozilla.org/POPOWA;1");
-                this.m_DomainManager.newDomainForProtocol(oData.szDomain, "SMTP", "@mozilla.org/SMTPOWA;1");
 
                 this.clearList();
                 this.updateList();
@@ -300,14 +293,10 @@ var gOWADomains =
                 
                 //remove old entry
                 this.m_UriManager.removeDomain(szDomain);                
-                this.m_DomainManager.removeDomainForProtocol(szDomain, "POP");
-                this.m_DomainManager.removeDomainForProtocol(szDomain, "SMTP");
 
                 //add new one
                 this.m_UriManager.addDomain(oData.szDomain, oData.szURL);      
-                this.m_DomainManager.newDomainForProtocol(oData.szDomain, "POP", "@mozilla.org/POPOWA;1");
-                this.m_DomainManager.newDomainForProtocol(oData.szDomain, "SMTP", "@mozilla.org/SMTPOWA;1");
-  
+                
                 this.clearList();
                 this.updateList();
               
@@ -348,8 +337,6 @@ var gOWADomains =
             this.m_DebugLog.Write("OWA-Prefs-Domains : remove -  " + szDomain);
             
             this.m_UriManager.removeDomain(szDomain);                
-            this.m_DomainManager.removeDomainForProtocol(szDomain, "POP");
-            this.m_DomainManager.removeDomainForProtocol(szDomain, "SMTP");
             
             this.m_DebugLog.Write("OWA-Prefs-Domains : remove -  DB");
             listView.removeChild(item);
