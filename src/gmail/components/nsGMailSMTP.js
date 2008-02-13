@@ -118,14 +118,16 @@ nsGMailSMTP.prototype =
     {
         try {
             this.m_Log.Write("nsGMailSMTP.js - logIN - START");
-            this.m_Log.Write("nsGMailSMTP.js - logIN - Username: " + this.m_szUserName + " Password: " + this.m_szPassWord + " stream: " + this.m_oResponseStream);
+            this.m_Log.Write("nsGMailSMTP.js - logIN - Username: " + this.m_szUserName + " Password: " 
+                                                                   + this.m_szPassWord + " stream: " 
+                                                                   + this.m_oResponseStream);
 
             if (!this.m_szUserName || !this.m_oResponseStream  || !this.m_szPassWord) return false;
 
             // get login webPage
             var szDomain = this.m_szUserName.match(/.*?@(.*?)$/)[1].toLowerCase();
             var loginURL = this.m_DomainManager.getURL(szDomain);
-            if (!loginURL) loginURL = 'https://www.google.com/accounts/ServiceLoginBoxAuth';
+            if (!loginURL) loginURL = "http://www.gmail.com";
 
 
             this.m_HttpComms.setUserName(this.m_szUserName);
@@ -144,18 +146,11 @@ nsGMailSMTP.prototype =
                 var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
                                          .getService(Components.interfaces.nsIWebMailCookieManager2);
                 oCookies.removeCookie(this.m_szUserName);
-
-                this.m_ComponentManager.deleteAllElements(this.m_szUserName, this);
-
-                this.m_HttpComms.addValuePair('Email', encodeURIComponent(this.m_szUserName));
-                this.m_HttpComms.addValuePair('Passwd', encodeURIComponent(this.m_szPassWord));
-                this.m_HttpComms.addValuePair('continue', encodeURIComponent(this.m_szMailURL));
-
-                // this.m_HttpComms.m_bHandleBounce  = false
+                this.m_ComponentManager.deleteAllElements(this.m_szUserName);
 
                 this.m_HttpComms.setURI(loginURL);
-                this.m_HttpComms.setRequestMethod("POST");
-
+                this.m_HttpComms.setRequestMethod("GET");
+                
                 var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);
                 if (!bResult) throw new Error('httpConnection returned false');
                 this.m_iStage = 0;
@@ -164,8 +159,11 @@ nsGMailSMTP.prototype =
             this.m_Log.Write("nsGMailSMTP.js - logIN - END");
             return true;
         }
-        catch(e) {
-            this.m_Log.DebugDump("nsGMailSMTP.js: logIN : Exception : " + e.name + ".\nError message: " + e.message+ "\n" + e.lineNumber);
+        catch(e) 
+        {
+            this.m_Log.DebugDump("nsGMailSMTP.js: logIN : Exception : " + e.name 
+                                                     + ".\nError message: " + e.message+ "\n" 
+                                                     + e.lineNumber);
             this.serverComms("502 negative vibes from "+this.m_szUserName+"\r\n");
             return false;
         }
@@ -185,47 +183,73 @@ nsGMailSMTP.prototype =
             if (httpChannel.responseStatus != 200)
                 throw new Error("return status " + httpChannel.responseStatus);
 
+            //bounce check
+            if (szResponse.search(patternGMailLoginBounce)!=-1)
+            {
+                mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - bounce");
+                var aRedirect = szResponse.match(patternGMailLoginBounce);
+                mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - aRedirect " + aRedirect);
+                           
+                var szURI = aRedirect[1].replace(/&amp;/g,"&");
+                mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - redirectURL " + szURI);
+    
+                mainObject.m_HttpComms.setURI(szURI);
+                mainObject.m_HttpComms.setRequestMethod("GET");
+                var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
+                if (!bResult) throw new Error("httpConnection returned false");    
+                return;   
+            }
+
+
             switch  ( mainObject.m_iStage ) 
             {
-                case 0:
-                    mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - redirect test");
-    
-                    var aRedirect = szResponse.match(patternGMailLoginRedirect);
-                    if ( !aRedirect )
-                        throw new Error("Login failed. (Wrong username/password?)");
-    
-                    var szURI = decodeURIComponent(aRedirect[1]);
-                    mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - redirectURL " + szURI);
-    
-                    mainObject.m_HttpComms.setURI(szURI);
-                    mainObject.m_HttpComms.setRequestMethod("GET");
+                case 0:  //login
+                    mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - login");
+                     
+                    var aszLoginForm = szResponse.match(patternGMailLoginForm);
+                    mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - aszLoginForm " + aszLoginForm);
+                     
+                    var szAction = aszLoginForm[0].match(patternGMailFormAction)[1];
+                    mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - szAction " + szAction);
+                   
+                    var aszInput = aszLoginForm[0].match(patternGMailFormInput);
+                    mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - aszInput " + aszInput);
+                               
+                    for (i=0; i<aszInput.length; i++)
+                    {
+                        mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - aszInput[i] " + aszInput[i]);
+                        
+                        var szName = aszInput[i].match(patternGMailFormName)[1];
+                        mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - szName " + szName);
+                       
+                        var szValue = "";
+                        try 
+                        {
+                            var szValue = aszInput[i].match(patternGMailFormValue)[1];
+                        } 
+                        catch (e) 
+                        {
+                        }
+                        mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - szValue " + szValue);
+                        
+                        if (szName.search(/Passwd/i) != -1) szValue = mainObject.m_szPassWord;
+                        if (szName.search(/Email/i) != -1) 
+                        {
+                            var szUserName = mainObject.m_szUserName.match(/(.*?)@.*?$/)[1].toLowerCase();
+                            szValue = szUserName;
+                        }
+                        
+                        mainObject.m_HttpComms.addValuePair(szName, encodeURIComponent(szValue));
+                    }        
+                    
+                    mainObject.m_HttpComms.setURI(szAction);
+                    mainObject.m_HttpComms.setRequestMethod("POST");
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
                     if (!bResult) throw new Error("httpConnection returned false");
-    
-                    mainObject.m_szCookieLoginURL = szURI;
-    
-                    mainObject.m_iStage++;
+                    mainObject.m_iStage++;      
                 break;
-            
+           
                 case 1:
-                    mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - redirect test");
-        
-                    var aRedirect = szResponse.match(patternGMailLoginBounce);
-                    if ( !aRedirect )
-                        throw new Error("Login failed. (Wrong username/password?)");
-        
-                    var szURI = decodeURIComponent(aRedirect[1]);
-                    mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - redirectURL " + szURI);
-        
-                    mainObject.m_HttpComms.setURI(szURI);
-                    mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
-                    if (!bResult) throw new Error("httpConnection returned false");
-                
-                    mainObject.m_iStage++;
-               break;
-               
-               case 2:
                     if ( szResponse.indexOf("Sign In") > -1 ||
                             szResponse.indexOf("NewAccount") > -1 ||
                             szResponse.indexOf("Username and password do not match") > -1 ||
@@ -234,20 +258,13 @@ nsGMailSMTP.prototype =
     
                     mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - Getting session cookie...");
     
+                    var szLocation  = httpChannel.URI.spec;
+                    mainObject.m_Log.Write("nsGMailPOP.js - loginOnloadHandler - location : " + szLocation );
+                    
                     var IOService = Components.classes["@mozilla.org/network/io-service;1"]
                                               .getService(Components.interfaces.nsIIOService);
-                    try {
-                        var nsIURI = IOService.newURI(mainObject.m_szCookieLoginURL, null, null);
-                    }
-                    catch(err) {
-                        mainObject.m_Log.DebugDump("nsGMailSMTP.js: loginHandler : Exception : "
-                            + err.name
-                            + ".\nError message: "
-                            + err.message);
-                        mainObject.serverComms("-ERR negative vibes (GMail)\r\n");
-                        break;
-                    }
-    
+
+                    var nsIURI = IOService.newURI(szLocation, null, null);
                     var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
                                              .getService(Components.interfaces.nsIWebMailCookieManager2);
                     szCookies = oCookies.findCookie(mainObject.m_szUserName, nsIURI);

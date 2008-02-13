@@ -123,10 +123,10 @@ nsGMail.prototype =
             // get login webPage     
             var szDomain = this.m_szUserName.match(/.*?@(.*?)$/)[1].toLowerCase();
             var loginURL = this.m_DomainManager.getURL(szDomain);
-            if (!loginURL) loginURL = 'https://www.google.com/accounts/ServiceLoginBoxAuth';
+            if (!loginURL) loginURL = "http://www.gmail.com";
 
             this.m_HttpComms.setUserName(this.m_szUserName);
-
+            
             var bSessionStored = this.m_ComponentManager.findElement(this.m_szUserName, "bSessionStored");
             if ( bSessionStored && this.m_bReUseSession ) 
             {
@@ -141,18 +141,11 @@ nsGMail.prototype =
                 var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
                                          .getService(Components.interfaces.nsIWebMailCookieManager2);
                 oCookies.removeCookie(this.m_szUserName);
-
                 this.m_ComponentManager.deleteAllElements(this.m_szUserName);
 
-                this.m_HttpComms.addValuePair('Email', encodeURIComponent(this.m_szUserName));
-                this.m_HttpComms.addValuePair('Passwd', encodeURIComponent(this.m_szPassWord));
-                this.m_HttpComms.addValuePair('continue', encodeURIComponent(this.m_szMailURL));
-
-                // this.m_HttpComms.m_bHandleBounce  = false
-
                 this.m_HttpComms.setURI(loginURL);
-                this.m_HttpComms.setRequestMethod("POST");
-
+                this.m_HttpComms.setRequestMethod("GET");
+                
                 var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);
                 if (!bResult) throw new Error('httpConnection returned false');
                 this.m_iStage = 0;
@@ -186,47 +179,73 @@ nsGMail.prototype =
             if (httpChannel.responseStatus != 200)
                 throw new Error("return status " + httpChannel.responseStatus);
 
+            //bounce check
+            if (szResponse.search(patternGMailLoginBounce)!=-1)
+            {
+                mainObject.m_Log.Write("nsGMailPOP.js - loginOnloadHandler - bounce");
+                var aRedirect = szResponse.match(patternGMailLoginBounce);
+                mainObject.m_Log.Write("nsGMailPOP.js - loginOnloadHandler - aRedirect " + aRedirect);
+                           
+                var szURI = aRedirect[1].replace(/&amp;/g,"&");
+                mainObject.m_Log.Write("nsGMailPOP.js - loginOnloadHandler - redirectURL " + szURI);
+    
+                mainObject.m_HttpComms.setURI(szURI);
+                mainObject.m_HttpComms.setRequestMethod("GET");
+                var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
+                if (!bResult) throw new Error("httpConnection returned false");    
+                return;   
+            }
+           
+
             switch  ( mainObject.m_iStage ) 
             {
-                case 0:
-                    mainObject.m_Log.Write("nsGMailPOP.js - loginOnloadHandler - redirect test");
-        
-                    var aRedirect = szResponse.match(patternGMailLoginRedirect);
-                    if ( !aRedirect )
-                        throw new Error("Login failed. (Wrong username/password?)");
-        
-                    var szURI = decodeURIComponent(aRedirect[1]);
-                    mainObject.m_Log.Write("nsGMailPOP.js - loginOnloadHandler - redirectURL " + szURI);
-        
-                    mainObject.m_HttpComms.setURI(szURI);
-                    mainObject.m_HttpComms.setRequestMethod("GET");
+                case 0:  //login
+                    mainObject.m_Log.Write("nsGMailPOP.js - loginOnloadHandler - login");
+                     
+                    var aszLoginForm = szResponse.match(patternGMailLoginForm);
+                    mainObject.m_Log.Write("nsGMailPOP.js - loginOnloadHandler - aszLoginForm " + aszLoginForm);
+                     
+                    var szAction = aszLoginForm[0].match(patternGMailFormAction)[1];
+                    mainObject.m_Log.Write("nsGMailPOP.js - loginOnloadHandler - szAction " + szAction);
+                   
+                    var aszInput = aszLoginForm[0].match(patternGMailFormInput);
+                    mainObject.m_Log.Write("nsGMailPOP.js - loginOnloadHandler - aszInput " + aszInput);
+                               
+                    for (i=0; i<aszInput.length; i++)
+                    {
+                        mainObject.m_Log.Write("nsGMailPOP.js - loginOnloadHandler - aszInput[i] " + aszInput[i]);
+                        
+                        var szName = aszInput[i].match(patternGMailFormName)[1];
+                        mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - szName " + szName);
+                       
+                        var szValue = "";
+                        try 
+                        {
+                            var szValue = aszInput[i].match(patternGMailFormValue)[1];
+                        } 
+                        catch (e) 
+                        {
+                        }
+                        mainObject.m_Log.Write("nsMailDotCom.js - loginOnloadHandler - szValue " + szValue);
+                        
+                        if (szName.search(/Passwd/i) != -1) szValue = mainObject.m_szPassWord;
+                        if (szName.search(/Email/i) != -1) 
+                        {
+                            var szUserName = mainObject.m_szUserName.match(/(.*?)@.*?$/)[1].toLowerCase();
+                            szValue = szUserName;
+                        }
+                        
+                        mainObject.m_HttpComms.addValuePair(szName, encodeURIComponent(szValue));
+                    }        
+                    
+                    mainObject.m_HttpComms.setURI(szAction);
+                    mainObject.m_HttpComms.setRequestMethod("POST");
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
                     if (!bResult) throw new Error("httpConnection returned false");
-        
-                    mainObject.m_szCookieLoginURL = szURI;
-        
-                    mainObject.m_iStage++;
-               break;
-               
+                    mainObject.m_iStage++;      
+               break
+                               
                case 1:
-                    mainObject.m_Log.Write("nsGMailPOP.js - loginOnloadHandler - redirect test");
-        
-                    var aRedirect = szResponse.match(patternGMailLoginBounce);
-                    if ( !aRedirect )
-                        throw new Error("Login failed. (Wrong username/password?)");
-        
-                    var szURI = decodeURIComponent(aRedirect[1]);
-                    mainObject.m_Log.Write("nsGMailPOP.js - loginOnloadHandler - redirectURL " + szURI);
-        
-                    mainObject.m_HttpComms.setURI(szURI);
-                    mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
-                    if (!bResult) throw new Error("httpConnection returned false");
-                
-                    mainObject.m_iStage++;
-               break;
-               
-               case 2:
                     if ( szResponse.indexOf("Sign In") > -1 ||
                          szResponse.indexOf("NewAccount") > -1 ||
                          szResponse.indexOf("Username and password do not match") > -1 ||
@@ -239,7 +258,7 @@ nsGMail.prototype =
                     mainObject.m_Log.Write("nsGMailPOP.js - loginOnloadHandler - Getting session cookie...");
                     var IOService = Components.classes["@mozilla.org/network/io-service;1"]
                                               .getService(Components.interfaces.nsIIOService);
-                    var nsIURI = IOService.newURI(mainObject.m_szCookieLoginURL, null, null);
+                    var nsIURI = IOService.newURI(szLocation, null, null);
                    
                     var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
                                              .getService(Components.interfaces.nsIWebMailCookieManager2);

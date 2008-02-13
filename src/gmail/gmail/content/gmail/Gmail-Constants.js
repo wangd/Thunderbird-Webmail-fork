@@ -1,3 +1,8 @@
+const patternGMailLoginForm = /<form[\s\S]*?<\/form>/igm;
+const patternGMailFormAction = /action="(.*?)"/i;
+const patternGMailFormInput = /<input[\s\S]*?>/igm;
+const patternGMailFormValue = /value=["|'](.*?)["|']/i;
+const patternGMailFormName = /name=["|'](.*?)["|']/i;
 const PatternGMailGetSessionCookie = /GMAIL_AT=(.*?);/i
 const PatternGMailGetLoginCookie = /.*GX=(.*);/
 const PatternGMailNextMSGTable = /D\(\["ts",(.*?),(.*?),(.*?),.*?,.*?,(.*?),.*?,.*?,.*?,.*?,.*?\]/i;
@@ -10,7 +15,6 @@ const PatternGMailThreadID = /\["(.*?)",\d,\d,.*?,.*?,.*?,.*?,.*?,"(.*?)",\d,.*?
 const PatternGMailThread = /.*?\((\d+)\)/;
 const PatternGMailNewMessagesIDsStep1 = /\[\"([\da-fA-F]*)\"/g
 const PatternGMailNewMessagesIDsStep2 = /\[\"([\da-fA-F]*)\"/
-const patternGMailLoginRedirect = /CheckCookie\?continue=(.*?)';/i
-const patternGMailLoginBounce = /<meta http-equiv="Refresh".*?content="0;URL=(.*?)".*?[\/]?>/;
+const patternGMailLoginBounce = /<meta http-equiv="refresh".*?url=[']?(.*?)[']?".*?[\/]?>/im;
 const PatternGMailRFCMsg = /X-Gmail-Received.*/;
 const PatternGmailConstants = true;
