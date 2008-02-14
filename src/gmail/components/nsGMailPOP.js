@@ -122,9 +122,13 @@ nsGMail.prototype =
 
             // get login webPage     
             var szDomain = this.m_szUserName.match(/.*?@(.*?)$/)[1].toLowerCase();
-            var loginURL = this.m_DomainManager.getURL(szDomain);
-            if (!loginURL) loginURL = "http://www.gmail.com";
+            if (szDomain == "gmail.com" || szDomain == "googlemail.com") 
+                loginURL = "http://mail.google.com/mail/";
+            else
+                loginURL = "http://mail.google.com/a/" + szDomain + "/";
 
+            this.m_szMailURL = loginURL;
+ 
             this.m_HttpComms.setUserName(this.m_szUserName);
             
             var bSessionStored = this.m_ComponentManager.findElement(this.m_szUserName, "bSessionStored");
@@ -395,7 +399,7 @@ nsGMail.prototype =
                                     if (aIDs[1]!=aIDs[2] || iThreadNum!=-1)
                                     {//thread found                                    
                                          mainObject.m_Log.Write("nsGMailPOP.js - mailBoxOnloadHandler - thread found");
-                                         var szThreadURI = "http://mail.google.com/mail?ui=1&view=cv&search=inbox&th="+ aszData[1];
+                                         var szThreadURI = mainObject.m_szMailURL + "?ui=1&view=cv&search=inbox&th="+ aszData[1];
                                          mainObject.m_Log.Write("nsGMailPOP.js - mailBoxOnloadHandler - szThreadURI :" +szThreadURI);
                                          mainObject.m_aszThreadURL.push(szThreadURI);
                                          iNumEmails--;

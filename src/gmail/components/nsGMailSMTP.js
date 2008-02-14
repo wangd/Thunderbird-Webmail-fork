@@ -126,8 +126,12 @@ nsGMailSMTP.prototype =
 
             // get login webPage
             var szDomain = this.m_szUserName.match(/.*?@(.*?)$/)[1].toLowerCase();
-            var loginURL = this.m_DomainManager.getURL(szDomain);
-            if (!loginURL) loginURL = "http://www.gmail.com";
+            if (szDomain == "gmail.com" || szDomain == "googlemail.com") 
+                loginURL = "http://mail.google.com/mail/";
+            else
+                loginURL = "http://mail.google.com/a/" + szDomain + "/";
+
+            this.m_szMailURL = loginURL;
 
 
             this.m_HttpComms.setUserName(this.m_szUserName);
