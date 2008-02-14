@@ -67,7 +67,7 @@ var gGMailAdd =
         try
         {
             this.m_Log.Write("GMail-Prefs-Domains-Add : doOk - START");   
-
+/*
             //get uri value
             var szUri = document.getElementById("txtURL").value;               
             this.m_Log.Write("GMail-Prefs-Domains-Add : doOk - uri " + szUri);   
@@ -88,7 +88,7 @@ var gGMailAdd =
                 return false;
             } 
              
-             
+  */           
                
             //get domain value  
             var szDomain = document.getElementById("txtDomain").value;
@@ -119,7 +119,7 @@ var gGMailAdd =
             }
             
             this.m_oData.szDomain = szDomain;
-            this.m_oData.szURL  = szUri;
+            this.m_oData.szURL  = "";
             window.arguments[1].value = this.m_oData            
             window.arguments[2].value = true;
             window.close();
