@@ -89,3 +89,6 @@ const kPatternDiskFileName =/diskfilename=(.*?)&/i;
 
 const kPatternSpamImageURL = /<imageurl>(.*?)<\/imageurl>/igm;
 const kPatternGreq = /<greq.*?>(.*?)<\/greq>/i;
+
+
+const kPatternBTBounce = /window.location.replace\('(.*?redir_now.*?)'\);/i;

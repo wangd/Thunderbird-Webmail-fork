@@ -96,19 +96,6 @@ YahooSMTPBETA.prototype =
             this.m_szYahooMail = "http://mail.yahoo.com";
             this.m_szLoginUserName = this.m_szUserName;
 
-
-            if (this.m_szUserName.search(/yahoo/i)!=-1)
-            { //remove domain from user name
-                this.m_szLoginUserName = this.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
-            }
-            else if (this.m_szUserName.search(/@talk21.com$/i)!=-1 ||
-                     this.m_szUserName.search(/@btinternet.com$/i)!=-1  ||
-                     this.m_szUserName.search(/@btopenworld.com$/i)!=-1 )
-            {
-                this.m_szYahooMail = "http://bt.yahoo.com/";
-            }
-
-
             this.m_iStage = 0;
             this.m_HttpComms.setURI(this.m_szYahooMail);
             this.m_HttpComms.setUserName(this.m_szUserName);
@@ -263,16 +250,28 @@ YahooSMTPBETA.prototype =
                 case 2: //mail box
                     if (szResponse.search(kPatternLogOut) == -1)
                     {
-                        if (mainObject.m_bReEntry)
+                        mainObject.m_Log.Write("YahooSMTPBETA.js - loginOnloadHandler - logout not found");
+                        //check for bounce
+                        if (szResponse.search(kPatternBTBounce)!= -1 && !mainObject.m_bReEntry) 
+                        {
+                            var szRedirect = szResponse.match(kPatternBTBounce)[1];
+                            mainObject.m_Log.Write("YahooSMTPBETA.js - loginOnloadHandler - szRedirect: " + szRedirect );
+                            if (!mainObject.m_HttpComms.setURI(szRedirect))
+                                mainObject.m_HttpComms.setURI(szLocation + szRedirect);
+                            mainObject.m_HttpComms.setRequestMethod("GET");
+                            var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
+                            if (!bResult) throw new Error("httpConnection returned false");
+                            return;
+                        }
+                        else if (mainObject.m_bReEntry)
                         {
                             mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
-
-                            var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
-                                                     .getService(Components.interfaces.nsIWebMailCookieManager2);
+                            
+                            var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"].getService(Components.interfaces.nsIWebMailCookieManager2);
                             oCookies.removeCookie(mainObject.m_szUserName);
-
+                            
                             mainObject.m_bReEntry = false;
-                            mainObject.m_iStage =0;
+                            mainObject.m_iStage = 0;
                             mainObject.m_HttpComms.setURI(mainObject.m_szYahooMail);
                             mainObject.m_HttpComms.setRequestMethod("GET");
                             var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
