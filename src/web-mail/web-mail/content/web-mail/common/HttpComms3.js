@@ -530,7 +530,6 @@ HttpComms.prototype =
             {
                 this.m_Log.Write("HttpComms3.js - multipartFormData - adding data "+oTemp.szName);
                 this.m_Log.Write("HttpComms3.js - multipartFormData - adding file" + oTemp.szFileName);
-                var szContDisp = "form-data; name=\"" + oTemp.szName + "\"; ";
                 szContDisp +="filename=\"" + (oTemp.szFileName ? oTemp.szFileName : "") + "\"";
                 mimeStream.addHeader("Content-Disposition",szContDisp);
                 mimeStream.addHeader("Content-Type","application/octet-stream");
@@ -553,7 +552,6 @@ HttpComms.prototype =
             {
                 this.m_Log.Write("HttpComms3.js - multipartFormData - adding data "+oTemp.szName+" "+oTemp.szValue);
                 this.m_Log.Write("HttpComms3.js - multipartFormData - adding form data");
-                var szContDisp = "form-data; name=\"" + oTemp.szName + "\"";
                 mimeStream.addHeader("Content-Disposition",szContDisp);
                 var valueStream = this.inputStream(oTemp.szValue? oTemp.szValue:"");
                 mimeStream.setData(valueStream);
