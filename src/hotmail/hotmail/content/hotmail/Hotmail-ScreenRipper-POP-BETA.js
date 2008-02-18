@@ -656,6 +656,19 @@ HotmailScreenRipperBETA.prototype =
                 catch(err){}
     
                 oMSG.iSize = 2000; //aTableData[6].match(patternHotmailEmailDate)[1];
+                var mSize = aTableData[7].match(patternHotmailEmailDate)[1].split(/\s/);
+                if (mSize[1] == "KB")
+                {
+                    oMSG.iSize = parseFloat(mSize[0]) * 1000;
+                }
+                else if (mSize[1] == "MB")
+                {
+                    oMSG.iSize = parseFloat(mSize[0]) * 1000 * 1000;
+                }
+                else
+                {
+                    oMSG.iSize = parseFloat(mSize[0]);
+                }
                 this.m_Log.Write("Hotmail-SR-BETA - processMSG - size " + oMSG.iSize );
                 this.m_iTotalSize += oMSG.iSize;
     
