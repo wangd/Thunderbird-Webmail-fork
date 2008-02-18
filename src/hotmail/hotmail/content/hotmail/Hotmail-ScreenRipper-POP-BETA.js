@@ -655,7 +655,6 @@ HotmailScreenRipperBETA.prototype =
                 }
                 catch(err){}
     
-                oMSG.iSize = 2000; //aTableData[6].match(patternHotmailEmailDate)[1];
                 var mSize = aTableData[7].match(patternHotmailEmailDate)[1].split(/\s/);
                 if (mSize[1] == "KB")
                 {
