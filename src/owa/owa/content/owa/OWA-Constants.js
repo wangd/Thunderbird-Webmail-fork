@@ -11,7 +11,7 @@ const kMailBoxURL = /<FRAME.*?name="viewer".*?src="(.*?)".*?>/i;
 const kMSGData = /<TR><TD class=List.*?><INPUT TYPE=checkbox.*?NAME=MsgID value=".*?"><\/TD>.*?<\/TR>/gi;
 const kOWAMSGURL = /href="(.*?")/i;
 const kOWAMSGID = /<INPUT.*?NAME=MsgID.*?value="(.*?)">/i;
-const kOWAMSGSize = /[<b>]?(\d*?)&nbsp;[a-z,A-Z]{1,}[<\/b>]?/i;
+const kOWAMSGSize = /(?:<b>)?(\d*?)&nbsp;([a-zA-Z]{1,})(?:<\/b>)?/i;
 const KNextPage = /<A href="(.*?Page=.*?)".*?Next.*?>/i;
 const KTextArea = /<TEXTAREA.*?>([\s\S]*?)<\/TEXTAREA>/gi;
 const kOWAPageNum = /<TD.*?><FONT.*?><B>&nbsp;[a-z,A-Z]*?&nbsp;([\d]*).*?<\/B><\/FONT><\/TD>/i;
