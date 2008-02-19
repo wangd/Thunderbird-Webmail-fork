@@ -11,12 +11,12 @@ function OWASMTPScreenRipper(oResponseStream, oLog, oPrefData)
         scriptLoader.loadSubScript("chrome://global/content/strres.js");
 
         this.m_Log = oLog;
-        this.m_Log.Write("nsOWASMTP.js - Constructor - START");
+        this.m_Log.Write("OWA-SMTP-SR.js - Constructor - START");
         this.m_oResponseStream = oResponseStream;
 
         if (typeof kOWAConstants == "undefined")
         {
-            this.m_Log.Write("nsOWASMTP.js - Constructor - loading constants");
+            this.m_Log.Write("OWA-SMTP-SR.js - Constructor - loading constants");
             scriptLoader.loadSubScript("chrome://owa/content/OWA-Constants.js");
         }
 
@@ -26,7 +26,6 @@ function OWASMTPScreenRipper(oResponseStream, oLog, oPrefData)
         this.m_bAuthorised = false;
         this.m_szUserName = null;
         this.m_szPassWord = null;
-        this.m_oResponseStream = null;
         this.m_HttpComms = new HttpComms(this.m_Log);
         this.m_aszTo = new Array();
         this.m_szFrom = null;
@@ -37,11 +36,11 @@ function OWASMTPScreenRipper(oResponseStream, oLog, oPrefData)
         this.m_iAttCount = 0;
         this.m_Email = new email(this.m_Log);
         this.m_Email.decodeBody(true);
-        this.m_Log.Write("nsOWASMTP.js - Constructor - END");
+        this.m_Log.Write("OWA-SMTP-SR.js - Constructor - END");
     }
     catch(e)
     {
-        DebugDump("nsOWASMTP.js: Constructor : Exception : "
+        DebugDump("OWA-SMTP-SR.js: Constructor : Exception : "
                                       + e.name
                                       + ".\nError message: "
                                       + e.message +"\n" +
@@ -58,11 +57,15 @@ OWASMTPScreenRipper.prototype =
     {
         try
         {
-            this.m_Log.Write("nsOWASMTP.js - logIN - START");
-            this.m_Log.Write("nsOWASMTP.js - logIN - Username: " + this.m_szUserName
-                                                   + " Password: " + this.m_szPassWord
+            this.m_Log.Write("OWA-SMTP-SR.js - logIN - START");
+            this.m_Log.Write("OWA-SMTP-SR.js - logIN - Username: " + szUserName
+                                                   + " Password: " + szPassWord
                                                    + " stream: " + this.m_oResponseStream);
 
+            this.m_szUserName = szUserName;
+            this.m_szPassWord = szPassWord;
+
+            if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
             var szDomain = this.m_szUserName.match(/.*?@(.*?)$/)[1].toLowerCase();
             var szURL = this.m_DomainManager.getURL(szDomain);
             this.m_HttpComms.setURI(szURL);
@@ -72,12 +75,12 @@ OWASMTPScreenRipper.prototype =
 
             this.m_iStage = 0;
                         
-            this.m_Log.Write("nsOWASMTP.js - logIN - END");
+            this.m_Log.Write("OWA-SMTP-SR.js - logIN - END");
             return true;
         }
         catch(e)
         {
-            this.m_Log.DebugDump("nsOWASMTP.js: logIN : Exception : "
+            this.m_Log.DebugDump("OWA-SMTP-SR.js: logIN : Exception : "
                                               + e.name +
                                               ".\nError message: "
                                               + e.message +"\n"
@@ -94,13 +97,13 @@ OWASMTPScreenRipper.prototype =
     {
         try
         {
-            mainObject.m_Log.Write("nsOWASMTP.js - loginOnloadHandler - START");
-            mainObject.m_Log.Write("nsOWASMTP.js - loginOnloadHandler : " + mainObject.m_iStage );
+            mainObject.m_Log.Write("OWA-SMTP-SR.js - loginOnloadHandler - START");
+            mainObject.m_Log.Write("OWA-SMTP-SR.js - loginOnloadHandler : " + mainObject.m_iStage );
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
 
             //if this fails we've gone somewhere new
-            mainObject.m_Log.Write("nsOWASMTP.js - loginOnloadHandler - status :" +httpChannel.responseStatus );
+            mainObject.m_Log.Write("OWA-SMTP-SR.js - loginOnloadHandler - status :" +httpChannel.responseStatus );
             if (httpChannel.responseStatus != 200 && httpChannel.responseStatus != 207)
                 throw new Error("return status " + httpChannel.responseStatus);
 
@@ -109,18 +112,18 @@ OWASMTPScreenRipper.prototype =
             {
                 case 0: //login form
                     var szAction = szResponse.match(kOWAAction)[1];            
-                    mainObject.m_Log.Write("nsOWASMTP - loginOnloadHandler - szAction :" +szAction);
+                    mainObject.m_Log.Write("OWA-SMTP-SR - loginOnloadHandler - szAction :" +szAction);
                     var szURL = httpChannel.URI.prePath + szAction
-                    mainObject.m_Log.Write("nsOWASMTP - loginOnloadHandler - szURL :" +szURL);
+                    mainObject.m_Log.Write("OWA-SMTP-SR - loginOnloadHandler - szURL :" +szURL);
         
                     var szForm = szResponse.match(kOWAForm)[1];
-                    mainObject.m_Log.Write("nsOWASMTP - loginOnloadHandler - szForm :" +szForm);
+                    mainObject.m_Log.Write("OWA-SMTP-SR - loginOnloadHandler - szForm :" +szForm);
                     
                     var aszInput = szForm.match(kOWAInput);
                     
                     for (var i =0 ; i<aszInput.length; i++)
                     {
-                        mainObject.m_Log.Write("nsOWASMTP - loginOnloadHandler - aszInput :" +aszInput[i]);
+                        mainObject.m_Log.Write("OWA-SMTP-SR - loginOnloadHandler - aszInput :" +aszInput[i]);
                         
                         if (aszInput[i].search(/submit/i)==-1 && aszInput[i].search(/radio/i) == -1 && aszInput[i].search(/check/i) == -1)
                         { 
@@ -156,11 +159,11 @@ OWASMTPScreenRipper.prototype =
                 
                 case 1: //get base URL
                     mainObject.m_szBaseURL = szResponse.match(kBaseURL)[1];            
-                    mainObject.m_Log.Write("nsOWASMTP - loginOnloadHandler - m_szBaseURL :" +mainObject.m_szBaseURL);
+                    mainObject.m_Log.Write("OWA-SMTP-SR - loginOnloadHandler - m_szBaseURL :" +mainObject.m_szBaseURL);
                     
                     var szMailBox = szResponse.match(kMailBoxURL)[1];  
                     mainObject.m_szMailBox = mainObject.m_szBaseURL + szMailBox         
-                    mainObject.m_Log.Write("nsOWASMTP - loginOnloadHandler - m_szMailBox :" +mainObject.m_szMailBox);
+                    mainObject.m_Log.Write("OWA-SMTP-SR - loginOnloadHandler - m_szMailBox :" +mainObject.m_szMailBox);
 
                     //server response
                     mainObject.serverComms("235 Your In\r\n");
@@ -168,11 +171,11 @@ OWASMTPScreenRipper.prototype =
                 break;
             }
 
-            mainObject.m_Log.Write("nsOWASMTP.js - loginOnloadHandler - END");
+            mainObject.m_Log.Write("OWA-SMTP-SR.js - loginOnloadHandler - END");
         }
         catch(err)
         {
-            mainObject.m_Log.DebugDump("nsOWASMTP.js: loginHandler : Exception : "
+            mainObject.m_Log.DebugDump("OWA-SMTP-SR.js: loginHandler : Exception : "
                                           + err.name
                                           + ".\nError message: "
                                           + err.message +"\n" +
@@ -186,8 +189,8 @@ OWASMTPScreenRipper.prototype =
     {
         try
         {
-            this.m_Log.Write("nsOWASMTP.js - rawMSG - START");
-            this.m_Log.Write("nsOWASMTP.js - rawMSG " + szEmail);
+            this.m_Log.Write("OWA-SMTP-SR.js - rawMSG - START");
+            this.m_Log.Write("OWA-SMTP-SR.js - rawMSG " + szEmail);
 
             if (!this.m_Email.parse(szEmail)) throw new Error ("Parse Failed")  
             
@@ -207,12 +210,12 @@ OWASMTPScreenRipper.prototype =
             var bResult = this.m_HttpComms.send(this.composerOnloadHandler, this);
             if (!bResult) throw new Error("httpConnection returned false");
             
-            this.m_Log.Write("nsOWASMTP.js - rawMSG - END");
+            this.m_Log.Write("OWA-SMTP-SR.js - rawMSG - END");
             return true;
         }
         catch(err)
         {
-            this.m_Log.DebugDump("nsOWASMTP.js: rawMSG : Exception : "
+            this.m_Log.DebugDump("OWA-SMTP-SR.js: rawMSG : Exception : "
                                               + err.name +
                                               ".\nError message: "
                                               + err.message +"\n" +
@@ -230,26 +233,28 @@ OWASMTPScreenRipper.prototype =
     {
         try
         {
-            mainObject.m_Log.Write("nsOWASMTP.js - composerOnloadHandler - START");
-            mainObject.m_Log.Write("nsOWASMTP.js - composerOnloadHandler : " + mainObject.m_iStage);
+            mainObject.m_Log.Write("OWA-SMTP-SR.js - composerOnloadHandler - START");
+            mainObject.m_Log.Write("OWA-SMTP-SR.js - composerOnloadHandler : " + mainObject.m_iStage);
 
-            var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
-                        
+            var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);            
+            var szLocation  = httpChannel.URI.spec;
+            mainObject.m_Log.Write("OWA-SMTP-SR.js - composerOnloadHandler - szLocation " + szLocation);
+                     
             switch(mainObject.m_iStage)
             {
                 case 0:  //send message
-                    mainObject.m_Log.Write("nsOWASMTP.js - composerOnloadHandler - send message");
+                    mainObject.m_Log.Write("OWA-SMTP-SR.js - composerOnloadHandler - send message");
                     var szAction = szResponse.match(kOWAAction)[1];            
-                    mainObject.m_Log.Write("nsOWASMTP - composerOnloadHandler - szAction :" +szAction);
+                    mainObject.m_Log.Write("OWA-SMTP-SR - composerOnloadHandler - szAction :" +szAction);
                 
                     var szForm = szResponse.match(kOWAForm)[1];
-                    mainObject.m_Log.Write("nsOWASMTP - composerOnloadHandler - szForm :" +szForm);
+                    mainObject.m_Log.Write("OWA-SMTP-SR - composerOnloadHandler - szForm :" +szForm);
                             
                     var aszInput = szForm.match(kOWAInput);
                             
                     for (var i = 0; i < aszInput.length; i++) 
                     {
-                        mainObject.m_Log.Write("nsOWASMTP - composerOnloadHandler - aszInput :" + aszInput[i]);
+                        mainObject.m_Log.Write("OWA-SMTP-SR - composerOnloadHandler - aszInput :" + aszInput[i]);
                         
                         var szName = aszInput[i].match(kOWAName)[1];
                         var szValue = "";
@@ -301,6 +306,7 @@ OWASMTPScreenRipper.prototype =
                     mainObject.m_HttpComms.addValuePair(szName, szValue);
                     
                     mainObject.m_bAttHandled = true;
+                    mainObject.m_HttpComms.addRequestHeader("Referer", szLocation, true);
                     mainObject.m_HttpComms.setURI(szAction);
                     mainObject.m_HttpComms.setRequestMethod("POST");
                     if (mainObject.m_Email.attachments.length >0)
@@ -318,17 +324,17 @@ OWASMTPScreenRipper.prototype =
                 
                                             
                 case 2: //upload attachment
-                    mainObject.m_Log.Write("nsOWASMTP.js - composerOnloadHandler - upload attachment");
+                    mainObject.m_Log.Write("OWA-SMTP-SR.js - composerOnloadHandler - upload attachment");
                     if (szResponse.search(kOWAAttchForm)==-1)
                     {
-                        mainObject.m_Log.Write("nsOWASMTP.js - composerOnloadHandler - attach check failed");
+                        mainObject.m_Log.Write("OWA-SMTP-SR.js - composerOnloadHandler - attach check failed");
                         mainObject.serverComms("502 Error Sending Email\r\n");
                         return;
                     }
                                         
                     if (mainObject.m_iAttCount >= mainObject.m_Email.attachments.length) 
                     {
-                        mainObject.m_Log.Write("nsOWASMTP.js - composerOnloadHandler - Done uploading attachment");
+                        mainObject.m_Log.Write("OWA-SMTP-SR.js - composerOnloadHandler - Done uploading attachment");
                         var szURL = szResponse.match(kOWAEdit)[1]; 
                         szURL = szURL.replace(/^\.\//,"");  //clean up url        
                        
@@ -337,12 +343,13 @@ OWASMTPScreenRipper.prototype =
                             if (szResponse.search(kOWABase)!=-1)
                             {
                                 var szBase =  szResponse.match(kOWABase)[1];
-                                mainObject.m_Log.Write("nsOWASMTP - composerOnloadHandler - szBase :" + szBase);
+                                mainObject.m_Log.Write("OWA-SMTP-SR - composerOnloadHandler - szBase :" + szBase);
                                 mainObject.m_HttpComms.setURI(szBase + szURL);                              
                             }
                             else
                                 mainObject.m_HttpComms.setURI(mainObject.m_szBaseURL + szURL);
                         }
+                        mainObject.m_HttpComms.addRequestHeader("Referer", szLocation, true);
                         mainObject.m_HttpComms.setRequestMethod("GET");
                         mainObject.m_iStage = 3;
                         var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler, mainObject);
@@ -350,20 +357,20 @@ OWASMTPScreenRipper.prototype =
                     }
                     else 
                     {
-                        mainObject.m_Log.Write("nsOWASMTP.js - composerOnloadHandler - uploading file");
+                        mainObject.m_Log.Write("OWA-SMTP-SR.js - composerOnloadHandler - uploading file");
                         var szForm = szResponse.match(kOWAAttchForm);
-                        mainObject.m_Log.Write("nsOWASMTP - composerOnloadHandler - szForm :" + szForm);
+                        mainObject.m_Log.Write("OWA-SMTP-SR - composerOnloadHandler - szForm :" + szForm);
                         
                         var szAction = szForm[0].match(kOWAAction2)[1];
                         szAction = szAction.replace(/^\.\//,"");  //clean up url        
-                        mainObject.m_Log.Write("nsOWASMTP - composerOnloadHandler - szAction :" + szAction);
+                        mainObject.m_Log.Write("OWA-SMTP-SR - composerOnloadHandler - szAction :" + szAction);
                         
                         if (!mainObject.m_HttpComms.setURI(szAction)) 
                         {
                             if (szResponse.search(kOWABase)!=-1)
                             {
                                 var szBase =  szResponse.match(kOWABase)[1];
-                                mainObject.m_Log.Write("nsOWASMTP - composerOnloadHandler - szBase :" + szBase);
+                                mainObject.m_Log.Write("OWA-SMTP-SR - composerOnloadHandler - szBase :" + szBase);
                                 mainObject.m_HttpComms.setURI(szBase + szAction);                              
                             }
                             else
@@ -373,7 +380,7 @@ OWASMTPScreenRipper.prototype =
                         var aszInput = szForm[0].match(kOWAInput);
                         for (var i = 0; i < aszInput.length; i++) 
                         {
-                            mainObject.m_Log.Write("nsOWASMTP - composerOnloadHandler - aszInput :" + aszInput[i]);
+                            mainObject.m_Log.Write("OWA-SMTP-SR - composerOnloadHandler - aszInput :" + aszInput[i]);
                             
                             if (aszInput[i].search(kOWAName)!= -1) 
                             {
@@ -402,6 +409,7 @@ OWASMTPScreenRipper.prototype =
                         }
                         
                         mainObject.m_iStage = 2;
+                        mainObject.m_HttpComms.addRequestHeader("Referer", szLocation, true);
                         mainObject.m_HttpComms.setRequestMethod("POST");
                         mainObject.m_HttpComms.setContentType("multipart/form-data");
                         var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler, mainObject);
@@ -411,18 +419,18 @@ OWASMTPScreenRipper.prototype =
                 
                 
                 case 3:  //send message
-                    mainObject.m_Log.Write("nsOWASMTP.js - composerOnloadHandler - send message");
+                    mainObject.m_Log.Write("OWA-SMTP-SR.js - composerOnloadHandler - send message");
                     var szAction = szResponse.match(kOWAAction)[1];            
-                    mainObject.m_Log.Write("nsOWASMTP - composerOnloadHandler - szAction :" +szAction);
+                    mainObject.m_Log.Write("OWA-SMTP-SR - composerOnloadHandler - szAction :" +szAction);
                 
                     var szForm = szResponse.match(kOWAForm)[1];
-                    mainObject.m_Log.Write("nsOWASMTP - composerOnloadHandler - szForm :" +szForm);
+                    mainObject.m_Log.Write("OWA-SMTP-SR - composerOnloadHandler - szForm :" +szForm);
                             
                     var aszInput = szForm.match(kOWAInput);
                             
                     for (var i = 0; i < aszInput.length; i++) 
                     {
-                        mainObject.m_Log.Write("nsOWASMTP - composerOnloadHandler - aszInput :" + aszInput[i]);
+                        mainObject.m_Log.Write("OWA-SMTP-SR - composerOnloadHandler - aszInput :" + aszInput[i]);
                         
                         var szName = aszInput[i].match(kOWAName)[1];
                         var szValue = "";
@@ -440,6 +448,7 @@ OWASMTPScreenRipper.prototype =
                                                             encodeURIComponent(szValue));
                     }
                     
+                    mainObject.m_HttpComms.addRequestHeader("Referer", szLocation, true);
                     mainObject.m_HttpComms.setURI(szAction);
                     mainObject.m_HttpComms.setRequestMethod("POST");
                     mainObject.m_iStage =1;
@@ -448,11 +457,11 @@ OWASMTPScreenRipper.prototype =
                 break;               
             }
 
-            mainObject.m_Log.Write("nsOWASMTP.js - composerOnloadHandler - END");
+            mainObject.m_Log.Write("OWA-SMTP-SR.js - composerOnloadHandler - END");
         }
         catch(err)
         {
-            mainObject.m_Log.DebugDump("nsOWASMTP.js: composerOnloadHandler : Exception : "
+            mainObject.m_Log.DebugDump("OWA-SMTP-SR.js: composerOnloadHandler : Exception : "
                                           + err.name
                                           + ".\nError message: "
                                           + err.message +"\n" +                                         
@@ -468,15 +477,15 @@ OWASMTPScreenRipper.prototype =
     {
         try
         {
-            this.m_Log.Write("nsOWASMTP.js - getBcc - START");
+            this.m_Log.Write("OWA-SMTP-SR.js - getBcc - START");
             if (this.m_aszTo.length==0) return null;
-            this.m_Log.Write("nsOWASMTP.js - getBcc - szRcptList " + this.m_aszTo);
+            this.m_Log.Write("OWA-SMTP-SR.js - getBcc - szRcptList " + this.m_aszTo);
 
             var szBcc = null;
             var szAddress = null;
             if (szTo) szAddress = szTo;
             if (szCc) szAddress = (szTo ? (szAddress + ","+ szCc) : szCc);
-            this.m_Log.Write("nsOWASMTP.js - getBcc - szAddress " + szAddress);
+            this.m_Log.Write("OWA-SMTP-SR.js - getBcc - szAddress " + szAddress);
 
             if (!szAddress)
                 szBcc = this.m_aszTo;
@@ -492,14 +501,14 @@ OWASMTPScreenRipper.prototype =
                     }
                 }
             }
-            this.m_Log.Write("nsOWASMTP.js - getBcc szBcc- " + szBcc);
+            this.m_Log.Write("OWA-SMTP-SR.js - getBcc szBcc- " + szBcc);
 
-            this.m_Log.Write("nsOWASMTP.js - getBcc - End");
+            this.m_Log.Write("OWA-SMTP-SR.js - getBcc - End");
             return szBcc;
         }
         catch(err)
         {
-            this.m_Log.DebugDump("nsOWASMTP.js: getBcc : Exception : "
+            this.m_Log.DebugDump("OWA-SMTP-SR.js: getBcc : Exception : "
                                                   + err.name
                                                   + ".\nError message: "
                                                   + err.message + "\n"
@@ -514,16 +523,16 @@ OWASMTPScreenRipper.prototype =
     {
         try
         {
-            this.m_Log.Write("nsOWASMTP.js - serverComms - START");
-            this.m_Log.Write("nsOWASMTP.js - serverComms msg " + szMsg);
+            this.m_Log.Write("OWA-SMTP-SR.js - serverComms - START");
+            this.m_Log.Write("OWA-SMTP-SR.js - serverComms msg " + szMsg);
             var iCount = this.m_oResponseStream.write(szMsg,szMsg.length);
-            this.m_Log.Write("nsOWASMTP.js - serverOWA sent count: " + iCount
+            this.m_Log.Write("OWA-SMTP-SR.js - serverOWA sent count: " + iCount
                                                         +" msg length: " +szMsg.length);
-            this.m_Log.Write("nsOWASMTP.js - serverComms - END");
+            this.m_Log.Write("OWA-SMTP-SR.js - serverComms - END");
         }
         catch(e)
         {
-            this.m_Log.DebugDump("nsOWASMTP.js: serverComms : Exception : "
+            this.m_Log.DebugDump("OWA-SMTP-SR.js: serverComms : Exception : "
                                               + e.name
                                               + ".\nError message: "
                                               + e.message +"\n" +

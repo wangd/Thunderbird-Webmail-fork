@@ -34,6 +34,7 @@ function OWAScreenRipper(oResponseStream, oLog, oPrefData)
         this.m_iHandleCount = 0; 
         this.m_iProcessAmount = 25;
         this.m_iCurrentPage = 0;
+        this.m_iTotalSize = 0;
         this.m_iNumPages = -1;
         this.m_iTime = 20;
         this.m_Timer = Components.classes["@mozilla.org/timer;1"]
@@ -320,7 +321,7 @@ OWAScreenRipper.prototype =
                     {
                         data.iSize = Item.match(kOWAMSGSize)[1];
                         if (Item.match(kOWAMSGSize)[2].search(/k/i) !=-1) data.iSize *= 1000;
-                        if (Item.match(kOWAMSGSize)[2].search(/g/i) !=-1) data.iSize *= 1000000;
+                        if (Item.match(kOWAMSGSize)[2].search(/m/i) !=-1) data.iSize *= 1000000;
                     }
                     catch(e)
                     {
