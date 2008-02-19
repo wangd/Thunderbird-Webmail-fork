@@ -16,7 +16,7 @@ function OWAScreenRipper(oResponseStream, oLog, oPrefData)
         
         if (typeof kOWAConstants == "undefined")
         {
-            this.m_Log.Write("nsPOPOWA.js - Constructor - loading constants");
+            this.m_Log.Write("POP-OWA-SR.js - Constructor - loading constants");
             scriptLoader.loadSubScript("chrome://owa/content/OWA-Constants.js");
         }
 
@@ -26,7 +26,6 @@ function OWAScreenRipper(oResponseStream, oLog, oPrefData)
         this.m_bAuthorised = false;
         this.m_szUserName = null;
         this.m_szPassWord = null;
-        this.m_oResponseStream = null;
         this.m_HttpComms = new HttpComms(this.m_Log);
         this.m_iStage = 0;
         this.m_szBaseURL = null;
@@ -66,7 +65,10 @@ OWAScreenRipper.prototype =
                                                    + " Password: " + szPassWord
                                                    + " stream: " + this.m_oResponseStream);
 
-            if (!this.m_szUserName || !this.m_oResponseStream  || !this.m_szPassWord) return false;
+            this.m_szUserName = szUserName;
+            this.m_szPassWord = szPassWord;
+
+            if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
 
             var szDomain = this.m_szUserName.match(/.*?@(.*?)$/)[1].toLowerCase();
             var szURL = this.m_DomainManager.getURL(szDomain);
@@ -523,6 +525,37 @@ OWAScreenRipper.prototype =
             this.serverComms("-ERR negative vibes from " +this.m_szUserName+ "\r\n");
         }
     },
+
+
+
+
+    //top
+    getMessageHeaders : function(lID)
+    {
+        try
+        {
+            this.m_Log.Write("nsOWA-SR.js - getHeaders - START");
+            this.m_Log.Write("nsOWA-SR.js - getHeaders - id " + lID );
+
+            var  szResponse = "-ERR Not supported yet \r\n";
+            this.serverComms(szResponse);
+
+            this.m_Log.Write("nsOWA-SR.js - getHeaders - END");
+            return true;
+        }
+        catch(err)
+        {
+            this.m_Log.DebugDump("nsOWA-SR.js: getHeaders : Exception : "
+                                          + e.name +
+                                          ".\nError message: "
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
+            mainObject.serverComms("-ERR negative vibes from " +mainObject.m_szUserName+ "\r\n");
+            return false;
+        }
+    },
+
+
 
 
     //retr
