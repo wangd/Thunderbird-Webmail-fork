@@ -1,5 +1,4 @@
-﻿<!ENTITY HotmailPref.Window.Title "Hotmail 选项">
-<!ENTITY HotmailPref.Window.size "width: 45em; height: 38em">
+<!ENTITY HotmailPref.Window.Title "Hotmail 选项">
 <!ENTITY HotmailPref.Panel.Accounts.Title "帐户">
 <!ENTITY HotmailPref.Panel.Domains.Title "域">
 <!ENTITY HotmailPref.Button.Close.Label "关闭">
@@ -7,11 +6,9 @@
 <!ENTITY HotmailPref.Tab.POP.Title "POP">
 <!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
 <!ENTITY HotmailPref.Mode.Label "选择扩展用来连接 Microsoft 服务器的通信方法">
-
+<!ENTITY HotmailPref.Mode.HotmailLive.Label "Hotmail Live (新站点)">
+<!ENTITY HotmailPref.Mode.HotmailOld.Label "Hotmail (旧站点)">
 <!ENTITY HotmailPref.Mode.WebDav.Label "WebDav">
-<!ENTITY HotmailPref.Mode.HotmailLive.Label "Hotmail Live (New website)">
-<!ENTITY HotmailPref.Mode.HotmailOld.Label "Hotmail (Old website)">
-
 <!ENTITY HotmailPref.POP.DownloadUnread.Label "仅下载未读邮件">
 <!ENTITY HotmailPref.POP.DownloadUnread.AccessKey "u">
 <!ENTITY HotmailPref.POP.JunkMail.Label "下载垃圾邮件">
