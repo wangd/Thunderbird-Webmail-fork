@@ -63,10 +63,13 @@ nsOWA.prototype =
     get passWord() {return this.m_szPassWord;},
     set passWord(passWord) {return this.m_szPassWord = passWord;},
 
-    get bAuthorised() {return this.m_bAuthorised;},
-
     get ResponseStream() {return this.m_oResponseStream;},
     set ResponseStream(responseStream) {return this.m_oResponseStream = responseStream;},
+
+    get bAuthorised()
+    {
+        return (this.m_CommMethod)? this.m_CommMethod.m_bAuthorised: false;
+    },
 
 
     logIn : function()
@@ -176,6 +179,32 @@ nsOWA.prototype =
                                           + e.name
                                           + ".\nError message: "
                                           + e.message);
+            return false;
+        }
+    },
+
+
+
+    //top
+    getMessageHeaders : function(lID)
+    {
+        try
+        {
+            this.m_HotmailLog.Write("nsOWA.js - getHeaders - START");
+            this.m_HotmailLog.Write("nsOWA.js - getHeaders - id " + lID );
+
+            this.m_CommMethod.getMessageHeaders(lID);
+
+            this.m_HotmailLog.Write("nsOWA.js - getHeaders - END");
+            return true;
+        }
+        catch(err)
+        {
+            this.m_HotmailLog.DebugDump("nsOWA.js: getHeaders : Exception : "
+                                          + e.name +
+                                          ".\nError message: "
+                                          + e.message+ "\n"
+                                          + e.lineNumber);
             return false;
         }
     },

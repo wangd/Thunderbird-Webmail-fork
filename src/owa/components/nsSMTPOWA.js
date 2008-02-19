@@ -63,7 +63,10 @@ nsOWASMTP.prototype =
     get passWord() {return this.m_szPassWord;},
     set passWord(passWord) {return this.m_szPassWord = passWord;},
 
-    get bAuthorised() {return this.m_bAuthorised;},
+    get bAuthorised()
+    {
+        return (this.m_CommMethod)? this.m_CommMethod.m_bAuthorised: false;
+    },
 
     get ResponseStream() {return this.m_oResponseStream;},
     set ResponseStream(responseStream) {return this.m_oResponseStream = responseStream;},
