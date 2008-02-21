@@ -1,9 +1,21 @@
-<!ENTITY Window.size "width: 46em; height: 30em">
+<!ENTITY Window.size "width: 40em; height: 30em">
 <!ENTITY OWAPref.Options.szTitle "OWA Options">
 <!ENTITY OWAPref.Panel.Accounts.Title "Accounts">
 <!ENTITY OWAPref.Panel.Domains.Title "Domains">
 <!ENTITY OWAPref.Button.Close.Label "Close">
 
-<!ENTITY OWAPref.Panel.POP.szTitle "POP">
-<!ENTITY OWAPref.Panel.SMTP.szTitle "SMTP">
-<!ENTITY OWAPref.Panel.IMAP.szTitle "IMAP">
+<!ENTITY OWAPref.Tab.Mode.szTitle "Mode">
+<!ENTITY OWAPref.Tab.Login.szTitle "Login">
+<!ENTITY OWAPref.Tab.POP.szTitle "POP">
+<!ENTITY OWAPref.Tab.SMTP.szTitle "SMTP">
+
+<!ENTITY OWAPref.Mode.Label "Select the communications method the extension will use to connect to Exchange">
+<!ENTITY OWAPref.Mode.OWAScreenRipper.Label "Screen Ripper">
+<!ENTITY OWAPref.Mode.WebDav.Label "WebDav">
+
+<!ENTITY OWAPref.Login.szLabel "Use domain in login request">
+<!ENTITY OWAPref.Login.AccessKey "d">
+
+<!ENTITY OWAPref.AccountError.Label "No OWA Accounts Found">
+<!ENTITY OWAPref.SMTP.NA.Label "No options for OWA Live">
+
