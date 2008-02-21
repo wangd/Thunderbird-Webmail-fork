@@ -17,6 +17,7 @@ function nsOWA()
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms3.js");
+        scriptLoader.loadSubScript("chrome://owa/content/OWA-Prefs-Data.js");
         scriptLoader.loadSubScript("chrome://owa/content/OWA-MSG.js");
         scriptLoader.loadSubScript("chrome://owa/content/OWA-WebDav-POP.js");
         scriptLoader.loadSubScript("chrome://owa/content/OWA-ScreenRipper-POP.js");
@@ -33,9 +34,6 @@ function nsOWA()
             scriptLoader.loadSubScript("chrome://owa/content/OWA-Constants.js");
         }
 
-        this.m_DomainManager =  Components.classes["@mozilla.org/OWADomains;1"]
-                                          .getService()
-                                          .QueryInterface(Components.interfaces.nsIOWADomains);       
         this.m_szUserName = null;
         this.m_szPassWord = null;
         this.m_oResponseStream = null;
@@ -81,10 +79,9 @@ nsOWA.prototype =
             if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
 
             //load webdav address
-            var PrefData = null;
-            var iMode = 0;
+            var PrefData = this.getPrefs();
 
-            if (iMode==1) ///webdav
+            if (PrefData.iMode==1) ///webdav
                 this.m_CommMethod = new OWAWebDav(this.m_oResponseStream, this.m_Log, PrefData);
             else // scrren ripper
                 this.m_CommMethod = new OWAScreenRipper(this.m_oResponseStream, this.m_Log, PrefData);
@@ -286,6 +283,62 @@ nsOWA.prototype =
         }
     },
 
+
+
+
+    getPrefs : function ()
+    {
+        try
+        {
+            this.m_Log.Write("nsOWA.js - getPrefs - START");
+
+            var WebMailPrefAccess = new WebMailCommonPrefAccess();
+            var oPref = {Value : null};
+            var oData = new PrefData();
+
+            var szUserName =  this.m_szUserName;
+            szUserName = szUserName.replace(/\./g,"~");
+            szUserName = szUserName.toLowerCase();
+
+            //delay processing time delay
+            if (WebMailPrefAccess.Get("int","owa.iProcessDelay",oPref))
+                oData.iProcessDelay = oPref.Value;
+
+            //delay proccess amount
+            oPref.Value = null;
+            if (WebMailPrefAccess.Get("bool","owa.iProcessAmount",oPref))
+                oData.iProcessAmount = oPref.Value;
+
+            //do i reuse the session
+            oPref.Value = null;
+            if (WebMailPrefAccess.Get("bool","owa.bReUseSession",oPref))
+                oData.bReUseSession = oPref.Value;
+
+            //get Mode
+            oPref.Value = null;
+            if (WebMailPrefAccess.Get("int","owa.Account."+szUserName+".iMode",oPref))
+                oData.iMode = oPref.Value;
+            this.m_Log.Write("nsOWA.js - getPrefs - iMode " + oData.iMode);
+
+            //get LoginWithDomain
+            oPref.Value = null;
+            if (WebMailPrefAccess.Get("bool","owa.Account."+szUserName+".bLoginWithDomain",oPref))
+                oData.bLoginWithDomain = oPref.Value;
+            this.m_Log.Write("nsOWA.js - getPrefs - bLoginWithDomain " + oData.bLoginWithDomain);
+
+            this.m_Log.Write("nsOWA.js - getPrefs - END");
+            return oData;
+        }
+        catch(e)
+        {
+            this.m_Log.DebugDump("nsOWA.js: getPrefs : Exception : "
+                                      + e.name
+                                      + ".\nError message: "
+                                      + e.message+ "\n"
+                                      + e.lineNumber);
+            return null;
+        }
+    },
 
 
 

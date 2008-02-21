@@ -23,15 +23,22 @@ function OWAWebDav(oResponseStream, oLog, oPrefData)
         this.m_iTotalSize = 0;
         this.m_szMSG = null;
         this.m_iRetries = 2;
+        this.m_szURL = null;
 
         this.m_IOS = Components.classes["@mozilla.org/network/io-service;1"]
                                .getService(Components.interfaces.nsIIOService);
 
+        this.m_DomainManager =  Components.classes["@mozilla.org/OWADomains;1"]
+                                          .getService()
+                                          .QueryInterface(Components.interfaces.nsIOWADomains);       
+
         this.m_Timer = Components.classes["@mozilla.org/timer;1"]
                                  .createInstance(Components.interfaces.nsITimer);
 
-        this.m_iProcessAmount = 25;
-        this.m_iTime = 20;
+        this.m_iProcessAmount = oPrefData.iProcessAmount;
+        this.m_iTime = oPrefData.iProcessDelay;
+        this.m_bLoginWithDomain = oPrefData.bLoginWithDomain;
+        this.m_bReUseSession = oPrefData.bReUseSession;
 
         //process folders
         this.m_aszFolders = new Array();
@@ -90,12 +97,15 @@ OWAWebDav.prototype =
             }
 
             this.m_iStage=0;
-            this.m_HttpComms.setUserName(this.m_szUserName);
+            if (this.m_bLoginWithDomain)
+                this.m_HttpComms.setUserName(this.m_szUserName);
+            else
+                this.m_HttpComms.setUserName(this.m_szUserName.match(/(.*?)@/)[1].toLowerCase());
             this.m_HttpComms.setPassword(this.m_szPassWord);
             
             var szDomain = this.m_szUserName.match(/.*?@(.*?)$/)[1].toLowerCase();
-            var szURL = this.m_DomainManager.getURL(szDomain);
-            this.m_HttpComms.setURI(szURL);
+            this.m_szURL = this.m_DomainManager.getURL(szDomain);
+            this.m_HttpComms.setURI(this.m_szURL);
             this.m_HttpComms.setRequestMethod("PROPFIND");
             this.m_HttpComms.setContentType("text/xml");
             this.m_HttpComms.addData(OWASchema);
@@ -213,9 +223,12 @@ OWAWebDav.prototype =
             {
                 mainObject.m_iRetries --;
                 mainObject.m_Log.Write("OWAWebDav.js - loginOnloadHandler - having another go " +mainObject.m_iRetries);
-                mainObject.m_HttpComms.setUserName(mainObject.m_szUserName);
+                if (mainObject.m_bLoginWithDomain)
+                    mainObject.m_HttpComms.setUserName(this.m_szUserName);
+                else
+                    mainObject.m_HttpComms.setUserName(mainObject.m_szUserName.match(/(.*?)@/)[1].toLowerCase());
                 mainObject.m_HttpComms.setPassword(mainObject.m_szPassWord);
-                mainObject.m_HttpComms.setURI("http://oe.OWA.com/svcs/OWA/httpmail.asp");
+                mainObject.m_HttpComms.setURI(mainObject.m_szURL);
                 mainObject.m_HttpComms.setRequestMethod("PROPFIND");
                 mainObject.m_HttpComms.setContentType("text/xml");
                 mainObject.m_HttpComms.addData(OWASchema);

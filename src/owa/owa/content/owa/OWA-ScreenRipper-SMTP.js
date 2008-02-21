@@ -14,12 +14,6 @@ function OWASMTPScreenRipper(oResponseStream, oLog, oPrefData)
         this.m_Log.Write("OWA-SMTP-SR.js - Constructor - START");
         this.m_oResponseStream = oResponseStream;
 
-        if (typeof kOWAConstants == "undefined")
-        {
-            this.m_Log.Write("OWA-SMTP-SR.js - Constructor - loading constants");
-            scriptLoader.loadSubScript("chrome://owa/content/OWA-Constants.js");
-        }
-
         this.m_DomainManager =  Components.classes["@mozilla.org/OWADomains;1"]
                                           .getService()
                                           .QueryInterface(Components.interfaces.nsIOWADomains);       
@@ -36,6 +30,10 @@ function OWASMTPScreenRipper(oResponseStream, oLog, oPrefData)
         this.m_iAttCount = 0;
         this.m_Email = new email(this.m_Log);
         this.m_Email.decodeBody(true);
+        
+        this.m_bLoginWithDomain = oPrefData.bLoginWithDomain;
+        this.m_bReUseSession = oPrefData.bReUseSession;
+                        
         this.m_Log.Write("OWA-SMTP-SR.js - Constructor - END");
     }
     catch(e)
@@ -134,7 +132,10 @@ OWASMTPScreenRipper.prototype =
                             
                             if (szName.search(/username/i) != -1) 
                             {
-                                szValue = mainObject.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
+                                if (mainObject.m_bLoginWithDomain)
+                                    szValue = mainObject.m_szUserName.toLowerCase();
+                                else
+                                    szValue = mainObject.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
                                 szValue = encodeURIComponent(szValue);
                             }
                             else if (szName.search(/password/i) != -1) 

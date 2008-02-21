@@ -14,15 +14,13 @@ function OWAScreenRipper(oResponseStream, oLog, oPrefData)
         
         this.m_oResponseStream = oResponseStream;
         
-        if (typeof kOWAConstants == "undefined")
-        {
-            this.m_Log.Write("POP-OWA-SR.js - Constructor - loading constants");
-            scriptLoader.loadSubScript("chrome://owa/content/OWA-Constants.js");
-        }
-
         this.m_DomainManager =  Components.classes["@mozilla.org/OWADomains;1"]
                                           .getService()
-                                          .QueryInterface(Components.interfaces.nsIOWADomains);       
+                                          .QueryInterface(Components.interfaces.nsIOWADomains);   
+                                                                              
+        this.m_Timer = Components.classes["@mozilla.org/timer;1"]
+                                 .createInstance(Components.interfaces.nsITimer);  
+                                   
         this.m_bAuthorised = false;
         this.m_szUserName = null;
         this.m_szPassWord = null;
@@ -32,15 +30,16 @@ function OWAScreenRipper(oResponseStream, oLog, oPrefData)
         this.m_szMailBox = null;
         this.m_aMsgDataStore = new Array();
         this.m_iHandleCount = 0; 
-        this.m_iProcessAmount = 25;
         this.m_iCurrentPage = 0;
         this.m_iTotalSize = 0;
         this.m_iNumPages = -1;
-        this.m_iTime = 20;
-        this.m_Timer = Components.classes["@mozilla.org/timer;1"]
-                                 .createInstance(Components.interfaces.nsITimer);
         this.m_aRawData =new Array();
-         
+        
+        this.m_iProcessAmount = oPrefData.iProcessAmount;
+        this.m_iTime = oPrefData.iProcessDelay;
+        this.m_bLoginWithDomain = oPrefData.bLoginWithDomain;
+        this.m_bReUseSession = oPrefData.bReUseSession;
+        
         this.m_Log.Write("nsOWA.js - Constructor - END");
     }
     catch(e)
@@ -133,7 +132,10 @@ OWAScreenRipper.prototype =
                             
                             if (szName.search(/username/i) != -1) 
                             {
-                                szValue = mainObject.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
+                                if (mainObject.m_bLoginWithDomain)
+                                    szValue = mainObject.m_szUserName.toLowerCase();
+                                else
+                                    szValue = mainObject.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
                                 szValue = encodeURIComponent(szValue);
                             }
                             else if (szName.search(/password/i) != -1) 
@@ -178,7 +180,8 @@ OWAScreenRipper.prototype =
             mainObject.m_Log.DebugDump("nsOWA.js: loginHandler : Exception : "
                                           + err.name
                                           + ".\nError message: "
-                                          + err.message);
+                                          + err.message+ "\n"
+                                          + e.lineNumber);
 
             mainObject.serverComms("-ERR negative vibes from "+ mainObject.m_szUserName +"\r\n");
         }
