@@ -56,8 +56,8 @@ function nsAOL()
         this.m_aszFolderURLList = new Array();
         this.m_aRawData = new Array();
 
-        this.m_Timer = Components.classes["@mozilla.org/timer;1"];
-        this.m_Timer = this.m_Timer.createInstance(Components.interfaces.nsITimer);
+        this.m_Timer = Components.classes["@mozilla.org/timer;1"]
+                                 .createInstance(Components.interfaces.nsITimer);
 
         this.m_ComponentManager = Components.classes["@mozilla.org/ComponentData2;1"]
                                             .getService(Components.interfaces.nsIComponentData2);
@@ -143,7 +143,7 @@ nsAOL.prototype =
                 if (this.m_szHomeURI)
                 {
                     this.m_Log.Write("nsAOL.js - logIN - Session Data Found");
-                    this.m_iStage =3;
+                    this.m_iStage =4;
                     this.m_bReEntry = true;
                     this.m_HttpComms.setURI(this.m_szHomeURI);
                 }
@@ -279,8 +279,18 @@ nsAOL.prototype =
                 break;
 
 
-                case 3://get urls
-                    if(szResponse.search(patternAOLVersion)==-1)
+                case 3://get settings
+                    var szSetttingsURL = szResponse.match(kPatternSettings)[1];
+                    mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - szSetttingsURL " +szSetttingsURL);
+                    mainObject.m_HttpComms.setURI(szSetttingsURL);
+                    mainObject.m_HttpComms.setRequestMethod("GET");
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
+                    if (!bResult) throw new Error("httpConnection returned false");
+                    mainObject.m_iStage++;
+                break;
+            
+                case 4://get urls
+                    if(szResponse.search(patternAOLUserID)==-1)
                     {
                         if (mainObject.m_bReEntry)
                         {
@@ -302,31 +312,19 @@ nsAOL.prototype =
                             throw new Error("error logging in");
                     }
 
-                    //get cookies
-                    var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
-                                             .getService(Components.interfaces.nsIWebMailCookieManager2);
-                    var szCookie = oCookies.findCookie(mainObject.m_szUserName, httpChannel.URI);
-                    oCookies.addCookie(mainObject.m_szUserName, httpChannel.URI, "RELOAD=false;");
-
-                    this.m_Log.Write("AOLPOP.js - loginOnloadHandler cookies "+ szCookie);
-
-                    mainObject.m_szUserId = szCookie.match(patternAOLUserID)[1];
+                    mainObject.m_szUserId = szResponse.match(patternAOLUserID)[1];
                     mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - m_szUserId " +mainObject.m_szUserId);
 
-                    mainObject.m_szRealUserName = decodeURIComponent(szCookie.match(patternAOLRealUserName)[1]);
+                    mainObject.m_szRealUserName = szResponse.match(patternAOLRealUserName)[1];
                     mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - m_szRealUserName " +mainObject.m_szRealUserName);
 
-
-                    mainObject.m_szVersion = szResponse.match(patternAOLVersion)[1];
-                    mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - szVersion " +mainObject.m_szVersion);
-
-                    var IOService = Components.classes["@mozilla.org/network/io-service;1"];
-                    IOService = IOService.getService(Components.interfaces.nsIIOService);
+                    var IOService = Components.classes["@mozilla.org/network/io-service;1"]
+                                              .getService(Components.interfaces.nsIIOService);
                     var nsIURI = IOService.newURI(httpChannel.URI.spec, null, null);
                     var szDirectory = nsIURI.QueryInterface(Components.interfaces.nsIURL).directory;
                     mainObject.m_Log.Write("AOLPOP - loginOnloadHandler - directory : " +szDirectory);
 
-                    mainObject.m_szLocation = httpChannel.URI.prePath + szDirectory +"common/rpc/";
+                    mainObject.m_szLocation = httpChannel.URI.prePath + szDirectory +"rpc/";
                     mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - mainObject.m_szLocation " +mainObject.m_szLocation);
 
                     mainObject.m_szHomeURI = httpChannel.URI.spec;
