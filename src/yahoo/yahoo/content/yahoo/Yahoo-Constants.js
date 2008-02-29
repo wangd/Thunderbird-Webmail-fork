@@ -34,7 +34,7 @@ const PatternYahooBoxAlt =/(box=.*?)$/;
 const PatternYahooUnRead = /msgnew/;
 const PatternYahooFolders = /".*?ShowFolder\?box=.*?"/gim;
 const PatternYahooFoldersPart = /"(.*?ShowFolder\?box=.*?)"/gim;
-const PatternYahooFolderURL =/'(.*?Folders\?YY.*?)'"/i;
+const PatternYahooFolderURL =/\[.*?id="addfoldercontrol"[\s\S]*?\-[\s\S]*?href="(.*?Folders\?.*?)"[\s\S]*?\]/i;
 const PatternYahooFolderBox = /box=(.*?)&/i;
 const PatternYahooFolderBoxAlt = /box=(.*?)$/i;
 

@@ -276,7 +276,8 @@ YahooPOP.prototype =
                     var szFolderURL = szResponse.match(PatternYahooFolderURL)[1];
                     mainObject.m_Log.Write("YahooPOP.js - loginOnloadHandler - szFolderURL : "+szFolderURL );
 
-                    mainObject.m_HttpComms.setURI(szFolderURL);
+                    if(!mainObject.m_HttpComms.setURI(szFolderURL))
+                        mainObject.m_HttpComms.setURI(mainObject.m_szLocationURI + szFolderURL);
                     mainObject.m_HttpComms.setRequestMethod("GET");
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
                     if (!bResult) throw new Error("httpConnection returned false");
