@@ -555,7 +555,7 @@ nsAOL.prototype =
                         if (this.m_bDownloadUnread)
                         {
                             bRead = parseInt(aTempData[6]); //unread
-                            this.m_Log.Write("AOL.js - mailBoxOnloadHandler - bRead -" + bRead);
+                            this.m_Log.Write("AOL.js - mailBoxOnloadHandler - bRead : " + bRead);
                         }
 
                         if (!bRead)
