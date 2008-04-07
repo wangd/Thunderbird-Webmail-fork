@@ -1,11 +1,11 @@
 <!ENTITY YahooPref.Window.Title "雅虎選項">
 <!ENTITY YahooPref.Panel.Accounts.Title "帳戶">
 <!ENTITY YahooPref.Panel.Domains.Title "網域">
-<!ENTITY YahooPref.Panel.Globals.Title "全域">
 <!ENTITY YahooPref.Button.Close.Label "關閉">
 <!ENTITY YahooPref.Tab.Mode.Title "模式">
 <!ENTITY YahooPref.Tab.POP.Title "POP">
 <!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
+<!ENTITY YahooPref.Tab.Adv.Title "進階">
 <!ENTITY YahooPref.Mode.Label "選擇延伸套件適用網站">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "產品網站">
 <!ENTITY YahooPref.Mode.Beta.Label "BETA網站">
@@ -18,28 +18,18 @@
 <!ENTITY YahooPref.POP.ButtonAdd.AccessKey "A">
 <!ENTITY YahooPref.POP.ButtonRemove.Label "移除">
 <!ENTITY YahooPref.POP.ButtonRemove.AccessKey "R">
+<!ENTITY YahooPref.POP.MarkAsRead.Label "於伺服器端標示郵件已讀">
+<!ENTITY YahooPref.POP.MarkAsRead.AccessKey "k">
 <!ENTITY YahooPref.SMTP.SaveSentItems.Label "儲存副本於傳送項目中。">
 <!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "s">
+<!ENTITY YahooPref.Adv.ShortID.Label "使用短ID">
+<!ENTITY YahooPref.Adv.ShortID.AccessKey "I">
+<!ENTITY YahooPref.Adv.ReUseSession.Label "重新使用http session資料。">
+<!ENTITY YahooPref.Adv.ReUseSession.AccessKey "S">
+<!ENTITY YahooPref.AdvInfo.Label "改變短ID選項將使您整個郵箱被下載">
 <!ENTITY YahooPref.AccountError.Label "未發現雅虎帳戶">
-<!ENTITY YahooPref.SMTP.NA.Label "雅虎BETA無SMTP選項">
 <!ENTITY YahooPref.Domain.Label "雅虎延伸套件支援的網域">
 <!ENTITY YahooPref.Domain.Button.AddDomain.Label "新增...">
 <!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "A">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "移除">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "R">
-<!ENTITY YahooPref.Globals.ShortID.Label "使用短的ID">
-<!ENTITY YahooPref.Globals.ShortID.AccessKey "I">
-<!ENTITY YahooPref.Globals.ReUseSession.Label "重複使用HTTP Session資料">
-<!ENTITY YahooPref.Globals.ReUseSession.AccessKey "S">
-<!ENTITY YahooPref.GlobalsInfo.Label "變更短的ID選項將導致您下載整個郵箱">
-
-
-
-<!ENTITY YahooPref.Tab.Adv.Title "Advanced">
-<!ENTITY YahooPref.Adv.ShortID.Label "Use Short ID">
-<!ENTITY YahooPref.Adv.ShortID.AccessKey "I">
-<!ENTITY YahooPref.Adv.ReUseSession.Label "Reuse http session data.">
-<!ENTITY YahooPref.Adv.ReUseSession.AccessKey "S">
-<!ENTITY YahooPref.AdvInfo.Label "Changing the Short Id option will result in your entire mailbox being downloaded">
-<!ENTITY YahooPref.POP.MarkAsRead.Label "Mark emails as read on server">
-<!ENTITY YahooPref.POP.MarkAsRead.AccessKey "k">
