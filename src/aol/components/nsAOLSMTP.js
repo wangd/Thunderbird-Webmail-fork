@@ -485,7 +485,8 @@ nsAOLSMTP.prototype =
                 throw new Error("return status " + httpChannel.responseStatus);
 
 
-            if (szResponse.search(/&quot;isSuccess&quot;:true/i)==-1)
+            if (szResponse.search(/&quot;isSuccess&quot;:true/i)==-1 && 
+                szResponse.search(/"isSuccess":true/i)==-1)
             {
                 mainObject.m_Log.Write("nsAOLSMTP.js - composerOnloadHandler - check failed");
                 mainObject.serverComms("502 Error Sending Email\r\n");
