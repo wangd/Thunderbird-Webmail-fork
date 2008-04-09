@@ -24,8 +24,8 @@ function HttpComms(oLog)
         }
         this.m_Log.Write("HttpComms3.js - constructor - START");
 
-        this.m_IOService = Components.classes["@mozilla.org/network/io-service;1"];
-        this.m_IOService = this.m_IOService.getService(Components.interfaces.nsIIOService);
+        this.m_IOService = Components.classes["@mozilla.org/network/io-service;1"]
+                                     .getService(Components.interfaces.nsIIOService);
 
         this.m_oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
                                     .getService(Components.interfaces.nsIWebMailCookieManager2);
@@ -152,6 +152,7 @@ HttpComms.prototype =
         }
         catch(err)
         {
+            this.m_Log.Write("HttpComms3.js - setURI - invlaid url");
             return false;
         }
     },
@@ -666,8 +667,6 @@ HttpComms.prototype =
     {
         try
         {
-            this.m_Log.Write("HttpComms3.js - inputStream - " + szValue);
-
             var Stream = Components.classes["@mozilla.org/io/string-input-stream;1"];
             Stream = Stream.createInstance(Components.interfaces.nsIStringInputStream);
             Stream.setData(szValue,-1);
@@ -780,6 +779,8 @@ HttpComms.prototype =
                     if (mainObject.getRequestMethod().search(/post/i)!=-1)
                         mainObject.setRequestMethod("GET");
 
+                    mainObject.m_szContentType = "application/x-www-form-urlencoded";
+                     
                     delete mainObject.m_aFormData;
                     mainObject.m_aFormData = new Array();
 
