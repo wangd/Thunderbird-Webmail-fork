@@ -476,8 +476,7 @@ HotmailSMTPScreenRipperBETA.prototype =
                         szContentType = mainObject.m_Email.headers.getContentType(0);
                         szBody = mainObject.m_Email.htmlBody.body.getBody();
                         //var szHTMLBody = "<font size=\"7\">another test</font><br><big>test</big><br>test"
-                        szBody = szBody.match(/<body.*?>[\s\S]*<\/body>/)[0];
-                        szBody = szBody.replace(/body/ig,"span");
+                        szBody = szBody.match(/<body.*?>([\s\S]*)<\/body>/)[1];
                     }
                     
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler szContentType " + szContentType);
