@@ -526,12 +526,12 @@ HttpComms.prototype =
             mimeStream = mimeStream.createInstance(Components.interfaces.nsIMIMEInputStream );
             mimeStream.addContentLength = false;
 
-            var szContDisp = "form-data; name=\"" + oTemp.szName + "\"; ";
+            var szContDisp = "form-data; name=\"" + oTemp.szName + "\"";
             if (oTemp.bFile)
             {
                 this.m_Log.Write("HttpComms3.js - multipartFormData - adding data "+oTemp.szName);
                 this.m_Log.Write("HttpComms3.js - multipartFormData - adding file" + oTemp.szFileName);
-                szContDisp +="filename=\"" + (oTemp.szFileName ? oTemp.szFileName : "") + "\"";
+                szContDisp +="; filename=\"" + (oTemp.szFileName ? oTemp.szFileName : "") + "\"";
                 mimeStream.addHeader("Content-Disposition",szContDisp);
                 mimeStream.addHeader("Content-Type","application/octet-stream");
 
