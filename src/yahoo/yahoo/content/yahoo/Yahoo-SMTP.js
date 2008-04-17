@@ -557,7 +557,15 @@ YahooSMTP.prototype =
 
                         if(szName.search(/^UPL$/i)!=-1)
                         {
-                            mainObject.m_HttpComms.addValuePair(szName,"Attach Files");
+                            mainObject.m_HttpComms.addValuePair(szName, 1);
+                        }
+                        else if (szName.search(/^body$/i)!=-1)
+                        {
+                            mainObject.m_HttpComms.addValuePair(szName,"Inbox");   
+                        }
+                        else if (szName.search(/^box$/i)!=-1)
+                        {
+                            mainObject.m_HttpComms.addValuePair(szName,"<br>");                              
                         }
                         else
                         {
