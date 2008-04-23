@@ -272,12 +272,29 @@ YahooPOP.prototype =
                     //get urls for later use
                     mainObject.m_szLocationURI = httpChannel.URI.prePath ;
                     mainObject.m_Log.Write("YahooPOP.js - loginOnloadHandler - m_szLocationURI : "+mainObject.m_szLocationURI );
-
+                                        
                     var szFolderURL = szResponse.match(PatternYahooFolderURL)[1];
                     mainObject.m_Log.Write("YahooPOP.js - loginOnloadHandler - szFolderURL : "+szFolderURL );
 
-                    if(!mainObject.m_HttpComms.setURI(szFolderURL))
-                        mainObject.m_HttpComms.setURI(mainObject.m_szLocationURI + szFolderURL);
+                    if (!mainObject.m_HttpComms.setURI(szFolderURL)) 
+                    {
+                        if (szFolderURL.search(/^\//) == -1)
+                        {
+                            var IOService = Components.classes["@mozilla.org/network/io-service;1"]
+                                                      .getService(Components.interfaces.nsIIOService);
+                            var nsIURI = IOService.newURI(httpChannel.URI.spec, null, null)
+                                                  .QueryInterface(Components.interfaces.nsIURL);
+                            var szDirectory = nsIURI.directory
+                            mainObject.m_Log.Write("YahooPOP - loginOnloadHandler - directory : " +szDirectory);
+                            
+                            szFolderURL = mainObject.m_szLocationURI + szDirectory + szFolderURL
+                        }
+                        else
+                        {
+                            szFolderURL = mainObject.m_szLocationURI + szFolderURL
+                        }
+                        mainObject.m_HttpComms.setURI(szFolderURL);
+                    }
                     mainObject.m_HttpComms.setRequestMethod("GET");
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
                     if (!bResult) throw new Error("httpConnection returned false");
@@ -287,6 +304,7 @@ YahooPOP.prototype =
 
                 case 3:// folder list
                     var aszServerFolders = szResponse.match(PatternYahooFolders);
+                    if (!aszServerFolders) aszServerFolders = szResponse.match(PatternYahooFoldersAlt);
                     mainObject.m_Log.Write("YahooPOP.js - loginOnloadHandler - aszServerFolders : "+aszServerFolders);
                     mainObject.m_Log.Write("YahooPOP.js - loginOnloadHandler - m_aszFolderList : "+mainObject.m_aszFolderList);
 
@@ -295,14 +313,53 @@ YahooPOP.prototype =
                         var regExp = new RegExp("^"+mainObject.m_aszFolderList[j]+"$","i");
                         for (i=0; i<aszServerFolders.length; i++)
                         {
-                            var szBox = aszServerFolders[i].match(PatternYahooFolderBox)[1];
+                            var szBox = null;
+                            try
+                            {
+                                szBox = aszServerFolders[i].match(PatternYahooFolderName)[1];
+                            }
+                            catch(e)
+                            {
+                                 szBox = aszServerFolders[i].match(PatternYahooFolderNameAlt)[1];
+                            }                       
                             mainObject.m_Log.Write("YahooPOP.js - loginOnloadHandler - szBox : "+szBox );
 
                             if (szBox.search(regExp)!=-1)
                             {
-                                var szURL = mainObject.m_szLocationURI + aszServerFolders[i].replace(/"/g,"");
-                                mainObject.m_aszFolderURLList.push(szURL);
-                                mainObject.m_Log.Write("YahooPOP.js - loginOnloadHandler - szURL : "+szURL);
+                                var szPart ="";
+                                try
+                                {
+                                    szPart = aszServerFolders[i].match(PatternYahooFoldersPart)[1];
+                                }
+                                catch(e)
+                                {
+                                    szPart = aszServerFolders[i].match(PatternYahooFoldersPartAlt)[1]; 
+                                }
+                                mainObject.m_Log.Write("YahooPOP.js - loginOnloadHandler - szBox : "+szBox );                               
+                                
+                                //test urls
+                                var szFolderURL= "";
+                                if (!mainObject.m_HttpComms.setURI(szPart)) 
+                                {
+                                    if (szPart.search(/^\//) == -1)
+                                    {
+                                        var IOService = Components.classes["@mozilla.org/network/io-service;1"]
+                                                                  .getService(Components.interfaces.nsIIOService);
+                                        var nsIURI = IOService.newURI(httpChannel.URI.spec, null, null)
+                                                              .QueryInterface(Components.interfaces.nsIURL);
+                                        var szDirectory = nsIURI.directory
+                                        mainObject.m_Log.Write("YahooPOP - loginOnloadHandler - directory : " +szDirectory);
+                                        
+                                        szFolderURL = mainObject.m_szLocationURI + szDirectory + szPart
+                                    }
+                                    else
+                                    {
+                                        szFolderURL = mainObject.m_szLocationURI + szPart
+                                    }
+                                }
+                                
+                                mainObject.m_aszFolderURLList.push(szFolderURL);
+                                mainObject.m_Log.Write("YahooPOP.js - loginOnloadHandler - szURL : "+szFolderURL);
                             }
                         }
                     }
@@ -401,38 +458,38 @@ YahooPOP.prototype =
                 var aszDeleteForm = szResponse.match(PatternYahooDeleteForm);
                 mainObject.m_Log.Write("YahooPOP.js - mailBoxOnloadHandler - delete form :" + aszDeleteForm);
 
-                mainObject.m_szDeleteURL = aszDeleteForm[0].match(PatternYahooDeleteURL)[1];
-                mainObject.m_Log.Write("YahooPOP.js - mailBoxOnloadHandler - delete URL :" + mainObject.m_szDeleteURL);
-
-                var aszDeleteInput = aszDeleteForm[0].match(PatternYahooDeleteInput);
-                mainObject.m_Log.Write("YahooPOP.js - mailBoxOnloadHandler - delete Input :" + aszDeleteInput);
-
-                for (i=0 ; i < aszDeleteInput.length ; i++)
+                if (aszDeleteForm) 
                 {
-                     var aszInput = aszDeleteInput[i].match(PatternYahooDeleteInput);
-                     mainObject.m_Log.Write("YahooPOP.js - mailBoxOnloadHandler - delete Input data :" + aszInput);
-
-                     if (aszInput)
-                     {
-                        var szName = aszInput[0].match(patternYahooNameAlt)[1];
-                        szName = szName.replace(/["|']/gm,"");
-                        mainObject.m_Log.Write("YahooPOP.js - mailBoxOnloadHandler - delete name " + szName);
-
-                        var szValue = aszInput[0].match(patternYahooAltValue)[1];
-                        szValue = szValue.replace(/["|']/gm,"");
-                        mainObject.m_Log.Write("YahooPOP.js - mailBoxOnloadHandler - delete value " + szValue);
-
-                        var oYahooData = new YahooData();
-                        oYahooData.szName = szName;
-                        oYahooData.szValue = szValue;
-
-                        if (szName.search(/DEL/i)!=-1)
-                            oYahooData.szValue = 1;
-                        else
-                            oYahooData.szValue = encodeURIComponent(szValue); //encodeURIComponent
-
-                       mainObject.m_aDeleteData.push(oYahooData);
-                     }
+                    mainObject.m_szDeleteURL = aszDeleteForm[0].match(PatternYahooDeleteURL)[1];
+                    mainObject.m_Log.Write("YahooPOP.js - mailBoxOnloadHandler - delete URL :" + mainObject.m_szDeleteURL);
+                    
+                    var aszDeleteInput = aszDeleteForm[0].match(PatternYahooDeleteInput);
+                    mainObject.m_Log.Write("YahooPOP.js - mailBoxOnloadHandler - delete Input :" + aszDeleteInput);
+                    
+                    for (i = 0; i < aszDeleteInput.length; i++) 
+                    {
+                        var aszInput = aszDeleteInput[i].match(PatternYahooDeleteInput);
+                        mainObject.m_Log.Write("YahooPOP.js - mailBoxOnloadHandler - delete Input data :" + aszInput);
+                        
+                        if (aszInput) 
+                        {
+                            var szName = aszInput[0].match(patternYahooNameAlt)[1];
+                            szName = szName.replace(/["|']/gm, "");
+                            mainObject.m_Log.Write("YahooPOP.js - mailBoxOnloadHandler - delete name " + szName);
+                            
+                            var szValue = aszInput[0].match(patternYahooAltValue)[1];
+                            szValue = szValue.replace(/["|']/gm, "");
+                            mainObject.m_Log.Write("YahooPOP.js - mailBoxOnloadHandler - delete value " + szValue);
+                            
+                            var oYahooData = new YahooData();
+                            oYahooData.szName = szName;
+                            oYahooData.szValue = szValue;
+                            
+                            if (szName.search(/DEL/i) != -1) oYahooData.szValue = 1;
+                            else oYahooData.szValue = encodeURIComponent(szValue); //encodeURIComponent
+                            mainObject.m_aDeleteData.push(oYahooData);
+                        }
+                    }
                 }
             }
 
@@ -453,6 +510,8 @@ YahooPOP.prototype =
                 {
                     for (i= 1 ; i< iNum+1 ; i++)
                     {
+                        mainObject.m_Log.Write("YahooPOP.js - mailBoxOnloadHandler - msgRow :" + aMsgRows[i]);
+                        
                         var bRead = true;
                         if (mainObject.m_bDownloadUnread)
                         {
@@ -468,7 +527,15 @@ YahooPOP.prototype =
                             mainObject.m_Log.Write("YahooPOP.js - mailBoxOnloadHandler -  data.bUnread -" +  data.bUnread);
 
                             //get msg info
-                            var szMsgID =  aMsgRows[i].match(patternYahooMsgID)[1];
+                            var szMsgID =""
+                            try
+                            {
+                                szMsgID = aMsgRows[i].match(patternYahooMsgID)[1];
+                            }
+                            catch(err)
+                            {
+                                szMsgID = aMsgRows[i].match(patternYahooMsgIDAlt)[1];   
+                            }                           
                             mainObject.m_Log.Write("YahooPOP.js - mailBoxOnloadHandler - msg id :" + i + " " +szMsgID);
                             data.szMSGUri = szMsgID;
                             data.szDeleteUri = mainObject.m_szDeleteURL;
@@ -703,7 +770,17 @@ YahooPOP.prototype =
                 do{
                      var szEmailURL = this.m_aMsgDataStore[this.m_iHandleCount].szMSGUri;
                      this.m_Log.Write("YahooPOP.js - getMessageIDs - Email URL : " +szEmailURL);
-                     var szEmailID = szEmailURL.match(PatternYahooID)[1];
+                     
+                     var szEmailID = ""
+                     try
+                     {
+                         szEmailID = szEmailURL.match(PatternYahooID)[1];
+                     }
+                     catch(e)
+                     {
+                         szEmailID = szEmailURL.match(PatternYahooIDAlt)[1];
+                     }
+                     
 
                      //use short id    1_8571_AJSySdEAAREkRPe9dgtLa1BshJg
                     if (this.m_bUseShortID)
@@ -769,15 +846,26 @@ YahooPOP.prototype =
             }
             catch(err)
             {
-                this.m_szBox= this.m_szMsgID.match(PatternYahooBoxAlt)[1];
+                try
+                {
+                    this.m_szBox= this.m_szMsgID.match(PatternYahooBoxAlt)[1];
+                }
+                catch(e)
+                {
+                    this.m_szBox= this.m_szMsgID.match(PatternYahooBoxAlt2)[1];
+                    this.m_szBox = this.m_szBox.replace(/fid/,"box");           
+                } 
+                
+
             }
             this.m_Log.Write("YahooPOP.js - getHeaders - msg box" + this.m_szBox);
 
-          //  this.m_bUnread = oMSGData.bUnread;
-          //  this.m_Log.Write("YahooPOP.js - getHeaders - msg box" + this.m_bUnread);
-
             //get headers
-            var szDest = this.m_szLocationURI + "/ya/download?" + this.m_szMsgID.match(/MsgId.*?&/) + this.m_szBox +"&bodyPart=HEADER";
+            var szID = this.m_szMsgID.match(/MsgId.*?&/);
+            if (!szID) 
+                szID = this.m_szMsgID.match(/mid.*?&/)[0].replace(/mid/, "MsgId");
+
+            var szDest = this.m_szLocationURI + "/ya/download?" + szID + this.m_szBox +"&PRINT=1&bodyPart=HEADER";
             this.m_Log.Write("YahooPOP.js - getHeaders - url - "+ szDest);
             this.m_iStage = 0;
 
@@ -821,7 +909,16 @@ YahooPOP.prototype =
             mainObject.m_Log.Write("YahooPOP.js - headerOnloadHandler - uri : " + szUri);
 
             mainObject.m_szHeader  = "X-WebMail: true\r\n";
-            var szFolder = mainObject.m_szBox.match(PatternYahooFolderBoxAlt)[1];
+            var szFolder = "";
+            try
+            {
+                szFolder = mainObject.m_szBox.match(PatternYahooFolderBox)[1];
+            }
+            catch(err)
+            {
+                szFolder = mainObject.m_szBox.match(PatternYahooFolderBoxAlt)[1];
+            }
+
             mainObject.m_szHeader += "X-Folder: " +szFolder+ "\r\n";
             mainObject.m_szHeader += szResponse;
             mainObject.m_szHeader = mainObject.m_szHeader.replace(/^\./mg,"..");    //bit padding
@@ -859,7 +956,7 @@ YahooPOP.prototype =
             this.m_iID = lID-1;
             var oMSGData = this.m_aMsgDataStore[lID-1]
             this.m_szMsgID = oMSGData.szMSGUri;
-            this.m_Log.Write("YahooPOP.js - getMessage - msg id" + this.m_szMsgID);
+            this.m_Log.Write("YahooPOP.js - getMessage - msg raw url " + this.m_szMsgID);
 
             try
             {
@@ -867,12 +964,24 @@ YahooPOP.prototype =
             }
             catch(err)
             {
-                this.m_szBox= this.m_szMsgID.match(PatternYahooBoxAlt)[1];
+                try
+                {
+                    this.m_szBox= this.m_szMsgID.match(PatternYahooBoxAlt)[1];
+                }
+                catch(e)
+                {
+                    this.m_szBox = this.m_szMsgID.match(PatternYahooBoxAlt2)[1];
+                    this.m_szBox = this.m_szBox.replace(/fid/,"box");           
+                }               
             }
-            this.m_Log.Write("YahooPOP.js - getMessage - msg box" + this.m_szBox);
+            this.m_Log.Write("YahooPOP.js - getMessage - msg box " + this.m_szBox);
 
             //get headers
-            var szDest = this.m_szLocationURI + "/ya/download?" + this.m_szMsgID.match(/MsgId.*?&/) + this.m_szBox +"&bodyPart=HEADER";
+            var szID = this.m_szMsgID.match(/MsgId.*?&/);
+            if (!szID) 
+                szID = this.m_szMsgID.match(/mid.*?&/)[0].replace(/mid/, "MsgId");
+
+            var szDest = this.m_szLocationURI + "/ya/download?" + szID + this.m_szBox +"&bodyPart=HEADER&pid=HEADER";
             this.m_Log.Write("YahooPOP.js - getMessage - url - "+ szDest);
             this.m_iStage = 0;
 
@@ -961,20 +1070,41 @@ YahooPOP.prototype =
                     }
                     mainObject.m_iMSGCount = 0;
                     mainObject.m_szMessage = "X-WebMail: true\r\n";
-                    var szFolder = mainObject.m_szBox.match(PatternYahooFolderBoxAlt)[1];
+                   
+                    var szFolder = "";
+	                try
+                    {
+                    	szFolder =  mainObject.m_szBox.match(PatternYahooBox)[1];
+            	    }
+            	    catch(err)
+            	    {
+                    	try
+                    	{
+            	            szFolder =  mainObject.m_szBox.match(PatternYahooBoxAlt)[1];
+                    	}
+                    	catch(e)
+                    	{
+                   	        szFolder =  mainObject.m_szBox.match(PatternYahooBoxAlt2)[1];
+                            szFolder =  mainObject.m_szBox.replace(/fid/,"box");           
+                    	}               
+            	    }
                     mainObject.m_szMessage += "X-Folder: " + szFolder + "\r\n";
 
                     //remove quoted printable header
-                    szResponse = szResponse.replace(/content-transfer-Encoding:.*?quoted-printable.*?/i,"");
-                    szResponse = szResponse.replace(/content-transfer-Encoding:.*?base64.*?/i,"");
+                    szResponse = szResponse.replace(/content-transfer-Encoding:.*?quoted-printable.*?$/im, "x-Header: removed");
+                    szResponse = szResponse.replace(/content-transfer-Encoding:.*?base64.*?$/im,"x-Header: removed");
                     var oHeaders = new headers(szResponse);
                     mainObject.m_szMessage += oHeaders.getAllHeaders();
                     mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - headers - "+mainObject.m_szMessage);
                     delete oHeaders;
-                    
+
+                    var szID = mainObject.m_szMsgID.match(/MsgId.*?&/);
+                    if (!szID) 
+                        szID = mainObject.m_szMsgID.match(/mid.*?&/)[0].replace(/mid/, "MsgId");
+
                     var szDest = mainObject.m_szLocationURI + "/ya/download?" + 
-                                 mainObject.m_szMsgID.match(/MsgId.*?&/) + 
-                                 mainObject.m_szBox + "&bodyPart=TEXT";
+                                 szID + 
+                                 mainObject.m_szBox + "&bodyPart=TEXT&pid=TEXT";
                     mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - url - "+ szDest);
 
                     //get msg from yahoo
@@ -1021,7 +1151,17 @@ YahooPOP.prototype =
 
                             mainObject.m_HttpComms.addValuePair(oData.szName, oData.szValue);
                         }
-                        mainObject.m_HttpComms.addValuePair("Mid", oMSGData.szMSGUri.match(PatternYahooID)[1]);
+                        
+                        var szID = "";
+                        try
+                        {
+                            szID = oMSGData.szMSGUri.match(PatternYahooID)[1]
+                        }
+                        catch(e)
+                        {
+                            szID = oMSGData.szMSGUri.match(PatternYahooIDAlt)[1]
+                        }                        
+                        mainObject.m_HttpComms.addValuePair("Mid", szID);
 
                         //send request
                         mainObject.m_HttpComms.setURI(szPath);
@@ -1078,7 +1218,17 @@ YahooPOP.prototype =
                 
                 this.m_HttpComms.addValuePair(oData.szName, oData.szValue);
             }
-            this.m_HttpComms.addValuePair("Mid", oMSGData.szMSGUri.match(PatternYahooID)[1]);
+            
+            var szID = "";
+            try
+            {
+                szID = oMSGData.szMSGUri.match(PatternYahooID)[1]
+            }
+            catch(e)
+            {
+                szID = oMSGData.szMSGUri.match(PatternYahooIDAlt)[1]
+            }                        
+            this.m_HttpComms.addValuePair("Mid", szID);
 
             //send request
             this.m_HttpComms.setURI(szPath);
