@@ -854,9 +854,7 @@ YahooPOP.prototype =
                 {
                     this.m_szBox= this.m_szMsgID.match(PatternYahooBoxAlt2)[1];
                     this.m_szBox = this.m_szBox.replace(/fid/,"box");           
-                } 
-                
-
+                }
             }
             this.m_Log.Write("YahooPOP.js - getHeaders - msg box" + this.m_szBox);
 
@@ -865,7 +863,7 @@ YahooPOP.prototype =
             if (!szID) 
                 szID = this.m_szMsgID.match(/mid.*?&/)[0].replace(/mid/, "MsgId");
 
-            var szDest = this.m_szLocationURI + "/ya/download?" + szID + this.m_szBox +"&PRINT=1&bodyPart=HEADER";
+            var szDest = this.m_szLocationURI + "/ya/download?" + szID + this.m_szBox +"&bodyPart=HEADER";
             this.m_Log.Write("YahooPOP.js - getHeaders - url - "+ szDest);
             this.m_iStage = 0;
 
@@ -957,7 +955,7 @@ YahooPOP.prototype =
             var oMSGData = this.m_aMsgDataStore[lID-1]
             this.m_szMsgID = oMSGData.szMSGUri;
             this.m_Log.Write("YahooPOP.js - getMessage - msg raw url " + this.m_szMsgID);
-
+            
             try
             {
                 this.m_szBox= this.m_szMsgID.match(PatternYahooBox)[1];
@@ -981,7 +979,7 @@ YahooPOP.prototype =
             if (!szID) 
                 szID = this.m_szMsgID.match(/mid.*?&/)[0].replace(/mid/, "MsgId");
 
-            var szDest = this.m_szLocationURI + "/ya/download?" + szID + this.m_szBox +"&bodyPart=HEADER&pid=HEADER";
+            var szDest = this.m_szLocationURI + "/ya/download?" + szID + this.m_szBox +"&bodyPart=HEADER";
             this.m_Log.Write("YahooPOP.js - getMessage - url - "+ szDest);
             this.m_iStage = 0;
 
@@ -1102,9 +1100,11 @@ YahooPOP.prototype =
                     if (!szID) 
                         szID = mainObject.m_szMsgID.match(/mid.*?&/)[0].replace(/mid/, "MsgId");
 
-                    var szDest = mainObject.m_szLocationURI + "/ya/download?" + 
-                                 szID + 
-                                 mainObject.m_szBox + "&bodyPart=TEXT&pid=TEXT";
+                    var szDest = mainObject.m_szLocationURI + "/ya/download?" 
+                                                            + szID 
+                                                            + mainObject.m_szBox    
+                                                            + "&bodyPart=TEXT";
+                                                            
                     mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - url - "+ szDest);
 
                     //get msg from yahoo
