@@ -53,7 +53,6 @@ function YahooPOPClassic(oResponseStream, oLog, oPrefs)
         this.m_bReEntry = false;
         this.m_bStat = false;
         this.m_aMsgDataStore = new Array();
-        this.m_aDeleteData = new Array();
         this.m_aszFolderURLList = new Array();
         this.m_bUnread = true;
         this.m_iHandleCount = 0;
@@ -992,11 +991,52 @@ YahooPOPClassic.prototype =
                 case 1: //body
                     mainObject.m_Log.Write("YahooPOPClassic.js - emailOnloadHandler - BODY ");       
                     mainObject.m_oMessage.addBody(null,szResponse);             
-                    var szEmail = mainObject.m_oMessage.build();
 
-                    var szPOPResponse = "+OK " +szEmail.length + "\r\n";
+                    if (!mainObject.m_bHasAttachments) //no attachments
+                    {
+                        if (!mainObject.m_bMarkAsRead) //don't mark as read
+                        {
+                            var szEmail = mainObject.m_oMessage.build();
+                            var szPOPResponse = "+OK " + szEmail.length + "\r\n";
+                            szPOPResponse += szEmail;
+                            mainObject.serverComms(szPOPResponse);
+                            delete mainObject.m_oMessage;
+                            mainObject.m_oMessage = null;
+                        }
+                        else                          //mark as read
+                        {
+                            mainObject.m_Log.Write("YahooPOPClassic.js - emailOnloadHandler - mark email as read "); 
+                                  
+                            var szDest = mainObject.m_szLocationURI + "/mc/showFolder?" + mainObject.m_szBox;
+                            
+                            var szID = mainObject.m_szMsgID.match(PatternYahooIDAlt)[1];
+                            mainObject.m_HttpComms.addValuePair("mid", szID);
+                            mainObject.m_HttpComms.addValuePair("top_mark_select", 1);
+                            mainObject.m_HttpComms.addValuePair("top_bpress_topmark", "Mark");
+                            mainObject.m_HttpComms.addValuePair("top_move_select", "");
+
+                            var szCrumb = mainObject.m_szMsgID.match(PatternYahooCrumb)[1];
+                            mainObject.m_HttpComms.addValuePair("mcrumb", szCrumb);
+                            mainObject.m_iStage++;
+                            mainObject.m_HttpComms.setURI(szDest);
+                            mainObject.m_HttpComms.setRequestMethod("POST");          
+                            var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);
+                            if (!bResult) throw new Error("httpConnection returned false");
+                        }
+                    }
+                    else   //attachments
+                    {
+                        mainObject.m_Log.Write("YahooPOPClassic.js - emailOnloadHandler - get first attachment ");       
+                        mainObject.serverComms("-ERR Attachments not supported \r\n"); 
+                    }
+                break;
+                
+                case 2: //marked as read
+                    mainObject.m_Log.Write("YahooPOPClassic.js - emailOnloadHandler - Marked as read ");       
+                    var szEmail = mainObject.m_oMessage.build();
+                    var szPOPResponse = "+OK " + szEmail.length + "\r\n";
                     szPOPResponse += szEmail;
-                    mainObject.serverComms(szPOPResponse);  
+                    mainObject.serverComms(szPOPResponse);
                     delete mainObject.m_oMessage;
                     mainObject.m_oMessage = null;
                 break;             
@@ -1028,35 +1068,24 @@ YahooPOPClassic.prototype =
 
             //create URL
             var oMSGData = this.m_aMsgDataStore[lID-1];
-
-            var szPath = this.m_szLocationURI + oMSGData.szDeleteUri;
-            this.m_Log.Write("YahooPOPClassic.js - deleteMessage - url - "+ szPath);
-
-            for(i=0; i<oMSGData.aData.length; i++ )
-            {
-                var oData = oMSGData.aData[i];
-                if (oData.szName.search(/^DEL$/i)!=-1) oData.szValue = "1";
-                
-                this.m_HttpComms.addValuePair(oData.szName, oData.szValue);
-            }
             
-            var szID = "";
-            try
-            {
-                szID = oMSGData.szMSGUri.match(PatternYahooID)[1]
-            }
-            catch(e)
-            {
-                szID = oMSGData.szMSGUri.match(PatternYahooIDAlt)[1]
-            }                        
-            this.m_HttpComms.addValuePair("Mid", szID);
+            var szBox = oMSGData.szMSGUri.match(PatternYahooBoxAlt2)[1];
+            var szPath = this.m_szLocationURI + "/mc/showFolder?" + szBox;
+            this.m_Log.Write("YahooPOPClassic.js - deleteMessage - url - "+ szPath);              
 
-            //send request
+            var szID = oMSGData.szMSGUri.match(PatternYahooIDAlt)[1];
+            this.m_HttpComms.addValuePair("mid", szID);
+            this.m_HttpComms.addValuePair("top_bpress_delete", "Delete");
+            this.m_HttpComms.addValuePair("top_mark_select", 0);
+            this.m_HttpComms.addValuePair("top_move_select", "");
+        
+            var szCrumb = oMSGData.szMSGUri.match(PatternYahooCrumb)[1];
+            this.m_HttpComms.addValuePair("mcrumb", szCrumb);
             this.m_HttpComms.setURI(szPath);
-            this.m_HttpComms.setRequestMethod("POST");
+            this.m_HttpComms.setRequestMethod("POST");          
             var bResult = this.m_HttpComms.send(this.deleteMessageOnloadHandler, this);
+            if (!bResult) throw new Error("httpConnection returned false");         
 
-            if (!bResult) throw new Error("httpConnection returned false");
             this.m_Log.Write("YahooPOPClassic.js - deleteMessage - END");
             return true;
         }
@@ -1127,7 +1156,6 @@ YahooPOPClassic.prototype =
             this.serverComms("+OK Your Out\r\n");
             this.m_Timer.cancel();
             delete this.m_aMsgDataStore;
-            delete this.m_aDeleteData;
             delete this.m_aszFolderURLList;
 
             this.m_Log.Write("YahooPOPClassic.js - logOUT - END");
