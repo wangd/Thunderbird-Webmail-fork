@@ -60,25 +60,6 @@ emailBuilder.prototype.addBody = function (szHeader, szBody)
         this.m_Log.Write("emailBuilder.js - addBody - szHeader \n" + szHeader + "\nBody \n" + szBody);
 
         var oPart = new mimePart (szHeader? szHeader : "", szBody);
-        //get type
-        if (szHeader)
-        {
-            if (!oPart.headers.getContentDisposition(1))  //not file
-            {
-                this.m_Log.Write("emailBuilder.js - addBody - not file");
-                var szSubType = oPart.headers.getContentType(2);
-                if (szSubType.search(/plain/i)!=-1)
-                {
-                    this.m_Log.Write("emailBuilder.js - addBody - plain");
-                    this.m_bPlain = true;
-                }
-                else if (szSubType.search(/html/i)!=-1)
-                {
-                    this.m_Log.Write("emailBuilder.js - addBody - html");
-                    this.m_bHTML = true;
-                }
-            }
-        }
 
         this.m_aoBodyPart.push(oPart);
 
