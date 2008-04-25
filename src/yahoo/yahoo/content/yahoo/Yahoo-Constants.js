@@ -22,29 +22,31 @@ const patternYahooShowFolder = /ShowFolder/igm;
 const patternYahooMSGIdTable = /<table id="datatable"[\S\s]*?>[\S\s]*?<\/table>/m;
 const patternYahooMsgRow = /<tr.*?>[\S\s]*?<\/tr>/gm;
 const patternYahooMsgID = /href="(.*?MsgId.*?)"/;
-const patternYahooMsgIDAlt =/href="(.*?mid.*?)"/;
 const patternYahooMsgSize = /<td.*?>.*?<\/td>/gm;
 const patternYahooNextPage = /<a href=".*?next=1.*?">/m;
 const patternYahooNextURI = /<a href=["|']*(.*?)["|']*>/
 const PatternYahooID =/MsgId=(.*?)&/;
-const PatternYahooIDAlt =/mid=(.*?)&/;
 const PatternYahooDeleteForm = /<form name=messageList.*?>[\S\s]*?<\/form>/;
 const PatternYahooDeleteURL = /action="(.*?)"/;
 const PatternYahooDeleteInput = /<input.*?hidden.*?>/gm;
 const PatternYahooBox =/(box=.*?)#/;
 const PatternYahooBoxAlt =/(box=.*?)$/;
-const PatternYahooBoxAlt2=/(fid=.*?)&/;
 const PatternYahooUnRead = /msgnew/;
 const PatternYahooFolders = /".*?ShowFolder\?box=.*?"/gim;
 const PatternYahooFoldersPart = /"(.*?ShowFolder\?box=.*?)"/i;
-const PatternYahooFoldersAlt = /href=".*?ShowFolder\?fid=.*?"/gim;
-const PatternYahooFoldersPartAlt = /href="(.*?ShowFolder\?fid=.*?)"/i;
 const PatternYahooFolderURL =/\[.*?id="addfoldercontrol"[\s\S]*?\-[\s\S]*?href="(.*?Folders\?.*?)"[\s\S]*?\]/i;
 const PatternYahooFolderName= /box=(.*?)&/i;
-const PatternYahooFolderNameAlt= /fid=(.*?)&/i;
 const PatternYahooFolderBox = /box=(.*?)$/i;
-const PatternYahooFolderBoxAlt = /fid=(.*?)$/i;
 
+//new classic
+const patternYahooMsgIDAlt =/href="(.*?mid.*?)"/;
+const PatternYahooFoldersAlt = /href=".*?ShowFolder\?fid=.*?"/gim;
+const PatternYahooFoldersPartAlt = /href="(.*?ShowFolder\?fid=.*?)"/i;
+const PatternYahooIDAlt =/mid=(.*?)&/;
+const PatternYahooBoxAlt2=/(fid=.*?)&/;
+const PatternYahooFolderNameAlt= /fid=(.*?)&/i;
+const PatternYahooFolderBoxAlt = /fid=(.*?)$/i;
+const PatternYahooCrumb =/mcrumb=(.*?)&/i;
 
 
 /******************************  BETA ***************************************/
