@@ -846,22 +846,12 @@ YahooPOP.prototype =
             }
             catch(err)
             {
-                try
-                {
-                    this.m_szBox= this.m_szMsgID.match(PatternYahooBoxAlt)[1];
-                }
-                catch(e)
-                {
-                    this.m_szBox= this.m_szMsgID.match(PatternYahooBoxAlt2)[1];
-                    this.m_szBox = this.m_szBox.replace(/fid/,"box");           
-                }
+                this.m_szBox= this.m_szMsgID.match(PatternYahooBoxAlt)[1];
             }
             this.m_Log.Write("YahooPOP.js - getHeaders - msg box" + this.m_szBox);
 
             //get headers
             var szID = this.m_szMsgID.match(/MsgId.*?&/);
-            if (!szID) 
-                szID = this.m_szMsgID.match(/mid.*?&/)[0].replace(/mid/, "MsgId");
 
             var szDest = this.m_szLocationURI + "/ya/download?" + szID + this.m_szBox +"&bodyPart=HEADER";
             this.m_Log.Write("YahooPOP.js - getHeaders - url - "+ szDest);
@@ -962,22 +952,12 @@ YahooPOP.prototype =
             }
             catch(err)
             {
-                try
-                {
-                    this.m_szBox= this.m_szMsgID.match(PatternYahooBoxAlt)[1];
-                }
-                catch(e)
-                {
-                    this.m_szBox = this.m_szMsgID.match(PatternYahooBoxAlt2)[1];
-                    this.m_szBox = this.m_szBox.replace(/fid/,"box");           
-                }               
+                this.m_szBox= this.m_szMsgID.match(PatternYahooBoxAlt)[1];
             }
             this.m_Log.Write("YahooPOP.js - getMessage - msg box " + this.m_szBox);
 
             //get headers
             var szID = this.m_szMsgID.match(/MsgId.*?&/);
-            if (!szID) 
-                szID = this.m_szMsgID.match(/mid.*?&/)[0].replace(/mid/, "MsgId");
 
             var szDest = this.m_szLocationURI + "/ya/download?" + szID + this.m_szBox +"&bodyPart=HEADER";
             this.m_Log.Write("YahooPOP.js - getMessage - url - "+ szDest);
@@ -1076,15 +1056,7 @@ YahooPOP.prototype =
             	    }
             	    catch(err)
             	    {
-                    	try
-                    	{
-            	            szFolder =  mainObject.m_szBox.match(PatternYahooBoxAlt)[1];
-                    	}
-                    	catch(e)
-                    	{
-                   	        szFolder =  mainObject.m_szBox.match(PatternYahooBoxAlt2)[1];
-                            szFolder =  mainObject.m_szBox.replace(/fid/,"box");           
-                    	}               
+        	            szFolder =  mainObject.m_szBox.match(PatternYahooBoxAlt)[1];
             	    }
                     mainObject.m_szMessage += "X-Folder: " + szFolder + "\r\n";
 
