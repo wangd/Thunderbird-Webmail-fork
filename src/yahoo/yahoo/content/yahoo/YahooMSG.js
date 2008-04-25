@@ -18,6 +18,9 @@ YahooMSG.prototype.szID = null;
 
 YahooMSG.prototype.bUnread = true;
 
+YahooMSG.prototype.bHasAttachments = false;
+
+YahooMSG.prototype.iAttachments = 0;
 
 function YahooData()
 {
