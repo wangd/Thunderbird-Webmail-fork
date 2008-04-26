@@ -4,8 +4,8 @@ function YahooPOPClassic(oResponseStream, oLog, oPrefs)
 {
     try
     {
-        var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
-        scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
+        var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                                      .getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms3.js");
         scriptLoader.loadSubScript("chrome://yahoo/content/EmailBuilder.js");
@@ -56,7 +56,8 @@ function YahooPOPClassic(oResponseStream, oLog, oPrefs)
         this.m_aszFolderURLList = new Array();
         this.m_bUnread = true;
         this.m_iHandleCount = 0;
-
+        this.m_iCount = 3;
+         
         this.m_Timer = Components.classes["@mozilla.org/timer;1"]
                                  .createInstance(Components.interfaces.nsITimer);
 
@@ -461,13 +462,13 @@ YahooPOPClassic.prototype =
                 mainObject.m_Log.Write("YahooPOPClassic.js - mailBoxOnloadHandler - msgRows :" + aMsgRows);
 
                 //get number of msg on page
-                var iNum = aMsgRows.length -1; // first row is headers
+                var iNum = aMsgRows.length; // first row is headers
                 mainObject.m_Log.Write("YahooPOPClassic.js - mailBoxOnloadHandler - msgRows Num :" + iNum);
 
                 //process data
                 if (iNum > 0)
                 {
-                    for (i= 1 ; i< iNum+1 ; i++)
+                    for (i= 0 ; i< iNum ; i++)
                     {
                         mainObject.m_Log.Write("YahooPOPClassic.js - mailBoxOnloadHandler - msgRow :" + aMsgRows[i]);
                         
@@ -856,7 +857,7 @@ YahooPOPClassic.prototype =
             this.m_Log.Write("YahooPOPClassic.js - getMessage - msg num" + lID);
 
             if (this.m_oMessage) delete this.m_oMessage;
-            this.m_oMessage = new emailBuilder();
+            this.m_oMessage = new emailBuilder( this.m_Log);
             
             //get msg id
             this.m_iID = lID-1;
@@ -905,21 +906,21 @@ YahooPOPClassic.prototype =
             
             //check status should be 200.
             mainObject.m_Log.Write("YahooPOPClassic.js - emailOnloadHandler - msg :" + httpChannel.responseStatus);
-            if (httpChannel.responseStatus != 200)
+            if (httpChannel.responseStatus != 200 && mainObject.m_iStage!=3)
                 throw new Error("error status " + httpChannel.responseStatus);
             
             var szUri = httpChannel.URI.spec;
             mainObject.m_Log.Write("YahooPOPClassic.js - emailOnloadHandler - uri : " + szUri);
             
-            var szContetnType = "";
+            var szContentType = "";
             try
             {
-                var szContetnType =  httpChannel.getResponseHeader("Content-Type");
-                mainObject.m_Log.Write("YahooPOPClassic.js - emailOnloadHandler - szContetnType "+szContetnType);
+                szContentType =  httpChannel.getResponseHeader("Content-Type");
+                mainObject.m_Log.Write("YahooPOPClassic.js - emailOnloadHandler - szContetnType "+szContentType);
             }
             catch(e)
             { 
-                szContetnType = " "   
+                szContentType = " "   
             }
             
             switch(mainObject.m_iStage)
@@ -929,7 +930,7 @@ YahooPOPClassic.prototype =
                     
                     try
                     {
-                        if (szContetnType.search(/text\/html/i)!=-1)
+                        if (szContentType.search(/text\/html/i)!=-1)
                         {
                             mainObject.m_Log.Write("YahooPOPClassic.js - emailOnloadHandler - error download msg ");
                             if (mainObject.m_iMSGCount == 2)
@@ -989,56 +990,107 @@ YahooPOPClassic.prototype =
                 break;
 
                 case 1: //body
-                    mainObject.m_Log.Write("YahooPOPClassic.js - emailOnloadHandler - BODY ");       
-                    mainObject.m_oMessage.addBody(null,szResponse);             
-
+                    mainObject.m_Log.Write("YahooPOPClassic.js - emailOnloadHandler - BODY ");  
+                    
+                    if (szContentType.search(/multipart/i) != -1) 
+                    {
+                        //if this is a mulitpart then the first line is the boundary
+                        var szBoundary = szResponse.match(/^--(.*?)\r?\n/m)[1];
+                        var szHeader = "Content-Type: multipart/alternative; boundary=\"" + szBoundary + "\"\r\n\r\n";
+                        mainObject.m_oMessage.addBody(szHeader, szResponse);
+                    }
+                    else 
+                    {
+                        var szHeader = "Content-Type: "+szContentType +"\r\n";
+                        szHeader    += "Content-Transfer-Encoding: 7bit\r\n\r\n";
+                        mainObject.m_oMessage.addBody(szHeader, szResponse);
+                    }
+                    
                     if (!mainObject.m_bHasAttachments) //no attachments
                     {
                         if (!mainObject.m_bMarkAsRead) //don't mark as read
                         {
-                            var szEmail = mainObject.m_oMessage.build();
-                            var szPOPResponse = "+OK " + szEmail.length + "\r\n";
-                            szPOPResponse += szEmail;
-                            mainObject.serverComms(szPOPResponse);
-                            delete mainObject.m_oMessage;
-                            mainObject.m_oMessage = null;
+                            mainObject.m_oMessage.buildAsync(mainObject.emailBuiltCallback, mainObject);
                         }
                         else                          //mark as read
                         {
                             mainObject.m_Log.Write("YahooPOPClassic.js - emailOnloadHandler - mark email as read "); 
-                                  
-                            var szDest = mainObject.m_szLocationURI + "/mc/showFolder?" + mainObject.m_szBox;
-                            
-                            var szID = mainObject.m_szMsgID.match(PatternYahooIDAlt)[1];
-                            mainObject.m_HttpComms.addValuePair("mid", szID);
-                            mainObject.m_HttpComms.addValuePair("top_mark_select", 1);
-                            mainObject.m_HttpComms.addValuePair("top_bpress_topmark", "Mark");
-                            mainObject.m_HttpComms.addValuePair("top_move_select", "");
-
-                            var szCrumb = mainObject.m_szMsgID.match(PatternYahooCrumb)[1];
-                            mainObject.m_HttpComms.addValuePair("mcrumb", szCrumb);
-                            mainObject.m_iStage++;
-                            mainObject.m_HttpComms.setURI(szDest);
-                            mainObject.m_HttpComms.setRequestMethod("POST");          
-                            var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);
-                            if (!bResult) throw new Error("httpConnection returned false");
+                            mainObject.markAsRead()
                         }
                     }
                     else   //attachments
                     {
-                        mainObject.m_Log.Write("YahooPOPClassic.js - emailOnloadHandler - get first attachment ");       
-                        mainObject.serverComms("-ERR Attachments not supported \r\n"); 
+                        mainObject.m_Log.Write("YahooPOPClassic.js - emailOnloadHandler - get first attachment ");    
+                        var szID = mainObject.m_szMsgID.match(/mid.*?&/)[0];   
+                        var szDest = mainObject.m_szLocationURI.replace(/mc/,"f") + "/ya/download?clean=0&" 
+                                                                              + szID 
+                                                                              + mainObject.m_szBox
+                                                                              + "&pid=2";                   
+                        mainObject.m_Log.Write("YahooPOPClassic.js - emailOnloadHandler - url - "+ szDest);
+    
+                        mainObject.m_iStage=3;
+                        mainObject.m_HttpComms.setURI(szDest);
+                        mainObject.m_HttpComms.setRequestMethod("GET");
+                        var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);
+                        if (!bResult) throw new Error("httpConnection returned false");
                     }
                 break;
                 
+                
                 case 2: //marked as read
-                    mainObject.m_Log.Write("YahooPOPClassic.js - emailOnloadHandler - Marked as read ");       
-                    var szEmail = mainObject.m_oMessage.build();
-                    var szPOPResponse = "+OK " + szEmail.length + "\r\n";
-                    szPOPResponse += szEmail;
-                    mainObject.serverComms(szPOPResponse);
-                    delete mainObject.m_oMessage;
-                    mainObject.m_oMessage = null;
+                    mainObject.m_Log.Write("YahooPOPClassic.js - emailOnloadHandler - Marked as read "); 
+                    mainObject.m_oMessage.buildAsync(mainObject.emailBuiltCallback, mainObject);
+                break;
+                      
+                                
+                case 3: //handle attachmetns
+                    mainObject.m_Log.Write("YahooPOPClassic.js - emailOnloadHandler - handle attachment ");
+                     
+                    if (httpChannel.responseStatus == 200)   //attachment found
+                    {
+                        var szContetnDis = "";
+                        try 
+                        {
+                            szContetnDis = httpChannel.getResponseHeader("content-disposition");
+                            mainObject.m_Log.Write("YahooPOPClassic.js - emailOnloadHandler - szContetnDis " + szContetnDis);
+                        } 
+                        catch (e) 
+                        {
+                        }                       
+                        
+                        //construct header
+                        var szHeader = "";
+                        szHeader = "Content-Type: application/octet-stream\r\n";
+                        szHeader += "Content-Transfer-Encoding: base64\r\n";
+                        szHeader += "Content-Disposition: " + szContetnDis + "\"\r\n\r\n";
+                        
+                        mainObject.m_oMessage.addAttachment(szHeader, szResponse);
+                        
+                        var szID = mainObject.m_szMsgID.match(/mid.*?&/)[0];   
+                        var szDest = mainObject.m_szLocationURI.replace(/mc/,"f") + "/ya/download?clean=0&" 
+                                                                              + szID 
+                                                                              + mainObject.m_szBox
+                                                                              + "&pid="+mainObject.m_iCount;                   
+                        mainObject.m_Log.Write("YahooPOPClassic.js - emailOnloadHandler - url - "+ szDest);
+                        mainObject.m_iCount++;
+                        mainObject.m_iStage=3;
+                        mainObject.m_HttpComms.setURI(szDest);
+                        mainObject.m_HttpComms.setRequestMethod("GET");
+                        var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);
+                        if (!bResult) throw new Error("httpConnection returned false");
+                    } 
+                    else  //no more attachments
+                    {
+                        if (!mainObject.m_bMarkAsRead) //don't mark as read
+                        {
+                            mainObject.m_oMessage.buildAsync(mainObject.emailBuiltCallback, mainObject);
+                        }
+                        else //mark as read
+                         {
+                            mainObject.m_Log.Write("YahooPOPClassic.js - emailOnloadHandler - mark email as read ");
+                            mainObject.markAsRead();
+                        }
+                    }      
                 break;             
             }
 
@@ -1054,6 +1106,72 @@ YahooPOPClassic.prototype =
 
             mainObject.serverComms("-ERR negative vibes from "+ mainObject.m_szUserName +"\r\n");
         }
+    },
+
+
+    markAsRead : function()
+    {
+        try
+        {
+            this.m_Log.Write("YahooPOPClassic.js -markAsRead - START"); 
+                  
+            var szDest = this.m_szLocationURI + "/mc/showFolder?" + this.m_szBox;
+            
+            var szID = this.m_szMsgID.match(PatternYahooIDAlt)[1];
+            this.m_HttpComms.addValuePair("mid", szID);
+            this.m_HttpComms.addValuePair("top_mark_select", 1);
+            this.m_HttpComms.addValuePair("top_bpress_topmark", "Mark");
+            this.m_HttpComms.addValuePair("top_move_select", "");
+
+            var szCrumb = this.m_szMsgID.match(PatternYahooCrumb)[1];
+            this.m_HttpComms.addValuePair("mcrumb", szCrumb);
+            this.m_iStage=2;
+            this.m_HttpComms.setURI(szDest);
+            this.m_HttpComms.setRequestMethod("POST");          
+            var bResult = this.m_HttpComms.send(this.emailOnloadHandler, this);
+            if (!bResult) throw new Error("httpConnection returned false");
+            
+            this.m_Log.Write("YahooPOPClassic.js -markAsRead - END"); 
+            return true;
+        }
+        catch(e)
+        {
+            this.m_Log.DebugDump("YahooPOPClassic.js: markAsRead : Exception : "
+                              + e.name +
+                              ".\nError message: "
+                              + e.message+ "\n"
+                              + e.lineNumber);
+            return false;
+        }
+    },
+    
+    
+    
+    emailBuiltCallback : function( mainObject)
+    {
+       try
+       {
+            mainObject.m_Log.DebugDump("YahooPOPClassic.js: emailBuilt : START ");
+            var szEmail = mainObject.m_oMessage.getEmail();                  
+            var szPOPResponse = "+OK " + szEmail.length + "\r\n";
+            szPOPResponse += szEmail;
+            mainObject.serverComms(szPOPResponse);
+            delete mainObject.m_oMessage;
+            mainObject.m_oMessage = null; 
+            mainObject.m_Log.DebugDump("YahooPOPClassic.js: emailBuilt : END ");
+            return true;
+       } 
+       catch(err)
+       {
+            mainObject.m_Log.DebugDump("YahooPOPClassic.js: emailBuilt : Exception : "
+                                          + err.name
+                                          + ".\nError message: "
+                                          + err.message+ "\n"
+                                          + err.lineNumber);
+
+            mainObject.serverComms("-ERR negative vibes from "+ mainObject.m_szUserName +"\r\n");
+            return false;
+       }
     },
 
 
