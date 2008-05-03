@@ -458,11 +458,11 @@ YahooPOPClassic.prototype =
             mainObject.m_Log.Write("YahooPOPClassic.js - mailBoxOnloadHandler - msgtable :" + aMsgTable);
             if (aMsgTable)
             {
-                var aMsgRows = aMsgTable[0].match(patternYahooMsgRow);
+                var aMsgRows = aMsgTable[0].match(patternYahooMsgRowClassic);
                 mainObject.m_Log.Write("YahooPOPClassic.js - mailBoxOnloadHandler - msgRows :" + aMsgRows);
 
                 //get number of msg on page
-                var iNum = aMsgRows.length; // first row is headers
+                var iNum = aMsgRows.length; 
                 mainObject.m_Log.Write("YahooPOPClassic.js - mailBoxOnloadHandler - msgRows Num :" + iNum);
 
                 //process data
