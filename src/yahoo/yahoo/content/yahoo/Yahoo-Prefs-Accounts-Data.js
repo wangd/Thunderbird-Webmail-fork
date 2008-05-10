@@ -17,6 +17,8 @@ PrefData.prototype.aszFolder = null;
 
 PrefData.prototype.bBeta = false;
 
+PrefData.prototype.bClassic = false;
+
 PrefData.prototype.bReUseSession = true;
 
 PrefData.prototype.iProcessDelay = 10;

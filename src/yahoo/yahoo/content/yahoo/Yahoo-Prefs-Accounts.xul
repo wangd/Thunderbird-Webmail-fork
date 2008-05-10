@@ -46,6 +46,7 @@
                                 <radiogroup id="radiogroupMode" onclick ="gPrefAccounts.rgModeOnChange();"  class="radio">
                                     <radio label="&YahooPref.Mode.ScreenScraper.Label;" value="0"/>
                                     <radio label="&YahooPref.Mode.Beta.Label;"          value="1"/>
+                                    <radio label="&YahooPref.Mode.Classic.Label;"       value="2"/>
                                 </radiogroup>
                              </vbox>
                         </vbox>

@@ -158,7 +158,7 @@ var gPrefAccounts =
 
                 if (!prefAccess.Get("bool","yahoo.Account."+szUserName+".bBeta",oPref))
                     oPref.Value = false; //Default to production account
-                this.m_DebugLog.Write("Yahoo-Pref-Accounts : userClick -  data.bBeta "+ oPref.Value);
+                this.m_DebugLog.Write("Yahoo-Pref-Accounts : userClick -  bBeta "+ oPref.Value);
                 document.getElementById("radiogroupMode").selectedIndex = oPref.Value? 1 : 0;
 
                 if (oPref.Value)  //beta account type
@@ -174,8 +174,14 @@ var gPrefAccounts =
                 {
                     document.getElementById("tabSMTP").collapsed = false;// show smtp
                     document.getElementById("vboxSmtpItems").setAttribute("hidden", false);
+                    
+                    //check for new classice test code
+                    if (!prefAccess.Get("bool","yahoo.Account."+szUserName+".bClassic",oPref))
+                        oPref.Value = false; //Default to production account
+                    this.m_DebugLog.Write("Yahoo-Pref-Accounts : userClick -  bClassic "+ oPref.Value);
+                    document.getElementById("radiogroupMode").selectedIndex = 2;             
                 }
-
+                
                 //download unread
                 if (!prefAccess.Get("bool","yahoo.Account."+szUserName+".bDownloadUnread",oPref))
                    oPref.Value = false; //Default
@@ -326,6 +332,9 @@ var gPrefAccounts =
 
         var bMode = document.getElementById("radiogroupMode").value == 1? true : false;
         this.m_DebugLog.Write("Yahoo-Pref-Accounts : rgModeOnChange -  bMode "+ bMode);
+        
+        var bClassic = document.getElementById("radiogroupMode").value == 2? true : false;
+        this.m_DebugLog.Write("Yahoo-Pref-Accounts : rgModeOnChange -  bClassic "+ bClassic);
 
         var szUserName = this.m_aszUserList[this.m_iIndex].toLowerCase();
         szUserName = szUserName.replace(/\./g,"~");
@@ -335,7 +344,7 @@ var gPrefAccounts =
         //write pref
         var prefAccess = new WebMailCommonPrefAccess();
         prefAccess.Set("bool","yahoo.Account."+szUserName+".bBeta",bMode);
-
+        prefAccess.Set("bool","yahoo.Account."+szUserName+".bClassic",bClassic);
 
         if (bMode)
         {
