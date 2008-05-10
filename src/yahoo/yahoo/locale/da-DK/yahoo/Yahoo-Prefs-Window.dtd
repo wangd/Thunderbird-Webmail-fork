@@ -9,6 +9,7 @@
 <!ENTITY YahooPref.Mode.Label "Vælg website som udvidelsen skal bruge">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Produktionswebsite">
 <!ENTITY YahooPref.Mode.Beta.Label "BETA-website">
+<!ENTITY YahooPref.Mode.Classic.Label "New Classic Website (test code)">
 <!ENTITY YahooPref.POP.DownloadUnread.Label "Hent kun ulæste emails">
 <!ENTITY YahooPref.POP.DownloadUnread.AccessKey "u">
 <!ENTITY YahooPref.POP.JunkMail.Label "Hent JunkMail">

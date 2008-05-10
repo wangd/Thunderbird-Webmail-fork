@@ -9,6 +9,7 @@
 <!ENTITY YahooPref.Mode.Label "Vyberte webovú stránku, ktorú má rozšírenie používať">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Webová stránka služby">
 <!ENTITY YahooPref.Mode.Beta.Label "Webová stránka (BETA verzia)">
+<!ENTITY YahooPref.Mode.Classic.Label "New Classic Website (test code)">
 <!ENTITY YahooPref.POP.DownloadUnread.Label "Sťahovať len neprečítané e-maily">
 <!ENTITY YahooPref.POP.DownloadUnread.AccessKey "n">
 <!ENTITY YahooPref.POP.JunkMail.Label "Sťahovať nevyžiadanú poštu">

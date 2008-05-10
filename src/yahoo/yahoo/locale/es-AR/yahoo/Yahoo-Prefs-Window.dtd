@@ -9,6 +9,7 @@
 <!ENTITY YahooPref.Mode.Label "Elija el sitio web que utilizará la extensión">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Sitio Web de Producción">
 <!ENTITY YahooPref.Mode.Beta.Label "Sitio Web BETA">
+<!ENTITY YahooPref.Mode.Classic.Label "New Classic Website (test code)">
 <!ENTITY YahooPref.POP.DownloadUnread.Label "Descargar solamente los correos no leídos">
 <!ENTITY YahooPref.POP.DownloadUnread.AccessKey "u">
 <!ENTITY YahooPref.POP.JunkMail.Label "Descargar JunkMail">

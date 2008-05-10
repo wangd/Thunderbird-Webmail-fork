@@ -10,6 +10,7 @@
 <!ENTITY YahooPref.Mode.Label "Select website the extension will use">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Production Website">
 <!ENTITY YahooPref.Mode.Beta.Label "BETA Website">
+<!ENTITY YahooPref.Mode.Classic.Label "New Classic Website (test code)">
 
 <!ENTITY YahooPref.POP.DownloadUnread.Label "Download unread emails only">
 <!ENTITY YahooPref.POP.DownloadUnread.AccessKey "u">

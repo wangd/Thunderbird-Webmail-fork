@@ -9,6 +9,7 @@
 <!ENTITY YahooPref.Mode.Label "Seleccioneu el lloc web que utilitzarà l&apos;extensió">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Lloc web en producció">
 <!ENTITY YahooPref.Mode.Beta.Label "BETA Website">
+<!ENTITY YahooPref.Mode.Classic.Label "New Classic Website (test code)">
 <!ENTITY YahooPref.POP.DownloadUnread.Label "Descarrega només correus no llegits">
 <!ENTITY YahooPref.POP.DownloadUnread.AccessKey "u">
 <!ENTITY YahooPref.POP.JunkMail.Label "Descarrega el correu brossa">

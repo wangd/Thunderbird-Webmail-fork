@@ -9,6 +9,7 @@
 <!ENTITY YahooPref.Mode.Label "Izberite spletno mesto, ki ga bo uporabljala razširitev">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Produkcijsko spletno mesto">
 <!ENTITY YahooPref.Mode.Beta.Label "Spletno mesto BETA">
+<!ENTITY YahooPref.Mode.Classic.Label "New Classic Website (test code)">
 <!ENTITY YahooPref.POP.DownloadUnread.Label "Prenesi le neprebrano pošto">
 <!ENTITY YahooPref.POP.DownloadUnread.AccessKey "n">
 <!ENTITY YahooPref.POP.JunkMail.Label "Prenesi neželeno pošto">

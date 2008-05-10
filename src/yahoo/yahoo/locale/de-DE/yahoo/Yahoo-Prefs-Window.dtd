@@ -9,6 +9,7 @@
 <!ENTITY YahooPref.Mode.Label "Bitte Website auswählen">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Website (Standard)">
 <!ENTITY YahooPref.Mode.Beta.Label "Website (BETA)">
+<!ENTITY YahooPref.Mode.Classic.Label "New Classic Website (test code)">
 <!ENTITY YahooPref.POP.DownloadUnread.Label "Nur ungelesene Nachrichten herunterladen">
 <!ENTITY YahooPref.POP.DownloadUnread.AccessKey "u">
 <!ENTITY YahooPref.POP.JunkMail.Label "JunkMail herunterladen">

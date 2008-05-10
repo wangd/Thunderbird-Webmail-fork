@@ -9,6 +9,7 @@
 <!ENTITY YahooPref.Mode.Label "Alege situl pe care il va folosi extensia">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Situl productiv">
 <!ENTITY YahooPref.Mode.Beta.Label "Situl BETA">
+<!ENTITY YahooPref.Mode.Classic.Label "New Classic Website (test code)">
 <!ENTITY YahooPref.POP.DownloadUnread.Label "Descarca numai mesajele necitite">
 <!ENTITY YahooPref.POP.DownloadUnread.AccessKey "u">
 <!ENTITY YahooPref.POP.JunkMail.Label "Descarca JunkMail">

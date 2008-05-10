@@ -9,6 +9,7 @@
 <!ENTITY YahooPref.Mode.Label "Selezionare come il componente Yahoo si collegherà ai server Yahoo">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Sito web di produzione di Yahoo">
 <!ENTITY YahooPref.Mode.Beta.Label "Sito web di Yahoo BETA">
+<!ENTITY YahooPref.Mode.Classic.Label "New Classic Website (test code)">
 <!ENTITY YahooPref.POP.DownloadUnread.Label "Scarica solo messaggi non letti">
 <!ENTITY YahooPref.POP.DownloadUnread.AccessKey "N">
 <!ENTITY YahooPref.POP.JunkMail.Label "Scarica posta indesiderata">
