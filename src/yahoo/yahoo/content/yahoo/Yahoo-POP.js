@@ -1063,6 +1063,8 @@ YahooPOP.prototype =
                     //remove quoted printable header
                     szResponse = szResponse.replace(/content-transfer-Encoding:.*?quoted-printable.*?$/im, "x-Header: removed");
                     szResponse = szResponse.replace(/content-transfer-Encoding:.*?base64.*?$/im,"x-Header: removed");
+                    szResponse = szResponse.replace(/Content-Transfer-Encoding:.*?base64.*?$/im,"x-Header: removed");
+
                     var oHeaders = new headers(szResponse);
                     mainObject.m_szMessage += oHeaders.getAllHeaders();
                     mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - headers - "+mainObject.m_szMessage);
