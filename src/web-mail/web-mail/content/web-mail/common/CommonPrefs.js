@@ -22,12 +22,14 @@ WebMailCommonPrefAccess.prototype.Get = function(Type, Key, Value)
             break
          
             case "char":
-                Value.Value = this.m_PrefService.getCharPref(Key);
+                // Value.Value = this.m_PrefService.getCharPref(Key);
+                var str = this.m_PrefService.getComplexValue(Key, Components.interfaces.nsISupportsString);
+                Value.Value = str.data;
                 return true;
             break
          
             case "nsILocalFile":
-                Value.Value = this.m_PrefService.getComplexValue( Key , Components.interfaces.nsILocalFile);
+                Value.Value = this.m_PrefService.getComplexValue(Key, Components.interfaces.nsILocalFile);
                 return true;
             break
             
@@ -60,7 +62,11 @@ WebMailCommonPrefAccess.prototype.Set = function(Type, Key, Value)
             break
          
             case "char":
-                this.m_PrefService.setCharPref(Key,Value);
+                // this.m_PrefService.setCharPref(Key,Value);
+                var str = Components.classes["@mozilla.org/supports-string;1"]
+                                   .createInstance(Components.interfaces.nsISupportsString);
+                str.data = Value;
+                this.m_PrefService.setComplexValue(Key,Components.interfaces.nsISupportsString, str);
                 return true;
             break
          
