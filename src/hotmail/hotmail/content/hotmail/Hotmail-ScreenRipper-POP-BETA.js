@@ -330,24 +330,27 @@ HotmailScreenRipperBETA.prototype =
                         {
                             var regExp = new RegExp("^"+mainObject.m_aszFolders[i]+"$","i");
                             mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler - regExp : "+regExp );
-
+                            
+                            var oEscape = new HTMLescape();
                             for (var j=0; j<aszFolderList.length; j++)
                             {
                                 var szTitle = aszFolderList[j].match(patternHotmailFolderTitle)[1];
-                                mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler - folder szTitle: " +szTitle);
+                                var szDeCodeTitle = oEscape.decode(szTitle);
+                                mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler - folder szTitle: " +szDeCodeTitle);
 
-                                if (szTitle.search(regExp)!=-1)
+                                if (szDeCodeTitle.search(regExp)!=-1)
                                 {
                                     var szID = aszFolderList[j].match(patternHotmailFolderURL)[1];
                                     mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler - folder szID: " +szID);
                                     var szURI = mainObject.m_szLocationURI + szID;
                                     mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler - Found URI : " +szURI);
                                     var oFolder = new FolderData();
-                                    oFolder.szFolderName = szTitle;
+                                    oFolder.szFolderName = szDeCodeTitle;
                                     oFolder.szURI = szURI;
                                     mainObject.m_aszFolderURLList.push(oFolder);
                                 }
                             }
+                            delete oEscape;
                         }
                     }
 
