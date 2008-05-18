@@ -79,12 +79,11 @@ nsYahoo.prototype =
             //get prefs
             var oData = this.loadPrefs();
 
-            if (oData.bBeta) //use beta site
-                this.m_CommMethod = new YahooPOPBETA(this.m_oResponseStream, this.m_Log, oData);
-
             if (oData.bClassic) //use new yahoo classic handler
                 this.m_CommMethod = new YahooPOPClassic(this.m_oResponseStream, this.m_Log, oData);
 
+            if (oData.bBeta) //use beta site
+                this.m_CommMethod = new YahooPOPBETA(this.m_oResponseStream, this.m_Log, oData);
 
             if (!this.m_CommMethod) //use standard site
                 this.m_CommMethod = new YahooPOP(this.m_oResponseStream, this.m_Log, oData);
@@ -353,12 +352,14 @@ nsYahoo.prototype =
             oPref.Value = null;
             if (WebMailPrefAccess.Get("bool","yahoo.Account."+szUserName+".bBeta",oPref))
                 oData.bBeta=oPref.Value;
-
+            this.m_Log.Write("nsYahoo.js - loadPrefs - bBeta " + oPref.Value);
+            
             //use yahoo classic site
             oPref.Value = null;
             if (WebMailPrefAccess.Get("bool","yahoo.Account."+szUserName+".bClassic",oPref))
                 oData.bClassic=oPref.Value;
-                
+            this.m_Log.Write("nsYahoo.js - loadPrefs - bClassic " + oPref.Value);
+                            
             //get unread
             oPref.Value = null;
             if (WebMailPrefAccess.Get("bool","yahoo.Account."+szUserName+".bDownloadUnread",oPref))
