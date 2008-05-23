@@ -94,6 +94,9 @@ YahooPOP.prototype =
 
             if (this.m_szUserName.search(/yahoo/i)!=-1) //remove domain from user name
             {
+                if (this.m_szUserName.search(/yahoo\.co\.jp/i)!=-1)
+                    this.m_szYahooMail = "http://mail.yahoo.co.jp/";
+
                 this.m_szLoginUserName = this.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
             }
             else if (this.m_szUserName.search(/@talk21.com$/i)!=-1 ||
@@ -1028,7 +1031,15 @@ YahooPOP.prototype =
                             else//try again
                             {
                                 mainObject.m_iMSGCount++;
-                                mainObject.m_HttpComms.setURI(szUri);
+                                var szID = mainObject.m_szMsgID.match(/MsgId.*?&/);
+                                if (!szID) 
+                                    szID = mainObject.m_szMsgID.match(/mid.*?&/)[0].replace(/mid/, "MsgId");
+            
+                                var szDest = mainObject.m_szLocationURI + "/ya/download?" 
+                                                                        + szID 
+                                                                        + mainObject.m_szBox    
+                                                                        + "&bodyPart=HEADER";
+                                mainObject.m_HttpComms.setURI(szDest);
                                 mainObject.m_HttpComms.setRequestMethod("GET");
                                 var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);
                                 if (!bResult) throw new Error("httpConnection returned false");
@@ -1090,7 +1101,9 @@ YahooPOP.prototype =
                 break;
 
                 case 1: //body
-                    mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - BODY ");                    
+                    mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - BODY ");         
+
+                    mainObject.m_iMSGCount = 0;     
                     mainObject.m_szMessage += szResponse;
                     szEmail = null;
                     mainObject.m_szMessage = mainObject.m_szMessage.replace(/^\./mg,"..");    //bit padding
