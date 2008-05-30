@@ -241,7 +241,7 @@ var gPrefAccounts =
                                
                 //set seasion id
                 if (!prefAccess.Get("bool","yahoo.Account."+szUserName+".bUseShortID",oPref))
-                   oPref.Value = false; //Default
+                   oPref.Value = true; //Default
                 this.m_DebugLog.Write("Yahoo-Pref-Accounts : selectUserName -  bUseShortID "+ oPref.Value);
                 document.getElementById("chkShortID").checked = oPref.Value;     
                 
