@@ -1,0 +1,8 @@
+<!ENTITY AOLFolderAdd.Title "加入資料夾">
+<!ENTITY AOLFolderName.Label "資料夾名稱">
+<!ENTITY AOLFolderName.AccessKey "F">
+<!ENTITY AOLFolders.Label "加入下載資料夾">
+<!ENTITY AOLFolderName.ButtonOk.Label "OK">
+<!ENTITY AOLFolderName.ButtonOk.AccessKey "O">
+<!ENTITY AOLFolderName.ButtonCancel.Label "取消">
+<!ENTITY AOLFolderName.ButtonCancel.AccessKey "C">

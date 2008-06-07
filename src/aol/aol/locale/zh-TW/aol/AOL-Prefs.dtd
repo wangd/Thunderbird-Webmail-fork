@@ -1,0 +1,22 @@
+<!ENTITY AOLPref.Window.Title "AOL / Netscape 選項">
+<!ENTITY AOLPref.Panel.Accounts.Title "帳號">
+<!ENTITY AOLPref.Panel.Domains.Title "網域">
+<!ENTITY AOLPref.Button.Close.Label "關閉">
+<!ENTITY AOLPref.Tab.POP.Title "POP">
+<!ENTITY AOLPref.POP.DownloadUnread.Label "只下載未閱讀的郵件">
+<!ENTITY AOLPref.POP.DownloadUnread.AccessKey "u">
+<!ENTITY AOLPref.POP.JunkMail.Label "下載垃圾郵件">
+<!ENTITY AOLPref.POP.JunkMail.AccessKey "J">
+<!ENTITY AOLPref.POP.Folders.Label "下載資料夾">
+<!ENTITY AOLPref.POP.ButtonAdd.Label "新增...">
+<!ENTITY AOLPref.POP.ButtonAdd.AccessKey "A">
+<!ENTITY AOLPref.POP.ButtonRemove.Label "移除">
+<!ENTITY AOLPref.POP.ButtonRemove.AccessKey "R">
+<!ENTITY AOLPref.AccountError.Label "找不到 AOL 帳號">
+<!ENTITY AOLPref.POP.MarkAsRead.Label "在伺服器上設定為已閱讀信件">
+<!ENTITY AOLPref.POP.MarkAsRead.AccessKey "k">
+<!ENTITY AOLPref.Domain.Label "由 AOL 套件支援網域">
+<!ENTITY AOLPref.Domain.Button.AddDomain.Label "新增...">
+<!ENTITY AOLPref.Domain.Button.AddDomain.AccessKey "A">
+<!ENTITY AOLPref.Domain.Button.RemoveDomain.Label "移除">
+<!ENTITY AOLPref.Domain.Button.RemoveDomain.AccessKey "R">
