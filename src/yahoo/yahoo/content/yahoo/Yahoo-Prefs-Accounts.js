@@ -158,10 +158,17 @@ var gPrefAccounts =
 
                 if (!prefAccess.Get("bool","yahoo.Account."+szUserName+".bBeta",oPref))
                     oPref.Value = false; //Default to production account
-                this.m_DebugLog.Write("Yahoo-Pref-Accounts : userClick -  bBeta "+ oPref.Value);
-                document.getElementById("radiogroupMode").selectedIndex = oPref.Value? 1 : 0;
+                var bBeta = oPref.Value
+                this.m_DebugLog.Write("Yahoo-Pref-Accounts : userClick -  bBeta "+ bBeta);
+                
+                if (!prefAccess.Get("bool","yahoo.Account."+szUserName+".bClassic",oPref))
+                    oPref.Value = false; //Default to production account
+                var bClassic = oPref.Value
+                this.m_DebugLog.Write("Yahoo-Pref-Accounts : userClick -  bClassic "+ bBeta);
+                
+                document.getElementById("radiogroupMode").selectedIndex = bBeta? 1:(bClassic? 2:0);
 
-                if (oPref.Value)  //beta account type
+                if (bBeta)  //beta account type
                 {
                     document.getElementById("tabSMTP").collapsed = true;// hide smtp
                     document.getElementById("vboxSmtpItems").setAttribute("hidden", true);
@@ -170,16 +177,10 @@ var gPrefAccounts =
                     if (document.getElementById("tabsAccount").selectedIndex == 2)
                         document.getElementById("tabsAccount").selectedIndex = 1; //POP
                 }
-                else            //current account
+                else            //classic account
                 {
                     document.getElementById("tabSMTP").collapsed = false;// show smtp
-                    document.getElementById("vboxSmtpItems").setAttribute("hidden", false);
-                    
-                    //check for new classice test code
-                    if (!prefAccess.Get("bool","yahoo.Account."+szUserName+".bClassic",oPref))
-                        oPref.Value = false; //Default to production account
-                    this.m_DebugLog.Write("Yahoo-Pref-Accounts : userClick -  bClassic "+ oPref.Value);
-                    document.getElementById("radiogroupMode").selectedIndex = 2;             
+                    document.getElementById("vboxSmtpItems").setAttribute("hidden", false);                    
                 }
                 
                 //download unread
