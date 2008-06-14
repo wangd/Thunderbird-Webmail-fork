@@ -727,6 +727,22 @@ YahooPOPClassic.prototype =
                     this.m_Log.Write("YahooPOPClassic.js - getMessageIDs - Email URL : " +szEmailURL);
                      
                     var szEmailID = szEmailURL.match(PatternYahooIDAlt)[1];
+                                
+                                         
+                    //use short id    1_8571_AJSySdEAAREkRPe9dgtLa1BshJg
+                    if (this.m_bUseShortID)
+                    {
+                        var aszIDParts = szEmailID.split(/_/);
+                        szEmailID ="";
+                        for (var j=0; j<aszIDParts.length; j++)
+                        {
+                            if (j!=1)
+                            {
+                                szEmailID += aszIDParts[j];
+                                if (j!=aszIDParts.length-1) szEmailID += "_";
+                            }
+                        }
+                    }            
                                     
                     this.serverComms((this.m_iHandleCount+1) + " " + szEmailID + "\r\n");
                     this.m_iHandleCount++;
