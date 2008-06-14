@@ -314,29 +314,14 @@ YahooPOPClassic.prototype =
                         var regExp = new RegExp("^"+mainObject.m_aszFolderList[j]+"$","i");
                         for (i=0; i<aszServerFolders.length; i++)
                         {
-                            var szBox = null;
-                            try
-                            {
-                                szBox = aszServerFolders[i].match(PatternYahooFolderName)[1];
-                            }
-                            catch(e)
-                            {
-                                 szBox = aszServerFolders[i].match(PatternYahooFolderNameAlt)[1];
-                            }                       
+                            var szServerFolders = decodeURIComponent(aszServerFolders[i]);
+                            var szBox = szServerFolders.match(PatternYahooFolderNameAlt)[1];
                             mainObject.m_Log.Write("YahooPOPClassic.js - loginOnloadHandler - szBox : "+szBox );
 
                             if (szBox.search(regExp)!=-1)
                             {
-                                var szPart ="";
-                                try
-                                {
-                                    szPart = aszServerFolders[i].match(PatternYahooFoldersPart)[1];
-                                }
-                                catch(e)
-                                {
-                                    szPart = aszServerFolders[i].match(PatternYahooFoldersPartAlt)[1]; 
-                                }
-                                mainObject.m_Log.Write("YahooPOPClassic.js - loginOnloadHandler - szBox : "+szBox );                               
+                                var szPart = szServerFolders.match(PatternYahooFoldersPartAlt)[1]; 
+                                mainObject.m_Log.Write("YahooPOPClassic.js - loginOnloadHandler - szPart : "+szPart );                               
                                 
                                 //test urls
                                 var szFolderURL= "";
@@ -513,18 +498,47 @@ YahooPOPClassic.prototype =
             }
 
             //check for more pages
-            var aszNextPage = szResponse.match(patternYahooNextPage);
-            mainObject.m_Log.Write("YahooPOPClassic.js - mailBoxOnloadHandler - msg next page :" +aszNextPage);
-            if (aszNextPage)
+            var szNextPage = null;
+            try
             {
-                var szNewPage = aszNextPage[0].split("|");
-                mainObject.m_Log.Write("YahooPOPClassic.js - mailBoxOnloadHandler - msg next page :" +szNewPage + " " + szNewPage.length);
+                szNextPage = szResponse.match(patternYahooNextPageAlt)[1];              
+                mainObject.m_Log.Write("YahooPOPClassic.js - mailBoxOnloadHandler - next page :" +szNextPage);
+                                                              
+                var iStart = parseInt(szNextPage.match(/startMid=(.*?)&/i)[1]);
+                mainObject.m_Log.Write("YahooPOPClassic.js - mailBoxOnloadHandler - next page :" +iStart);
+                if (iStart == 0)szNextPage=null; //no next page
+            }
+            catch(err)
+            {       
+                szNextPage = null;      
+                mainObject.m_Log.Write("YahooPOPClassic.js: mailBoxOnloadHandler : next page : "
+                                              + err.name
+                                              + ".\nError message: "
+                                              + err.message+ "\n"
+                                              + err.lineNumber);
+            }
 
-                var szMailboxURI = mainObject.m_szLocationURI +
-                                    szNewPage[szNewPage.length-1].match(patternYahooNextURI)[1];
-                mainObject.m_Log.Write("YahooPOPClassic.js - getNumMessages - mail box url " + szMailboxURI);
-
-                mainObject.m_HttpComms.setURI(szMailboxURI);
+            if (szNextPage)
+            {         
+                if (!mainObject.m_HttpComms.setURI(szNextPage)) 
+                {
+                    if (szNextPage.search(/^\//) == -1)
+                    {
+                        var IOService = Components.classes["@mozilla.org/network/io-service;1"]
+                                                  .getService(Components.interfaces.nsIIOService);
+                        var nsIURI = IOService.newURI(httpChannel.URI.spec, null, null)
+                                              .QueryInterface(Components.interfaces.nsIURL);
+                        var szDirectory = nsIURI.directory
+                        mainObject.m_Log.Write("YahooPOPClassic - getNumMessages - directory : " +szDirectory);
+                        
+                        szNextPage = mainObject.m_szLocationURI + szDirectory + szNextPage
+                    }
+                    else
+                    {
+                        szNextPage = mainObject.m_szLocationURI +"/" +szNextPage
+                    }
+                }
+                mainObject.m_HttpComms.setURI(szNextPage)                
                 mainObject.m_HttpComms.setRequestMethod("GET");
                 var bResult = mainObject.m_HttpComms.send(mainObject.mailBoxOnloadHandler, mainObject);
                 if (!bResult) throw new Error("httpConnection returned false");
@@ -1167,14 +1181,14 @@ YahooPOPClassic.prototype =
     {
        try
        {
-            mainObject.m_Log.DebugDump("YahooPOPClassic.js: emailBuilt : START ");
+            mainObject.m_Log.Write("YahooPOPClassic.js: emailBuilt : START ");
             var szEmail = mainObject.m_oMessage.getEmail();                  
             var szPOPResponse = "+OK " + szEmail.length + "\r\n";
             szPOPResponse += szEmail;
             mainObject.serverComms(szPOPResponse);
             delete mainObject.m_oMessage;
             mainObject.m_oMessage = null; 
-            mainObject.m_Log.DebugDump("YahooPOPClassic.js: emailBuilt : END ");
+            mainObject.m_Log.Write("YahooPOPClassic.js: emailBuilt : END ");
             return true;
        } 
        catch(err)

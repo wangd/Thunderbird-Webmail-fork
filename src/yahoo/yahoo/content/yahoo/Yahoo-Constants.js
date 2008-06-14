@@ -48,7 +48,7 @@ const PatternYahooBoxAlt2=/(fid=.*?)&/;
 const PatternYahooFolderNameAlt= /fid=(.*?)&/i;
 const PatternYahooFolderBoxAlt = /fid=(.*?)$/i;
 const PatternYahooCrumb =/mcrumb=(.*?)&/i;
-
+const patternYahooNextPageAlt = /<span class="offscreen">.*?href="(.*?startMid=.*?)">/im;
 
 /******************************  BETA ***************************************/
 const kPatternWssid = /[']?wssid[']?.*?'(.*?)',/i;
