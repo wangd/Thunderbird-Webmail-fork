@@ -57,6 +57,7 @@ function YahooPOPClassic(oResponseStream, oLog, oPrefs)
         this.m_bUnread = true;
         this.m_iHandleCount = 0;
         this.m_iCount = 3;
+        this.m_iLastPage = 0;
          
         this.m_Timer = Components.classes["@mozilla.org/timer;1"]
                                  .createInstance(Components.interfaces.nsITimer);
@@ -506,7 +507,9 @@ YahooPOPClassic.prototype =
                                                               
                 var iStart = parseInt(szNextPage.match(/startMid=(.*?)&/i)[1]);
                 mainObject.m_Log.Write("YahooPOPClassic.js - mailBoxOnloadHandler - next page :" +iStart);
-                if (iStart == 0)szNextPage=null; //no next page
+               
+                if (mainObject.m_iLastPage >= iStart)szNextPage=null; //no next page
+                 mainObject.m_iLastPage = iStart;
             }
             catch(err)
             {       
