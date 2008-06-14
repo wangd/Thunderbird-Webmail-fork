@@ -748,6 +748,8 @@ YahooPOP.prototype =
                                           + ".\nError message: "
                                           + e.message+ "\n"
                                           + e.lineNumber);
+                                          
+            this.serverComms("-ERR negative vibes from "+ this.m_szUserName +"\r\n");
             return false;
         }
     },
