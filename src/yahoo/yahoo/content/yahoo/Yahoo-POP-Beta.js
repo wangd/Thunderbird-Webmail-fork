@@ -10,6 +10,7 @@ function YahooPOPBETA(oResponseStream, oLog, oPrefs)
         scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms3.js");
         scriptLoader.loadSubScript("chrome://yahoo/content/YahooMSG.js");
         scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-Prefs-Accounts-Data.js");
+        scriptLoader.loadSubScript("chrome://web-mail/content/common/Header.js");
 
         this.m_Log = oLog;
         this.m_Log.Write("YahooPOPBETA.js - Constructor - START");
@@ -1015,7 +1016,11 @@ YahooPOPBETA.prototype =
 
                     mainObject.m_szEmail  = "X-WebMail: true\r\n";
                     mainObject.m_szEmail += "X-Folder: " +mainObject.m_szBox+ "\r\n";
-                    mainObject.m_szEmail += szResponse;
+                    
+                    var oHeaders = new headers(szResponse);
+                    mainObject.m_szEmail += oHeaders.getAllHeaders();
+                    mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - headers - "+mainObject.m_szEmail);
+                    delete oHeaders;
                     
                     //now get body
                     var szURI = mainObject.m_szLocationURI + "/ya/download?";
