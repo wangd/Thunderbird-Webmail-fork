@@ -39,7 +39,7 @@ const PatternYahooFolderName= /box=(.*?)&/i;
 const PatternYahooFolderBox = /box=(.*?)$/i;
 
 //new classic
-const patternYahooMsgRowClassic = /<tr.*?[msgold|msgnew].*?>[\S\s]*?<\/tr>/im;
+const patternYahooClassicMsgRow = /<tr.*?[msgold|msgnew].*?>[\S\s]*?<\/tr>/igm;
 const patternYahooMsgIDAlt =/href="(.*?mid.*?)"/;
 const PatternYahooFoldersAlt = /href=".*?ShowFolder\?fid=.*?"/gim;
 const PatternYahooFoldersPartAlt = /href="(.*?ShowFolder\?fid=.*?)"/i;
