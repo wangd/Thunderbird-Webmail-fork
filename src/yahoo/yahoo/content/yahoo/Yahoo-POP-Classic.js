@@ -442,7 +442,7 @@ YahooPOPClassic.prototype =
             mainObject.m_Log.Write("YahooPOPClassic.js - mailBoxOnloadHandler - msgtable :" + aMsgTable);
             if (aMsgTable)
             {
-                var aMsgRows = aMsgTable[0].match(patternYahooMsgRowClassic);
+                var aMsgRows = aMsgTable[0].match(patternYahooClassicMsgRow);
                 mainObject.m_Log.Write("YahooPOPClassic.js - mailBoxOnloadHandler - msgRows :" + aMsgRows);
 
                 //get number of msg on page
