@@ -3,7 +3,7 @@ const kYahooConstants = true;
 const patternYahooSecure = /<a href="(.*?https.*?login.*?)".*?>/;
 const patternYahooLoginForm = /<form.*?name="login_form".*?>[\S\s]*?<\/form>/gm;
 const patternYahooAction = /<form.*?action="(.*?)".*?>/;
-const patternYahooInput = /<input.*?type=['|"]*hidden['|"]*.*?name=.*?value=[\s\S]*?>/igm;
+const patternYahooInput = /<input.*?type=['|"]*hidden['|"]*.*?name=.*?>/igm;
 const patternYahooLogInSpam = /<input type="hidden" name=".secdata" value=".*?">/igm;
 const patternYahooSpanURI =/<td colspan="2">[\s\S]*?<img src="(https.*?)".*?>[\s\S]*?<img src=".*?error.gif.*?".*?>[\s\S]*?<\/td>/im;
 const patternYahooFile = /<input.*?type="*file"*.*?name=.*?>/igm;
@@ -39,7 +39,7 @@ const PatternYahooFolderName= /box=(.*?)&/i;
 const PatternYahooFolderBox = /box=(.*?)$/i;
 
 //new classic
-const patternYahooMsgRowClassic = /<tr.*?msgold.*?>[\S\s]*?<\/tr>/gm;
+const patternYahooMsgRowClassic = /<tr.*?[msgold|msgnew].*?>[\S\s]*?<\/tr>/im;
 const patternYahooMsgIDAlt =/href="(.*?mid.*?)"/;
 const PatternYahooFoldersAlt = /href=".*?ShowFolder\?fid=.*?"/gim;
 const PatternYahooFoldersPartAlt = /href="(.*?ShowFolder\?fid=.*?)"/i;
@@ -49,6 +49,9 @@ const PatternYahooFolderNameAlt= /fid=(.*?)&/i;
 const PatternYahooFolderBoxAlt = /fid=(.*?)$/i;
 const PatternYahooCrumb =/mcrumb=(.*?)&/i;
 const patternYahooNextPageAlt = /<span class="offscreen">.*?href="(.*?startMid=.*?)">/im;
+const patternYahooComposeURLForm = /<form.*?compose.*?>[\s\S]*?<\/form>/igm;
+const patternYahooClassicName = /name=['|"]([\S\s]*?)['|"]/i;
+const patternYahooClassicValue = /value=['|"]([\S\s]*?)['|"]/i;
 
 /******************************  BETA ***************************************/
 const kPatternWssid = /[']?wssid[']?.*?'(.*?)',/i;
