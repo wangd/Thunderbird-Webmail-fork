@@ -15,6 +15,7 @@ function nsYahooSMTP()
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-SMTP.js");
         scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-SMTP-Beta.js");
+        scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-SMTP-Classic.js");
         scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-Prefs-Accounts-Data.js");
 
         var date = new Date();
@@ -89,6 +90,9 @@ nsYahooSMTP.prototype =
             //get prefs
             var oData = this.loadPrefs();
 
+            if (oData.bClassic) //use new yahoo classic handler
+                this.m_CommMethod = new YahooSMTPClassic(this.m_oResponseStream, this.m_Log, oData);
+                
             if (oData.bBeta) //use beta site
                 this.m_CommMethod = new YahooSMTPBETA(this.m_oResponseStream, this.m_Log, oData);
 
@@ -167,14 +171,20 @@ nsYahooSMTP.prototype =
             oPref.Value = null;
             if (WebMailPrefAccess.Get("bool","yahoo.Account."+szUserName+".bSaveCopy",oPref))
                 oData.bSaveCopy=oPref.Value;
-            this.m_Log.Write("nsHotmailSMTP.js - getPrefs - bSaveCopy " + oPref.Value);
+            this.m_Log.Write("nsYahooSMTP.js - getPrefs - bSaveCopy " + oPref.Value);
 
 
             //use yahoo beta site
             oPref.Value = null;
             if (WebMailPrefAccess.Get("bool","yahoo.Account."+szUserName+".bBeta",oPref))
                oData.bBeta=oPref.Value;
-            this.m_Log.Write("nsHotmailSMTP.js - getPrefs - bBeta " + oPref.Value);
+            this.m_Log.Write("nsYahooSMTP.js - getPrefs - bBeta " + oPref.Value);
+
+            //use yahoo classic site
+            oPref.Value = null;
+            if (WebMailPrefAccess.Get("bool","yahoo.Account."+szUserName+".bClassic",oPref))
+                oData.bClassic=oPref.Value;
+            this.m_Log.Write("nsYahooSMTP.js - loadPrefs - bClassic " + oPref.Value);
 
             this.m_Log.Write("nsYahooSMTP.js - loadPrefs - END");
             return oData;
