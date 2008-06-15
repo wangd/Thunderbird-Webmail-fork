@@ -173,6 +173,11 @@ nsYahooSMTP.prototype =
                 oData.bSaveCopy=oPref.Value;
             this.m_Log.Write("nsYahooSMTP.js - getPrefs - bSaveCopy " + oPref.Value);
 
+            //do i use html part
+            oPref.Value = null;
+            if (WebMailPrefAccess.Get("bool","yahoo.Account."+szUserName+".bSendHtml",oPref))
+                oData.bSendHtml=oPref.Value;
+            this.m_Log.Write("nsYahooSMTP.js - getPrefs - bSendHtml " + oPref.Value);
 
             //use yahoo beta site
             oPref.Value = null;
