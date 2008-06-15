@@ -93,10 +93,26 @@
 
                         <vbox id="smptPanel" class="panel" flex="1">
                             <vbox id="vboxSmtpItems">
-                                <checkbox label="&YahooPref.SMTP.SaveSentItems.Label;"
-                                          accesskey="&YahooPref.SMTP.SaveSentItems.AccessKey;"
-                                          id="chkSentItems"
-                                          onclick ="gPrefAccounts.chkSentItemsOnChange();"/>
+                                <vbox id="vbSaveSentItems">
+                                    <checkbox label="&YahooPref.SMTP.SaveSentItems.Label;"
+                                              accesskey="&YahooPref.SMTP.SaveSentItems.AccessKey;"
+                                              id="chkSentItems"
+                                              onclick ="gPrefAccounts.chkSentItemsOnChange();"/>
+                                </vbox>          
+                                <vbox id="vboxSendAlt">
+                                    <label value="&YahooPref.SMTP.AlternativeGroup.Label;" id="labelAlt" flex="1"/>
+                                    <radiogroup id="radiogroupAlt" onclick ="gPrefAccounts.rgAltOnChange();" class="radio">
+                                        <radio label="&YahooPref.SMTP.SendPlain.Label;"
+                                               accesskey="&YahooPref.SMTP.SendPlain.AccessKey;"
+                                               value = "0"
+                                               id="rdSendPlain"/>
+
+                                        <radio label="&YahooPref.SMTP.SendHtml.Label;"
+                                               accesskey="&YahooPref.SMTP.SendHtml.AccessKey;"
+                                               value = "1"
+                                               id="rdSendHtml"/>
+                                    </radiogroup>
+                                </vbox>
                             </vbox>
                         </vbox>
                         

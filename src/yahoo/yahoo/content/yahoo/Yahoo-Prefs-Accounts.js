@@ -178,9 +178,21 @@ var gPrefAccounts =
                         document.getElementById("tabsAccount").selectedIndex = 1; //POP
                 }
                 else            //classic account
-                {
-                    document.getElementById("tabSMTP").collapsed = false;// show smtp
-                    document.getElementById("vboxSmtpItems").setAttribute("hidden", false);                    
+                {                    
+                    if (bClassic) //new classic
+                    { 
+                        document.getElementById("vbSaveSentItems").setAttribute("hidden", true); 
+                        document.getElementById("tabSMTP").collapsed = true;// show smtp 
+                        if (document.getElementById("tabsAccount").selectedIndex == 2)
+                            document.getElementById("tabsAccount").selectedIndex = 1; //POP                                                                    
+                    }
+                    else           //old classic
+                    {
+                        document.getElementById("vboxSmtpItems").setAttribute("hidden", false);
+                        document.getElementById("vboxSendAlt").setAttribute("hidden", true); 
+                        document.getElementById("vbSaveSentItems").setAttribute("hidden", false); 
+                        document.getElementById("tabSMTP").collapsed = false;// show smtp         
+                    }         
                 }
                 
                 //download unread
@@ -239,7 +251,13 @@ var gPrefAccounts =
                    oPref.Value = false; //Default
                 this.m_DebugLog.Write("Yahoo-Pref-Accounts : selectUserName -  bSaveCopy "+ oPref.Value);
                 document.getElementById("chkSentItems").checked = oPref.Value;
-                               
+                
+                //Send Html part
+                if (!prefAccess.Get("bool","yahoo.Account."+szUserName+".bSendHtml",oPref))
+                   oPref.Value = false; //Default
+                this.m_DebugLog.Write("Yahoo-Pref-Accounts : selectUserName -  bSendHtml "+ oPref.Value);
+                document.getElementById("radiogroupAlt").selectedIndex = oPref.Value?1:0;
+                       
                 //set seasion id
                 if (!prefAccess.Get("bool","yahoo.Account."+szUserName+".bUseShortID",oPref))
                    oPref.Value = true; //Default
@@ -347,15 +365,29 @@ var gPrefAccounts =
         prefAccess.Set("bool","yahoo.Account."+szUserName+".bBeta",bMode);
         prefAccess.Set("bool","yahoo.Account."+szUserName+".bClassic",bClassic);
 
-        if (bMode)
+        if (bMode)  //beta
         {
             document.getElementById("vboxSmtpItems").setAttribute("hidden", true);
-            document.getElementById("vboxSmtpNA").setAttribute("hidden", false);
+            document.getElementById("tabSMTP").collapsed = true;// show smtp
+            if (document.getElementById("tabsAccount").selectedIndex == 2)
+                document.getElementById("tabsAccount").selectedIndex = 1; //POP                                                                    
         }
-        else
-        {
-            document.getElementById("vboxSmtpNA").setAttribute("hidden", true);
-            document.getElementById("vboxSmtpItems").setAttribute("hidden", false);
+        else  //classic
+        {        
+            if (bClassic) //new classic
+            { 
+                document.getElementById("vbSaveSentItems").setAttribute("hidden", true); 
+                document.getElementById("tabSMTP").collapsed = true;// show smtp 
+                if (document.getElementById("tabsAccount").selectedIndex == 2)
+                    document.getElementById("tabsAccount").selectedIndex = 1; //POP                                                                    
+            }
+            else           //old classic
+            {
+                document.getElementById("vboxSmtpItems").setAttribute("hidden", false);
+                document.getElementById("vboxSendAlt").setAttribute("hidden", true); 
+                document.getElementById("vbSaveSentItems").setAttribute("hidden", false); 
+                document.getElementById("tabSMTP").collapsed = false;// show smtp         
+            }         
         }
 
         this.m_DebugLog.Write("Yahoo-Pref-Accounts : rgModeOnChange - END");
@@ -673,6 +705,23 @@ var gPrefAccounts =
         this.m_DebugLog.Write("Yahoo-Pref-Accounts : chkSentItemsOnChange - END");
     },
 
+
+    rgAltOnChange : function ()
+    {
+        this.m_DebugLog.Write("Yahoo-Pref-Accounts : rgAltOnChange - START");
+
+        var bSendHtml = document.getElementById("radiogroupAlt").value;
+        this.m_DebugLog.Write("Yahoo-Pref-Accounts : rgAltOnChange -  bSendHtml "+ bSendHtml);
+
+        var szUserName = this.m_aszUserList[this.m_iIndex].toLowerCase();
+        szUserName = szUserName.replace(/\./g,"~");
+        this.m_DebugLog.Write("Yahoo-Pref-Accounts : chkJunkMailOnChange -  username "+ szUserName);
+
+        var prefAccess = new WebMailCommonPrefAccess();
+        prefAccess.Set("bool","yahoo.Account."+szUserName+".bSendHtml",bSendHtml);
+
+        this.m_DebugLog.Write("Yahoo-Pref-Accounts : rgAltOnChange - END");
+    },
 /**********************************************************************/
 //Deck Adv Panel
 /**********************************************************************/

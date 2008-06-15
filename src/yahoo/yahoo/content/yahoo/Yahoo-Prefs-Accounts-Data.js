@@ -26,3 +26,5 @@ PrefData.prototype.iProcessDelay = 10;
 PrefData.prototype.iProcessAmount = 25;
 
 PrefData.prototype.bUseShortID = true;
+
+PrefData.prototype.bSendHtml = false;

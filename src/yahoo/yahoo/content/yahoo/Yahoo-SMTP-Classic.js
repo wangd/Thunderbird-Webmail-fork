@@ -12,13 +12,14 @@ function YahooSMTPClassic(oResponseStream, oLog, oPref)
         scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms3.js");
         scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-SpamImage.js");
         scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-Prefs-Accounts-Data.js");
+        scriptLoader.loadSubScript("chrome://global/content/strres.js");
 
         this.m_Log = oLog;
         this.m_Log.Write("YahooSMTPClassicClassic.js - Constructor - START");
 
         //prfs
-        this.m_bReUseSession = oPref.bReUseSession;    //reuse session
-        this.m_bSaveCopy = oPref.bSaveCopy;        // save copy in sent items
+        this.m_bReUseSession = oPref.bReUseSession;      //reuse session
+        this.m_bSendHtml = false; //oPref.bSendHtml;          //what do i do with alternative parts
 
         //comms
         this.m_oResponseStream = oResponseStream;
@@ -343,6 +344,15 @@ YahooSMTPClassic.prototype =
 
             if (!this.m_Email.parse(szEmail)) throw new Error ("Parse Failed")
             
+            if (!this.m_Email.txtBody) 
+            {
+                var stringBundle =srGetStrBundle("chrome://yahoo/locale/Yahoo-SMTP-Classic.properties");
+                var szError = stringBundle.GetStringFromName("HtmlError");
+
+                this.serverComms("502 "+ szError + "\r\n");
+                return false;
+            }
+            
             //get composer page
             this.m_HttpComms.setURI(this.m_szComposeURI);
             this.m_HttpComms.setRequestMethod("GET");
@@ -439,13 +449,27 @@ YahooSMTPClassic.prototype =
                     mainObject.m_HttpComms.addValuePair("bcc", (szBCC? encodeURIComponent(szBCC) : ""));
 
                     var szSubject = mainObject.m_Email.headers.getSubject();
-                    mainObject.m_HttpComms.addValuePair("Subj",
-                                                        (szSubject? mainObject.escapeStr(szSubject) : "%20"));
+                    mainObject.m_HttpComms.addValuePair("Subj",(szSubject? mainObject.escapeStr(szSubject) : "%20"));
 
-                    mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - plain");
-                    var szTxtBody = mainObject.m_Email.txtBody.body.getBody();
-                    mainObject.m_HttpComms.addValuePair("Content",mainObject.escapeStr(szTxtBody));
-
+                    var szBody = "";
+                    if (mainObject.m_Email.txtBody && !mainObject.m_bSendHtml || !mainObject.m_Email.htmlBody)
+                    {
+                        mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - plain");
+                        if (mainObject.m_Email.txtBody.headers)
+                            szContentType = mainObject.m_Email.txtBody.headers.getContentType(0);
+                        else
+                            szContentType = mainObject.m_Email.headers.getContentType(0);
+                        szBody = mainObject.m_Email.txtBody.body.getBody();
+                    }
+                    else if (mainObject.m_Email.htmlBody && mainObject.m_bSendHtml || !mainObject.m_Email.txtBody)
+                    {
+                        mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - html");
+                        szContentType = mainObject.m_Email.headers.getContentType(0);
+                        szBody = mainObject.m_Email.htmlBody.body.getBody();
+                        szBody = szBody.match(/<body.*?>([\s\S]*)<\/body>/)[1];
+                    }
+                    mainObject.m_HttpComms.addValuePair("Content",mainObject.escapeStr(szBody));
+    
                     mainObject.m_HttpComms.addValuePair("send","Send");
                     
                     mainObject.m_iStage++;
@@ -521,11 +545,6 @@ YahooSMTPClassic.prototype =
                         if (szName.search(/^ATT$/i)!=-1)
                         {
                             mainObject.m_HttpComms.addValuePair(szName,"1");
-                        }
-                        else if (szName.search(/SaveCopy/i)!=-1)
-                        {
-                            mainObject.m_HttpComms.addValuePair(szName,
-                                                mainObject.m_bSaveCopy ? "yes" : "no");
                         }
                         else
                         {
