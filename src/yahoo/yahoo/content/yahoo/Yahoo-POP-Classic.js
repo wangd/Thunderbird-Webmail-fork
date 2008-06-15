@@ -193,13 +193,11 @@ YahooPOPClassic.prototype =
 
                     for (i=0; i<aLoginData.length; i++)
                     {
-                        var szName=aLoginData[i].match(patternYahooNameAlt)[1];
-                        szName = szName.replace(/["|']/gm,"");
+                        var szName=aLoginData[i].match(patternYahooClassicName)[1];
                         szName = szName.replace(/^\s*|\s*$/gm,"");
                         mainObject.m_Log.Write("YahooPOPClassic.js - loginOnloadHandler - loginData name " + szName);
 
-                        var szValue = aLoginData[i].match(patternYahooAltValue)[1];
-                        szValue = szValue.replace(/["|']/gm,"");
+                        var szValue = aLoginData[i].match(patternYahooClassicValue)[1];
                         szValue = szValue.replace(/^\s*|\s*$/gm,"");
                         mainObject.m_Log.Write("YahooPOPClassic.js - loginOnloadHandler - loginData value " + szValue);
 
