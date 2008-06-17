@@ -15,7 +15,7 @@ function OWAWebDav(oResponseStream, oLog, oPrefData)
         this.m_szPassWord = null;
         this.m_oResponseStream = oResponseStream;
         this.m_HttpComms = new HttpComms(this.m_Log);
-        this.m_HttpComms.setHandleHttpAuth(true);
+        this.m_HttpComms.setHandleHttpAuth(true);   
         this.m_iStage=0;
         this.m_szMsgID = null;
         this.m_aRawData = new Array();
@@ -90,24 +90,34 @@ OWAWebDav.prototype =
                 var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
                                          .getService(Components.interfaces.nsIWebMailCookieManager2);
                 oCookies.removeCookie(this.m_szUserName);
-
-                var oAuth = Components.classes["@mozilla.org/HttpAuthManager2;1"]
-                                      .getService(Components.interfaces.nsIHttpAuthManager2);
-                oAuth.removeToken(this.m_szUserName);
             }
 
             this.m_iStage=0;
-            if (this.m_bLoginWithDomain)
-                this.m_HttpComms.setUserName(this.m_szUserName);
-            else
-                this.m_HttpComms.setUserName(this.m_szUserName.match(/(.*?)@/)[1].toLowerCase());
+            var szUserName = this.m_szUserName;
+            if (!this.m_bLoginWithDomain)
+                szUserName = this.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
+            this.m_HttpComms.setUserName(szUserName);
             this.m_HttpComms.setPassword(this.m_szPassWord);
             
             var szDomain = this.m_szUserName.match(/.*?@(.*?)$/)[1].toLowerCase();
             this.m_szURL = this.m_DomainManager.getURL(szDomain);
+            
+            var nsIURI = Components.classes["@mozilla.org/network/io-service;1"]
+                                   .getService(Components.interfaces.nsIIOService)
+                                   .newURI(this.m_szURL, null, null);
+            var szServerName= nsIURI.host;
+            
+            var AuthToken = Components.classes["@mozilla.org/HttpAuthManager2;1"]
+                                    .getService(Components.interfaces.nsIHttpAuthManager2);
+            AuthToken.addToken(szServerName,
+                               "basic" ,
+                               nsIURI.path ,
+                               szUserName,
+                               this.m_szPassWord);
+            
+            this.m_HttpComms.setContentType("text/xml");
             this.m_HttpComms.setURI(this.m_szURL);
             this.m_HttpComms.setRequestMethod("PROPFIND");
-            this.m_HttpComms.setContentType("text/xml");
             this.m_HttpComms.addData(OWASchema);
             var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);
             if (!bResult) throw new Error("httpConnection returned false");
@@ -146,14 +156,24 @@ OWAWebDav.prototype =
 
             switch(mainObject.m_iStage)
             {
-                case 0: //get baisc uri's
+                case 0://get folder urls
+                    mainObject.m_HttpComms.setURI(mainObject.m_szURL);
+                    mainObject.m_HttpComms.setRequestMethod("PROPFIND");
+                    mainObject.m_HttpComms.setContentType("text/xml");
+                    mainObject.m_HttpComms.addData(OWASchema);
+                    mainObject.m_iStage++;
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
+                    if (!bResult) throw new Error("httpConnection returned false");
+                break;
+                
+                case 1: //get baisc uri's
                     var szFolderURI = szResponse.match(patternOWAFolder)[1];
                     mainObject.m_Log.Write("OWAWebDav.js - loginOnloadHandler - get folder url - " + szFolderURI);
                     mainObject.m_szTrashURI = szResponse.match(patternOWATrash)[1];
                     mainObject.m_Log.Write("OWAWebDav.js - loginOnloadHandler - get trash url - " + mainObject.m_szTrashURI);
 
                     //download folder list;
-                    mainObject.m_iStage = 1;
+                    mainObject.m_iStage++;
                     mainObject.m_HttpComms.setContentType("text/xml");
                     mainObject.m_HttpComms.setURI(szFolderURI);
                     mainObject.m_HttpComms.setRequestMethod("PROPFIND");
@@ -162,8 +182,7 @@ OWAWebDav.prototype =
                     if (!bResult) throw new Error("httpConnection returned false");
                 break;
 
-
-                case 1: //process folder uri's
+                case 2: //process folder uri's
                     var aszFolderList = szResponse.match(patternOWAResponse);
                     mainObject.m_Log.Write("OWAWebDav.js - loginOnloadHandler - aszFolderList :" +aszFolderList);
 
@@ -218,32 +237,13 @@ OWAWebDav.prototype =
                                   .getService(Components.interfaces.nsIHttpAuthManager2);
             oAuth.removeToken(mainObject.m_szUserName);
 
-            //check for retries
-            if (mainObject.m_iRetries > 0)
-            {
-                mainObject.m_iRetries --;
-                mainObject.m_Log.Write("OWAWebDav.js - loginOnloadHandler - having another go " +mainObject.m_iRetries);
-                if (mainObject.m_bLoginWithDomain)
-                    mainObject.m_HttpComms.setUserName(this.m_szUserName);
-                else
-                    mainObject.m_HttpComms.setUserName(mainObject.m_szUserName.match(/(.*?)@/)[1].toLowerCase());
-                mainObject.m_HttpComms.setPassword(mainObject.m_szPassWord);
-                mainObject.m_HttpComms.setURI(mainObject.m_szURL);
-                mainObject.m_HttpComms.setRequestMethod("PROPFIND");
-                mainObject.m_HttpComms.setContentType("text/xml");
-                mainObject.m_HttpComms.addData(OWASchema);
-                var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
-            }
-            else
-            {
-                mainObject.m_Log.DebugDump("OWAWebDav.js: loginHandler : Exception : "
-                                              + err.name
-                                              + ".\nError message: "
-                                              + err.message+ "\n"
-                                              + err.lineNumber);
+            mainObject.m_Log.DebugDump("OWAWebDav.js: loginHandler : Exception : "
+                                          + err.name
+                                          + ".\nError message: "
+                                          + err.message+ "\n"
+                                          + err.lineNumber);
 
-                mainObject.serverComms("-ERR negative vibes from " +mainObject.m_szUserName+ "\r\n");
-            }
+            mainObject.serverComms("-ERR negative vibes from " +mainObject.m_szUserName+ "\r\n");
         }
     },
 

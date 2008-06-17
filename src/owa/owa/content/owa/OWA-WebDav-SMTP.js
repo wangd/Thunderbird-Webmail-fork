@@ -65,10 +65,6 @@ OWASMTPWebDav.prototype =
                 var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
                                          .getService(Components.interfaces.nsIWebMailCookieManager2);
                 oCookies.removeCookie(this.m_szUserName);
-
-                var oAuth = Components.classes["@mozilla.org/HttpAuthManager2;1"]
-                                      .getService(Components.interfaces.nsIHttpAuthManager2);
-                oAuth.removeToken(this.m_szUserName);
             }
 
             if (this.m_bLoginWithDomain)
@@ -76,13 +72,23 @@ OWASMTPWebDav.prototype =
             else
                 this.m_HttpComms.setUserName(this.m_szUserName.match(/(.*?)@/)[1].toLowerCase());
             this.m_HttpComms.setPassword(this.m_szPassWord);
-            this.m_HttpComms.setContentType("text/xml");
-            
+
             var szDomain = this.m_szUserName.match(/.*?@(.*?)$/)[1].toLowerCase();
             this.m_szURL = this.m_DomainManager.getURL(szDomain);
-            this.m_HttpComms.setURI(this.m_szURL);
-            this.m_HttpComms.setRequestMethod("PROPFIND");
-            this.m_HttpComms.addData(OWASchema);
+
+            var nsIURI = Components.classes["@mozilla.org/network/io-service;1"]
+                                       .getService(Components.interfaces.nsIIOService)
+                                       .newURI(this.m_szURL, null, null);
+            var szServerName= nsIURI.host;
+            var szLoginURL  = "https://" + szServerName + "/exchweb/bin/auth/owaauth.dll"
+            this.m_HttpComms.setURI(szLoginURL);
+            this.m_HttpComms.setRequestMethod("POST");   
+            this.m_HttpComms.addValuePair("destination",this.m_szURL);
+            this.m_HttpComms.addValuePair("username",this.m_szUserName);
+            this.m_HttpComms.addValuePair("password",this.m_szPassWord);
+            this.m_HttpComms.addValuePair("SubmitCreds","Log+On");
+            this.m_HttpComms.addValuePair("forcedownlevel","0");
+            this.m_HttpComms.addValuePair("trusted","0");
             var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);
             if (!bResult) throw new Error("httpConnection returned false");
 
@@ -117,17 +123,32 @@ OWASMTPWebDav.prototype =
             if (httpChannel.responseStatus != 200 && httpChannel.responseStatus != 207 )
                 throw new Error("return status " + httpChannel.responseStatus);
 
-            mainObject.m_iStage++;
-            mainObject.m_Log.Write("OWAWD-SMTP.js - loginOnloadHandler - get url - start");
-            mainObject.m_iAuth=0; //reset login counter
-
-            mainObject.m_szSendUri = szResponse.match(patternOWASendMsg)[1];
-            mainObject.m_Log.Write("OWAWD-SMTP.js - loginOnloadHandler - Send URi - " +mainObject.m_szSendUri);
-
-            //server response
-            mainObject.serverComms("235 Your In\r\n");
-            mainObject.m_bAuthorised = true;
-
+            switch(mainObject.m_iStage)
+            {
+                case 0://get folder urls
+                    mainObject.m_HttpComms.setURI(mainObject.m_szURL);
+                    mainObject.m_HttpComms.setRequestMethod("PROPFIND");
+                    mainObject.m_HttpComms.setContentType("text/xml");
+                    mainObject.m_HttpComms.addData(OWASchema);
+                    mainObject.m_iStage++;
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
+                    if (!bResult) throw new Error("httpConnection returned false");
+                break;
+                
+                case 1: //get baisc uri's
+                    mainObject.m_iStage++;
+                    mainObject.m_Log.Write("OWAWD-SMTP.js - loginOnloadHandler - get url - start");
+                    mainObject.m_iAuth=0; //reset login counter
+        
+                    mainObject.m_szSendUri = szResponse.match(patternOWASendMsg)[1];
+                    mainObject.m_Log.Write("OWAWD-SMTP.js - loginOnloadHandler - Send URi - " +mainObject.m_szSendUri);
+        
+                    //server response
+                    mainObject.serverComms("235 Your In\r\n");
+                    mainObject.m_bAuthorised = true;
+                break;
+            }
+            
             mainObject.m_Log.Write("OWAWD-SMTP.js - loginOnloadHandler - END");
         }
         catch(err)
