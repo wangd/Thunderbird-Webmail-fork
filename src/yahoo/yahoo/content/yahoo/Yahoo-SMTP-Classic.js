@@ -43,7 +43,7 @@ function YahooSMTPClassic(oResponseStream, oLog, oPref)
         this.m_Email.decodeBody(true);
         this.m_szImageVerForm = null;
         this.m_szLoginUserName = null;
-
+        this.m_szForm = null;
         this.m_bReEntry = false;
         this.m_aLoginForm = null;
         this.m_iLoginCount = 0;
@@ -292,14 +292,18 @@ YahooSMTPClassic.prototype =
 
                     for (i=0; i<aInputData.length; i++)
                     {
-                        var szName=aInputData[i].match(patternYahooClassicName)[1];
+                        var szName = aInputData[i].match(patternYahooClassicName)[1];
                         mainObject.m_Log.Write("YahooSMTPClassic.js - loginOnloadHandler - aInputData name " + szName);
-
-                        var szValue = aInputData[i].match(patternYahooClassicValue)[1];
-                        mainObject.m_Log.Write("YahooSMTPClassic.js - loginOnloadHandler - aInputData value " + szValue);
-
-                        szComposeURL += "&" + szName + "=" + szValue;
+                     
+                        if (szName.search(/rand/i)==-1)
+                        {
+                            var szValue = aInputData[i].match(patternYahooClassicValue)[1];
+                            mainObject.m_Log.Write("YahooSMTPClassic.js - loginOnloadHandler - aInputData value " + szValue);
+                            
+                            szComposeURL += "&" + szName + "=" + szValue;
+                        }
                     }
+                    
                     
                                      
                     mainObject.m_szComposeURI = szComposeURL ;
@@ -436,7 +440,7 @@ YahooSMTPClassic.prototype =
                         if (aszInput[i].search(/value/i)!=-1)
                             szValue = aszInput[i].match(patternYahooClassicValue)[1]
 
-                        mainObject.m_HttpComms.addValuePair(szName, encodeURIComponent(szValue));
+                        mainObject.m_HttpComms.addValuePair(szName, encodeURIComponent(mainObject.cleanHTML(szValue)));
                     }
 
                     var szTo = mainObject.m_Email.headers.getTo();
@@ -531,8 +535,25 @@ YahooSMTPClassic.prototype =
 
                     var szActionURI = szForm.match(patternYahooAction)[1];
                     mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - Action " + szActionURI);
-                    if (szActionURI.search(/^http/i)==-1)
-                        szActionURI = mainObject.m_szLocationURI + szActionURI;
+                    if (!mainObject.m_HttpComms.setURI(szActionURI)) 
+                    {
+                        if (szActionURI.search(/^\//) == -1)
+                        {
+                            var IOService = Components.classes["@mozilla.org/network/io-service;1"]
+                                                      .getService(Components.interfaces.nsIIOService);
+                            var nsIURI = IOService.newURI(httpChannel.URI.spec, null, null)
+                                                  .QueryInterface(Components.interfaces.nsIURL);
+                            var szDirectory = nsIURI.directory
+                            mainObject.m_Log.Write("YahooSMTPClassic - loginOnloadHandler - directory : " +szDirectory);
+                            
+                            szActionURI = mainObject.m_szLocationURI + szDirectory + szActionURI
+                        }
+                        else
+                        {
+                            szActionURI = mainObject.m_szLocationURI + szActionURI
+                        }
+                        mainObject.m_HttpComms.setURI(szActionURI);                
+                    }
 
                     var aszInput = szForm.match(patternYahooInput);
                     mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - Input " + aszInput);
@@ -542,26 +563,19 @@ YahooSMTPClassic.prototype =
                         var szName = aszInput[i].match(patternYahooClassicName)[1];
                         mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - Name " + szName);
 
-                        if (szName.search(/^ATT$/i)!=-1)
-                        {
-                            mainObject.m_HttpComms.addValuePair(szName,"1");
-                        }
-                        else
-                        {
-                            var szValue = aszInput[i].match(patternYahooClassicValue)[1]
-                            mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler -  value " + szValue);
-                            mainObject.m_HttpComms.addValuePair(szName,(szValue.length>0) ? szValue : "");
-                        }
+                        var szValue = aszInput[i].match(patternYahooClassicValue)[1]
+                        mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler -  value " + szValue);
+                        mainObject.m_HttpComms.addValuePair(szName,(szValue.length>0) ? encodeURIComponent(szValue) : "");
                     }
 
-                    mainObject.m_HttpComms.addValuePair("To","");
-                    mainObject.m_HttpComms.addValuePair("Bcc","");
-                    mainObject.m_HttpComms.addValuePair("Cc","");
+                    mainObject.m_HttpComms.addValuePair("to","");
+                    mainObject.m_HttpComms.addValuePair("bcc","");
+                    mainObject.m_HttpComms.addValuePair("cc","");
                     mainObject.m_HttpComms.addValuePair("Subj","");
-                    mainObject.m_HttpComms.addValuePair("Body","");
+                    mainObject.m_HttpComms.addValuePair("Content","");
+                    mainObject.m_HttpComms.addValuePair("attachFiles","Attach+Files");
 
                     mainObject.m_iStage = 3;
-                    mainObject.m_HttpComms.setURI(szActionURI);
                     mainObject.m_HttpComms.setRequestMethod("POST");
                     var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler,mainObject);
                     if (!bResult) throw new Error("httpConnection returned false");
@@ -570,44 +584,36 @@ YahooSMTPClassic.prototype =
                 case 3: //Attchment handler
                     mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - attach upload");
 
-                    var szForm = szResponse.match(patternYahooAttachmentForm)[0];
-                    mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - Form " + szForm);
+                    mainObject.m_szForm = szResponse.match(patternYahooClassicAttForm)[0];
+                    mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - Form " + mainObject.m_szForm);
 
-                    var szAction = szForm.match(patternYahooAction)[1];
-                    mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - Action " + szAction);
-                    if (szAction.search(/^http/i)==-1)
-                        szAction = mainObject.m_szLocationURI + szAction;
-
-                    var aszInput = szForm.match(patternYahooInput);
+                    var aszInput = mainObject.m_szForm.match(patternYahooInput);
                     mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - Input " + aszInput);
 
-                    var aszFileInput = szForm.match(patternYahooFile);
-                    mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - File Input " + aszFileInput);
-
+                    var szActionURI = "";
+                    var szRand = "";
                     for (i=0; i< aszInput.length; i++)
                     {
                         var szName = aszInput[i].match(patternYahooClassicName)[1];
                         mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - Name " + szName);
-
-                        if(szName.search(/^UPL$/i)!=-1)
+                        
+                        if (szName.search(/uploadEndPoint/)!=-1)
                         {
-                            mainObject.m_HttpComms.addValuePair(szName, 1);
+                            szActionURI ="http://" + aszInput[i].match(patternYahooClassicValue)[1];
+                            mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler -  szActionURI " + szActionURI);
                         }
-                        else if (szName.search(/^body$/i)!=-1)
+                        else if (szName.search(/rand/i)!=-1)
                         {
-                            mainObject.m_HttpComms.addValuePair(szName,"Inbox");   
-                        }
-                        else if (szName.search(/^box$/i)!=-1)
-                        {
-                            mainObject.m_HttpComms.addValuePair(szName,"<br>");                              
-                        }
-                        else
-                        {
-                            var szValue = aszInput[i].match(patternYahooClassicValue)[1];
-                            mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - value " + szValue);
-                            mainObject.m_HttpComms.addValuePair(szName, (szValue.length>0) ? szValue : "");
-                        }
+                            szRand = aszInput[i].match(patternYahooClassicValue)[1];
+                        }                      
                     }
+                    mainObject.m_HttpComms.setURI(szActionURI.replace(/.rand=.*?/,".rand="+szRand));                
+
+                    var aszFileInput = mainObject.m_szForm.match(patternYahooFile);
+                    mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - File Input " + aszFileInput);
+
+                    mainObject.m_HttpComms.addValuePair("_charset_",  "UTF-8");
+                    mainObject.m_HttpComms.addValuePair("resulturl",  "http://us.mc539.mail.yahoo.com/mc/uploadHandler?do=done");
 
                     for (i=0; i< aszFileInput.length; i++)
                     {
@@ -632,7 +638,6 @@ YahooSMTPClassic.prototype =
                     }
 
                     mainObject.m_HttpComms.setContentType("multipart/form-data");
-                    mainObject.m_HttpComms.setURI(szAction);
                     mainObject.m_HttpComms.setRequestMethod("POST");
                     var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler,mainObject);
                     if (!bResult) throw new Error("httpConnection returned false");
@@ -642,56 +647,76 @@ YahooSMTPClassic.prototype =
                 case 4: //Attachment OK handler
                     mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - attach ok handler");
 
-                    if (szResponse.search(patternYahooAttachCheck)==-1)
+                    if (szResponse.search(patternYahooClassicAttCheck)==-1)
                     {
                         mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - attach check failed");
                         mainObject.serverComms("502 Error Sending Email\r\n");
                         return;
                     }
 
-                    var szForm = szResponse.match(patternYahooComposeForm)[0];
-                    mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - Form " + szForm);
 
-                    var szAction = szForm.match(patternYahooAction)[1];
-                    mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - Action " + szAction);
-                    if (szAction.search(/^http/i)==-1)
-                        szAction = mainObject.m_szLocationURI + szAction;
-
-                    var aszInput = szForm.match(patternYahooInput);
+                    mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - form  " + mainObject.m_szForm);                
+                    var aszInput = mainObject.m_szForm.match(patternYahooInput);
                     mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - Input " + aszInput);
 
-
+                    var szRand = "";
                     for (i=0; i< aszInput.length; i++)
                     {
                         var szName = aszInput[i].match(patternYahooClassicName)[1];
                         mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - Name " + szName);
 
-                        var szValue = aszInput[i].match(patternYahooClassicValue)[1];
-                        mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - value " + szValue);
-
-                        mainObject.m_HttpComms.addValuePair(szName,(szValue.length>0)? szValue : "");
+                        var szValue = "";
+                        if (szName.search(/uploadEndPoint/i)==-1)
+                        {        
+                            if (aszInput[i].search(/value/i)!=-1)
+                            {
+                                szValue = aszInput[i].match(patternYahooClassicValue)[1];
+                                mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - value " + szValue);
+                                
+                                if (szName.search(/rand/i)!=-1)
+                                {
+                                    szRand = aszInput[i].match(patternYahooClassicValue)[1];
+                                }  
+                            }
+                            mainObject.m_HttpComms.addValuePair(szName, (szValue.length > 0) ? encodeURIComponent(szValue) : "");
+                        }
                     }
+                    mainObject.m_szForm = null;
                     
-                    if (!mainObject.m_HttpComms.setURI(szAction)) 
+                    mainObject.m_HttpComms.setURI(mainObject.m_szComposeURI.replace(/.rand=.*?/,".rand="+szRand));
+                    
+                    var szAttDetails = szResponse.match(patternYahooClassicAttDetails)[1];
+                    mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - szAttDetails " + szAttDetails);
+                    var aszAttDetails = szAttDetails.match(/\[.*?\]/igm);
+                    mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - aszAttDetails " + aszAttDetails);
+                    var aszFileNames = aszAttDetails[0].match(/["|'].*?["|']/g);
+                    mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - aszFileNames " + aszFileNames);
+                    var aszFileSize = aszAttDetails[1].match(/["|'].*?["|']/g);
+                    mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - aszFileSize " + aszFileSize);
+                    var aszFileUpload = aszAttDetails[2].match(/["|'].*?["|']/g);
+                    mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - aszFileUpload " + aszFileUpload);
+                    var aszFileVirus = aszAttDetails[3].match(/["|'].*?["|']/g);
+                    mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - aszFileVirus " + aszFileVirus);
+                    
+                    var szFileDetails = "[";
+                    for (var i=0; i<aszFileNames.length; i++)
                     {
-                        if (szAction.search(/^\//) == -1)
-                        {
-                            var IOService = Components.classes["@mozilla.org/network/io-service;1"]
-                                                      .getService(Components.interfaces.nsIIOService);
-                            var nsIURI = IOService.newURI(httpChannel.URI.spec, null, null)
-                                                  .QueryInterface(Components.interfaces.nsIURL);
-                            var szDirectory = nsIURI.directory
-                            mainObject.m_Log.Write("YahooSMTPClassic - loginOnloadHandler - directory : " +szDirectory);
-                            
-                            szComposeURL = mainObject.m_szLocationURI + szDirectory + szAction
-                        }
-                        else
-                        {
-                            szComposeURL = mainObject.m_szLocationURI + szAction
-                        }
-                        mainObject.m_HttpComms.setURI(szAction)
+                        szFileDetails = szFileDetails + "[";
+                        szFileDetails = szFileDetails + "\"" + aszFileNames[i].match(/["|'](.*?)["|']/)[1] + "\",";
+                        szFileDetails = szFileDetails + "\"" + aszFileSize[i].match(/["|'](.*?)["|']/)[1] + "\",";
+                        szFileDetails = szFileDetails + "\"" + aszFileUpload[i].match(/["|'](.*?)["|']/)[1].replace(/\\/g,"") + "\",";
+                        szFileDetails = szFileDetails + "\"" + aszFileVirus[i].match(/["|'](.*?)["|']/)[1] + "\"";
+                        szFileDetails = szFileDetails + "]"; 
+                        
+                        if (i < aszFileNames.length-1) szFileDetails = szFileDetails + ","; 
                     }
+                    szFileDetails = szFileDetails + "]";
+                    mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - szFileDetails " + szFileDetails);
                     
+                    mainObject.m_HttpComms.addValuePair("attachment",encodeURIComponent(szFileDetails));
+                    mainObject.m_HttpComms.addValuePair("changed","true");
+                    mainObject.m_HttpComms.addValuePair("frmUp","fromupload");                  
+
                     mainObject.m_HttpComms.setRequestMethod("POST");
                     var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler, mainObject);
                     if (!bResult) throw new Error("httpConnection returned false");

@@ -52,6 +52,10 @@ const patternYahooNextPageAlt = /<span class="offscreen">.*?href="(.*?startMid=.
 const patternYahooComposeURLForm = /<form.*?compose.*?>[\s\S]*?<\/form>/igm;
 const patternYahooClassicName = /name=['|"]([\S\s]*?)['|"]/i;
 const patternYahooClassicValue = /value=['|"]([\S\s]*?)['|"]/i;
+const patternYahooClassicAttForm = /<form.*?id="attach_form0"[\S\s]*?>[\S\s]*?<\/form>/igm;
+const patternYahooClassicAction = /action="(.*?)"/;
+const patternYahooClassicAttCheck = /errorFlag.*?=.*?false;/igm;
+const patternYahooClassicAttDetails = /fileDetails.*?=.*?["|'](.*?)["|'];/im;
 
 /******************************  BETA ***************************************/
 const kPatternWssid = /[']?wssid[']?.*?'(.*?)',/i;
