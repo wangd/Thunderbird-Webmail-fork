@@ -94,9 +94,14 @@ YahooPOPClassic.prototype =
             this.m_szYahooMail = "http://mail.yahoo.com";
             this.m_szLoginUserName = this.m_szUserName;
 
-            if (this.m_szUserName.search(/yahoo/i)!=-1) //remove domain from user name
+            if (this.m_szUserName.search(/yahoo/i)!=-1)
             {
-                this.m_szLoginUserName = this.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
+                if (this.m_szUserName.search(/yahoo\.co\.jp/i)!=-1)
+                    this.m_szYahooMail = "http://mail.yahoo.co.jp/";
+
+                //remove domain from user name
+                if (this.m_szUserName.search(/ymail/i)!=-1) 
+                    this.m_szLoginUserName = this.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
             }
             else if (this.m_szUserName.search(/@talk21.com$/i)!=-1 ||
                      this.m_szUserName.search(/@btinternet.com$/i)!=-1  ||
@@ -104,7 +109,6 @@ YahooPOPClassic.prototype =
             {
                 this.m_szYahooMail = "http://bt.yahoo.com/";
             }
-
 
             this.m_Log.Write("YahooPOPClassic.js - logIN - default " +this.m_szYahooMail);
             this.m_iStage = 0;
