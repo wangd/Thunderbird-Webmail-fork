@@ -8,7 +8,6 @@ function OWASMTPScreenRipper(oResponseStream, oLog, oPrefData)
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms3.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Email.js");
-        scriptLoader.loadSubScript("chrome://global/content/strres.js");
 
         this.m_Log = oLog;
         this.m_Log.Write("OWA-SMTP-SR.js - Constructor - START");
@@ -111,6 +110,7 @@ OWASMTPScreenRipper.prototype =
                 case 0: //login form
                     var szAction = szResponse.match(kOWAAction)[1];            
                     mainObject.m_Log.Write("OWA-SMTP-SR - loginOnloadHandler - szAction :" +szAction);
+                    if (szAction.search(/^\//) == -1) szAction =  "/"+szAction;
                     var szURL = httpChannel.URI.prePath + szAction
                     mainObject.m_Log.Write("OWA-SMTP-SR - loginOnloadHandler - szURL :" +szURL);
         
@@ -123,7 +123,8 @@ OWASMTPScreenRipper.prototype =
                     {
                         mainObject.m_Log.Write("OWA-SMTP-SR - loginOnloadHandler - aszInput :" +aszInput[i]);
                         
-                        if (aszInput[i].search(/submit/i)==-1 && aszInput[i].search(/radio/i) == -1 && aszInput[i].search(/check/i) == -1)
+                        if (aszInput[i].search(/submit/i)==-1 && aszInput[i].search(/button/i)==-1 
+                                && aszInput[i].search(/radio/i) == -1 && aszInput[i].search(/check/i) == -1)
                         { 
                             var szName = aszInput[i].match(kOWAName)[1];
                             
@@ -197,7 +198,10 @@ OWASMTPScreenRipper.prototype =
             
             if (!this.m_Email.txtBody) 
             {
-                var stringBundle =srGetStrBundle("chrome://owa/locale/OWA-SMTP.properties");
+                var strBundleService = Components.classes["@mozilla.org/intl/stringbundle;1"]
+                                                 .getService(Components.interfaces.nsIStringBundleService);
+                var stringbundle = strBundleService.createBundle("chrome://owa/locale/OWA-SMTP.properties");                                 
+
                 var szError = stringBundle.GetStringFromName("HtmlError");
 
                 this.serverComms("502 "+ szError + "\r\n");

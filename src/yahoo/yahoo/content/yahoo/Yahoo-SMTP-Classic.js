@@ -351,7 +351,9 @@ YahooSMTPClassic.prototype =
             
             if (!this.m_Email.txtBody) 
             {
-                var stringBundle =srGetStrBundle("chrome://yahoo/locale/Yahoo-SMTP-Classic.properties");
+                var strBundleService = Components.classes["@mozilla.org/intl/stringbundle;1"]
+                                             .getService(Components.interfaces.nsIStringBundleService);
+                var stringBundle = strBundleService.createBundle("chrome://yahoo/locale/Yahoo-SMTP-Classic.properties");
                 var szError = stringBundle.GetStringFromName("HtmlError");
 
                 this.serverComms("502 "+ szError + "\r\n");
