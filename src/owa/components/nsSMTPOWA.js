@@ -17,7 +17,6 @@ function nsOWASMTP()
         scriptLoader.loadSubScript("chrome://owa/content/OWA-Prefs-Data.js");
         scriptLoader.loadSubScript("chrome://owa/content/OWA-WebDav-SMTP.js");
         scriptLoader.loadSubScript("chrome://owa/content/OWA-ScreenRipper-SMTP.js");
-        scriptLoader.loadSubScript("chrome://global/content/strres.js");
 
         var date = new Date();
         var szLogFileName = "OWA SMTP Log - " + date.getHours()+ "-" + date.getMinutes() + "-"+ date.getUTCMilliseconds() +" -";

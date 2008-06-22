@@ -200,7 +200,7 @@ OWASMTPScreenRipper.prototype =
             {
                 var strBundleService = Components.classes["@mozilla.org/intl/stringbundle;1"]
                                                  .getService(Components.interfaces.nsIStringBundleService);
-                var stringbundle = strBundleService.createBundle("chrome://owa/locale/OWA-SMTP.properties");                                 
+                var stringBundle = strBundleService.createBundle("chrome://owa/locale/OWA-SMTP.properties");                                 
 
                 var szError = stringBundle.GetStringFromName("HtmlError");
 

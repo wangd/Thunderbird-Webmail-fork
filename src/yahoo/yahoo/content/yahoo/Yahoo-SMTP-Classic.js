@@ -12,7 +12,6 @@ function YahooSMTPClassic(oResponseStream, oLog, oPref)
         scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms3.js");
         scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-SpamImage.js");
         scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-Prefs-Accounts-Data.js");
-        scriptLoader.loadSubScript("chrome://global/content/strres.js");
 
         this.m_Log = oLog;
         this.m_Log.Write("YahooSMTPClassicClassic.js - Constructor - START");

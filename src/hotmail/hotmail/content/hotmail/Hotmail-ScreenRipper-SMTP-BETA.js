@@ -8,7 +8,6 @@ function HotmailSMTPScreenRipperBETA(oResponseStream, oLog, oPrefData)
         scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms3.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Email.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-Prefs-Data.js");
-        scriptLoader.loadSubScript("chrome://global/content/strres.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/HTML-escape.js");
 
         this.m_Log = oLog;
