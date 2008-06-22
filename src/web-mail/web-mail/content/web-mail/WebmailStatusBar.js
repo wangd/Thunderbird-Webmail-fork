@@ -38,7 +38,7 @@ var gWebMailStatusBar =
             //load strings
             var strBundleService = Components.classes["@mozilla.org/intl/stringbundle;1"]
                                              .getService(Components.interfaces.nsIStringBundleService);
-            this.m_stringbundle = strBundleService.createBundle("chrome://web-mail/locale/Webmail-AccountWizard.properties");                                 
+            this.m_stringbundle = strBundleService.createBundle("chrome://web-mail/locale/Webmail-Statusbar.properties");                                 
                                              
             //get popt service
             this.m_POPServer = Components.classes["@mozilla.org/POPConnectionManager;1"].getService()
@@ -189,32 +189,31 @@ var gWebMailStatusBar =
                          
             var menu = document.getElementById("statusWebmailMenu");
             menu.showPopup(document.getElementById(id),-1,-1,"popup","topleft","bottomleft"); 
-            var strbundle =srGetStrBundle("chrome://web-mail/locale/Webmail-Statusbar.properties");
-            
+                        
             //get status of selected server
             var iServerStatus = -1;
             var szServer = ""
             if (id == "pop-status")
             {
                 iServerStatus = this.m_POPServer.GetStatus();
-                szServer = strbundle.GetStringFromName("pop");
+                szServer = this.m_stringbundle.GetStringFromName("pop");
             }
             else if (id == "smtp-status")
             {
                 iServerStatus = this.m_SMTPServer.GetStatus();
-                szServer = strbundle.GetStringFromName("smtp")
+                szServer = this.m_stringbundle.GetStringFromName("smtp")
             }
             else if (id == "imap-status")
             {
                 iServerStatus = this.m_IMAPServer.GetStatus();
-                szServer = strbundle.GetStringFromName("imap")
+                szServer = this.m_stringbundle.GetStringFromName("imap")
             } 
             this.m_Log.Write("Webmail : showMenu - " + iServerStatus);
             
-            var szEnable = strbundle.GetStringFromName("enable");
+            var szEnable = this.m_stringbundle.GetStringFromName("enable");
             szEnable = szEnable.replace(/\%1/,szServer);
             document.getElementById("enableWebmailServer").label = szEnable ; //update label
-            var szDisable =  strbundle.GetStringFromName("disable");
+            var szDisable =  this.m_stringbundle.GetStringFromName("disable");
             szDisable = szDisable.replace(/\%1/,szServer);
             document.getElementById("disableWebmailServer").setAttribute("label",szDisable); //update label
                         
@@ -402,25 +401,24 @@ var gWebMailStatusBar =
     {
         this.m_Log.Write("WebmailStatusbar : StatusText - " + iValue + " " + szServerID + "- START");
         
-        var strbundle =srGetStrBundle("chrome://web-mail/locale/Webmail-Statusbar.properties");
         var szStatus="";
 
         //status
         switch(iValue)
         {// -1 = ERROR (RED); 0 = WAITING (AMBER); 1 = Stopped (GREY); 2 = Running (GREEN)
-            case -1:   szStatus = strbundle.GetStringFromName("error"); break
-            case  0:   szStatus = strbundle.GetStringFromName("stop"); break
-            case  1:   szStatus = strbundle.GetStringFromName("wait"); break
-            case  2:   szStatus = strbundle.GetStringFromName("go"); break
+            case -1:   szStatus = this.m_stringbundle.GetStringFromName("error"); break
+            case  0:   szStatus = this.m_stringbundle.GetStringFromName("stop"); break
+            case  1:   szStatus = this.m_stringbundle.GetStringFromName("wait"); break
+            case  2:   szStatus = this.m_stringbundle.GetStringFromName("go"); break
         }
 
         //server
         var szServer = "";
         switch(szServerID)
         {
-            case "pop-status" :   szServer = strbundle.GetStringFromName("pop"); break
-            case "smtp-status":   szServer = strbundle.GetStringFromName("smtp"); break
-            case "imap-status":   szServer = strbundle.GetStringFromName("imap"); break
+            case "pop-status" :   szServer = this.m_stringbundle.GetStringFromName("pop"); break
+            case "smtp-status":   szServer = this.m_stringbundle.GetStringFromName("smtp"); break
+            case "imap-status":   szServer = this.m_stringbundle.GetStringFromName("imap"); break
         }
         
         var szResult = szStatus.replace(/\%1/,szServer);
