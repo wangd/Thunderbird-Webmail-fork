@@ -1,2 +1,4 @@
 <!ENTITY DownloadUnread.Label "Download unread emails only">
 <!ENTITY DownloadUnread.AccessKey "u">
+<!ENTITY Archive.Label "Save to Archive instead of deleting">
+<!ENTITY Archive.AccessKey "A">

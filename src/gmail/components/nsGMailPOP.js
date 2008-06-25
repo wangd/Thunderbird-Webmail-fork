@@ -68,12 +68,19 @@ function nsGMail()
 
         //do i download unread msg only
         oPref = {Value:null};
-        var  WebMailPrefAccess = new WebMailCommonPrefAccess();
         if (WebMailPrefAccess.Get("bool","gmail.bDownloadUnread",oPref))
             this.m_bDownloadUnread = oPref.Value;
         else
             this.m_bDownloadUnread = true;
         this.m_Log.Write("nsGMailPOP.js - Constructor - bDownloadUnread : " + this.m_bDownloadUnread);
+
+        //archive or delete
+        oPref = {Value:null};
+        if (WebMailPrefAccess.Get("bool","gmail.bArchive",oPref))
+            this.m_bArchive = oPref.Value;
+        else
+            this.m_bArchive = true;
+        this.m_Log.Write("nsGMailPOP.js - Constructor - m_bArchive : " + this.m_bArchive);
 
         this.m_szMsgID = 0;
 
@@ -804,9 +811,6 @@ nsGMail.prototype =
             if (httpChannel.responseStatus != 200)
                 throw new Error("error status " + httpChannel.responseStatus);
 
-            // if ( szResponse.indexOf('X-Gmail-Received') < 0 )
-            // if ( szResponse.indexOf('Subject:') < 0 )
-            //if ( szResponse.indexOf('From:') < 0 )
             var szContetnType =  httpChannel.getResponseHeader("Content-Type");
             mainObject.m_Log.Write("nsGMailPOP.js - emailOnloadHandler - szContetnType "+szContetnType);
             if (szContetnType.search(/text\/html/i)!=-1)
@@ -853,22 +857,10 @@ nsGMail.prototype =
             var szDeleteMsgURL = this.m_szMailURL ;
             szDeleteMsgURL += "?search=inbox&ui=1";
             szDeleteMsgURL += "&view=up";
-            szDeleteMsgURL += "&act=dm";
+            szDeleteMsgURL += this.m_bArchive ? "&act=rc_%5Ei" : "&act=tr"; 
             szDeleteMsgURL += "&at=" + this.m_szGMailAtCookie;
-            szDeleteMsgURL += "&m=" + this.m_szMsgID;
-/*    
-            this.m_HttpComms.addValuePair('search', 'inbox');
-            this.m_HttpComms.addValuePair('view', 'tl');
-            this.m_HttpComms.addValuePair('start', '0');
-            this.m_HttpComms.addValuePair('at', this.m_szGMailAtCookie);
-            this.m_HttpComms.addValuePair('act', 'tr');
-            this.m_HttpComms.addValuePair('t', this.m_szMsgID);
-    
-            var szDeleteMsgURL = this.m_szMailURL;
-    
-            this.m_HttpComms.setURI(szDeleteMsgURL);
-            this.m_HttpComms.setRequestMethod("POST");
-*/
+            szDeleteMsgURL += "&t=" + this.m_szMsgID;
+
             this.m_HttpComms.setURI(szDeleteMsgURL);
             this.m_HttpComms.setRequestMethod("GET");
             var bResult = this.m_HttpComms.send(this.deleteMessageOnloadHandler, this);
@@ -900,11 +892,6 @@ nsGMail.prototype =
             if (httpChannel.responseStatus != 200 )
                 throw new Error("error status " + httpChannel.responseStatus);
     
-    /*
-            if ( szResponse.indexOf("The conversation has been moved to the Trash") < 0 )
-                throw new Error("Error deleting message);
-    */
-    
             mainObject.serverComms("+OK its history\r\n");
             mainObject.m_Log.Write("nsGMailPOP.js - deleteMessageOnload - END");
         }
@@ -923,11 +910,7 @@ nsGMail.prototype =
         try
         {
             this.m_Log.Write("nsGMailPOP.js - logOUT - START");
-/*
-    var ios = Components.classes[kIOSERVICE_CONTRACTID].getService(nsIIOService);
-    var cookieMgr = Components.classes[kCOOKIESERVICE_CONTRACTID].getService(nsICookieManager);
-    cookieMgr.remove("mail.google.com", "GX", "/mail", false); cookieMgr.remove(".google.com", "SID", "/", false);
-*/
+            
             if ( this.m_bReUseSession)
             {
                 this.m_Log.Write("nsGMailSMTP.js - logOUT - Saving session Data");
