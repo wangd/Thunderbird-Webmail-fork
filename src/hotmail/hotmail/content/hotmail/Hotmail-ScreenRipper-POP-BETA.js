@@ -162,8 +162,8 @@ HotmailScreenRipperBETA.prototype =
 
             //check for java refresh
             var aRefresh = szResponse.match(patternHotmailJSRefresh);
-            if (!aRefresh) aRefresh = szResponse.match(patternHotmailJSRefreshAlt);
             if (!aRefresh) aRefresh = szResponse.match(patternHotmailRefresh2); 
+            if (!aRefresh) aRefresh = szResponse.match(patternHotmailJSRefreshAlt);
             mainObject.m_Log.Write("Hotmail-SR-BETA-SMTP - loginOnloadHandler aRefresh "+ aRefresh);
             if (aRefresh)
             {
@@ -638,13 +638,15 @@ HotmailScreenRipperBETA.prototype =
                             today.setFullYear("20" + aDate[2]);   //Hotmail uses YY
                             
                         this.m_Log.Write("Hotmail-SR-BETA.js - processMSG - date "+aDate);
-                        if (this.m_szLocale == "en-US") 
+                        if (this.m_szLocale.search(/en-US/i)!=-1) 
                         {
+                            this.m_Log.Write("Hotmail-SR-BETA.js - processMSG - date mm/day");
                             today.setMonth(aDate[0]-1);
                             today.setDate(aDate[1]);
                         }
                         else
                         {
+                            this.m_Log.Write("Hotmail-SR-BETA.js - processMSG - date day/mm");
                             today.setMonth(aDate[1]-1);
                             today.setDate(aDate[0]);
                         }
