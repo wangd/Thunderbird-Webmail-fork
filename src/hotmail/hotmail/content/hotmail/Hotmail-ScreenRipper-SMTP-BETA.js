@@ -143,10 +143,9 @@ HotmailSMTPScreenRipperBETA.prototype =
                 throw new Error("return status " + httpChannel.responseStatus);
 
             //check for java refresh
-            var aRefresh = szResponse.match(patternHotmailJSRefresh);
+            var aRefresh = szResponse.match(patternHotmailJSRefresh); 
             if (!aRefresh) aRefresh = szResponse.match(patternHotmailJSRefreshAlt);
             if (!aRefresh) aRefresh = szResponse.match(patternHotmailRefresh2);  
-            //if (!aRefresh) aRefresh = szResponse.match(patternHotmailJSRefreshAlt2);             
             mainObject.m_Log.Write("Hotmail-SR-BETA-SMTP - loginOnloadHandler aRefresh "+ aRefresh);
             if (aRefresh)
             {
