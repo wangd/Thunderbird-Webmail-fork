@@ -9,7 +9,7 @@
 <!ENTITY YahooPref.Mode.Label "Selecteer website die extensie zal gebruiken">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Productiewebsite">
 <!ENTITY YahooPref.Mode.Beta.Label "BETA website">
-<!ENTITY YahooPref.Mode.Classic.Label "New Classic Website (test code)">
+<!ENTITY YahooPref.Mode.Classic.Label "New Classic Website">
 
 <!ENTITY YahooPref.POP.DownloadUnread.Label "Download alleen ongelezen emails">
 <!ENTITY YahooPref.POP.DownloadUnread.AccessKey "u">

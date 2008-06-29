@@ -9,7 +9,7 @@
 <!ENTITY YahooPref.Mode.Label "Pasirinkite svetainę, kurią naudos priedas">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Produkcijos svetainė">
 <!ENTITY YahooPref.Mode.Beta.Label "BETA svetainė">
-<!ENTITY YahooPref.Mode.Classic.Label "New Classic Website (test code)">
+<!ENTITY YahooPref.Mode.Classic.Label "New Classic Website">
 <!ENTITY YahooPref.POP.DownloadUnread.Label "Parsiųsti tik neskaitytus laiškus">
 <!ENTITY YahooPref.POP.DownloadUnread.AccessKey "n">
 <!ENTITY YahooPref.POP.JunkMail.Label "Parsiųsti Šlamštą">

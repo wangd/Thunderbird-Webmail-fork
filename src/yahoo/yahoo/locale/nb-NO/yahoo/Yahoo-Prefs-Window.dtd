@@ -9,7 +9,7 @@
 <!ENTITY YahooPref.Mode.Label "Velg nettside som utvidelsen vil bruke">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Produksjonsnettside">
 <!ENTITY YahooPref.Mode.Beta.Label "BETA-nettside">
-<!ENTITY YahooPref.Mode.Classic.Label "New Classic Website (test code)">
+<!ENTITY YahooPref.Mode.Classic.Label "New Classic Website">
 <!ENTITY YahooPref.POP.DownloadUnread.Label "Last ned kun uleste mailer">
 <!ENTITY YahooPref.POP.DownloadUnread.AccessKey "u">
 <!ENTITY YahooPref.POP.JunkMail.Label "Last ned SøppelPost">

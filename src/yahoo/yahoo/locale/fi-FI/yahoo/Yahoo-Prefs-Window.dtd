@@ -9,7 +9,7 @@
 <!ENTITY YahooPref.Mode.Label "Valitse verkkosivu, jota laajennus käyttää">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Tuotteen verkkosivu">
 <!ENTITY YahooPref.Mode.Beta.Label "BETA-verkkosivu">
-<!ENTITY YahooPref.Mode.Classic.Label "New Classic Website (test code)">
+<!ENTITY YahooPref.Mode.Classic.Label "New Classic Website">
 <!ENTITY YahooPref.POP.DownloadUnread.Label "Lataa vain lukemattomat viestit">
 <!ENTITY YahooPref.POP.DownloadUnread.AccessKey "u">
 <!ENTITY YahooPref.POP.JunkMail.Label "Lataa roskaposti">
