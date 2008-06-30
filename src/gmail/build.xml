@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <project name="gmail" default="createxpi">
-    <property name="VERSION" value="0-5-14"/>
+    <property name="VERSION" value="0-6-0"/>
 
     <delete file="gmail-${VERSION}.xpi"/>
     <delete file="gmail.jar"/>
@@ -19,7 +19,7 @@
     <target name="createxpi" depends="createjar">
         <zip destfile="gmail-${VERSION}.xpi" >
             <zipfileset dir="." includes="gmail.jar" prefix="chrome"/>
-            <zipfileset dir="components" prefix="components" includes="**" excludes="*.idl *.bat"/>
+            <zipfileset dir="components" prefix="components" includes="**" excludes="*.idl *.bat *.xml"/>
             <zipfileset dir="defaults" prefix="defaults" includes="**"/>
             <zipfileset dir="." includes="install.rdf"/>
             <zipfileset dir="." includes="install.js"/>
