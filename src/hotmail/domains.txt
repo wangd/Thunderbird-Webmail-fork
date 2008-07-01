@@ -8,4 +8,5 @@
     <domain>hotmail.co.uk</domain>
     <domain>msn.co.uk</domain>
     <domain>live.com</domain>
+    <domain>live.fr</domain>
 </database>
