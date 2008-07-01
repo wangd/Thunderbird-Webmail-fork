@@ -99,9 +99,8 @@ YahooPOPClassic.prototype =
                 if (this.m_szUserName.search(/yahoo\.co\.jp/i)!=-1)
                     this.m_szYahooMail = "http://mail.yahoo.co.jp/";
 
-                //remove domain from user name
-                if (this.m_szUserName.search(/ymail/i)!=-1) 
-                    this.m_szLoginUserName = this.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
+                //remove domain from user name       
+                this.m_szLoginUserName = this.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
             }
             else if (this.m_szUserName.search(/@talk21.com$/i)!=-1 ||
                      this.m_szUserName.search(/@btinternet.com$/i)!=-1  ||

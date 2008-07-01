@@ -81,18 +81,17 @@ YahooSMTPClassic.prototype =
             this.m_szYahooMail = "http://mail.yahoo.com";
             this.m_szLoginUserName = this.m_szUserName;
 
-            if (this.m_szUserName.search(/yahoo/i)!=-1)
+            if (this.m_szUserName.search(/yahoo/i) != -1) 
             {
-                if (this.m_szUserName.search(/yahoo\.co\.jp/i)!=-1)
+                if (this.m_szUserName.search(/yahoo\.co\.jp/i) != -1) 
                     this.m_szYahooMail = "http://mail.yahoo.co.jp/";
-
+                
                 //remove domain from user name
-                if (this.m_szUserName.search(/ymail/i)!=-1) 
-                    this.m_szLoginUserName = this.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
+                this.m_szLoginUserName = this.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
             }
-            else if (this.m_szUserName.search(/@talk21.com$/i)!=-1 ||
-                     this.m_szUserName.search(/@btinternet.com$/i)!=-1  ||
-                     this.m_szUserName.search(/@btopenworld.com$/i)!=-1 )
+            else if (this.m_szUserName.search(/@talk21.com$/i) != -1 ||
+                       this.m_szUserName.search(/@btinternet.com$/i) != -1 ||
+                           this.m_szUserName.search(/@btopenworld.com$/i) != -1) 
             {
                 this.m_szYahooMail = "http://bt.yahoo.com/";
             }
