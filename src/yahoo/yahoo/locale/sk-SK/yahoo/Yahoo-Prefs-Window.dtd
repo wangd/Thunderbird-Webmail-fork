@@ -23,6 +23,11 @@
 <!ENTITY YahooPref.POP.MarkAsRead.AccessKey "r">
 <!ENTITY YahooPref.SMTP.SaveSentItems.Label "Ukladať kópie v odoslaných položkách">
 <!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "U">
+<!ENTITY YahooPref.SMTP.AlternativeGroup.Label "Aké formátovanie sa má použiť pri odosielaní textových e-mailov?">
+<!ENTITY YahooPref.SMTP.SendPlain.Label "Odoslať ako čistý text">
+<!ENTITY YahooPref.SMTP.SendPlain.AccessKey "a">
+<!ENTITY YahooPref.SMTP.SendHtml.Label "Odoslať vo formáte HTML">
+<!ENTITY YahooPref.SMTP.SendHtml.AccessKey "h">
 <!ENTITY YahooPref.Adv.ShortID.Label "Použiť Skrátené ID">
 <!ENTITY YahooPref.Adv.ShortID.AccessKey "s">
 <!ENTITY YahooPref.Adv.ReUseSession.Label "Znovu použiť údaje http relácie.">

@@ -23,6 +23,11 @@
 <!ENTITY YahooPref.POP.MarkAsRead.AccessKey "k">
 <!ENTITY YahooPref.SMTP.SaveSentItems.Label "Guardar una copia en elementos enviados.">
 <!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "s">
+<!ENTITY YahooPref.SMTP.AlternativeGroup.Label "Al enviar correo con texto enriquecido, que porción será enviada como extensión?">
+<!ENTITY YahooPref.SMTP.SendPlain.Label "Enviar texto plano">
+<!ENTITY YahooPref.SMTP.SendPlain.AccessKey "p">
+<!ENTITY YahooPref.SMTP.SendHtml.Label "Enviar texto en html">
+<!ENTITY YahooPref.SMTP.SendHtml.AccessKey "h">
 <!ENTITY YahooPref.Adv.ShortID.Label "Utilizar ID Corta">
 <!ENTITY YahooPref.Adv.ShortID.AccessKey "I">
 <!ENTITY YahooPref.Adv.ReUseSession.Label "Reutilizar los datos de la sesión http.">

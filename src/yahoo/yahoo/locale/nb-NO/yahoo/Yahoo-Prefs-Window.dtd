@@ -23,6 +23,11 @@
 <!ENTITY YahooPref.POP.MarkAsRead.AccessKey "k">
 <!ENTITY YahooPref.SMTP.SaveSentItems.Label "Lagre kopi i sendte objekter">
 <!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "s">
+<!ENTITY YahooPref.SMTP.AlternativeGroup.Label "Ved sending av riktekst-epostmeldinger, hvilken del skal utvidelsen sende?">
+<!ENTITY YahooPref.SMTP.SendPlain.Label "Send uformatert tekst">
+<!ENTITY YahooPref.SMTP.SendPlain.AccessKey "p">
+<!ENTITY YahooPref.SMTP.SendHtml.Label "Send HTML-tekst">
+<!ENTITY YahooPref.SMTP.SendHtml.AccessKey "h">
 <!ENTITY YahooPref.Adv.ShortID.Label "Bruk Short ID">
 <!ENTITY YahooPref.Adv.ShortID.AccessKey "I">
 <!ENTITY YahooPref.Adv.ReUseSession.Label "Bruk http data fra tidligere besøk.">

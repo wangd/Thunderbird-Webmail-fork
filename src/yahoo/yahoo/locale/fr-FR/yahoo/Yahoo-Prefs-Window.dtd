@@ -8,14 +8,14 @@
 <!ENTITY YahooPref.Tab.Adv.Title "Avancé">
 <!ENTITY YahooPref.Mode.Label "Sélectionner le site Web, que l&apos;extension va utiliser">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Site Web de production">
-<!ENTITY YahooPref.Mode.Beta.Label "Site Web BETA">
-<!ENTITY YahooPref.Mode.Classic.Label "New Classic Website">
+<!ENTITY YahooPref.Mode.Beta.Label "Site Web « BETA »">
+<!ENTITY YahooPref.Mode.Classic.Label "Site Web « New Classic »">
 <!ENTITY YahooPref.POP.DownloadUnread.Label "Télécharger seulement les messages non lus">
 <!ENTITY YahooPref.POP.DownloadUnread.AccessKey "u">
 <!ENTITY YahooPref.POP.JunkMail.Label "Télécharger les indésirables">
 <!ENTITY YahooPref.POP.JunkMail.AccessKey "i">
 <!ENTITY YahooPref.POP.Folders.Label "Dossier de destination">
-<!ENTITY YahooPref.POP.ButtonAdd.Label "Ajouter ...">
+<!ENTITY YahooPref.POP.ButtonAdd.Label "Ajouter…">
 <!ENTITY YahooPref.POP.ButtonAdd.AccessKey "A">
 <!ENTITY YahooPref.POP.ButtonRemove.Label "Enlever">
 <!ENTITY YahooPref.POP.ButtonRemove.AccessKey "E">
@@ -23,14 +23,19 @@
 <!ENTITY YahooPref.POP.MarkAsRead.AccessKey "q">
 <!ENTITY YahooPref.SMTP.SaveSentItems.Label "Garder une copie dans la boîte d&apos;envoi">
 <!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "d">
+<!ENTITY YahooPref.SMTP.AlternativeGroup.Label "Lors d&apos;envoi de courriels en HTML quel format choisir ?">
+<!ENTITY YahooPref.SMTP.SendPlain.Label "Envoyer en texte brut">
+<!ENTITY YahooPref.SMTP.SendPlain.AccessKey "b">
+<!ENTITY YahooPref.SMTP.SendHtml.Label "Envoyer en texte HTML">
+<!ENTITY YahooPref.SMTP.SendHtml.AccessKey "H">
 <!ENTITY YahooPref.Adv.ShortID.Label "Utiliser une ID courte">
 <!ENTITY YahooPref.Adv.ShortID.AccessKey "c">
-<!ENTITY YahooPref.Adv.ReUseSession.Label "Réutiliser les données de la session http">
+<!ENTITY YahooPref.Adv.ReUseSession.Label "Réutiliser les données de la session HTTP">
 <!ENTITY YahooPref.Adv.ReUseSession.AccessKey "l">
-<!ENTITY YahooPref.AdvInfo.Label "Activer l&apos;option &apos;ID courte&apos; retéléchargera entièrement votre boîte de courrier">
+<!ENTITY YahooPref.AdvInfo.Label "Activer l&apos;option « ID courte » retéléchargera entièrement votre boîte de courrier">
 <!ENTITY YahooPref.AccountError.Label "Aucun compte Yahoo trouvé">
 <!ENTITY YahooPref.Domain.Label "Domaines acceptés par l&apos;extension Yahoo">
-<!ENTITY YahooPref.Domain.Button.AddDomain.Label "Ajouter ...">
+<!ENTITY YahooPref.Domain.Button.AddDomain.Label "Ajouter…">
 <!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "A">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Enlever">
 <!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "E">

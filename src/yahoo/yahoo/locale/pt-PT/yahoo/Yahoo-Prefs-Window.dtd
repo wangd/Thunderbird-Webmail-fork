@@ -7,9 +7,9 @@
 <!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
 <!ENTITY YahooPref.Tab.Adv.Title "Avançadas">
 <!ENTITY YahooPref.Mode.Label "Seleccione o sítio web que a extensão irá utilizar">
-<!ENTITY YahooPref.Mode.ScreenScraper.Label "Página Web Producção">
+<!ENTITY YahooPref.Mode.ScreenScraper.Label "Página Web Produção">
 <!ENTITY YahooPref.Mode.Beta.Label "Sítio Web Beta">
-<!ENTITY YahooPref.Mode.Classic.Label "New Classic Website">
+<!ENTITY YahooPref.Mode.Classic.Label "Novo Sítio Web Clássico">
 <!ENTITY YahooPref.POP.DownloadUnread.Label "Transferir apenas correio não lido">
 <!ENTITY YahooPref.POP.DownloadUnread.AccessKey "T">
 <!ENTITY YahooPref.POP.JunkMail.Label "Transferir Lixo Electrónico">
@@ -23,6 +23,11 @@
 <!ENTITY YahooPref.POP.MarkAsRead.AccessKey "r">
 <!ENTITY YahooPref.SMTP.SaveSentItems.Label "Guardar cópia nos itens enviados.">
 <!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "s">
+<!ENTITY YahooPref.SMTP.AlternativeGroup.Label "Ao enviar correio rich text que parte deve a extensão enviar?">
+<!ENTITY YahooPref.SMTP.SendPlain.Label "Enviar em formato texto">
+<!ENTITY YahooPref.SMTP.SendPlain.AccessKey "x">
+<!ENTITY YahooPref.SMTP.SendHtml.Label "Enviar em html">
+<!ENTITY YahooPref.SMTP.SendHtml.AccessKey "h">
 <!ENTITY YahooPref.Adv.ShortID.Label "Utilizar ID curto">
 <!ENTITY YahooPref.Adv.ShortID.AccessKey "I">
 <!ENTITY YahooPref.Adv.ReUseSession.Label "Reutilizar dados da sessão HTTP">

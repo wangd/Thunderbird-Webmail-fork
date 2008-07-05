@@ -23,6 +23,11 @@
 <!ENTITY YahooPref.POP.MarkAsRead.AccessKey "č">
 <!ENTITY YahooPref.SMTP.SaveSentItems.Label "Shrani kopijo med poslano.">
 <!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "S">
+<!ENTITY YahooPref.SMTP.AlternativeGroup.Label "Katero vrsto naj pošlje razširitev pri pošiljanju e-poštnih sporočil?">
+<!ENTITY YahooPref.SMTP.SendPlain.Label "Pošlji navadno besedilo">
+<!ENTITY YahooPref.SMTP.SendPlain.AccessKey "n">
+<!ENTITY YahooPref.SMTP.SendHtml.Label "Pošlji besedilo html">
+<!ENTITY YahooPref.SMTP.SendHtml.AccessKey "h">
 <!ENTITY YahooPref.Adv.ShortID.Label "Uporabi kratki ID">
 <!ENTITY YahooPref.Adv.ShortID.AccessKey "I">
 <!ENTITY YahooPref.Adv.ReUseSession.Label "Ponovno uporabi podatke seje http.">
