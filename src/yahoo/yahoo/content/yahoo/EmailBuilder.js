@@ -345,7 +345,7 @@ emailBuilder.prototype.processAttachmentsCallback = function(szMSG, mainObject)
 {
     try
     {
-        mainObject.m_Log.DebugDump("emailBuilder.js: processAttachmentsCallback - START");
+        mainObject.m_Log.Write("emailBuilder.js: processAttachmentsCallback - START");
         
         mainObject.m_szEmail += szMSG; 
         if (mainObject.m_aoAttachments.length ==0)
@@ -368,7 +368,7 @@ emailBuilder.prototype.processAttachmentsCallback = function(szMSG, mainObject)
                              mainObject);
         }
         
-        mainObject.m_Log.DebugDump("emailBuilder.js: processAttachmentsCallback - END");
+        mainObject.m_Log.Write("emailBuilder.js: processAttachmentsCallback - END");
     }
     catch(err)
     {
