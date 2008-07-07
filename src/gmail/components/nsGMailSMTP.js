@@ -448,7 +448,8 @@ D(["sr","2",0,"test.vbs is an executable file. For security reasons, Gmail does 
 
             if ( szResponse.indexOf("Your message has been sent.") < 0 &&
                     szResponse.indexOf("Il messaggio è stato inviato.") < 0 &&
-                    szResponse.indexOf("Ihre Nachricht wurde gesendet.") < 0)
+                    szResponse.indexOf("Ihre Nachricht wurde gesendet.") < 0 &&
+                    szResponse.indexOf("Votre message a été envoyé.")<0)
                 mainObject.serverComms("502 Invalid mail format\r\n");
 
             if ( mainObject.m_bReUseSession)
