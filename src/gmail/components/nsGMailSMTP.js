@@ -441,15 +441,11 @@ D(["sr","2",0,"test.vbs is an executable file. For security reasons, Gmail does 
 
             //if this fails we've gone somewhere new
             mainObject.m_Log.Write("nsGMailSMTP.js - composerOnloadHandler - status :" + httpChannel.responseStatus );
-            if (httpChannel.responseStatus != 200) {
-                            mainObject.serverComms("502 Error Sending Email\r\n");
-                // throw new Error("return status " + httpChannel.responseStatus);
-            }
 
-            if ( szResponse.indexOf("Your message has been sent.") < 0 &&
-                    szResponse.indexOf("Il messaggio è stato inviato.") < 0 &&
-                    szResponse.indexOf("Ihre Nachricht wurde gesendet.") < 0 &&
-                    szResponse.indexOf("Votre message a été envoyé.")<0)
+            if ( szResponse.search("Your message has been sent.") ==-1 &&
+                 szResponse.search("Il messaggio è stato inviato.") ==-1 &&
+                 szResponse.search("Ihre Nachricht wurde gesendet.") ==-1 &&
+                 szResponse.search("Votre message a Ã©tÃ© envoyÃ©.") ==-1 )
                 mainObject.serverComms("502 Invalid mail format\r\n");
 
             if ( mainObject.m_bReUseSession)
@@ -466,7 +462,7 @@ D(["sr","2",0,"test.vbs is an executable file. For security reasons, Gmail does 
                 mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
             }
 
-                        mainObject.serverComms("250 OK\r\n");
+            mainObject.serverComms("250 OK\r\n");
             mainObject.m_Log.Write("nsGMailSMTP.js - composerOnloadHandler - END");
         }
         catch(err) {
