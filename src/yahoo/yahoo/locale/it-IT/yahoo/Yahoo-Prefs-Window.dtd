@@ -9,7 +9,7 @@
 <!ENTITY YahooPref.Mode.Label "Selezionare come il componente Yahoo si collegherà ai server Yahoo">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Sito web di produzione di Yahoo">
 <!ENTITY YahooPref.Mode.Beta.Label "Sito web di Yahoo BETA">
-<!ENTITY YahooPref.Mode.Classic.Label "New Classic Website">
+<!ENTITY YahooPref.Mode.Classic.Label "Sito web classico di Yahoo">
 <!ENTITY YahooPref.POP.DownloadUnread.Label "Scarica solo messaggi non letti">
 <!ENTITY YahooPref.POP.DownloadUnread.AccessKey "N">
 <!ENTITY YahooPref.POP.JunkMail.Label "Scarica posta indesiderata">
@@ -23,6 +23,11 @@
 <!ENTITY YahooPref.POP.MarkAsRead.AccessKey "S">
 <!ENTITY YahooPref.SMTP.SaveSentItems.Label "Salva una copia del messaggio in &apos;Posta inviata&apos;">
 <!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "s">
+<!ENTITY YahooPref.SMTP.AlternativeGroup.Label "Selezionare come il componente Yahoo invierà i messaggi">
+<!ENTITY YahooPref.SMTP.SendPlain.Label "In formato testo semplice">
+<!ENTITY YahooPref.SMTP.SendPlain.AccessKey "p">
+<!ENTITY YahooPref.SMTP.SendHtml.Label "In formato HTML">
+<!ENTITY YahooPref.SMTP.SendHtml.AccessKey "H">
 <!ENTITY YahooPref.Adv.ShortID.Label "Utilizza ID breve">
 <!ENTITY YahooPref.Adv.ShortID.AccessKey "I">
 <!ENTITY YahooPref.Adv.ReUseSession.Label "Riutilizza i dati della sezione http">
