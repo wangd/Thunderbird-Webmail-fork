@@ -125,7 +125,7 @@ YahooPOPClassic.prototype =
                     this.m_Log.Write("YahooPOPClassic.js - logIN - Session Data Found");
                     this.m_iStage =2;
                     this.m_bReEntry = true;
-                    this.m_HttpComms.setURI(this.m_szLocation);
+                    this.m_HttpComms.setURI(this.m_szHomeURI);
                 }
                 else
                 {
