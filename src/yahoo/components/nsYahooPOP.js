@@ -301,7 +301,7 @@ nsYahoo.prototype =
             szUserName = szUserName.toLowerCase();
 
             //do i reuse the session
-            if (WebMailPrefAccess.Get("bool","yahoo.Account."+szUserName +"bReUseSession",oPref))
+            if (WebMailPrefAccess.Get("bool","yahoo.Account."+szUserName +".bReUseSession",oPref))
                 oData.bReUseSession = oPref.Value;
 
             //delay processing time delay
