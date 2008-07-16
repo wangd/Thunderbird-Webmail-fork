@@ -12,7 +12,6 @@
     list-style-image: url("chrome://yahoo/skin/custom.png");
 }
 
-
 #labelFolder
 {
     margin-left: 10px; 
@@ -23,3 +22,60 @@
 {
     margin-left: 10px; 
 }
+
+
+#imageDownloadFolder
+{
+    margin-left: 10px; 
+    margin-top: 10px;
+    margin-bottom : 10px;
+    list-style-image: url("chrome://yahoo/skin/Yahoo-DownloadImage.gif");
+}
+
+#listFolders
+{
+    height: 10em; 
+    width : 20em;
+}
+
+
+.listItem
+{
+    padding: 4px 8px 4px 4px;
+    min-height: 15px !important;
+    border-bottom: 1px dotted #C0C0C0;
+}
+
+
+.listItem[selected="true"] 
+{
+    -moz-user-focus: normal;
+    background-image: url("chrome://mozapps/skin/shared/itemSelected.png");
+}
+
+
+#folderName
+{
+    margin-left: 10px; 
+}
+
+
+#labelFolders
+{
+    margin-left: 10px;
+}
+
+
+#boxFolders
+{
+    margin-top:5px;
+    margin-left: 75px;
+    margin-right: 75px; 
+    margin-bottom: 25px;
+}
+
+#listFolders
+{
+    margin-bottom: 25px;
+}
+

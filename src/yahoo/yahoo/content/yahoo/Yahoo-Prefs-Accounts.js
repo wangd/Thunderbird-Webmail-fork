@@ -134,7 +134,6 @@ var gPrefAccounts =
     },
 
 
-
     selectUserName : function ()
     {
         try
@@ -281,7 +280,6 @@ var gPrefAccounts =
                                           + e.lineNumber);
         }
     },
-
 
 
     createUserDropDown : function ()
@@ -446,8 +444,6 @@ var gPrefAccounts =
     },
 
 
-
-
     chkJunkMailOnChange : function ()
     {
         this.m_DebugLog.Write("Yahoo-Pref-Accounts : chkJunkMailOnChange - START");
@@ -467,15 +463,35 @@ var gPrefAccounts =
     },
 
 
-
-
     addFolderList: function ()
     {
         try
         {
             this.m_DebugLog.Write("Yahoo-Pref-Accounts : folderListAdd - START");
-            var oResult = {value : -1};
-            var oParam = {szfolder : null};
+
+            var iType = document.getElementById("radiogroupMode").value;  
+            this.m_DebugLog.Write("Yahoo-Pref-Accounts : folderListAdd -  iType "+ iType);
+                        
+            var szUserName = this.m_aszUserList[this.m_iIndex].toLowerCase();
+            this.m_DebugLog.Write("Yahoo-Pref-Accounts : folderListAdd -  szUserName "+ szUserName);
+            
+            //get folder list pref
+            var oPref = {Value : null};
+            var prefAccess = new WebMailCommonPrefAccess();
+            var szPrefUserName = szUserName.replace(/\./g,"~").toLowerCase();
+            prefAccess.Get("char","yahoo.Account."+szPrefUserName+".szFolders",oPref);
+            var aFolders = null;
+            if (oPref.Value) 
+            {
+                aFolders = oPref.Value.split("\r");
+                this.m_DebugLog.Write("Yahoo-Pref-Accounts : folderListAdd -  aFolders " + aFolders);
+            }
+            
+            var oParam = {aszFolder : new Array(), 
+                          aszCurrentFolders : aFolders,
+                          iAccountType : iType, 
+                          szUserName : szUserName};
+            var oResult = {value : -1};            
             window.openDialog("chrome://yahoo/content/Yahoo-Prefs-Folders-Add.xul",
                               "Add",
                               "chrome, centerscreen, modal",
@@ -483,51 +499,36 @@ var gPrefAccounts =
                               oResult);
 
             this.m_DebugLog.Write("Yahoo-Pref-Accounts: folderListAdd oResult.value " + oResult.value);
-
-            if (oResult.value!=-1)
+            if (oResult.value==1)
             {
-                this.m_DebugLog.Write("Yahoo-Pref-Accounts : folderListAdd oParam.szfolder " + oParam.szFolder);
-
-                var szUserName = this.m_aszUserList[this.m_iIndex].toLowerCase();
-                szUserName = szUserName.replace(/\./g,"~");
-                szUserName = szUserName.toLowerCase();
-                this.m_DebugLog.Write("Hotmail-Pref-Accounts : folderListAdd -  username "+ szUserName);
-
-                var szFolder = "";
-                var bFound = false;
-                var oPref = {Value : null };
-                var prefAccess = new WebMailCommonPrefAccess();
-                prefAccess.Get("char","yahoo.Account."+szUserName+".szFolders",oPref);
-                if (oPref.Value)
+                this.m_DebugLog.Write("Yahoo-Pref-Accounts : folderListAdd oParam.szfolder " + oParam.aszFolder);
+                
+                //update folder pref
+                var szFolder = "";              
+                for (var i = 0; i < oParam.aszFolder.length; i++) 
                 {
-                    var aFolders = oPref.Value.split("\r");
-                    this.m_DebugLog.Write("Yahoo-Pref-Accounts : folderListAdd -  aFolders "+ aFolders);
-                    for (var j=0; j<aFolders.length; j++)
-                    {
-                        var regExp = new RegExp("^"+oParam.szFolder+"$","i");
-                        if (aFolders[j].length>0 && aFolders[j].search(regExp)==-1)
-                        {
-                            szFolder += aFolders[j] +"\r";
-                        }
-
-                        if (aFolders[j].search(regExp)!=-1)bFound = true;
-                    }
+                    szFolder += oParam.aszFolder[i] + "\r";
+                }
+                prefAccess.Set("char","yahoo.Account."+szPrefUserName+".szFolders",szFolder);
+                
+                //clear listview
+                var listView = document.getElementById("listFolders");   //click item
+                var iRowCount =listView.getRowCount();
+                for (var i = 0; i < iRowCount; i++) 
+                {
+                    listView.removeChild(listView.getItemAtIndex(0));
                 }
 
-
-                if (!bFound)
+                //add new items                    
+                for (var j = 0; j < oParam.aszFolder.length; j++) 
                 {
-                    szFolder += oParam.szFolder +"\r";           //add item to pref list
-                    this.m_DebugLog.Write("Yahoo-Pref-Accounts.js - getAccountPrefs - szFolder " + szFolder);
-                    prefAccess.Set("char","yahoo.Account."+szUserName+".szFolders",szFolder);
-
-                    this.addItemFolderList(oParam.szFolder);   //add item to list
-
-                    //refresh list
-                    var event = document.createEvent("Events");
-                    event.initEvent("change", false, true);
-                    document.getElementById("listFolders").dispatchEvent(event);
+                    this.addItemFolderList(oParam.aszFolder[j]); //add item to list
                 }
+                
+                //refresh list
+                var event = document.createEvent("Events");
+                event.initEvent("change", false, true);
+                document.getElementById("listFolders").dispatchEvent(event);
             }
             this.m_DebugLog.Write("Yahoo-Pref-Accounts : folderListAdd - END");
         }
