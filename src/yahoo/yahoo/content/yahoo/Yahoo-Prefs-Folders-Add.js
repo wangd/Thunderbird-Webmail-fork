@@ -18,7 +18,8 @@ var gYahooFoldersAdd =
             var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                                       .getService(Components.interfaces.mozIJSSubScriptLoader);
             scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-Prefs-Folders-Download-Classic.js");
-     
+            scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-Prefs-Folders-Download-Beta.js");
+                 
             var date = new Date();
             var szLogFileName = "YahooPrefsComms - " + date.getHours()+ "-" + date.getMinutes() + "-"+ date.getUTCMilliseconds() +" -";
             this.m_Log = new DebugLog("webmail.logging.comms", 
@@ -30,7 +31,7 @@ var gYahooFoldersAdd =
             this.m_aszFolderPref =  window.arguments[0].aszCurrentFolders;
             this.m_DebugLog.Write("Yahoo-Prefs-Folders-Add : " + this.m_iType + " " + this.m_szUserName);
 
-            if (this.m_iType == 2 /*|| this.m_iType == 1*/) 
+            if (this.m_iType == 2 || this.m_iType == 1) 
             {
                 if (this.m_iType == 2)  //new classic
                 {
@@ -41,10 +42,10 @@ var gYahooFoldersAdd =
                 }
                 else if (this.m_iType == 1) //beta
                 {
-                    document.getElementById("vBoxfolderDownload").setAttribute("hidden", true);
-                    document.getElementById("vBoxFolderList").setAttribute("hidden", false);
+                    document.getElementById("vBoxfolderDownload").setAttribute("hidden", false);
+                    document.getElementById("vBoxFolderList").setAttribute("hidden", true);
                     document.getElementById("cmd_close").setAttribute("oncommand", "gYahooFoldersAdd.doCancelDownload()");
-                    this.m_comms = new YahooFolderBeta(this.m_DebugLog);
+                    this.m_comms = new YahooFolderBeta(this.m_Log);
                 }
 
                 this.m_comms.setUserName(this.m_szUserName);
@@ -98,7 +99,7 @@ var gYahooFoldersAdd =
                         {
                             for (var j = 0; j < parent.m_aszFolderPref.length; j++) 
                             {
-                                if (parent.m_aszFolderPref.search(regExp) != -1) bFound = true;
+                                if (parent.m_aszFolderPref[j].search(regExp) != -1) bFound = true;
                             }
                         }
                         //looks ok add to list

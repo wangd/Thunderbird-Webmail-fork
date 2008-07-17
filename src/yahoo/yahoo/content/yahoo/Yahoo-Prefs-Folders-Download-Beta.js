@@ -1,4 +1,4 @@
-function YahooFolderClassic(oLog)
+function YahooFolderBeta(oLog)
 {
     try
     {
@@ -9,11 +9,11 @@ function YahooFolderClassic(oLog)
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         
         this.m_Log = oLog;
-        this.m_Log.Write("YahooFolderClassic.js - Constructor - START");
+        this.m_Log.Write("YahooFolderBeta.js - Constructor - START");
 
         if (typeof kYahooConstants == "undefined")
         {
-            this.m_Log.Write("YahooFolderClassic.js - Constructor - loading constants");
+            this.m_Log.Write("YahooFolderBeta.js - Constructor - loading constants");
             scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-Constants.js");
         }
 
@@ -36,12 +36,13 @@ function YahooFolderClassic(oLog)
         this.m_szLocationURI = null;
         this.m_szHomeURI = null;
         this.m_szYahooMail = null;
-
-        this.m_Log.Write("YahooFolderClassic.js - Constructor - END");
+        this.m_szWssid = null;  
+        
+        this.m_Log.Write("YahooFolderBeta.js - Constructor - END");
     }
     catch(e)
     {
-        this.m_Log.Write("YahooFolderClassic.js: Constructor : Exception : "
+        this.m_Log.Write("YahooFolderBeta.js: Constructor : Exception : "
                                       + e.name
                                       + ".\nError message: "
                                       + e.message+ "\n"
@@ -51,7 +52,7 @@ function YahooFolderClassic(oLog)
 
 
 
-YahooFolderClassic.prototype =
+YahooFolderBeta.prototype =
 {
     setUserName : function (szUserName)
     {
@@ -78,7 +79,7 @@ YahooFolderClassic.prototype =
     {
         try
         {
-            this.m_Log.Write("YahooFolderClassic.js - donwloadFolderList - START");
+            this.m_Log.Write("YahooFolderBeta.js - donwloadFolderList - START");
             if (!this.m_szUserName) return -2;
             
             this.m_callback = callback;
@@ -102,7 +103,7 @@ YahooFolderClassic.prototype =
                 this.m_szYahooMail = "http://bt.yahoo.com/";
             }
 
-            this.m_Log.Write("YahooFolderClassic.js - donwloadFolderList - default " +this.m_szYahooMail);
+            this.m_Log.Write("YahooFolderBeta.js - donwloadFolderList - default " +this.m_szYahooMail);
             this.m_iStage = 0;
             
             this.m_HttpComms.setUserName(this.m_szUserName);
@@ -115,12 +116,12 @@ YahooFolderClassic.prototype =
             WebMailPrefAccess.Get("bool","yahoo.Account."+szUserName +".bReUseSession",oPref);
             if (oPref.Value == true)
             {
-                this.m_Log.Write("YahooFolderClassic.js - donwloadFolderList - Getting Session Data");
+                this.m_Log.Write("YahooFolderBeta.js - donwloadFolderList - Getting Session Data");
                 this.m_szHomeURI = this.m_ComponentManager.findElement(this.m_szUserName, "szHomeURI");
-                this.m_Log.Write("YahooFolderClassic - donwloadFolderList - m_szLocation " +this.m_szHomeURI);
+                this.m_Log.Write("YahooFolderBeta - donwloadFolderList - m_szLocation " +this.m_szHomeURI);
                 if (this.m_szHomeURI)
                 {
-                    this.m_Log.Write("YahooFolderClassic.js - donwloadFolderList - Session Data Found");
+                    this.m_Log.Write("YahooFolderBeta.js - donwloadFolderList - Session Data Found");
                     this.m_iStage =2;
                     this.m_bReEntry = true;
                     this.m_HttpComms.setURI(this.m_szHomeURI);
@@ -145,7 +146,7 @@ YahooFolderClassic.prototype =
             
             if (!this.m_szHomeURI && !this.m_szPassWord)  //no session data and no password
             {
-                this.m_Log.Write("YahooFolderClassic.js - donwloadFolderList - NO Session Data");
+                this.m_Log.Write("YahooFolderBeta.js - donwloadFolderList - NO Session Data");
                 var ioService = Components.classes["@mozilla.org/network/io-service;1"]
                                           .getService(Components.interfaces.nsIIOService);
                 var passwordManager = Components.classes["@mozilla.org/passwordmanager;1"]
@@ -157,13 +158,13 @@ YahooFolderClassic.prototype =
                     {
                        var pass = e.getNext().QueryInterface(Components.interfaces.nsIPassword);
                        var user = decodeURIComponent(ioService.newURI(pass.host, null, null).username);
-                       this.m_Log.Write("YahooFolderClassic.js - donwloadFolderList - user " + user);
+                       this.m_Log.Write("YahooFolderBeta.js - donwloadFolderList - user " + user);
                        
                        var regExp = new RegExp("^"+user+"$","i");
                        if (this.m_szUserName.search(regExp)!=-1) 
                        {
                            this.m_szPassWord = pass.password;
-                           this.m_Log.Write("YahooFolderClassic.js - donwloadFolderList - this.m_szPassWord " + this.m_szPassWord);
+                           this.m_Log.Write("YahooFolderBeta.js - donwloadFolderList - this.m_szPassWord " + this.m_szPassWord);
                        }
                     } 
                     catch (ex) 
@@ -176,12 +177,12 @@ YahooFolderClassic.prototype =
             this.m_HttpComms.setRequestMethod("GET");
             var bResult = this.m_HttpComms.send(this.downloadOnloadHandler, this);
             if (!bResult) throw new Error("httpConnection returned false");
-            this.m_Log.Write("YahooFolderClassic.js - donwloadFolderList - END");
+            this.m_Log.Write("YahooFolderBeta.js - donwloadFolderList - END");
             return 1;
         }
         catch(e)
         {
-            this.m_Log.DebugDump("YahooFolderClassic.js: donwloadFolderList : Exception : "
+            this.m_Log.DebugDump("YahooFolderBeta.js: donwloadFolderList : Exception : "
                                               + e.name +
                                               ".\nError message: "
                                               + e.message+ "\n"
@@ -197,15 +198,15 @@ YahooFolderClassic.prototype =
     {
         try
         {
-            mainObject.m_Log.Write("YahooFolderClassic.js - downloadOnloadHandler - START");
-            mainObject.m_Log.Write("YahooFolderClassic.js - downloadOnloadHandler : Stage " + mainObject.m_iStage);
-            mainObject.m_Log.Write("YahooFolderClassic.js - downloadOnloadHandler : canceled " + mainObject.m_bCancel);
+            mainObject.m_Log.Write("YahooFolderBeta.js - downloadOnloadHandler - START");
+            mainObject.m_Log.Write("YahooFolderBeta.js - downloadOnloadHandler : Stage " + mainObject.m_iStage);
+            mainObject.m_Log.Write("YahooFolderBeta.js - downloadOnloadHandler : canceled " + mainObject.m_bCancel);
             
             if (mainObject.m_bCancel) throw new Error("canceled");
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             //if this fails we've gone somewhere new
-            mainObject.m_Log.Write("YahooFolderClassic.js - downloadOnloadHandler - status :" +httpChannel.responseStatus );
+            mainObject.m_Log.Write("YahooFolderBeta.js - downloadOnloadHandler - status :" +httpChannel.responseStatus );
             if (httpChannel.responseStatus != 200)
                 throw new Error("return status " + httpChannel.responseStatus);
 
@@ -216,24 +217,24 @@ YahooFolderClassic.prototype =
                     var aLoginForm = szResponse.match(patternYahooLoginForm);
                     if (aLoginForm == null)
                          throw new Error("error parsing yahoo login web page");
-                    mainObject.m_Log.Write("YahooPOPClassic.js - loginOnloadHandler - loginForm " + aLoginForm);
+                    mainObject.m_Log.Write("YahooPOPClassic.js - downloadOnloadHandler - loginForm " + aLoginForm);
 
 
                     var szLoginURL = aLoginForm[0].match(patternYahooAction)[1];
-                    mainObject.m_Log.Write("YahooPOPClassic.js - loginOnloadHandler - loginURL " + szLoginURL);
+                    mainObject.m_Log.Write("YahooPOPClassic.js - downloadOnloadHandler - loginURL " + szLoginURL);
 
                     var aLoginData = aLoginForm[0].match(patternYahooInput);
-                    mainObject.m_Log.Write("YahooPOPClassic.js - loginOnloadHandler - loginData " + aLoginData);
+                    mainObject.m_Log.Write("YahooPOPClassic.js - downloadOnloadHandler - loginData " + aLoginData);
 
                     for (i=0; i<aLoginData.length; i++)
                     {
                         var szName=aLoginData[i].match(patternYahooClassicName)[1];
                         szName = szName.replace(/^\s*|\s*$/gm,"");
-                        mainObject.m_Log.Write("YahooPOPClassic.js - loginOnloadHandler - loginData name " + szName);
+                        mainObject.m_Log.Write("YahooPOPClassic.js - downloadOnloadHandler - loginData name " + szName);
 
                         var szValue = aLoginData[i].match(patternYahooClassicValue)[1];
                         szValue = szValue.replace(/^\s*|\s*$/gm,"");
-                        mainObject.m_Log.Write("YahooPOPClassic.js - loginOnloadHandler - loginData value " + szValue);
+                        mainObject.m_Log.Write("YahooPOPClassic.js - downloadOnloadHandler - loginData value " + szValue);
 
                         mainObject.m_HttpComms.addValuePair(szName,(szValue? szValue : ""));
                     }
@@ -257,7 +258,7 @@ YahooFolderClassic.prototype =
                     var aLoginRedirect = szResponse.match(patternYahooRedirect);
                     if (aLoginRedirect == null)
                          throw new Error("error parsing yahoo login web page");
-                    mainObject.m_Log.Write("YahooFolderClassic.js - downloadOnloadHandler - login redirect " + aLoginRedirect);
+                    mainObject.m_Log.Write("YahooFolderBeta.js - downloadOnloadHandler - login redirect " + aLoginRedirect);
 
                     var szLocation = aLoginRedirect[1];
 
@@ -270,30 +271,34 @@ YahooFolderClassic.prototype =
 
                 case 2: //mail box
                     var szLocation  = httpChannel.URI.spec;
-                    mainObject.m_Log.Write("YahooFolderClassic.js - downloadOnloadHandler - page check : " + szLocation );
-                    if (szResponse.search(patternYahooShowFolder)== -1)
+                    mainObject.m_Log.Write("YahooFoldersBETA.js - downloadOnloadHandler - page check : " + szLocation );
+
+                    if (szResponse.search(kPatternLogOut)== -1)
                     {
-                        if (szLocation.search(/try_mail/i)!=-1)
+                        mainObject.m_Log.Write("YahooFoldersBETA.js - downloadOnloadHandler - logout not found");
+                        //check for bounce
+                        if (szResponse.search(kPatternBTBounce)!= -1 && !mainObject.m_bReEntry) 
                         {
-                             mainObject.m_Log.Write("YahooFolderClassic.js - downloadOnloadHandler - try_mail");
-                             mainObject.m_HttpComms.addValuePair("newStatus", "1");
-                             mainObject.m_HttpComms.setURI(szLocation);
-                             mainObject.m_HttpComms.setRequestMethod("POST");
-                             var bResult = mainObject.m_HttpComms.send(mainObject.downloadOnloadHandler, mainObject);
-                             if (!bResult) throw new Error("httpConnection returned false");
-                             return;
+                            var szRedirect = szResponse.match(kPatternBTBounce)[1];
+                            mainObject.m_Log.Write("YahooFoldersBETA.js - downloadOnloadHandler - szRedirect: " + szRedirect );
+                            if (!mainObject.m_HttpComms.setURI(szRedirect))
+                                mainObject.m_HttpComms.setURI(szLocation + szRedirect);
+                            mainObject.m_HttpComms.setRequestMethod("GET");
+                            var bResult = mainObject.m_HttpComms.send(mainObject.downloadOnloadHandler, mainObject);
+                            if (!bResult) throw new Error("httpConnection returned false");
+                            return;
                         }
                         else if (mainObject.m_bReEntry)
-                        {
-                            mainObject.m_Log.Write("YahooFolderClassic.js - downloadOnloadHandler - retrying");
+                        {                       
+                            //clean and start again
                             mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
-
+                            
                             var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
                                                      .getService(Components.interfaces.nsIWebMailCookieManager2);
                             oCookies.removeCookie(mainObject.m_szUserName);
-
+                            
                             mainObject.m_bReEntry = false;
-                            mainObject.m_iStage =0;
+                            mainObject.m_iStage = 0;
                             mainObject.m_HttpComms.setURI(mainObject.m_szYahooMail);
                             mainObject.m_HttpComms.setRequestMethod("GET");
                             var bResult = mainObject.m_HttpComms.send(mainObject.downloadOnloadHandler, mainObject);
@@ -303,61 +308,50 @@ YahooFolderClassic.prototype =
                         else
                             throw new Error("error logging in");
                     }
+
                     mainObject.m_szHomeURI = szLocation;
 
-                    //get urls for later use
-                    mainObject.m_szLocationURI = httpChannel.URI.prePath ;
-                    mainObject.m_Log.Write("YahooFolderClassic.js - downloadOnloadHandler - m_szLocationURI : "+mainObject.m_szLocationURI );
-                                        
-                    var szFolderURL = szResponse.match(PatternYahooFolderURL)[1];
-                    mainObject.m_Log.Write("YahooFolderClassic.js - downloadOnloadHandler - szFolderURL : "+szFolderURL );
+                    //get wssid
+                    mainObject.m_szWssid = szResponse.match(kPatternWssid)[1];
+                    mainObject.m_Log.Write("YahooFoldersBETA.js - downloadOnloadHandler - m_szWssid : "+mainObject.m_szWssid );
 
-                    if (!mainObject.m_HttpComms.setURI(szFolderURL)) 
-                    {
-                        if (szFolderURL.search(/^\//) == -1)
-                        {
-                            var IOService = Components.classes["@mozilla.org/network/io-service;1"]
-                                                      .getService(Components.interfaces.nsIIOService);
-                            var nsIURI = IOService.newURI(httpChannel.URI.spec, null, null)
-                                                  .QueryInterface(Components.interfaces.nsIURL);
-                            var szDirectory = nsIURI.directory
-                            mainObject.m_Log.Write("YahooFolderClassic - downloadOnloadHandler - directory : " +szDirectory);
-                            
-                            szFolderURL = mainObject.m_szLocationURI + szDirectory + szFolderURL
-                        }
-                        else
-                        {
-                            szFolderURL = mainObject.m_szLocationURI + szFolderURL
-                        }
-                        mainObject.m_HttpComms.setURI(szFolderURL);
-                    }
-                    mainObject.m_HttpComms.setRequestMethod("GET");
+                    mainObject.m_szLocationURI = httpChannel.URI.prePath ;
+                    mainObject.m_Log.Write("YahooFoldersBETA.js - downloadOnloadHandler - m_szLocationURI : "+mainObject.m_szLocationURI );
+
+                    mainObject.m_iStage++;
+                    var szURI = mainObject.m_szLocationURI + "/ws/mail/v1/soap?appid=YahooMailRC&m=ListFolders&wssid="+mainObject.m_szWssid;
+                    mainObject.m_Log.Write("YahooFoldersBETA.js - downloadOnloadHandler - szURI " + szURI);
+                    mainObject.m_HttpComms.setURI(szURI);
+                    mainObject.m_HttpComms.setRequestMethod("POST");
+                    mainObject.m_HttpComms.setContentType("application/xml");
+                    mainObject.m_HttpComms.addData(kListFolders);
                     var bResult = mainObject.m_HttpComms.send(mainObject.downloadOnloadHandler, mainObject);
                     if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
                 break;
 
 
                 case 3:// folder list
-                    var aszServerFolders = szResponse.match(PatternYahooFolders);
-                    if (!aszServerFolders) aszServerFolders = szResponse.match(PatternYahooFoldersAlt);
-                    mainObject.m_Log.Write("YahooFolderClassic.js - downloadOnloadHandler - aszServerFolders : "+aszServerFolders);
-           
+                    var szFolderResponse = szResponse.match(kPatternFolderResponse)[1];
+                    mainObject.m_Log.Write("YahooFoldersBETA.js - downloadOnloadHandler - szFolderResponse : "+szFolderResponse);
+
+                    var aszFolders = szFolderResponse.match(kPatternFolderData);
+                    mainObject.m_Log.Write("YahooFoldersBETA.js - downloadOnloadHandler - aszFolders : "+aszFolders);
+                    
                     mainObject.m_ComponentManager.addElement(mainObject.m_szUserName, "szHomeURI", mainObject.m_szHomeURI);
 
                     var aszFolderList = new Array();
-                    for (i=0; i<aszServerFolders.length; i++)
+                    for (i=0; i<aszFolders.length; i++)
                     {
-                        var szServerFolders = decodeURIComponent(aszServerFolders[i]);
-                        var szBox = decodeURIComponent(szServerFolders.match(PatternYahooFolderNameAlt)[1]);
-                        mainObject.m_Log.Write("YahooFolderClassic.js - downloadOnloadHandler - szBox : "+szBox );
+                        var szBox = decodeURIComponent(aszFolders[i].match(kPatternFolderID)[1]);
+                        mainObject.m_Log.Write("YahooFolderBeta.js - downloadOnloadHandler - szBox : "+szBox );
                         aszFolderList.push(szBox);
                     }
+                    
                     mainObject.m_callback(aszFolderList, mainObject.m_parent);
                 break;
             };
 
-            mainObject.m_Log.Write("YahooFolderClassic.js - downloadOnloadHandler - END");
+            mainObject.m_Log.Write("YahooFolderBeta.js - downloadOnloadHandler - END");
         }
         catch(err)
         {
@@ -367,7 +361,7 @@ YahooFolderClassic.prototype =
                                      .getService(Components.interfaces.nsIWebMailCookieManager2);
             oCookies.removeCookie(mainObject.m_szUserName);
 
-            mainObject.m_Log.DebugDump("YahooFolderClassic.js: loginHandler : Exception : "
+            mainObject.m_Log.DebugDump("YahooFolderBeta.js: loginHandler : Exception : "
                                           + err.name
                                           + ".\nError message: "
                                           + err.message + "\n"
