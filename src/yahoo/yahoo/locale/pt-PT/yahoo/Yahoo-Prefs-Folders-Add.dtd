@@ -6,3 +6,5 @@
 <!ENTITY YahooFolder.ButtonOk.AccessKey "O">
 <!ENTITY YahooFolder.ButtonCancel.Label "Cancelar">
 <!ENTITY YahooFolder.ButtonCancel.AccessKey "C">
+
+<!ENTITY YahooFolder.DownloadFolder.Label "Downloading folder list">

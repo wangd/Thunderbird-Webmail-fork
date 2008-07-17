@@ -22,6 +22,7 @@
 <!ENTITY YahooPref.POP.MarkAsRead.Label "Marcar los correos como leídos en el servidor">
 <!ENTITY YahooPref.POP.MarkAsRead.AccessKey "M">
 <!ENTITY YahooPref.SMTP.SaveSentItems.Label "Guardar una copia en la carpeta enviados">
+<!ENTITY YahooPref.SMTP.AlternativeGroup.Label "When sending rich text emails which part should the extension send?">
 <!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "G">
 <!ENTITY YahooPref.Adv.ShortID.Label "Usar identificador corto">
 <!ENTITY YahooPref.Adv.ShortID.AccessKey "i">
