@@ -224,6 +224,7 @@ HotmailWebDav.prototype =
                 mainObject.m_HttpComms.setRequestMethod("PROPFIND");
                 mainObject.m_HttpComms.setContentType("text/xml");
                 mainObject.m_HttpComms.addData(HotmailSchema);
+                mainObject.m_iStage = 0;
                 var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
             }
             else
