@@ -314,7 +314,12 @@ nsYahoo.prototype =
             if (WebMailPrefAccess.Get("bool","yahoo.iProcessAmount",oPref))
                 oData.iProcessAmount = oPref.Value;
 
-
+            //msglist amount
+            oPref.Value = null;
+            if (WebMailPrefAccess.Get("int","yahoo.iMSGList",oPref))
+                oData.iMSGList = oPref.Value;
+            this.m_Log.Write("nsYahoo.js - loadPrefs - iMSGList " + oPref.Value);
+            
             //use short id
             oPref.Value = null;
             if (WebMailPrefAccess.Get("bool","yahoo.Account."+szUserName +".bUseShortID",oPref))

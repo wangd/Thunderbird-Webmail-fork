@@ -56,6 +56,8 @@ const patternYahooClassicAttForm = /<form.*?id="attach_form0"[\S\s]*?>[\S\s]*?<\
 const patternYahooClassicAction = /action="(.*?)"/;
 const patternYahooClassicAttCheck = /errorFlag.*?=.*?false;/igm;
 const patternYahooClassicAttDetails = /fileDetails.*?=.*?["|'](.*?)["|'];/im;
+const patternYahooAddress =/<option value="(.*?)"[\s]*?selected/i;
+const patternYahooSelect = /<select  id="defFromAddress"[\s\S]*<\/select>/igm;
 
 /******************************  BETA ***************************************/
 const kPatternWssid = /[']?wssid[']?.*?'(.*?)',/i;
@@ -67,7 +69,7 @@ const kPatternFolderData =  /<folder.*?>[\s\S]*?<\/folder>/img;
 const kPatternFolderName =/name="(.*?)"/i;
 const kPatternFolderID =/fid="(.*?)"/i;
 
-const kLstMsgs = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><ListMessages startMid=\"0\" numMid=\"300\" startInfo=\"0\" numInfo=\"65\" startBody=\"0\" numBody=\"0\"><sortKey>date</sortKey><sortOrder>down</sortOrder><fid>folderName</fid></ListMessages></SOAP-ENV:Body></SOAP-ENV:Envelope>";
+const kLstMsgs = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><ListMessages startMid=\"0\" numMid=\"MSGLIST\" startInfo=\"0\" numInfo=\"65\" startBody=\"0\" numBody=\"0\"><sortKey>date</sortKey><sortOrder>down</sortOrder><fid>folderName</fid></ListMessages></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 const kPatternLstMsgsResponse = /<ListMessagesResponse.*?>([\s\S]*?)<\/ListMessagesResponse>/i;
 const kPatternInfo = /<messageInfo.*?>[\s\S]*?<\/messageInfo>/ig;
 const kPatternID = /mid="(.*?)"/i;

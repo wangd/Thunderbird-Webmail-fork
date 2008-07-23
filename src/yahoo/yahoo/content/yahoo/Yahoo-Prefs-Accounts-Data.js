@@ -28,3 +28,5 @@ PrefData.prototype.iProcessAmount = 25;
 PrefData.prototype.bUseShortID = true;
 
 PrefData.prototype.bSendHtml = false;
+
+PrefData.prototype.iMSGList = 3000;

@@ -23,6 +23,7 @@ function YahooPOPBETA(oResponseStream, oLog, oPrefs)
         this.m_iProcessAmount =  oPrefs.iProcessAmount; //delay proccess amount
         this.m_bUseShortID = oPrefs.bUseShortID;
         this.m_bMarkAsRead = oPrefs.bMarkAsRead;
+        this.m_iMSGList  = oPrefs.iMSGList;             //max number of msg pre folder
 
 
         //login data
@@ -470,7 +471,8 @@ YahooPOPBETA.prototype =
         var szFolderName = this.m_aszFolderList.shift();
         this.m_Log.Write("YahooPOPBETA.js - mailBox - szFolderName " + szFolderName);
         var szData = kLstMsgs.replace(/folderName/,szFolderName);
-
+        szData = szData.replace(/MSGLIST/,this.m_iMSGList);
+        
         var szURI = this.m_szLocationURI + "/ws/mail/v1/soap?appid=YahooMailRC&m=ListMessages&wssid="+this.m_szWssid;
         this.m_Log.Write("YahooPOPBETA.js - mailBox - szURI " + szURI);
         this.m_HttpComms.setURI(szURI);
@@ -520,6 +522,7 @@ YahooPOPBETA.prototype =
                 var szFolderName = mainObject.m_aszFolderList.shift();
                 this.m_Log.Write("YahooPOPBETA.js - mailBoxOnloadHandler - szFolderName " + szFolderName);
                 var szData = kLstMsgs.replace(/folderName/,szFolderName);
+                szData = szData.replace(/MSGLIST/,mainObject.m_iMSGList);
 
                 var szURI = mainObject.m_szLocationURI + "/ws/mail/v1/soap?appid=YahooMailRC&m=ListMessages&wssid="+mainObject.m_szWssid;
                 mainObject.m_HttpComms.setURI(szURI);
@@ -1034,6 +1037,9 @@ YahooPOPBETA.prototype =
                     
                     var oHeaders = new headers(szResponse);
                     mainObject.m_szEmail += oHeaders.getAllHeaders();
+                    mainObject.m_szEmail = mainObject.m_szEmail.replace(/content-transfer-Encoding:.*?quoted-printable.*?$/im, "x-Header: removed");
+                    mainObject.m_szEmail = mainObject.m_szEmail.replace(/content-transfer-Encoding:.*?base64.*?$/im,"x-Header: removed");
+
                     mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - headers - "+mainObject.m_szEmail);
                     delete oHeaders;
                     
