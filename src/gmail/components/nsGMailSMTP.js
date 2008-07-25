@@ -18,6 +18,7 @@ function nsGMailSMTP()
         scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms3.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/base64.js");
         scriptLoader.loadSubScript("chrome://gmail/content/GMailMSG.js");
+        scriptLoader.loadSubScript("chrome://gmail/content/HTML-escape.js");
 
         var date = new Date();
         var szLogFileName = "GMailLog_SMTP_" + date.getHours()+ "_" + date.getMinutes() + "_"+ date.getUTCMilliseconds() +"_";
@@ -191,12 +192,12 @@ nsGMailSMTP.prototype =
             if (szResponse.search(patternGMailLoginBounce)!=-1)
             {
                 mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - bounce");
-                var aRedirect = szResponse.match(patternGMailLoginBounce);
-                mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - aRedirect " + aRedirect);
-                           
-                var szURI = aRedirect[1].replace(/&amp;/g,"&");
-                mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - redirectURL " + szURI);
-    
+                var oEscape = new HTMLescape();
+                var szClean = oEscape.decode(szResponse);
+                delete oEscape;
+                var szURI = szClean.match(patternGMailLoginBounce)[1];
+                mainObject.m_Log.Write("nsGMailPOP.js - loginOnloadHandler - redirectURL " + szURI);
+
                 mainObject.m_HttpComms.setURI(szURI);
                 mainObject.m_HttpComms.setRequestMethod("GET");
                 var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
@@ -443,7 +444,7 @@ D(["sr","2",0,"test.vbs is an executable file. For security reasons, Gmail does 
             mainObject.m_Log.Write("nsGMailSMTP.js - composerOnloadHandler - status :" + httpChannel.responseStatus );
 
             if ( szResponse.search("Your message has been sent.") ==-1 &&
-                 szResponse.search("Il messaggio � stato inviato.") ==-1 &&
+                 szResponse.search("Il messaggio � stato inviato.") ==-1 &&
                  szResponse.search("Ihre Nachricht wurde gesendet.") ==-1 &&
                  szResponse.search("Votre message a été envoyé.") ==-1 )
                 mainObject.serverComms("502 Invalid mail format\r\n");

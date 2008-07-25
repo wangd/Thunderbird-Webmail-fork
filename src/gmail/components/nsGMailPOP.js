@@ -18,6 +18,7 @@ function nsGMail()
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms3.js");
         scriptLoader.loadSubScript("chrome://gmail/content/GMailMSG.js");
+        scriptLoader.loadSubScript("chrome://gmail/content/HTML-escape.js");
 
         var date = new Date();
         var szLogFileName = "GMailLog_" + date.getHours()+ "_" + date.getMinutes() + "_"+ date.getUTCMilliseconds() +"_";
@@ -194,10 +195,10 @@ nsGMail.prototype =
             if (szResponse.search(patternGMailLoginBounce)!=-1)
             {
                 mainObject.m_Log.Write("nsGMailPOP.js - loginOnloadHandler - bounce");
-                var aRedirect = szResponse.match(patternGMailLoginBounce);
-                mainObject.m_Log.Write("nsGMailPOP.js - loginOnloadHandler - aRedirect " + aRedirect);
-                           
-                var szURI = aRedirect[1].replace(/&amp;/g,"&");
+                var oEscape = new HTMLescape();
+                var szClean = oEscape.decode(szResponse);
+                delete oEscape;
+                var szURI = szClean.match(patternGMailLoginBounce)[1];
                 mainObject.m_Log.Write("nsGMailPOP.js - loginOnloadHandler - redirectURL " + szURI);
     
                 mainObject.m_HttpComms.setURI(szURI);
@@ -300,7 +301,8 @@ nsGMail.prototype =
             mainObject.m_Log.DebugDump("nsGMailPOP.js: loginHandler : Exception : "
                                           + err.name
                                           + ".\nError message: "
-                                          + err.message);
+                                          + err.message
+                                          + "\n" + err.lineNumber);
 
             mainObject.serverComms("-ERR negative vibes (GMail)\r\n");
         }
