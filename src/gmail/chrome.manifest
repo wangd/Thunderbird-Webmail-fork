@@ -12,3 +12,5 @@ locale  gmail    de-DE   jar:chrome/gmail.jar!/locale/de-DE/gmail/
 locale  gmail    ca-AD   jar:chrome/gmail.jar!/locale/ca-AD/gmail/
 locale  gmail    nl-NL   jar:chrome/gmail.jar!/locale/nl-NL/gmail/
 locale  gmail    sk      jar:chrome/gmail.jar!/locale/sk/gmail/
+locale  gmail    jp-JP   jar:chrome/gmail.jar!/locale/jp-JP/gmail/
+locale  gmail    pt-BR   jar:chrome/gmail.jar!/locale/pt-BR/gmail/
