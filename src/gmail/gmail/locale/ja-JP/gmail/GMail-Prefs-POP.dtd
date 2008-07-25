@@ -1,0 +1,4 @@
+<!ENTITY DownloadUnread.Label "未読メールのみダウンロードする">
+<!ENTITY DownloadUnread.AccessKey "u">
+<!ENTITY Archive.Label "削除する代わりにアーカイブへ保存する">
+<!ENTITY Archive.AccessKey "A">

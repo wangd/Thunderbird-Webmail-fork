@@ -1,0 +1,10 @@
+<!ENTITY GMailAbout.Title "Gmail について">
+<!ENTITY GMailAbout.ExtName "Gmail">
+<!ENTITY GMailAbout.ExtVersion "バージョン 0.5.4">
+<!ENTITY GMailAbout.ExtDescription "拡張機能 Web-Mail のための Gmail コンポーネント。">
+<!ENTITY GMailAbout.ExtCreaterTitle "作成者:">
+<!ENTITY GMailAbout.ExtCreator "Luigi Capriotti">
+<!ENTITY GMailAbout.ExtHome "ホームページ">
+<!ENTITY GMailAbout.ExtHomeURL "http://webmail.mozdev.org/">
+<!ENTITY GMailAbout.ExtButton "閉じる">
+<!ENTITY GMailAbout.ExtContributorTitle "貢献者:">

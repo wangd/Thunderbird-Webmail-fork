@@ -1,0 +1,8 @@
+<!ENTITY GMailPref.Domain.Label "Domínios suportados">
+<!ENTITY Domain.label "Domínio">
+<!ENTITY Remove.label "Remover">
+<!ENTITY Remove.AccessKey "R">
+<!ENTITY Add.label "Adicionar">
+<!ENTITY Add.AccessKey "A">
+<!ENTITY Edit.label "Editar">
+<!ENTITY Edit.AccessKey "E">

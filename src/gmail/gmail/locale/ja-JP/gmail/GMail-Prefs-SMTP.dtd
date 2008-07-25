@@ -1,0 +1,3 @@
+<!ENTITY Placeholder.Label "現在オプションがありません。">
+<!ENTITY SaveSentItems.Label "送信済みメールの中にコピーを保存する。">
+<!ENTITY SaveSentItems.AccessKey "s">

@@ -1,0 +1,8 @@
+<!ENTITY GMailPref.Domain.Label "対応済みドメイン">
+<!ENTITY Domain.label "ドメイン">
+<!ENTITY Remove.label "除去">
+<!ENTITY Remove.AccessKey "R">
+<!ENTITY Add.label "追加">
+<!ENTITY Add.AccessKey "A">
+<!ENTITY Edit.label "編集">
+<!ENTITY Edit.AccessKey "E">

@@ -1,0 +1,4 @@
+<!ENTITY DownloadUnread.Label "Somente transferir mensagens não lidas">
+<!ENTITY DownloadUnread.AccessKey "u">
+<!ENTITY Archive.Label "Salvar para Archive em vez de excluir">
+<!ENTITY Archive.AccessKey "A">
