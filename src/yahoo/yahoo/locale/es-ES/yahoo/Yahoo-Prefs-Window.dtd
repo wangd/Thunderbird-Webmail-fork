@@ -6,10 +6,12 @@
 <!ENTITY YahooPref.Tab.POP.Title "POP">
 <!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
 <!ENTITY YahooPref.Tab.Adv.Title "Avanzado">
+
 <!ENTITY YahooPref.Mode.Label "Seleccione la página que usará la extensión">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Página web actual">
 <!ENTITY YahooPref.Mode.Beta.Label "Página web BETA">
 <!ENTITY YahooPref.Mode.Classic.Label "New Classic Website">
+
 <!ENTITY YahooPref.POP.DownloadUnread.Label "Descargar sólo los mensajes no leídos">
 <!ENTITY YahooPref.POP.DownloadUnread.AccessKey "s">
 <!ENTITY YahooPref.POP.JunkMail.Label "Descargar correo basura">
@@ -21,15 +23,22 @@
 <!ENTITY YahooPref.POP.ButtonRemove.AccessKey "B">
 <!ENTITY YahooPref.POP.MarkAsRead.Label "Marcar los correos como leídos en el servidor">
 <!ENTITY YahooPref.POP.MarkAsRead.AccessKey "M">
+
 <!ENTITY YahooPref.SMTP.SaveSentItems.Label "Guardar una copia en la carpeta enviados">
 <!ENTITY YahooPref.SMTP.AlternativeGroup.Label "When sending rich text emails which part should the extension send?">
+<!ENTITY YahooPref.SMTP.SendPlain.Label "Send plain text">
+<!ENTITY YahooPref.SMTP.SendPlain.AccessKey "p">
+<!ENTITY YahooPref.SMTP.SendHtml.Label "Send html text">
+<!ENTITY YahooPref.SMTP.SendHtml.AccessKey "h">
 <!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "G">
+
 <!ENTITY YahooPref.Adv.ShortID.Label "Usar identificador corto">
 <!ENTITY YahooPref.Adv.ShortID.AccessKey "i">
 <!ENTITY YahooPref.Adv.ReUseSession.Label "Reutilizar los datos de la sesión http">
 <!ENTITY YahooPref.Adv.ReUseSession.AccessKey "R">
 <!ENTITY YahooPref.AdvInfo.Label "Cambiar la opción del identificador corto hará que se vuelvan a descargar todos sus mensajes">
 <!ENTITY YahooPref.AccountError.Label "No se han encontrado cuentas yahoo">
+
 <!ENTITY YahooPref.Domain.Label "Dominios soportados por la extensión">
 <!ENTITY YahooPref.Domain.Button.AddDomain.Label "Añadir...">
 <!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "A">
