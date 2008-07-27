@@ -283,6 +283,9 @@ nsGMail.prototype =
         
                     mainObject.m_Log.Write("nsGMailPOP.js - loginOnloadHandler - szGMAIL_AT: " + mainObject.m_szGMailAtCookie);
         
+                    if (httpChannel.URI.schemeIs("https")) 
+                        mainObject.m_szMailURL = mainObject.m_szMailURL.replace(/^http/i,"https");
+        
                     mainObject.serverComms("+OK Your in\r\n");
                     mainObject.m_bAuthorised = true;
                 break;
