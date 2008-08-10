@@ -1,0 +1,4 @@
+<!ENTITY DownloadUnread.Label "Pobieraj tylko nieprzeczytane wiadomości">
+<!ENTITY DownloadUnread.AccessKey "N">
+<!ENTITY Archive.Label "Zamiast usuwać, zapisuj do archiwum">
+<!ENTITY Archive.AccessKey "A">

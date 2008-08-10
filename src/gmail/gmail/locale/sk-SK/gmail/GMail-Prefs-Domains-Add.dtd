@@ -1,0 +1,10 @@
+<!ENTITY Window.size "šírka: 30em; výška: 10em">
+<!ENTITY Uri.label "Uri">
+<!ENTITY Uri.accessKey "U">
+<!ENTITY Uri.size "šírka: 35px">
+<!ENTITY Domain.label "Doména">
+<!ENTITY Domain.accessKey "D">
+<!ENTITY TitleAdd "Pridať">
+<!ENTITY TitleEdit "Upraviť">
+<!ENTITY Ok.label "Ok">
+<!ENTITY Cancel.label "Zrušiť">
