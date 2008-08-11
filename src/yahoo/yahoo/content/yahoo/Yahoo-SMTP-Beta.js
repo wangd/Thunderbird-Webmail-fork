@@ -416,7 +416,7 @@ YahooSMTPBETA.prototype =
             szData = szData.replace(/FROMADDRESS/g,szFrom.toLowerCase());   //set from address
             var szFromName = this.m_Email.headers.getHeader("From").split('<');
             if (szFromName.length > 1)
-                szData = szData.replace(/FROMNAME/g,szFromName[0]);   //set from name
+                szData = szData.replace(/FROMNAME/g,szFromName[0].replace(/\s*$/g,""));   //set from name
             else
                 szData = szData.replace(/FROMNAME/g,"");   
                           

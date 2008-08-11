@@ -440,9 +440,23 @@ YahooSMTPClassic.prototype =
                         var szValue = "";
                         if (aszInput[i].search(/value/i)!=-1)
                             szValue = aszInput[i].match(patternYahooClassicValue)[1]
-
+                      
                         mainObject.m_HttpComms.addValuePair(szName, encodeURIComponent(mainObject.cleanHTML(szValue)));
                     }
+
+
+                    if (szForm.search(patternYahooSelect)!=-1) 
+                    {
+                        var szName = "defFromAddress";
+                        var szSelect = szForm.match(patternYahooSelect)[0];
+                        mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - szSelect " + szSelect);
+                            
+                        szValue = szSelect.match(patternYahooAddress)[1];
+                        mainObject.m_Log.Write("YahooSMTPClassic.js - composerOnloadHandler - szValue " + szValue);
+                        
+                        mainObject.m_HttpComms.addValuePair(szName, encodeURIComponent(mainObject.cleanHTML(szValue)));
+                    }  
+
 
                     var szTo = mainObject.m_Email.headers.getTo();
                     mainObject.m_HttpComms.addValuePair("to", (szTo? encodeURIComponent(szTo) : ""));

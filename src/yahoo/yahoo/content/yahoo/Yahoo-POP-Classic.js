@@ -388,9 +388,14 @@ YahooPOPClassic.prototype =
         {
             this.m_Log.Write("YahooPOPClassic.js - getNumMessages - START");
 
-            if (this.m_aszFolderURLList.length==0) return false;
-            this.mailBox(true);
-
+            if (this.m_aszFolderURLList.length == 0) 
+            {
+                this.serverComms("+OK " + this.m_aMsgDataStore.length + " " + this.m_iTotalSize + "\r\n");
+            }
+            else 
+            {
+                this.mailBox(true);
+            }
             this.m_Log.Write("YahooPOPClassic.js - getNumMessages - END");
             return true;
         }

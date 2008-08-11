@@ -57,7 +57,7 @@ const patternYahooClassicAction = /action="(.*?)"/;
 const patternYahooClassicAttCheck = /errorFlag.*?=.*?false;/igm;
 const patternYahooClassicAttDetails = /fileDetails.*?=.*?["|'](.*?)["|'];/im;
 const patternYahooAddress =/<option value="(.*?)"[\s]*?selected/i;
-const patternYahooSelect = /<select  id="defFromAddress"[\s\S]*<\/select>/igm;
+const patternYahooSelect = /<select\s*id="defFromAddress"[\s\S]*<\/select>/igm;
 
 /******************************  BETA ***************************************/
 const kPatternWssid = /[']?wssid[']?.*?'(.*?)',/i;

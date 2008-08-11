@@ -445,9 +445,15 @@ YahooPOPBETA.prototype =
         try
         {
             this.m_Log.Write("YahooPOPBETA.js - getNumMessages - START");
-            if (this.m_aszFolderList.length==0) return false;
-
-            this.mailBox(true);
+            
+            if (this.m_aszFolderList.length == 0) 
+            {
+                this.serverComms("+OK " + this.m_aMsgDataStore.length + " " + this.m_iTotalSize + "\r\n");
+            }
+            else 
+            {
+                this.mailBox(true);
+            }
 
             this.m_Log.Write("YahooPOPBETA.js - getNumMessages - END");
             return true;
@@ -1037,8 +1043,8 @@ YahooPOPBETA.prototype =
                     
                     var oHeaders = new headers(szResponse);
                     mainObject.m_szEmail += oHeaders.getAllHeaders();
-                    mainObject.m_szEmail = mainObject.m_szEmail.replace(/content-transfer-Encoding:.*?quoted-printable.*?$/im, "x-Header: removed");
-                    mainObject.m_szEmail = mainObject.m_szEmail.replace(/content-transfer-Encoding:.*?base64.*?$/im,"x-Header: removed");
+                    mainObject.m_szEmail = mainObject.m_szEmail.replace(/content-transfer-Encoding:.*?quoted-printable.*?$/img, "x-Header: removed");
+                    mainObject.m_szEmail = mainObject.m_szEmail.replace(/content-transfer-Encoding:.*?base64.*?$/img,"x-Header: removed");
 
                     mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - headers - "+mainObject.m_szEmail);
                     delete oHeaders;
