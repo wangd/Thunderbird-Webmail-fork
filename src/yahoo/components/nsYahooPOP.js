@@ -328,7 +328,9 @@ nsYahoo.prototype =
 
 
             //inbox
-            oData.aszFolder.push("inbox");
+            oPref.Value = null;
+            WebMailPrefAccess.Get("bool","yahoo.Account."+szUserName+".bDownloadInbox",oPref);
+            if (oPref.Value==null || oPref.Value==true ) oData.aszFolder.push("inbox");
 
             //get spam
             oPref.Value = null;
