@@ -2,17 +2,14 @@
 <!ENTITY YahooPref.Panel.Accounts.Title "Contas">
 <!ENTITY YahooPref.Panel.Domains.Title "Domínios">
 <!ENTITY YahooPref.Button.Close.Label "Fechar">
-
 <!ENTITY YahooPref.Tab.Mode.Title "Modo">
 <!ENTITY YahooPref.Tab.POP.Title "POP">
 <!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
 <!ENTITY YahooPref.Tab.Adv.Title "Avançado">
-
 <!ENTITY YahooPref.Mode.Label "Selecione o website que a extensão vai utilizar">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Website de Produção">
 <!ENTITY YahooPref.Mode.Beta.Label "Website BETA">
 <!ENTITY YahooPref.Mode.Classic.Label "New Classic Website">
-
 <!ENTITY YahooPref.POP.DownloadUnread.Label "Baixar apenas mensagens não lidas">
 <!ENTITY YahooPref.POP.DownloadUnread.AccessKey "n">
 <!ENTITY YahooPref.POP.JunkMail.Label "Baixar lixo eletrônico">
@@ -24,7 +21,6 @@
 <!ENTITY YahooPref.POP.ButtonRemove.AccessKey "x">
 <!ENTITY YahooPref.POP.MarkAsRead.Label "Marcar e-mails como lidos no servidor">
 <!ENTITY YahooPref.POP.MarkAsRead.AccessKey "c">
-
 <!ENTITY YahooPref.SMTP.SaveSentItems.Label "Salvar uma cópia nos ítens enviados.">
 <!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "s">
 <!ENTITY YahooPref.SMTP.AlternativeGroup.Label "When sending rich text emails which part should the extension send?">
@@ -32,14 +28,12 @@
 <!ENTITY YahooPref.SMTP.SendPlain.AccessKey "p">
 <!ENTITY YahooPref.SMTP.SendHtml.Label "Send html text">
 <!ENTITY YahooPref.SMTP.SendHtml.AccessKey "h">
-
 <!ENTITY YahooPref.Adv.ShortID.Label "Utilizar ID reduzido">
 <!ENTITY YahooPref.Adv.ShortID.AccessKey "I">
 <!ENTITY YahooPref.Adv.ReUseSession.Label "Reutilizar dados da sessão http.">
 <!ENTITY YahooPref.Adv.ReUseSession.AccessKey "s">
 <!ENTITY YahooPref.AdvInfo.Label "Mudar o ID reduzido vai fazer com que toda sua caixa de e-mail seja baixada">
 <!ENTITY YahooPref.AccountError.Label "Nenhuma conta do Yahoo foi encontrada">
-
 <!ENTITY YahooPref.Domain.Label "Domínios suportados pela extensão Yahoo">
 <!ENTITY YahooPref.Domain.Button.AddDomain.Label "Adicionar...">
 <!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "A">

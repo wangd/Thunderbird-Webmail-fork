@@ -1,11 +1,11 @@
 <!ENTITY YahooPref.Window.Title "Opcions del Yahoo">
 <!ENTITY YahooPref.Panel.Accounts.Title "Comptes">
 <!ENTITY YahooPref.Panel.Domains.Title "Dominis">
-<!ENTITY YahooPref.Panel.Globals.Title "Globals">
 <!ENTITY YahooPref.Button.Close.Label "Tanca">
 <!ENTITY YahooPref.Tab.Mode.Title "Mode">
 <!ENTITY YahooPref.Tab.POP.Title "POP">
 <!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
+<!ENTITY YahooPref.Tab.Adv.Title "Advanced">
 <!ENTITY YahooPref.Mode.Label "Seleccioneu el lloc web que utilitzarà l&apos;extensió">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Lloc web en producció">
 <!ENTITY YahooPref.Mode.Beta.Label "BETA Website">
@@ -19,26 +19,23 @@
 <!ENTITY YahooPref.POP.ButtonAdd.AccessKey "A">
 <!ENTITY YahooPref.POP.ButtonRemove.Label "Esborra">
 <!ENTITY YahooPref.POP.ButtonRemove.AccessKey "R">
+<!ENTITY YahooPref.POP.MarkAsRead.Label "Mark emails as read on server">
+<!ENTITY YahooPref.POP.MarkAsRead.AccessKey "k">
 <!ENTITY YahooPref.SMTP.SaveSentItems.Label "Desa una còpia a elements enviats.">
 <!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "s">
-<!ENTITY YahooPref.AccountError.Label "No s&apos;han trobat comptes de Yahoo.">
-<!ENTITY YahooPref.SMTP.NA.Label "No hi ha opcions SMPT per a Yahoo BETA">
-<!ENTITY YahooPref.Domain.Label "Dominis suportats per l&apos;estensió de Yahoo">
-<!ENTITY YahooPref.Domain.Button.AddDomain.Label "Afegeix...">
-<!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "A">
-<!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Esborra">
-<!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "R">
-<!ENTITY YahooPref.Globals.ShortID.Label "Utilitza un ID curt">
-<!ENTITY YahooPref.Globals.ShortID.AccessKey "I">
-<!ENTITY YahooPref.Globals.ReUseSession.Label "Reutilitza les dades de sessió http">
-<!ENTITY YahooPref.Globals.ReUseSession.AccessKey "S">
-<!ENTITY YahooPref.GlobalsInfo.Label "Si canvieu la opció d&apos;ID curt es descarregarà tot el correu">
-
-<!ENTITY YahooPref.Tab.Adv.Title "Advanced">
+<!ENTITY YahooPref.SMTP.AlternativeGroup.Label "When sending rich text emails which part should the extension send?">
+<!ENTITY YahooPref.SMTP.SendPlain.Label "Send plain text">
+<!ENTITY YahooPref.SMTP.SendPlain.AccessKey "p">
+<!ENTITY YahooPref.SMTP.SendHtml.Label "Send html text">
+<!ENTITY YahooPref.SMTP.SendHtml.AccessKey "h">
 <!ENTITY YahooPref.Adv.ShortID.Label "Use Short ID">
 <!ENTITY YahooPref.Adv.ShortID.AccessKey "I">
 <!ENTITY YahooPref.Adv.ReUseSession.Label "Reuse http session data.">
 <!ENTITY YahooPref.Adv.ReUseSession.AccessKey "S">
 <!ENTITY YahooPref.AdvInfo.Label "Changing the Short Id option will result in your entire mailbox being downloaded">
-<!ENTITY YahooPref.POP.MarkAsRead.Label "Mark emails as read on server">
-<!ENTITY YahooPref.POP.MarkAsRead.AccessKey "k">
+<!ENTITY YahooPref.AccountError.Label "No s&apos;han trobat comptes de Yahoo.">
+<!ENTITY YahooPref.Domain.Label "Dominis suportats per l&apos;estensió de Yahoo">
+<!ENTITY YahooPref.Domain.Button.AddDomain.Label "Afegeix...">
+<!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "A">
+<!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Esborra">
+<!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "R">

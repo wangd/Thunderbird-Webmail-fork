@@ -2,16 +2,14 @@
 <!ENTITY YahooPref.Panel.Accounts.Title "Accounts">
 <!ENTITY YahooPref.Panel.Domains.Title "Domains">
 <!ENTITY YahooPref.Button.Close.Label "Close">
-
 <!ENTITY YahooPref.Tab.Mode.Title "Mode">
 <!ENTITY YahooPref.Tab.POP.Title "POP">
 <!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
-
+<!ENTITY YahooPref.Tab.Adv.Title "Advanced">
 <!ENTITY YahooPref.Mode.Label "Select website the extension will use">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Production Website">
 <!ENTITY YahooPref.Mode.Beta.Label "BETA Website">
 <!ENTITY YahooPref.Mode.Classic.Label "New Classic Website">
-
 <!ENTITY YahooPref.POP.DownloadUnread.Label "Download unread emails only">
 <!ENTITY YahooPref.POP.DownloadUnread.AccessKey "u">
 <!ENTITY YahooPref.POP.JunkMail.Label "Download JunkMail">
@@ -21,33 +19,23 @@
 <!ENTITY YahooPref.POP.ButtonAdd.AccessKey "A">
 <!ENTITY YahooPref.POP.ButtonRemove.Label "Remove">
 <!ENTITY YahooPref.POP.ButtonRemove.AccessKey "R">
-
+<!ENTITY YahooPref.POP.MarkAsRead.Label "Mark emails as read on server">
+<!ENTITY YahooPref.POP.MarkAsRead.AccessKey "k">
 <!ENTITY YahooPref.SMTP.SaveSentItems.Label "Save copy in sent items.">
 <!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "s">
-
-<!ENTITY YahooPref.AccountError.Label "No Yahoo Accounts Found">
-<!ENTITY YahooPref.SMTP.NA.Label "No SMPT options for Yahoo BETA">
-
-<!ENTITY YahooPref.Domain.Label "Domains supported by Yahoo extension">
-<!ENTITY YahooPref.Domain.Button.AddDomain.Label "Add...">
-<!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "A">
-<!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Remove">
-<!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "R">
-
-
-<!ENTITY YahooPref.Panel.Globals.Title "Globals">
-<!ENTITY YahooPref.Globals.ShortID.Label "Use Short ID">
-<!ENTITY YahooPref.Globals.ShortID.AccessKey "I">
-<!ENTITY YahooPref.Globals.ReUseSession.Label "Reuse http session data.">
-<!ENTITY YahooPref.Globals.ReUseSession.AccessKey "S">
-<!ENTITY YahooPref.GlobalsInfo.Label "Changing the Short Id option will result in your entire mailbox being downloaded">
-
-
-<!ENTITY YahooPref.Tab.Adv.Title "Advanced">
+<!ENTITY YahooPref.SMTP.AlternativeGroup.Label "When sending rich text emails which part should the extension send?">
+<!ENTITY YahooPref.SMTP.SendPlain.Label "Send plain text">
+<!ENTITY YahooPref.SMTP.SendPlain.AccessKey "p">
+<!ENTITY YahooPref.SMTP.SendHtml.Label "Send html text">
+<!ENTITY YahooPref.SMTP.SendHtml.AccessKey "h">
 <!ENTITY YahooPref.Adv.ShortID.Label "Use Short ID">
 <!ENTITY YahooPref.Adv.ShortID.AccessKey "I">
 <!ENTITY YahooPref.Adv.ReUseSession.Label "Reuse http session data.">
 <!ENTITY YahooPref.Adv.ReUseSession.AccessKey "S">
 <!ENTITY YahooPref.AdvInfo.Label "Changing the Short Id option will result in your entire mailbox being downloaded">
-<!ENTITY YahooPref.POP.MarkAsRead.Label "Mark emails as read on server">
-<!ENTITY YahooPref.POP.MarkAsRead.AccessKey "k">
+<!ENTITY YahooPref.AccountError.Label "No Yahoo Accounts Found">
+<!ENTITY YahooPref.Domain.Label "Domains supported by Yahoo extension">
+<!ENTITY YahooPref.Domain.Button.AddDomain.Label "Add...">
+<!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "A">
+<!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Remove">
+<!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "R">

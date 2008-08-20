@@ -1,11 +1,11 @@
 <!ENTITY YahooPref.Window.Title "Optiuni Yahoo">
 <!ENTITY YahooPref.Panel.Accounts.Title "Conturi">
 <!ENTITY YahooPref.Panel.Domains.Title "Domenii">
-<!ENTITY YahooPref.Panel.Globals.Title "Globale">
 <!ENTITY YahooPref.Button.Close.Label "Inchide">
 <!ENTITY YahooPref.Tab.Mode.Title "Mod">
 <!ENTITY YahooPref.Tab.POP.Title "POP">
 <!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
+<!ENTITY YahooPref.Tab.Adv.Title "Advanced">
 <!ENTITY YahooPref.Mode.Label "Alege situl pe care il va folosi extensia">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Situl productiv">
 <!ENTITY YahooPref.Mode.Beta.Label "Situl BETA">
@@ -19,27 +19,23 @@
 <!ENTITY YahooPref.POP.ButtonAdd.AccessKey "A">
 <!ENTITY YahooPref.POP.ButtonRemove.Label "Sterge">
 <!ENTITY YahooPref.POP.ButtonRemove.AccessKey "R">
+<!ENTITY YahooPref.POP.MarkAsRead.Label "Mark emails as read on server">
+<!ENTITY YahooPref.POP.MarkAsRead.AccessKey "k">
 <!ENTITY YahooPref.SMTP.SaveSentItems.Label "Salveaza o copie in Sent items">
 <!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "s">
-<!ENTITY YahooPref.AccountError.Label "Niciun cont Yahoo gasit">
-<!ENTITY YahooPref.SMTP.NA.Label "Nicio optiune SMTP pentru Yahoo BETA">
-<!ENTITY YahooPref.Domain.Label "Domenii suportate de extensia Yahoo">
-<!ENTITY YahooPref.Domain.Button.AddDomain.Label "Adauga...">
-<!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "A">
-<!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Sterge">
-<!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "R">
-<!ENTITY YahooPref.Globals.ShortID.Label "Foloseste ID Scurt">
-<!ENTITY YahooPref.Globals.ShortID.AccessKey "I">
-<!ENTITY YahooPref.Globals.ReUseSession.Label "Refoloseste date sesiune http.">
-<!ENTITY YahooPref.Globals.ReUseSession.AccessKey "S">
-<!ENTITY YahooPref.GlobalsInfo.Label "Schimbarea optiunii ID Scurt va avea ca efect descarcarea intregii casute cu mesaje">
-
-
-<!ENTITY YahooPref.Tab.Adv.Title "Advanced">
+<!ENTITY YahooPref.SMTP.AlternativeGroup.Label "When sending rich text emails which part should the extension send?">
+<!ENTITY YahooPref.SMTP.SendPlain.Label "Send plain text">
+<!ENTITY YahooPref.SMTP.SendPlain.AccessKey "p">
+<!ENTITY YahooPref.SMTP.SendHtml.Label "Send html text">
+<!ENTITY YahooPref.SMTP.SendHtml.AccessKey "h">
 <!ENTITY YahooPref.Adv.ShortID.Label "Use Short ID">
 <!ENTITY YahooPref.Adv.ShortID.AccessKey "I">
 <!ENTITY YahooPref.Adv.ReUseSession.Label "Reuse http session data.">
 <!ENTITY YahooPref.Adv.ReUseSession.AccessKey "S">
 <!ENTITY YahooPref.AdvInfo.Label "Changing the Short Id option will result in your entire mailbox being downloaded">
-<!ENTITY YahooPref.POP.MarkAsRead.Label "Mark emails as read on server">
-<!ENTITY YahooPref.POP.MarkAsRead.AccessKey "k">
+<!ENTITY YahooPref.AccountError.Label "Niciun cont Yahoo gasit">
+<!ENTITY YahooPref.Domain.Label "Domenii suportate de extensia Yahoo">
+<!ENTITY YahooPref.Domain.Button.AddDomain.Label "Adauga...">
+<!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "A">
+<!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Sterge">
+<!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "R">
