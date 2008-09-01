@@ -101,8 +101,10 @@ OWAScreenRipper.prototype =
             mainObject.m_Log.Write("nsOWA.js - loginOnloadHandler - START");
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
-            mainObject.m_Log.Write("nsOWA.js - loginOnloadHandler - status :" +httpChannel.responseStatus );
+            var szLocation = httpChannel.URI.spec;
+            mainObject.m_Log.Write("OWA-SMTP-SR - loginOnloadHandler - szLocation :" +szLocation);
 
+            mainObject.m_Log.Write("nsOWA.js - loginOnloadHandler - status :" +httpChannel.responseStatus );
             if (httpChannel.responseStatus != 200)
                 throw new Error("return status " + httpChannel.responseStatus);
            
@@ -111,7 +113,22 @@ OWAScreenRipper.prototype =
                 case 0: //login form
                     var szAction = szResponse.match(kOWAAction)[1];            
                     mainObject.m_Log.Write("nsOWA - loginOnloadHandler - szAction :" +szAction);
-                    var szURL = httpChannel.URI.prePath + szAction
+                    var szURL =""; 
+                    if (szAction.search(/^\//) == -1)
+                    {
+                        var IOService = Components.classes["@mozilla.org/network/io-service;1"]
+                                                  .getService(Components.interfaces.nsIIOService);
+                        var nsIURI = IOService.newURI(httpChannel.URI.spec, null, null)
+                                              .QueryInterface(Components.interfaces.nsIURL);
+                        var szDirectory = nsIURI.directory
+                        mainObject.m_Log.Write("nsOWA - loginOnloadHandler - directory : " +szDirectory);
+                        
+                        szURL = httpChannel.URI.prePath + szDirectory + szAction
+                    }
+                    else
+                    {
+                        szURL = httpChannel.URI.prePath + szAction
+                    }
                     mainObject.m_Log.Write("nsOWA - loginOnloadHandler - szURL :" +szURL);
         
                     var szForm = szResponse.match(kOWAForm)[1];
@@ -123,7 +140,8 @@ OWAScreenRipper.prototype =
                     {
                         mainObject.m_Log.Write("nsOWA - loginOnloadHandler - aszInput :" +aszInput[i]);
                         
-                        if (aszInput[i].search(/submit/i)==-1 && aszInput[i].search(/radio/i) == -1 && aszInput[i].search(/check/i) == -1)
+                        if (aszInput[i].search(/submit/i)==-1 && aszInput[i].search(/button/i)==-1 
+                                && aszInput[i].search(/radio/i) == -1 && aszInput[i].search(/check/i) == -1)
                         { 
                             var szName = aszInput[i].match(kOWAName)[1];
                             
@@ -132,7 +150,7 @@ OWAScreenRipper.prototype =
                             
                             if (szName.search(/username/i) != -1) 
                             {
-                                if (mainObject.m_bLoginWithDomain)
+                                if (mainObject.m_bLoginWithDomain == true)
                                     szValue = mainObject.m_szUserName.toLowerCase();
                                 else
                                     szValue = mainObject.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
@@ -159,7 +177,14 @@ OWAScreenRipper.prototype =
                 
                 
                 case 1: //get base URL
-                    mainObject.m_szBaseURL = szResponse.match(kBaseURL)[1];            
+                    try
+                    {
+                        mainObject.m_szBaseURL = szResponse.match(kBaseURL)[1];
+                    }
+                    catch(e)
+                    {
+                        mainObject.m_szBaseURL = szResponse.match(kOWABaseAlt)[1]; 
+                    }            
                     mainObject.m_Log.Write("nsOWA - loginOnloadHandler - m_szBaseURL :" +mainObject.m_szBaseURL);
                     
                     var szMailBox = szResponse.match(kMailBoxURL)[1];  
@@ -181,7 +206,7 @@ OWAScreenRipper.prototype =
                                           + err.name
                                           + ".\nError message: "
                                           + err.message+ "\n"
-                                          + e.lineNumber);
+                                          + err.lineNumber);
 
             mainObject.serverComms("-ERR negative vibes from "+ mainObject.m_szUserName +"\r\n");
         }

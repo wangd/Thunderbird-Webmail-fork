@@ -42,7 +42,9 @@ function OWAWebDav(oResponseStream, oLog, oPrefData)
 
         //process folders
         this.m_aszFolders = new Array();
-        this.m_aszFolders.push("Active"); //Inbox
+        //this.m_aszFolders.push("Active"); //Inbox
+        this.m_aszFolders.push("Inbox"); //Inbox
+        this.m_aszFolderURLList = new Array();
         if (oPrefData.bUseJunkMail)  this.m_aszFolders.push("HM_BuLkMail_"); //junk
         for(var i=0; i<oPrefData.aszFolder.length; i++)
         {
@@ -85,13 +87,6 @@ OWAWebDav.prototype =
 
             if (!this.m_szUserName || !this.m_oResponseStream || !this.m_szPassWord) return false;
 
-            if (!this.m_bReUseSession)
-            {
-                var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
-                                         .getService(Components.interfaces.nsIWebMailCookieManager2);
-                oCookies.removeCookie(this.m_szUserName);
-            }
-
             this.m_iStage=0;
             var szUserName = this.m_szUserName;
             if (!this.m_bLoginWithDomain)
@@ -115,11 +110,10 @@ OWAWebDav.prototype =
                                szUserName,
                                this.m_szPassWord);
             
-            this.m_HttpComms.setContentType("text/xml");
+            this.m_HttpComms.setContentType("text/html");
             this.m_HttpComms.setURI(this.m_szURL);
-            this.m_HttpComms.setRequestMethod("PROPFIND");
-            this.m_HttpComms.addData(OWASchema);
-            var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);
+            this.m_HttpComms.setRequestMethod("Get");
+            var bResult = this.m_HttpComms.send(this.loginOnloadHandlerFirst, this);
             if (!bResult) throw new Error("httpConnection returned false");
 
             this.m_Log.Write("OWAWebDav.js - logIN - END");
@@ -137,6 +131,44 @@ OWAWebDav.prototype =
     },
 
 
+    loginOnloadHandlerFirst : function(szResponse ,event , mainObject)
+    {
+        try
+        {
+            mainObject.m_Log.Write("OWAWebDav.js - logINOnLoadHandlerFirst - START");
+            mainObject.m_Log.Write("OWAWebDav.js - loginOnloadHandler : " + mainObject.m_iStage);
+
+            var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                      .getService(Components.interfaces.nsIWebMailCookieManager2);
+            
+            var szDomain = mainObject.m_szUserName.match(/.*?@(.*?)$/)[1].toLowerCase();
+            mainObject.m_szURL = mainObject.m_DomainManager.getURL(szDomain) + mainObject.m_szUserName.match(/(.*?)@.*?$/)[1].toLowerCase() + "/Inbox/";
+            
+            var nsIURI = Components.classes["@mozilla.org/network/io-service;1"]
+                                   .getService(Components.interfaces.nsIIOService)
+                                   .newURI(mainObject.m_szURL, null, null);
+            var szServerName= nsIURI.host;
+            
+            mainObject.m_HttpComms.setContentType("text/xml");
+            mainObject.m_HttpComms.setURI(mainObject.m_szURL);
+            mainObject.m_HttpComms.setRequestMethod("PROPFIND");
+            mainObject.m_HttpComms.addData(OWASchema);
+            var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
+            if (!bResult) throw new Error("httpConnection returned false");
+
+            mainObject.m_Log.Write("OWAWebDav.js - logINOnLoadHandlerFirst - END");
+            return bResult;
+        }
+        catch(e)
+        {
+            mainObject.m_Log.DebugDump("OWAWebDav.js: logIN : Exception : "
+                                              + e.name +
+                                              ".\nError message: "
+                                              + e.message+ "\n"
+                                              + e.lineNumber);
+            return false;
+        }
+	},
 
 
     loginOnloadHandler : function(szResponse ,event , mainObject)
@@ -154,6 +186,8 @@ OWAWebDav.prototype =
             if (httpChannel.responseStatus != 200 && httpChannel.responseStatus != 207)
                 throw new Error("return status " + httpChannel.responseStatus);
 
+            mainObject.m_Log.Write("OWAWebDav.js - Response Status is OK");
+
             switch(mainObject.m_iStage)
             {
                 case 0://get folder urls
@@ -167,7 +201,7 @@ OWAWebDav.prototype =
                 break;
                 
                 case 1: //get baisc uri's
-                    var szFolderURI = szResponse.match(patternOWAFolder)[1];
+                    var szFolderURI = szResponse.match(patternOWAFolder)[1]; // FAILING HERE?
                     mainObject.m_Log.Write("OWAWebDav.js - loginOnloadHandler - get folder url - " + szFolderURI);
                     mainObject.m_szTrashURI = szResponse.match(patternOWATrash)[1];
                     mainObject.m_Log.Write("OWAWebDav.js - loginOnloadHandler - get trash url - " + mainObject.m_szTrashURI);
@@ -194,26 +228,30 @@ OWAWebDav.prototype =
                         var i =0;
                         var bFound = false;
                         do{
-                            var szFolderURL = aszFolderList[i].match(patternOWAHref)[1];
-                            mainObject.m_Log.Write("OWAWebDav.js - loginOnloadHandler - szFolderURL : "+szFolderURL );
-                            var szFolderName = szFolderURL.match(patternOWAFolderName)[1];
-                            mainObject.m_Log.Write("OWAWebDav.js - loginOnloadHandler - szFolderName : "+szFolderName );
-
-                            var szDisplayName = "";
-                            if (aszFolderList[i].search(patternOWADisplayName)!=-1)
-                                szDisplayName =aszFolderList[i].match(patternOWADisplayName)[1];
-                            mainObject.m_Log.Write("OWAWebDav.js - loginOnloadHandler - szDisplayName : "+szDisplayName );
-
-                            var szSpecial = "";
-                            if (aszFolderList[i].search(patternOWASpecial)!=-1)
-                                szSpecial =aszFolderList[i].match(patternOWASpecial)[1];
-                            mainObject.m_Log.Write("OWAWebDav.js - loginOnloadHandler - szSpecial : "+szSpecial );
-
-                            if (szFolderName.search(regExp)>=0 || szDisplayName.search(regExp)>=0 || szSpecial.search(regExp)>=0 )
+                            if (aszFolderList[i].match(patternOWAIsFolder) )
                             {
-                                bFound = true;
-                                mainObject.m_aszFolderURLList.push(szFolderURL);
-                                mainObject.m_Log.Write("OWAWebDav.js - loginOnloadHandler - URL found : "+szFolderURL);
+                                mainObject.m_Log.Write("OWAWebDav.js - loginOnloadHandler - folderListItem : "+aszFolderList[i] );
+                                var szFolderURL = aszFolderList[i].match(patternOWAHref)[1];
+                                mainObject.m_Log.Write("OWAWebDav.js - loginOnloadHandler - szFolderURL : "+szFolderURL );
+                                var szFolderName = szFolderURL.match(patternOWAFolderName)[1];
+                                mainObject.m_Log.Write("OWAWebDav.js - loginOnloadHandler - szFolderName : "+szFolderName );
+    
+                                var szDisplayName = "";
+                                if (aszFolderList[i].search(patternOWADisplayName)!=-1)
+                                    szDisplayName =aszFolderList[i].match(patternOWADisplayName)[1];
+                                mainObject.m_Log.Write("OWAWebDav.js - loginOnloadHandler - szDisplayName : "+szDisplayName );
+    
+                                var szSpecial = "";
+                                if (aszFolderList[i].search(patternOWASpecial)!=-1)
+                                    szSpecial =aszFolderList[i].match(patternOWASpecial)[1];
+                                mainObject.m_Log.Write("OWAWebDav.js - loginOnloadHandler - szSpecial : "+szSpecial );
+    
+                                if (szFolderName.search(regExp)>=0 || szDisplayName.search(regExp)>=0 || szSpecial.search(regExp)>=0 )
+                                {
+                                    bFound = true;
+                                    mainObject.m_aszFolderURLList.push(szFolderURL);
+                                    mainObject.m_Log.Write("OWAWebDav.js - loginOnloadHandler - URL found : "+szFolderURL);
+                                }
                             }
                             i++;
                         }while (i<aszFolderList.length && !bFound)
@@ -371,6 +409,7 @@ OWAWebDav.prototype =
                 var iCount=0;
                 do{
                     var Item = this.m_aRawData.shift();
+                    this.m_Log.Write("OWAWebDav.js - processItem - item - "+ Item);
 
                     var bRead = true;
                     if (this.m_bDownloadUnread)
@@ -396,11 +435,14 @@ OWAWebDav.prototype =
                         var szTO="";
                         try
                         {
-                            szTO = Item.match(patternOWATo)[1].match(/[\S\d]*@[\S\d]*/);
+                            //szTO = Item.match(patternOWATo)[1].match(/[\S\d]*@[\S\d]*/);
+                            szTO = Item.match(patternOWATo)[1];
+                            this.m_Log.Write("OWAWebDav.js - processItem - to - "+ szTo);
                         }
                         catch(err)
                         {
                             szTO = this.m_szUserName;
+                            this.m_Log.Write("OWAWebDav.js - processItem - to - <FAILED>" );
                         }
                         oMSG.szTo = szTO;
 
@@ -408,19 +450,23 @@ OWAWebDav.prototype =
                         var szFrom = "";
                         try
                         {
-                            szFrom = Item.match(patternOWAFrom)[1].match(/[\S]*@[\S]*/);
+                            //szFrom = Item.match(patternOWAFrom)[1].match(/[\S]*@[\S]*/);
+                            szFrom = Item.match(patternOWAFrom)[1];
                             if (!szFrom) throw new Error("no sender");
+                            this.m_Log.Write("OWAWebDav.js - processItem - from - " + szFrom );
                         }
                         catch(err)
                         {
                             var aFrom = Item.match(patternOWAFrom);
                             if (aFrom == null)
                             {
+                                this.m_Log.Write("OWAWebDav.js - processItem - from - <FAILED>");
                                 szFrom ="";
                             }
                             else
                             {
                                 szFrom = Item.match(patternOWAFrom)[1];
+                                this.m_Log.Write("OWAWebDav.js - processItem - from - " + szFrom );
                             }
                         }
                         oMSG.szFrom = szFrom;
@@ -430,6 +476,7 @@ OWAWebDav.prototype =
                         try
                         {
                             szSubject= Item.match(patternOWASubject)[1];
+                            this.m_Log.Write("OWAWebDav.js - processItem - subject - " + szSubject );
                         }
                         catch(err){}
                         oMSG.szSubject = szSubject;
@@ -746,7 +793,10 @@ OWAWebDav.prototype =
             this.m_Log.Write("OWAWebDav.js - getMessage - msg url" + oMSG.szMSGUri);
 
             //get email
-            this.m_HttpComms.setURI(oMSG.szMSGUri);
+            //this.m_HttpComms.setURI(oMSG.szMSGUri);
+            //this.m_HttpComms.setURI(oMSG.szMSGUri + "?Cmd=open");
+            this.m_HttpComms.setURI(oMSG.szMSGUri + "?Cmd=body");
+            this.m_HttpComms.addRequestHeader("Translate", "f", true);
             this.m_HttpComms.setRequestMethod("GET");
             var bResult = this.m_HttpComms.send(this.emailOnloadHandler, this);
             if (!bResult) throw new Error("httpConnection returned false");
@@ -778,8 +828,10 @@ OWAWebDav.prototype =
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             mainObject.m_Log.Write("OWAWebDav - emailOnloadHandler - status :" +httpChannel.responseStatus );
 
-            if (httpChannel.responseStatus != 200)
+            if ( (httpChannel.responseStatus != 200) && (httpChannel.responseStatus != 204) )
+			{
                 throw new Error("return status " + httpChannel.responseStatus);
+			}
 
             switch(mainObject.m_iStage)
             {
@@ -790,11 +842,12 @@ OWAWebDav.prototype =
                     var szUri = httpChannel.URI.spec;
                     mainObject.m_Log.Write("OWAWebDav.js - loginOnloadHandler - szUri - " + szUri);
 
-                    var szFolderName= szUri.match(patternOWAFolderName)[1];
+                    //var szFolderName= szUri.match(patternOWAFolderName)[1];
+                    var szFolderName= szUri.match(patternOWAFolderName)[1].match( /^([^\?]*)/ )[1];
                     mainObject.m_Log.Write("OWAWebDav.js - loginOnloadHandler - szFolderName - " + szFolderName);
 
                     var szCleanName = szFolderName;
-                    if (szFolderName.search(/active/i)!=-1) szCleanName = "Inbox"
+                    if (szFolderName.search(/active/i)!=-1) szCleanName = "Inbox";
                     else if (szFolderName.search(/BuLkMail/i)!=-1) szCleanName = "Spam";
                     else if (szFolderName.search(/sAVeD/i)!=-1) szCleanName = "Sent Items";
                     mainObject.m_Log.Write("OWAWebDav.js - loginOnloadHandler - szCleanName - " + szCleanName);
@@ -904,7 +957,10 @@ OWAWebDav.prototype =
 
             //if this fails we've gone somewhere new
             if (httpChannel.responseStatus != 201)
-                throw new Error("return status " + httpChannel.responseStatus);
+			{
+				// JBL: Couldn't get this to work properly
+                //throw new Error("return status " + httpChannel.responseStatus);
+			}
 
             mainObject.serverComms("+OK its gone\r\n");
 

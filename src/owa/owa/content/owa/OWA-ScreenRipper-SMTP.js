@@ -98,7 +98,9 @@ OWASMTPScreenRipper.prototype =
             mainObject.m_Log.Write("OWA-SMTP-SR.js - loginOnloadHandler : " + mainObject.m_iStage );
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
-
+            var szLocation = httpChannel.URI.spec;
+            mainObject.m_Log.Write("OWA-SMTP-SR - loginOnloadHandler - szLocation :" +szLocation);
+            
             //if this fails we've gone somewhere new
             mainObject.m_Log.Write("OWA-SMTP-SR.js - loginOnloadHandler - status :" +httpChannel.responseStatus );
             if (httpChannel.responseStatus != 200 && httpChannel.responseStatus != 207)
@@ -110,8 +112,22 @@ OWASMTPScreenRipper.prototype =
                 case 0: //login form
                     var szAction = szResponse.match(kOWAAction)[1];            
                     mainObject.m_Log.Write("OWA-SMTP-SR - loginOnloadHandler - szAction :" +szAction);
-                    if (szAction.search(/^\//) == -1) szAction =  "/"+szAction;
-                    var szURL = httpChannel.URI.prePath + szAction
+                    var szURL =""; 
+                    if (szAction.search(/^\//) == -1)
+                    {
+                        var IOService = Components.classes["@mozilla.org/network/io-service;1"]
+                                                  .getService(Components.interfaces.nsIIOService);
+                        var nsIURI = IOService.newURI(httpChannel.URI.spec, null, null)
+                                              .QueryInterface(Components.interfaces.nsIURL);
+                        var szDirectory = nsIURI.directory
+                        mainObject.m_Log.Write("OWA-SMTP-SR - loginOnloadHandler - directory : " +szDirectory);
+                        
+                        szURL = httpChannel.URI.prePath + szDirectory + szAction
+                    }
+                    else
+                    {
+                        szURL = httpChannel.URI.prePath + szAction
+                    }
                     mainObject.m_Log.Write("OWA-SMTP-SR - loginOnloadHandler - szURL :" +szURL);
         
                     var szForm = szResponse.match(kOWAForm)[1];
@@ -133,7 +149,7 @@ OWASMTPScreenRipper.prototype =
                             
                             if (szName.search(/username/i) != -1) 
                             {
-                                if (mainObject.m_bLoginWithDomain)
+                                if (mainObject.m_bLoginWithDomain == true)
                                     szValue = mainObject.m_szUserName.toLowerCase();
                                 else
                                     szValue = mainObject.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
@@ -296,7 +312,7 @@ OWASMTPScreenRipper.prototype =
                         else if (szName.search(/^cmd$/i) != -1) 
                         {
                             if (mainObject.m_Email.attachments.length >0)
-                                szValue = "editAttach";
+                                szValue = "editattach";
                             else
                                 szValue = "SEND";  
                         }
