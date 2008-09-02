@@ -43,8 +43,8 @@ function HotmailWebDav(oResponseStream, oLog, oPrefData)
 
         //process folders
         this.m_aszFolders = new Array();
-        this.m_aszFolders.push("Active"); //Inbox
-        if (oPrefData.bUseJunkMail)  this.m_aszFolders.push("HM_BuLkMail_"); //junk
+        if (oPrefData.bDownloadInbox) this.m_aszFolders.push("Active"); //Inbox
+        if (oPrefData.bUseJunkMail)   this.m_aszFolders.push("HM_BuLkMail_"); //junk
         for(var i=0; i<oPrefData.aszFolder.length; i++)
         {
             this.m_aszFolders.push(oPrefData.aszFolder[i]);
@@ -251,10 +251,15 @@ HotmailWebDav.prototype =
         {
             this.m_Log.Write("HotmailWebDav.js - getNumMessages - START");
 
-            if (this.m_aszFolderURLList.length==0) return false;
-            this.m_Log.Write("HotmailWebDav.js - getNumMessages - mail box url " + this.m_aszFolderURLList);
-            this.mailBox(true);
-
+            if (this.m_aszFolderURLList.length == 0) 
+            {
+                this.serverComms("+OK " + this.m_aMsgDataStore.length + " " + this.m_iTotalSize + "\r\n");
+            }
+            else 
+            {
+                this.m_Log.Write("HotmailWebDav.js - getNumMessages - mail box url " + this.m_aszFolderURLList);
+                this.mailBox(true);
+            }
             this.m_Log.Write("HotmailWebDav.js - getNumMessages - END");
             return true;
         }
