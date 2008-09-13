@@ -1,0 +1,35 @@
+<!ENTITY Window.size "width: 46em; height: 37em">
+<!ENTITY Options.szTitle "WebMail選項">
+<!ENTITY Servers.Panel.szTitle "伺服器">
+<!ENTITY Domains.Panel.szTitle "網域">
+<!ENTITY Logging.Panel.szTitle "紀錄">
+<!ENTITY General.Panel.szTitle "一般">
+<!ENTITY close.button.label "關閉">
+<!ENTITY Ports.Label "埠">
+<!ENTITY Ports.POP.AccessKey "o">
+<!ENTITY Ports.SMTP.AccessKey "r">
+<!ENTITY Ports.IMAP.AccessKey "t">
+<!ENTITY Pop.Label "POP">
+<!ENTITY SMTP.Label "SMTP">
+<!ENTITY IMAP.Label "IMAP">
+<!ENTITY StatusBox.size "width: 6em;">
+<!ENTITY StartServer.Tooltip "啟動伺服器">
+<!ENTITY StopServer.Tooltip "停止伺服器">
+<!ENTITY Enable.Server.Label "於執行時啟動">
+<!ENTITY Enable.POP.AccessKey "E">
+<!ENTITY Enable.SMTP.AccessKey "n">
+<!ENTITY Enable.IMAP.AccessKey "a">
+<!ENTITY ShowInStatusbar.AccessKey "s">
+<!ENTITY ShowInStatusbar.Label "於狀態烈顯示伺服器狀態">
+<!ENTITY GeneralLogging.Label "啟動紀錄">
+<!ENTITY GeneralLogging.AccessKey "E">
+<!ENTITY Location.Label "位置">
+<!ENTITY Location.AccessKey "L">
+<!ENTITY Button.Label "瀏覽...">
+<!ENTITY Button.AccessKey "B">
+<!ENTITY NotePort.Label "某些作業系統阻擋小於1024的埠。">
+<!ENTITY Note.Label "紀錄中將包含使用者名稱及密碼。">
+<!ENTITY Restart.Label "Thunderbird重新執行後變更才會生效。">
+<!ENTITY RestartServer.Label "伺服器重新啟動後埠的變更才會生效。">
+<!ENTITY Domain.Label "網域">
+<!ENTITY POP.Label "POP">

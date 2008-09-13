@@ -1,0 +1,8 @@
+<!ENTITY WebmailAbout.Title "Webmail - 關於">
+<!ENTITY WebmailAbout.ExtName "Web Mail">
+<!ENTITY WebmailAbout.ExtVersion "版本">
+<!ENTITY WebmailAbout.ExtDescription "使用Thunderbird存取網頁郵件。">
+<!ENTITY WebmailAbout.ExtCreaterTitle "設計:">
+<!ENTITY WebmailAbout.ExtHome "首頁">
+<!ENTITY WebmailAbout.ExtButton "關閉">
+<!ENTITY WebmailAbout.ExtContributorTitle "貢獻者:">
