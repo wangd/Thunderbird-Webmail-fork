@@ -608,8 +608,8 @@ nsDomainManager.prototype =
             }
             finally
             {
-                statement.reset();
                 this.m_Log.Write("nsDomainManager : getDoamin - DB Reset "+ this.m_dbConn.lastErrorString);
+                statement.reset();
             }
 
             this.m_Log.Write("nsDomainManager.js - getDoamin - END " + bFound);
