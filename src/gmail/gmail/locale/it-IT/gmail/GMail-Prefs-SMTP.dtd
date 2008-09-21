@@ -1,3 +1,3 @@
-<!ENTITY Placeholder.Label "Nessuna opzione al momento">
-<!ENTITY SaveSentItems.Label "Salva una copia del messaggio in 'Posta inviata'">
+<!ENTITY Placeholder.Label "Nessuna opzione al momento disponibile">
+<!ENTITY SaveSentItems.Label "Salva una copia del messaggio in &apos;Posta inviata&apos;">
 <!ENTITY SaveSentItems.AccessKey "s">

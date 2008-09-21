@@ -1,10 +1,10 @@
 <!ENTITY Window.size "width: 30em; height: 10em">
-<!ENTITY Uri.label "Uri">
+<!ENTITY Uri.label "URI">
 <!ENTITY Uri.accessKey "U">
 <!ENTITY Uri.size "width: 35px">
-<!ENTITY Domain.label "Domain">
+<!ENTITY Domain.label "Dominio:">
 <!ENTITY Domain.accessKey "D">
-<!ENTITY TitleAdd "Add">
-<!ENTITY TitleEdit "Edit">
-<!ENTITY Ok.label "Ok">
-<!ENTITY Cancel.label "Cancel">
+<!ENTITY TitleAdd "Aggiungi">
+<!ENTITY TitleEdit "Modifica">
+<!ENTITY Ok.label "OK">
+<!ENTITY Cancel.label "Annulla">
