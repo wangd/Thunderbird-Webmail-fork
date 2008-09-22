@@ -1,0 +1,6 @@
+<!ENTITY Options.szTitle "GMail Ayarları">
+<!ENTITY POP.Panel.szTitle "POP">
+<!ENTITY SMTP.Panel.szTitle "SMTP">
+<!ENTITY IMAP.Panel.szTitle "IMAP">
+<!ENTITY Domains.Panel.szTitle "Alanlar">
+<!ENTITY Window.size "genişlik: 36; yükseklik: 30">

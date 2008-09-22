@@ -1,0 +1,10 @@
+<!ENTITY GMailAbout.Title "GMail - Hakkında">
+<!ENTITY GMailAbout.ExtName "GMail">
+<!ENTITY GMailAbout.ExtVersion "Sürüm 0.5.4">
+<!ENTITY GMailAbout.ExtDescription "Web-Mail eklentisi için GMail bileşeni.">
+<!ENTITY GMailAbout.ExtCreaterTitle "Eklentiyi yapan:">
+<!ENTITY GMailAbout.ExtCreator "Luigi Capriotti">
+<!ENTITY GMailAbout.ExtHome "Ana Sayfa">
+<!ENTITY GMailAbout.ExtHomeURL "http://webmail.mozdev.org/">
+<!ENTITY GMailAbout.ExtButton "Kapat">
+<!ENTITY GMailAbout.ExtContributorTitle "Katkıda bulunanlar:">

@@ -1,0 +1,8 @@
+<!ENTITY GMailPref.Domain.Label "Desteklenen Alanlar">
+<!ENTITY Domain.label "Alan">
+<!ENTITY Remove.label "Kaldır">
+<!ENTITY Remove.AccessKey "R">
+<!ENTITY Add.label "Ekle">
+<!ENTITY Add.AccessKey "A">
+<!ENTITY Edit.label "Düzenle">
+<!ENTITY Edit.AccessKey "E">

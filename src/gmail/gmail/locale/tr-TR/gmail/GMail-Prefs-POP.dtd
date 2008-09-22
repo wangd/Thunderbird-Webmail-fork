@@ -1,0 +1,4 @@
+<!ENTITY DownloadUnread.Label "Sadece okunmamış mailleri indir.">
+<!ENTITY DownloadUnread.AccessKey "u">
+<!ENTITY Archive.Label "Sil ve arşive kopyala.">
+<!ENTITY Archive.AccessKey "A">

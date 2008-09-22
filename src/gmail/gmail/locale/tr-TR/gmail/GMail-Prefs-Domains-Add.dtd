@@ -1,0 +1,10 @@
+<!ENTITY Window.size "Genişlik: 30; Yükseklik: 10">
+<!ENTITY Uri.label "Uri">
+<!ENTITY Uri.accessKey "U">
+<!ENTITY Uri.size "Genişlik: 35px">
+<!ENTITY Domain.label "Alan">
+<!ENTITY Domain.accessKey "D">
+<!ENTITY TitleAdd "Ekle">
+<!ENTITY TitleEdit "Düzenle">
+<!ENTITY Ok.label "Tamam">
+<!ENTITY Cancel.label "İptal">
