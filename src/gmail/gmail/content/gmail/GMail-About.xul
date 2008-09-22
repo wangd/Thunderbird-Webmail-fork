@@ -12,33 +12,29 @@
 	    onunload ="gGMailAbout.stop()"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         id = "GMailAboutDialog">
-     
-     <stringbundleset>
-	   <stringbundle id="stringsGMailAbout" src="chrome://gmail/locale/GMail-About.properties"/>
-	</stringbundleset>
-	
+     	
     <script type="application/x-javascript" src="chrome://gmail/content/GMail-About.js"/>
         
     <groupbox align="center" orient="horizontal">
         <vbox>
-		<hbox>
-			<spacer flex="1"/>
-			<image id="GMailImage"/>
-			<spacer flex="1"/>
-		</hbox>
-		<!--<text value="&GMailAbout.ExtName;" id = "GMailName"/>-->
-		<text value="&GMailAbout.ExtVersion;" id = "GMailVersion"/>
-		<text value="&GMailAbout.ExtDescription;" id = "GMailDescription"/>
-		<text value="&GMailAbout.ExtCreaterTitle;" id = "GMailCreatorLabel"/>
-		<hbox>
-			<image id="LiliumImage"/>
-			<text value="&GMailAbout.ExtCreator;" class = "GMailCreatorText"/>
-		</hbox>
-		<text value="&GMailAbout.ExtContributorTitle;" id = "GMailContributorLabel"/>
-		<vbox flex="1" id="GMailContributorBox"/>
-		<text value="&GMailAbout.ExtHome;" 
-		      id = "GMailHomePage"
-		      onclick="window.opener.openURL('&GMailAbout.ExtHomeURL;');"/>
+    		<hbox>
+    			<spacer flex="1"/>
+    			<image id="GMailImage"/>
+    			<spacer flex="1"/>
+    		</hbox>
+    		<!--<text value="&GMailAbout.ExtName;" id = "GMailName"/>-->
+    		<text value="&GMailAbout.ExtVersion;" id = "GMailVersion"/>
+    		<text value="&GMailAbout.ExtDescription;" id = "GMailDescription"/>
+    		<text value="&GMailAbout.ExtCreaterTitle;" id = "GMailCreatorLabel"/>
+    		<hbox>
+    			<image id="LiliumImage"/>
+    			<text value="&GMailAbout.ExtCreator;" class = "GMailCreatorText"/>
+    		</hbox>
+    		<text value="&GMailAbout.ExtContributorTitle;" id = "GMailContributorLabel"/>
+	       	<vbox flex="1" id="GMailContributorBox"/>
+    		<text value="&GMailAbout.ExtHome;" 
+    		      id = "GMailHomePage"
+    		      onclick="window.opener.openURL('&GMailAbout.ExtHomeURL;');"/>
         </vbox>
 
     </groupbox>
