@@ -5,11 +5,11 @@
 <!ENTITY YahooPref.Tab.Mode.Title "Mode">
 <!ENTITY YahooPref.Tab.POP.Title "POP">
 <!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
-<!ENTITY YahooPref.Tab.Adv.Title "Advanced">
+<!ENTITY YahooPref.Tab.Adv.Title "Avançat">
 <!ENTITY YahooPref.Mode.Label "Seleccioneu el lloc web que utilitzarà l&apos;extensió">
 <!ENTITY YahooPref.Mode.ScreenScraper.Label "Lloc web en producció">
-<!ENTITY YahooPref.Mode.Beta.Label "BETA Website">
-<!ENTITY YahooPref.Mode.Classic.Label "New Classic Website">
+<!ENTITY YahooPref.Mode.Beta.Label "Lloc web BETA">
+<!ENTITY YahooPref.Mode.Classic.Label "Nou lloc web clàssic">
 <!ENTITY YahooPref.POP.DownloadUnread.Label "Descarrega només correus no llegits">
 <!ENTITY YahooPref.POP.DownloadUnread.AccessKey "u">
 <!ENTITY YahooPref.POP.JunkMail.Label "Descarrega el correu brossa">
@@ -19,20 +19,20 @@
 <!ENTITY YahooPref.POP.ButtonAdd.AccessKey "A">
 <!ENTITY YahooPref.POP.ButtonRemove.Label "Esborra">
 <!ENTITY YahooPref.POP.ButtonRemove.AccessKey "R">
-<!ENTITY YahooPref.POP.MarkAsRead.Label "Mark emails as read on server">
+<!ENTITY YahooPref.POP.MarkAsRead.Label "Marca els correus llegits al servidor">
 <!ENTITY YahooPref.POP.MarkAsRead.AccessKey "k">
 <!ENTITY YahooPref.SMTP.SaveSentItems.Label "Desa una còpia a elements enviats.">
 <!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "s">
-<!ENTITY YahooPref.SMTP.AlternativeGroup.Label "When sending rich text emails which part should the extension send?">
-<!ENTITY YahooPref.SMTP.SendPlain.Label "Send plain text">
+<!ENTITY YahooPref.SMTP.AlternativeGroup.Label "Quan s&apos;envien correus amb text enriquit, quina part hauria d&apos;enviar l&apos;extensió?">
+<!ENTITY YahooPref.SMTP.SendPlain.Label "Envia text pla">
 <!ENTITY YahooPref.SMTP.SendPlain.AccessKey "p">
-<!ENTITY YahooPref.SMTP.SendHtml.Label "Send html text">
+<!ENTITY YahooPref.SMTP.SendHtml.Label "Envia text html">
 <!ENTITY YahooPref.SMTP.SendHtml.AccessKey "h">
-<!ENTITY YahooPref.Adv.ShortID.Label "Use Short ID">
+<!ENTITY YahooPref.Adv.ShortID.Label "Utilitza l&apos;identificador (ID) curt">
 <!ENTITY YahooPref.Adv.ShortID.AccessKey "I">
-<!ENTITY YahooPref.Adv.ReUseSession.Label "Reuse http session data.">
+<!ENTITY YahooPref.Adv.ReUseSession.Label "Reutilitza les dades de la sessió http">
 <!ENTITY YahooPref.Adv.ReUseSession.AccessKey "S">
-<!ENTITY YahooPref.AdvInfo.Label "Changing the Short Id option will result in your entire mailbox being downloaded">
+<!ENTITY YahooPref.AdvInfo.Label "Canviar l&apos;opció d&apos;identificador (ID) curt pot comportar que es descarregue tota la vostra safata d&apos;entrada.">
 <!ENTITY YahooPref.AccountError.Label "No s&apos;han trobat comptes de Yahoo.">
 <!ENTITY YahooPref.Domain.Label "Dominis suportats per l&apos;estensió de Yahoo">
 <!ENTITY YahooPref.Domain.Button.AddDomain.Label "Afegeix...">
