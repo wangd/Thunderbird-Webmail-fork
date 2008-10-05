@@ -255,11 +255,7 @@ nsGMailSMTP.prototype =
                 break;
            
                 case 1:
-                    if ( szResponse.indexOf("Sign In") > -1 ||
-                            szResponse.indexOf("NewAccount") > -1 ||
-                            szResponse.indexOf("Username and password do not match") > -1 ||
-                            szResponse.indexOf("Sign up for Gmail") > -1)
-                        throw new Error("Invalid Password");
+                    if ( szResponse.search(/logout/i) == -1) throw new Error("Invalid Password");
     
                     mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - Getting session cookie...");
     
