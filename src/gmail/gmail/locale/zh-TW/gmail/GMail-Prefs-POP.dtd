@@ -1,0 +1,4 @@
+<!ENTITY DownloadUnread.Label "僅下載未讀的電子郵件">
+<!ENTITY DownloadUnread.AccessKey "u">
+<!ENTITY Archive.Label "封存郵件而不刪除">
+<!ENTITY Archive.AccessKey "A">

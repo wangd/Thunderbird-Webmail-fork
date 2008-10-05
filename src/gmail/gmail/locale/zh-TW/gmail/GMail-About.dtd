@@ -1,0 +1,10 @@
+<!ENTITY GMailAbout.Title "GMail - 說明">
+<!ENTITY GMailAbout.ExtName "GMail">
+<!ENTITY GMailAbout.ExtVersion "版本 0.5.4">
+<!ENTITY GMailAbout.ExtDescription "供 Web-Mail 套件使用 GMail 功能的元件。">
+<!ENTITY GMailAbout.ExtCreaterTitle "作者:">
+<!ENTITY GMailAbout.ExtCreator "Luigi Capriotti">
+<!ENTITY GMailAbout.ExtHome "首頁">
+<!ENTITY GMailAbout.ExtHomeURL "http://webmail.mozdev.org/">
+<!ENTITY GMailAbout.ExtButton "關閉">
+<!ENTITY GMailAbout.ExtContributorTitle "貢獻人員:">

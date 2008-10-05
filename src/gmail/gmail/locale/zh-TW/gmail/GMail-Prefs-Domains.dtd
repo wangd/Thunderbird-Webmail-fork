@@ -1,0 +1,8 @@
+<!ENTITY GMailPref.Domain.Label "支援的網域">
+<!ENTITY Domain.label "網域">
+<!ENTITY Remove.label "移除">
+<!ENTITY Remove.AccessKey "R">
+<!ENTITY Add.label "新增">
+<!ENTITY Add.AccessKey "A">
+<!ENTITY Edit.label "編輯">
+<!ENTITY Edit.AccessKey "E">

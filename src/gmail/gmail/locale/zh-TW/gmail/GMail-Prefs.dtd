@@ -1,0 +1,6 @@
+<!ENTITY Options.szTitle "GMail 設定">
+<!ENTITY POP.Panel.szTitle "POP">
+<!ENTITY SMTP.Panel.szTitle "SMTP">
+<!ENTITY IMAP.Panel.szTitle "IMAP">
+<!ENTITY Domains.Panel.szTitle "網域">
+<!ENTITY Window.size "寬: 36; 高: 30">
