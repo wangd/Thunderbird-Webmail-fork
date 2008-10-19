@@ -344,6 +344,12 @@ nsHotmail.prototype =
                 oData.bUseJunkMail = oPref.Value;
             this.m_HotmailLog.Write("nsHotmail.js - getPrefs - bUseJunkMail " + oPref.Value);
 
+            //inbox
+            oPref.Value = null;
+            WebMailPrefAccess.Get("bool","hotmail.Account."+szUserName+".bDownloadInbox",oPref);
+            if (oPref.Value==null || oPref.Value==true ) oData.bDownloadInbox = true;
+            this.m_HotmailLog.Write("nsHotmail.js - getPrefs - bDownloadInbox " + oPref.Value);           
+            
             //get unread
             oPref.Value = null;
             if (WebMailPrefAccess.Get("bool","hotmail.Account."+szUserName+".bDownloadUnread",oPref))
