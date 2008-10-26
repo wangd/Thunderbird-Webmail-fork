@@ -146,12 +146,14 @@ HotmailSMTPScreenRipperBETA.prototype =
             var aRefresh = szResponse.match(patternHotmailJSRefresh); 
             if (!aRefresh) aRefresh = szResponse.match(patternHotmailJSRefreshAlt);
             if (!aRefresh) aRefresh = szResponse.match(patternHotmailRefresh2);  
+           // if (!aRefresh) aRefresh = szResponse.match(patternHotmailJSRefreshAlt2);
             mainObject.m_Log.Write("Hotmail-SR-BETA-SMTP - loginOnloadHandler aRefresh "+ aRefresh);
             if (aRefresh)
             {
                 mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler - refresh ");
 
-                mainObject.m_HttpComms.setURI(aRefresh[1]);
+                if (!mainObject.m_HttpComms.setURI(aRefresh[1]))
+                    mainObject.m_HttpComms.setURI(httpChannel.URI.prePath + szDirectory + aRefresh[1]);
                 mainObject.m_HttpComms.setRequestMethod("GET");
 
                 var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
@@ -385,7 +387,7 @@ HotmailSMTPScreenRipperBETA.prototype =
                     var aszInput = szForm.match(patternHotmailInput);
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler - szInput " + aszInput);
 
-                    var szAction = szResponse.match(patternHotmailSend)[1];
+                    var szAction = szResponse.match(patternHotmailAction)[1];
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler - Action " + szAction);
                     var szURL =  mainObject.decodeHTML(mainObject.m_szLocationURI + szAction);
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA - composerOnloadHandler - szURL : " +szURL);
@@ -416,6 +418,7 @@ HotmailSMTPScreenRipperBETA.prototype =
                                 if (szName.search(/fTo/i)!=-1)
                                 {
                                     szValue = mainObject.m_Email.headers.getTo();
+                                    szValue = new HTMLescape().decode(szValue);
 
                                 }
                                 else if (szName.search(/fCc/i)!=-1)
@@ -448,11 +451,12 @@ HotmailSMTPScreenRipperBETA.prototype =
                         }
                     }
 
+/*
                     var aszFromDate = szForm.match(patternHotmailFromBeta);
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler aszFromDate " + aszFromDate);
                     var szSenderAddress = new HTMLescape().decode(aszFromDate[2]) 
                     mainObject.m_HttpComms.addValuePair(aszFromDate[1], szSenderAddress);
-
+*/
 
                     mainObject.m_HttpComms.addValuePair("MsgPriority", "0");
                     
