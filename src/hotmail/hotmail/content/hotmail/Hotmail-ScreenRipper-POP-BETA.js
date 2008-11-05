@@ -36,7 +36,6 @@ function HotmailScreenRipperBETA(oResponseStream, oLog, oPrefData)
         this.m_iPageCount = 1;
         this.m_szMSGPerPage = 25;
         this.m_szRtl = false;  
-        this.m_szMSGCount = 0;  //message count
 
         this.m_szMSG = null;
         this.m_bStat = false;
@@ -174,8 +173,7 @@ HotmailScreenRipperBETA.prototype =
             //check for java refresh
             var aRefresh = szResponse.match(patternHotmailJSRefresh); 
             if (!aRefresh) aRefresh = szResponse.match(patternHotmailJSRefreshAlt);
-            if (!aRefresh) aRefresh = szResponse.match(patternHotmailRefresh2); 
-            //if (!aRefresh) aRefresh = szResponse.match(patternHotmailJSRefreshAlt2); 
+            if (!aRefresh) aRefresh = szResponse.match(patternHotmailRefresh2);  
             mainObject.m_Log.Write("Hotmail-SR-BETA-SMTP - loginOnloadHandler aRefresh "+ aRefresh);
             if (aRefresh)
             {
@@ -190,6 +188,7 @@ HotmailScreenRipperBETA.prototype =
                 if (!bResult) throw new Error("httpConnection returned false");
                 return;
             }
+            
             
             var aForm = szResponse.match(patternHotmailLoginForm);
             mainObject.m_Log.Write("Hotmail-SR-BETA-POP - loginOnloadHandler aForm "+ aForm);
@@ -460,42 +459,46 @@ HotmailScreenRipperBETA.prototype =
             //check status should be 200.
             if (httpChannel.responseStatus != 200 )
                 throw new Error("error status " + httpChannel.responseStatus);
-              
-            if (szResponse.search(patternHotmailInboxContent)!=-1) //search for inbox content
+            
+            var szCleanResponse  = szResponse.replace(/\\"/g,"\"");
+            szCleanResponse  = szResponse.replace(/\\'/g,"\'");
+            szCleanResponse = szCleanResponse.replace(/\\r\\n/g,"\r\n");
+                        
+            if (szCleanResponse.search(patternHotmailInboxContent)!=-1) //search for inbox content
             {
                 mainObject.m_Log.Write("Hotmail-SR-BETA - mailBoxOnloadHandler - content found");
 
                 //get view state
                 var szStatView = ""
-                if (szResponse.search(patternHotmailViewState)!=-1)
-                    szStatView = szResponse.match(patternHotmailViewState)[1];
+                if (szCleanResponse.search(patternHotmailViewState)!=-1)
+                    szStatView = szCleanResponse.match(patternHotmailViewState)[1];
                 mainObject.m_Log.Write("Hotmail-SR-BETA - mailBoxOnloadHandler - szViewState : " +szStatView);
 
                 //get AuthUser
-                if (szResponse.search(patternHotmailAuthUser)!=-1)
-                    mainObject.m_szAuthUser = szResponse.match(patternHotmailAuthUser)[1];
+                if (szCleanResponse.search(patternHotmailAuthUser)!=-1)
+                    mainObject.m_szAuthUser = szCleanResponse.match(patternHotmailAuthUser)[1];
                 mainObject.m_Log.Write("Hotmail-SR-BETA - mailBoxOnloadHandler - m_szAuthUser : " +mainObject.m_szAuthUser);
 
                 //get SessionId
-                if (szResponse.search(patternHotmailSessionID)!=-1)
-                    mainObject.m_szSessionID = szResponse.match(patternHotmailSessionID)[1];
+                if (szCleanResponse.search(patternHotmailSessionID)!=-1)
+                    mainObject.m_szSessionID = szCleanResponse.match(patternHotmailSessionID)[1];
                 mainObject.m_Log.Write("Hotmail-SR-BETA - mailBoxOnloadHandler - m_szSessionID : " +mainObject.m_szSessionID);
 
                 //nonce 
-                if (szResponse.search(patternHotmailNonce)!=-1)
-                    mainObject.m_szNonce = szResponse.match(patternHotmailNonce)[1];
+                if (szCleanResponse.search(patternHotmailNonce)!=-1)
+                    mainObject.m_szNonce = szCleanResponse.match(patternHotmailNonce)[1];
                 mainObject.m_Log.Write("Hotmail-SR-BETA - mailBoxOnloadHandler - m_szNonce : " +mainObject.m_szNonce);
 
                 //Right to left
-                if (szResponse.search(patternHotmailRtl)!=-1)
-                    mainObject.m_szRtl = szResponse.match(patternHotmailRtl)[1];
+                if (szCleanResponse.search(patternHotmailRtl)!=-1)
+                    mainObject.m_szRtl = szCleanResponse.match(patternHotmailRtl)[1];
                 mainObject.m_Log.Write("Hotmail-SR-BETA - mailBoxOnloadHandler -szRtl : " +mainObject.m_szRtl);              
 
               
                 //get msg urls
-                if (szResponse.search(patternHotmailMailBoxTable)!= -1) 
+                if (szCleanResponse.search(patternHotmailMailBoxTable)!= -1) 
                 {
-                    var szMsgTable = szResponse.match(patternHotmailMailBoxTable)[1];
+                    var szMsgTable = szCleanResponse.match(patternHotmailMailBoxTable)[1];
                     mainObject.m_Log.Write("Hotmail-SR-BETA - mailBoxOnloadHandler -msg table : " + szMsgTable);
                     
                     var szMsgRows = szMsgTable.match(patternHotmailMailBoxTableRow); //split on rows
@@ -512,18 +515,19 @@ HotmailScreenRipperBETA.prototype =
                 }
             }
 
+
             //get pages uri
             var bMorepages = false;
-            if (szResponse.search(patternHotmailNextPage)!=-1)
+            if (szCleanResponse.search(patternHotmailNextPage)!=-1 && szCleanResponse.search(patternHotmailLastPage)!=-1)
             {
-                var iLastPage = parseInt(szResponse.match(patternHotmailLastPage)[1]);              
+                var iLastPage = parseInt(szCleanResponse.match(patternHotmailLastPage)[1]);              
                 mainObject.m_Log.Write("Hotmail-SR-BETA - mailBoxOnloadHandler -iLastPage : " +iLastPage +" " + mainObject.m_iPageCount);
                 if (iLastPage > mainObject.m_iPageCount)bMorepages = true;
             }
-            
+         
             if (bMorepages)  //more pages
             {                
-                var szNavBlock = szResponse.match(patternHotmailNextPage)[0];
+                var szNavBlock = szCleanResponse.match(patternHotmailNextPage)[0];
                 mainObject.m_Log.Write("Hotmail-SR-BETA - mailBoxOnloadHandler -szNavBlock : " +szNavBlock);
                 
                 var szPageDir = szNavBlock.match(patternHotmailPageDir)[1];
@@ -539,8 +543,12 @@ HotmailScreenRipperBETA.prototype =
                 szAnchorDate = szAnchorDate.replace(/\:/g,"\\:");
                 delete oEscape;  
                 
+                var szMSGCount = 0;  //message count
+                szMSGCount = szCleanResponse.match(patternHotmailMSGcount)[1];
+                mainObject.m_Log.Write("Hotmail-SR-BETA - mailBoxOnloadHandler -szMSGCount : " +szMSGCount);    
+                                
                 mainObject.m_Log.Write("Hotmail-SR-BETA - mailBoxOnloadHandler -m_iPageCount : " +mainObject.m_iPageCount);    
-                mainObject.m_iPageCount
+                
                 var szMid = szNavBlock.match(patternHotmailMid)[1];
                 mainObject.m_Log.Write("Hotmail-SR-BETA - mailBoxOnloadHandler -szMid : " +szMid);              
                  
@@ -556,7 +564,6 @@ HotmailScreenRipperBETA.prototype =
                 
                 var szD = "true,true,{";
                 szD += "\"" + mainObject.m_szFolderURL.match(patternHotmailFolderID)[1] + "\",";  //folderID
-                szD += mainObject.m_szMSGPerPage + ","; //msgPerPage
                 szD += szPageDir + ","; //pnDir
                 szD += "0,Date,false,"; 
                 szD += "\"" + szMsgAnchor + "\",";  //pnAm
@@ -564,8 +571,8 @@ HotmailScreenRipperBETA.prototype =
                 szD += mainObject.m_iPageCount +",";  //current page
                 szD += szMid + ",";  //pMid
                 szD += "false,\"\","; 
-                szD += mainObject.m_szRtl + ",";  //isRtl
-                szD += mainObject.m_szMSGCount;  //message count
+                szD += szMSGCount;  //message count
+                szD += ",-1,Off";
                 szD += "},false,null";
                 szD = mainObject.urlEncode(szD);
                               
@@ -651,10 +658,7 @@ HotmailScreenRipperBETA.prototype =
                 
                 oMSG.szMad = szMSGData.match(patternHotmailMad)[1];
                 this.m_Log.Write("Hotmail-SR-BETA..js - processMSG - oMSG.szMad -" + oMSG.szMad);
-                        
-              //  var aTableData = szMSGData.match(patternHotmailMailBoxTableData);
-              //  this.m_Log.Write("Hotmail-SR-BETA..js - processMSG - aTableData -" + aTableData);
-    
+                           
                 var szEmailID = szMSGData.match(patternHotmailID)[1];
                 this.m_Log.Write("Hotmail-SR-BETA - processMSG - Email ID : " +szEmailID);
                 oMSG.szMSGID = szEmailID;
@@ -1126,19 +1130,21 @@ HotmailScreenRipperBETA.prototype =
                 mainObject.m_Log.Write("Hotmail-SR-BETA - emailOnloadHandler - MarkAsRead");   
                 mainObject.m_iStage++;
                 var szURL = mainObject.m_szLocationURI + "mail.fpp?"
-                szURL += "cnmn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox.GetInboxData&";
+                szURL += "cnmn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox.MarkMessagesReadState&";
                 szURL += "a=" + mainObject.m_szSessionID + "&";
                 szURL += "au=" + mainObject.m_szAuthUser + "&";
                 szURL += "ptid=0";
                 mainObject.m_Log.Write("Hotmail-SR-BETA - emailOnloadHandler - szURL :" + szURL);
                 
                 mainObject.m_HttpComms.addValuePair("cn","Microsoft.Msn.Hotmail.Ui.Fpp.MailBox");
-                mainObject.m_HttpComms.addValuePair("mn","GetInboxData");
+                mainObject.m_HttpComms.addValuePair("mn","MarkMessagesReadState");
                 
-                var szD = "false,false,null,true,{\"";
-                szD += mainObject.m_szMsgID + "\",\"" + mainObject.m_szFolderID;
-                szD += "\",false,false,-1,{\""  + mainObject.m_szMad.replace(/\|/g,"\\|"); 
-                szD += "\",null},Date,false,6}";
+                var szD = "true,";
+                szD    += "[\"" + mainObject.m_szMsgID + "\"],";
+                szD    += "{\"" + mainObject.m_szFolderID + "\",";
+                szD    += "FirstPage,0,Date,false,\"00000000-0000-0000-0000-000000000000\",";
+                szD    += "\"\",1,2,false,\"\",2,-1,Off}";
+                         
                 szD = mainObject.urlEncode(szD);
                 mainObject.m_HttpComms.addValuePair("d",szD);
                 mainObject.m_HttpComms.addValuePair("v","1");
@@ -1336,6 +1342,8 @@ HotmailScreenRipperBETA.prototype =
         szEncoded = szEncoded.replace(/%5D/g,"]");
         szEncoded = szEncoded.replace(/%7B/g,"{");
         szEncoded = szEncoded.replace(/%7D/g,"}");
+        szEncoded = szEncoded.replace(/\:/g,"%3A");
+        
         return szEncoded;
 
     }
