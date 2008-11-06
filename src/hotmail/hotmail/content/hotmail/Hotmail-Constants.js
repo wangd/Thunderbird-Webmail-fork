@@ -76,9 +76,9 @@ const patternHotmailSMTPForm = /<form.*?name="aspnetForm".*?>[\S\s]*?<\/form>/i;
 const patternHotmailJSRefresh = /<html><head><script.*?>.*?\.location\.replace.*?\("(.*?)"\).*?<\/script>.*?<\/html>/i;
 const patternHotmailJSRefreshAlt = /<head><meta http-equiv="REFRESH".*?content=".*?URL=(.*?)">.*?<\/head><\/html>/i;
 const patternHotmailJSRefreshAlt2 = /srf_uLogin.*?=.*?"(.*?)";/i;
-
 const patternHotmailJSBounce = /srf_uRet="(.*?)"/i;
-const patternHotmailLogOut = /"(.*?logout.aspx.*?)"/i;
+
+const patternHotmailLogOut = /logout/i;
 const patternHotmailViewState = /__VIEWSTATE".*?value="(.*?)".*?\/>/i;
 const patternHotmailInboxFolderID = /<td class="ManageFoldersFolderNameCol"><a.*?href="(.*?\?FolderID=.*?1&.*?)".*?>/i;
 const patternHotmailJunkFolderID = /<td class="ManageFoldersFolderNameCol"><a.*?href="(.*?\?FolderID=.*?5&.*?)".*?>/i;
@@ -94,19 +94,19 @@ const patternHotmailAddAttachment = /href=".*?,'(.*?AddAttachmentLight.*?)'.*?"/
 const patternHotmailLastAttachment = /href=".*?,'(.*?EditMessageLight.*?)'.*?"/i;
 const patternHotmailNavDiv = /<div class="[\S]?ItemListHeader[\S]*?>([\s\S]*?)<\/ul><\/div>/igm;
 const patternHotmailSentOK = /smcMainContentContainer/im;
-const patternHotmailMailBoxTable = /<table.*?InboxTable.*?<tbody.*?>(<tr.*?>.*?<\/tr>)<\/tbody><\/table>/i;
+const patternHotmailMailBoxTable = /<table.*?Inbox.*?>[\s\S]*?(<tr.*?msg.*?>[\s\S]*<\/tr>)[\s\S]*?<\/tbody>[\r\n]*<\/table>/i;
 const patternHotmailMailBoxTableRow = /<tr.*?>[\s\S]*?<\/tr>/igm;
 const patternHotmailMailBoxTableData = /<td.*?>[\s\S]*?<\/td>/ig;
 const patternHotmailEMailURL = /<td .*?><a href="(.*?)".*?>.*?<\/a><\/td>/i;
-const patternHotmailMad = /mad="(.*?)"/i;
+const patternHotmailMad = /mad=[\\]?"(.*?)[\\]?"/i;
 const patternHotmailEmailRead = /class="InboxContentItemUnread"/i;
-const patternHotmailID = /id="(.*?)"/i;
-const patternHotmailEmailSender = /<td class="FromCol">[<a>]*(.*?)[<\/a>]*<\/td>/i;
-const patternHotmailEmailSenderAlt= /<div class="FromBox">[<a>]*(.*?)[<\/a>]*<\/div>/i
-const patternHotmailEmailSubject = /<td class="SubjectCol">.*?<a href=.*?>(.*?)<\/a>.*?<\/td>/i;
-const patternHotmailEmailSubjectAlt = /<div class="SubjectBox">.*?<a href=.*?>(.*?)<\/a>.*?<\/td>/i;
-const patternHotmailEmailDate = /<td class="DateCol">(.*?)<\/td>/i;
-const patternHotmailEmailDateAlt = /<div class="DatetBox">(.*?)<\/div>/i;
+const patternHotmailID = /id=[\\]?"(.*?)[\\]?"/i;
+const patternHotmailEmailSender = /<td class=[\\]?"FromCol[\\]?">[<a>]*(.*?)[<\/a>]*<\/td>/i;
+const patternHotmailEmailSenderAlt= /<div class=[\\]?"FromBox[\\]?">[<a>]*(.*?)[<\/a>]*<\/div>/i
+const patternHotmailEmailSubject = /<td class=[\\]?"SubjectCol[\\]?">.*?<a href=.*?>(.*?)<\/a>.*?<\/td>/i;
+const patternHotmailEmailSubjectAlt = /<div class=[\\]?"SubjectBox[\\]?">.*?<a href=.*?>(.*?)<\/a>.*?<\/td>/i;
+const patternHotmailEmailDate = /<td class=[\\]?"DateCol[\\]?">(.*?)<\/td>/i;
+const patternHotmailEmailDateAlt = /<div class=[\\]?"DatetBox[\\]?">(.*?)<\/div>/i;
 const patternHotmailSentEMailID =/DraftID=(.*?)&/i;
 const patternHotmailFolderID = /FolderID=(.*?)&/i; 
 const patternHotmailFromBeta = /<select.*?id="fromAddressDropdown".*?name="(.*?)"[\s\S]*<option value="(.*?)" selected>.*?<\/option>/im;
@@ -117,13 +117,12 @@ const patternHotmailFrame = /frameset id="app_frameset"/i;
 const patternHotmailAuthUser =/AuthUser:"(.*?)"/i;
 const patternHotmailSessionID = /SessionID:"(.*?)"/i;
 const patternHotmailNonce = /nonce.*?"(.*?)"/i;
-const patternHotmailMSGcount = /<div class="ItemListHeaderMsgInfo" >[\s]?([\d]*?)\s.*?<\/div>/i;
+const patternHotmailMSGcount = /<div class="PageNavigationMsgRange">(\d+).*?<\/div>/i;
 const patternHotmailMSGPerPage = /msgsPerPage : (.*?),/i;
-const patternHotmailNextPage = /i_previouspage.*?<li pnCur=.*?pnAm=.*?pnAd=.*?pnDir=.*?pnMid=.*?pnSkip="0">.*?<.*?i_nextpage.*?\/>/i;
-const patternHotmailPageDir = /pnDir="(.*?)"/i;
-const patternHotmailMsgAnchor = /pnAm="(.*?)"/i;
-const patternHotmailAnchorDate = /pnAd="(.*?)"/i;
-const patternHotmailMid = /pnMid="(.*?)"/i;
+const patternHotmailNextPage = /<li id="nextPageLink.*?>/ig;
+const patternHotmailLastPage = /<li pnCur=[\\]*"\d+[\\]*".*?pnDir=[\\]*"LastPage[\\]*".*?><a.*?>(\d+)<\/a><\/li>/i;
+const patternHotmailPageDir = /pnDir=[\\]?"(.*?)[\\]?"/i;
+const patternHotmailMsgAnchor = /pnAm=[\\]?"(.*?)[\\]?"/i;
+const patternHotmailAnchorDate = /pnAd=[\\]?"(.*?)[\\]?"/i;
+const patternHotmailMid = /pnMid=[\\]?"(.*?)[\\]?"/i;
 const patternHotmailRtl = /g_isRtl = (.*?),/i;
-const patternHotmailLastPage = /<.*?pnDir="LastPage".*?><a.*?>(\d*?)<\/a><\/li>/i;
-
