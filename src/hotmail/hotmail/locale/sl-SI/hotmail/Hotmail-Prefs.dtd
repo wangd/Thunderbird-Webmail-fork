@@ -1,6 +1,4 @@
-﻿<!ENTITY HotmailPref.Window.Title "Možnosti Hotmail">
-<!ENTITY HotmailPref.Window.size "width: 45em; height: 38em">
-
+<!ENTITY HotmailPref.Window.Title "Možnosti Hotmail">
 <!ENTITY HotmailPref.Panel.Accounts.Title "Računi">
 <!ENTITY HotmailPref.Panel.Domains.Title "Domene">
 <!ENTITY HotmailPref.Button.Close.Label "Zapri">

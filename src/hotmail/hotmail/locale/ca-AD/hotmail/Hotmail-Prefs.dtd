@@ -1,5 +1,4 @@
 <!ENTITY HotmailPref.Window.Title "Opcions de Hotmail">
-<!ENTITY HotmailPref.Window.size "width: 45em; height: 38em">
 <!ENTITY HotmailPref.Panel.Accounts.Title "Comptes">
 <!ENTITY HotmailPref.Panel.Domains.Title "Dominis">
 <!ENTITY HotmailPref.Button.Close.Label "Tanca">
@@ -7,11 +6,9 @@
 <!ENTITY HotmailPref.Tab.POP.Title "POP">
 <!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
 <!ENTITY HotmailPref.Mode.Label "Escolliu el mètode de comunicació que utilitzarà l&apos;extensió per connectar-se als servidors de Microsoft">
-
-<!ENTITY HotmailPref.Mode.WebDav.Label "WebDav">
 <!ENTITY HotmailPref.Mode.HotmailLive.Label "Hotmail Live (New website)">
 <!ENTITY HotmailPref.Mode.HotmailOld.Label "Hotmail (Old website)">
-
+<!ENTITY HotmailPref.Mode.WebDav.Label "WebDav">
 <!ENTITY HotmailPref.POP.DownloadUnread.Label "Descarrega només els correus no llegits">
 <!ENTITY HotmailPref.POP.DownloadUnread.AccessKey "u">
 <!ENTITY HotmailPref.POP.JunkMail.Label "Descarrega el correu brossa">

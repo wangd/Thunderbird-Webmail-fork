@@ -1,5 +1,4 @@
 <!ENTITY HotmailPref.Window.Title "Hotmail indstillinger">
-<!ENTITY HotmailPref.Window.size "width: 45em; height: 38em">
 <!ENTITY HotmailPref.Panel.Accounts.Title "Konti">
 <!ENTITY HotmailPref.Panel.Domains.Title "Domæner">
 <!ENTITY HotmailPref.Button.Close.Label "Luk">

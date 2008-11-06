@@ -1,0 +1,8 @@
+<!ENTITY HotmailAbout.Title "Hotmail - About">
+<!ENTITY HotmailAbout.ExtName "Hotmail">
+<!ENTITY HotmailAbout.ExtVersion "version">
+<!ENTITY HotmailAbout.ExtDescription "Hotmail component for the Web-Mail extension.">
+<!ENTITY HotmailAbout.ExtCreaterTitle "Created By:">
+<!ENTITY HotmailAbout.ExtHome "Home Page">
+<!ENTITY HotmailAbout.ExtButton "Close">
+<!ENTITY HotmailAbout.ExtContributorTitle "Contributors:">

@@ -1,5 +1,4 @@
 <!ENTITY HotmailPref.Window.Title "Hotmail - Einstellungen">
-<!ENTITY HotmailPref.Window.size "width: 50em; height: 38em">
 <!ENTITY HotmailPref.Panel.Accounts.Title "Konten">
 <!ENTITY HotmailPref.Panel.Domains.Title "Websites">
 <!ENTITY HotmailPref.Button.Close.Label "Schließen">
@@ -7,12 +6,9 @@
 <!ENTITY HotmailPref.Tab.POP.Title "POP3">
 <!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
 <!ENTITY HotmailPref.Mode.Label "Bitte die Zugangsart auswählen mit der die WebMail-Erweiterung auf die Microsoft-Server zugreift">
-
-<!ENTITY HotmailPref.Mode.WebDav.Label "WebDAV">
 <!ENTITY HotmailPref.Mode.HotmailLive.Label "Windows Live Hotmail (Neue Website)">
 <!ENTITY HotmailPref.Mode.HotmailOld.Label "MSN Hotmail (Bisherige Website)">
-
-
+<!ENTITY HotmailPref.Mode.WebDav.Label "WebDAV">
 <!ENTITY HotmailPref.POP.DownloadUnread.Label "Nur ungelesene Nachrichten herunterladen">
 <!ENTITY HotmailPref.POP.DownloadUnread.AccessKey "u">
 <!ENTITY HotmailPref.POP.JunkMail.Label "JunkMail herunterladen">
@@ -31,10 +27,10 @@
 <!ENTITY HotmailPref.SMTP.SendHtml.AccessKey "H">
 <!ENTITY HotmailPref.AccountError.Label "Keine Hotmail-Konten gefunden">
 <!ENTITY HotmailPref.SMTP.NA.Label "Keine SMPT-Einstellungen für &quot;Windows Live Hotmail Beta&quot; verfügbar">
+<!ENTITY HotmailPref.POP.MarkAsRead.Label "Nachrichten auf dem Server als gelesen markieren">
+<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "g">
 <!ENTITY HotmailPref.Domain.Label "Von der Hotmail-Komponente unterstützte Websites">
 <!ENTITY HotmailPref.Domain.Button.AddDomain.Label "Hinzufügen...">
 <!ENTITY HotmailPref.Domain.Button.AddDomain.AccessKey "H">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.Label "Entfernen">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.AccessKey "E">
-<!ENTITY HotmailPref.POP.MarkAsRead.Label "Nachrichten auf dem Server als gelesen markieren">
-<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "g">

@@ -1,18 +1,14 @@
 <!ENTITY HotmailPref.Window.Title "Hotmail Options">
-<!ENTITY HotmailPref.Window.size "width: 45em; height: 38em">
 <!ENTITY HotmailPref.Panel.Accounts.Title "Accounts">
 <!ENTITY HotmailPref.Panel.Domains.Title "Domains">
 <!ENTITY HotmailPref.Button.Close.Label "Close">
-
 <!ENTITY HotmailPref.Tab.Mode.Title "Mode">
 <!ENTITY HotmailPref.Tab.POP.Title "POP">
 <!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
-
-<!ENTITY HotmailPref.Mode.Label "Select the communications method the extension will use to connect to Microsoft's servers">
-<!ENTITY HotmailPref.Mode.WebDav.Label "WebDav">
+<!ENTITY HotmailPref.Mode.Label "Select the communications method the extension will use to connect to Microsoft&apos;s servers">
 <!ENTITY HotmailPref.Mode.HotmailLive.Label "Hotmail Live (New website)">
 <!ENTITY HotmailPref.Mode.HotmailOld.Label "Hotmail (Old website)">
-
+<!ENTITY HotmailPref.Mode.WebDav.Label "WebDav">
 <!ENTITY HotmailPref.POP.DownloadUnread.Label "Download unread emails only">
 <!ENTITY HotmailPref.POP.DownloadUnread.AccessKey "u">
 <!ENTITY HotmailPref.POP.JunkMail.Label "Download JunkMail">
@@ -22,7 +18,6 @@
 <!ENTITY HotmailPref.POP.ButtonAdd.AccessKey "A">
 <!ENTITY HotmailPref.POP.ButtonRemove.Label "Remove">
 <!ENTITY HotmailPref.POP.ButtonRemove.AccessKey "R">
-
 <!ENTITY HotmailPref.SMTP.SaveSentItems.Label "Save copy in sent items.">
 <!ENTITY HotmailPref.SMTP.SaveSentItems.AccessKey "s">
 <!ENTITY HotmailPref.SMTP.AlternativeGroup.Label "When sending rich text emails which part should the extension send?">
@@ -30,15 +25,12 @@
 <!ENTITY HotmailPref.SMTP.SendPlain.AccessKey "p">
 <!ENTITY HotmailPref.SMTP.SendHtml.Label "Send html text">
 <!ENTITY HotmailPref.SMTP.SendHtml.AccessKey "h">
-
 <!ENTITY HotmailPref.AccountError.Label "No Hotmail Accounts Found">
 <!ENTITY HotmailPref.SMTP.NA.Label "No SMPT options for Hotmail BETA">
-
+<!ENTITY HotmailPref.POP.MarkAsRead.Label "Mark emails as read on server">
+<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "k">
 <!ENTITY HotmailPref.Domain.Label "Domains supported by Hotmail extension">
 <!ENTITY HotmailPref.Domain.Button.AddDomain.Label "Add...">
 <!ENTITY HotmailPref.Domain.Button.AddDomain.AccessKey "A">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.Label "Remove">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.AccessKey "R">
-
-<!ENTITY HotmailPref.POP.MarkAsRead.Label "Mark emails as read on server">
-<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "k">

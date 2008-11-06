@@ -1,5 +1,4 @@
 <!ENTITY HotmailPref.Window.Title "Hotmail - Asetukset">
-<!ENTITY HotmailPref.Window.size "width: 45em; height: 38em">
 <!ENTITY HotmailPref.Panel.Accounts.Title "Tilit">
 <!ENTITY HotmailPref.Panel.Domains.Title "Verkkotunnukset">
 <!ENTITY HotmailPref.Button.Close.Label "Close">
@@ -7,11 +6,9 @@
 <!ENTITY HotmailPref.Tab.POP.Title "POP">
 <!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
 <!ENTITY HotmailPref.Mode.Label "Valitse yhteystapa, jolla laajennus yhdistää Microsoftin palvelimelle">
-
+<!ENTITY HotmailPref.Mode.HotmailLive.Label "Hotmail Live (uusi verkkosivu)">
+<!ENTITY HotmailPref.Mode.HotmailOld.Label "Hotmail (vanha verkkosivu)">
 <!ENTITY HotmailPref.Mode.WebDav.Label "WebDav">
-<!ENTITY HotmailPref.Mode.HotmailLive.Label "Hotmail Live (New website)">
-<!ENTITY HotmailPref.Mode.HotmailOld.Label "Hotmail (Old website)">
-
 <!ENTITY HotmailPref.POP.DownloadUnread.Label "Lataa vain lukemattomat viestit">
 <!ENTITY HotmailPref.POP.DownloadUnread.AccessKey "a">
 <!ENTITY HotmailPref.POP.JunkMail.Label "Lataa roskaposti">
@@ -30,10 +27,10 @@
 <!ENTITY HotmailPref.SMTP.SendHtml.AccessKey "H">
 <!ENTITY HotmailPref.AccountError.Label "Hotmail-tilejä ei löytynyt">
 <!ENTITY HotmailPref.SMTP.NA.Label "Hotmail BETA:lle ei ole SMTP-asetuksia">
+<!ENTITY HotmailPref.POP.MarkAsRead.Label "Merkitse viestit luetuksi palvelimella">
+<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "M">
 <!ENTITY HotmailPref.Domain.Label "Hotmail-laajennuksen tukemat verkkotunnukset">
 <!ENTITY HotmailPref.Domain.Button.AddDomain.Label "Lisää...">
 <!ENTITY HotmailPref.Domain.Button.AddDomain.AccessKey "L">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.Label "Poista">
 <!ENTITY HotmailPref.Domain.Button.RemoveDomain.AccessKey "P">
-<!ENTITY HotmailPref.POP.MarkAsRead.Label "Merkitse viestit luetuksi palvelimella">
-<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "M">
