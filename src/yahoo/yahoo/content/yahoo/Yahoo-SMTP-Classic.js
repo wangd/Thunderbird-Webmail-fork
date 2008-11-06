@@ -14,7 +14,7 @@ function YahooSMTPClassic(oResponseStream, oLog, oPref)
         scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-Prefs-Accounts-Data.js");
 
         this.m_Log = oLog;
-        this.m_Log.Write("YahooSMTPClassicClassic.js - Constructor - START");
+        this.m_Log.Write("YahooSMTPClassic.js - Constructor - START");
 
         //prfs
         this.m_bReUseSession = oPref.bReUseSession;      //reuse session
