@@ -1,4 +1,5 @@
 <!ENTITY HotmailPref.Window.Title "Hotmail 설정">
+<!ENTITY HotmailPref.Window.size "width: 45em; height: 38em">
 <!ENTITY HotmailPref.Panel.Accounts.Title "계정">
 <!ENTITY HotmailPref.Panel.Domains.Title "도메인">
 <!ENTITY HotmailPref.Button.Close.Label "닫기">

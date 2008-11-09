@@ -1,4 +1,5 @@
 <!ENTITY HotmailPref.Window.Title "Hotmail - Opciones">
+<!ENTITY HotmailPref.Window.size "width: 45em; height: 38em">
 <!ENTITY HotmailPref.Panel.Accounts.Title "Cuentas">
 <!ENTITY HotmailPref.Panel.Domains.Title "Dominios">
 <!ENTITY HotmailPref.Button.Close.Label "Cerrar">

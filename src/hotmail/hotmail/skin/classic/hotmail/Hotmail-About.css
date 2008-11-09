@@ -250,6 +250,11 @@
 }
 
 
+.flag[value="30"]/*bl*/
+{
+     -moz-image-region: rect(0px, 1024px, 32px, 992px)
+}
+
 
 #HotmailHomePage
 {
