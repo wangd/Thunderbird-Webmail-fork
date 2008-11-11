@@ -544,9 +544,13 @@ HotmailScreenRipperBETA.prototype =
                 delete oEscape;  
                 
                 var szMSGCount = 0;  //message count
-                szMSGCount = szCleanResponse.match(patternHotmailMSGcount)[1];
-                mainObject.m_Log.Write("Hotmail-SR-BETA - mailBoxOnloadHandler -szMSGCount : " +szMSGCount);    
-                                
+                try
+                {
+                    szMSGCount = szCleanResponse.match(patternHotmailMSGcount)[1];
+                    mainObject.m_Log.Write("Hotmail-SR-BETA - mailBoxOnloadHandler -szMSGCount : " + szMSGCount);
+                }
+                catch(e){}   
+                      
                 mainObject.m_Log.Write("Hotmail-SR-BETA - mailBoxOnloadHandler -m_iPageCount : " +mainObject.m_iPageCount);    
                 
                 var szMid = szNavBlock.match(patternHotmailMid)[1];
