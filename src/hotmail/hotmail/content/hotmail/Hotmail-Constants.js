@@ -89,6 +89,7 @@ const patternHotmailFolderURL = /<a.*?href="(.*?)">.*?<\/a>/i;
 const patternHotmailFolderOption = /<option value=.*?>.*?<\/option>/ig;
 const patternHotmailInboxContent = /<table.*?InboxTable[\s\S]*?<\/table>/ig;
 const patternHotmailCompose = /href="(.*?EditMessageLight.*?)"/i;
+const patternHotmailN = /'&(n=.*?)'/i;
 const patternHotmailSend = /href=".*?,'(.*?SendMessageLight.*?)'.*?"/i;
 const patternHotmailAddAttachment = /href=".*?,'(.*?AddAttachmentLight.*?)'.*?"/i;
 const patternHotmailLastAttachment = /href=".*?,'(.*?EditMessageLight.*?)'.*?"/i;

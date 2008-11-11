@@ -274,7 +274,16 @@ HotmailSMTPScreenRipperBETA.prototype =
                     mainObject.m_szHomeURI = httpChannel.URI.spec;
                     mainObject.m_Log.Write("Hotmail-SR-BETA-SMTP - loginOnloadHandler - m_szHomeURI : "+mainObject.m_szHomeURI );
 
-                    var szURL = szResponse.match(patternHotmailCompose)[1];
+                    var szURL = "";
+                    try 
+                    {
+                        szURL = szResponse.match(patternHotmailCompose)[1];
+                    }
+                    catch(e)
+                    {
+                        var szN = szResponse.match(patternHotmailN)[1];
+                        szURL = "EditMessageLight.aspx?" + szN
+                    }                   
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA - loginOnloadHandler - szURL : "+szURL);
                     mainObject.m_szComposer =  mainObject.m_szLocationURI + szURL;
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA - loginOnloadHandler - m_szComposer : "+mainObject.m_szComposer );
