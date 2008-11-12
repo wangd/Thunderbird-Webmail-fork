@@ -13,4 +13,5 @@
     <domain>live.co.uk</domain>
     <domain>live.ie</domain>
     <domain>live.nl</domain>
+    <domain>live.com.au</domain>
 </database>
