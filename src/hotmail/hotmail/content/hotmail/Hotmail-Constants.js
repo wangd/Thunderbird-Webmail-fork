@@ -120,7 +120,7 @@ const patternHotmailSessionID = /SessionID:"(.*?)"/i;
 const patternHotmailNonce = /nonce.*?"(.*?)"/i;
 const patternHotmailMSGcount = /<div class="PageNavigationMsgRange">(\d+).*?<\/div>/i;
 const patternHotmailMSGPerPage = /msgsPerPage : (.*?),/i;
-const patternHotmailNextPage = /<li id="nextPageLink.*?>/ig;
+const patternHotmailNextPage = /<li id=[\\]*"nextPageLink.*?>/ig;
 const patternHotmailLastPage = /<li pnCur=[\\]*"\d+[\\]*".*?pnDir=[\\]*"LastPage[\\]*".*?><a.*?>(\d+)<\/a><\/li>/i;
 const patternHotmailPageDir = /pnDir=[\\]?"(.*?)[\\]?"/i;
 const patternHotmailMsgAnchor = /pnAm=[\\]?"(.*?)[\\]?"/i;
