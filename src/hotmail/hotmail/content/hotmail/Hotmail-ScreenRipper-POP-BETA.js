@@ -1339,16 +1339,31 @@ HotmailScreenRipperBETA.prototype =
 
 
 
+    /*        
+    %60 %7E %40 %24 %25 %5E
+    `   ~   @   $   %   ^ 
+    
+    %26 %28 %29 %2B %3D
+    &   (    )   +   = 
+    
+    %7B %7D %7C %5B %5D %5C  %22
+    {    }   |   [   ]   \    " 
+    
+    %3B %27 %3C %3E %3F %2C %2F
+    ;     '  <   >   ?   ,   /
+    */
+
     urlEncode : function (szData)
     {
         var szEncoded = encodeURI(szData);
         szEncoded = szEncoded.replace(/!/g,"%21");
+        szEncoded = szEncoded.replace(/\:/g,"%3A");
+        szEncoded = szEncoded.replace(/\#/g,"%23");
+
         szEncoded = szEncoded.replace(/%5B/g,"[");
         szEncoded = szEncoded.replace(/%5D/g,"]");
         szEncoded = szEncoded.replace(/%7B/g,"{");
-        szEncoded = szEncoded.replace(/%7D/g,"}");
-        szEncoded = szEncoded.replace(/\:/g,"%3A");
-        
+        szEncoded = szEncoded.replace(/%7D/g,"}");        
         return szEncoded;
 
     }
