@@ -1,0 +1,28 @@
+<!ENTITY MailDotComPref.Window.Title "Opções do MailDotCom">
+<!ENTITY MailDotComPref.Panel.Accounts.Title "Contas">
+<!ENTITY MailDotComPref.Panel.Domains.Title "Domínios">
+<!ENTITY MailDotComPref.Button.Close.Label "Fechar">
+<!ENTITY MailDotComPref.Tab.POP.Title "POP">
+<!ENTITY MailDotComPref.Tab.SMTP.Title "SMTP">
+<!ENTITY MailDotComPref.POP.DownloadUnread.Label "Descarregar apenas correio electrónico por ler">
+<!ENTITY MailDotComPref.POP.DownloadUnread.AccessKey "u">
+<!ENTITY MailDotComPref.POP.EmptyTrash.Label "Esvaziar reciclagem">
+<!ENTITY MailDotComPref.POP.EmptyTrash.AccessKey "E">
+<!ENTITY MailDotComPref.POP.Folders.Label "Descarregar pastas">
+<!ENTITY MailDotComPref.POP.ButtonAdd.Label "Adicionar...">
+<!ENTITY MailDotComPref.POP.ButtonAdd.AccessKey "A">
+<!ENTITY MailDotComPref.POP.ButtonRemove.Label "Remover">
+<!ENTITY MailDotComPref.POP.ButtonRemove.AccessKey "R">
+<!ENTITY MailDotComPref.SMTP.SaveSentItems.Label "Salvar cópia nos itens enviados.">
+<!ENTITY MailDotComPref.SMTP.SaveSentItems.AccessKey "s">
+<!ENTITY MailDotComPref.SMTP.AlternativeGroup.Label "Quando enviar correio electrónico em rich text que parte da extensão deve enviar?">
+<!ENTITY MailDotComPref.SMTP.SendPlain.Label "Enviar em texto simples">
+<!ENTITY MailDotComPref.SMTP.SendPlain.AccessKey "p">
+<!ENTITY MailDotComPref.SMTP.SendHtml.Label "Enviar em texto html">
+<!ENTITY MailDotComPref.SMTP.SendHtml.AccessKey "h">
+<!ENTITY MailDotComPref.AccountError.Label "Não foi encontrada nenhuma conta do MailDotCom">
+<!ENTITY MailDotComPref.Domain.Label "Domínios suportados pela extensão MailDotCom">
+<!ENTITY MailDotComPref.Domain.Button.AddDomain.Label "Adicionar...">
+<!ENTITY MailDotComPref.Domain.Button.AddDomain.AccessKey "A">
+<!ENTITY MailDotComPref.Domain.Button.RemoveDomain.Label "Remover">
+<!ENTITY MailDotComPref.Domain.Button.RemoveDomain.AccessKey "R">

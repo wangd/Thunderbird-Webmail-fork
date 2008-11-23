@@ -1,0 +1,22 @@
+<!ENTITY AOLPref.Window.Title "AOL/Netscape-indstillinger">
+<!ENTITY AOLPref.Panel.Accounts.Title "Konti">
+<!ENTITY AOLPref.Panel.Domains.Title "Domæner">
+<!ENTITY AOLPref.Button.Close.Label "Luk">
+<!ENTITY AOLPref.Tab.POP.Title "POP">
+<!ENTITY AOLPref.POP.DownloadUnread.Label "Download kun ulæste e-mails">
+<!ENTITY AOLPref.POP.DownloadUnread.AccessKey "u">
+<!ENTITY AOLPref.POP.JunkMail.Label "Download Uønsket post">
+<!ENTITY AOLPref.POP.JunkMail.AccessKey "N">
+<!ENTITY AOLPref.POP.Folders.Label "Download mapper">
+<!ENTITY AOLPref.POP.ButtonAdd.Label "Tilføj...">
+<!ENTITY AOLPref.POP.ButtonAdd.AccessKey "T">
+<!ENTITY AOLPref.POP.ButtonRemove.Label "Fjern">
+<!ENTITY AOLPref.POP.ButtonRemove.AccessKey "F">
+<!ENTITY AOLPref.AccountError.Label "Ingen AOL-konti fundet">
+<!ENTITY AOLPref.POP.MarkAsRead.Label "Markér e-mails som læste på server">
+<!ENTITY AOLPref.POP.MarkAsRead.AccessKey "k">
+<!ENTITY AOLPref.Domain.Label "Domæner understøttet af AOL-udvidelse">
+<!ENTITY AOLPref.Domain.Button.AddDomain.Label "Tilføj...">
+<!ENTITY AOLPref.Domain.Button.AddDomain.AccessKey "T">
+<!ENTITY AOLPref.Domain.Button.RemoveDomain.Label "Fjern">
+<!ENTITY AOLPref.Domain.Button.RemoveDomain.AccessKey "F">

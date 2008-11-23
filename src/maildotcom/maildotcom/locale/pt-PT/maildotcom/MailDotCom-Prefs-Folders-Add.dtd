@@ -1,0 +1,8 @@
+<!ENTITY MailDotComFolderAdd.Title "Adicionar pasta">
+<!ENTITY MailDotComFolderName.Label "Nome da pasta">
+<!ENTITY MailDotComFolderName.AccessKey "F">
+<!ENTITY MailDotComFolders.Label "Adicionar pasta de descarregar">
+<!ENTITY MailDotComFolder.ButtonOk.Label "Ok">
+<!ENTITY MailDotComFolder.ButtonOk.AccessKey "O">
+<!ENTITY MailDotComFolder.ButtonCancel.Label "Cancelar">
+<!ENTITY MailDotComFolder.ButtonCancel.AccessKey "C">

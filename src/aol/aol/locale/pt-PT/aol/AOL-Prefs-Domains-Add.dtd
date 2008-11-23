@@ -1,0 +1,8 @@
+<!ENTITY AOLAddDomain.Title "Adicionar domínio">
+<!ENTITY AOLAddDomain.Label "Adicionar domínio AOL">
+<!ENTITY AOLAddDomainName.Label "Domínio">
+<!ENTITY AOLAddDomainName.AccessKey "D">
+<!ENTITY AOLAddDomain.ButtonOk.Label "Ok">
+<!ENTITY AOLAddDomain.ButtonOk.AccessKey "O">
+<!ENTITY AOLAddDomain.ButtonCancel.Label "Cancelar">
+<!ENTITY AOLAddDomain.ButtonCancel.AccessKey "C">

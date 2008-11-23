@@ -1,0 +1,22 @@
+<!ENTITY LycosPref.Window.Title "Opções do Lycos">
+<!ENTITY LycosPref.Panel.Accounts.Title "Contas">
+<!ENTITY LycosPref.Panel.Domains.Title "Domínios">
+<!ENTITY LycosPref.Button.Close.Label "Fechar">
+<!ENTITY LycosPref.Tab.POP.Title "POP">
+<!ENTITY LycosPref.Tab.SMTP.Title "SMTP">
+<!ENTITY LycosPref.POP.DownloadUnread.Label "Descarregar apenas correio electrónico por ler">
+<!ENTITY LycosPref.POP.DownloadUnread.AccessKey "u">
+<!ENTITY LycosPref.POP.EmptyTrash.Label "Esvaziar a reciclagem">
+<!ENTITY LycosPref.POP.EmptyTrash.AccessKey "E">
+<!ENTITY LycosPref.POP.JunkMail.Label "Descarregar JunkMail">
+<!ENTITY LycosPref.POP.JunkMail.AccessKey "J">
+<!ENTITY LycosPref.POP.Folders.Label "Descarregar pastas">
+<!ENTITY LycosPref.POP.ButtonAdd.Label "Adicionar...">
+<!ENTITY LycosPref.POP.ButtonAdd.AccessKey "A">
+<!ENTITY LycosPref.POP.ButtonRemove.Label "Remover">
+<!ENTITY LycosPref.POP.ButtonRemove.AccessKey "R">
+<!ENTITY LycosPref.SMTP.SaveSentItems.Label "Salvar cópia nos itens enviados.">
+<!ENTITY LycosPref.SMTP.SaveSentItems.AccessKey "s">
+<!ENTITY LycosPref.AccountError.Label "Não foi encontrada nenhuma conta do Lycos">
+<!ENTITY LycosPref.POP.MarkAsRead.Label "Marcar mensagens electrónicas como lidas no servidor">
+<!ENTITY LycosPref.POP.MarkAsRead.AccessKey "k">

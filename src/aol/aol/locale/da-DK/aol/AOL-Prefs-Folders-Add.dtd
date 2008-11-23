@@ -1,0 +1,8 @@
+<!ENTITY AOLFolderAdd.Title "Tilføj mappe">
+<!ENTITY AOLFolderName.Label "Mappenavn">
+<!ENTITY AOLFolderName.AccessKey "M">
+<!ENTITY AOLFolders.Label "Tilføj download-mappe">
+<!ENTITY AOLFolderName.ButtonOk.Label "Ok">
+<!ENTITY AOLFolderName.ButtonOk.AccessKey "O">
+<!ENTITY AOLFolderName.ButtonCancel.Label "Annuller">
+<!ENTITY AOLFolderName.ButtonCancel.AccessKey "A">

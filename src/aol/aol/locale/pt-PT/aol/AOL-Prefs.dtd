@@ -1,0 +1,22 @@
+<!ENTITY AOLPref.Window.Title "Opções AOL/Netscape">
+<!ENTITY AOLPref.Panel.Accounts.Title "Contas">
+<!ENTITY AOLPref.Panel.Domains.Title "Domínios">
+<!ENTITY AOLPref.Button.Close.Label "Fechar">
+<!ENTITY AOLPref.Tab.POP.Title "POP">
+<!ENTITY AOLPref.POP.DownloadUnread.Label "Descarregar só o correio electrónico por ler">
+<!ENTITY AOLPref.POP.DownloadUnread.AccessKey "u">
+<!ENTITY AOLPref.POP.JunkMail.Label "Descarregar junkmail">
+<!ENTITY AOLPref.POP.JunkMail.AccessKey "J">
+<!ENTITY AOLPref.POP.Folders.Label "Descarregar pastas">
+<!ENTITY AOLPref.POP.ButtonAdd.Label "Adicionar...">
+<!ENTITY AOLPref.POP.ButtonAdd.AccessKey "A">
+<!ENTITY AOLPref.POP.ButtonRemove.Label "Remover">
+<!ENTITY AOLPref.POP.ButtonRemove.AccessKey "R">
+<!ENTITY AOLPref.AccountError.Label "Não foi encontrada nenhuma conta AOL">
+<!ENTITY AOLPref.POP.MarkAsRead.Label "Marcar correio electrónico como lido no servidor">
+<!ENTITY AOLPref.POP.MarkAsRead.AccessKey "k">
+<!ENTITY AOLPref.Domain.Label "Domínios suportados pela extensão AOL">
+<!ENTITY AOLPref.Domain.Button.AddDomain.Label "Adicionar...">
+<!ENTITY AOLPref.Domain.Button.AddDomain.AccessKey "A">
+<!ENTITY AOLPref.Domain.Button.RemoveDomain.Label "Remover">
+<!ENTITY AOLPref.Domain.Button.RemoveDomain.AccessKey "R">
