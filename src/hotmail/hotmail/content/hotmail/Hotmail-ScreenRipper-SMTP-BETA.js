@@ -39,7 +39,8 @@ function HotmailSMTPScreenRipperBETA(oResponseStream, oLog, oPrefData)
                                           .getService(Components.interfaces.nsIComponentData2);
 
         this.m_bReEntry = false;
-
+        this.m_iLoginBounce = 4;
+        
         this.m_bReUseSession = oPrefData.bReUseSession;    //do i reuse the session
         this.m_bSaveCopy= oPrefData.bSaveCopy;            //do i save copy
         this.m_bSendHtml = oPrefData.bSendHtml;          //what do i do with alternative parts
@@ -152,6 +153,9 @@ HotmailSMTPScreenRipperBETA.prototype =
             if (aRefresh)
             {
                 mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler - refresh ");
+
+                if (mainObject.m_iLoginBounce == 0) throw new Error ("No many bounces") 
+                mainObject.m_iLoginBounce--;
 
                 if (!mainObject.m_HttpComms.setURI(aRefresh[1]))
                     mainObject.m_HttpComms.setURI(httpChannel.URI.prePath + szDirectory + aRefresh[1]);

@@ -40,6 +40,7 @@ function HotmailScreenRipperBETA(oResponseStream, oLog, oPrefData)
         this.m_szMSG = null;
         this.m_bStat = false;
         this.m_bReEntry = true;
+        this.m_iLoginBounce = 4;
         this.m_szMT = null;
         this.m_iDownloadRetry = 3;
         this.m_szLocale = null;
@@ -179,7 +180,10 @@ HotmailScreenRipperBETA.prototype =
             if (aRefresh)
             {
                 mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler - refresh ");
-
+                
+                if (mainObject.m_iLoginBounce == 0) throw new Error ("No many bounces") 
+                mainObject.m_iLoginBounce--;
+                
                 if (!mainObject.m_HttpComms.setURI(aRefresh[1]))
                     mainObject.m_HttpComms.setURI(httpChannel.URI.prePath + szDirectory + aRefresh[1]);
 
