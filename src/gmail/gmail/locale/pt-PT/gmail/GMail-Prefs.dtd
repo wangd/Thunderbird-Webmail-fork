@@ -1,0 +1,6 @@
+<!ENTITY Options.szTitle "Opções do GMail">
+<!ENTITY POP.Panel.szTitle "POP">
+<!ENTITY SMTP.Panel.szTitle "SMTP">
+<!ENTITY IMAP.Panel.szTitle "IMAP">
+<!ENTITY Domains.Panel.szTitle "Domínios">
+<!ENTITY Window.size "width: 42em; height: 35em">

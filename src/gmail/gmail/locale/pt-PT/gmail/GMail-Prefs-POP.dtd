@@ -1,0 +1,4 @@
+<!ENTITY DownloadUnread.Label "Transferir apenas correio não lido">
+<!ENTITY DownloadUnread.AccessKey "n">
+<!ENTITY Archive.Label "Guardar na pasta em vez de eliminar">
+<!ENTITY Archive.AccessKey "G">
