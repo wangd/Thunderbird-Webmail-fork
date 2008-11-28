@@ -27,11 +27,12 @@
               label="&SMTP.Panel.szTitle;"
               src="chrome://gmail/content/GMail-Prefs-SMTP.xul"/> 
 
-    <!-- Domains -->
+    <!-- Domains 
     <prefpane id="paneDomains"
               label="&Domains.Panel.szTitle;"
+              hidden = "true"
               src="chrome://gmail/content/GMail-Prefs-Domains.xul"/>
-    
+   -->
     <script type="application/x-javascript" src="chrome://web-mail/content/common/DebugLog.js"/>
     <script type="application/x-javascript" src="chrome://gmail/content/GMail-Prefs-Domains.js"/>       
 </prefwindow>
