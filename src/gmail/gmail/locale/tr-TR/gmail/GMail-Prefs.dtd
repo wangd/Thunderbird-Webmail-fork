@@ -3,4 +3,4 @@
 <!ENTITY SMTP.Panel.szTitle "SMTP">
 <!ENTITY IMAP.Panel.szTitle "IMAP">
 <!ENTITY Domains.Panel.szTitle "Alanlar">
-<!ENTITY Window.size "genişlik: 36; yükseklik: 30">
+<!ENTITY Window.size "width: 42em; height: 35em">

@@ -1,10 +1,10 @@
 <!ENTITY GMailAbout.Title "Quant al GMail">
 <!ENTITY GMailAbout.ExtName "GMail">
 <!ENTITY GMailAbout.ExtVersion "versió 0.5.4">
-<!ENTITY GMailAbout.ExtDescription "Component de GMail per a l'extensió WebMail.">
+<!ENTITY GMailAbout.ExtDescription "Component de GMail per a l&apos;extensió WebMail.">
 <!ENTITY GMailAbout.ExtCreaterTitle "Creat per:">
 <!ENTITY GMailAbout.ExtCreator "Luigi Capriotti">
-<!ENTITY GMailAbout.ExtHome "Pàgina d'inici">
+<!ENTITY GMailAbout.ExtHome "Pàgina d&apos;inici">
 <!ENTITY GMailAbout.ExtHomeURL "http://webmail.mozdev.org/">
 <!ENTITY GMailAbout.ExtButton "Tanca">
 <!ENTITY GMailAbout.ExtContributorTitle "Col·laboradors:">

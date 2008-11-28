@@ -3,4 +3,4 @@
 <!ENTITY SMTP.Panel.szTitle "SMTP">
 <!ENTITY IMAP.Panel.szTitle "IMAP">
 <!ENTITY Domains.Panel.szTitle "網域">
-<!ENTITY Window.size "寬: 36; 高: 30">
+<!ENTITY Window.size "width: 42em; height: 35em">

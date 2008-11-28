@@ -1,4 +1,4 @@
-<!ENTITY Window.size "šírka: 30em; výška: 10em">
+<!ENTITY Window.size "width: 37em; height: 13em">
 <!ENTITY Uri.label "Uri">
 <!ENTITY Uri.accessKey "U">
 <!ENTITY Uri.size "šírka: 35px">

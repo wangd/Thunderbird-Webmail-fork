@@ -1,0 +1,6 @@
+<!ENTITY Options.szTitle "Gmail Настойки">
+<!ENTITY POP.Panel.szTitle "ПОП">
+<!ENTITY SMTP.Panel.szTitle "СМТП">
+<!ENTITY IMAP.Panel.szTitle "ИМАП">
+<!ENTITY Domains.Panel.szTitle "Домейни">
+<!ENTITY Window.size "width: 36em; height: 30em">

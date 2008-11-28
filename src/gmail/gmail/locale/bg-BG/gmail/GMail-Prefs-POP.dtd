@@ -1,0 +1,4 @@
+<!ENTITY DownloadUnread.Label "Свали само непрочетените писма">
+<!ENTITY DownloadUnread.AccessKey "u">
+<!ENTITY Archive.Label "Запиши в архива вместо да ги изтриеш">
+<!ENTITY Archive.AccessKey "A">

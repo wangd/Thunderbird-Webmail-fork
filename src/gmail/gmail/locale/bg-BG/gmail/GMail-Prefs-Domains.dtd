@@ -1,0 +1,8 @@
+<!ENTITY GMailPref.Domain.Label "Поддържани домейни">
+<!ENTITY Domain.label "Домейн">
+<!ENTITY Remove.label "Премахни">
+<!ENTITY Remove.AccessKey "R">
+<!ENTITY Add.label "Добави">
+<!ENTITY Add.AccessKey "A">
+<!ENTITY Edit.label "Промени">
+<!ENTITY Edit.AccessKey "E">
