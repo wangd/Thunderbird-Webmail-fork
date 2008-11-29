@@ -1,4 +1,5 @@
 #include "nsISupports.idl"
+#include "nsIDomainData.idl"
 
 [scriptable, uuid(5bb1ae60-d693-11dc-95ff-0800200c9a66)]
 interface nsIGMailDomains : nsISupports
@@ -11,5 +12,5 @@ interface nsIGMailDomains : nsISupports
     string getURL(in string szDomain);
     
     long getAllDomains(out PRUint32 count,
-                       [array, size_is(count)] out string Domains);
+                       [array, size_is(count)] out nsIDomainData Domains);
 };

@@ -9,7 +9,7 @@ function nsGMailDomains()
     this.m_scriptLoader = null;
     this.m_Log = null;
     this.m_DomainManager = null;
-    this.m_dbService = null;
+
     this.m_bIsReady = false;
     this.m_oFile = null;
     this.m_aFilesDomains = new Array();
@@ -19,166 +19,7 @@ function nsGMailDomains()
 
 
 nsGMailDomains.prototype =
-{
-    loadDataBase : function()
-    {
-        try
-        {
-            this.m_Log.Write("nsDomainsGMail.js - loadDataBase - START");
-
-            try
-            {
-                this.m_dbService = Components.classes["@mozilla.org/storage/service;1"]
-                                             .getService(Components.interfaces.mozIStorageService);
-            }
-            catch(err)
-            {
-                this.m_Log.Write("nsDomainsGMail.js : startUp - SQL components NOT installed");
-                throw new Error("no database");
-            }
-
-            //get location of DB
-            var fileDB = Components.classes["@mozilla.org/file/directory_service;1"];
-            fileDB = fileDB.createInstance(Components.interfaces.nsIProperties);
-            fileDB = fileDB.get("ProfD", Components.interfaces.nsILocalFile);
-            fileDB.append("WebmailData");         //add folder
-            if (!fileDB.exists() || !fileDB.isDirectory())    //check folder exist
-                fileDB.create(Components.interfaces.nsIFile.DIRECTORY_TYPE, 0764);
-            if (fileDB.exists() && fileDB.isDirectory() && fileDB.permissions != 0764) //check permissions
-            {
-                this.m_Log.Write("nsDomainsGMail.js - loadDB - updating file permissions");
-                try
-                {
-                    fileDB.permissions = 0764;
-                }
-                catch(e)
-                {
-                    this.m_Log.Write("nsDomainsGMail.js: loadDataBase : permissions exception : "
-                                          + e.name
-                                          + ".\nError message: "
-                                          + e.message);
-                }
-            }
-            fileDB.append("GMaildomains.db3");         //sqlite database
-            fileDB.QueryInterface(Components.interfaces.nsIFile)
-            this.m_Log.Write("nsDomainsGMail.js - loadDB - fileDB "+ fileDB.path);
-
-            //load DB
-            this.m_dbConn = this.m_dbService.openDatabase(fileDB);
-            if (!this.m_dbConn) return false;
-
-            var iVersion = this.getDBVersion();
-            if (iVersion == -1)
-                this.createDB();
-          
-            this.m_bIsReady = true;
-
-            this.m_Log.Write("nsDomainsGMail.js - loadDataBase - END");
-            return true;
-        }
-        catch(err)
-        {
-            this.m_Log.DebugDump("nsDomainsGMail.js: loadDataBase : Exception : "
-                                          + err.name
-                                          + ".\nError message: "
-                                          + err.message + "\n"
-                                          + err.lineNumber +"\n"
-                                          + "DB Reset "+ this.m_dbConn.lastErrorString);
-
-            return false;
-        }
-    },
-
-    
-        
-    getDBVersion : function ()
-    {
-        try
-        {
-            this.m_Log.Write("nsDomainsGMail.js - getDBVersion - START");
-
-            var iVersion = -1;
-
-            try
-            {
-                var szVersion = "SELECT version FROM GMaildomains_schema_version LIMIT 1";
-                var statement = this.m_dbConn.createStatement(szVersion);
-                var wStatement = Components.classes["@mozilla.org/storage/statement-wrapper;1"]
-                                           .createInstance(Components.interfaces.mozIStorageStatementWrapper);
-                try
-                {
-                    wStatement.initialize(statement);
-                    if (wStatement.step()) iVersion = wStatement.row["version"];
-                }
-                finally
-                {
-                    wStatement.reset();
-                    this.m_Log.Write("nsDomainsGMail : getDBversion - DB Reset");
-                }
-            }
-            catch (e)
-            {
-                iVersion = -1;
-            }
-
-            this.m_Log.Write("nsDomainsGMail.js - getDBVersion - "+ iVersion);
-            this.m_Log.Write("nsDomainsGMail.js - getDBVersion - END");
-            return iVersion;
-        }
-        catch(err)
-        {
-            this.m_Log.DebugDump("nsDomainsGMail.js: getDBVersion : Exception : "
-                                          + err.name
-                                          + "\nError message: "
-                                          + err.message +"\n"
-                                          + err.lineNumber+ "\n"
-                                          + this.m_dbConn.lastErrorString);
-            return -1;
-        }
-    },
-
-     
- 
-    createDB : function ()
-    {
-        try
-        {
-            this.m_Log.Write("nsDomainsGMail.js - createDB - START");
-            var szSQL;
-
-            //Domains Table
-            szSQL = "CREATE TABLE domains ";
-            szSQL +="(";
-            szSQL +=    "id INTEGER PRIMARY KEY, ";
-            szSQL +=    "domain TEXT, ";
-            szSQL +=    "url TEXT ";
-            szSQL +=");";
-            this.m_Log.Write("nsDomainsGMail.js - createDB - szSQL " + szSQL);
-            this.m_dbConn.executeSimpleSQL(szSQL);
-
-            //Version table
-            szSQL = "CREATE TABLE GMaildomains_schema_version (version INTEGER);";
-            this.m_dbConn.executeSimpleSQL(szSQL);
-            szSQL = "INSERT INTO GMaildomains_schema_version VALUES(1);";
-            this.m_dbConn.executeSimpleSQL(szSQL);
-            
-            this.m_Log.Write("nsDomainsGMail.js - createDB - END");
-        }
-        catch(err)
-        {
-            this.m_Log.DebugDump("nsDomainsGMail.js: createDB : Exception : "
-                                          + err.name +
-                                          "\nError message: "
-                                          + err.message +"\n"
-                                          + "DB Error " + "\n"
-                                          + err.lineNumber+ "\n"
-                                          + this.m_dbConn.lastErrorString);
-            return false;
-        }
-    },
-
-  
-    
+{        
     loadFileData : function()
     {
         try
@@ -190,7 +31,7 @@ nsGMailDomains.prototype =
                                      .createInstance(Components.interfaces.nsIProperties)
                                      .get("ProfD", Components.interfaces.nsIFile);
             this.m_oFile.append("extensions");          //goto profile extension folder
-            this.m_oFile.append("{3d82b2c0-0109-11da-8cd6-0800200c9a66}"); //goto client extension folder
+            this.m_oFile.append("{860a7040-44a3-11da-8cd6-0800200c9a66}"); //goto client extension folder
             this.m_oFile.append("domains.txt");       //goto logfiles folder
 
             //check file exist
@@ -264,16 +105,13 @@ nsGMailDomains.prototype =
                     var szDataBase = szResult.match(/<database>([\S\s]*?)<\/database>/i)[1];
 
                     //get rows
-                    var aszRows = szDataBase.match(/<entry>[\S\s]*?<\/entry>/ig);
-            
+                    var aszRows = szDataBase.match(/<domain>[\S\s]*?<\/domain>/ig);
+
                     for (i=0; i < aszRows.length; i++)
                     {
-                        var data = new GMailDomains()
-                        data.szDomain = aszRows[i].match(/<domain>([\S\s]*?)<\/domain>/i)[1];
-                        this.m_Log.Write("nsGMailDomains.js - onStreamComplete - szDomain " + data.szDomain);
-                        data.szURL = aszRows[i].match(/<url>([\S\s]*?)<\/url>/i)[1];
-                        this.m_Log.Write("nsGMailDomains.js - onStreamComplete - szURL " + data.szURL);
-                        this.m_aFilesDomains.push(data);
+                        var szDomain = aszRows[i].match(/<domain>([\S\s]*?)<\/domain>/i)[1];
+                        this.m_Log.Write("nsHotmailDomains.js - onStreamComplete - szDomain " + szDomain);
+                        this.m_aFilesDomains.push(szDomain);
                     }
                 }
             }
@@ -327,8 +165,13 @@ nsGMailDomains.prototype =
 
             if (this.m_iCount< this.m_aFilesDomains.length)
             {
-                this.addDomain(this.m_aFilesDomains[this.m_iCount].szDomain,
-                               this.m_aFilesDomains[this.m_iCount].szURL)
+                this.addDomain(this.m_aFilesDomains[this.m_iCount],"");
+                //add domains to webmail database
+               // if (!this.domainCheck( this.m_aFilesDomains[this.m_iCount], "POP", "@mozilla.org/GMailPOP;1"))
+                    this.m_DomainManager.newDomain(this.m_aFilesDomains[this.m_iCount], "POP", "@mozilla.org/GMailPOP;1","true");
+               // if (!this.domainCheck(this.m_aFilesDomains[this.m_iCount], "SMTP", "@mozilla.org/GMailSMTP;1"))
+                    this.m_DomainManager.newDomain(this.m_aFilesDomains[this.m_iCount], "SMTP", "@mozilla.org/GMailSMTP;1","true");
+
             }
             else
                 timer.cancel();
@@ -395,20 +238,6 @@ nsGMailDomains.prototype =
                 this.m_DomainManager.newDomain(szDomain, "POP", "@mozilla.org/GMailPOP;1","false");
             if (!this.domainCheck(szDomain, "SMTP", "@mozilla.org/GMailSMTP;1"))
                 this.m_DomainManager.newDomain(szDomain, "SMTP", "@mozilla.org/GMailSMTP;1","false");
-
-            var szSQL;
-            szSQL  = "REPLACE INTO domains (id, domain, url) ";
-            szSQL += "VALUES ";
-            szSQL += "( ";
-            szSQL += "  (SELECT id FROM domains WHERE domain LIKE ?1),";
-            szSQL += "   ?1,";
-            szSQL += "   ?2 ";
-            szSQL += ");";
-            this.m_Log.Write("nsGMailDomains : newDomain - sql "  + szSQL);
-            var statement = this.m_dbConn.createStatement(szSQL);
-            statement.bindStringParameter(0, szDomain.toLowerCase().replace(/\s/,""));
-            statement.bindStringParameter(1, szURL.toLowerCase().replace(/\s/,""));
-            statement.execute();
             
             this.m_Log.Write("nsGMailDomains.js - addDomain - END " );
         }
@@ -431,11 +260,6 @@ nsGMailDomains.prototype =
         try
         {
             this.m_Log.Write("nsGMailDomains.js - removeDomain - START " + szDomain);
-
-            var szSQL = "DELETE FROM domains WHERE domain LIKE ?1";
-            var statement = this.m_dbConn.createStatement(szSQL);
-            statement.bindStringParameter(0, szDomain.toLowerCase().replace(/\s/,""));
-            statement.execute();
 
             this.m_DomainManager.removeDomainForProtocol(szDomain, "POP");
             this.m_DomainManager.removeDomainForProtocol(szDomain, "SMTP");
@@ -462,32 +286,9 @@ nsGMailDomains.prototype =
         try
         {
             this.m_Log.Write("nsGMailDomains.js - getAllDomains - START ");
-            var aResult = new Array();
-            
-            var szSQL = "SELECT domain FROM domains ORDER BY domain ASC ";            
-            var statement = this.m_dbConn.createStatement(szSQL);
-            try
-            {
-                var wStatement = Components.classes["@mozilla.org/storage/statement-wrapper;1"]
-                                           .createInstance(Components.interfaces.mozIStorageStatementWrapper);
-                wStatement.initialize(statement);
-                while (wStatement.step())
-                {
-                   aResult.push(wStatement.row["domain"]);
-                }
-            }
-            finally
-            {
-                statement.reset();
-                this.m_Log.Write("nsGMailDomains : getAllDomains - DB Reset "+ this.m_dbConn.lastErrorString);
-            }
-            
-            
-            iCount.value = aResult.length;
-            aDomains.value = aResult;
-            this.m_Log.Write("nsGMailDomains.js - getAllDomains - " + iCount.value);
-            
-            this.m_Log.Write("nsGMailDomains.js - getAllDomains - END " );
+
+            this.m_DomainManager.getDomainForExtension("{860a7040-44a3-11da-8cd6-0800200c9a66}",iCount,aDomains)
+            this.m_Log.Write("nsGMailDomains.js - getAllDomains - END " + iCount.value );
             return 1;
         }
         catch(err)
@@ -509,28 +310,9 @@ nsGMailDomains.prototype =
         try
         {
             this.m_Log.Write("nsGMailDomains.js - getURL - START " + szDomain);
-            var szURL = null;
-            var szSQL = "SELECT url FROM domains WHERE domain LIKE ?1";
-            var statement = this.m_dbConn.createStatement(szSQL);
-            statement.bindStringParameter(0, szDomain.toLowerCase().replace(/\s/,""));
-            try
-            {
-                var wStatement = Components.classes["@mozilla.org/storage/statement-wrapper;1"]
-                                           .createInstance(Components.interfaces.mozIStorageStatementWrapper);
-                wStatement.initialize(statement);
-                while (wStatement.step())
-                {
-                   szURL = wStatement.row["url"];
-                }
-            }
-            finally
-            {
-                statement.reset();
-                this.m_Log.Write("nsGMailDomains : getURL - DB Reset "+ this.m_dbConn.lastErrorString);
-            }
-
-            this.m_Log.Write("nsGMailDomains.js - getURL - END " + szURL );
-            return szURL;
+           
+            this.m_Log.Write("nsGMailDomains.js - getURL - END " );
+            return "";
         }
         catch(err)
         {
@@ -582,8 +364,7 @@ nsGMailDomains.prototype =
                 {
                     this.m_Log.Write("nsGMailDomains.js - domainmanager not found");
                 }
-                
-                this.loadDataBase();                
+                            
                 this.loadFileData();
             break;
 
