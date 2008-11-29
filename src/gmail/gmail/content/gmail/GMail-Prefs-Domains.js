@@ -54,7 +54,8 @@ var gGMailDomains =
                     this.m_DebugLog.Write("GMail-Prefs-Domains : updateList - "+iCount.value +" " + aDomains.value);         
                     for (var i=0; i<aDomains.value.length; i++)
                     {
-                        this.domainList(aDomains.value[i]);
+                        this.domainList(aDomains.value[i].szDomain,
+                                        aDomains.value[i].bPOPDefault);
                     }
                     var listView = document.getElementById("listDomain");   //click item
                     listView.selectedIndex = this.m_iSelectedIndex;
@@ -120,9 +121,9 @@ var gGMailDomains =
     
 
 
-    domainList : function (szDomain)
+    domainList : function (szDomain , bDefault)
     {
-        this.m_DebugLog.Write("GMail-Prefs-Domains : domainList - START " +szDomain);
+        this.m_DebugLog.Write("GMail-Prefs-Domains : domainList - START " +szDomain + " " + bDefault);
         
         var list = document.getElementById("listDomain");
             
@@ -130,14 +131,15 @@ var gGMailDomains =
         newItem.setAttribute("id", szDomain);
         newItem.setAttribute("class", "listItemDomain");
         newItem.setAttribute("allowEvents", "true");
+        newItem.setAttribute("selected","false"); 
+        newItem.setAttribute("align", "center");
+        newItem.setAttribute("bDefaultDomain", false);
+        newItem.setAttribute("disabled",  false);
         
         var regExp = new RegExp(this.m_szSelectedDomain);
         if (szDomain.search(regExp) != -1) 
             this.m_iSelectedIndex =  list.getRowCount();
-        
-        newItem.setAttribute("selected", "false");             
-        newItem.setAttribute("align", "center");
-        
+                
         //image
         var space = document.createElement("spacer")
         space.setAttribute("flex","1");
@@ -278,7 +280,7 @@ var gGMailDomains =
             this.m_DebugLog.Write("GMail-Prefs-Domains : edit -  " + szURL);                       
             
             var oResult = {value : null};
-            var oData = {szURL : szURL, szDomain: szDomain};            
+            var oData = {szURL : szURL , szDomain: szDomain};            
             window.openDialog("chrome://gmail/content/GMail-Prefs-Domains-Add.xul",
                               "Edit",
                               "chrome, centerscreen, modal",
@@ -356,7 +358,7 @@ var gGMailDomains =
             event.initEvent("change", false, true);
             document.getElementById("listDomain").dispatchEvent(event);
 
-            this.m_DebugLog.Write("Yahoo-Prefs-Domains: remove - END");
+            this.m_DebugLog.Write("GMail-Prefs-Domains: remove - END");
             return true;
         }
         catch(err)
@@ -376,9 +378,10 @@ var gGMailDomains =
         try
         {
             this.m_DebugLog.Write("GMail-Prefs-Domains : ondbclick - START");
-                           
+             
             this.m_iCount==0 ? this.add() : this.edit();
-
+            
+             
             this.m_DebugLog.Write("GMail-Prefs-Domains : ondbclick - END");
         }
         catch(err)
@@ -402,7 +405,12 @@ var gGMailDomains =
             var listView = document.getElementById("listDomain");   //click item
             var iIndex = listView.selectedIndex;
             this.m_DebugLog.Write("GMail-Prefs-Domains : onSelect - iIndex "+iIndex); 
-             
+            
+            var item = listView.getItemAtIndex(iIndex); 
+            var bDefaultDomain = item.getAttribute("bDefaultDomain");
+            this.m_DebugLog.Write("GMail-Prefs-Domains : onSelect - bDefaultDomain "+bDefaultDomain); 
+            iIndex = bDefaultDomain=="true"? -1: iIndex;
+ 
             var buttonRemove = document.getElementById("remove");   
             buttonRemove.setAttribute("disabled", iIndex!=-1? false : true);
             
