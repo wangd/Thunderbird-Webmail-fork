@@ -1,0 +1,4 @@
+<database>
+    <domain>gmail.com</domain>
+    <domain>googlemail.com</domain>
+</database>
