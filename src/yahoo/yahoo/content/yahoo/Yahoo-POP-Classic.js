@@ -317,12 +317,28 @@ YahooPOPClassic.prototype =
                         for (i=0; i<aszServerFolders.length; i++)
                         {
                             var szServerFolders = decodeURIComponent(aszServerFolders[i]);
-                            var szBox = szServerFolders.match(PatternYahooFolderNameAlt)[1];
+                            var szBox = "";
+                            try 
+                            {
+                                szBox = szServerFolders.match(PatternYahooFolderNameAlt)[1];
+                            } 
+                            catch (e) 
+                            {
+                                szBox = szServerFolders.match(PatternYahooFolderName)[1];         
+                            }
                             mainObject.m_Log.Write("YahooPOPClassic.js - loginOnloadHandler - szBox : "+szBox );
 
                             if (szBox.search(regExp)!=-1)
                             {
-                                var szPart = szServerFolders.match(PatternYahooFoldersPartAlt)[1]; 
+                                var szPart = "";
+                                try
+                                {
+                                    szPart = szServerFolders.match(PatternYahooFoldersPart)[1];
+                                }
+                                catch(e)
+                                {
+                                    szPart = szServerFolders.match(PatternYahooFoldersPartAlt)[1];
+                                } 
                                 mainObject.m_Log.Write("YahooPOPClassic.js - loginOnloadHandler - szPart : "+szPart );                               
                                 
                                 //test urls
@@ -1005,8 +1021,8 @@ YahooPOPClassic.prototype =
                     szMessage += szResponse;
                     
                     //remove quoted printable header
-                    szMessage = szMessage.replace(/content-transfer-Encoding:.*?quoted-printable.*?$/im, "x-Header: removed");
-                    szMessage = szMessage.replace(/content-transfer-Encoding:.*?base64.*?$/im,"x-Header: removed");
+                    szMessage = szMessage.replace(/content-transfer-Encoding:.*?quoted-printable.*?$/img, "x-Header: removed");
+                    szMessage = szMessage.replace(/content-transfer-Encoding:.*?base64.*?$/img,  "x-Header: removed");
                     mainObject.m_oMessage.setEnvolpeHeaders(szMessage);
                     
                     var szID = mainObject.m_szMsgID.match(/mid.*?&/)[0];
@@ -1092,6 +1108,16 @@ YahooPOPClassic.prototype =
                         {
                             szContetnDis = httpChannel.getResponseHeader("content-disposition");
                             mainObject.m_Log.Write("YahooPOPClassic.js - emailOnloadHandler - szContetnDis " + szContetnDis);
+                            
+                            //filename*="utf-8''"
+                            if (szContetnDis.search(patternYahooAttFilename)!=-1)
+                            {
+                                var szFileName= "att";
+                                if (szContentType.search(/message\/rfc822/)!=-1) szFileName += ".eml"
+                            
+                                var szNewFilename = "filename*=\"utf-8'" + szFileName + "'\"";
+                                szContetnDis = szContetnDis.replace(patternYahooAttFilename,szNewFilename );     
+                            }                                            
                         } 
                         catch (e) 
                         {

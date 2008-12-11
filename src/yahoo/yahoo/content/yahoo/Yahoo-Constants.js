@@ -48,7 +48,7 @@ const PatternYahooBoxAlt2=/(fid=.*?)&/;
 const PatternYahooFolderNameAlt= /fid=(.*?)&/i;
 const PatternYahooFolderBoxAlt = /fid=(.*?)$/i;
 const PatternYahooCrumb =/mcrumb=(.*?)&/i;
-const patternYahooNextPageAlt = /<span class="offscreen">.*?href="(.*?startMid=.*?)">/im;
+const patternYahooNextPageAlt = /<a href="([^"]+)"><span[^\|]+\|\s<a href="[^"]+&last=1">/im;
 const patternYahooComposeURLForm = /<form.*?compose.*?>[\s\S]*?<\/form>/igm;
 const patternYahooClassicName = /name=['|"]([\S\s]*?)['|"]/i;
 const patternYahooClassicValue = /value=['|"]([\S\s]*?)['|"]/i;
@@ -58,7 +58,7 @@ const patternYahooClassicAttCheck = /errorFlag.*?=.*?false;/igm;
 const patternYahooClassicAttDetails = /fileDetails.*?=.*?["|'](.*?)["|'];/im;
 const patternYahooAddress =/<option value="(.*?)"[\s]*?selected/i;
 const patternYahooSelect = /<select\s*id="defFromAddress"[\s\S]*<\/select>/igm;
-
+const patternYahooAttFilename = /filename\*="utf-8''"/i
 /******************************  BETA ***************************************/
 const kPatternWssid = /[']?wssid[']?.*?'(.*?)',/i;
 const kPatternLogOut = /LoggedInAs/ig;

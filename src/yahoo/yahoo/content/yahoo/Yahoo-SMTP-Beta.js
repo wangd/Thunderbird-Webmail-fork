@@ -545,7 +545,7 @@ YahooSMTPBETA.prototype =
                 //First file
                 var oAttach = this.m_Email.attachments[this.m_iAttachCount];
                 var szFileName = oAttach.headers.getContentType(4);
-                if (!szFileName) szFileName = "";
+                if (!szFileName) szFileName = "File";
                 var szBody = oAttach.body.getBody();
                 this.m_HttpComms.addFile("uploadfile", szFileName, szBody);
 
