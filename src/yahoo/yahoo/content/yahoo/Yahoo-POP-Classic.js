@@ -526,12 +526,6 @@ YahooPOPClassic.prototype =
             {
                 szNextPage = szResponse.match(patternYahooNextPageAlt)[1];              
                 mainObject.m_Log.Write("YahooPOPClassic.js - mailBoxOnloadHandler - next page :" +szNextPage);
-                                                              
-                var iStart = parseInt(szNextPage.match(/startMid=(.*?)&/i)[1]);
-                mainObject.m_Log.Write("YahooPOPClassic.js - mailBoxOnloadHandler - next page :" +iStart);
-               
-                if (mainObject.m_iLastPage >= iStart)szNextPage=null; //no next page
-                 mainObject.m_iLastPage = iStart;
             }
             catch(err)
             {       
