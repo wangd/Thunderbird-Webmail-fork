@@ -1,0 +1,8 @@
+<!ENTITY HotmailFolderAdd.Title "اضافة مجلد">
+<!ENTITY HotmailFolderName.Label "اسم المجلد">
+<!ENTITY HotmailFolderName.AccessKey "F">
+<!ENTITY HotmailFolders.Label "اضافة مجلد تحميل">
+<!ENTITY HotmailFolder.ButtonOk.Label "موافق">
+<!ENTITY HotmailFolder.ButtonOk.AccessKey "O">
+<!ENTITY HotmailFolder.ButtonCancel.Label "إلغاء">
+<!ENTITY HotmailFolder.ButtonCancel.AccessKey "C">

@@ -1,0 +1,8 @@
+<!ENTITY YahooAddDomain.Title "اضافة مجال">
+<!ENTITY YahooAddDomainName.Label "المجال">
+<!ENTITY YahooAddDomainName.AccessKey "D">
+<!ENTITY YahooAddDomain.Label "اضافة مجال ياهو">
+<!ENTITY YahooAddDomain.ButtonOk.Label "موافق">
+<!ENTITY YahooAddDomain.ButtonOk.AccessKey "O">
+<!ENTITY YahooAddDomain.ButtonCancel.Label "إلغاء">
+<!ENTITY YahooAddDomain.ButtonCancel.AccessKey "C">

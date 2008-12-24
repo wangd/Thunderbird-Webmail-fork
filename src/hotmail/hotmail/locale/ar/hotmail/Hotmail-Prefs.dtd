@@ -1,0 +1,36 @@
+<!ENTITY HotmailPref.Window.Title "اعدادات الهوتميل">
+<!ENTITY HotmailPref.Panel.Accounts.Title "حسابات">
+<!ENTITY HotmailPref.Panel.Domains.Title "مجالات">
+<!ENTITY HotmailPref.Button.Close.Label "اغلق">
+<!ENTITY HotmailPref.Tab.Mode.Title "وضع">
+<!ENTITY HotmailPref.Tab.POP.Title "POP">
+<!ENTITY HotmailPref.Tab.SMTP.Title "SMTP">
+<!ENTITY HotmailPref.Mode.Label "اختر طريقة اتصالات الامتداد التي سوف تستخدم لربط لمايكروسوفت بخدمة الشبكة">
+<!ENTITY HotmailPref.Mode.HotmailLive.Label "Hotmail Live (موقع جديد)">
+<!ENTITY HotmailPref.Mode.HotmailOld.Label "Hotmail (موقع قديم)">
+<!ENTITY HotmailPref.Mode.WebDav.Label "WebDav">
+<!ENTITY HotmailPref.POP.DownloadUnread.Label "تنزيل الرسائل الغير مقرؤة فقط">
+<!ENTITY HotmailPref.POP.DownloadUnread.AccessKey "u">
+<!ENTITY HotmailPref.POP.JunkMail.Label "تنزيل البريد المزعج">
+<!ENTITY HotmailPref.POP.JunkMail.AccessKey "J">
+<!ENTITY HotmailPref.POP.Folders.Label "مجلدات التحميل">
+<!ENTITY HotmailPref.POP.ButtonAdd.Label "اضافة ...">
+<!ENTITY HotmailPref.POP.ButtonAdd.AccessKey "A">
+<!ENTITY HotmailPref.POP.ButtonRemove.Label "حذف">
+<!ENTITY HotmailPref.POP.ButtonRemove.AccessKey "R">
+<!ENTITY HotmailPref.SMTP.SaveSentItems.Label "حفظ نسخة من الرسائل المرسلة">
+<!ENTITY HotmailPref.SMTP.SaveSentItems.AccessKey "s">
+<!ENTITY HotmailPref.SMTP.AlternativeGroup.Label "When sending rich text emails which part should the extension send?">
+<!ENTITY HotmailPref.SMTP.SendPlain.Label "ارسال رسالة نصية">
+<!ENTITY HotmailPref.SMTP.SendPlain.AccessKey "p">
+<!ENTITY HotmailPref.SMTP.SendHtml.Label "ارسال نص html">
+<!ENTITY HotmailPref.SMTP.SendHtml.AccessKey "h">
+<!ENTITY HotmailPref.AccountError.Label "لم يجد حسابات هوتميل">
+<!ENTITY HotmailPref.SMTP.NA.Label "لا يوجد اعدادات لـ هوتميل ليف">
+<!ENTITY HotmailPref.POP.MarkAsRead.Label "تحديد كل الرسائل كـ تمت قرأتها على السيرفر">
+<!ENTITY HotmailPref.POP.MarkAsRead.AccessKey "k">
+<!ENTITY HotmailPref.Domain.Label "المجالات التي يدعمها امتداد هوتميل">
+<!ENTITY HotmailPref.Domain.Button.AddDomain.Label "اضافة ...">
+<!ENTITY HotmailPref.Domain.Button.AddDomain.AccessKey "A">
+<!ENTITY HotmailPref.Domain.Button.RemoveDomain.Label "حذف">
+<!ENTITY HotmailPref.Domain.Button.RemoveDomain.AccessKey "R">

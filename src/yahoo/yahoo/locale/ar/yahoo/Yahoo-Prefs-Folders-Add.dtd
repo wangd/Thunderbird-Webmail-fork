@@ -1,0 +1,9 @@
+<!ENTITY YahooFolderAdd.Title "اضافة مجلد">
+<!ENTITY YahooFolderName.Label "اسم المجلد">
+<!ENTITY YahooFolderName.AccessKey "F">
+<!ENTITY YahooFolders.Label "اضافة مجلد تحميل">
+<!ENTITY YahooFolder.ButtonOk.Label "موافق">
+<!ENTITY YahooFolder.ButtonOk.AccessKey "O">
+<!ENTITY YahooFolder.ButtonCancel.Label "إلغاء">
+<!ENTITY YahooFolder.ButtonCancel.AccessKey "C">
+<!ENTITY YahooFolder.DownloadFolder.Label "تنزيل قائمة مجلد">

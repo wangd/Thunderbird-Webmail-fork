@@ -1,0 +1,41 @@
+<!ENTITY YahooPref.Window.Title "اعدادات ياهو">
+<!ENTITY YahooPref.Panel.Accounts.Title "الحسابات">
+<!ENTITY YahooPref.Panel.Domains.Title "المجالات">
+<!ENTITY YahooPref.Button.Close.Label "اغلق">
+<!ENTITY YahooPref.Tab.Mode.Title "الوضع">
+<!ENTITY YahooPref.Tab.POP.Title "POP">
+<!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
+<!ENTITY YahooPref.Tab.Adv.Title "متقدم">
+<!ENTITY YahooPref.Mode.Label "اختيار الموقع سوف تستخدمه هذه الاضافة">
+<!ENTITY YahooPref.Mode.ScreenScraper.Label "الموقع المنتج">
+<!ENTITY YahooPref.Mode.Beta.Label "موقع تجريبية">
+<!ENTITY YahooPref.Mode.Classic.Label "موقع كلاسيكي جديد">
+<!ENTITY YahooPref.POP.DownloadUnread.Label "تحميل الرسائل الغير مقروء فقط">
+<!ENTITY YahooPref.POP.DownloadUnread.AccessKey "u">
+<!ENTITY YahooPref.POP.JunkMail.Label "تحميل البريد المزعج">
+<!ENTITY YahooPref.POP.JunkMail.AccessKey "J">
+<!ENTITY YahooPref.POP.Folders.Label "مجلدات التحميل">
+<!ENTITY YahooPref.POP.ButtonAdd.Label "اضافة...">
+<!ENTITY YahooPref.POP.ButtonAdd.AccessKey "A">
+<!ENTITY YahooPref.POP.ButtonRemove.Label "حذف">
+<!ENTITY YahooPref.POP.ButtonRemove.AccessKey "R">
+<!ENTITY YahooPref.POP.MarkAsRead.Label "تحديد الرسائل كـ تمت قرأتها على السيرفر">
+<!ENTITY YahooPref.POP.MarkAsRead.AccessKey "k">
+<!ENTITY YahooPref.SMTP.SaveSentItems.Label "حفظ نسخة في العناصر المرسلة">
+<!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "s">
+<!ENTITY YahooPref.SMTP.AlternativeGroup.Label "عند إرسال رسائل البريد الإلكتروني الفائقة الجزء الذي ينبغي  إرسال الاضافة؟">
+<!ENTITY YahooPref.SMTP.SendPlain.Label "ارسل نص بسيط">
+<!ENTITY YahooPref.SMTP.SendPlain.AccessKey "p">
+<!ENTITY YahooPref.SMTP.SendHtml.Label "ارسل نص html">
+<!ENTITY YahooPref.SMTP.SendHtml.AccessKey "h">
+<!ENTITY YahooPref.Adv.ShortID.Label "استخدم ID مختصر">
+<!ENTITY YahooPref.Adv.ShortID.AccessKey "I">
+<!ENTITY YahooPref.Adv.ReUseSession.Label "اعادة استخدام دورة بيانات http">
+<!ENTITY YahooPref.Adv.ReUseSession.AccessKey "S">
+<!ENTITY YahooPref.AdvInfo.Label "تغيير اعدادات المعرف المختصر سيؤدي عند دخول صندوق البريد الى بداية التحميل">
+<!ENTITY YahooPref.AccountError.Label "لم يجد حسابات ياهو">
+<!ENTITY YahooPref.Domain.Label "المجالات المدعومة من اضافة ياهو">
+<!ENTITY YahooPref.Domain.Button.AddDomain.Label "اضافة...">
+<!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "A">
+<!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "حذف">
+<!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "R">

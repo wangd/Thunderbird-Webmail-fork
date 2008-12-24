@@ -1,0 +1,8 @@
+<!ENTITY HotmailAddDomain.Title "اضافة مجال">
+<!ENTITY HotmailAddDomain.Label "اضافة مجال هوتميل">
+<!ENTITY HotmailAddDomainName.Label "مجال">
+<!ENTITY HotmailAddDomainName.AccessKey "D">
+<!ENTITY HotmailAddDomain.ButtonOk.Label "موافق">
+<!ENTITY HotmailAddDomain.ButtonOk.AccessKey "O">
+<!ENTITY HotmailAddDomain.ButtonCancel.Label "إلغاء">
+<!ENTITY HotmailAddDomain.ButtonCancel.AccessKey "C">
