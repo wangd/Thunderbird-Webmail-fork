@@ -256,6 +256,13 @@
 }
 
 
+.flag[value="31"]/*mk*/
+{
+     -moz-image-region: rect(0px, 1056px, 32px, 1024px)
+}
+
+
+
 #HotmailHomePage
 {
     text-align: right;
