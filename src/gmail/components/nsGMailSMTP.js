@@ -255,7 +255,8 @@ nsGMailSMTP.prototype =
                 break;
            
                 case 1:
-                    if ( szResponse.search(/logout/i) == -1) throw new Error("Invalid Password");
+                    if ( szResponse.search(/logout/i) == -1 && szResponse.search(/ManageAccount/i)==-1) 
+                        throw new Error("Invalid Password");
     
                     mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - Getting session cookie...");
     
