@@ -7,7 +7,7 @@ const PatternGMailGetSessionCookie = /GMAIL_AT=(.*?);/i
 const PatternGMailGetLoginCookie = /.*GX=(.*);/
 const PatternGMailNextMSGTable = /D\(\["ts",(.*?),(.*?),(.*?),.*?,.*?,(.*?),.*?,.*?,.*?,.*?,.*?\]/i;
 const PatternGMailMSGTable = /D\(\["t",\[[\s\S]*?^\);/igm;
-const PatternGMailMSGData = /\["(.*?)",(\d),(\d),".*?","(.*?)",.*?,.*?,.*?,\[(.*?)\]/i;
+const PatternGMailMSGData = /\["(.*?)",(\d),(\d),".*?","(.*?)",.*?,.*?,.*?,\[(.*?)\],/i;
 const PatternGMailThreadTable = /D\(\["mi",[\s\S]*?\);/igm;
 const PatternGMailThreadData = /\["mi",(\d+),(\d+),"(.*?)",(\d),".*?",".*?",".*?","(.*?)",/i;
 const PatternGMailThreadLabels = /D\(\["cs",.*?,.*?,.*?,.*?,\[(.*?)\]/i;
