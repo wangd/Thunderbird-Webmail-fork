@@ -380,8 +380,10 @@ nsGMail.prototype =
                             var szBlock = aMSGTable[i].replace(/\]\r?\n,"/gm, "\], \" ");
                             mainObject.m_Log.Write("nsGMailPOP.js - mailBoxOnloadHandler - szBlock :\n" +szBlock);
         
-                            var aMSGRows = szBlock.replace(/D\(\["t",/igm,"").split(/\r?\n,/gm);
-                            mainObject.m_Log.Write("nsGMailPOP.js - mailBoxOnloadHandler - rows :" + aMSGRows);
+                            var MSGRows = szBlock.match(/D\(\["t"([\s\S]*?)\]\r?\n\);/im)[1];
+                            mainObject.m_Log.Write("nsGMailPOP.js - mailBoxOnloadHandler - rows :" + MSGRows);
+                            var aMSGRows = MSGRows.match(/,\[.*?\]\r?\n/igm);
+                            mainObject.m_Log.Write("nsGMailPOP.js - mailBoxOnloadHandler - rows split :" + aMSGRows);
         
                             //get rows
                             for (var j = 0 ; j<aMSGRows.length; j++)
