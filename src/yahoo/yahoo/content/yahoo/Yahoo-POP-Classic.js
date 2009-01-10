@@ -123,7 +123,7 @@ YahooPOPClassic.prototype =
                 if (this.m_szHomeURI)
                 {
                     this.m_Log.Write("YahooPOPClassic.js - logIN - Session Data Found");
-                    this.m_iStage =2;
+                    this.m_iStage =1;
                     this.m_bReEntry = true;
                     this.m_HttpComms.setURI(this.m_szHomeURI);
                 }
@@ -178,6 +178,20 @@ YahooPOPClassic.prototype =
             if (httpChannel.responseStatus != 200)
                 throw new Error("return status " + httpChannel.responseStatus);
 
+            var aLoginRedirect = szResponse.match(patternYahooRefresh);
+            if (aLoginRedirect==null) aLoginRedirect = szResponse.match(patternYahooRefresh2);
+            mainObject.m_Log.Write("YahooPOPClassic.js - loginOnloadHandler - login redirect " + aLoginRedirect);
+            if (aLoginRedirect != null && mainObject.m_iStage!=0) 
+            {         
+                var szLocation = aLoginRedirect[1];         
+                mainObject.m_HttpComms.setURI(szLocation);
+                mainObject.m_HttpComms.setRequestMethod("GET");
+                var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
+                if (!bResult) throw new Error("httpConnection returned false");
+                return;
+            }
+
+
             //page code
             switch (mainObject.m_iStage)
             {
@@ -222,22 +236,7 @@ YahooPOPClassic.prototype =
                     mainObject.m_iStage++;
                 break;
 
-                case 1: //redirect
-                    var aLoginRedirect = szResponse.match(patternYahooRedirect);
-                    if (aLoginRedirect == null)
-                         throw new Error("error parsing yahoo login web page");
-                    mainObject.m_Log.Write("YahooPOPClassic.js - loginOnloadHandler - login redirect " + aLoginRedirect);
-
-                    var szLocation = aLoginRedirect[1];
-
-                    mainObject.m_HttpComms.setURI(szLocation);
-                    mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
-                break;
-
-                case 2: //mail box
+                case 1: //mail box
                     var szLocation  = httpChannel.URI.spec;
                     mainObject.m_Log.Write("YahooPOPClassic.js - loginOnloadHandler - page check : " + szLocation );
                     if (szResponse.search(patternYahooShowFolder)== -1)
@@ -305,7 +304,7 @@ YahooPOPClassic.prototype =
 
                 break;
 
-                case 3:// folder list
+                case 2:// folder list
                     var aszServerFolders = szResponse.match(PatternYahooFolders);
                     if (!aszServerFolders) aszServerFolders = szResponse.match(PatternYahooFoldersAlt);
                     mainObject.m_Log.Write("YahooPOPClassic.js - loginOnloadHandler - aszServerFolders : "+aszServerFolders);

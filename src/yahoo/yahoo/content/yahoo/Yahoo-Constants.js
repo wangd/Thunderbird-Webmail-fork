@@ -10,6 +10,8 @@ const patternYahooFile = /<input.*?type="*file"*.*?name=.*?>/igm;
 const patternYahooNameAlt = /name=['|"]*([\S]*)['|"]*/;
 const patternYahooAltValue = /value=['|"]*([\S\s]*)['|"]*[\s]*>/;
 const patternYahooRedirect = /<a href=['|"]*(.*?)['|"]*>/;
+const patternYahooRefresh = /window.location.replace\("(.*?)"\)/i;
+const patternYahooRefresh2 = /document.location.href.*'(.*?)';/i;
 const patternYahooCompose = /location=['|"](http:\/\/.*?Compose\?YY=.*?)['|"]/i;
 const patternYahooComposeForm = /<form.*?name="*Compose"*.*?>[\S\s]*?<\/form>/igm;
 const patternYahooAttachmentForm = /<form.*?name="*Attachments"*.*?>[\S\s]*?<\/form>/igm;
