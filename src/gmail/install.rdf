@@ -6,7 +6,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
     <Description about="urn:mozilla:install-manifest">
 
         <em:id>{860a7040-44a3-11da-8cd6-0800200c9a66}</em:id>
-        <em:version>0.6.2</em:version>
+        <em:version>0.6.3</em:version>
         <em:type>2</em:type>
 
         <em:name>WebMail - GMail</em:name>
@@ -33,7 +33,9 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
         <em:contributor>Tobbytw  (zh-TW)|7</em:contributor>
         <em:contributor>lloco (pt-PT)|16</em:contributor>
         <em:contributor>Ivaylo (bg-BG)|30</em:contributor>
-     
+        <em:contributor>Risse (fi-FI)|14</em:contributor>
+        <em:contributor>Renegade06 (mk-MK)|31</em:contributor>
+        
         <em:targetApplication>
             <Description>
                 <!-- Mozilla Thunderbird -->

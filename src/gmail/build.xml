@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <project name="gmail" default="createxpi">
-    <property name="VERSION" value="0-6-2"/>
+    <property name="VERSION" value="0-6-3"/>
 
     <delete file="gmail-${VERSION}.xpi"/>
     <delete file="gmail.jar"/>
