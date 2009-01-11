@@ -8,15 +8,15 @@
             <RDF:Seq>
                 <RDF:li>
                     <RDF:Description>
-                        <em:version>1.3.4</em:version>
+                        <em:version>1.4.0</em:version>
                         <!-- Thunderbird updates -->
                         <em:targetApplication>
                             <Description>
                                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
                                 <em:minVersion>2.0</em:minVersion>
-                                <em:maxVersion>2.0.*</em:maxVersion>
-                                <em:updateLink>http://download.mozdev.org/webmail/yahoo-1-3-4.xpi</em:updateLink>
-                                <em:updateHash>sha256:21e5d7ad9898d0e194b0eb35914a0cc10abe99af0451fee87bd88f5bea3c8329</em:updateHash>
+                                <em:maxVersion>3.0.*</em:maxVersion>
+                                <em:updateLink>http://download.mozdev.org/webmail/yahoo-1-4-0.xpi</em:updateLink>
+                                <em:updateHash>sha256:647b669508128f4d4df2fc7cf10a295ace2b55a733f8b56ee1054d5c43b5eeb7</em:updateHash>
                           </Description>
                         </em:targetApplication>
                            
@@ -36,7 +36,7 @@
             </RDF:Seq>
         </em:updates>
         
-        <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBAJCa9SMwWLx36S8iEOoliO8un3lEMwjU2VIEuu9pbBul3oX5Ez+Q3D5TfUuv3c2a0oEIMnyX8MQqwRQFUyuy1av46XgOiCKPVloBZ9ZWKDuWT/woekxZOn0o1kQRN2msIc1q5s3+Qsl6/lq35to7ilxZTFKljXUCJeGAhXZRX9Y/</em:signature>
+        <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBAHNbvCg4UQRuFCOxQTHGecmu9KzFh5VKKNuKjdXu/9QuXU4TU5+DSSFcWIXnOdn9dmXr9emCoe46quoXjLps7nunn6NGZ+h2Rw0Nd5M3AvNNmOTpDMMmKaIfVvKE/MiBwj4L07bx5dAx8/sB9Kkgtck19T3VezWSvi06iuHNLmEJ</em:signature>
 
     </RDF:Description>
 </RDF:RDF>
