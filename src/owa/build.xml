@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <project name="owa" default="createxpi">
-    <property name="VERSION" value="0-6-0"/>
+    <property name="VERSION" value="0-7-0a36"/>
 
     <delete file="owa-${VERSION}.xpi"/>
     <delete file="owa.jar"/>

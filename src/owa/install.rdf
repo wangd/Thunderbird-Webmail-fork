@@ -5,7 +5,7 @@
 
 	<Description about="urn:mozilla:install-manifest">
 		<em:id>{3d82b2c0-0109-11da-8cd6-0800200c9a66}</em:id>
-	    <em:version>0.6.0</em:version>
+	    <em:version>0.7.0a36</em:version>
 	    <em:type>2</em:type>
         	
         <em:name>WebMail - OWA</em:name>
