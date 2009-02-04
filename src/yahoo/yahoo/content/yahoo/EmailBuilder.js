@@ -21,8 +21,8 @@ function emailBuilder (oLog)
                                  .createInstance(Components.interfaces.nsITimer); 
 
         this.m_oHeader = null;
-        this.m_oBodyPart = null;
         this.m_aoAttachments = new Array();
+        this.m_aoBodyPart = new Array();
         this.m_szBoundary = "";
         this.m_szEmail= null;
         this.m_callback = null;
@@ -94,7 +94,7 @@ emailBuilder.prototype.addBody = function (szHeader, szBody)
         this.m_Log.Write("emailBuilder.js - addBody - START");
         this.m_Log.Write("emailBuilder.js - addBody - szHeader \n" + szHeader + "\nBody \n" + szBody);
 
-        this.m_oBodyPart= new mimePart (szHeader? szHeader : "", szBody);
+        this.m_aoBodyPart.push( new mimePart (szHeader? szHeader : "", szBody));
 
         this.m_Log.Write("emailBuilder.js - addBody - END");
         return true;
@@ -115,75 +115,6 @@ emailBuilder.prototype.getEmail = function()
 {
     this.m_Log.Write("emailBuilder.js - getEmail ");
     return this.m_szEmail;
-}
-
-
-
-emailBuilder.prototype.build = function()
-{
-    try
-    {
-        this.m_Log.Write("emailBuilder.js - build - START");
-        
-        this.m_szEmail = this.headers(this.m_oHeader.getAllHeadersArray());  //construct email headers
-        
-        if (this.m_aoAttachments.length==0) //no attachments
-        {
-            this.m_Log.Write("emailBuilder.js - build -  simple email");        
-            //message body
-            this.m_szEmail += this.m_oBodyPart.body.getBody();
-        }
-        else //has attachments
-        {
-            this.m_szEmail +="This is a multi-part message in MIME format built by the Yahoo extension.\r\n";
-            
-            //get body bounday 
-            var szBoundary = this.m_oBodyPart.headers.getContentType(3);
-            this.m_Log.Write("emailBuilder.js - build - szBoundary " +szBoundary);
-            this.m_szEmail += szBoundary+"\r\n";
-            
-            if (! this.m_oBodyPart.headers.getContentType(3)) //simple body
-            {
-                this.m_Log.Write("emailBuilder.js - build - simple body ");
-                this.m_szEmail += this.headers(this.m_oBodyPart.headers.getAllHeadersArray()); //construct email headers
-                this.m_szEmail += this.m_oBodyPart.body.getBody();
-            }
-            else //complex body 
-             {
-                this.m_Log.Write("emailBuilder.js - build - complex body ");
-                this.m_szEmail += this.headers(this.m_oBodyPart.headers.getAllHeadersArray()); //construct email headers
-                this.m_szEmail += this.m_oBodyPart.body.getBody();
-            }  
-            
-            this.m_szEmail += szBoundary + "\r\n";
-            //get attachments 
-            var oB64 = new base64();
-            oB64.bLineBreak = true;
-            for (var i = 0; i < this.m_aoAttachments.length; i++) 
-            {
-                var attach = this.m_aoAttachments.pop();
-                this.m_szEmail += this.headers(attach.headers.getAllHeadersArray());
-                this.m_szEmail += oB64.encode(attach.body.getBody());
-                if (i>this.m_aoAttachments.length-1)
-                    this.m_szEmail += szBoundary + "\r\n"
-                delete attach;
-            }
-            this.m_szEmail += szBoundary + "--\r\n\r\n"
-        }
-        
-        this.m_szEmail = this.correctForSending(this.m_szEmail);
-        
-        this.m_Log.Write("emailBuilder.js - build - END");
-        return this.m_szEmail;
-    }
-    catch(err)
-    {
-        this.m_Log.DebugDump("emailBuilder.js: build : Exception : " + err.name
-                                                  + ".\nError message: "
-                                                  + err.message + "\n"
-                                                  + err.lineNumber);
-        return null;
-    }
 }
 
 
@@ -229,8 +160,32 @@ emailBuilder.prototype.notify = function (timer)
         if (this.m_aoAttachments.length==0) //no attachments
         {
             this.m_Log.Write("emailBuilder.js - build -  simple email");
+            
             //message body
-            this.m_szEmail += this.m_oBodyPart.body.getBody();            
+            if (this.m_aoBodyPart.length == 1) //ONE part only
+            {
+                this.m_Log.Write("emailBuilder.js - build - simple body ");  
+                this.m_szEmail += this.m_aoBodyPart[0].body.getBody();
+            }
+            else // alternative body parts
+            {
+                this.m_Log.Write("emailBuilder.js - build - complex body "); 
+                
+                this.m_szEmail += "This is a multi-part message in MIME format built by the Yahoo extension.\r\n";
+                
+                //get body bounday 
+                this.m_szBoundary = this.m_oHeader.getContentType(3);
+                this.m_Log.Write("emailBuilder.js - build - szBoundary " + this.m_szBoundary);
+                              
+                for (var i = 0; i < this.m_aoBodyPart.length; i++) 
+                {
+                    this.m_szEmail += "\r\n--" + this.m_szBoundary + "\r\n";
+                    this.m_szEmail += this.headers(this.m_aoBodyPart[i].headers.getAllHeadersArray());
+                    this.m_szEmail += this.m_aoBodyPart[i].body.getBody();
+                }
+                
+                this.m_szEmail += "\r\n--"+ this.m_szBoundary + "--\r\n\r\n"
+            }                
             this.m_szEmail  = this.correctForSending(this.m_szEmail);
             
             //call callback
@@ -243,19 +198,24 @@ emailBuilder.prototype.notify = function (timer)
             //get body bounday 
             this.m_szBoundary = this.m_oHeader.getContentType(3);
             this.m_Log.Write("emailBuilder.js - build - szBoundary " +this.m_szBoundary);
-            this.m_szEmail += "--" +this.m_szBoundary+"\r\n";
-            
-            if (! this.m_oBodyPart.headers.getContentType(3)) //simple body
+                    
+            if (this.m_aoBodyPart.length == 1) //simple body
             {
                 this.m_Log.Write("emailBuilder.js - build - simple body ");
-                this.m_szEmail += this.headers(this.m_oBodyPart.headers.getAllHeadersArray()); //construct email headers
-                this.m_szEmail += this.m_oBodyPart.body.getBody();
+                this.m_szEmail += "\r\n--" +this.m_szBoundary+"\r\n";
+                this.m_szEmail += this.headers(this.m_aoBodyPart[0].headers.getAllHeadersArray()); //construct email headers
+                this.m_szEmail += this.m_aoBodyPart[0].body.getBody();
             }
             else //complex body 
              {
                 this.m_Log.Write("emailBuilder.js - build - complex body "); 
-                this.m_szEmail += this.headers(this.m_oBodyPart.headers.getAllHeadersArray()); 
-                this.m_szEmail += this.m_oBodyPart.body.getBody();
+                
+                for (var i = 0; i < this.m_aoBodyPart.length; i++) 
+                {
+                    this.m_szEmail += "\r\n--" + this.m_szBoundary + "\r\n";
+                    this.m_szEmail += this.headers(this.m_aoBodyPart[i].headers.getAllHeadersArray());
+                    this.m_szEmail += this.m_aoBodyPart[i].body.getBody();
+                }
             }  
             
             this.m_szEmail += "\r\n--"+ this.m_szBoundary + "\r\n";
