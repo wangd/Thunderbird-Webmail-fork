@@ -10,7 +10,7 @@ function YahooPOPBETA(oResponseStream, oLog, oPrefs)
         scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms3.js");
         scriptLoader.loadSubScript("chrome://yahoo/content/YahooMSG.js");
         scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-Prefs-Accounts-Data.js");
-        scriptLoader.loadSubScript("chrome://web-mail/content/common/Header.js");
+        scriptLoader.loadSubScript("chrome://yahoo/content/EmailBuilder.js");
 
         this.m_Log = oLog;
         this.m_Log.Write("YahooPOPBETA.js - Constructor - START");
@@ -49,7 +49,8 @@ function YahooPOPBETA(oResponseStream, oLog, oPrefs)
         this.m_aszFolderList= new Array();
         this.m_aRawData = new Array();
         this.m_aMsgDataStore = new Array();
-
+        this.m_aDownloadFiles = new Array();
+        
         this.m_iTotalSize = 0;
         this.m_iMSGCount = 0;
         this.m_szEmail = "";
@@ -939,22 +940,26 @@ YahooPOPBETA.prototype =
             this.m_Log.Write("YahooPOPBETA.js - getMessage - START");
             this.m_Log.Write("YahooPOPBETA.js - getMessage - msg num" + lID);
             
-            this.m_szEmail = "";
+            if (this.m_oEmail) delete this.m_oEmail;
+            this.m_oEmail = new emailBuilder();
+            
+            delete this.m_aDownloadFiles;
+            this.m_aDownloadFiles = new Array();
+                        
             //get msg id
-            var oMSGData = this.m_aMsgDataStore[lID-1]
+            var oMSGData = this.m_aMsgDataStore[lID-1];
             this.m_szMsgID = oMSGData.szID;
             this.m_szBox = oMSGData.szFolder;
-            this.m_Log.Write("YahooPOPBETA.js - getMessage - msg id" + this.m_szMsgID + " Folder " + this.m_szBox);
+            var szData = kMSGHeaders.replace(/MSGID/,oMSGData.szID).replace(/FOLDERNAME/,oMSGData.szFolder);
+            this.m_Log.Write("YahooPOPBETA.js - getMessage - szData " + szData);
 
-            var szURI = this.m_szLocationURI + "/ya/download?";
-            szURI += "fid=" + encodeURIComponent(this.m_szBox);
-            szURI += "&mid=" + encodeURIComponent(this.m_szMsgID);
-            szURI += "&pid=HEADER";
+            var szURI = this.m_szLocationURI + "/ws/mail/v1/soap?appid=YahooMailRC&m=GetMessageRawHeader&wssid="+this.m_szWssid;
             this.m_Log.Write("YahooPOPBETA.js - getMessage - szURI " + szURI);
-            
-            this.m_HttpComms.setURI(szURI);
-            this.m_HttpComms.setRequestMethod("GET");
 
+            this.m_HttpComms.setURI(szURI);
+            this.m_HttpComms.setRequestMethod("POST");
+            this.m_HttpComms.setContentType("application/xml");
+            this.m_HttpComms.addData(szData);
             var bResult = this.m_HttpComms.send(this.emailOnloadHandler, this);
             if (!bResult) throw new Error("httpConnection returned false");
             this.m_iStage = 0;
@@ -989,75 +994,32 @@ YahooPOPBETA.prototype =
             var szUri = httpChannel.URI.spec;
             mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - uri : " + szUri);
 
-            var szContetnType = "";
-            try
-            {
-                var szContetnType =  httpChannel.getResponseHeader("Content-Type");
-                mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szContetnType "+szContetnType);
-            }
-            catch(e)
-            { 
-                szContetnType = " "   
-            }
-
             switch(mainObject.m_iStage)
             {
                 case 0: // headers
                     mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - headers");
-                    
-                    try
-                    {
-                        if (szContetnType.search(/text\/html/i)!=-1)
-                        {
-                            mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - error download msg ");
-                            if (mainObject.m_iMSGCount == 2)
-                            {
-                                throw new Error("download failed");
-                            }
-                            else//try again
-                            {
-                                mainObject.m_iMSGCount++;
-                                mainObject.m_HttpComms.setURI(szUri);
-                                mainObject.m_HttpComms.setRequestMethod("GET");
-                                var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);
-                                if (!bResult) throw new Error("httpConnection returned false");
-                                return;
-                            }
-                        }
-                    }
-                    catch(err)
-                    {
-                        mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - download : Exception : "
-                                                  + err.name
-                                                  + ".\nError message: "
-                                                  + err.message+ "\n"
-                                                  + err.lineNumber);
-        
-                        if ( mainObject.m_iMSGCount == 2) throw new Error("download error ran out of retries")
-                    }
-                    mainObject.m_iMSGCount = 0;
+                    if (szResponse.search(kPatternLstHeadersResponse)==-1)
+                        throw new Error("Error Parsing Headers");
+                       
+                    var szHeader = szResponse.match(kPatternHeader)[1];
+                    szHeader= mainObject.cleanHTML(szHeader);
 
-
-                    mainObject.m_szEmail  = "X-WebMail: true\r\n";
-                    mainObject.m_szEmail += "X-Folder: " +mainObject.m_szBox+ "\r\n";
-                    
-                    var oHeaders = new headers(szResponse);
-                    mainObject.m_szEmail += oHeaders.getAllHeaders();
-                    mainObject.m_szEmail = mainObject.m_szEmail.replace(/content-transfer-Encoding:.*?quoted-printable.*?$/img, "x-Header: removed");
-                    mainObject.m_szEmail = mainObject.m_szEmail.replace(/content-transfer-Encoding:.*?base64.*?$/img,"x-Header: removed");
-
-                    mainObject.m_Log.Write("YahooPOP.js - emailOnloadHandler - headers - "+mainObject.m_szEmail);
-                    delete oHeaders;
-                    
+                    var szHeaderTemp  = "X-WebMail: true\r\n";
+                    szHeaderTemp += "X-Folder: " +mainObject.m_szBox+ "\r\n";
+                    szHeaderTemp += szHeader;
+                    mainObject.m_oEmail.setEnvolpeHeaders(szHeaderTemp);
+                                       
                     //now get body
-                    var szURI = mainObject.m_szLocationURI + "/ya/download?";
-                    szURI += "fid=" + encodeURIComponent(mainObject.m_szBox);
-                    szURI += "&mid=" + encodeURIComponent(mainObject.m_szMsgID);
-                    szURI += "&pid=TEXT";
-                    mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szURI "+szURI);
-                    
+                    var szData = kMSG.replace(/MSGID/,mainObject.m_szMsgID).replace(/FOLDERNAME/,mainObject.m_szBox);
+                    mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szData " + szData);
+        
+                    var szURI = mainObject.m_szLocationURI + "/ws/mail/v1/soap?&appid=YahooMailRC&m=GetMessage&wssid="+mainObject.m_szWssid;
+                    mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szURI " + szURI);
+        
                     mainObject.m_HttpComms.setURI(szURI);
-                    mainObject.m_HttpComms.setRequestMethod("GET");
+                    mainObject.m_HttpComms.setRequestMethod("POST");
+                    mainObject.m_HttpComms.setContentType("application/xml");
+                    mainObject.m_HttpComms.addData(szData);
                     var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
@@ -1065,45 +1027,231 @@ YahooPOPBETA.prototype =
 
                 case 1: // body
                     mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - body");
-
-                    mainObject.m_szEmail += szResponse;
+      				if (szResponse.search(kPatternLstBodyPartResponse)==-1)
+                        throw new Error("Error Parsing Body");
                     
-                    if (mainObject.m_bMarkAsRead) //no files 
+                    var aszShortParts = szResponse.match(kPatternShortPart);
+                    mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - aszShortParts : " + aszShortParts);
+                    var aszComplexParts = szResponse.match(kPatternLongPart);
+                    mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - aszComplexParts : " + aszComplexParts);
+                    if (aszComplexParts.length>0)
                     {
-                        var szURI = mainObject.m_szLocationURI + 
-                                    "/ws/mail/v1/soap?&appid=YahooMailRC&m=FlagMessages&wssid=" + 
-                                    mainObject.m_szWssid;
-                        mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szURI " +szURI);
+                        var aszCleanParts = new Array();
+                        for (var i =0; i<aszComplexParts.length; i++)
+                        {
+                            aszCleanParts = aszCleanParts.concat(aszComplexParts[i].replace(kPatternShortPart,""));
+                        }
+                        
+                        delete aszComplexParts;
+                        aszComplexParts = aszCleanParts;
+                        mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szCleanedParts : " + aszComplexParts);                     
+                    }
+                    var aszParts = aszShortParts.concat(aszComplexParts);
+                    delete aszShortParts;
+                    delete aszComplexParts;
 
+                    do{
+                        var szData = aszParts.shift();
+                        mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - aszParts[i] : " + szData);
+                        var szPartID = szData.match(kPatternPartID)[1];
+                        mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szPartID : " + szPartID);
+                        
+                        var szType = szData.match(kPatternPartType)[1];
+                        mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szType : " + szType);
+
+                        if (szType.search(/x-unknown/i)!=-1)
+                        {
+                            mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - x-unknown : ");
+                            var aszNumber = szPartID.match(/(\d)\..*?/);  //numerical part of id
+                            if (aszNumber)
+                            {
+                                var iPartId = parseInt(aszNumber[1]);
+                                mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - iPartId : " + iPartId);
+                                var iLength = aszParts.length;
+                                var i = 0;
+                                do{  //remove find subpart
+                                    var szTemp = aszParts.shift();
+                                    var szTempPartID = szTemp.match(kPatternPartID)[1];
+                                    mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szTempPartID : " + szTempPartID);
+                                    var aszTempNumber = szTempPartID.match(/(\d)\..*?/);
+                                    if (aszTempNumber)
+                                    {
+                                        var iTempPartId = parseInt(aszTempNumber[1]);
+                                        mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - iTempPartId : " + iTempPartId);
+                                        if (iTempPartId == iPartId) //remove part
+                                        {                                        
+                                            mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - removing part : ");
+                                            delete szTemp;                                            
+                                        }
+                                        else
+                                        {
+                                            mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - keeping part : ");
+                                            aszParts.push(szTemp);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - keeping part : ");
+                                        aszParts.push(szTemp);  
+                                    }
+                                    i++
+                                }while(iLength!=i);
+                            }                            
+                        }
+                        else if(szType.search(/text/i)!=-1)
+                        {  //process text/htlm message part
+                            mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler -  Text part");
+                            //proces headers
+                            var szHeader = null;
+
+                            var szSubType = "plain";
+                            if (szData.search(kPatternPartSubType)!=-1)
+                            {
+                                szSubType = szData.match(kPatternPartSubType)[1];
+                                mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szSubType : " + szSubType);
+                            }
+
+                            if (szData.search(kPatternPartTypeParams)!=-1)
+                            {
+                                var szTypeParams = szData.match(kPatternPartTypeParams)[1];
+                                mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szTypeParams : " + szTypeParams);
+
+                                szHeader = "Content-Type: "+szType+"/"+szSubType+"; " +szTypeParams + "\r\n";
+                                szHeader += "Content-Transfer-Encoding: 7bit\r\n";
+                                if (szData.search(kPatternPartDispParam)!=-1)
+                                {
+                                    var szDispParam = szData.match(kPatternPartDispParam)[1];
+                                    if (szDispParam.search(/filename=/i)!=-1)
+                                    {
+                                        var szFileName = szDispParam.match(kPatternFileName)[1];
+                                        szHeader += "Content-Disposition: attachment; fileName=\"" +szFileName + "\"\r\n\r\n";
+                                    }
+                                }
+                                szHeader += "\r\n\r\n";
+
+                                mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szHeader : " + szHeader);
+                            }
+
+                            //get text
+                            var szText = szData.match(kPatternPartText)[1];
+                            szText= mainObject.cleanHTML(szText, szCharset);
+                            var szCharset = null;
+                            if (szTypeParams.search(/charset/i)!=-1)
+                            {
+                                szCharset = szTypeParams.match(/charset=(.*?)[;|\s]*$/i)[1];
+                                szText = mainObject.convertFromUTF8(szText, szCharset);
+                            }
+                            mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szText : " + szText);
+                            mainObject.m_oEmail.addBody(szHeader,szText);
+                        }
+                        else if (szData.search(kPatternPartDispParam)!=-1)
+                        {
+                            var szDispParam = szData.match(kPatternPartDispParam)[1];
+                            mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler -  szDispParam " +szDispParam);
+                            if (szDispParam.search(/filename=/i)!=-1)
+                            {
+                                mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler -  need to download file attachment");
+                                mainObject.m_aDownloadFiles.push(szData);
+                            }
+                        }
+                    }while(aszParts.length!=0);
+
+                    if (mainObject.m_aDownloadFiles.length==0) //no files 
+                    {
+                        if (mainObject.m_bMarkAsRead)
+                            mainObject.markAsRead();
+                        else
+                            mainObject.m_oEmail.buildAsync(mainObject.emailBuiltCallback, mainObject);  
+                    }
+                    else
+                    {   //download first file
+                        var szURI = mainObject.m_szLocationURI + "/ya/download?";
+                        szURI += "fid=" + encodeURIComponent(mainObject.m_szBox);
+                        szURI += "&mid=" + encodeURIComponent(mainObject.m_szMsgID);
+                        szURI += "&pid=" +mainObject.m_aDownloadFiles[0].match(kPatternPartId)[1];
+
+                        mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szURI " +szURI);
                         mainObject.m_HttpComms.setURI(szURI);
-                        mainObject.m_HttpComms.setRequestMethod("POST");
-                        mainObject.m_HttpComms.setContentType("application/xml");
-                        var szData = kSeen.replace(/MSGID/,mainObject.m_szMsgID).replace(/FOLDERNAME/,mainObject.m_szBox);
-                        mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szData " +szData);
-                        mainObject.m_HttpComms.addData(szData);
+                        mainObject.m_HttpComms.setRequestMethod("GET");
                         var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);
                         if (!bResult) throw new Error("httpConnection returned false");
-                        mainObject.m_iStage = 2;
-                    }
-                    else if (!mainObject.m_bMarkAsRead )
-                    {
-                        mainObject.m_szEmail = mainObject.m_szEmail.replace(/^\./mg,"..");    //bit padding
-                        mainObject.m_szEmail += "\r\n.\r\n";  //msg end
-
-                        var szPOPResponse = "+OK " + mainObject.m_szEmail.length + "\r\n";
-                        szPOPResponse += mainObject.m_szEmail;
-                        mainObject.serverComms(szPOPResponse);
+                        mainObject.m_iStage = 3;
                     }
                 break;
 
+
                 case 2:// MSG marked as seen
                     mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - SEEN");
-                    mainObject.m_szEmail = mainObject.m_szEmail.replace(/^\./mg,"..");    //bit padding
-                    mainObject.m_szEmail += "\r\n.\r\n";  //msg end
+                    mainObject.m_oEmail.buildAsync(mainObject.emailBuiltCallback, mainObject);                   
+                break;
+                  
+                         
+                case 3:  //handle attachments
+                    mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - Attachments");
 
-                    var szPOPResponse = "+OK " + mainObject.m_szEmail.length + "\r\n";
-                    szPOPResponse += mainObject.m_szEmail;
-                    mainObject.serverComms(szPOPResponse);
+                    var szPart = mainObject.m_aDownloadFiles.shift();
+                    mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szPart : " + szPart);
+
+                    //headers
+                    var szName = null;
+                    if (szPart.search(kPatternPartTypeParams)!=-1)
+                        szName = szPart.match(kPatternPartTypeParams)[1];
+                    var szDispParam = szPart.match(kPatternPartDispParam)[1];
+                    var szFileName = szDispParam.match(kPatternFileName)[1];
+                    var szContentID = null;
+                    if (szPart.search(kPatternContentId)!=-1)
+                    {
+                        szContentID = szPart.match(kPatternContentId)[1];
+                        szContentID = mainObject.cleanHTML(szContentID);
+                    }
+                    
+                    var szType = "application/octet-stream";
+                    if (szPart.search(kPatternPartType)!=-1 && szPart.search(kPatternPartSubType)!=-1)
+                        szType = szPart.match(kPatternPartType)[1] +"/" + szPart.match(kPatternPartSubType)[1];
+
+                    var szHeader = "Content-Type: "+szType+"; ";
+                    szHeader +=  szName?szName:"";
+                    if (szType.search(/rfc822/i)!=-1 || szType.search(/message/i)!=-1)
+                        szHeader += "\r\nContent-Transfer-Encoding: 7bit\r\n";
+                    else    
+                        szHeader += "\r\nContent-Transfer-Encoding: base64\r\n";
+                    if (szContentID) mainObject.m_szHeader += "Content-ID: "+ szContentID + "\r\n";
+                    var szFileType = "attachment";
+                    if (szPart.search(/disposition="inline"/i)!=-1) szFileType = "inline";
+                    szHeader += "Content-Disposition: " + szFileType +"; fileName=\"" +szFileName + "\"\r\n\r\n";
+                    mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szHeader : " + szHeader);
+                          
+                    mainObject.m_oEmail.addAttachment(szHeader, szResponse);
+                   
+                    if (mainObject.m_aDownloadFiles.length!=0) //all files downloaded process them
+                    {
+                        mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - download next file ");
+                          
+                        var szURI = mainObject.m_szLocationURI + "/ya/download?";
+                        szURI += "fid=" + encodeURIComponent(mainObject.m_szBox);
+                        szURI += "&mid=" + encodeURIComponent(mainObject.m_szMsgID);
+                        szURI += "&pid=" +mainObject.m_aDownloadFiles[0].match(kPatternPartId)[1];
+                        mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szURI " +szURI);
+        
+                        mainObject.m_HttpComms.setURI(szURI);
+                        mainObject.m_HttpComms.setRequestMethod("GET");
+                        var bResult = mainObject.m_HttpComms.send(mainObject.emailOnloadHandler, mainObject);
+                        if (!bResult) throw new Error("httpConnection returned false");
+                        mainObject.m_iStage = 3;   
+                    }   
+                    else   //download next file in list
+                    {  
+                        mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - all files downloaded ");
+                                               
+                        if (mainObject.m_bMarkAsRead) //mark as read
+                        { 
+                            mainObject.markAsRead();                           
+                        }
+                        else                         //pass email to TB
+                        {                 
+                            mainObject.m_oEmail.buildAsync(mainObject.emailBuiltCallback, mainObject);
+                        }                    
+                    }
                 break;
             }
 
@@ -1120,6 +1268,76 @@ YahooPOPBETA.prototype =
             mainObject.serverComms("-ERR negative vibes from "+ mainObject.m_szUserName +"\r\n");
         }
     },
+
+
+
+    markAsRead : function()
+    {
+        try
+        {
+            this.m_Log.Write("YahooPOPBETA.js -markAsRead - START"); 
+             
+            this.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - marking as read"); 
+            var szURI = this.m_szLocationURI + 
+                        "/ws/mail/v1/soap?&appid=YahooMailRC&m=FlagMessages&wssid=" 
+                        + this.m_szWssid;
+            this.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szURI " +szURI);
+
+            this.m_HttpComms.setURI(szURI);
+            this.m_HttpComms.setRequestMethod("POST");
+            this.m_HttpComms.setContentType("application/xml");
+            var szData = kSeen.replace(/MSGID/,this.m_szMsgID).replace(/FOLDERNAME/,this.m_szBox);
+            this.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szData " +szData);
+            this.m_HttpComms.addData(szData);
+            var bResult = this.m_HttpComms.send(this.emailOnloadHandler, this);
+            if (!bResult) throw new Error("httpConnection returned false");
+            this.m_iStage = 2;      
+            
+            this.m_Log.Write("YahooPOPBETA.js -markAsRead - END"); 
+            return true;
+        }
+        catch(e)
+        {
+            this.m_Log.DebugDump("YahooPOPBETA.js: markAsRead : Exception : "
+                              + e.name +
+                              ".\nError message: "
+                              + e.message+ "\n"
+                              + e.lineNumber);
+            return false;
+        }
+    },
+    
+
+
+    emailBuiltCallback : function( mainObject)
+    {
+       try
+       {
+            mainObject.m_Log.Write("YahooPOPBETA.js: emailBuilt : START ");
+            var szEmail = mainObject.m_oEmail.getEmail();                  
+            var szPOPResponse = "+OK " + szEmail.length + "\r\n";
+            szPOPResponse += szEmail;
+            mainObject.serverComms(szPOPResponse);
+            delete mainObject.m_oEmail;
+            mainObject.m_oEmail = null; 
+            mainObject.m_Log.Write("YahooPOPBETA.js: emailBuilt : END ");
+            return true;
+       } 
+       catch(err)
+       {
+            mainObject.m_Log.DebugDump("YahooPOPBETA.js: emailBuilt : Exception : "
+                                          + err.name
+                                          + ".\nError message: "
+                                          + err.message+ "\n"
+                                          + err.lineNumber);
+
+            mainObject.serverComms("-ERR negative vibes from "+ mainObject.m_szUserName +"\r\n");
+            return false;
+       }
+    },
+
+
+
 
 
 
@@ -1191,6 +1409,7 @@ YahooPOPBETA.prototype =
 
 
 
+
     //cookies are deleted when the connection ends so i dont need to download pages
     logOut : function()
     {
@@ -1237,8 +1456,6 @@ YahooPOPBETA.prototype =
 
 
 
-
-
     serverComms : function (szMsg)
     {
         try
@@ -1256,7 +1473,6 @@ YahooPOPBETA.prototype =
                                               + e.lineNumber);
         }
     },
-
 
 
 
