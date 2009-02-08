@@ -912,14 +912,14 @@ nsMailDotCom.prototype =
                     mainObject.m_szHeaders = "X-WebMail: true\r\n";
                     mainObject.m_szHeaders += "X-Folder: " + mainObject.m_szFolderName+"\r\n";
 
-                    //get message block
-                    var aszMSG = szResponse.match(patternMailDotComMSG);
-                    mainObject.m_Log.Write("nsMailDotCom.js - emailOnloadHandler - MSG block :" +aszMSG);
-
+                   //get header block
+                    var szHeaderBlock = szResponse.match(/<p>([\s\S]*)<\/p>/i);
+                    mainObject.m_Log.Write("nsMailDotCom.js - emailOnloadHandler - szHeaderBlock block :" +szHeaderBlock);
+/*
                     //get header block
-                    var szHeaderBlock = aszMSG[0].match(patternMailDotComHeaders);
+                    var szHeaderBlock = aszMSG[1].match(patternMailDotComHeaders);
                     mainObject.m_Log.Write("nsMailDotCom.js - emailOnloadHandler - Header block :" +szHeaderBlock);
-
+*/
                     //get headers
                     var aszRawHeaders = szHeaderBlock[1].split(/<BR>/i);
                     mainObject.m_Log.Write("nsMailDotCom.js - emailOnloadHandler -RawHeaders :" +aszRawHeaders);
