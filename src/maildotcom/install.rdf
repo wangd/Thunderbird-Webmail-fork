@@ -7,7 +7,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
         <em:id>{1ad5b3b0-b908-11d9-9669-0800200c9a66}</em:id>
         <em:type>2</em:type>
-        <em:version>1.1.6</em:version>
+        <em:version>1.1.7</em:version>
 
         <em:name>WebMail - MailDotCom</em:name>
         <em:description>Mail.Com component for Web-Mail extension</em:description>
@@ -37,21 +37,28 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
         <em:contributor>Kneekoo (ro-RO)|27</em:contributor>
         <em:contributor>BenoitRen (SeaMonkey Compatibility)|28</em:contributor>
         <em:contributor>Philip Chee (SeaMonkey Compatibility)|28</em:contributor>
-
+        <em:contributor>moutinho (pt-PT)|16</em:contributor>
 
         <em:targetApplication>
             <Description>
                 <!-- Mozilla Thunderbird -->
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
                 <em:minVersion>1.5</em:minVersion>
-                <em:maxVersion>2.0.*</em:maxVersion>
+                <em:maxVersion>3.0.*</em:maxVersion>
+            </Description>
+
+             <!-- Synovel Spicebird -->
+            <Description>
+                  <em:id>{ee53ece0-255c-4cc6-8a7e-81a8b6e5ba2c}</em:id>
+                  <em:minVersion>0.4</em:minVersion>
+                  <em:maxVersion>1.0</em:maxVersion>
             </Description>
 
             <!-- SeaMonkey -->
             <Description>
                 <em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id>
                 <em:minVersion>1.1</em:minVersion>
-                <em:maxVersion>1.5a</em:maxVersion>
+                <em:maxVersion>1.5</em:maxVersion>
             </Description>
         </em:targetApplication>
 
