@@ -941,7 +941,7 @@ YahooPOPBETA.prototype =
             this.m_Log.Write("YahooPOPBETA.js - getMessage - msg num" + lID);
             
             if (this.m_oEmail) delete this.m_oEmail;
-            this.m_oEmail = new emailBuilder();
+            this.m_oEmail = new emailBuilder(this.m_Log);
             
             delete this.m_aDownloadFiles;
             this.m_aDownloadFiles = new Array();
