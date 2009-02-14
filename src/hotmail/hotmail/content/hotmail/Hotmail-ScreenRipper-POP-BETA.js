@@ -174,8 +174,8 @@ HotmailScreenRipperBETA.prototype =
             //check for java refresh
             var aRefresh = szResponse.match(patternHotmailJSRefresh); 
             if (!aRefresh) aRefresh = szResponse.match(patternHotmailJSRefreshAlt);
-            if (!aRefresh) aRefresh = szResponse.match(patternHotmailRefresh2);  
-            if (!aRefresh && mainObject.m_iStage>0) aRefresh = szResponse.match(patternHotmailJSBounce);  
+            if (!aRefresh) aRefresh = szResponse.match(patternHotmailRefresh2);
+            if (!aRefresh) aRefresh = szResponse.match(patternHotmailJSRefreshAlt3);  
             mainObject.m_Log.Write("Hotmail-SR-BETA-SMTP - loginOnloadHandler aRefresh "+ aRefresh);
             if (aRefresh)
             {
@@ -184,7 +184,8 @@ HotmailScreenRipperBETA.prototype =
                 if (mainObject.m_iLoginBounce == 0) throw new Error ("No many bounces") 
                 mainObject.m_iLoginBounce--;
                 
-                if (!mainObject.m_HttpComms.setURI(aRefresh[1]))
+                var szURL = mainObject.urlDecode(aRefresh[1]);
+                if (!mainObject.m_HttpComms.setURI(szURL))
                     mainObject.m_HttpComms.setURI(httpChannel.URI.prePath + szDirectory + aRefresh[1]);
 
                 mainObject.m_HttpComms.setRequestMethod("GET");
@@ -682,13 +683,13 @@ HotmailScreenRipperBETA.prototype =
                 {
                     if (szMSGData.search(patternHotmailEmailSender) != -1) 
                     {
-                        szFrom = szMSGData.match(patternHotmailEmailSenderAlt)[1];
+                        szFrom = szMSGData.match(patternHotmailEmailSender)[1];
                         szFrom = oEscape.decode(szFrom);
                         this.m_Log.Write("Hotmail-SR-BETA - processMSG - Email Alt From : " + szFrom);
                     }
                     else 
                     {
-                        szFrom = szMSGData.match(patternHotmailEmailSender)[1];
+                        szFrom = szMSGData.match(patternHotmailEmailSenderAlt)[1];
                         szFrom = oEscape.decode(szFrom);
                         this.m_Log.Write("Hotmail-SR-BETA - processMSG - Email From : " + szFrom);
                     }
@@ -701,13 +702,13 @@ HotmailScreenRipperBETA.prototype =
                 {
                     if (szMSGData.search(patternHotmailEmailSubject) != -1) 
                     {
-                        szSubject = szMSGData.match(patternHotmailEmailSubjectAlt)[1];
+                        szSubject = szMSGData.match(patternHotmailEmailSubject)[1];
                         szSubject = oEscape.decode(szSubject);
                         this.m_Log.Write("Hotmail-SR-BETA - processMSG - Email Subject Alt : " + szSubject);
                     }
                     else 
                     {
-                        szSubject = szMSGData.match(patternHotmailEmailSubject)[1];
+                        szSubject = szMSGData.match(patternHotmailEmailSubjectAlt)[1];
                         szSubject = oEscape.decode(szSubject);
                         this.m_Log.Write("Hotmail-SR-BETA - processMSG - Email szSubject : " + szSubject);
                     }
@@ -719,10 +720,7 @@ HotmailScreenRipperBETA.prototype =
         
                 try
                 {
-                    var szRawDate = aTableData[6].match(patternHotmailEmailDate)[1];
-                    this.m_Log.Write("Hotmail-SR-BETA.js - processMSG - raw date/time "+szRawDate);
                     var today = new Date();
-                    
                     var szRawDate = "";
                     try
                     {
@@ -1356,7 +1354,6 @@ HotmailScreenRipperBETA.prototype =
     %3B %27 %3C %3E %3F %2C %2F
     ;     '  <   >   ?   ,   /
     */
-
     urlEncode : function (szData)
     {
         var szEncoded = encodeURI(szData);
@@ -1370,5 +1367,16 @@ HotmailScreenRipperBETA.prototype =
         szEncoded = szEncoded.replace(/%7D/g,"}");        
         return szEncoded;
 
+    },
+    
+    
+    urlDecode : function (szDate)
+    {
+        var szDecode = szDate.replace(/\\x3a/g,":");
+        szDecode = szDecode.replace(/\\x2f/g,"/");
+        szDecode = szDecode.replace(/\\x3f/g,"?");
+        szDecode = szDecode.replace(/\\x3d/g,"="); 
+        szDecode = szDecode.replace(/\\x26/g,"&");
+        return szDecode;
     }
 }

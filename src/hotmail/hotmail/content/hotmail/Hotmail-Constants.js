@@ -72,12 +72,13 @@ const patternHotmailSRFrom =/<tr[\S\s]*name="(.*?)"><td>/i;
 
 
 /*********BETA**********/
-const patternHotmailSMTPForm = /<form.*?name="aspnetForm".*?>[\S\s]*?<\/form>/i;
+const patternHotmailJSBounce = /srf_uRet="(.*?)"/i;
 const patternHotmailJSRefresh = /<html><head><script.*?>.*?\.location\.replace.*?\("(.*?)"\).*?<\/script>.*?<\/html>/i;
 const patternHotmailJSRefreshAlt = /<head><meta http-equiv="REFRESH".*?content=".*?URL=(.*?)">.*?<\/head><\/html>/i;
 const patternHotmailJSRefreshAlt2 = /srf_uLogin.*?=.*?"(.*?)";/i;
-const patternHotmailJSBounce = /srf_uRet="(.*?)"/i;
+const patternHotmailJSRefreshAlt3 = /self\.location\.href = ['|"](.*?wsignin.*?)['|"]/i;
 
+const patternHotmailSMTPForm = /<form.*?name="aspnetForm".*?>[\S\s]*?<\/form>/i;
 const patternHotmailLogOut = /logout/i;
 const patternHotmailViewState = /__VIEWSTATE".*?value="(.*?)".*?\/>/i;
 const patternHotmailInboxFolderID = /<td class="ManageFoldersFolderNameCol"><a.*?href="(.*?\?FolderID=.*?1&.*?)".*?>/i;
