@@ -7,7 +7,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
         <em:id>{a6a33690-2c6a-11d9-9669-0800200c9a66}</em:id>
         <em:type>2</em:type>
-        <em:version>1.2.19</em:version>
+        <em:version>1.2.21</em:version>
 
         <em:name>WebMail - Hotmail</em:name>
         <em:description>Hotmail component for Web-Mail extension</em:description>
@@ -47,6 +47,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
         <em:contributor>Kneekoo (ro-RO)|27</em:contributor>
         <em:contributor>BenoitRen (SeaMonkey Compatibility)|28</em:contributor>
         <em:contributor>Philip Chee (SeaMonkey Compatibility)|28</em:contributor>
+        <em:contributor>lord1980 (ar)|-1</em:contributor>
 
         <em:targetApplication>
             <Description>
