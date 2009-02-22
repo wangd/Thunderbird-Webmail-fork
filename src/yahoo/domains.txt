@@ -18,5 +18,6 @@
     <domain>ymail.com</domain>
     <domain>talk21.com</domain>
     <domain>btinternet.com</domain>
-    <domain>btopenworld.com</domain>
+    <domain>btopenworl<domain>
+    <domain>Y7mail.com</domain>
 </database>
