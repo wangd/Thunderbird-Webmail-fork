@@ -1003,10 +1003,15 @@ YahooPOPBETA.prototype =
                        
                     var szHeader = szResponse.match(kPatternHeader)[1];
                     szHeader= mainObject.cleanHTML(szHeader);
+                    
+                    //remove quoted printable header
+                    szHeader = szHeader.replace(/content-transfer-Encoding:.*?quoted-printable.*?$/img, "x-Header: removed");
+                    szHeader = szHeader.replace(/content-transfer-Encoding:.*?base64.*?$/img,  "x-Header: removed");
 
                     var szHeaderTemp  = "X-WebMail: true\r\n";
                     szHeaderTemp += "X-Folder: " +mainObject.m_szBox+ "\r\n";
                     szHeaderTemp += szHeader;
+                    
                     mainObject.m_oEmail.setEnvolpeHeaders(szHeaderTemp);
                                        
                     //now get body
@@ -1134,7 +1139,7 @@ YahooPOPBETA.prototype =
 
                             //get text
                             var szText = szData.match(kPatternPartText)[1];
-                            szText= mainObject.cleanHTML(szText, szCharset);
+                            szText= mainObject.cleanHTML(szText);
                             var szCharset = null;
                             if (szTypeParams.search(/charset/i)!=-1)
                             {
@@ -1585,6 +1590,7 @@ YahooPOPBETA.prototype =
         szMsg = szMsg.replace(/&#xA;/g ,"\n");
         szMsg = szMsg.replace(/&#xD;/g ,"\r");
         szMsg = szMsg.replace(/&#x9;/g ,"\t");
+        szMsg = szMsg.replace(/&#13;/g ,"\r");
         return szMsg;
     },
 
