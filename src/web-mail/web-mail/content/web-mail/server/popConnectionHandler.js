@@ -55,29 +55,47 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
 {
     try
     {
-        this.m_POPLog.Write("POPconnectionHandler - onDataWritable - START - "+ this.iID);
+        this.m_POPLog.Write("POPconnectionHandler - onDataWritable - START - "+ this.iID );
 
         var instream = Components.classes["@mozilla.org/scriptableinputstream;1"]
                      .createInstance(Components.interfaces.nsIScriptableInputStream);
         instream.init(inputStream);
         var szStream = instream.read(count);
-
+        this.m_POPLog.Write("POPconnectionHandler - onDataWritable - stream - "+ szStream);
+        
         //remove \n\r from request
         var aStream = szStream.split("\r\n");  //split string on return carrage line feed
-        var aCommand = aStream[0].split(" "); //split string on space
+        var aCommand = aStream[0].match(/^(.*?)\s(.*?)$/); //split string on space
+        
+        var szCommand = null;
+        try
+        {
+            szCommand = aCommand[1];
+        }
+        catch(e)
+        {
+            szCommand = aStream[0];
+        }
+        
+        var szParam = null;
+        try 
+        {
+            szParam = aCommand[2];
+        } 
+        catch (e){}
 
-        switch(aCommand[0].toLowerCase())  //first element is command
+        switch(szCommand.toLowerCase())  //first element is command
         {
             //AUTHORIZATION state
             case "user":
                 this.m_POPLog.Write("POPconnectionHandler - onDataWritable - user - START - "+ this.iID);
 
-                var aszDomain = aCommand[1].replace(/\s/,"").split("@");     //split username and domain
+                var aszDomain = szParam.replace(/\s/,"").split("@");     //split username and domain
                 if (this.getDomainHandler(aszDomain[0], aszDomain[1]))
                 {
                     this.m_POPLog.Write("POPconnectionHandler - onDataWritable - user "
-                                                + aCommand[0] + " "
-                                                + aCommand[1] + " "
+                                                + szCommand + " "
+                                                + szParam + " "
                                                 + szOK);
 
                     this.ServerResponse.write(szOK,szOK.length);
@@ -87,8 +105,8 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                     var szTemp = "-ERR "+ aszDomain[1] + " is a unsupported domain\r\n"
 
                     this.m_POPLog.Write("POPconnectionHandler - onDataWritable - user "
-                                                + aCommand[0] + " "
-                                                + aCommand[1] + " "
+                                                + szCommand + " "
+                                                + szParam + " "
                                                 + szTemp);
 
                     this.ServerResponse.write(szTemp,szTemp.length);
@@ -101,10 +119,7 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
             case "pass":
                 try
                 {
-                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - pass START "
-                                                + aCommand[0] + " "
-                                                + aCommand[1] + " "
-                                                + this.iID);
+                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - pass START " + this.iID);
 
                     if (this.iLoginReTryCount == 0)
                         throw new Error("ran out of login re-trys");
@@ -113,13 +128,13 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
 
                     try
                     {//new method
-                        this.m_DomainHandler.passWord = aCommand[1];
+                        this.m_DomainHandler.passWord = szParam;
                         if (!this.m_DomainHandler.logIn())
                             throw new Error("login failed");
                     }
                     catch(err)
                     {//old method
-                        if (!this.m_DomainHandler.logIn(aCommand[1]))
+                        if (!this.m_DomainHandler.logIn(szParam))
                             throw new Error("login failed");
                     }
 
@@ -138,8 +153,8 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                     this.ServerRequest.close();
 
                     this.m_POPLog.Write("POPconnectionHandler - onDataWritable - pass "
-                                                + aCommand[0] + " "
-                                                + aCommand[1] + "\n"
+                                                + szCommand + " "
+                                                + szParam + "\n"
                                                 + e.message+ "\n"
                                                 + e.lineNumber);
                 }
@@ -232,8 +247,8 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
 
                     try
                     {
-                        this.m_POPLog.Write("POPconnectionHandler - onDataWritable - top -" + aCommand[1] );
-                        if (!this.m_DomainHandler.getMessageHeaders(aCommand[1]))
+                        this.m_POPLog.Write("POPconnectionHandler - onDataWritable - top -" + szParam );
+                        if (!this.m_DomainHandler.getMessageHeaders(szParam))
                             throw new Error("TOP NOT supported");
                     }
                     catch(e)
@@ -270,8 +285,8 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                     if (!this.m_DomainHandler.bAuthorised)
                         throw new Error("not logged how did you here?");
 
-                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - retr -" + aCommand[1] );
-                    if (!this.m_DomainHandler.getMessage( aCommand[1]))
+                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - retr -" + szParam );
+                    if (!this.m_DomainHandler.getMessage( szParam))
                         throw new Error("getMessage returned false");
 
                     this.m_POPLog.Write("POPconnectionHandler - onDataWritable - retr - END   "+ this.iID);
@@ -297,8 +312,8 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                     if (!this.m_DomainHandler.bAuthorised)
                         throw new Error("not logged how did you here?");
 
-                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - dele " + aCommand[1]);
-                    if (!this.m_DomainHandler.deleteMessage(aCommand[1]))
+                    this.m_POPLog.Write("POPconnectionHandler - onDataWritable - dele " + szParam);
+                    if (!this.m_DomainHandler.deleteMessage(szParam))
                         throw new Error("deleteMessage return false");
 
                     this.m_POPLog.Write("POPconnectionHandler - onDataWritable - dele - END   "+ this.iID);
