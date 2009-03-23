@@ -279,7 +279,7 @@ nsAOLSMTP.prototype =
             
 
                 case 3://get urls
-                    if(szResponse.search(patternAOLUserID)==-1)
+                    if(szResponse.search(patternAOLRealUserName)==-1)
                     {
                         if (mainObject.m_bReEntry)
                         {
@@ -301,8 +301,15 @@ nsAOLSMTP.prototype =
                             throw new Error("error logging in");
                     }
 
-                    mainObject.m_szUserId = szResponse.match(patternAOLUserID)[1];
+                    //get cookies
+                    var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                             .getService(Components.interfaces.nsIWebMailCookieManager2);
+                    var szCookie = oCookies.findCookie(mainObject.m_szUserName, httpChannel.URI);                  
+                    this.m_Log.Write("AOLPOP.js - loginOnloadHandler cookies "+ szCookie);
+                    
+                    mainObject.m_szUserId = szCookie.match(patternAOLUserID)[1];
                     mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - m_szUserId " +mainObject.m_szUserId);
+
 
                     mainObject.m_szRealUserName = szResponse.match(patternAOLRealUserName)[1];
                     mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - m_szRealUserName " +mainObject.m_szRealUserName);

@@ -11,7 +11,7 @@ const patternAOLValue = /value="(.*?)"/i;
 const patternAOLVerify = /<body onLoad=".*?'(http.*?)'.*>/i;
 const patternAOLMSGList = /gMessageButtonVisibility/i;
 const patternAOLVersion =/var VERSION="(.*?):.*?"/i;
-const patternAOLUserID =/"UserUID":"(.*?)"/i;
+const patternAOLUserID =/uid:(.*?)&/i;
 const patternAOLRealUserName =/"UserScreenName":"(.*?)"/i;
 const patternAOLPageNum = /info.pageCount\s=\s(.*?);/i;
 const patternAOLMSGSender = /^fa[\s\S].*$/gmi;
