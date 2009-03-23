@@ -7,7 +7,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
         <em:id>{268d7420-9032-11da-a72b-0800200c9a66}</em:id>
         <em:type>2</em:type>
-        <em:version>1.2.9</em:version>
+        <em:version>1.2.10</em:version>
 
         <em:name>WebMail - AOL / Netscape </em:name>
         <em:description>AOL / NetScape component for Web-Mail extension</em:description>
@@ -40,7 +40,8 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
         <em:contributor>Branislav Rozbora (sk-SK)|19</em:contributor>
         <em:contributor>BenoitRen (SeaMonkey Compatibility)|28</em:contributor>
         <em:contributor>Philip Chee (SeaMonkey Compatibility)|28</em:contributor>
-
+        <em:contributor>AlleyKat (da-DK)|5</em:contributor>
+        <em:contributor>moutinho (pt-PT)|16</em:contributor>
 
         <em:targetApplication>
             <Description>
@@ -50,11 +51,18 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
                 <em:maxVersion>3.0.*</em:maxVersion>
             </Description>
 
+            <!-- Synovel Spicebird -->
+            <Description>
+                  <em:id>{ee53ece0-255c-4cc6-8a7e-81a8b6e5ba2c}</em:id>
+                  <em:minVersion>0.4</em:minVersion>
+                  <em:maxVersion>1.0</em:maxVersion>
+            </Description>
+
             <!-- SeaMonkey -->
             <Description>
                 <em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id>
                 <em:minVersion>1.1</em:minVersion>
-                <em:maxVersion>1.5a</em:maxVersion>
+                <em:maxVersion>1.5</em:maxVersion>
             </Description>
         </em:targetApplication>
 
