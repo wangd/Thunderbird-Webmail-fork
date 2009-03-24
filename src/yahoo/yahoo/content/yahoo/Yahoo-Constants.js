@@ -95,6 +95,7 @@ const kPatternPartSubType =/subType="(.*?)"/i;
 const kPatternPartDispParam =/dispParams="(.*?)"/i;
 const kPatternPartId = /partId="(.*?)"/i;
 const kPatternFileName = /filename=(.*?)$/i;
+const kPatternFileNameAlt = /filename="(.*?)"/i
 const kPatternContentId = /contentId="(.*?)"/i;
 
 const kSeen = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><m:FlagMessages xmlns:m=\"urn:yahoo:ymws\"><fid>FOLDERNAME<\/fid><mid>MSGID</mid><setFlags read=\"1\"></setFlags></m:FlagMessages></SOAP-ENV:Body></SOAP-ENV:Envelope>";

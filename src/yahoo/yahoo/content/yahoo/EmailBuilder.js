@@ -155,7 +155,20 @@ emailBuilder.prototype.notify = function (timer)
         
         timer.cancel();
         
-        this.m_szEmail = this.headers(this.m_oHeader.getAllHeadersArray());  //construct email headers
+        //construct email headers
+        var szContentSubType = this.m_oHeader.getContentType(2);
+        this.m_Log.Write("emailBuilder.js - " + szContentSubType + " " + this.m_aoBodyPart.length);
+        if (this.m_aoBodyPart.length == 1  &&
+            szContentSubType.search(/alternative/i)!=-1 || 
+            szContentSubType.search(/related/i)!=-1  ) 
+        {   //something's wrong with the header only one body part found 
+            this.m_Log.Write("emailBuilder.js - Wrong subtype header found");
+            this.m_szEmail = this.headers(this.m_oHeader.getAllHeadersArray(),
+                                          this.m_aoBodyPart[0].headers.getHeader("Content-Type"));          
+        }
+        else
+            this.m_szEmail = this.headers(this.m_oHeader.getAllHeadersArray(), null);  
+        
         
         if (this.m_aoAttachments.length==0) //no attachments
         {
@@ -193,6 +206,8 @@ emailBuilder.prototype.notify = function (timer)
         }
         else //has attachments
         {
+            this.m_Log.Write("emailBuilder.js - build - email with attachments "); 
+            
             this.m_szEmail +="This is a multi-part message in MIME format built by the Yahoo extension.\r\n";
             
             //get body bounday 
@@ -210,12 +225,17 @@ emailBuilder.prototype.notify = function (timer)
              {
                 this.m_Log.Write("emailBuilder.js - build - complex body "); 
                 
+                this.m_szEmail += "\r\n--" + this.m_szBoundary + "\r\n";
+                this.m_szEmail += "Content-Type: multipart/alternative; boundary=\"" + this.m_szBoundary+ "=MULTPART\"\r\n";
+
                 for (var i = 0; i < this.m_aoBodyPart.length; i++) 
                 {
-                    this.m_szEmail += "\r\n--" + this.m_szBoundary + "\r\n";
+                    this.m_szEmail += "\r\n--" + this.m_szBoundary + "=MULTPART\r\n";
                     this.m_szEmail += this.headers(this.m_aoBodyPart[i].headers.getAllHeadersArray());
                     this.m_szEmail += this.m_aoBodyPart[i].body.getBody();
                 }
+                
+                this.m_szEmail += "\r\n--"+ this.m_szBoundary + "=MULTPART--";
             }  
             
             this.m_szEmail += "\r\n--"+ this.m_szBoundary + "\r\n";
@@ -247,19 +267,24 @@ emailBuilder.prototype.notify = function (timer)
 
 
 
-emailBuilder.prototype.headers = function(aHeaders)
+emailBuilder.prototype.headers = function(aHeaders, szContentType)
 {
     try 
     {
-        this.m_Log.Write("emailBuilder.js - headers - START");
+        this.m_Log.Write("emailBuilder.js - headers - START " + szContentType);
         var szHeaders = "";
         for (var i =0; i<aHeaders.length; i++)
         {
             var szName = aHeaders[i].szName;
+            var szValue ="";
             this.m_Log.Write("emailBuilder.js - Headers - szName "+ szName);
+            
             szHeaders += szName;
             szHeaders += ": ";
-            var szValue = aHeaders[i].szValue;
+            if (szName.search(/Content-Type/i)!=-1 && szContentType!=null )
+                szValue = szContentType;
+            else
+                szValue = aHeaders[i].szValue;
             this.m_Log.Write("emailBuilder.js - Headers - szValue "+ szValue);
 
             szHeaders += szValue;
