@@ -12,7 +12,7 @@
                             <Description>
                                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id> <!-- Thunderbird updates -->
                                 <em:minVersion>2.0</em:minVersion>
-                                <em:maxVersion>3.*</em:maxVersion>
+                                <em:maxVersion>3.0.*</em:maxVersion>
                                 <em:updateLink>http://download.mozdev.org/webmail/aol-1-2-10.xpi</em:updateLink>
                                 <em:updateHash>sha256:7ed86285bbb2a51fb9683db2b4415ec40ee59d22a75a8c6afbbd3dfadd8faa73</em:updateHash>
                           </Description>
@@ -33,7 +33,7 @@
             </RDF:Seq>
         </em:updates>
         
-       <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBAGKKwCbJ6iYZr5tbAtnvlSQjLyeOgvUa0w3vHxh9ldasJsuK4f05+nq3L+u5YDCpJ88p3Fb0F4t46+9vO517oZK4waVTeXFTPlY8Yt0dVIEEf0ARJzu/dEMON8+FMLS3odgWqrbKJcmuYpn8Xd0/3ddgw759uUE3sQtY8FH47RjH</em:signature>
+       <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBACMHbu+gErKfsLROTg1zPwS4zqP/MPOTj4NpdKU5IdK0M4ct4iWERjiapyRE8cm9UeRMvoOEKe6BSZFFNkIP4qQFksYiHjggCE2ldMP27DW/y8VHYTAdILCf5DM59AKo5skNELmGtA8SrmMPrS4tnFT5Tcvc/0SfhGJFi0rAwKa0</em:signature>
     
     </RDF:Description>
 </RDF:RDF>
