@@ -2,7 +2,7 @@
 <RDF:RDF xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
          xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
-     <RDF:Description about="urn:mozilla:extension:268d7420-9032-11da-a72b-0800200c9a66}">
+     <RDF:Description about="urn:mozilla:extension:{268d7420-9032-11da-a72b-0800200c9a66}">
         <em:updates>
             <RDF:Seq>
                 <RDF:li>
@@ -33,7 +33,7 @@
             </RDF:Seq>
         </em:updates>
         
-       <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBACMHbu+gErKfsLROTg1zPwS4zqP/MPOTj4NpdKU5IdK0M4ct4iWERjiapyRE8cm9UeRMvoOEKe6BSZFFNkIP4qQFksYiHjggCE2ldMP27DW/y8VHYTAdILCf5DM59AKo5skNELmGtA8SrmMPrS4tnFT5Tcvc/0SfhGJFi0rAwKa0</em:signature>
+       <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBANHm4zKHAkV3pc/CKOOb90MpleD+rq7mqkAK3CogG8OvxpCnNAwn6OwW6vnN6L/OOgNyLElp4b0LsNQwgYdS4hsv92br80yA7uD8l2G/cXskZx1BU8/43xHAyrQkHMl7LC2VK5I7GuzX3KnZwYPVXbP6fPeZq4cD3LMMiZKZaiYu</em:signature>
     
     </RDF:Description>
 </RDF:RDF>
