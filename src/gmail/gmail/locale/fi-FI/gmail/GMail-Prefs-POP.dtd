@@ -1,0 +1,4 @@
+<!ENTITY DownloadUnread.Label "Lataa vain lukemattomat sähköpostit">
+<!ENTITY DownloadUnread.AccessKey "u">
+<!ENTITY Archive.Label "Tallenna kansioin poistamatta">
+<!ENTITY Archive.AccessKey "A">

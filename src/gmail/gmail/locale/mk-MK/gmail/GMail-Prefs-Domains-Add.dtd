@@ -1,0 +1,10 @@
+<!ENTITY Window.size "ширина: 30em; висина: 10em">
+<!ENTITY Uri.label "Uri">
+<!ENTITY Uri.accessKey "U">
+<!ENTITY Uri.size "ширина: 35px">
+<!ENTITY Domain.label "Домен">
+<!ENTITY Domain.accessKey "Д">
+<!ENTITY TitleAdd "Додади">
+<!ENTITY TitleEdit "Уреди">
+<!ENTITY Ok.label "Во ред">
+<!ENTITY Cancel.label "Откажи">

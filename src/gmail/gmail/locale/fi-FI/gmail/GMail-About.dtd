@@ -1,0 +1,10 @@
+<!ENTITY GMailAbout.Title "Gmail-Tietoja">
+<!ENTITY GMailAbout.ExtName "Gmail">
+<!ENTITY GMailAbout.ExtVersion "versio 0.5.4">
+<!ENTITY GMailAbout.ExtDescription "Gmail komponentti Web-Mail lisäosaan">
+<!ENTITY GMailAbout.ExtCreaterTitle "Tekijä:">
+<!ENTITY GMailAbout.ExtCreator "Luigi Capriotti">
+<!ENTITY GMailAbout.ExtHome "Kotisivu">
+<!ENTITY GMailAbout.ExtHomeURL "http://webmail.mozdev.org/">
+<!ENTITY GMailAbout.ExtButton "Sulje">
+<!ENTITY GMailAbout.ExtContributorTitle "Kääntäjät:">

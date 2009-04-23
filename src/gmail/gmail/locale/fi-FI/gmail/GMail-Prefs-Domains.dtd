@@ -1,0 +1,8 @@
+<!ENTITY GMailPref.Domain.Label "Tuetut osoitteet">
+<!ENTITY Domain.label "osoite">
+<!ENTITY Remove.label "poista">
+<!ENTITY Remove.AccessKey "R">
+<!ENTITY Add.label "Lisää">
+<!ENTITY Add.AccessKey "A">
+<!ENTITY Edit.label "Muokkaa">
+<!ENTITY Edit.AccessKey "E">

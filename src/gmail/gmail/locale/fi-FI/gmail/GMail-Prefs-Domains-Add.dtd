@@ -1,0 +1,10 @@
+<!ENTITY Window.size "leveys: 30em; korkeus 10em">
+<!ENTITY Uri.label "Uri">
+<!ENTITY Uri.accessKey "U">
+<!ENTITY Uri.size "leveys: 35px">
+<!ENTITY Domain.label "Osoite">
+<!ENTITY Domain.accessKey "D">
+<!ENTITY TitleAdd "Lisää">
+<!ENTITY TitleEdit "Muokkaa">
+<!ENTITY Ok.label "Ok">
+<!ENTITY Cancel.label "Peruuta">

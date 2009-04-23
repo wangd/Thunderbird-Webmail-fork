@@ -1,0 +1,10 @@
+<!ENTITY GMailAbout.Title "GMail - За">
+<!ENTITY GMailAbout.ExtName "GMail">
+<!ENTITY GMailAbout.ExtVersion "верзија 0.5.4">
+<!ENTITY GMailAbout.ExtDescription "GMail компонента за додатокот за Веб Пошта.">
+<!ENTITY GMailAbout.ExtCreaterTitle "Креирано од:">
+<!ENTITY GMailAbout.ExtCreator "Luigi Capriotti">
+<!ENTITY GMailAbout.ExtHome "Домашна Страница:">
+<!ENTITY GMailAbout.ExtHomeURL "http://webmail.mozdev.org/">
+<!ENTITY GMailAbout.ExtButton "Затвори">
+<!ENTITY GMailAbout.ExtContributorTitle "Соработници:">
