@@ -48,7 +48,7 @@ function HttpComms(oLog)
         
         var prefs = new WebMailCommonPrefAccess();
         var oPref = {Value : null};
-        this.m_szUserAgent = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.9.0.1) Gecko/2008070208 Firefox/3.0.1";
+        this.m_szUserAgent = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.9.0.9) Gecko/2009040821 Firefox/3.0.9";
         prefs.Get("char","webmail.UserAgent",oPref);
         this.m_Log.Write("HttpComms3.js - useragent " + oPref.Value);
         if (oPref.Value) this.m_szUserAgent =oPref.Value
