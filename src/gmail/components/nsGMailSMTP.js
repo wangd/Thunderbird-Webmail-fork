@@ -443,12 +443,15 @@ D(["sr","2",0,"test.vbs is an executable file. For security reasons, Gmail does 
             //if this fails we've gone somewhere new
             mainObject.m_Log.Write("nsGMailSMTP.js - composerOnloadHandler - status :" + httpChannel.responseStatus );
 
-            if ( szResponse.search("Your message has been sent.") ==-1 &&
-                 szResponse.search("Il messaggio � stato inviato.") ==-1 &&
-                 szResponse.search("Ihre Nachricht wurde gesendet.") ==-1 &&
-                 szResponse.search("Votre message a été envoyé.") ==-1 )
+            if (szResponse.search("Your message has been sent.") == -1 &&
+                szResponse.search("Il messaggio � stato inviato.") == -1 &&
+                szResponse.search("Ihre Nachricht wurde gesendet.") == -1 &&
+                szResponse.search("Votre message a été envoyé.") == -1 &&
+                szResponse.search("Tu mensaje ha sido enviado.") == -1) 
+            {
                 mainObject.serverComms("502 Invalid mail format\r\n");
-
+            }
+            
             if ( mainObject.m_bReUseSession)
             {
                 mainObject.m_Log.Write("nsGMailPOP.js - loginOnloadHandler - Saving session Data");
