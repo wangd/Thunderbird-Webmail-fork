@@ -71,7 +71,7 @@ const kPatternFolderData =  /<folder.*?>[\s\S]*?<\/folder>/img;
 const kPatternFolderName =/name="(.*?)"/i;
 const kPatternFolderID =/fid="(.*?)"/i;
 
-const kLstMsgs = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><ListMessages startMid=\"0\" numMid=\"MSGLIST\" startInfo=\"0\" numInfo=\"650\" startBody=\"0\" numBody=\"0\"><sortKey>date</sortKey><sortOrder>down</sortOrder><fid>folderName</fid></ListMessages></SOAP-ENV:Body></SOAP-ENV:Envelope>";
+const kLstMsgs = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><ListMessages startMid=\"0\" numMid=\"650\" startInfo=\"0\" numInfo=\"MSGLIST\" startBody=\"0\" numBody=\"0\"><sortKey>date</sortKey><sortOrder>down</sortOrder><fid>folderName</fid></ListMessages></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 const kPatternLstMsgsResponse = /<ListMessagesResponse.*?>([\s\S]*?)<\/ListMessagesResponse>/i;
 const kPatternInfo = /<messageInfo.*?>[\s\S]*?<\/messageInfo>/ig;
 const kPatternID = /mid="(.*?)"/i;
@@ -97,6 +97,7 @@ const kPatternPartId = /partId="(.*?)"/i;
 const kPatternFileName = /filename=(.*?)$/i;
 const kPatternFileNameAlt = /filename="(.*?)"/i
 const kPatternContentId = /contentId="(.*?)"/i;
+const kPatternDispositionInline = /disposition="inline"/i;
 
 const kSeen = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><m:FlagMessages xmlns:m=\"urn:yahoo:ymws\"><fid>FOLDERNAME<\/fid><mid>MSGID</mid><setFlags read=\"1\"></setFlags></m:FlagMessages></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 const kPatternSeenMSGResponse = /<ymws:SetMessageFlagResponse.*?>([\s\S]*?)<\/ymws:SetMessageFlagResponse.*?>/i;
@@ -104,7 +105,7 @@ const kPatternSeenMSGResponse = /<ymws:SetMessageFlagResponse.*?>([\s\S]*?)<\/ym
 const kDelete = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><m:MoveMessages xmlns:m=\"urn:yahoo:ymws\"><sourceFid>FOLDERNAME</sourceFid><destinationFid>Trash</destinationFid><mid>MSGID</mid></m:MoveMessages></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 const kPatternDeleteMSGResponse = /<MoveMessagesResponse.*?>([\s\S]*?)<\/MoveMessagesResponse.*?>/i;
 
-const kSendMessge = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><m:SendMessage xmlns:m=\"urn:yahoo:ymws\"><message>TOADDRESS-BCCEMAILADDRESS-CCEMAILADDRESS<from><name>FROMNAME</name><email>FROMADDRESS</email></from><simplebody>EMAILBODY</simplebody><subject>EMAILSUBJECT</subject></message></m:SendMessage></SOAP-ENV:Body></SOAP-ENV:Envelope>";
+const kSendMessge = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><m:SendMessage xmlns:m=\"urn:yahoo:ymws\"><message>TOADDRESS-BCCEMAILADDRESS-CCEMAILADDRESS<from><name>FROMNAME</name><email>FROMADDRESS</email></from><mailer>YahooMailRC/1277.35</mailer><simplebody>EMAILBODY</simplebody><subject>EMAILSUBJECT</subject></message></m:SendMessage></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 const kPatternSendMSGResponse = /<SendMessageResponse.*?>/i;
 const kPatternDiskFileName =/diskfilename=(.*?)&/i;
 
