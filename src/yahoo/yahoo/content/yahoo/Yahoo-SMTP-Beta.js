@@ -283,7 +283,8 @@ YahooSMTPBETA.prototype =
                         {
                             mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
                             
-                            var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"].getService(Components.interfaces.nsIWebMailCookieManager2);
+                            var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
+                                                     .getService(Components.interfaces.nsIWebMailCookieManager2);
                             oCookies.removeCookie(mainObject.m_szUserName);
                             
                             mainObject.m_bReEntry = false;
@@ -525,7 +526,7 @@ YahooSMTPBETA.prototype =
                 this.m_iStage = 0 ;
                 this.m_HttpComms.setURI(szURI);
                 this.m_HttpComms.setRequestMethod("POST");
-                this.m_HttpComms.setContentType("application/xml");
+                this.m_HttpComms.setContentType("application/xml; charset=UTF-8");
                 this.m_HttpComms.addData(szData);
                 var bResult = this.m_HttpComms.send(this.composerOnloadHandler, this);
                 if (!bResult) throw new Error("httpConnection returned false");
@@ -553,6 +554,7 @@ YahooSMTPBETA.prototype =
 
                 this.m_HttpComms.setContentType("multipart/form-data");
                 this.m_HttpComms.setRequestMethod("POST");
+ 
                 var bResult = this.m_HttpComms.send(this.composerOnloadHandler, this);
                 if (!bResult) throw new Error("httpConnection returned false");
             }
