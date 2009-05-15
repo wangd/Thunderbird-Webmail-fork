@@ -178,6 +178,9 @@ YahooPOPBETA.prototype =
             mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - status :" +httpChannel.responseStatus );
             if (httpChannel.responseStatus != 200)
                 throw new Error("return status " + httpChannel.responseStatus);
+                    
+            var szLocation  = httpChannel.URI.spec;
+            mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - page check : " + szLocation );
 
             if (szResponse.search(patternYahooLoginForm)!=-1)
             {
@@ -189,6 +192,7 @@ YahooPOPBETA.prototype =
                         mainObject.m_iStage =4; //spam image found
                         mainObject.m_iLoginCount++;
                     }
+                    
                     else
                     {
                         mainObject.m_iLoginCount++;
@@ -198,7 +202,15 @@ YahooPOPBETA.prototype =
                 else
                     throw new Error ("Too Many Login's");
             }
-
+            
+            
+            if (mainObject.m_iStage == 0 && szResponse.search(kPatternLogOut)!=-1)
+            {             
+                mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - already login");
+                mainObject.m_iStage =2; //logged in already
+                mainObject.m_iLoginCount++;
+            }
+            
 
             //page code
             switch (mainObject.m_iStage)
@@ -262,8 +274,6 @@ YahooPOPBETA.prototype =
                 break;
 
                 case 2: //mail box
-                    var szLocation  = httpChannel.URI.spec;
-                    mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - page check : " + szLocation );
 
                     if (szResponse.search(kPatternLogOut)== -1)
                     {

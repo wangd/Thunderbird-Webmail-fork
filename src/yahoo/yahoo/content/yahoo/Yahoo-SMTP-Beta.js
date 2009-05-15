@@ -203,6 +203,13 @@ YahooSMTPBETA.prototype =
                     throw new Error ("Too Many Login's");
             }
 
+            if (mainObject.m_iStage == 0 && szResponse.search(kPatternLogOut)!=-1)
+            {             
+                mainObject.m_Log.Write("YahooSMTPBETA.js - loginOnloadHandler - already login");
+                mainObject.m_iStage =2; //logged in already
+                mainObject.m_iLoginCount++;
+            }
+
 
             //page code
             switch (mainObject.m_iStage)
