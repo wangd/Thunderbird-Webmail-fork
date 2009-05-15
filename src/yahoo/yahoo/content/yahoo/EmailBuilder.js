@@ -99,6 +99,7 @@ emailBuilder.prototype.addBody = function (szHeader, szBody)
 
         var oMimeData = new mimePart (szHeader? szHeader:" " , szBody);
         var szNewPartSubType = oMimeData.headers.getContentType(2); // subtype
+        if (szNewPartSubType=="" || szNewPartSubType==null) szNewPartSubType = "plain";
         var regExp = new RegExp(szNewPartSubType,"i");
         this.m_Log.Write("emailBuilder.js - addBody - szNewPartSubType " + szNewPartSubType);
         
