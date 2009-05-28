@@ -62,7 +62,7 @@ const patternYahooAddress =/<option value="(.*?)"[\s]*?selected/i;
 const patternYahooSelect = /<select\s*id="defFromAddress"[\s\S]*<\/select>/igm;
 const patternYahooAttFilename = /filename\*="utf-8''"/i
 /******************************  BETA ***************************************/
-const kPatternWssid = /[']?wssid[']?.*?'(.*?)',/i;
+const kPatternWssid = /['|"]?wssid['|"]?.*?['|"](.*?)['|"],/i;
 const kPatternLogOut = /LoggedInAs/ig;
 
 const kListFolders = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><m:ListFolders xmlns:m=\"urn:yahoo:ymws\"><param1><greq gve=\"8\" ListFolders=\"true\" resetUnseen=\"true\"><gid>cg</gid></greq></param1></m:ListFolders></SOAP-ENV:Body></SOAP-ENV:Envelope>";
@@ -109,7 +109,7 @@ const kSendMessge = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<SOAP-ENV:Env
 const kPatternSendMSGResponse = /<SendMessageResponse.*?>/i;
 const kPatternDiskFileName =/diskfilename=(.*?)&/i;
 
-const kPatternSpamImageURL = /<imageurl>(.*?)<\/imageurl>/igm;
+const kPatternSpamImageURL = /<imageurl>([\s\S]*?)<\/imageurl>/i;
 const kPatternGreq = /<greq.*?>(.*?)<\/greq>/i;
 
 

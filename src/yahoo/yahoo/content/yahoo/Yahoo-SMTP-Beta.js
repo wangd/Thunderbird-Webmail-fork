@@ -627,7 +627,7 @@ YahooSMTPBETA.prototype =
                         mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - Spam Image");
 
                         //spam image challange
-                        var szURL = szResponse.search(kPatternSpamImageURL)[1];
+                        var szURL = szResponse.match(kPatternSpamImageURL)[1];
                         mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - szURL " +szURL);
 
                         mainObject.m_HttpComms.setURI(szURL);
