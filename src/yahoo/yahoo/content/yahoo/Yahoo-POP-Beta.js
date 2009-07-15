@@ -175,10 +175,29 @@ YahooPOPBETA.prototype =
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
             //if this fails we've gone somewhere new
-            mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - status :" +httpChannel.responseStatus );
+            mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - status : " +httpChannel.responseStatus );
             if (httpChannel.responseStatus != 200)
-                throw new Error("return status " + httpChannel.responseStatus);
-                    
+            {
+            	if (szResponse.search(/SessionIdReissue/igm)!=-1 && mainObject.m_bReEntry == true)
+            	{
+            		mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler : ID Reiussue" );
+            		mainObject.m_szWssid = szResponse.match(/wssid=(.*?)<\/url>/igm)[1];
+                    mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - m_szWssid : "+mainObject.m_szWssid );
+
+                    mainObject.m_bReEntry = false;
+                    var szURI = szResponse.match(/<url>(.*?)<\/url>/igm)[1];
+                    mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - szURI " + szURI);
+                    mainObject.m_HttpComms.setURI(szURI);
+                    mainObject.m_HttpComms.setRequestMethod("POST");
+                    mainObject.m_HttpComms.setContentType("application/xml");
+                    mainObject.m_HttpComms.addData(kListFolders);
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
+                    if (!bResult) throw new Error("httpConnection returned false");           		
+            	}
+            	else
+            		throw new Error("return status " + httpChannel.responseStatus);
+            }
+            
             var szLocation  = httpChannel.URI.spec;
             mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - page check : " + szLocation );
 
@@ -314,7 +333,7 @@ YahooPOPBETA.prototype =
                     mainObject.m_szHomeURI = szLocation;
 
                     //get wssid
-                    mainObject.m_szWssid = szResponse.match(kPatternWssid)[1];
+                    mainObject.m_szWssid = encodeURIComponent(szResponse.match(kPatternWssid)[1]);
                     mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - m_szWssid : "+mainObject.m_szWssid );
 
                     mainObject.m_szLocationURI = httpChannel.URI.prePath ;

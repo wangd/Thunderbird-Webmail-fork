@@ -69,8 +69,8 @@ var gPrefAccounts =
 
             for (var i=0; i < allServers.Count(); i++)
             {
-                var currentServer = allServers.GetElementAt(i).
-                                        QueryInterface(Components.interfaces.nsIMsgIncomingServer);
+                var currentServer = allServers.GetElementAt(i)
+                							  .QueryInterface(Components.interfaces.nsIMsgIncomingServer);
 
                 if (currentServer.type.search(/pop3/i)!=-1)  //found pop account
                 {
@@ -154,45 +154,6 @@ var gPrefAccounts =
 
                 var prefAccess = new WebMailCommonPrefAccess();
                 var oPref = {Value : null};
-
-                if (!prefAccess.Get("bool","yahoo.Account."+szUserName+".bBeta",oPref))
-                    oPref.Value = false; //Default to production account
-                var bBeta = oPref.Value
-                this.m_DebugLog.Write("Yahoo-Pref-Accounts : userClick -  bBeta "+ bBeta);
-                
-                if (!prefAccess.Get("bool","yahoo.Account."+szUserName+".bClassic",oPref))
-                    oPref.Value = false; //Default to production account
-                var bClassic = oPref.Value
-                this.m_DebugLog.Write("Yahoo-Pref-Accounts : userClick -  bClassic "+ bBeta);
-                
-                document.getElementById("radiogroupMode").selectedIndex = bBeta? 1:(bClassic? 2:0);
-
-                if (bBeta)  //beta account type
-                {
-                    document.getElementById("tabSMTP").collapsed = true;// hide smtp
-                    document.getElementById("vboxSmtpItems").setAttribute("hidden", true);
-                    
-                    //check if SMTP selected
-                    if (document.getElementById("tabsAccount").selectedIndex == 2)
-                        document.getElementById("tabsAccount").selectedIndex = 1; //POP
-                }
-                else            //classic account
-                {                    
-                    if (bClassic) //new classic
-                    { 
-                        document.getElementById("vbSaveSentItems").setAttribute("hidden", true); 
-                        document.getElementById("tabSMTP").collapsed = true;// show smtp 
-                        if (document.getElementById("tabsAccount").selectedIndex == 2)
-                            document.getElementById("tabsAccount").selectedIndex = 1; //POP                                                                    
-                    }
-                    else           //old classic
-                    {
-                        document.getElementById("vboxSmtpItems").setAttribute("hidden", false);
-                        document.getElementById("vboxSendAlt").setAttribute("hidden", true); 
-                        document.getElementById("vbSaveSentItems").setAttribute("hidden", false); 
-                        document.getElementById("tabSMTP").collapsed = false;// show smtp         
-                    }         
-                }
                 
                 //download unread
                 if (!prefAccess.Get("bool","yahoo.Account."+szUserName+".bDownloadUnread",oPref))
@@ -244,20 +205,8 @@ var gPrefAccounts =
                             this.addItemFolderList(aFolders[j]);
                     }
                 }
-
-                //Save Copy in sent items
-                if (!prefAccess.Get("bool","yahoo.Account."+szUserName+".bSaveCopy",oPref))
-                   oPref.Value = false; //Default
-                this.m_DebugLog.Write("Yahoo-Pref-Accounts : selectUserName -  bSaveCopy "+ oPref.Value);
-                document.getElementById("chkSentItems").checked = oPref.Value;
-                
-                //Send Html part
-                if (!prefAccess.Get("bool","yahoo.Account."+szUserName+".bSendHtml",oPref))
-                   oPref.Value = false; //Default
-                this.m_DebugLog.Write("Yahoo-Pref-Accounts : selectUserName -  bSendHtml "+ oPref.Value);
-                document.getElementById("radiogroupAlt").selectedIndex = oPref.Value?1:0;
-                       
-                //set seasion id
+                     
+                //set short id
                 if (!prefAccess.Get("bool","yahoo.Account."+szUserName+".bUseShortID",oPref))
                    oPref.Value = true; //Default
                 this.m_DebugLog.Write("Yahoo-Pref-Accounts : selectUserName -  bUseShortID "+ oPref.Value);
@@ -334,64 +283,6 @@ var gPrefAccounts =
 
        this.m_DebugLog.Write("Yahoo-Pref-Accounts : tabSelectionChanged - END");
    },
-
-
-
-
-/**********************************************************************/
-//Deck Mode Panel
-/**********************************************************************/
-
-
-    rgModeOnChange : function ()
-    {
-        this.m_DebugLog.Write("Yahoo-Pref-Accounts : rgModeOnChange - START");
-
-        var bMode = document.getElementById("radiogroupMode").value == 1? true : false;
-        this.m_DebugLog.Write("Yahoo-Pref-Accounts : rgModeOnChange -  bMode "+ bMode);
-        
-        var bClassic = document.getElementById("radiogroupMode").value == 2? true : false;
-        this.m_DebugLog.Write("Yahoo-Pref-Accounts : rgModeOnChange -  bClassic "+ bClassic);
-
-        var szUserName = this.m_aszUserList[this.m_iIndex].toLowerCase();
-        szUserName = szUserName.replace(/\./g,"~");
-        szUserName = szUserName.toLowerCase();
-        this.m_DebugLog.Write("Yahoo-Pref-Accounts : rgModeOnChange -  szUserName "+ szUserName);
-
-        //write pref
-        var prefAccess = new WebMailCommonPrefAccess();
-        prefAccess.Set("bool","yahoo.Account."+szUserName+".bBeta",bMode);
-        prefAccess.Set("bool","yahoo.Account."+szUserName+".bClassic",bClassic);
-
-        if (bMode)  //beta
-        {
-            document.getElementById("vboxSmtpItems").setAttribute("hidden", true);
-            document.getElementById("tabSMTP").collapsed = true;// show smtp
-            if (document.getElementById("tabsAccount").selectedIndex == 2)
-                document.getElementById("tabsAccount").selectedIndex = 1; //POP                                                                    
-        }
-        else  //classic
-        {        
-            if (bClassic) //new classic
-            { 
-                document.getElementById("vbSaveSentItems").setAttribute("hidden", true); 
-                document.getElementById("tabSMTP").collapsed = true;// show smtp 
-                if (document.getElementById("tabsAccount").selectedIndex == 2)
-                    document.getElementById("tabsAccount").selectedIndex = 1; //POP                                                                    
-            }
-            else           //old classic
-            {
-                document.getElementById("vboxSmtpItems").setAttribute("hidden", false);
-                document.getElementById("vboxSendAlt").setAttribute("hidden", true); 
-                document.getElementById("vbSaveSentItems").setAttribute("hidden", false); 
-                document.getElementById("tabSMTP").collapsed = false;// show smtp         
-            }         
-        }
-
-        this.m_DebugLog.Write("Yahoo-Pref-Accounts : rgModeOnChange - END");
-    },
-
-
 
 
 
@@ -685,44 +576,7 @@ var gPrefAccounts =
         }
     },
 
-/**********************************************************************/
-//Deck SMTP Panel
-/**********************************************************************/
-    chkSentItemsOnChange : function ()
-    {
-        this.m_DebugLog.Write("Yahoo-Pref-Accounts : chkSentItemsOnChange - START");
 
-        var bSaveItem = document.getElementById("chkSentItems").checked ? false : true;
-        this.m_DebugLog.Write("Yahoo-Pref-Accounts : chkSentItemsOnChange -  bSaveItem "+ bSaveItem);
-
-        var szUserName = this.m_aszUserList[this.m_iIndex].toLowerCase();
-        szUserName = szUserName.replace(/\./g,"~");
-        szUserName = szUserName.toLowerCase();
-        this.m_DebugLog.Write("Yahoo-Pref-Accounts : chkJunkMailOnChange -  username "+ szUserName);
-
-        var prefAccess = new WebMailCommonPrefAccess();
-        prefAccess.Set("bool","yahoo.Account."+szUserName+".bSaveCopy",bSaveItem);
-
-        this.m_DebugLog.Write("Yahoo-Pref-Accounts : chkSentItemsOnChange - END");
-    },
-
-
-    rgAltOnChange : function ()
-    {
-        this.m_DebugLog.Write("Yahoo-Pref-Accounts : rgAltOnChange - START");
-
-        var bSendHtml = document.getElementById("radiogroupAlt").value;
-        this.m_DebugLog.Write("Yahoo-Pref-Accounts : rgAltOnChange -  bSendHtml "+ bSendHtml);
-
-        var szUserName = this.m_aszUserList[this.m_iIndex].toLowerCase();
-        szUserName = szUserName.replace(/\./g,"~");
-        this.m_DebugLog.Write("Yahoo-Pref-Accounts : chkJunkMailOnChange -  username "+ szUserName);
-
-        var prefAccess = new WebMailCommonPrefAccess();
-        prefAccess.Set("bool","yahoo.Account."+szUserName+".bSendHtml",bSendHtml);
-
-        this.m_DebugLog.Write("Yahoo-Pref-Accounts : rgAltOnChange - END");
-    },
 /**********************************************************************/
 //Deck Adv Panel
 /**********************************************************************/

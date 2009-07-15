@@ -15,9 +15,7 @@ PrefData.prototype.bSaveSentItem = false;
 
 PrefData.prototype.aszFolder = null;
 
-PrefData.prototype.bBeta = false;
-
-PrefData.prototype.bClassic = true;
+PrefData.prototype.bBeta = true;
 
 PrefData.prototype.bReUseSession = true;
 
