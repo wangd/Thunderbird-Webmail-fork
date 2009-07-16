@@ -12,9 +12,9 @@ function nsYahoo()
         scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
-        scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-POP.js");
+        //scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-POP.js");
         scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-POP-Beta.js");
-        scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-POP-Classic.js");
+        //scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-POP-Classic.js");
         scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-Prefs-Accounts-Data.js");
 
         var date = new Date();
@@ -79,14 +79,8 @@ nsYahoo.prototype =
             //get prefs
             var oData = this.loadPrefs();
 
-            if (oData.bClassic) //use new yahoo classic handler
-                this.m_CommMethod = new YahooPOPClassic(this.m_oResponseStream, this.m_Log, oData);
-
-            if (oData.bBeta) //use beta site
-                this.m_CommMethod = new YahooPOPBETA(this.m_oResponseStream, this.m_Log, oData);
-
-            if (!this.m_CommMethod) //use standard site
-                this.m_CommMethod = new YahooPOP(this.m_oResponseStream, this.m_Log, oData);
+            //use beta site
+            this.m_CommMethod = new YahooPOPBETA(this.m_oResponseStream, this.m_Log, oData);
 
             var bResult = this.m_CommMethod.logIn(this.m_szUserName, this.m_szPassWord);
 

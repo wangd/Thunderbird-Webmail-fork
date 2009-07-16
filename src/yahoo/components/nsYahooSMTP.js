@@ -13,9 +13,9 @@ function nsYahooSMTP()
 
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
-        scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-SMTP.js");
+       // scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-SMTP.js");
         scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-SMTP-Beta.js");
-        scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-SMTP-Classic.js");
+       // scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-SMTP-Classic.js");
         scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-Prefs-Accounts-Data.js");
 
         var date = new Date();
@@ -89,15 +89,8 @@ nsYahooSMTP.prototype =
 
             //get prefs
             var oData = this.loadPrefs();
-
-            if (oData.bClassic) //use new yahoo classic handler
-                this.m_CommMethod = new YahooSMTPClassic(this.m_oResponseStream, this.m_Log, oData);
-                
-            if (oData.bBeta) //use beta site
-                this.m_CommMethod = new YahooSMTPBETA(this.m_oResponseStream, this.m_Log, oData);
-
-            if (!this.m_CommMethod) //use standard site
-                this.m_CommMethod = new YahooSMTP(this.m_oResponseStream, this.m_Log, oData);
+            //use beta site
+            this.m_CommMethod = new YahooSMTPBETA(this.m_oResponseStream, this.m_Log, oData);
 
             var bResult = this.m_CommMethod.logIn(this.m_szUserName, this.m_szPassWord);
 
