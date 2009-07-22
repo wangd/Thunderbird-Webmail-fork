@@ -1,11 +1,18 @@
-function HTMLescape()
+function HTMLescape(oLog)
 {
     var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
     scriptLoader = scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
     scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-           
-    var  szLogFileName = "HTML escape Log ";
-    this.m_Log = new DebugLog("webmail.logging.comms", ExtHotmailGuid, szLogFileName);
+             
+    if (oLog)
+    {
+    	this.m_Log = oLog; 
+    }
+    else
+    {
+    	var  szLogFileName = "HTML escape Log ";
+    	this.m_Log = new DebugLog("webmail.logging.comms", ExtHotmailGuid, szLogFileName);
+    }
     
     this.m_Timer = Components.classes["@mozilla.org/timer;1"]
                              .createInstance(Components.interfaces.nsITimer); 
@@ -55,6 +62,8 @@ HTMLescape.prototype.decode = function(rawMSG)
         
           
         //some more MS use
+        
+        if (szMSG.search(/&#60;/gm)!=-1) szMSG = szMSG.replace(/&#60;/gm,"<");
         if (szMSG.search(/&lt;/g)!=-1) szMSG = szMSG.replace(/&lt;/gm,"<");
         if (szMSG.search(/&gt;/g)!=-1) szMSG = szMSG.replace(/&gt;/gm,">");
         if (szMSG.search(/&quot;/g)!=-1) szMSG = szMSG.replace(/&quot;/gm,"\"");
@@ -136,9 +145,15 @@ HTMLescape.prototype.notify = function (timer)
         //clean only complete lines
         var iComplete = this.m_szTempMSG.lastIndexOf(this.kTerminator )
         if (iComplete ==-1)
-            iComplete = this.m_szTempMSG.lastIndexOf(this.kTerminatorAlt)+ this.kTerminatorAlt.length;
+        {
+            iComplete = this.m_szTempMSG.lastIndexOf(this.kTerminatorAlt)
+            if (iComplete==-1)
+            	iComplete = this.kBlockSize;
+            else
+            	iComplete += this.kTerminatorAlt.length;
+        }
         else
-            iComplete += this.kTerminator.length
+            iComplete += this.kTerminator.length;
         this.m_Log.Write("HTMLescape.js - notify - iComplete " + iComplete);    
 
         var szToClean = this.m_szTempMSG.substr(0,iComplete );
@@ -153,8 +168,7 @@ HTMLescape.prototype.notify = function (timer)
             timer.cancel();
             this.m_inStream.close();
             this.m_inStream = null;
-            if (this.m_szTempMSG.length>0) this.m_szCleanMSG += this.decode(this.m_szTempMSG); 
-            this.m_Log.Write("HTMLescape.js - notify - Clean Message \n" + this.m_szCleanMSG);
+            if (this.m_szTempMSG.length>0) this.m_szCleanMSG += this.decode(this.m_szTempMSG);
             this.m_callback(this.m_szCleanMSG, this.m_parent );
             this.m_szTempMSG = null;
         }
