@@ -175,7 +175,7 @@ HotmailScreenRipperBETA.prototype =
             var aRefresh = szResponse.match(patternHotmailJSRefresh); 
             if (!aRefresh) aRefresh = szResponse.match(patternHotmailJSRefreshAlt);
             if (!aRefresh) aRefresh = szResponse.match(patternHotmailRefresh2);
-            if (!aRefresh) aRefresh = szResponse.match(patternHotmailJSRefreshAlt3);  
+            if (!aRefresh && mainObject.m_iStage>0) aRefresh = szResponse.match(patternHotmailJSRefreshAlt3);  
             mainObject.m_Log.Write("Hotmail-SR-BETA-SMTP - loginOnloadHandler aRefresh "+ aRefresh);
             if (aRefresh)
             {
@@ -229,7 +229,7 @@ HotmailScreenRipperBETA.prototype =
                     szData = szPasswordPadding.substr(0,(lPad<0)?0:lPad);
                     mainObject.m_HttpComms.addValuePair("PwdPad",szData);
                     
-                    mainObject.m_HttpComms.addValuePair("loginOptions","2");
+                    mainObject.m_HttpComms.addValuePair("LoginOptions","3");
                     mainObject.m_HttpComms.addValuePair("CS","");
                     mainObject.m_HttpComms.addValuePair("FedState","");
                     
@@ -241,8 +241,11 @@ HotmailScreenRipperBETA.prototype =
                     mainObject.m_HttpComms.addValuePair("passwd",mainObject.urlEncode(mainObject.m_szPassWord));       
                     mainObject.m_HttpComms.addValuePair("remMe","1");
                     mainObject.m_HttpComms.addValuePair("NewUser","1");
+                    mainObject.m_HttpComms.addValuePair("i1","0");
+                    mainObject.m_HttpComms.addValuePair("i2","0");
+                    mainObject.m_HttpComms.addValuePair("type","11");
                     
-                    var szSFT = szResponse.match(patternHotmailSFT)[1];   
+                    var szSFT = mainObject.urlEncode(szResponse.match(patternHotmailSFT)[1]);   
                     mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler - szSFT :" +szSFT);
                     mainObject.m_HttpComms.addValuePair("PPFT",szSFT);
 
@@ -353,7 +356,7 @@ HotmailScreenRipperBETA.prototype =
                             var regExp = new RegExp("^"+mainObject.m_aszFolders[i]+"$","i");
                             mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler - regExp : "+regExp );
                             
-                            var oEscape = new HTMLescape();
+                            var oEscape = new HTMLescape(mainObject.m_Log);
                             for (var j=0; j<aszFolderList.length; j++)
                             {
                                 var szTitle = aszFolderList[j].match(patternHotmailFolderTitle)[1];
@@ -544,7 +547,7 @@ HotmailScreenRipperBETA.prototype =
                   
                 var szAnchorDate = szNavBlock.match(patternHotmailAnchorDate)[1];
                 mainObject.m_Log.Write("Hotmail-SR-BETA - mailBoxOnloadHandler -szAnchorDate : " +szAnchorDate);              
-                var oEscape = new HTMLescape();
+                var oEscape = new HTMLescape(mainObject.m_Log);
                 szAnchorDate = oEscape.decode(szAnchorDate);
                 szAnchorDate = szAnchorDate.replace(/\:/g,"\\:");
                 delete oEscape;  
@@ -664,7 +667,7 @@ HotmailScreenRipperBETA.prototype =
             if (bRead)
             {
                 oMSG = new HotmailMSG();
-                var oEscape = new HTMLescape();
+                var oEscape = new HTMLescape(this.m_Log);
                 
                 oMSG.szMad = szMSGData.match(patternHotmailMad)[1];
                 this.m_Log.Write("Hotmail-SR-BETA..js - processMSG - oMSG.szMad -" + oMSG.szMad);
@@ -1091,7 +1094,7 @@ HotmailScreenRipperBETA.prototype =
                     szEmail = szEmail.replace(/<\/pr$/,"");  //clean bad tag
                     szEmail = szEmail.replace(/<\/pre$/,"");  //clean bad tag - Why can't MS get this right
 
-                    mainObject.m_MSGEscape = new HTMLescape();
+                    mainObject.m_MSGEscape = new HTMLescape(mainObject.m_Log);
                     if (!mainObject.m_MSGEscape.decodeAsync(szEmail, mainObject.emailCleanCallback, mainObject)) 
                         throw new Error ("email clean failed")
                 break;
@@ -1360,6 +1363,7 @@ HotmailScreenRipperBETA.prototype =
         szEncoded = szEncoded.replace(/!/g,"%21");
         szEncoded = szEncoded.replace(/\:/g,"%3A");
         szEncoded = szEncoded.replace(/\#/g,"%23");
+        szEncoded = szEncoded.replace(/\@/g,"%40");
 
         szEncoded = szEncoded.replace(/%5B/g,"[");
         szEncoded = szEncoded.replace(/%5D/g,"]");

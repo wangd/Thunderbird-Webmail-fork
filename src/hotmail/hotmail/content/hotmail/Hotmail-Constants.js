@@ -31,8 +31,6 @@ const patternHotmailLoginURL = /srf_uPost=['|"](.*?)["|']/i;
 const patternHotmailSRBlob = /srf_sRBlob=['|"](.*?)["|']/i;
 const patternHotmailSFT =/srf_sFT=.*?value=['|"](.*?)["|']/i;
 const patternHotmailJavaRefresh = /location\.replace\("(.*?)"\)/i;
-const patternHotmailRefresh2 = /window\.location=['|"](.*?)['|"][\s\S]*?src=['|"](.*?)['|"]/i;
-const patternHotmailRefresh3 = /window\.location/i;
 
 const patternHotmailLoginForm = /<form.*?name="fmHF".*?>[\S\s]*?<\/form>/i;
 const patternHotmailForm = /<form[\S\s]*?>[\S\s]*?<\/form>/i;
@@ -77,6 +75,10 @@ const patternHotmailJSRefresh = /<html><head><script.*?>.*?\.location\.replace.*
 const patternHotmailJSRefreshAlt = /<head><meta http-equiv="REFRESH".*?content=".*?URL=(.*?)">.*?<\/head><\/html>/i;
 const patternHotmailJSRefreshAlt2 = /srf_uLogin.*?=.*?"(.*?)";/i;
 const patternHotmailJSRefreshAlt3 = /self\.location\.href = ['|"](.*?wsignin.*?)['|"]/i;
+const patternHotmailRefresh2 = /window\.location=['|"](.*?)['|"][\s\S]*?src=['|"](.*?)['|"]/i;
+const patternHotmailRefresh3 = /window\.location/i;
+
+
 
 const patternHotmailSMTPForm = /<form.*?name="aspnetForm".*?>[\S\s]*?<\/form>/i;
 const patternHotmailLogOut = /logout/i;

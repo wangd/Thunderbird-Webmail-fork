@@ -147,8 +147,10 @@ HotmailSMTPScreenRipperBETA.prototype =
             //check for java refresh
             var aRefresh = szResponse.match(patternHotmailJSRefresh); 
             if (!aRefresh) aRefresh = szResponse.match(patternHotmailJSRefreshAlt);
-            if (!aRefresh) aRefresh = szResponse.match(patternHotmailRefresh2);  
+            if (!aRefresh) aRefresh = szResponse.match(patternHotmailRefresh2);
             if (!aRefresh && mainObject.m_iStage>0) aRefresh = szResponse.match(patternHotmailJSRefreshAlt3);  
+            //if (!aRefresh) aRefresh = szResponse.match(patternHotmailJSRefreshAlt2);
+            //if (!aRefresh) aRefresh = szResponse.match(patternHotmailJSBounce);  
             mainObject.m_Log.Write("Hotmail-SR-BETA-SMTP - loginOnloadHandler aRefresh "+ aRefresh);
             if (aRefresh)
             {
@@ -201,7 +203,7 @@ HotmailSMTPScreenRipperBETA.prototype =
                     szData = szPasswordPadding.substr(0,(lPad<0)?0:lPad);
                     mainObject.m_HttpComms.addValuePair("PwdPad",szData);
                     
-                    mainObject.m_HttpComms.addValuePair("loginOptions","2");
+                    mainObject.m_HttpComms.addValuePair("LoginOptions","2");
                     mainObject.m_HttpComms.addValuePair("CS","");
                     mainObject.m_HttpComms.addValuePair("FedState","");
                     
@@ -466,7 +468,7 @@ HotmailSMTPScreenRipperBETA.prototype =
                             try
                             {
                                 szValue = aszInput[i].match(patternHotmailValue)[1];
-                                szValue = new HTMLescape().decode(szValue);
+                                szValue = new HTMLescape(mainObject.m_Log).decode(szValue);
                             }
                             catch(err){}
 
@@ -831,6 +833,7 @@ HotmailSMTPScreenRipperBETA.prototype =
         szEncoded = szEncoded.replace(/!/g,"%21");
         szEncoded = szEncoded.replace(/\:/g,"%3A");
         szEncoded = szEncoded.replace(/\#/g,"%23");
+        szEncoded = szEncoded.replace(/\@/g,"%40");
 
         szEncoded = szEncoded.replace(/%5B/g,"[");
         szEncoded = szEncoded.replace(/%5D/g,"]");
@@ -841,7 +844,7 @@ HotmailSMTPScreenRipperBETA.prototype =
     },
   
   
-      urlDecode : function (szDate)
+    urlDecode : function (szDate)
     {
         var szDecode = szDate.replace(/\\x3a/g,":");
         szDecode = szDecode.replace(/\\x2f/g,"/");
