@@ -9,10 +9,10 @@ var gYahooSpamImage =
     init: function ()
     {
         try
-        {
+        {     	
             this.m_Log = new DebugLog("webmail.logging.comms",
                                       "{3c8e8390-2cf6-11d9-9669-0800200c9a66}",
-                                      "yahoo-SpamImage"),
+                                      "yahoo-SpamImage");
             this.m_Log.Write("YahooSpamImage : init - START");
             
             this.m_params = window.arguments[0].QueryInterface(Components.interfaces.nsIDialogParamBlock);
