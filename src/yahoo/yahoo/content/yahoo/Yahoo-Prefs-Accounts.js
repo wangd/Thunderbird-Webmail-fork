@@ -360,8 +360,7 @@ var gPrefAccounts =
         {
             this.m_DebugLog.Write("Yahoo-Pref-Accounts : folderListAdd - START");
 
-            var iType = document.getElementById("radiogroupMode").value;  
-            this.m_DebugLog.Write("Yahoo-Pref-Accounts : folderListAdd -  iType "+ iType);
+            var iType = 1;
                         
             var szUserName = this.m_aszUserList[this.m_iIndex].toLowerCase();
             this.m_DebugLog.Write("Yahoo-Pref-Accounts : folderListAdd -  szUserName "+ szUserName);
