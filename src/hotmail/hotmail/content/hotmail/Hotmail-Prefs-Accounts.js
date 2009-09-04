@@ -96,13 +96,11 @@ var gPrefAccounts =
                             this.m_DebugLog.Write("Hotmail-Pref-Accounts : getUserNames - szDomain " + szDomain);
 
                             var szContentID ={value:null};
-                            var iType = 0 ;   //default pop
-                            if (szType.search(/imap/i)!=-1) iType = 1;                           
-                            var bDomainCheck = domainManager.getDomainForProtocol(szDomain, iType==0?"pop":"imap", szContentID);                               
+                            var iType = 0 ;   //default po                    
+                            var bDomainCheck = domainManager.getDomainForProtocol(szDomain, "pop", szContentID);                               
                             if (bDomainCheck)//domain found
                             {
-                                if (szContentID.value == this.m_cszHotmailPOPContentID
-                                     || szContentID.value == this.m_cszHotmailIMAPContentID ) //Hotmail account found
+                                if (szContentID.value == this.m_cszHotmailPOPContentID) //Hotmail account found
                                 {
                                    this.m_DebugLog.Write("Hotmail-Pref-Accounts : getUserNames - userName raw " + szUserName);
 
@@ -169,107 +167,62 @@ var gPrefAccounts =
 
                 var prefAccess = new WebMailCommonPrefAccess();
                 var oPref = {Value : null};
-
-                //get iMode
-                if (!prefAccess.Get("int","hotmail.Account."+szUserName+".iMode",oPref))
-                   oPref.Value = 2 //Default to Live account
-                this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - selectUserName - iMode " + oPref.Value);
-                document.getElementById("radiogroupMode").selectedIndex  = oPref.Value;
-
-                if (iType == 1 && oPref.Value != 1) //imap and not webdav
-                    prefAccess.Set("int","hotmail.Account."+szUserName+".iMode",1);
-                    
-                //hid AlternativeGroup
-                if (oPref.Value==0 || oPref.Value == 2)  //enable alt part  --  Old site || Beta Site
+                                  
+                //download unread
+                if (!prefAccess.Get("bool","hotmail.Account."+szUserName+".bDownloadUnread",oPref))
+                   oPref.Value = false; //Default
+                this.m_DebugLog.Write("Hotmail-Pref-Accounts : selectUserName -  bUnread "+ oPref.Value);
+                document.getElementById("chkDownloadUnread").checked = oPref.Value;
+                if (oPref.Value)
                 {
-                    this.m_DebugLog.Write("Hotmail-Pref-Accounts : selectUserName -  show  AlternativeGroup");
-                    document.getElementById("vboxAlt").setAttribute("hidden", false);
-
-                    //save in sent items
-                    if (oPref.Value == 2)  //new site
-                        document.getElementById("vboxSentItems").setAttribute("hidden", true);
-                    else                  //old site
-                        document.getElementById("vboxSentItems").setAttribute("hidden", false);
-                        
-                    document.getElementById("tabMode").collapsed = false;// hide mode tab
-                    document.getElementById("tabPOP").collapsed = false;// hide pop tab
+                    document.getElementById("chkMarkAsRead").checked = true;
+                    document.getElementById("chkMarkAsRead").setAttribute("disabled", true);
                 }
-                else                      //disable alt part  -- Webdav
+
+                //mark asread
+                if (!prefAccess.Get("bool","hotmail.Account."+szUserName+".bMarkAsRead",oPref))
+                   oPref.Value = true; //Default
+                this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - selectUserName - bMarkAsRead " + oPref.Value);
+                document.getElementById("chkMarkAsRead").checked = oPref.Value;
+
+                //download junk mail
+                if (!prefAccess.Get("bool","hotmail.Account."+szUserName+".bUseJunkMail",oPref))
+                   oPref.Value = false; //Default
+                this.m_DebugLog.Write("Hotmail-Pref-Accounts : selectUserName -  bJunkFolder "+ oPref.Value);
+                document.getElementById("chkJunkMail").checked = oPref.Value;
+                
+                //Send HTML
+                if (!prefAccess.Get("bool","hotmail.Account."+szUserName+".bSendHtml",oPref))
+                   oPref.Value = false; //Default
+                this.m_DebugLog.Write("Hotmail-Pref-Accounts : selectUserName -  data.bSendHtml "+ oPref.Value);
+                document.getElementById("radiogroupAlt").selectedIndex = oPref.Value?1:0;
+
+
+                //clear Folder list
+                var listFolders = document.getElementById("listFolders");
+                var iRowCount = listFolders.getRowCount()
+                for (var i=0; i<iRowCount; i++)
                 {
-                    this.m_DebugLog.Write("Hotmail-Pref-Accounts : selectUserName -  Hide  AlternativeGroup");
-                    document.getElementById("vboxAlt").setAttribute("hidden", true);
-                    document.getElementById("vboxSentItems").setAttribute("hidden", false);
-                    
-                    if (iType == 1) //imap
+                    this.m_DebugLog.Write("Hotmail-Pref-Accounts : selectUserName - removing " + i);
+                    var item = listFolders.getItemAtIndex(0);
+                    listFolders.removeChild(item);
+                }
+
+                //add folder details
+                if (!prefAccess.Get("char","hotmail.Account."+szUserName+".szFolders",oPref))
+                   oPref.Value = null; //Default
+                this.m_DebugLog.Write("Hotmail-Pref-Accounts : selectUserName - aszFolder " + oPref.Value);
+                if (oPref.Value)
+                {
+                    var aFolders = oPref.Value.split("\r");
+                    for (var j=0; j<aFolders.length; j++)
                     {
-                        document.getElementById("tabMode").collapsed = true;// mode
-                        document.getElementById("tabPOP").collapsed = true;// mode
-                        document.getElementById("tabsAccount").selectedIndex = 2; //SMTP
-                    }
-                    else
-                    {
-                        document.getElementById("tabMode").collapsed = false;// hide mode tab
-                        document.getElementById("tabPOP").collapsed = false;// hide pop tab
+                        this.m_DebugLog.Write("Hotmail-Pref-Accounts : selectUserName - aszFolder " + aFolders[j] + " j "+j);
+                        if (aFolders[j].length>0)
+                            this.addItemFolderList(aFolders[j]);
                     }
                 }
 
-                if (iType != 1)  //not imap
-                { 
-                    //download unread
-                    if (!prefAccess.Get("bool","hotmail.Account."+szUserName+".bDownloadUnread",oPref))
-                       oPref.Value = false; //Default
-                    this.m_DebugLog.Write("Hotmail-Pref-Accounts : selectUserName -  bUnread "+ oPref.Value);
-                    document.getElementById("chkDownloadUnread").checked = oPref.Value;
-                    if (oPref.Value)
-                    {
-                        document.getElementById("chkMarkAsRead").checked = true;
-                        document.getElementById("chkMarkAsRead").setAttribute("disabled", true);
-                    }
-
-                    //mark asread
-                    if (!prefAccess.Get("bool","hotmail.Account."+szUserName+".bMarkAsRead",oPref))
-                       oPref.Value = true; //Default
-                    this.m_DebugLog.Write("Hotmail-Pref-Accounts.js - selectUserName - bMarkAsRead " + oPref.Value);
-                    document.getElementById("chkMarkAsRead").checked = oPref.Value;
-    
-                    //download junk mail
-                    if (!prefAccess.Get("bool","hotmail.Account."+szUserName+".bUseJunkMail",oPref))
-                       oPref.Value = false; //Default
-                    this.m_DebugLog.Write("Hotmail-Pref-Accounts : selectUserName -  bJunkFolder "+ oPref.Value);
-                    document.getElementById("chkJunkMail").checked = oPref.Value;
-                    
-                    //Send HTML
-                    if (!prefAccess.Get("bool","hotmail.Account."+szUserName+".bSendHtml",oPref))
-                       oPref.Value = false; //Default
-                    this.m_DebugLog.Write("Hotmail-Pref-Accounts : selectUserName -  data.bSendHtml "+ oPref.Value);
-                    document.getElementById("radiogroupAlt").selectedIndex = oPref.Value?1:0;
-    
-    
-                    //clear Folder list
-                    var listFolders = document.getElementById("listFolders");
-                    var iRowCount = listFolders.getRowCount()
-                    for (var i=0; i<iRowCount; i++)
-                    {
-                        this.m_DebugLog.Write("Hotmail-Pref-Accounts : selectUserName - removing " + i);
-                        var item = listFolders.getItemAtIndex(0);
-                        listFolders.removeChild(item);
-                    }
-    
-                    //add folder details
-                    if (!prefAccess.Get("char","hotmail.Account."+szUserName+".szFolders",oPref))
-                       oPref.Value = null; //Default
-                    this.m_DebugLog.Write("Hotmail-Pref-Accounts : selectUserName - aszFolder " + oPref.Value);
-                    if (oPref.Value)
-                    {
-                        var aFolders = oPref.Value.split("\r");
-                        for (var j=0; j<aFolders.length; j++)
-                        {
-                            this.m_DebugLog.Write("Hotmail-Pref-Accounts : selectUserName - aszFolder " + aFolders[j] + " j "+j);
-                            if (aFolders[j].length>0)
-                                this.addItemFolderList(aFolders[j]);
-                        }
-                    }
-                }
                 
                 //Save Copy in sent items
                 if (!prefAccess.Get("bool","hotmail.Account."+szUserName+".bSaveCopy",oPref))
@@ -348,49 +301,6 @@ var gPrefAccounts =
 
        this.m_DebugLog.Write("Hotmail-Pref-Accounts : tabSelectionChanged - END");
    },
-
-/**********************************************************************/
-//Deck Mode Panel
-/**********************************************************************/
-
-
-    rgModeOnChange : function ()
-    {
-        this.m_DebugLog.Write("Hotmail-Pref-Accounts : rgModeOnChange - START");
-
-        var iMode = document.getElementById("radiogroupMode").value;
-        this.m_DebugLog.Write("Hotmail-Pref-Accounts : rgModeOnChange -  iMode "+ iMode);
-
-        var szUserName = this.m_aszUserList[this.m_iIndex].szUsername.toLowerCase();
-        szUserName = szUserName.replace(/\./g,"~");
-        this.m_DebugLog.Write("Hotmail-Pref-Accounts : rgModeOnChange -  szUserName "+ szUserName);
-
-        //write pref
-        var prefAccess = new WebMailCommonPrefAccess();
-        prefAccess.Set("int","hotmail.Account."+szUserName+".iMode",iMode);
-
-        //hid AlternativeGroup
-        if (iMode == 0 || iMode ==2 )  //enable alt part  -- Old Site || new site
-        {
-            this.m_DebugLog.Write("Hotmail-Pref-Accounts : userClick -  show  AlternativeGroup");
-            document.getElementById("vboxAlt").setAttribute("hidden", false);
-
-            //save in sent items
-            if (iMode == 2)  //new site
-                document.getElementById("vboxSentItems").setAttribute("hidden", true);
-            else            //old site
-                document.getElementById("vboxSentItems").setAttribute("hidden", false);
-        }
-        else                //disable alt part  -- Webdav
-        {
-            this.m_DebugLog.Write("Hotmail-Pref-Accounts : userClick -  Hide  AlternativeGroup");
-            document.getElementById("vboxAlt").setAttribute("hidden", true);
-            document.getElementById("vboxSentItems").setAttribute("hidden", false);
-        }
-
-        this.m_DebugLog.Write("Hotmail-Pref-Accounts : rgModeOnChange - END");
-    },
-
 
 
 
@@ -683,25 +593,6 @@ var gPrefAccounts =
 /**********************************************************************/
 //Deck SMTP Panel
 /**********************************************************************/
-    chkSentItemsOnChange : function ()
-    {
-        this.m_DebugLog.Write("Hotmail-Pref-Accounts : chkSentItemsOnChange - START");
-
-        var bSaveItem = document.getElementById("chkSentItems").checked ? false : true;
-        this.m_DebugLog.Write("Hotmail-Pref-Accounts : chkSentItemsOnChange -  bSaveItem "+ bSaveItem);
-
-        var szUserName = this.m_aszUserList[this.m_iIndex].szUsername.toLowerCase();
-        szUserName = szUserName.replace(/\./g,"~");
-        this.m_DebugLog.Write("Hotmail-Pref-Accounts : chkJunkMailOnChange -  username "+ szUserName);
-
-        var prefAccess = new WebMailCommonPrefAccess();
-        prefAccess.Set("bool","hotmail.Account."+szUserName+".bSaveCopy",bSaveItem);
-
-        this.m_DebugLog.Write("Hotmail-Pref-Accounts : chkSentItemsOnChange - END");
-    },
-
-
-
     rgAltOnChange : function ()
     {
         this.m_DebugLog.Write("Hotmail-Pref-Accounts : rgAltOnChange - START");

@@ -28,21 +28,7 @@ var gHotmailStartUp =
             var oPref = {Value : null};
             
             if (!WebMailPrefAccess.Get("int","hotmail.version",oPref))
-            {               
-                //get user name list
-                var aszUserList = this.getUserNames();
-                for (var i=0; i<aszUserList.length; i++)
-                {
-                    var szUserName = aszUserList[i].replace(/\./g,"~");
-                    this.m_Log.Write("nsHotmail.js - init - szUserName " +szUserName);
-
-                    //check for old accounts without mode setting
-                    if (!WebMailPrefAccess.Get("int","hotmail.Account."+szUserName+".iMode",oPref))
-                    {
-                        this.m_Log.Write("nsHotmail.js - init - set to old default value ");
-                        WebMailPrefAccess.Set("int","hotmail.Account."+szUserName+".iMode",0);
-                    }
-                }
+            { 
                 WebMailPrefAccess.DeleteBranch("hotmail.Account.updated");
                 WebMailPrefAccess.Set("int","hotmail.version", 1); 
             }

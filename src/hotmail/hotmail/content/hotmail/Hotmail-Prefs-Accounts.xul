@@ -35,24 +35,11 @@
 
                 <tabbox  flex="1" id="tabsAccount" onselect="gPrefAccounts.tabSelectionChanged();">
                     <tabs>
-                        <tab label="&HotmailPref.Tab.Mode.Title;" id="tabMode"/>
                         <tab label="&HotmailPref.Tab.POP.Title;"  id="tabPOP"/>
                         <tab label="&HotmailPref.Tab.SMTP.Title;" id="tabSMTP"/>
                     </tabs>
                     <tabpanels flex="1" id="tabPanels">
-                        <vbox id="modePanel" class="panel" flex="1">
-                            <vbox>
-                               <description id="labelMode">
-                                    &HotmailPref.Mode.Label;
-                                </description>
-                                <radiogroup id="radiogroupMode" onclick ="gPrefAccounts.rgModeOnChange();"  class="radio">
-                                    <radio label="&HotmailPref.Mode.HotmailOld.Label;"    value="0"/>
-                                    <radio label="&HotmailPref.Mode.WebDav.Label;"        value="1"/>
-                                    <radio label="&HotmailPref.Mode.HotmailLive.Label;"   value="2"/>
-                                </radiogroup>
-                             </vbox>
-                        </vbox>
-
+ 
                         <vbox id="popPanel" class="panel" flex="1">
                             <checkbox label="&HotmailPref.POP.DownloadUnread.Label;"
                                       accesskey="&HotmailPref.POP.DownloadUnread.AccessKey;"
@@ -96,12 +83,6 @@
 
                         <vbox id="smptPanel" class="panel" flex="1">
                             <vbox id="vboxSmtpItems">
-                                <vbox id="vboxSentItems">
-                                    <checkbox label="&HotmailPref.SMTP.SaveSentItems.Label;"
-                                              accesskey="&HotmailPref.SMTP.SaveSentItems.AccessKey;"
-                                              id="chkSentItems"
-                                              onclick ="gPrefAccounts.chkSentItemsOnChange();"/>
-                                </vbox>
                                 <vbox id="vboxAlt">
                                     <label value="&HotmailPref.SMTP.AlternativeGroup.Label;" id="labelAlt" flex="1"/>
                                     <radiogroup id="radiogroupAlt" onclick ="gPrefAccounts.rgAltOnChange();" class="radio">
