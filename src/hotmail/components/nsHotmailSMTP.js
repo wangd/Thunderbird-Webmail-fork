@@ -13,8 +13,6 @@ function nsHotmailSMTP()
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-Prefs-Data.js");
-        scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-WebDav-SMTP.js");
-        scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-ScreenRipper-SMTP.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-ScreenRipper-SMTP-BETA.js");
 
         var date = new Date();
@@ -90,14 +88,7 @@ nsHotmailSMTP.prototype =
             //load prefs
             var PrefData = this.getPrefs();
 
-            if (PrefData.iMode==1) ///webdav
-                this.m_CommMethod = new HotmailSMTPWebDav(this.m_oResponseStream, this.m_Log, PrefData);
-            else if (PrefData.iMode==0) //old website
-                this.m_CommMethod = new HotmailSMTPScreenRipper(this.m_oResponseStream, this.m_Log, PrefData);
-
-            if (!this.m_CommMethod) //default to new website
-                this.m_CommMethod = new HotmailSMTPScreenRipperBETA(this.m_oResponseStream, this.m_Log, PrefData);
-
+            this.m_CommMethod = new HotmailSMTPScreenRipperBETA(this.m_oResponseStream, this.m_Log, PrefData);
 
             var bResult = this.m_CommMethod.logIn(this.m_szUserName, this.m_szPassWord);
 
@@ -189,12 +180,6 @@ nsHotmailSMTP.prototype =
             if (WebMailPrefAccess.Get("bool","hotmail.bReUseSession",oPref))
                 oData.bReUseSession = oPref.Value;
             this.m_Log.Write("nsHotmailSMTP.js - getPrefs - hotmail.bReUseSession " + oPref.Value);
-
-            //get Mode
-            oPref.Value = null;
-            if (WebMailPrefAccess.Get("int","hotmail.Account."+szUserName+".iMode",oPref))
-                oData.iMode = oPref.Value;
-            this.m_Log.Write("nsHotmailSMTP.js - getPrefs - iMode " + oPref.Value);
 
             //do i save copy
             oPref.Value = null;

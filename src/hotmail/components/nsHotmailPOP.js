@@ -12,8 +12,6 @@ function nsHotmail()
         var scriptLoader =  Components.classes["@mozilla.org/moz/jssubscript-loader;1"];
         scriptLoader= scriptLoader.getService(Components.interfaces.mozIJSSubScriptLoader);
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
-        scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-WebDav-POP.js");
-        scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-ScreenRipper-POP.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-ScreenRipper-POP-BETA.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
         scriptLoader.loadSubScript("chrome://hotmail/content/Hotmail-Prefs-Data.js");
@@ -85,15 +83,7 @@ nsHotmail.prototype =
             //load webdav address
             var PrefData = this.getPrefs();
 
-            if (PrefData.iMode==1) ///webdav
-                this.m_CommMethod = new HotmailWebDav(this.m_oResponseStream, this.m_HotmailLog, PrefData);
-            else if (PrefData.iMode==0) //old WebSite
-                this.m_CommMethod = new HotmailScreenRipper(this.m_oResponseStream, this.m_HotmailLog, PrefData);
-
-            if (!this.m_CommMethod) //default to new website
-                this.m_CommMethod = new HotmailScreenRipperBETA(this.m_oResponseStream, this.m_HotmailLog, PrefData);
-
-
+            this.m_CommMethod = new HotmailScreenRipperBETA(this.m_oResponseStream, this.m_HotmailLog, PrefData);
 
             var bResult = this.m_CommMethod.logIn(this.m_szUserName, this.m_szPassWord);
 
@@ -331,12 +321,6 @@ nsHotmail.prototype =
             oPref.Value = null;
             if (WebMailPrefAccess.Get("bool","hotmail.bReUseSession",oPref))
                 oData.bReUseSession = oPref.Value;
-
-            //get Mode
-            oPref.Value = null;
-            if (WebMailPrefAccess.Get("int","hotmail.Account."+szUserName+".iMode",oPref))
-                oData.iMode = oPref.Value;
-            this.m_HotmailLog.Write("nsHotmail.js - getPrefs - iMode " + oData.iMode);
 
             //get spam
             oPref.Value = null;
