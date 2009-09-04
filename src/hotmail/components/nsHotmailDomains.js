@@ -439,11 +439,13 @@ nsHotmailDomains.prototype =
             if (this.m_iCount<aszDomain.length)
             {
                 if (!this.domainCheck(aszDomain[this.m_iCount], "POP", "@mozilla.org/HotmailPOP;1"))
-                    this.domainAdd(aszDomain[this.m_iCount], "POP", "@mozilla.org/HotmailPOP;1")
+                    this.domainAdd(aszDomain[this.m_iCount], "POP", "@mozilla.org/HotmailPOP;1");
                 if (!this.domainCheck(aszDomain[this.m_iCount], "SMTP", "@mozilla.org/HotmailSMTP;1"))
-                    this.domainAdd(aszDomain[this.m_iCount], "SMTP", "@mozilla.org/HotmailSMTP;1")
-                if (!this.domainCheck(aszDomain[this.m_iCount], "IMAP", "@mozilla.org/HotmailIMAP;1"))
-                    this.domainAdd(aszDomain[this.m_iCount], "IMAP", "@mozilla.org/HotmailIMAP;1")
+                    this.domainAdd(aszDomain[this.m_iCount], "SMTP", "@mozilla.org/HotmailSMTP;1");
+                    
+                //removed old IMAP entry
+                if (this.domainCheck(aszDomain[this.m_iCount], "IMAP", "@mozilla.org/HotmailIMAP;1"))
+                	this.m_DomainManager.removeDomainForProtocol(aszDomain[this.m_iCount], "IMAP");
             }
             else
             {
