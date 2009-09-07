@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <project name="hotmail" default="createxpi">
-    <property name="VERSION" value="1-2-22"/>
+    <property name="VERSION" value="1-2-23"/>
 
     <delete file="hotmail-${VERSION}.xpi"/>
     <delete file="hotmail.jar"/>
@@ -19,7 +19,7 @@
     <target name="createxpi" depends="createjar">
         <zip destfile="hotmail-${VERSION}.xpi" >
             <zipfileset dir="." includes="hotmail.jar" prefix="chrome"/>
-            <zipfileset dir="components" prefix="components" includes="**" excludes="*.idl *.bat"/>
+            <zipfileset dir="components" prefix="components" includes="**" excludes="*IMAP*.idl *.idl *.bat"/>
             <zipfileset dir="defaults" prefix="defaults" includes="**"/>
             <zipfileset dir="." includes="install.rdf"/>
             <zipfileset dir="." includes="install.js"/>
