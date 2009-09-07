@@ -182,7 +182,30 @@ YahooSMTPBETA.prototype =
             //if this fails we've gone somewhere new
             mainObject.m_Log.Write("YahooSMTPBETA.js - loginOnloadHandler - status :" +httpChannel.responseStatus );
             if (httpChannel.responseStatus != 200)
-                throw new Error("return status " + httpChannel.responseStatus);
+            {
+            	if (szResponse.search(/SessionIdReissue/igm)!=-1)
+            	{
+            		mainObject.m_Log.Write("YahooSMTPBETA.js - loginOnloadHandler : ID Reiussue" );
+            		mainObject.m_szWssid = szResponse.match(/;wssid=(.*?)<\/url>/i)[1];
+                    mainObject.m_Log.Write("YahooSMTPBETA.js - loginOnloadHandler - m_szWssid : "+mainObject.m_szWssid );
+
+                    mainObject.m_bReEntry = false;
+                    var szURI = szResponse.match(/<url>(.*?)<\/url>/i)[1];
+                    var oEscapeDecode = new HTMLescape();
+                    szURI = oEscapeDecode.decode(szURI);
+                    delete oEscapeDecode;
+                    mainObject.m_Log.Write("YahooSMTPBETA.js - loginOnloadHandler - szURI " + szURI);
+                    mainObject.m_HttpComms.setURI(szURI);
+                    mainObject.m_HttpComms.setRequestMethod("POST");
+                    mainObject.m_HttpComms.setContentType("application/xml");
+                    mainObject.m_HttpComms.addData(kListFolders);
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
+                    if (!bResult) throw new Error("httpConnection returned false");  
+                    return;
+            	}
+            	else
+            		throw new Error("return status " + httpChannel.responseStatus);
+            }
 
             if (szResponse.search(patternYahooLoginForm)!=-1)
             {
@@ -242,14 +265,15 @@ YahooSMTPBETA.prototype =
                         mainObject.m_HttpComms.addValuePair(szName,(szValue? encodeURIComponent(szValue):""));
                     }
 
-                    var szLogin = encodeURIComponent(mainObject.m_szLoginUserName);
+                    var szLogin = encodeURIComponent(mainObject.m_szUserName/*m_szLoginUserName*/);
                     mainObject.m_HttpComms.addValuePair("login", szLogin);
 
                     var szPass = encodeURIComponent(mainObject.m_szPassWord);
                     mainObject.m_HttpComms.addValuePair("passwd",szPass);
 
                     mainObject.m_HttpComms.addValuePair(".persistent","y");
-
+                    mainObject.m_HttpComms.addValuePair(".save","Sign+In");
+                    
                     mainObject.m_HttpComms.setURI(szLoginURL);
                     mainObject.m_HttpComms.setRequestMethod("POST");
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
@@ -262,9 +286,9 @@ YahooSMTPBETA.prototype =
                     if (aLoginRedirect == null)
                          throw new Error("error parsing yahoo login web page");
                     mainObject.m_Log.Write("YahooSMTPBETA.js - loginOnloadHandler - login redirect " + aLoginRedirect);
-                    var szLocation = aLoginRedirect[1];
-
-                    mainObject.m_HttpComms.setURI(szLocation);
+                    var szURL = aLoginRedirect[1];
+                                        
+                    mainObject.m_HttpComms.setURI(szURL);
                     mainObject.m_HttpComms.setRequestMethod("GET");
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
                     if (!bResult) throw new Error("httpConnection returned false");
@@ -353,7 +377,7 @@ YahooSMTPBETA.prototype =
                     var szLoginURL = mainObject.m_aLoginForm[0].match(patternYahooAction)[1];
                     mainObject.m_Log.Write("YahooSMTPBETA.js - loginOnloadHandler - loginURL " + szLoginURL);
 
-                    var aLoginData = mainObject.m_aLoginForm[0].match(patternYahooLogIn);
+                    var aLoginData = mainObject.m_aLoginForm[0].match(patternYahooInput);
                     mainObject.m_Log.Write("YahooSMTPBETA.js - loginOnloadHandler - loginData " + aLoginData);
 
                     for (i=0; i<aLoginData.length; i++)
@@ -430,7 +454,7 @@ YahooSMTPBETA.prototype =
                 this.m_szData = this.m_szData.replace(/FROMNAME/g,"");   
                           
             //get subject
-            var szSubject = this.m_Email.headers.getSubject();
+            var szSubject = this.encodeHTML(this.m_Email.headers.getSubject());         
             this.m_Log.Write("YahooSMTPBETA.js - rawMSG - szSubject " + szSubject);
             this.m_szData = this.m_szData.replace(/EMAILSUBJECT/,szSubject);   //set Subject
 
@@ -935,6 +959,13 @@ YahooSMTPBETA.prototype =
     },
 
 
+    encodeHTML : function (szRaw)
+    {
+        this.m_Log.Write("YahooSMTPBETA - encodeHTML - START");
+        var szMsg = szRaw.replace(/&/g, "&amp;");
+        this.m_Log.Write("YahooSMTPBETA - encodeHTML - ENd")
+        return szMsg;
+    },
 
     ////////////////////////////////////////////////////////////////////////////
     /////  Comms

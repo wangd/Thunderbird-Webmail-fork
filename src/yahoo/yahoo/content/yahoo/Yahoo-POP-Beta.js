@@ -178,21 +178,25 @@ YahooPOPBETA.prototype =
             mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - status : " +httpChannel.responseStatus );
             if (httpChannel.responseStatus != 200)
             {
-            	if (szResponse.search(/SessionIdReissue/igm)!=-1 && mainObject.m_bReEntry == true)
+            	if (szResponse.search(/SessionIdReissue/igm)!=-1)
             	{
             		mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler : ID Reiussue" );
-            		mainObject.m_szWssid = szResponse.match(/wssid=(.*?)<\/url>/igm)[1];
+            		mainObject.m_szWssid = szResponse.match(/;wssid=(.*?)<\/url>/i)[1];
                     mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - m_szWssid : "+mainObject.m_szWssid );
 
                     mainObject.m_bReEntry = false;
-                    var szURI = szResponse.match(/<url>(.*?)<\/url>/igm)[1];
+                    var szURI = szResponse.match(/<url>(.*?)<\/url>/i)[1];
+                    var oEscapeDecode = new HTMLescape();
+                    szURI = oEscapeDecode.decode(szURI);
+                    delete oEscapeDecode;
                     mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - szURI " + szURI);
                     mainObject.m_HttpComms.setURI(szURI);
                     mainObject.m_HttpComms.setRequestMethod("POST");
                     mainObject.m_HttpComms.setContentType("application/xml");
                     mainObject.m_HttpComms.addData(kListFolders);
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
-                    if (!bResult) throw new Error("httpConnection returned false");           		
+                    if (!bResult) throw new Error("httpConnection returned false");  
+                    return;
             	}
             	else
             		throw new Error("return status " + httpChannel.responseStatus);
@@ -262,13 +266,14 @@ YahooPOPBETA.prototype =
                         mainObject.m_HttpComms.addValuePair(szName,(szValue? encodeURIComponent(szValue):""));
                     }
 
-                    var szLogin = encodeURIComponent(mainObject.m_szLoginUserName);
+                    var szLogin = encodeURIComponent(mainObject.m_szUserName/*m_szLoginUserName*/);
                     mainObject.m_HttpComms.addValuePair("login", szLogin);
 
                     var szPass = encodeURIComponent(mainObject.m_szPassWord);
                     mainObject.m_HttpComms.addValuePair("passwd",szPass);
 
                     mainObject.m_HttpComms.addValuePair(".persistent","y");
+                    mainObject.m_HttpComms.addValuePair(".save","Sign+In");
 
                     mainObject.m_HttpComms.setURI(szLoginURL);
                     mainObject.m_HttpComms.setRequestMethod("POST");
@@ -282,10 +287,9 @@ YahooPOPBETA.prototype =
                     if (aLoginRedirect == null)
                          throw new Error("error parsing yahoo login web page");
                     mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - login redirect " + aLoginRedirect);
-
-                    var szLocation = aLoginRedirect[1];
-
-                    mainObject.m_HttpComms.setURI(szLocation);
+                    var szURL = aLoginRedirect[1];
+                                        
+                    mainObject.m_HttpComms.setURI(szURL);
                     mainObject.m_HttpComms.setRequestMethod("GET");
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
                     if (!bResult) throw new Error("httpConnection returned false");
@@ -333,7 +337,11 @@ YahooPOPBETA.prototype =
                     mainObject.m_szHomeURI = szLocation;
 
                     //get wssid
-                    mainObject.m_szWssid = encodeURIComponent(szResponse.match(kPatternWssid)[1]);
+                    try
+                    {
+                    	mainObject.m_szWssid = encodeURIComponent(szResponse.match(kPatternWssid)[1]);
+                    }
+                    catch(e){}
                     mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - m_szWssid : "+mainObject.m_szWssid );
 
                     mainObject.m_szLocationURI = httpChannel.URI.prePath ;
@@ -424,7 +432,7 @@ YahooPOPBETA.prototype =
                         var szValue = aLoginData[i].match(patternYahooAltValue)[1];
                         szValue = szValue.replace(/["|']/gm,"");
                         szValue = szValue.replace(/^\s*|\s*$/gm,"");
-                        mainObject.m_Log.Write("nsYahoo.js - loginOnloadHandler - loginData value " + szValue);
+                        mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - loginData value " + szValue);
 
                         mainObject.m_HttpComms.addValuePair(szName,(szValue? encodeURIComponent(szValue):""));
                     }
