@@ -7,7 +7,7 @@
 
         <em:id>{3c8e8390-2cf6-11d9-9669-0800200c9a66}</em:id>
         <em:type>2</em:type>
-        <em:version>1.3.2</em:version>
+        <em:version>1.3.3</em:version>
 
         <em:name>WebMail</em:name>
         <em:description>Lets Thunderbird access web mail</em:description>
@@ -31,6 +31,7 @@
         <em:contributor>Softcatal&#195; (ca-AD)|4</em:contributor>
         <em:contributor>Asterxx (RF) (nl-NL)|5</em:contributor>
         <em:contributor>George C. Tsoi (zh-CN)|7</em:contributor>
+        <em:contributor>Greener (zh-TW)|7</em:contributor>
         <em:contributor>Blackdire (zh-CN)|7</em:contributor>
         <em:contributor>Fishbone (zh-CN)|7</em:contributor>
         <em:contributor>Akilles (fi-FI)|14</em:contributor>
@@ -62,12 +63,26 @@
                 <em:maxVersion>3.0</em:maxVersion>
             </Description>
 
+            <!-- Synovel Spicebird -->
+           <Description>
+                  <em:id>{ee53ece0-255c-4cc6-8a7e-81a8b6e5ba2c}</em:id>
+                  <em:minVersion>0.4</em:minVersion>
+                  <em:maxVersion>1.0</em:maxVersion>
+           </Description>
+
             <!-- SeaMonkey -->
             <Description>
                 <em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id>
                 <em:minVersion>1.1</em:minVersion>
-                <em:maxVersion>1.5a</em:maxVersion>
+                <em:maxVersion>1.5</em:maxVersion>
             </Description>
+            
+            <!-- Postbox -->
+            <Description>
+                <em:id>postbox@postbox-inc.com</em:id>
+                <em:minVersion>1.0b13</em:minVersion>
+                <em:maxVersion>1.0.*</em:maxVersion>
+            </Description>          
         </em:targetApplication>
 
     </Description>
