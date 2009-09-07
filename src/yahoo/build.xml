@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <project name="yahoo" default="createxpi">
-    <property name="VERSION" value="1-4-4"/>
+    <property name="VERSION" value="1-4-5"/>
 
     <delete file="yahoo-${VERSION}.xpi"/>
     <delete file="yahoo.jar"/>

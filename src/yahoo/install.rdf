@@ -6,7 +6,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
     <Description about="urn:mozilla:install-manifest">
 
         <em:id>{d7103710-6112-11d9-9669-0800200c9a66}</em:id>
-        <em:version>1.4.4</em:version>
+        <em:version>1.4.5</em:version>
         <em:type>2</em:type>
 
         <em:name>WebMail - Yahoo</em:name>
@@ -66,6 +66,13 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
                 <em:minVersion>1.1</em:minVersion>
                 <em:maxVersion>1.5 </em:maxVersion>
             </Description>
+            
+            <!-- Postbox -->
+            <Description>
+                <em:id>postbox@postbox-inc.com</em:id>
+                <em:minVersion>1.0b13</em:minVersion>
+                <em:maxVersion>1.0.*</em:maxVersion>
+            </Description>         
         </em:targetApplication>
 
         <em:requires>
