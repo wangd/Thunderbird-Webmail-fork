@@ -170,6 +170,7 @@ headers.prototype =
                 case 2://subtype
                     szContent= szContentType.match(/.*?\/(.*?);.*?$/)[1];
                     szContent = szContent.replace(/\s/,"");
+                    szContent = szContent.replace(/;/," ");
                 break;
 
                 case 3://boundary
