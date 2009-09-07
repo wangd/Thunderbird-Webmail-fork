@@ -110,19 +110,20 @@ base64.prototype.notify = function (timer)
             case 0: //encode
                 var iCurrentStream = this.m_inStream.available();
                 var iBlock = iCurrentStream > this.m_kBlockSize ? this.m_kBlockSize : iCurrentStream;
-
-                
                 var i=0;
+                var buf = new Array();
+                buf.length = iBlock;
+                buf = this.m_inStream.readByteArray(iBlock);
+
                 while (iBlock>i)
                 {
                     this.m_iCount+=3;
-                    i+=3;
-                    if (this.m_inStream.available()>=3)
+                    if (buf.length - i >=3)
                     {   
-                        var chr1 = this.m_inStream.readByteArray(1);
-                        var chr2 = this.m_inStream.readByteArray(1);
-                        var chr3 = this.m_inStream.readByteArray(1);
-                        
+                        var chr1 = buf[i];
+                        var chr2 = buf[i+1];
+                        var chr3 = buf[i+2];
+                        i+=3;
                         var enc1 = chr1 >> 2;
                         var enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
                         var enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
@@ -130,6 +131,7 @@ base64.prototype.notify = function (timer)
                         
                         this.m_szOutMSG += this.m_kBase64chars[enc1] +  this.m_kBase64chars[enc2] + 
                                            this.m_kBase64chars[enc3] +  this.m_kBase64chars[enc4];
+                        
                     }
                     
                     if (this.bLineBreak && (this.m_iCount >= this.iLineBreak))
@@ -137,14 +139,15 @@ base64.prototype.notify = function (timer)
                         this.m_szOutMSG +=  "\r\n"
                         this.m_iCount = 0;
                     }
-            
-                    if (this.m_inStream.available()<=2)
+                    
+                    if (buf.length - i <=2)
                     {
-                        switch (this.m_inStream.available())
+                        switch (buf.length - i)
                         {
                             case 2:
-                               chr1 = this.m_inStream.readByteArray(1);
-                               chr2 = this.m_inStream.readByteArray(1);
+                               chr1 = buf[i];
+                               chr2 = buf[i+1];
+                               i+=2;
                                this.m_szOutMSG += this.m_kBase64chars[(chr1>>2) & 0x3F];
                                this.m_szOutMSG += this.m_kBase64chars[((chr1 & 0x03) << 4) | ((chr2 >> 4) & 0x0F)];
                                this.m_szOutMSG += this.m_kBase64chars[((chr2 & 0x0F) << 2)];
@@ -152,13 +155,15 @@ base64.prototype.notify = function (timer)
                             break;
                     
                             case 1:
-                               chr1 = this.m_inStream.readByteArray(1); 
+                               chr1 = buf[i];
+                               i+=1;
                                this.m_szOutMSG += this.m_kBase64chars[(chr1>>2) & 0x3F];
                                this.m_szOutMSG += this.m_kBase64chars[(chr1 & 0x03) << 4];
                                this.m_szOutMSG += "==";
                             break;
                         }
                     }
+                    
                 }
 
                 
