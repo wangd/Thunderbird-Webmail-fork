@@ -242,16 +242,18 @@ HotmailSMTPScreenRipperBETA.prototype =
                     //check for logout option
                     if (szResponse.search(patternHotmailLogOut)==-1)
                     {
-                        mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler - logout not found : ");
+                        mainObject.m_Log.Write("Hotmail-SR-BETA-SMTP - loginOnloadHandler - logout not found : ");
                         //check for complex hotmail site
                         if (szResponse.search(patternHotmailFrame)!=-1)
                         {
                             mainObject.m_Log.Write("Hotmail-SR-BETA-SMTP - loginOnloadHandler - frame found");
                             mainObject.m_iStage = 1;
-                            oCookies.addCookie(mainObject.m_szUserName, httpChannel.URI, "lr=1;");
-                            var szLight = szResponse.match(patternHotmailLight)[1]; 
-                            mainObject.m_Log.Write("Hotmail-SR-BETA-SMTP - loginOnloadHandler - szLight " + szLight);
-                            mainObject.m_HttpComms.setURI(httpChannel.URI.prePath + szLight);
+                            var szURL = szResponse.match(patternHotmailLight)[1];
+                            var oEscape = new HTMLescape(mainObject.m_Log);
+                            szURL = oEscape.decode(szURL);
+                            delete oEscape
+                            mainObject.m_Log.Write("Hotmail-SR-BETA-SMTP - loginOnloadHandler - szLight " + szURL);
+                            mainObject.m_HttpComms.setURI(szURL);
                             mainObject.m_HttpComms.setRequestMethod("GET");
                             var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
                             if (!bResult) throw new Error("httpConnection returned false");
