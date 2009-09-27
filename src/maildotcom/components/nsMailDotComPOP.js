@@ -829,7 +829,7 @@ nsMailDotCom.prototype =
             this.m_Log.Write("nsMailDotCom.js - getHeaders - END");
             return true;
         }
-        catch(err)
+        catch(e)
         {
             this.m_Log.DebugDump("nsMailDotCom.js: getHeaders : Exception : "
                                           + e.name +
