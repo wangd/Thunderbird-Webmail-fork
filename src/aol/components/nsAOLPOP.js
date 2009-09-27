@@ -476,7 +476,7 @@ nsAOL.prototype =
             {
                 var szMSGDetails = szResponse.match(patternAOLMSGData)[1];
                 mainObject.m_Log.Write("AOl - mailBoxOnloadHandler - szMSGDetails : " + szMSGDetails);
-                var aszMSGDetails = szMSGDetails.match(/\[.*?\](,|$)/igm);
+                var aszMSGDetails = szMSGDetails.match(/\[.*?\d,\d,\d,\d,\d,\d\],?/igm);
                 mainObject.m_Log.Write("AOl - mailBoxOnloadHandler - aszMSGDetails : " + aszMSGDetails);
                 if (aszMSGDetails)
                 {
