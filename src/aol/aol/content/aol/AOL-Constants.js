@@ -2,7 +2,7 @@ const kAOLConstants = true;
 
 const patternAOLReplace = /parent\.location\.replace\("(.*?)"\);/i;
 const patternAOLRedirect = /goToLoginUrl[\s\S]*snsRedir\("(.*?)"\)/i;
-const patternAOLLoginForm = /<form.*?loginForm.*?>[\s\S]*<\/form>/igm;
+const patternAOLLoginForm = /<form.*?AOLLoginForm.*?>[\s\S]*?<\/form>/igm;
 const patternAOLAction = /<form.*?action="(.*?)".*?>/;
 const patternAOLInput = /<input.*?>/igm;
 const patternAOLType = /type="(.*?)"/i;
