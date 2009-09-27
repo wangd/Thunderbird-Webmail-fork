@@ -1081,9 +1081,11 @@ YahooPOPBETA.prototype =
                     mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - aszShortParts : " + aszShortParts);
                     var aszComplexParts = szResponse.match(kPatternLongPart);
                     mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - aszComplexParts : " + aszComplexParts);
-                    if (aszComplexParts.length>0)
+                    
+                    var aszParts; 
+                    if (aszComplexParts)
                     {
-                        var aszCleanParts = new Array();
+	                    var aszCleanParts = new Array();
                         for (var i =0; i<aszComplexParts.length; i++)
                         {
                             aszCleanParts = aszCleanParts.concat(aszComplexParts[i].replace(kPatternShortPart,""));
@@ -1092,8 +1094,12 @@ YahooPOPBETA.prototype =
                         delete aszComplexParts;
                         aszComplexParts = aszCleanParts;
                         mainObject.m_Log.Write("YahooPOPBETA.js - emailOnloadHandler - szCleanedParts : " + aszComplexParts);                     
+	                    
+	                    aszParts = aszShortParts.concat(aszComplexParts);
                     }
-                    var aszParts = aszShortParts.concat(aszComplexParts);
+                    else
+                    	aszParts = aszShortParts;
+                    
                     delete aszShortParts;
                     delete aszComplexParts;
                     var bTextAttachments = false;
