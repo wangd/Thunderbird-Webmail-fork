@@ -6,7 +6,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
     <Description about="urn:mozilla:install-manifest">
 
         <em:id>{860a7040-44a3-11da-8cd6-0800200c9a66}</em:id>
-        <em:version>0.6.3</em:version>
+        <em:version>0.6.4</em:version>
         <em:type>2</em:type>
 
         <em:name>WebMail - GMail</em:name>
@@ -57,6 +57,13 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
                 <em:minVersion>1.1</em:minVersion>
                 <em:maxVersion>1.5</em:maxVersion>
             </Description>
+                      
+            <!-- Postbox -->
+            <Description>
+                <em:id>postbox@postbox-inc.com</em:id>
+                <em:minVersion>1.0b13</em:minVersion>
+                <em:maxVersion>1.0.*</em:maxVersion>
+            </Description>     
         </em:targetApplication>
 
         <em:requires>
