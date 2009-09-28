@@ -7,14 +7,14 @@
             <RDF:Seq>
                 <RDF:li>
                      <RDF:Description>
-                        <em:version>1.1.7</em:version>
+                        <em:version>1.1.8</em:version>
                         <em:targetApplication>
                             <Description>
                                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id> <!-- Thunderbird updates -->
                                 <em:minVersion>2.0</em:minVersion>
                                 <em:maxVersion>3.0.*</em:maxVersion>
-                                <em:updateLink>http://download.mozdev.org/webmail/maildotcom-1-1-7.xpi</em:updateLink>
-                                <em:updateHash>sha256:e2a8d33038c5379616989a6fa3009c43ed33ba4089745a2bcd7e004552d89981</em:updateHash>
+                                <em:updateLink>http://download.mozdev.org/webmail/maildotcom-1-1-8.xpi</em:updateLink>
+                                <em:updateHash>sha256:8d83acc4b81a006db61f3287522a1adb00caacaf3b6df6b717d4d616e674ef95</em:updateHash>
                           </Description>
                         </em:targetApplication>
                         <em:requires>
@@ -33,7 +33,7 @@
             </RDF:Seq>
         </em:updates>
         
-       <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBAFyOUshxGbCisyJGgFG1kb4uE/6nRciK9cJCgHMgqoJ1lYmitg8uChmUVbG5C2hZmBhSbP/a2oxx2NZqhx8Rr8r/KK14i5V4yHp7DDghU81y6UdqyyQS8FImd2ODRihlpgW3i8aa7Uc/P0C96HSC3tv89El2JCDqgm7YhAOstJ16</em:signature>
+       <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBAJbrWH3oXSRnbwY6jePz1GgeMLxZSHH7okvfoHQzpmOCFK9MHtpzga5zMr5Gbpf8HQ0rXq5180/2jdpw6Rf6p27gmMViUI1y5rZq/6WwgN0cu2I5Rpw0lItW0yigD1hWwE93bh1y6eLmIoWXk7gFygShNGFqJDfsK7Uhc/Q8z5XX</em:signature>
     
     </RDF:Description>
 </RDF:RDF>

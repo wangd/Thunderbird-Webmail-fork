@@ -7,15 +7,15 @@
             <RDF:Seq>
                 <RDF:li>
                     <RDF:Description>
-                        <em:version>0.6.3</em:version>
+                        <em:version>0.6.4</em:version>
                         <!-- Thunderbird updates -->
                         <em:targetApplication>
                             <Description>
                                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
                                 <em:minVersion>2.0</em:minVersion>
                                 <em:maxVersion>3.0.*</em:maxVersion>
-                                <em:updateLink>http://download.mozdev.org/webmail/gmail-0-6-3.xpi</em:updateLink>
-                                <em:updateHash>sha256:7436dd259e55779984bd32125e54645c42bf8f27cceb5abe6ae1ab0e2b59b34f</em:updateHash>
+                                <em:updateLink>http://download.mozdev.org/webmail/gmail-0-6-4.xpi</em:updateLink>
+                                <em:updateHash>sha256:7ed33b671ac0743a0de11154b3009687bbf0ab725bbd6eca314f7cf907eae082</em:updateHash>
                           </Description>
                         </em:targetApplication>
                 
@@ -35,7 +35,7 @@
             </RDF:Seq>
         </em:updates>
         
-        <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBAHFSkEDbknTXgbbiW7o4V+rTkwvy5rpZb/QCH4oIHaCt/kBsC+jWaw7tS1f64rXSaKzexamMC6vOL0muphZGVkTkTlRgdNZEWz5y5KrUt9oJEtyIdyeiML11xyoop90LtiHogua8XcbLLmBHGsbKUlKefdxkp0fdz3+XKs7twOYc</em:signature>
+        <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBAJpHuo7XPjwJrdMLNGujcBljyTRjzyrEsNs2uWhHllEF1Uz1NC0eYQWbRzIj9plWqc2VxT3X/31C4jWSNOmoDT8G345gSuiuox+bIS4YwW/lVddIdcZzTN9JZQ0xZFq0WSOsY+OuFg9k5PNBmG/EorYhrCjViCwf7G7Qt0yeYQI7</em:signature>
 
     </RDF:Description>
 </RDF:RDF>
