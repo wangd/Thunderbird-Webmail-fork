@@ -1366,7 +1366,8 @@ HotmailScreenRipperBETA.prototype =
         szEncoded = szEncoded.replace(/\:/g,"%3A");
         szEncoded = szEncoded.replace(/\#/g,"%23");
         szEncoded = szEncoded.replace(/\@/g,"%40");
-
+        szEncoded = szEncoded.replace(/&/g,"%26");
+        
         szEncoded = szEncoded.replace(/%5B/g,"[");
         szEncoded = szEncoded.replace(/%5D/g,"]");
         szEncoded = szEncoded.replace(/%7B/g,"{");
