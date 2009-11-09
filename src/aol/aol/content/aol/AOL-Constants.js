@@ -20,7 +20,7 @@ const patternAOLMSGDataProcess =/\["(.*?)","(.*?)",.*?,"([\s\S]*)",(.*?),(.*?),.
 const patternAOLURLPageNum = /page=(.*?)&/i;
 const patternAOLLogout = /Logout\.aspx/i;
 const patternAOLLogoutURL = /<div id="sns"><a.*?href="(.*?logout.*?)".*?>.*?<\/div>/i;
-const patternAOLFolders =/"folders":\[(.*?)\],"foldersCanMoveTo":/i;
+const patternAOLFolders =/"folders"\:\[(\[.*?\])\]/i;
 const patternAOLFolderName = /\["(.*?)",.*?\]/i
 const patternAOLFolderNameURL = /folder=(.*?)&/i;
 const patternAOLSend =/<form.*?name="SendForm".*?>[\s\S]*?<\/form>/igm;
