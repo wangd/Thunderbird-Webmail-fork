@@ -7,14 +7,14 @@
             <RDF:Seq>
                 <RDF:li>
                      <RDF:Description>
-                        <em:version>1.2.11</em:version>
+                        <em:version>1.2.12</em:version>
                         <em:targetApplication>
                             <Description>
                                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id> <!-- Thunderbird updates -->
                                 <em:minVersion>2.0</em:minVersion>
                                 <em:maxVersion>3.0.*</em:maxVersion>
-                                <em:updateLink>http://download.mozdev.org/webmail/aol-1-2-11.xpi</em:updateLink>
-                                <em:updateHash>sha256:e53b1c73027e852f3e36c4f60490ed8e8d93247ee0a6aef5256137d326a3aabe</em:updateHash>
+                                <em:updateLink>http://download.mozdev.org/webmail/aol-1-2-12.xpi</em:updateLink>
+                                <em:updateHash>sha256:723758f0b9204606b43e5fb1203bb6a20f61cbe814d1bb9666b0d69155a955d4</em:updateHash>
                           </Description>
                         </em:targetApplication>
                         <em:requires>
@@ -33,7 +33,7 @@
             </RDF:Seq>
         </em:updates>
         
-       <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBAIey7S2EKWJb+Zu+O9LUCjp+LcC4l3uqUIF27Z0UuRBkkNwFng8WbU6LVPLRW6TsiPwfmj2THDA41TDT24hDlIqVxEfvVsuu7cEtNbk7zCVfImpwOSvQmIKYaIwRcpdWSLDD3kEN6A25PQZbNg5XVfngJLPsJHs9g9PnzjmfwY9J</em:signature>
+       <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBAJ1jMxSasVF6+JQQX30QIIk0Jx/+U1pSrPh42tlwRCGYbHSNqsvQX1IPwpI+KGhWXsICNaPLfsSamYuvq4DxH4DBRBZ4Ku5J4gBo3OZPYAabE6il0TokpZgQgk++yUd5Xtn0H4BVhYbb09rmOwkq+41n6OFB6MwePK4qiQ3Vh3KB</em:signature>
     
     </RDF:Description>
 </RDF:RDF>
