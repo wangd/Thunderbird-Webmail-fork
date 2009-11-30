@@ -11,6 +11,7 @@ function YahooSMTPBETA(oResponseStream, oLog, oPref)
         scriptLoader.loadSubScript("chrome://web-mail/content/common/Email.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms3.js");
         scriptLoader.loadSubScript("chrome://yahoo/content/Yahoo-Prefs-Accounts-Data.js");
+        scriptLoader.loadSubScript("chrome://yahoo/content/HTML-escape.js");
 
         this.m_Log = oLog;
         this.m_Log.Write("YahooSMTPBETA.js - Constructor - START");
@@ -128,7 +129,7 @@ YahooSMTPBETA.prototype =
                     this.m_Log.Write("YahooSMTPBETA.js - logIN - Session Data Found");
                     this.m_iStage =2;
                     this.m_bReEntry = true;
-                    this.m_HttpComms.setURI(this.m_szLocation);
+                    this.m_HttpComms.setURI(this.m_szHomeURI);
                 }
                 else
                 {
@@ -296,7 +297,7 @@ YahooSMTPBETA.prototype =
                 break;
 
                 case 2: //mail box
-                    if (szResponse.search(kPatternLogOut) == -1)
+                    if (szResponse.search(kPatternLogOut)== -1 && szResponse.search(kPatternLogOutAlt)==-1)
                     {
                         mainObject.m_Log.Write("YahooSMTPBETA.js - loginOnloadHandler - logout not found");
                         //check for bounce
@@ -658,6 +659,27 @@ YahooSMTPBETA.prototype =
                         var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler, mainObject);
                         if (!bResult) throw new Error("httpConnection returned false");
                         mainObject.m_iStage = 2;
+                    }
+                    else if (szResponse.search(/SessionIdReissue/igm)!=-1)
+                    {
+                        mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler : ID Reiussue" );
+                        mainObject.m_szWssid = szResponse.match(/;wssid=(.*?)<\/url>/i)[1];
+                        mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - m_szWssid : "+mainObject.m_szWssid );
+
+                        mainObject.m_bReEntry = false;
+                        var szURI = szResponse.match(/<url>(.*?)<\/url>/i)[1];
+                        var oEscapeDecode = new HTMLescape();
+                        szURI = oEscapeDecode.decode(szURI);
+                        delete oEscapeDecode;
+                        mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - szURI " + szURI);
+                        mainObject.m_iStage = 0;
+                        mainObject.m_HttpComms.setURI(szURI);
+                        mainObject.m_HttpComms.setRequestMethod("POST");
+                        mainObject.m_HttpComms.setContentType("application/xml; charset=UTF-8");
+                        mainObject.m_HttpComms.addData(mainObject.m_szData.replace(/PACKETHEADER/g,""));   //remove packet header;
+                        var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler, mainObject);                        
+                        if (!bResult) throw new Error("httpConnection returned false");  
+                        return;
                     }
                     else
                     {   //have no idea whats gone wrong

@@ -126,7 +126,7 @@ YahooPOPBETA.prototype =
                     this.m_Log.Write("YahooPOPBETA.js - logIN - Session Data Found");
                     this.m_iStage =2;
                     this.m_bReEntry = true;
-                    this.m_HttpComms.setURI(this.m_szLocation);
+                    this.m_HttpComms.setURI(this.m_szHomeURI);
                 }
                 else
                 {
@@ -298,7 +298,8 @@ YahooPOPBETA.prototype =
 
                 case 2: //mail box
 
-                    if (szResponse.search(kPatternLogOut)== -1)
+                	
+                    if (szResponse.search(kPatternLogOut)== -1 && szResponse.search(kPatternLogOutAlt)==-1)
                     {
                         mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - logout not found");
                         //check for bounce
