@@ -214,7 +214,19 @@ nsAOL.prototype =
                 return;
             }
 
+    		//check for Screen Name Container
+            if (szResponse.search(patternAOLScreen)!= -1) 
+            {
+                var szScreenNameURL = szResponse.match(patternAOLScreen)[1];
+                mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - szScreenNameURL " + szScreenNameURL);
+                mainObject.m_HttpComms.setURI(szScreenNameURL);
+                mainObject.m_HttpComms.setRequestMethod("GET");
+                var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
+                if (!bResult) throw new Error("httpConnection returned false");
+                return;
+            }
 
+            
              //page code
             switch (mainObject.m_iStage)
             {
