@@ -533,8 +533,12 @@ HttpComms.prototype =
                 this.m_Log.Write("HttpComms3.js - multipartFormData - adding file" + oTemp.szFileName);
                 szContDisp +="; filename=\"" + (oTemp.szFileName ? oTemp.szFileName : "") + "\"";
                 mimeStream.addHeader("Content-Disposition",szContDisp);
-                mimeStream.addHeader("Content-Type","application/octet-stream");
-
+                var szFileType = "application/octet-stream";
+                if (oTemp.szFileName.search(/JPG$/i)!=-1) szFileType = "image/pjpeg";
+                if (oTemp.szFileName.search(/PNG$/i)!=-1) szFileType = "image/png";
+                this.m_Log.Write("HttpComms3.js - multipartFormData - adding szContentType " +szFileType);
+                mimeStream.addHeader("Content-Type",szFileType);
+        
                 if(oTemp.szValue)
                 {
                     this.m_Log.Write("HttpComms3.js - multipartFormData - adding binary data");
