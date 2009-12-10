@@ -16,6 +16,13 @@
                                 <em:updateLink>http://download.mozdev.org/webmail/aol-1-2-12.xpi</em:updateLink>
                                 <em:updateHash>sha256:723758f0b9204606b43e5fb1203bb6a20f61cbe814d1bb9666b0d69155a955d4</em:updateHash>
                           </Description>
+                          <Description>
+                                <em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id> <!-- Seamonkey updates -->
+                                <em:minVersion>1.1</em:minVersion>
+                                <em:maxVersion>2.0.*</em:maxVersion>
+                                <em:updateLink>http://download.mozdev.org/webmail/aol-1-2-12.xpi</em:updateLink>
+                                <em:updateHash>sha256:723758f0b9204606b43e5fb1203bb6a20f61cbe814d1bb9666b0d69155a955d4</em:updateHash>
+                          </Description>
                         </em:targetApplication>
                         <em:requires>
                             <Description>
