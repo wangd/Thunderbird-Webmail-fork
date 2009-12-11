@@ -7,16 +7,30 @@
             <RDF:Seq>
                 <RDF:li>
                     <RDF:Description>
-                        <em:version>0.9.5</em:version>
+                        <em:version>0.9.6</em:version>
                         <!-- Thunderbird updates -->
                         <em:targetApplication>
-                            <Description>
-                                <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
-                                <em:minVersion>1.4</em:minVersion>
+                          <Description>
+                                <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id><!-- Thunderbird updates -->
+                                <em:minVersion>2.0b2</em:minVersion>
+                                <em:maxVersion>3.0.*</em:maxVersion>
+                                <em:updateLink>http://download.mozdev.org/webmail/libero-0-9-5.xpi</em:updateLink>
+                                <em:updateHash>sha256:0d3d0cf8b5e12230589bc38433a8deb5c53821af44822a09cfbbbb4bdcd6b77e</em:updateHash>
+                          </Description>
+                          <Description>
+                                <em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id> <!-- Seamonkey updates -->
+                                <em:minVersion>1.1</em:minVersion>
                                 <em:maxVersion>2.0.*</em:maxVersion>
                                 <em:updateLink>http://download.mozdev.org/webmail/libero-0-9-5.xpi</em:updateLink>
-                                <em:updateHash>sha256:187dfcc10e7365add46592a6520aa746388a0b2d543c70cf6638a1aa0c25cddb</em:updateHash>
+                                <em:updateHash>sha256:0d3d0cf8b5e12230589bc38433a8deb5c53821af44822a09cfbbbb4bdcd6b77e</em:updateHash>
                           </Description>
+                           <Description>
+                                <em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id> <!-- Postbox updates -->
+                                <em:minVersion>1.0b13</em:minVersion>
+                                <em:maxVersion>1.0.*</em:maxVersion>
+                                <em:updateLink>http://download.mozdev.org/webmail/libero-0-9-5.xpi</em:updateLink>                             
+                                <em:updateHash>sha256:0d3d0cf8b5e12230589bc38433a8deb5c53821af44822a09cfbbbb4bdcd6b77e</em:updateHash>
+                          </Description>                     
                         </em:targetApplication>
                 
                         <em:requires>
@@ -35,7 +49,7 @@
             </RDF:Seq>
         </em:updates>
         
-        <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBAEvAEq7wOoAfd8gL1RWHb7IRUIrfLKvPdiTqfQJYIjbV+a0w3mhVAfvE5pYKdyhSirOle//QPtxQIPCQA+ZB1GsySPbAGghgdY46a7cEGkcVFGKx21ahPQFllVQ8QqRqg2V1E29AoNczoEZoaEaIT0mVc9pQ7NT9OLSGBdDgLKNj</em:signature>
+        <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBAEcA8r/MOI/91KWywXqKvYGi+XQgpJgN93ve1JQ2I5d3ERWLRW5FHzNJSh1XUtvpYRFhrrGA8BiCoUfpe4F5MVRXKdkIMFEgFeQHhWoFnUdrcrdvsQEXfJ10MeNwdlarzLOnYptonoh8hD+twgndNpDoFH38xxTsHeo1HhYMSOW3</em:signature>
 
     </RDF:Description>
 </RDF:RDF>
