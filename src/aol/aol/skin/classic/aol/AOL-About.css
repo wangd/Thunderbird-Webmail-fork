@@ -253,6 +253,15 @@
      -moz-image-region: rect(0px, 1024px, 32px, 992px)
 }
 
+.flag[value="31"]/*mk*/
+{
+     -moz-image-region: rect(0px, 1056px, 32px, 1024px)
+}
+
+.flag[value="32"]/*vn*/
+{
+     -moz-image-region: rect(0px, 1088px, 32px, 1056px)
+}
 
 
 #AOLHomePage
