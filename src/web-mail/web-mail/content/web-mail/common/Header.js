@@ -316,7 +316,7 @@ headers.prototype =
             this.m_Log.Write("Header.js - emailAddress - START " + szAddress);
 
             if (!szAddress) return null;
-            szAddress = szAddress.replace(/".*?"/, ""); //remove name
+            szAddress = szAddress.replace(/".*?"/g, ""); //remove name
             var aszAddress = szAddress.split(",");
 
             var szList =null;
