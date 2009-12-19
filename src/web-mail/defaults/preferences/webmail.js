@@ -10,6 +10,6 @@ pref("webmail.bUsePOPServer", true);
 pref("webmail.bUseSMTPServer", true);
 pref("webmail.bUseIMAPServer", false);
 pref("webmail.server.statusbar", false);
-pref("webmail.UserAgent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.9.0.9) Gecko/2009040821 Firefox/3.0.9");
+pref("webmail.UserAgent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.5; en-US; rv:1.9.1b4) Gecko/20090423 Firefox/3.5b4 GTB5");
 pref("extensions.{3c8e8390-2cf6-11d9-9669-0800200c9a66}.description", "chrome://web-mail/locale/Webmail.properties");
 pref("network.cookie.cookieBehavior", 2);
