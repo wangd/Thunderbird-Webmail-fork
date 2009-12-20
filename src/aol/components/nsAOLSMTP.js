@@ -424,6 +424,7 @@ nsAOLSMTP.prototype =
                 this.m_Log.Write("AOLSMTP.js - composerOnloadHandler szContentType " + szContentType);
                 var szCharset = szContentType.match(/charset=(.*?)($|;|\s)/i)[1];
                 szValue = this.m_Email.txtBody.body.getBody().replace(/\r?\n/g,"\\n");
+                szValue = this.m_Email.txtBody.body.getBody().replace(/"/g,"\\\"");
 
                 this.m_Log.Write("AOLSMTP.js - composerOnloadHandler szCharset " + szCharset);
                 var Converter = Components.classes["@mozilla.org/intl/scriptableunicodeconverter"]

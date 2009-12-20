@@ -860,7 +860,7 @@ nsAOL.prototype =
             var oMSG = this.m_aMsgDataStore[lID-1];
             this.m_szFolder = oMSG.szFolder ;
             this.iID = oMSG.iID;
-            var szURL = this.m_szLocation.replace(/common/i,"MAIL").replace(/rpc\//i,"") + "ViewSource.aspx?";
+            var szURL = this.m_szLocation.replace(/common/i,"mail").replace(/rpc\//i,"") + "ViewSource.aspx?";
             szURL += "folder=" + this.m_szFolder +"&";
             szURL += "uid=" + oMSG.iID;
             szURL += "&user="+ this.m_szUserId;
@@ -917,15 +917,20 @@ nsAOL.prototype =
 
                     if (mainObject.m_bMarkAsRead)
                     {
-                        var szURL = mainObject.m_szLocation +"RPC.aspx?user=" +mainObject.m_szUserId + "&r="+Math.random();
+                        var szURL = mainObject.m_szLocation +"RPC.aspx?user=" +mainObject.m_szUserId 
+                        									+"&transport=xmlhttp&r="+Math.random()
+                        									+"&a=MessageAction";
 
-                        mainObject.m_HttpComms.addValuePair("dojo.transport","xmlhttp");
+                        //mainObject.m_HttpComms.addValuePair("dojo.transport","xmlhttp");
                         mainObject.m_HttpComms.addValuePair("automatic","false");
-
+                		mainObject.m_HttpComms.addRequestHeader("X-Requested-With", "XMLHttpRequest", true);
+                		
                         var szData = "[{\"messageAction\":\"seen\",";
                         szData += "\"folder\":\"" + mainObject.m_szFolder+ "\",";
-                        szData += "\"uids\":[\"" + mainObject.iID  + "\"]," ;
-                        szData += "\"destFolder\":undefined,\"isSpam\":undefined,\"action\":\"MessageAction\"}]";
+                        szData += "\"uids\":[\"" + mainObject.iID  + "\"]," ;                     
+                        szData += "\"destFolder\":undefined,\"isSpam\":undefined,\"checkUndo\":false,";
+                        szData += "\"screenName\":\"" + mainObject.m_szLoginUserName+ "\"," ;
+                        szData += "\"reason\":undefined,\"action\":\"MessageAction\"}]";
 
                         mainObject.m_HttpComms.addValuePair("requests",encodeURIComponent(szData));
 
