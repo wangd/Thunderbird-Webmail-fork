@@ -1,7 +1,10 @@
 <!ENTITY AOLPref.Window.Title "AOL / Netscape Opties">
 <!ENTITY AOLPref.Panel.Accounts.Title "Accounts">
+<!ENTITY AOLPref.Panel.Domains.Title "Domains">
 <!ENTITY AOLPref.Button.Close.Label "Close">
+
 <!ENTITY AOLPref.Tab.POP.Title "POP">
+
 <!ENTITY AOLPref.POP.DownloadUnread.Label "Download alleen ongelezen emails">
 <!ENTITY AOLPref.POP.DownloadUnread.AccessKey "o">
 <!ENTITY AOLPref.POP.JunkMail.Label "Download JunkMail">
@@ -11,6 +14,14 @@
 <!ENTITY AOLPref.POP.ButtonAdd.AccessKey "T">
 <!ENTITY AOLPref.POP.ButtonRemove.Label "Verwijderen">
 <!ENTITY AOLPref.POP.ButtonRemove.AccessKey "V">
+
 <!ENTITY AOLPref.AccountError.Label "Geen AOL / Netscape Accounts Gevonden">
+
 <!ENTITY AOLPref.POP.MarkAsRead.Label "Markeer emails als gelezen op server">
 <!ENTITY AOLPref.POP.MarkAsRead.AccessKey "k">
+
+<!ENTITY AOLPref.Domain.Label "Domains supported by AOL extension">
+<!ENTITY AOLPref.Domain.Button.AddDomain.Label "Add...">
+<!ENTITY AOLPref.Domain.Button.AddDomain.AccessKey "A">
+<!ENTITY AOLPref.Domain.Button.RemoveDomain.Label "Remove">
+<!ENTITY AOLPref.Domain.Button.RemoveDomain.AccessKey "R">
