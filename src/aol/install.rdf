@@ -7,7 +7,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
         <em:id>{268d7420-9032-11da-a72b-0800200c9a66}</em:id>
         <em:type>2</em:type>
-        <em:version>1.2.12</em:version>
+        <em:version>1.2.13</em:version>
 
         <em:name>WebMail - AOL / Netscape </em:name>
         <em:description>AOL / NetScape component for Web-Mail extension</em:description>
@@ -62,7 +62,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
             <Description>
                 <em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id>
                 <em:minVersion>1.1</em:minVersion>
-                <em:maxVersion>1.5</em:maxVersion>
+                <em:maxVersion>2.0.*</em:maxVersion>
             </Description>
             
    
