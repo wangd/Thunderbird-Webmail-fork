@@ -7,21 +7,28 @@
             <RDF:Seq>
                 <RDF:li>
                      <RDF:Description>
-                        <em:version>1.2.12</em:version>
+                        <em:version>1.2.13</em:version>
                         <em:targetApplication>
                             <Description>
                                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id> <!-- Thunderbird updates -->
                                 <em:minVersion>2.0</em:minVersion>
                                 <em:maxVersion>3.0.*</em:maxVersion>
-                                <em:updateLink>http://download.mozdev.org/webmail/aol-1-2-12.xpi</em:updateLink>
-                                <em:updateHash>sha256:723758f0b9204606b43e5fb1203bb6a20f61cbe814d1bb9666b0d69155a955d4</em:updateHash>
+                                <em:updateLink>http://download.mozdev.org/webmail/aol-1-2-13.xpi</em:updateLink>
+                                <em:updateHash>sha256:716b293b5c23faa4266c10d6e6330fa4dac88505673ce1d57dccfa63b249fd50</em:updateHash>
                           </Description>
                           <Description>
                                 <em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id> <!-- Seamonkey updates -->
                                 <em:minVersion>1.1</em:minVersion>
                                 <em:maxVersion>2.0.*</em:maxVersion>
-                                <em:updateLink>http://download.mozdev.org/webmail/aol-1-2-12.xpi</em:updateLink>
-                                <em:updateHash>sha256:723758f0b9204606b43e5fb1203bb6a20f61cbe814d1bb9666b0d69155a955d4</em:updateHash>
+                                <em:updateLink>http://download.mozdev.org/webmail/aol-1-2-13.xpi</em:updateLink>
+                                <em:updateHash>sha256:716b293b5c23faa4266c10d6e6330fa4dac88505673ce1d57dccfa63b249fd50</em:updateHash>
+                          </Description>
+                          <Description>
+                                <em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id> <!-- Postbox updates -->
+                                <em:minVersion>1.0b13</em:minVersion>
+                                <em:maxVersion>1.0.*</em:maxVersion>
+                                <em:updateLink>http://download.mozdev.org/webmail/aol-1-2-13.xpi</em:updateLink>
+                                <em:updateHash>sha256:716b293b5c23faa4266c10d6e6330fa4dac88505673ce1d57dccfa63b249fd50</em:updateHash>
                           </Description>
                         </em:targetApplication>
                         <em:requires>
@@ -40,7 +47,7 @@
             </RDF:Seq>
         </em:updates>
         
-       <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBAJ1jMxSasVF6+JQQX30QIIk0Jx/+U1pSrPh42tlwRCGYbHSNqsvQX1IPwpI+KGhWXsICNaPLfsSamYuvq4DxH4DBRBZ4Ku5J4gBo3OZPYAabE6il0TokpZgQgk++yUd5Xtn0H4BVhYbb09rmOwkq+41n6OFB6MwePK4qiQ3Vh3KB</em:signature>
+       <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBAE/G4ornoHh20vScMPoypGYrTliSSczKomMBFc/1iOnowm3mVGTHbKKulNxYp7J/LdcTYlnH3uG/bIjQs+koYX/AZ6C5mX1Pb1yh2WuWdYDe0vLPBZds9t/eCisZuDSbTa/lHmRiAbnmuzqvRThEOSR7ihwo8DauC/pwCTIR6rQJ</em:signature>
     
     </RDF:Description>
 </RDF:RDF>
