@@ -14,21 +14,21 @@
                                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id><!-- Thunderbird updates -->
                                 <em:minVersion>2.0b2</em:minVersion>
                                 <em:maxVersion>3.0.*</em:maxVersion>
-                                <em:updateLink>http://download.mozdev.org/webmail/libero-0-9-5.xpi</em:updateLink>
+                                <em:updateLink>http://download.mozdev.org/webmail/libero-0-9-6.xpi</em:updateLink>
                                 <em:updateHash>sha256:0d3d0cf8b5e12230589bc38433a8deb5c53821af44822a09cfbbbb4bdcd6b77e</em:updateHash>
                           </Description>
                           <Description>
                                 <em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id> <!-- Seamonkey updates -->
                                 <em:minVersion>1.1</em:minVersion>
                                 <em:maxVersion>2.0.*</em:maxVersion>
-                                <em:updateLink>http://download.mozdev.org/webmail/libero-0-9-5.xpi</em:updateLink>
+                                <em:updateLink>http://download.mozdev.org/webmail/libero-0-9-6.xpi</em:updateLink>
                                 <em:updateHash>sha256:0d3d0cf8b5e12230589bc38433a8deb5c53821af44822a09cfbbbb4bdcd6b77e</em:updateHash>
                           </Description>
                            <Description>
                                 <em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id> <!-- Postbox updates -->
                                 <em:minVersion>1.0b13</em:minVersion>
                                 <em:maxVersion>1.0.*</em:maxVersion>
-                                <em:updateLink>http://download.mozdev.org/webmail/libero-0-9-5.xpi</em:updateLink>                             
+                                <em:updateLink>http://download.mozdev.org/webmail/libero-0-9-6.xpi</em:updateLink>                             
                                 <em:updateHash>sha256:0d3d0cf8b5e12230589bc38433a8deb5c53821af44822a09cfbbbb4bdcd6b77e</em:updateHash>
                           </Description>                     
                         </em:targetApplication>
@@ -49,7 +49,7 @@
             </RDF:Seq>
         </em:updates>
         
-        <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBAEcA8r/MOI/91KWywXqKvYGi+XQgpJgN93ve1JQ2I5d3ERWLRW5FHzNJSh1XUtvpYRFhrrGA8BiCoUfpe4F5MVRXKdkIMFEgFeQHhWoFnUdrcrdvsQEXfJ10MeNwdlarzLOnYptonoh8hD+twgndNpDoFH38xxTsHeo1HhYMSOW3</em:signature>
+        <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBABbXdzwY5z1rLsm5M5LOCma0ghwgk85k3kmRE8hpsX2NzSMn+9envqNtDgP4RGjhWx7EcxRCaVO1qeeRT0Txli/FjZ1rsdG3xp12pGML6l40NoypuF9gUmAWuzGnzHT47bt+MynBEGq4PG8JO8vnbYQ3QzrnnnN86Klk7fACNTqW</em:signature>
 
     </RDF:Description>
 </RDF:RDF>
