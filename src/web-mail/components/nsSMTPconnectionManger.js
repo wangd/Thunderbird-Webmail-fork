@@ -25,11 +25,11 @@ nsSMTPConnectionManager.prototype.Start = function()
 
         if(this.m_iStatus != 2 && this.m_iStatus != 1)  //enter here if server is not running
         {
-            if (!this.m_serverSocket)
-            {
+          //  if (!this.m_serverSocket)
+           // {
                 this.m_serverSocket = Components.classes["@mozilla.org/network/server-socket;1"]
                                                 .createInstance(Components.interfaces.nsIServerSocket);
-            }
+           // }
 
             //get pref settings
             var  WebMailPrefAccess = new WebMailCommonPrefAccess();

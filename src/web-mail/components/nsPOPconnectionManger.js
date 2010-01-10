@@ -28,11 +28,12 @@ nsPOPConnectionManager.prototype.Start = function()
         this.m_Log.Write("nsPOPConnectionManager - Start - this.m_iStatus " + this.m_iStatus);
         if(this.m_iStatus != 2 && this.m_iStatus != 1)  //enter here if server is not running
         {
-            if (!this.m_serverSocket)
-            {
+          //  if (!this.m_serverSocket)
+          //  {
+                this.m_Log.Write("nsPOPConnectionManager - Start - creating server");
                 this.m_serverSocket = Components.classes["@mozilla.org/network/server-socket;1"]
                                                 .createInstance(Components.interfaces.nsIServerSocket);
-            }
+          //  }
             
             //get pref settings
             var  WebMailPrefAccess = new WebMailCommonPrefAccess();
