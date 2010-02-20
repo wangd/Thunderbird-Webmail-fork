@@ -175,7 +175,8 @@ HotmailScreenRipperBETA.prototype =
             var aRefresh = szResponse.match(patternHotmailJSRefresh); 
             if (!aRefresh) aRefresh = szResponse.match(patternHotmailJSRefreshAlt);
             if (!aRefresh) aRefresh = szResponse.match(patternHotmailRefresh2);
-            if (!aRefresh && mainObject.m_iStage>0) aRefresh = szResponse.match(patternHotmailJSRefreshAlt3);  
+            if (!aRefresh && mainObject.m_iStage>0) aRefresh = szResponse.match(patternHotmailJSRefreshAlt3);
+            if (!aRefresh && mainObject.m_iStage>0) aRefresh = szResponse.match(patternHotmailJSBounce);
             mainObject.m_Log.Write("Hotmail-SR-BETA-SMTP - loginOnloadHandler aRefresh "+ aRefresh);
             if (aRefresh)
             {
@@ -260,8 +261,9 @@ HotmailScreenRipperBETA.prototype =
                     //get urls for later use
                     var IOService = Components.classes["@mozilla.org/network/io-service;1"];
                     IOService = IOService.getService(Components.interfaces.nsIIOService);
-                    var nsIURI = IOService.newURI(httpChannel.URI.spec, null, null);
-                    var szDirectory = nsIURI.QueryInterface(Components.interfaces.nsIURL).directory;
+                    //var nsIURI = IOService.newURI(httpChannel.URI.spec, null, null);
+                    //var szDirectory = nsIURI.QueryInterface(Components.interfaces.nsIURL).directory;
+                    var szDirectory = "/mail/"
                     this.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler - directory : " +szDirectory);
 
                     var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
@@ -533,7 +535,7 @@ HotmailScreenRipperBETA.prototype =
             {
                 var iLastPage = parseInt(szCleanResponse.match(patternHotmailLastPage)[1]);              
                 mainObject.m_Log.Write("Hotmail-SR-BETA - mailBoxOnloadHandler -iLastPage : " +iLastPage +" " + mainObject.m_iPageCount);
-                if (iLastPage > mainObject.m_iPageCount)bMorepages = true;
+                if (iLastPage >= mainObject.m_iPageCount)bMorepages = true;
             }
          
             if (bMorepages)  //more pages

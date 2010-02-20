@@ -232,8 +232,9 @@ HotmailSMTPScreenRipperBETA.prototype =
                     //get urls for later use
                     var IOService = Components.classes["@mozilla.org/network/io-service;1"];
                     IOService = IOService.getService(Components.interfaces.nsIIOService);
-                    var nsIURI = IOService.newURI(httpChannel.URI.spec, null, null);
-                    var szDirectory = nsIURI.QueryInterface(Components.interfaces.nsIURL).directory;
+                   // var nsIURI = IOService.newURI(httpChannel.URI.spec, null, null);
+                   // var szDirectory = nsIURI.QueryInterface(Components.interfaces.nsIURL).directory;
+                    var szDirectory = "/mail/"
                     this.m_Log.Write("Hotmail-SR-BETA-SMTP - loginOnloadHandler - directory : " +szDirectory);
 
                     var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
@@ -428,7 +429,8 @@ HotmailSMTPScreenRipperBETA.prototype =
                                     try 
                                     {
                                         var szAttValue = aszAttInput[i].match(patternHotmailValue)[1];
-                                        mainObject.m_szAttachData += "|" + mainObject.urlEncode(szAttValue);                                      
+                                        if (szAttValue.length>0)
+                                        	mainObject.m_szAttachData += "|" + mainObject.urlEncode(szAttValue);                                      
                                     } 
                                     catch (err) 
                                     {
@@ -643,7 +645,8 @@ HotmailSMTPScreenRipperBETA.prototype =
                         }
                         catch(err){}
 
-                        if (szType.search(/submit/i)==-1 && szType.search(/image/i)==-1 && aszInput[i].search(/name/i)!=-1 )
+                        if (szType.search(/submit/i)==-1 && szType.search(/image/i)==-1 && 
+                        		szType.search(/button/i)==-1 && aszInput[i].search(/name/i)!=-1 )
                         {
                             var szName = aszInput[i].match(patternHotmailName)[1];
                             var szValue = "";
@@ -672,7 +675,8 @@ HotmailSMTPScreenRipperBETA.prototype =
                             }
                             else if (szName.search(/HiddenFileName/i) != -1) 
                             {
-                                mainObject.m_szAttachData += "|" + mainObject.urlEncode(szValue);
+                                if (szValue.length>0)
+                                	mainObject.m_szAttachData += "|" + mainObject.urlEncode(szValue);
                                 mainObject.m_HttpComms.addValuePair(szName, mainObject.m_szAttachData);
                             }
                             else
