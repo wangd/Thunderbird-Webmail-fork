@@ -1,7 +1,7 @@
 <!ENTITY Window.size "width: 37em; height: 13em">
 <!ENTITY Uri.label "Uri">
 <!ENTITY Uri.accessKey "U">
-<!ENTITY Uri.size "Genişlik: 35px">
+<!ENTITY Uri.size "width: 35px">
 <!ENTITY Domain.label "Alan">
 <!ENTITY Domain.accessKey "D">
 <!ENTITY TitleAdd "Ekle">

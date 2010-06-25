@@ -1,0 +1,8 @@
+<!ENTITY YahooAddDomain.Title "Thêm tên miền">
+<!ENTITY YahooAddDomainName.Label "Tên miền">
+<!ENTITY YahooAddDomainName.AccessKey "D">
+<!ENTITY YahooAddDomain.Label "Thêm tên miền Yahoo">
+<!ENTITY YahooAddDomain.ButtonOk.Label "OK">
+<!ENTITY YahooAddDomain.ButtonOk.AccessKey "O">
+<!ENTITY YahooAddDomain.ButtonCancel.Label "Hủy">
+<!ENTITY YahooAddDomain.ButtonCancel.AccessKey "C">

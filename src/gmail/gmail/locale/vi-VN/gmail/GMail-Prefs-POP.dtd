@@ -1,0 +1,4 @@
+<!ENTITY DownloadUnread.Label "Chỉ tải các thư chưa đọc">
+<!ENTITY DownloadUnread.AccessKey "u">
+<!ENTITY Archive.Label "Lưu vào &quot;Hộp lưu trữ&quot; thay vì xóa bỏ">
+<!ENTITY Archive.AccessKey "A">

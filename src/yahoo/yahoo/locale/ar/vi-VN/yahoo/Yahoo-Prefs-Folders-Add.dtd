@@ -1,0 +1,9 @@
+<!ENTITY YahooFolderAdd.Title "Thêm thư mục">
+<!ENTITY YahooFolderName.Label "Tên thư mục">
+<!ENTITY YahooFolderName.AccessKey "F">
+<!ENTITY YahooFolders.Label "Thêm thư mục tải dữ liệu">
+<!ENTITY YahooFolder.ButtonOk.Label "OK">
+<!ENTITY YahooFolder.ButtonOk.AccessKey "O">
+<!ENTITY YahooFolder.ButtonCancel.Label "Hủy">
+<!ENTITY YahooFolder.ButtonCancel.AccessKey "C">
+<!ENTITY YahooFolder.DownloadFolder.Label "Danh sách thư mục tải dữ liệu">

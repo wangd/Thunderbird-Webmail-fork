@@ -534,11 +534,11 @@ HotmailScreenRipperBETA.prototype =
             if (szCleanResponse.search(patternHotmailNextPage)!=-1 && szCleanResponse.search(patternHotmailLastPage)!=-1)
             {
                 var iLastPage = parseInt(szCleanResponse.match(patternHotmailLastPage)[1]);              
-                mainObject.m_Log.Write("Hotmail-SR-BETA - mailBoxOnloadHandler -iLastPage : " +iLastPage +" " + mainObject.m_iPageCount);
-                if (iLastPage >= mainObject.m_iPageCount)bMorepages = true;
+                mainObject.m_Log.Write("Hotmail-SR-BETA - mailBoxOnloadHandler -iLastPage : "+iLastPage+" PageCount "+mainObject.m_iPageCount);
+                if (iLastPage > mainObject.m_iPageCount) bMorepages = true;
             }
          
-            if (bMorepages)  //more pages
+            if (bMorepages==true)  //more pages
             {                
                 var szNavBlock = szCleanResponse.match(patternHotmailNextPage)[0];
                 mainObject.m_Log.Write("Hotmail-SR-BETA - mailBoxOnloadHandler -szNavBlock : " +szNavBlock);

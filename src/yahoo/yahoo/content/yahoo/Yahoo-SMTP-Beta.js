@@ -622,6 +622,7 @@ YahooSMTPBETA.prototype =
             switch(mainObject.m_iStage)
             {
                 case 0:  //MSG sent
+                	mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - Checking response");
                     if (szResponse.search(kPatternSendMSGResponse)!=-1)
                     {
                         mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - SEND OK");
@@ -660,7 +661,7 @@ YahooSMTPBETA.prototype =
                         if (!bResult) throw new Error("httpConnection returned false");
                         mainObject.m_iStage = 2;
                     }
-                    else if (szResponse.search(/SessionIdReissue/igm)!=-1)
+                    else if (szResponse.search(/SessionIdReissue/i)!=-1)
                     {
                         mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler : ID Reiussue" );
                         mainObject.m_szWssid = szResponse.match(/;wssid=(.*?)<\/url>/i)[1];

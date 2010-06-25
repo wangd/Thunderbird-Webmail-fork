@@ -16,7 +16,7 @@ const patternAOLUserID =/uid:(.*?)&/i;
 const patternAOLRealUserName =/"UserScreenName":"(.*?)"/i;
 const patternAOLPageNum = /info.pageCount\s=\s(.*?);/i;
 const patternAOLMSGSender = /^fa[\s\S].*$/gmi;
-const patternAOLMSGData = /"rows":\[(.*?)\]}/i;
+const patternAOLMSGData = /"rows":\[(.*?\]\]),/i;
 const patternAOLMSGDataProcess =/\["(.*?)","(.*?)",.*?,"([\s\S]*)",(.*?),(.*?),.*?,.*?,(.*?),.*?\]/i;
 const patternAOLURLPageNum = /page=(.*?)&/i;
 const patternAOLLogout = /Logout\.aspx/i;

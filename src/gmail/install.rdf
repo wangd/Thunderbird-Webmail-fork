@@ -6,7 +6,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
     <Description about="urn:mozilla:install-manifest">
 
         <em:id>{860a7040-44a3-11da-8cd6-0800200c9a66}</em:id>
-        <em:version>0.6.4</em:version>
+        <em:version>0.6.5</em:version>
         <em:type>2</em:type>
 
         <em:name>WebMail - GMail</em:name>
@@ -35,13 +35,14 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
         <em:contributor>Ivaylo (bg-BG)|30</em:contributor>
         <em:contributor>Risse (fi-FI)|14</em:contributor>
         <em:contributor>Renegade06 (mk-MK)|31</em:contributor>
+        <em:contributor>longnh (vi-VN)|32</em:contributor>
         
         <em:targetApplication>
             <Description>
                 <!-- Mozilla Thunderbird -->
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
                 <em:minVersion>1.4</em:minVersion>
-                <em:maxVersion>3.0.*</em:maxVersion>
+                <em:maxVersion>3.1.*</em:maxVersion>
             </Description>
             
             <!-- Synovel Spicebird -->

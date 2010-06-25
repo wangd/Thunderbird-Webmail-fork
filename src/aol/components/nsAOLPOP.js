@@ -143,7 +143,7 @@ nsAOL.prototype =
                 if (this.m_szHomeURI)
                 {
                     this.m_Log.Write("nsAOL.js - logIN - Session Data Found");
-                    this.m_iStage =3;
+                    this.m_iStage =2;
                     this.m_bReEntry = true;
                     this.m_HttpComms.setURI(this.m_szHomeURI);
                 }
@@ -226,6 +226,19 @@ nsAOL.prototype =
                 return;
             }
 
+            if(szResponse.search(patternAOLPreferredHost)!=-1)
+            {      
+            	var szHostURL = szResponse.match(patternAOLPreferredHost)[1];
+	            var szSuccessURL = szResponse.match(patternAOLPath)[1];
+	            mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - szSuccessURL " +szSuccessURL);
+	            var szURL = "http://" + szHostURL + encodeURI(szSuccessURL);
+	
+	            mainObject.m_HttpComms.setURI(szURL);
+	            mainObject.m_HttpComms.setRequestMethod("GET");
+	            var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
+	            if (!bResult) throw new Error("httpConnection returned false");
+	            return;
+            }
             
              //page code
             switch (mainObject.m_iStage)
@@ -270,7 +283,7 @@ nsAOL.prototype =
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
-
+/*
                 case 1://another bloody bounce
                     var szHostURL = szResponse.match(patternAOLPreferredHost)[1];
                     if (szHostURL == null)
@@ -286,9 +299,9 @@ nsAOL.prototype =
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
+*/
 
-
-                case 2://get settings
+                case 1://get settings
                     var szSetttingsURL = szResponse.match(kPatternSettings)[1];
                     mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - szSetttingsURL " +szSetttingsURL);
                     mainObject.m_HttpComms.setURI(szSetttingsURL);
@@ -298,7 +311,7 @@ nsAOL.prototype =
                     mainObject.m_iStage++;
                 break;
             
-                case 3://get urls
+                case 2://get urls
                     if(szResponse.search(patternAOLRealUserName)==-1)
                     {
                         if (mainObject.m_bReEntry)
@@ -488,7 +501,7 @@ nsAOL.prototype =
             {
                 var szMSGDetails = szResponse.match(patternAOLMSGData)[1];
                 mainObject.m_Log.Write("AOl - mailBoxOnloadHandler - szMSGDetails : " + szMSGDetails);
-                var aszMSGDetails = szMSGDetails.match(/\[.*?\d,\d,\d,\d,\d,\d,\]/igm);
+                var aszMSGDetails = szMSGDetails.match(/\[.*?".*?"\]/igm);
                 mainObject.m_Log.Write("AOl - mailBoxOnloadHandler - aszMSGDetails : " + aszMSGDetails);
                 if (aszMSGDetails)
                 {
@@ -990,9 +1003,11 @@ nsAOL.prototype =
             this.m_HttpComms.addValuePair("automatic","false");
 
             var szData = "[{\"messageAction\":\"delete\","
-            szData +=    "\"folder\":\"" + this.m_szFolder + "\",";
-            szData +=    "\"uids\":[\"" + oMSG.iID + "\"],"
-            szData +=    "\"destFolder\":undefined,\"isSpam\":undefined,\"action\":\"MessageAction\"}]";
+        	szData +=    "\"folder\":\"" + this.m_szFolder + "\",";
+        	szData +=    "\"uids\":{\"" + this.m_szFolder + "\":[\"" + oMSG.iID + "\"]},";
+        	szData +=    "\"destFolder\":undefined,\"isSpam\":undefined,\"checkUndo\":true,";
+        	szData +=    "\"screenName\":\"" + this.m_szLoginUserName+ "\"," ;
+        	szData +=    "\"reason\":\"delebtn\",\"isAllSelected\":false,\"isUndoAction\":false,\"action\":\"MessageAction\"}]"
             this.m_HttpComms.addValuePair("requests",encodeURIComponent(szData));
 
             this.m_iStage = 0;

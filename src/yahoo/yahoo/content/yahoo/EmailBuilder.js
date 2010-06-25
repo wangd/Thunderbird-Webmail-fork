@@ -113,8 +113,10 @@ emailBuilder.prototype.addBody = function (szHeader, szBody)
                 this.m_Log.Write("emailBuilder.js - addBody - szOldPartSubType " + szOldPartSubType);
                 if (szOldPartSubType.search(regExp) != -1) //part found and delete  
                 {
-                    delete oOldMimePart;
-                    this.m_Log.Write("emailBuilder.js - addBody - old part delete ");
+                  	var szUpdateBody = oOldMimePart.body.getBody() + "\r\n\r\n" + szBody;
+                	delete oOldMimePart;
+                	oMimeData.body.setBody (szUpdateBody)
+                    this.m_Log.Write("emailBuilder.js - addBody - old part and new part megered ");
                 }
                 else 
                     this.m_aoBodyPart.push(oOldMimePart);  //return part to array

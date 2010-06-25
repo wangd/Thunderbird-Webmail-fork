@@ -297,9 +297,8 @@ YahooPOPBETA.prototype =
                 break;
 
                 case 2: //mail box
-
-                	
-                    if (szResponse.search(kPatternLogOut)== -1 && szResponse.search(kPatternLogOutAlt)==-1)
+           	
+                    if (szResponse.search(kPatternLogOut)== -1 && szResponse.search(kPatternLogOutAlt)== -1)
                     {
                         mainObject.m_Log.Write("YahooPOPBETA.js - loginOnloadHandler - logout not found");
                         //check for bounce

@@ -6,7 +6,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
     <Description about="urn:mozilla:install-manifest">
 
         <em:id>{d7103710-6112-11d9-9669-0800200c9a66}</em:id>
-        <em:version>1.4.6</em:version>
+        <em:version>1.4.7</em:version>
         <em:type>2</em:type>
 
         <em:name>WebMail - Yahoo</em:name>
@@ -44,13 +44,14 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
         <em:contributor>BenoitRen (SeaMonkey Compatibility)|28</em:contributor>
         <em:contributor>Philip Chee (SeaMonkey Compatibility)|28</em:contributor>
         <em:contributor>lord1980 (ar)|-1</em:contributor>
+        <em:contributor>longnh (vi-VN)|32</em:contributor>
         
         <em:targetApplication>
             <Description>
                 <!-- Mozilla Thunderbird -->
                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
                 <em:minVersion>1.4.0</em:minVersion>
-                <em:maxVersion>3.0.*</em:maxVersion>
+                <em:maxVersion>3.1.*</em:maxVersion>
             </Description>
 
             <!-- Synovel Spicebird -->

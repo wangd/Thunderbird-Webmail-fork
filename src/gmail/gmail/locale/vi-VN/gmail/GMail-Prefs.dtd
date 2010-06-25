@@ -1,0 +1,6 @@
+<!ENTITY Options.szTitle "Tùy chọn">
+<!ENTITY POP.Panel.szTitle "POP">
+<!ENTITY SMTP.Panel.szTitle "SMTP">
+<!ENTITY IMAP.Panel.szTitle "IMAP">
+<!ENTITY Domains.Panel.szTitle "Tên miền">
+<!ENTITY Window.size "width: 36em; height: 30em">

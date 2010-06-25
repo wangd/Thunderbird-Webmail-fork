@@ -1,0 +1,41 @@
+<!ENTITY YahooPref.Window.Title "Tùy chọn Yahoo">
+<!ENTITY YahooPref.Panel.Accounts.Title "Tài khoản">
+<!ENTITY YahooPref.Panel.Domains.Title "Tài khoản">
+<!ENTITY YahooPref.Button.Close.Label "Đóng">
+<!ENTITY YahooPref.Tab.Mode.Title "Chế độ">
+<!ENTITY YahooPref.Tab.POP.Title "POP">
+<!ENTITY YahooPref.Tab.SMTP.Title "SMTP">
+<!ENTITY YahooPref.Tab.Adv.Title "Nâng cao">
+<!ENTITY YahooPref.Mode.Label "Chọn trang web mà ứng dụng sẽ sử dụng">
+<!ENTITY YahooPref.Mode.ScreenScraper.Label "Trang web xuất bản">
+<!ENTITY YahooPref.Mode.Beta.Label "Trang web thử nghiệm">
+<!ENTITY YahooPref.Mode.Classic.Label "Trang web cổ điển mới">
+<!ENTITY YahooPref.POP.DownloadUnread.Label "Chỉ tải các thư chưa đọc">
+<!ENTITY YahooPref.POP.DownloadUnread.AccessKey "u">
+<!ENTITY YahooPref.POP.JunkMail.Label "Tải thư rác">
+<!ENTITY YahooPref.POP.JunkMail.AccessKey "J">
+<!ENTITY YahooPref.POP.Folders.Label "Tải các thư mục">
+<!ENTITY YahooPref.POP.ButtonAdd.Label "Thêm...">
+<!ENTITY YahooPref.POP.ButtonAdd.AccessKey "A">
+<!ENTITY YahooPref.POP.ButtonRemove.Label "Gỡ bỏ">
+<!ENTITY YahooPref.POP.ButtonRemove.AccessKey "R">
+<!ENTITY YahooPref.POP.MarkAsRead.Label "Đánh dấu thành các thư đã đọc trên máy chủ">
+<!ENTITY YahooPref.POP.MarkAsRead.AccessKey "k">
+<!ENTITY YahooPref.SMTP.SaveSentItems.Label "Lưu bản sao trong thư mục &quot;Hộp thư đi&quot;.">
+<!ENTITY YahooPref.SMTP.SaveSentItems.AccessKey "s">
+<!ENTITY YahooPref.SMTP.AlternativeGroup.Label "Khi gửi các thư có nhiều định dạng, phần nào sẽ được gửi?">
+<!ENTITY YahooPref.SMTP.SendPlain.Label "Gửi thư ngắn gọn">
+<!ENTITY YahooPref.SMTP.SendPlain.AccessKey "p">
+<!ENTITY YahooPref.SMTP.SendHtml.Label "Gửi văn bản html">
+<!ENTITY YahooPref.SMTP.SendHtml.AccessKey "h">
+<!ENTITY YahooPref.Adv.ShortID.Label "Sử dụng ID ngắn">
+<!ENTITY YahooPref.Adv.ShortID.AccessKey "I">
+<!ENTITY YahooPref.Adv.ReUseSession.Label "Sử dụng lại dữ liệu http">
+<!ENTITY YahooPref.Adv.ReUseSession.AccessKey "S">
+<!ENTITY YahooPref.AdvInfo.Label "Việc chuyển tùy chọn Id ngắn sẽ khiến toàn bộ hòm thư của bạn được tải">
+<!ENTITY YahooPref.AccountError.Label "Không tìm thấy tài khoản Yahoo">
+<!ENTITY YahooPref.Domain.Label "Các tên miền được hỗ trợ bởi ứng dụng mở rộng Yahoo">
+<!ENTITY YahooPref.Domain.Button.AddDomain.Label "Thêm...">
+<!ENTITY YahooPref.Domain.Button.AddDomain.AccessKey "A">
+<!ENTITY YahooPref.Domain.Button.RemoveDomain.Label "Gỡ bỏ">
+<!ENTITY YahooPref.Domain.Button.RemoveDomain.AccessKey "R">

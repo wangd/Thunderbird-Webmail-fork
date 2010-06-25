@@ -5,7 +5,7 @@ const patternYahooLoginForm = /<form.*?name="login_form".*?>[\S\s]*?<\/form>/gm;
 const patternYahooAction = /<form.*?action="(.*?)".*?>/;
 const patternYahooInput = /<input.*?type=['|"]*hidden['|"]*.*?name=.*?>/igm;
 const patternYahooLogInSpam = /<input type="hidden" name=".secdata" value=".*?">/igm;
-const patternYahooSpanURI =/<td colspan="2">[\s\S]*?<img src="(https.*?)".*?>[\s\S]*?<img src=".*?error.gif.*?".*?>[\s\S]*?<\/td>/im;
+const patternYahooSpanURI =/<td colspan="2">[\s\S]*?<div style=".*?url\((.*?jpg)\)[\s\S]*?<img src=".*?error.gif.*?".*?>[\s\S]*?<\/td>/im;
 const patternYahooFile = /<input.*?type="*file"*.*?name=.*?>/igm;
 const patternYahooNameAlt = /name=['|"]*([\S]*)['|"]*/;
 const patternYahooAltValue = /value=['|"]*([\S\s]*)['|"]*[\s]*>/;
@@ -62,8 +62,9 @@ const patternYahooAddress =/<option value="(.*?)"[\s]*?selected/i;
 const patternYahooSelect = /<select\s*id="defFromAddress"[\s\S]*<\/select>/igm;
 const patternYahooAttFilename = /filename\*="utf-8''"/i
 /******************************  BETA ***************************************/
-const kPatternWssid = /['|"]?wssid['|"]?.*?['|"](.*?)['|"],/i;
+const kPatternWssid = /,['|"]?wssid['|"]?.*?['|"](.*?)['|"],/i;
 const kPatternLogOut = /LoggedInAs/ig;
+const kPatternLogOutAlt = /logout/ig;
 
 const kListFolders = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><m:ListFolders xmlns:m=\"urn:yahoo:ymws\"><param1><greq gve=\"8\" ListFolders=\"true\" resetUnseen=\"true\"><gid>cg</gid></greq></param1></m:ListFolders></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 const kPatternFolderResponse = /<ListFoldersResponse.*?>([\s\S]*?)<\/ListFoldersResponse>/i;

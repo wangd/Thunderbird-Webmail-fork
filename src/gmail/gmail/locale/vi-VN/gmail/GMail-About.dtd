@@ -1,0 +1,10 @@
+<!ENTITY GMailAbout.Title "Giới thiệu">
+<!ENTITY GMailAbout.ExtName "MailDotCom">
+<!ENTITY GMailAbout.ExtVersion "phiên bản 0.5.4">
+<!ENTITY GMailAbout.ExtDescription "Thành phần GMail cho ứng dụng mở rộng Web-Mail">
+<!ENTITY GMailAbout.ExtCreaterTitle "Tác giả:">
+<!ENTITY GMailAbout.ExtCreator "Luigi Capriotti">
+<!ENTITY GMailAbout.ExtHome "Trang chủ">
+<!ENTITY GMailAbout.ExtHomeURL "http://webmail.mozdev.org/">
+<!ENTITY GMailAbout.ExtButton "Đóng">
+<!ENTITY GMailAbout.ExtContributorTitle "Nhà phân phối:">

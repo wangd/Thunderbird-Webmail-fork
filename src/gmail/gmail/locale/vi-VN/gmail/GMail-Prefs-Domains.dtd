@@ -1,0 +1,8 @@
+<!ENTITY GMailPref.Domain.Label "Các tên miền được hỗ trợ">
+<!ENTITY Domain.label "Tên miền">
+<!ENTITY Remove.label "Gỡ bỏ">
+<!ENTITY Remove.AccessKey "R">
+<!ENTITY Add.label "Thêm">
+<!ENTITY Add.AccessKey "A">
+<!ENTITY Edit.label "Sửa">
+<!ENTITY Edit.AccessKey "E">

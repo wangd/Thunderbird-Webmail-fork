@@ -824,6 +824,7 @@ nsGMail.prototype =
             szMsg +=  "X-Labels: " + mainObject.m_szLabels + "\r\n";
             szMsg +=  "X-Stared: " + mainObject.m_bStared;
             szMsg += szResponse;
+            szMsg =  szMsg.replace(/^\./mg,"..");    //bit padding
             szMsg += "\r\n.\r\n";  //msg end
 
             var szPOPResponse = "+OK " + szMsg.length + "\r\n";
