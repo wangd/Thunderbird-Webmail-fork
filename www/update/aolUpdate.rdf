@@ -26,7 +26,7 @@
                           <Description>
                                 <em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id> <!-- Postbox updates -->
                                 <em:minVersion>1.0b13</em:minVersion>
-                                <em:maxVersion>1.0.*</em:maxVersion>
+                                <em:maxVersion>1.1.*</em:maxVersion>
                                 <em:updateLink>http://download.mozdev.org/webmail/aol-1-2-14.xpi</em:updateLink>
                                 <em:updateHash>sha256:372c40fdb94bdab3b84332d574824d8f5eff16a3840434722cd2ab669d56da38</em:updateHash>
                           </Description>
@@ -47,7 +47,7 @@
             </RDF:Seq>
         </em:updates>
         
-       <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBABnZi5OHCW4wyYhbUq76RjcJzEfq28NWulwnD6nKd7hLDpIPg5SbLMltpVsQNPBTWtP47DZfSzKaSzKMxN/fbWEQ3k93Cv4EEt/Xji9g5jXb5F86fEToeMAW/QNYaSE5qdD4hwETEsnFuPLHF6kaZBeuv/hk0PtINFsz4UtKEnNv</em:signature>
+       <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBACRrPxSgcGJ473ut67khNZutQwTkQv8gC5aaiIkWd/74EO39sF0w4l6u4Hu5ViNhLWENNCf7ShCV7F5xz4fbpDpMAg5yUMjab9YYiu3xe6y9LSkTmCxFqdcu01e2PvKWv6emJiZpfHfFzoMRhKn3tTvrac+r/hGEtgCS+c6FuXnu</em:signature>
     
     </RDF:Description>
 </RDF:RDF>
