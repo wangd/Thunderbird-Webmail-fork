@@ -18,6 +18,13 @@
                                 <em:updateLink>http://download.mozdev.org/webmail/yahoo-1-4-7.xpi</em:updateLink>
                                 <em:updateHash>sha256:8fb259230e8ecd6adf2da157e4217fbb42fec45d568ed1e7e6aead882a58f134</em:updateHash>
                           </Description>
+                          <Description>
+                                <em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id> <!-- Postbox updates -->
+                                <em:minVersion>1.0b13</em:minVersion>
+                                <em:maxVersion>1.1.*</em:maxVersion>
+                                <em:updateLink>http://download.mozdev.org/webmail/yahoo-1-4-7.xpi</em:updateLink>
+                                <em:updateHash>sha256:8fb259230e8ecd6adf2da157e4217fbb42fec45d568ed1e7e6aead882a58f134</em:updateHash>
+                          </Description>
                         </em:targetApplication>
                            
                         <em:requires>
@@ -36,7 +43,7 @@
             </RDF:Seq>
         </em:updates>
         
-        <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBABIdfDXBhryAbNOIXj6fxTvTy+FZ8hCAeNLW3YsfyXEt1RoavyCxieU5tInY12t7XMa7yQC4aMiarMBohqQbooD9thT1gZ0GHQoJbbb9ol25unBZNYv8eiCjFqVpMl6jdQXdL5VqKUlEy3bSvsVQ4aNdA0Pfpwh7Z9sTAKCNATzn</em:signature>
+        <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBAIItJ6LPlOvnPLC5wDV+6MA5lOVhESuKdus9QmRyMUyhHUSR629B5H1VerH6dPUNRfLJIAvUkM4VVqRS+61XEcmOsCwO336uYgldqQ3cVWqobqvx07mhjd5eIDKRx7ayaE3IoGgR5EbkhsXVmA+iaJ77hbXG+Mlyvi2wFuIgwR4h</em:signature>
 
     </RDF:Description>
 </RDF:RDF>

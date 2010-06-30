@@ -16,6 +16,13 @@
                                 <em:updateLink>http://download.mozdev.org/webmail/hotmail-1-2-26.xpi</em:updateLink>
                                 <em:updateHash>sha256:d7dfe3981b93d11afd15ae0026df46fd70f9493d1adf4d7778eed35ee70a58ea</em:updateHash>
                           </Description>
+                          <Description>
+                                <em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id> <!-- Postbox updates -->
+                                <em:minVersion>1.0b13</em:minVersion>
+                                <em:maxVersion>1.1.*</em:maxVersion>
+                                <em:updateLink>http://download.mozdev.org/webmail/hotmail-1-2-26.xpi</em:updateLink>
+                                <em:updateHash>sha256:d7dfe3981b93d11afd15ae0026df46fd70f9493d1adf4d7778eed35ee70a58ea</em:updateHash>
+                          </Description>
                         </em:targetApplication>
                 
                         <em:requires>
@@ -34,7 +41,7 @@
             </RDF:Seq>
         </em:updates>
         
-       <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBAJO7n94tN1sbrg2+t7+5EhBqRXiX9Pf8RvooRw6zZxZR3SuBceUHQbPiriwVSkPnTWU7avP0k6nUVV24TnjvgZSozIV7A65DW9PflA5uiN7EF+hcFShf7mJETAIMFq8FwMEFGi137wSjcKmfkr6RkBbnxcTyPbCKK1m8eXf6lDUd</em:signature>
+       <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBABnfJfMo3u4bS0OV86VD6riqFP7ZrGH3QsGGaSa5zOG5EbyLID/5cIUluS9BwosNiAxfUy94NmjfwmAyVpw3EQn2mecnTm3wiA7dpOcm6lmGrfi1T5TSVObTC37EkEC4F9VsFFOOfwT5rQA8hq2f0B9O9mGnp15oKJmfEh0Naisp</em:signature>
 
     
     </RDF:Description>

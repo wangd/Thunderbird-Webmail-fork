@@ -17,6 +17,13 @@
                                 <em:updateLink>http://download.mozdev.org/webmail/gmail-0-6-5.xpi</em:updateLink>
                                 <em:updateHash>sha256:5a6a1a985e149e3281c57ca3c26d011caf3fd18b7f3de628a1c5861d98a54367</em:updateHash>
                           </Description>
+                          <Description>
+                                <em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id> <!-- Postbox updates -->
+                                <em:minVersion>1.0b13</em:minVersion>
+                                <em:maxVersion>1.1.*</em:maxVersion>
+                                <em:updateLink>http://download.mozdev.org/webmail/gmail-0-6-5.xpi</em:updateLink>
+                                <em:updateHash>sha256:5a6a1a985e149e3281c57ca3c26d011caf3fd18b7f3de628a1c5861d98a54367</em:updateHash>
+                          </Description>
                         </em:targetApplication>
                 
                         <em:requires>
@@ -35,7 +42,7 @@
             </RDF:Seq>
         </em:updates>
         
-        <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBAFbQ/6FPgWWhYz/TBpaxXqP3UdIpRGlm/K2HZ7DAS9YG47MAF9JFvBDUf++zCPQAo8enxZmfNeORUI/DDilcyihRx9AG0W+BOcUa3L8b9/BkpOQPF2K8mLlVzCxb6p7+0izugRZvhb8kl48JGuefPsX6qPvshs+/FXEc8PTImd5A</em:signature>
+        <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBAFPCBBz2Iy59iRRO6yZPxgos+ASNf0MGvJC2Uoe/DRsI8iX69L3mgajeYXeNOyj7CKq2W5hndftzCtGWWg25X6vQzpsO/LLmwy8qQgTmOq68jJy/AJGFIjKaQgyEmk8rMr4KP/QPRs83G8PPs2b5BVZykUMHkZel6jTvpPMnmPTC</em:signature>
 
     </RDF:Description>
 </RDF:RDF>
