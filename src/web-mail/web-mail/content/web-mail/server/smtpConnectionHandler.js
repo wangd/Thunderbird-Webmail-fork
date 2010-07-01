@@ -161,7 +161,15 @@ SMTPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
                     this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - mail - START "+ this.iID);
                     this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - mail -\n"+ aCommand);
 
-                    var szTemp = aCommand[1].match(/<(.*?)>/)[1];
+                    var szTemp;
+                    try
+                    {
+                    	szTemp = aCommand[1].match(/<(.*?)>/)[1];
+                    }
+                    catch(e)
+                    {
+                    	szTemp = aCommand[2].match(/<(.*?)>/)[1];
+                    }	
                     this.m_DomainHandler.from = szTemp;
 
                     var szResponse = "250 OK\r\n";
@@ -175,7 +183,15 @@ SMTPconnectionHandler.prototype.onDataAvailable = function(request, context, inp
                     this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - rcpt - START "+ this.iID);
                     this.m_SMTPLog.Write("SMTPconnectionHandler - onDataWritable - rcpt -\n"+ aCommand);
 
-                    var szTemp = aCommand[1].match(/<(.*?)>/)[1];
+                    var szTemp;
+                    try
+                    {
+                    	szTemp = aCommand[1].match(/<(.*?)>/)[1];
+                    }
+                    catch(e)
+                    {
+                    	szTemp = aCommand[2].match(/<(.*?)>/)[1];
+                    }	
                     this.m_DomainHandler.to = szTemp;
 
                     var szResponse = "250 OK\r\n";
