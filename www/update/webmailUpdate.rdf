@@ -7,28 +7,28 @@
             <RDF:Seq>
                 <RDF:li>
                      <RDF:Description>
-                        <em:version>1.3.7</em:version>
+                        <em:version>1.3.8</em:version>
                         <em:targetApplication>
                             <Description>
                                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id><!-- Thunderbird updates -->
                                 <em:minVersion>2.0b2</em:minVersion>
                                 <em:maxVersion>3.1.*</em:maxVersion>
-                                <em:updateLink>http://download.mozdev.org/webmail/web-mail-1-3-7.xpi</em:updateLink>
-                                <em:updateHash>sha256:da08b4498077e3b6c7b582f715cb7cfea290a71b75c546de530045e191f61e32</em:updateHash>
+                                <em:updateLink>http://download.mozdev.org/webmail/web-mail-1-3-8.xpi</em:updateLink>
+                                <em:updateHash>sha256:1b0c8fff7d325a98774d0d1b48e01c114be79b0cec9f3b3efb2df4d0403a9ce9</em:updateHash>
                           </Description>
                           <Description>
                                 <em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id> <!-- Seamonkey updates -->
                                 <em:minVersion>1.1</em:minVersion>
                                 <em:maxVersion>2.0.*</em:maxVersion>
-                                <em:updateLink>http://download.mozdev.org/webmail/web-mail-1-3-7.xpi</em:updateLink>
-                                <em:updateHash>sha256:da08b4498077e3b6c7b582f715cb7cfea290a71b75c546de530045e191f61e32</em:updateHash>
+                                <em:updateLink>http://download.mozdev.org/webmail/web-mail-1-3-8.xpi</em:updateLink>
+                                <em:updateHash>sha256:1b0c8fff7d325a98774d0d1b48e01c114be79b0cec9f3b3efb2df4d0403a9ce9</em:updateHash>
                           </Description>
                            <Description>
                                 <em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id> <!-- Postbox updates -->
                                 <em:minVersion>1.0b13</em:minVersion>
                                 <em:maxVersion>1.1.*</em:maxVersion>
-                                <em:updateLink>http://download.mozdev.org/webmail/web-mail-1-3-7.xpi</em:updateLink>
-                                <em:updateHash>sha256:da08b4498077e3b6c7b582f715cb7cfea290a71b75c546de530045e191f61e32</em:updateHash>
+                                <em:updateLink>http://download.mozdev.org/webmail/web-mail-1-3-8.xpi</em:updateLink>
+                                <em:updateHash>sha256:1b0c8fff7d325a98774d0d1b48e01c114be79b0cec9f3b3efb2df4d0403a9ce9</em:updateHash>
                           </Description>
                         </em:targetApplication>
                     </RDF:Description>
@@ -36,7 +36,7 @@
             </RDF:Seq>
         </em:updates>
         
-       <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBADzqhz8nbbJ7RJVGvEssarlkzyf5F+nLvsgWp3adHXbc3A0MB8gYoegzkBrJQBWl+Ih8qiFw9Nh5fd5FSsrLfdY2rGCxGS7HX8EZ4BkyDdS5GVT9zHABUzbuVNluHy6zeGJUNo4rT3A/XCtTZR8CzxaqCGsj/z0OBI0nqp7D7+2w</em:signature>
+       <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBAKNJcGIzV78opwmDaygHUIQ5i8pezBnO5tnKIrQjLIRosnNZclEwcW7Hu1J3GNdtFsciflSU5YWKM7fAls/kyYYKTiQkoqr+MDVbboo7dcilUroInZX+TXtDpSUn1b1km63jB48x1ebLGJeQ1zlhNAItH9bD6WBxN2F1QbCBvzqr</em:signature>
     
     </RDF:Description>
 </RDF:RDF>
