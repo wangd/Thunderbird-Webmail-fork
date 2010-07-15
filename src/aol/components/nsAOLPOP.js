@@ -226,6 +226,7 @@ nsAOL.prototype =
                 return;
             }
 
+            
             if(szResponse.search(patternAOLPreferredHost)!=-1)
             {      
             	var szHostURL = szResponse.match(patternAOLPreferredHost)[1];
@@ -239,6 +240,19 @@ nsAOL.prototype =
 	            if (!bResult) throw new Error("httpConnection returned false");
 	            return;
             }
+            
+            
+            if(szResponse.search(patternAOLSuccess)!=-1)
+            {      
+            	var gSuccessURL = szResponse.match(patternAOLSuccess)[1];
+            	mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - szSuccessURL " +szSuccessURL);
+	            mainObject.m_HttpComms.setURI(gSuccessURL);
+	            mainObject.m_HttpComms.setRequestMethod("GET");
+	            var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
+	            if (!bResult) throw new Error("httpConnection returned false");
+	            return;
+            }
+            
             
              //page code
             switch (mainObject.m_iStage)
@@ -283,23 +297,6 @@ nsAOL.prototype =
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
                 break;
-/*
-                case 1://another bloody bounce
-                    var szHostURL = szResponse.match(patternAOLPreferredHost)[1];
-                    if (szHostURL == null)
-                        throw new Error("error parsing AOL login web page");
-
-                    var szSuccessURL = szResponse.match(patternAOLPath)[1];
-                    mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - szSuccessURL " +szSuccessURL);
-                    var szURL = "http://" + szHostURL + encodeURI(szSuccessURL);
-
-                    mainObject.m_HttpComms.setURI(szURL);
-                    mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
-                break;
-*/
 
                 case 1://get settings
                     var szSetttingsURL = szResponse.match(kPatternSettings)[1];

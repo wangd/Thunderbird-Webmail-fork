@@ -29,6 +29,7 @@ const patternAOLSendCheck = /parent.HandleSendSaveResponse\(true,.*?\)/igm;
 const patternAOLBounce =/goToLoginUrl[\s\S]*?snsRedir\("(.*?)"\);[\s\S]*?\}/im;
 const patternAOLPath = /gSuccessPath.*?"(.*?)";/i;
 const patternAOLPreferredHost = /gPreferredHost.*?"(.*?)";/i;
+const patternAOLSuccess = /gSuccessURL.*?"(.*?)";/i;
 const patternAOLHostCheckPath = /gHostCheckPath.*?"(.*?)";/i;
 const kPatternFolderID = /<FolderInfo name="(.*?)">/i;
 const kPatternSettings = /\\"(.*?settings\.js\.aspx.*?)\\"/i;

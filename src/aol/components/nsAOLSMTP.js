@@ -138,7 +138,7 @@ nsAOLSMTP.prototype =
                 if (this.m_szHomeURI)
                 {
                     this.m_Log.Write("nsAOLSMTP.js - logIN - Session Data Found");
-                    this.m_iStage =3;
+                    this.m_iStage =2;
                     this.m_bReEntry = true;
                     this.m_HttpComms.setURI(this.m_szHomeURI);
                 }
@@ -220,6 +220,34 @@ nsAOLSMTP.prototype =
             }
 
             
+            if(szResponse.search(patternAOLPreferredHost)!=-1)
+            {      
+            	var szHostURL = szResponse.match(patternAOLPreferredHost)[1];
+	            var szSuccessURL = szResponse.match(patternAOLPath)[1];
+	            mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - szSuccessURL " +szSuccessURL);
+	            var szURL = "http://" + szHostURL + encodeURI(szSuccessURL);
+	
+	            mainObject.m_HttpComms.setURI(szURL);
+	            mainObject.m_HttpComms.setRequestMethod("GET");
+	            var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
+	            if (!bResult) throw new Error("httpConnection returned false");
+	            return;
+            }
+
+            
+            if(szResponse.search(patternAOLSuccess)!=-1)
+            {      
+            	var gSuccessURL = szResponse.match(patternAOLSuccess)[1];
+            	mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - szSuccessURL " +szSuccessURL);
+	            mainObject.m_HttpComms.setURI(gSuccessURL);
+	            mainObject.m_HttpComms.setRequestMethod("GET");
+	            var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
+	            if (!bResult) throw new Error("httpConnection returned false");
+	            return;
+            }
+
+            
+            
              //page code
             switch (mainObject.m_iStage)
             {
@@ -263,24 +291,8 @@ nsAOLSMTP.prototype =
                     mainObject.m_iStage++;
                 break;
 
-                case 1://another bloody bounce
-                    var szHostURL = szResponse.match(patternAOLPreferredHost)[1];
-                    if (szHostURL == null)
-                        throw new Error("error parsing AOL login web page");
 
-                    var szSuccessURL = szResponse.match(patternAOLPath)[1];
-                    mainObject.m_Log.Write("AOLSMTP.js - loginOnloadHandler - szSuccessURL " +szSuccessURL);
-                    var szURL = "http://" + szHostURL + encodeURI(szSuccessURL);
-
-                    mainObject.m_HttpComms.setURI(szURL);
-                    mainObject.m_HttpComms.setRequestMethod("GET");
-                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
-                    if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;
-                break;
-
-
-                case 2://get settings
+                case 1://get settings
                     var szSetttingsURL = szResponse.match(kPatternSettings)[1];
                     mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - szSetttingsURL " +szSetttingsURL);
                     mainObject.m_HttpComms.setURI(szSetttingsURL);
@@ -291,7 +303,7 @@ nsAOLSMTP.prototype =
                 break;
             
 
-                case 3://get urls
+                case 2://get urls
                     if(szResponse.search(patternAOLRealUserName)==-1)
                     {
                         if (mainObject.m_bReEntry)
