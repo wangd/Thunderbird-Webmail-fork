@@ -7,21 +7,21 @@
             <RDF:Seq>
                 <RDF:li>
                     <RDF:Description>
-                        <em:version>1.2.26</em:version>
+                        <em:version>1.2.27</em:version>
                         <em:targetApplication>
                             <Description>
                                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id> <!-- Thunderbird updates -->
                                 <em:minVersion>2.0b2</em:minVersion>
                                 <em:maxVersion>3.1.*</em:maxVersion>
-                                <em:updateLink>http://download.mozdev.org/webmail/hotmail-1-2-26.xpi</em:updateLink>
-                                <em:updateHash>sha256:d7dfe3981b93d11afd15ae0026df46fd70f9493d1adf4d7778eed35ee70a58ea</em:updateHash>
+                                <em:updateLink>http://download.mozdev.org/webmail/hotmail-1-2-27.xpi</em:updateLink>
+                                <em:updateHash>sha256:9c08a961251e0bfbc1e9ca68ba42b6e7b07614923cf87064271bd29d07a66be7</em:updateHash>
                           </Description>
                           <Description>
                                 <em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id> <!-- Postbox updates -->
                                 <em:minVersion>1.0b13</em:minVersion>
                                 <em:maxVersion>1.1.*</em:maxVersion>
-                                <em:updateLink>http://download.mozdev.org/webmail/hotmail-1-2-26.xpi</em:updateLink>
-                                <em:updateHash>sha256:d7dfe3981b93d11afd15ae0026df46fd70f9493d1adf4d7778eed35ee70a58ea</em:updateHash>
+                                <em:updateLink>http://download.mozdev.org/webmail/hotmail-1-2-27.xpi</em:updateLink>
+                                <em:updateHash>sha256:9c08a961251e0bfbc1e9ca68ba42b6e7b07614923cf87064271bd29d07a66be7</em:updateHash>
                           </Description>
                         </em:targetApplication>
                 
@@ -41,7 +41,7 @@
             </RDF:Seq>
         </em:updates>
         
-       <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBABnfJfMo3u4bS0OV86VD6riqFP7ZrGH3QsGGaSa5zOG5EbyLID/5cIUluS9BwosNiAxfUy94NmjfwmAyVpw3EQn2mecnTm3wiA7dpOcm6lmGrfi1T5TSVObTC37EkEC4F9VsFFOOfwT5rQA8hq2f0B9O9mGnp15oKJmfEh0Naisp</em:signature>
+       <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBAODTLELvqERzSai+S+Lyp+wyV4BJJrSiWeXt4u2qEwwQa0+Qd4Bx6Mo9OMEcfBv7+E77VpfLew4lPwPmJMUNFFiqcZ+vtD95b1QTJ/7QNr4zB+EZ4xZEhPrXn3noQDhZVkCETpaJrmWfKCkE8J/lpBh0Goegu1LuQtBoLHVIGXO/</em:signature>
 
     
     </RDF:Description>
