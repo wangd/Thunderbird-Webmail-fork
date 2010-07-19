@@ -47,7 +47,6 @@ const patternHotmailAttForm = /<form\s+name="doattach".*?>[\S\s]*?<\/form>/igm
 const patternHotmailAD = /<form.*?name="addtoAB".*?>/igm;
 const patternHotmailSpamForm = /<form.*?forcehip.srf.*>/igm;
 const patternHotmailSpamImage =/<img.*?src="(.*?hip\.srf.*?)".*?name="hipImage"\/>/i;
-const patternHotmailBase = /<base href="(.*?)"\/>/i;
 const patternHotmailCurmbox = /curmbox=(.*?)&/;
 const patternHotmailLogout = /<td><a.*?href="(.*?\/cgi-bin\/logout\?curmbox=.*?").*?>/m;
 const patternHotmailMailbox = /<a href="(\/cgi-bin\/HoTMaiL.*?)".*?tabindex=121.*?class="E">/;
@@ -77,8 +76,8 @@ const patternHotmailJSRefreshAlt2 = /srf_uLogin.*?=.*?"(.*?)";/i;
 const patternHotmailJSRefreshAlt3 = /self\.location\.href = ['|"](.*?wsignin.*?)['|"]/i;
 const patternHotmailRefresh2 = /window\.location=['|"](.*?)['|"][\s\S]*?src=['|"](.*?)['|"]/i;
 const patternHotmailRefresh3 = /window\.location/i;
-
-
+const patternHotmailUIFrame = /id="UIFrame"/igm;
+const patternHotmailBase = /base href="(.*?)"/i;
 
 const patternHotmailSMTPForm = /<form.*?name="aspnetForm".*?>[\S\s]*?<\/form>/i;
 const patternHotmailLogOut = /logout/i;

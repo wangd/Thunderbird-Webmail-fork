@@ -197,6 +197,24 @@ HotmailScreenRipperBETA.prototype =
             }
             
             
+            //frame
+            if(szResponse.search(patternHotmailUIFrame)!=-1)
+            {
+            	mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler - frame ");
+            	
+            	var szTempURL = szResponse.match(patternHotmailBase)[1];
+            	mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler - szTempURL " +szTempURL);
+            	var szURL = mainObject.urlDecode(szTempURL);
+                mainObject.m_HttpComms.setURI(szURL);
+                mainObject.m_HttpComms.setRequestMethod("GET");
+
+                var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
+                if (!bResult) throw new Error("httpConnection returned false");
+                return;    
+            }
+           
+            
+            //login form
             var aForm = szResponse.match(patternHotmailLoginForm);
             mainObject.m_Log.Write("Hotmail-SR-BETA-POP - loginOnloadHandler aForm "+ aForm);
             if (aForm)
@@ -1378,13 +1396,16 @@ HotmailScreenRipperBETA.prototype =
 
     },
     
-    
+
     urlDecode : function (szDate)
     {
         var szDecode = szDate.replace(/\\x3a/g,":");
+        szDecode = szDecode.replace(/&#58;/g,":");   
         szDecode = szDecode.replace(/\\x2f/g,"/");
         szDecode = szDecode.replace(/\\x3f/g,"?");
+        szDecode = szDecode.replace(/&#63;/g,"?");      
         szDecode = szDecode.replace(/\\x3d/g,"="); 
+        szDecode = szDecode.replace(/&#61;/g,"=");     
         szDecode = szDecode.replace(/\\x26/g,"&");
         return szDecode;
     }
