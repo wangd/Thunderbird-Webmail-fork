@@ -872,6 +872,7 @@ HotmailSMTPScreenRipperBETA.prototype =
         var szDecode = szDate.replace(/\\x3a/g,":");
         szDecode = szDecode.replace(/&#58;/g,":"); 
         szDecode = szDecode.replace(/\\x2f/g,"/");
+        szDecode = szDecode.replace(/&#47;/g,"/");  
         szDecode = szDecode.replace(/\\x3f/g,"?");
         szDecode = szDecode.replace(/&#63;/g,"?");      
         szDecode = szDecode.replace(/\\x3d/g,"="); 
