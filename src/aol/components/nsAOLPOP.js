@@ -244,9 +244,11 @@ nsAOL.prototype =
             
             if(szResponse.search(patternAOLSuccess)!=-1)
             {      
-            	var gSuccessURL = szResponse.match(patternAOLSuccess)[1];
+            	var szSuccessURL = szResponse.match(patternAOLSuccess)[1];
             	mainObject.m_Log.Write("AOLPOP.js - loginOnloadHandler - szSuccessURL " +szSuccessURL);
-	            mainObject.m_HttpComms.setURI(gSuccessURL);
+                if (!mainObject.m_HttpComms.setURI(szSuccessURL))
+                    mainObject.m_HttpComms.setURI(httpChannel.URI.prePath + szSuccessURL);
+
 	            mainObject.m_HttpComms.setRequestMethod("GET");
 	            var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
 	            if (!bResult) throw new Error("httpConnection returned false");
