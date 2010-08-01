@@ -7,7 +7,7 @@
             <RDF:Seq>
                 <RDF:li>
                      <RDF:Description>
-                        <em:version>1.2.15</em:version>
+                        <em:version>1.2.16</em:version>
                         <em:targetApplication>
                             <Description>
                                 <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id> <!-- Thunderbird updates -->
@@ -46,8 +46,8 @@
                 </RDF:li>
             </RDF:Seq>
         </em:updates>
-        
-       <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBAGMrZ8K1RT63cUA631cM1P1gqArgMBl0TteNG5kLHsyAqLpLJkOKFWJZKUl6vS5m/7URGGDnUCncU9vHcxPxR6ToW3F7LV+ASuI8PalbsPOyrRSLQR+KeUg9gP7WRJufkxlNI205JQG6MPLx+UOqhvYG1j5n0cMjwXf2ELVYzKVE</em:signature>
-    
+
+       <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBABQG1whHvTOZbPvtf9XLcrnadpFEqpw4zMubHUVGD2hc6rUh6ewYx9ZuwqdbKgVDRneATDC3egEMOS0jqvls0PmUhypr2h/bs6z5sFRamv0ghSYRSXeBszrkpS5eqPW/my5kLbpOuFpr3kF8CW16AffAT2U2mDjbSBqTUg3EQDNt</em:signature>
+
     </RDF:Description>
 </RDF:RDF>
