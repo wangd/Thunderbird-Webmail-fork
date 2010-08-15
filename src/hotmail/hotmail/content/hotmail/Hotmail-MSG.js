@@ -27,3 +27,5 @@ HotmailMSG.prototype.szStatView = null;
 HotmailMSG.prototype.bJunkFolder = false;
 
 HotmailMSG.prototype.szMad = null;
+
+HotmailMSG.prototype.szAnchor = null;

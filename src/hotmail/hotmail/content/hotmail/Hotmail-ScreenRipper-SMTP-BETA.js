@@ -19,7 +19,7 @@ function HotmailSMTPScreenRipperBETA(oResponseStream, oLog, oPrefData)
         this.m_oResponseStream = oResponseStream;
         this.m_HttpComms = new HttpComms(this.m_Log);
         this.m_HttpComms.setUserAgentOverride(true);
-                    
+
         this.m_szLocationURI = null;
         this.m_szHomeURI = null;
         this.m_szComposer = null;
@@ -40,7 +40,7 @@ function HotmailSMTPScreenRipperBETA(oResponseStream, oLog, oPrefData)
 
         this.m_bReEntry = false;
         this.m_iLoginBounce = 4;
-        
+
         this.m_bReUseSession = oPrefData.bReUseSession;    //do i reuse the session
         this.m_bSaveCopy= oPrefData.bSaveCopy;            //do i save copy
         this.m_bSendHtml = oPrefData.bSendHtml;          //what do i do with alternative parts
@@ -145,20 +145,20 @@ HotmailSMTPScreenRipperBETA.prototype =
                 throw new Error("return status " + httpChannel.responseStatus);
 
             //check for java refresh
-            var aRefresh = szResponse.match(patternHotmailJSRefresh); 
+            var aRefresh = szResponse.match(patternHotmailJSRefresh);
             if (!aRefresh) aRefresh = szResponse.match(patternHotmailJSRefreshAlt);
             if (!aRefresh) aRefresh = szResponse.match(patternHotmailRefresh2);
-            if (!aRefresh && mainObject.m_iStage>0) aRefresh = szResponse.match(patternHotmailJSRefreshAlt3);  
+            if (!aRefresh && mainObject.m_iStage>0) aRefresh = szResponse.match(patternHotmailJSRefreshAlt3);
             //if (!aRefresh) aRefresh = szResponse.match(patternHotmailJSRefreshAlt2);
-            //if (!aRefresh) aRefresh = szResponse.match(patternHotmailJSBounce);  
+            //if (!aRefresh) aRefresh = szResponse.match(patternHotmailJSBounce);
             mainObject.m_Log.Write("Hotmail-SR-BETA-SMTP - loginOnloadHandler aRefresh "+ aRefresh);
             if (aRefresh)
             {
                 mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler - refresh ");
-                
-                if (mainObject.m_iLoginBounce == 0) throw new Error ("No many bounces") 
+
+                if (mainObject.m_iLoginBounce == 0) throw new Error ("No many bounces")
                 mainObject.m_iLoginBounce--;
-                
+
                 var szURL = mainObject.urlDecode(aRefresh[1]);
                 if (!mainObject.m_HttpComms.setURI(szURL))
                     mainObject.m_HttpComms.setURI(httpChannel.URI.prePath + szDirectory + aRefresh[1]);
@@ -169,23 +169,23 @@ HotmailSMTPScreenRipperBETA.prototype =
                 if (!bResult) throw new Error("httpConnection returned false");
                 return;
             }
-            
-            
+
+
             //frame
             if(szResponse.search(patternHotmailUIFrame)!=-1)
             {
-            	mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler - frame ");
-            	
-            	var szURL = mainObject.urlDecode(szResponse.match(patternHotmailBase)[1]);
+                mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler - frame ");
+
+                var szURL = mainObject.urlDecode(szResponse.match(patternHotmailBase)[1]);
                 mainObject.m_HttpComms.setURI(szURL);
                 mainObject.m_HttpComms.setRequestMethod("GET");
 
                 var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
                 if (!bResult) throw new Error("httpConnection returned false");
-                return;    
+                return;
             }
 
-            
+
             var aForm = szResponse.match(patternHotmailLoginForm);
             mainObject.m_Log.Write("Hotmail-SR-BETA - loginOnloadHandler aForm "+ aForm);
             if (aForm)
@@ -202,37 +202,37 @@ HotmailSMTPScreenRipperBETA.prototype =
                 if (!bResult) throw new Error("httpConnection returned false");
                 return;
             }
-            
+
             //page code
             switch (mainObject.m_iStage)
             {
                 case 0: //login
-                    var szURL = szResponse.match(patternHotmailLoginURL)[1];            
+                    var szURL = szResponse.match(patternHotmailLoginURL)[1];
                     mainObject.m_Log.Write("Hotmail-SR-BETA loginOnloadHandler - szURL :" +szURL);
                     if (!szURL) throw new Error("error parsing login page");
 
                     //get form data
                     mainObject.m_HttpComms.addValuePair("idsbho","1");
-                    
+
                     var szPasswordPadding = "IfYouAreReadingThisYouHaveTooMuchFreeTime";
                     var lPad=szPasswordPadding.length-mainObject.m_szPassWord.length;
                     szData = szPasswordPadding.substr(0,(lPad<0)?0:lPad);
                     mainObject.m_HttpComms.addValuePair("PwdPad",szData);
-                    
+
                     mainObject.m_HttpComms.addValuePair("LoginOptions","2");
                     mainObject.m_HttpComms.addValuePair("CS","");
                     mainObject.m_HttpComms.addValuePair("FedState","");
-                    
-                    var szBlob = szResponse.match(patternHotmailSRBlob)[1];   
+
+                    var szBlob = szResponse.match(patternHotmailSRBlob)[1];
                     mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler - szBlob :" +szBlob);
                     mainObject.m_HttpComms.addValuePair("PPSX",szBlob);
-                   
+
                     mainObject.m_HttpComms.addValuePair("login",mainObject.urlEncode(mainObject.m_szUserName));
-                    mainObject.m_HttpComms.addValuePair("passwd",mainObject.urlEncode(mainObject.m_szPassWord));       
+                    mainObject.m_HttpComms.addValuePair("passwd",mainObject.urlEncode(mainObject.m_szPassWord));
                     mainObject.m_HttpComms.addValuePair("remMe","1");
                     mainObject.m_HttpComms.addValuePair("NewUser","1");
-                    
-                    var szSFT = szResponse.match(patternHotmailSFT)[1];   
+
+                    var szSFT = szResponse.match(patternHotmailSFT)[1];
                     mainObject.m_Log.Write("Hotmail-SR - loginOnloadHandler - szSFT :" +szSFT);
                     mainObject.m_HttpComms.addValuePair("PPFT",szSFT);
 
@@ -255,7 +255,7 @@ HotmailSMTPScreenRipperBETA.prototype =
 
                     var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
                                              .getService(Components.interfaces.nsIWebMailCookieManager2);
-                                             
+
                     //check for logout option
                     if (szResponse.search(patternHotmailLogOut)==-1)
                     {
@@ -302,15 +302,15 @@ HotmailSMTPScreenRipperBETA.prototype =
                     mainObject.m_Log.Write("Hotmail-SR-BETA-SMTP - loginOnloadHandler - m_szHomeURI : "+mainObject.m_szHomeURI );
 
                     var szURL = "";
-                    try 
+                    try
                     {
-                        var szN = szResponse.match(patternHotmailN)[1];
+                        var szN = mainObject.m_szHomeURI.match(patternHotmailN)[1];
                         szURL = "EditMessageLight.aspx?" + szN
                     }
                     catch(e)
                     {
                         szURL = "EditMessageLight.aspx?";
-                    }                   
+                    }
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA - loginOnloadHandler - szURL : "+szURL);
                     mainObject.m_szComposer =  mainObject.m_szLocationURI + szURL;
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA - loginOnloadHandler - m_szComposer : "+mainObject.m_szComposer );
@@ -401,54 +401,54 @@ HotmailSMTPScreenRipperBETA.prototype =
             if (szResponse.search(/GlobalError.aspx/i)!=-1)
                 throw new Error("Error parsing page");
 
-            //nonce 
+            //nonce
             if (szResponse.search(patternHotmailNonce)!=-1)
                 mainObject.m_szNonce = szResponse.match(patternHotmailNonce)[1];
             mainObject.m_Log.Write("Hotmail-SR-BETA - composerOnloadHandler - szNonce : " + mainObject.m_szNonce);
 
             //attachment processing required
-            if (mainObject.m_Email.attachments.length > 0 && !mainObject.m_bAttHandled) 
+            if (mainObject.m_Email.attachments.length > 0 && !mainObject.m_bAttHandled)
             {
                 mainObject.m_iStage = 2;
-                mainObject.m_szForm = szResponse.match(patternHotmailSMTPForm)[0];  
+                mainObject.m_szForm = szResponse.match(patternHotmailSMTPForm)[0];
                 mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler - Form " + mainObject.m_szForm);
             }
-            
+
             //page code
             switch (mainObject.m_iStage)
             {
                 case 0:  //MSG handler
 
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler - Send MSG");
-                    
-                    var szForm = mainObject.m_szForm; 
-                    if (mainObject.m_szForm == null) 
+
+                    var szForm = mainObject.m_szForm;
+                    if (mainObject.m_szForm == null)
                         szForm = szResponse.match(patternHotmailSMTPForm)[0];
                     else
                     {
                         //get attachment data
                         var szAttForm = szResponse.match(patternHotmailForm)[0];
                         mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler - Form " + szAttForm);
-                        
+
                         var aszAttInput = szAttForm.match(patternHotmailInput);
                         mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler - aszAttInput " + aszAttInput);
-                        
+
                         for (i=0; i<aszAttInput.length; i++)
                         {
                             mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler - aszAttInput[i] "  +aszAttInput[i]);
-                           
+
                             if (aszAttInput[i].search(/name/i)!=-1)
                             {
                                 var szAttName = aszAttInput[i].match(patternHotmailName)[1];
-                                if (szAttName.search(/HiddenFileName/i) != -1) 
+                                if (szAttName.search(/HiddenFileName/i) != -1)
                                 {
-                                    try 
+                                    try
                                     {
                                         var szAttValue = aszAttInput[i].match(patternHotmailValue)[1];
                                         if (szAttValue.length>0)
-                                        	mainObject.m_szAttachData += "|" + mainObject.urlEncode(szAttValue);                                      
-                                    } 
-                                    catch (err) 
+                                            mainObject.m_szAttachData += "|" + mainObject.urlEncode(szAttValue);
+                                    }
+                                    catch (err)
                                     {
                                     }
                                 }
@@ -469,7 +469,7 @@ HotmailSMTPScreenRipperBETA.prototype =
                     var szReferer = mainObject.m_szLocationURI + szForm.match(patternHotmailAction)[1];
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA - composerOnloadHandler - szReferer : " +szReferer);
                     mainObject.m_HttpComms.addRequestHeader("Referer", szReferer, true);
-                    
+
                     for (i=0; i<aszInput.length; i++)
                     {
                         mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler -aszInput[i] "  +aszInput[i]);
@@ -525,15 +525,15 @@ HotmailSMTPScreenRipperBETA.prototype =
                                 }
                                 else if (szName.search(/fAttachments_data/i)!=-1 && mainObject.m_szAttachData!="")
                                 {
-                                    szValue = mainObject.m_szAttachData;                                
+                                    szValue = mainObject.m_szAttachData;
                                 }
                                 mainObject.m_HttpComms.addValuePair(szName, szValue);
                             }
                         }
                     }
-                    
-                    var szBody = "";     
-                    var szContentType = null;               
+
+                    var szBody = "";
+                    var szContentType = null;
                     if (mainObject.m_Email.txtBody && !mainObject.m_bSendHtml || !mainObject.m_Email.htmlBody)
                     {
                         mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - plain");
@@ -547,19 +547,19 @@ HotmailSMTPScreenRipperBETA.prototype =
                     else if (mainObject.m_Email.htmlBody && mainObject.m_bSendHtml || !mainObject.m_Email.txtBody)
                     {
                         mainObject.m_Log.Write("Hotmail-SR-SMTP.js - composerOnloadHandler - html");
-                        szContentType = mainObject.m_Email.headers.getContentType(0);                       
+                        szContentType = mainObject.m_Email.headers.getContentType(0);
                         //var szHTMLBody = "<font size=\"7\">another test</font><br><big>test</big><br>test"
                         szBody = mainObject.m_Email.htmlBody.body.getBody();
-                        try 
+                        try
                         {
                             var szCleanBody = szBody.match(/<body.*?>([\s\S]*)<\/body>/)[1];
                             szBody = szCleanBody;
                         }
                         catch(e)
-                        {                            
+                        {
                         }
                     }
-                    
+
                     mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler szContentType " + szContentType);
                     if (szContentType)
                     {
@@ -573,15 +573,15 @@ HotmailSMTPScreenRipperBETA.prototype =
                             mainObject.m_Log.Write("Hotmail-SR-SMTP-BETA.js - composerOnloadHandler -szCharset " + szCharset);
                             if (szCharset)
                             {
-                                szBody = mainObject.convertToUTF8(szBody,szCharset);                                 
+                                szBody = mainObject.convertToUTF8(szBody,szCharset);
                                 mainObject.m_Log.Write("Hotmail-SR-BETA - emailOnloadHandler - utf-8 "+szBody);
                             }
                         }
                     }
-                    
-                    
+
+
                     mainObject.m_HttpComms.addValuePair("fMessageBody", szBody);
-             
+
                     mainObject.m_HttpComms.setURI(szURL);
                     mainObject.m_HttpComms.setRequestMethod("POST");
                     mainObject.m_HttpComms.setContentType("multipart/form-data");
@@ -661,8 +661,8 @@ HotmailSMTPScreenRipperBETA.prototype =
                         }
                         catch(err){}
 
-                        if (szType.search(/submit/i)==-1 && szType.search(/image/i)==-1 && 
-                        		szType.search(/button/i)==-1 && aszInput[i].search(/name/i)!=-1 )
+                        if (szType.search(/submit/i)==-1 && szType.search(/image/i)==-1 &&
+                                szType.search(/button/i)==-1 && aszInput[i].search(/name/i)!=-1 )
                         {
                             var szName = aszInput[i].match(patternHotmailName)[1];
                             var szValue = "";
@@ -689,10 +689,10 @@ HotmailSMTPScreenRipperBETA.prototype =
                             {
                                 mainObject.m_HttpComms.addValuePair(szName, "upload");
                             }
-                            else if (szName.search(/HiddenFileName/i) != -1) 
+                            else if (szName.search(/HiddenFileName/i) != -1)
                             {
                                 if (szValue.length>0)
-                                	mainObject.m_szAttachData += "|" + mainObject.urlEncode(szValue);
+                                    mainObject.m_szAttachData += "|" + mainObject.urlEncode(szValue);
                                 mainObject.m_HttpComms.addValuePair(szName, mainObject.m_szAttachData);
                             }
                             else
@@ -832,8 +832,8 @@ HotmailSMTPScreenRipperBETA.prototype =
         this.m_Log.Write("Hotmail-SR-SMTP-BETA - convertToUTF8 END");
         return szDecoded;
     },
-    
-    
+
+
     decodeHTML : function (szRaw)
     {
         this.m_Log.Write("Hotmail-SR-SMTP-BETA - decodeHTML - START");
@@ -861,26 +861,26 @@ HotmailSMTPScreenRipperBETA.prototype =
         szEncoded = szEncoded.replace(/%5B/g,"[");
         szEncoded = szEncoded.replace(/%5D/g,"]");
         szEncoded = szEncoded.replace(/%7B/g,"{");
-        szEncoded = szEncoded.replace(/%7D/g,"}");        
+        szEncoded = szEncoded.replace(/%7D/g,"}");
 
         return szEncoded;
     },
-  
-  
+
+
     urlDecode : function (szDate)
     {
         var szDecode = szDate.replace(/\\x3a/g,":");
-        szDecode = szDecode.replace(/&#58;/g,":"); 
+        szDecode = szDecode.replace(/&#58;/g,":");
         szDecode = szDecode.replace(/\\x2f/g,"/");
-        szDecode = szDecode.replace(/&#47;/g,"/");  
+        szDecode = szDecode.replace(/&#47;/g,"/");
         szDecode = szDecode.replace(/\\x3f/g,"?");
-        szDecode = szDecode.replace(/&#63;/g,"?");      
-        szDecode = szDecode.replace(/\\x3d/g,"="); 
-        szDecode = szDecode.replace(/&#61;/g,"=");     
+        szDecode = szDecode.replace(/&#63;/g,"?");
+        szDecode = szDecode.replace(/\\x3d/g,"=");
+        szDecode = szDecode.replace(/&#61;/g,"=");
         szDecode = szDecode.replace(/\\x26/g,"&");
         return szDecode;
     },
-    
+
     serverComms : function (szMsg)
     {
         try

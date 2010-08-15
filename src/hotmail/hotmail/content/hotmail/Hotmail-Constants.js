@@ -1,32 +1,5 @@
 const kHotmailConstants = true;
 
-/************************Webdav constants *************************************/
-const HotmailSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:h=\"http://schemas.microsoft.com/hotmail/\" xmlns:hm=\"urn:schemas:httpmail:\">\r\n<D:prop>\r\n<h:adbar/>\r\n<hm:contacts/>\r\n<hm:inbox/>\r\n<hm:outbox/>\r\n<hm:sendmsg/>\r\n<hm:sentitems/>\r\n<hm:deleteditems/>\r\n<hm:drafts/>\r\n<hm:msgfolderroot/>\r\n<h:maxpoll/>\r\n<h:sig/>\r\n</D:prop>\r\n</D:propfind>";
-const HotmailFolderSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:hm=\"urn:schemas:httpmail:\">\r\n<D:prop>\r\n<D:isfolder/>\r\n<D:displayname/>\r\n<hm:special/>\r\n<D:hassubs/>\r\n<D:nosubs/>\r\n<hm:unreadcount/>\r\n<D:visiblecount/>\r\n<hm:special/>\r\n</D:prop>\r\n</D:propfind>";
-const HotmailMailSchema = "<?xml version=\"1.0\"?>\r\n<D:propfind xmlns:D=\"DAV:\" xmlns:hm=\"urn:schemas:httpmail:\" xmlns:m=\"urn:schemas:mailheader:\">\r\n<D:prop>\r\n<D:isfolder/>\r\n<hm:read/>\r\n<m:hasattachment/>\r\n<m:to/>\r\n<m:from/>\r\n<h:fromaddr/>\r\n<m:subject/>\r\n<m:date/>\r\n<D:getcontentlength/>\r\n</D:prop>\r\n</D:propfind>";
-const HotmailReadSchema = "<?xml version=\"1.0\"?>\r\n<D:propertyupdate xmlns:D=\"DAV:\" xmlns:hm=\"urn:schemas:httpmail:\">\r\n<D:set>\r\n<D:prop>\r\n<hm:read>1</hm:read>\r\n</D:prop>\r\n</D:set>\r\n</D:propertyupdate>";
-const HotmailUnReadSchema = "<?xml version=\"1.0\"?>\r\n<D:propertyupdate xmlns:D=\"DAV:\" xmlns:hm=\"urn:schemas:httpmail:\">\r\n<D:set>\r\n<D:prop>\r\n<hm:read>0</hm:read>\r\n</D:prop>\r\n</D:set>\r\n</D:propertyupdate>";
-
-const patternHotmailResponse = /<D:response>[\S\s]*?<\/D:response>/gm;
-const patternHotmailSendMsg = /<hm:sendmsg>(.*?)<\/hm:sendmsg>/;
-const patternHotmailMSGID = /[^\/]+$/;
-const patternHotmailHref = /<D:href>(.*?)<\/D:href>/i;
-const patternHotmailRead = /<hm:read>(.*?)<\/hm:read>/i;
-const patternHotmailSize = /<D:getcontentlength>(.*?)<\/D:getcontentlength>/;
-const patternHotmailTo = /<m:to>(.*?)<\/m:to>/i;
-const patternHotmailFrom = /<m:from>(.*?)<\/m:from>/i;
-const patternHotmailFromAddr = /<h:fromaddr>(.*?)<\/h:fromaddr>/i;
-const patternHotmailSubject = /<m:subject>(.*?)<\/m:subject>/i;
-const patternHotmailDate = /<m:date>(.*?)T(.*?)<\/m:date>/i;
-const patternHotmailFolder = /<hm:msgfolderroot>(.*?)<\/hm:msgfolderroot>/;
-const patternHotmailSpecial = /<hm:special>(.*?)<\/hm:special>/;
-const patternHotmailDisplayName = /<D:displayname>(.*?)<\/D:displayname>/i;
-const patternHotmailUnreadCount = /<hm:unreadcount>(.*?)<\/hm:unreadcount>/;
-const patternHotmailMsgCount = /<D:visiblecount>(.*?)<\/D:visiblecount>/;
-const patternHotmailTrash = /<hm:deleteditems>(.*?)<\/hm:deleteditems>/;
-const patternHotmailFolderName = /folders\/(.*?)\//i;
-
-/************************Screen Rippper constants******************************/
 const patternHotmailLoginURL = /srf_uPost=['|"](.*?)["|']/i;
 const patternHotmailSRBlob = /srf_sRBlob=['|"](.*?)["|']/i;
 const patternHotmailSFT =/srf_sFT=.*?value=['|"](.*?)["|']/i;
@@ -66,8 +39,6 @@ const patternHotmailSRRead = /msgread=1/gi;
 const patternHotmailSRFrom =/<tr[\S\s]*name="(.*?)"><td>/i;
 
 
-
-
 /*********BETA**********/
 const patternHotmailJSBounce = /srf_uRet="(.*?)"/i;
 const patternHotmailJSRefresh = /<html><head><script.*?>.*?\.location\.replace.*?\("(.*?)"\).*?<\/script>.*?<\/html>/i;
@@ -91,7 +62,7 @@ const patternHotmailFolderURL = /<a.*?href="(.*?)">.*?<\/a>/i;
 const patternHotmailFolderOption = /<option value=.*?>.*?<\/option>/ig;
 const patternHotmailInboxContent = /<table.*?InboxTable[\s\S]*?<\/table>/ig;
 const patternHotmailCompose = /href="(.*?EditMessageLight.*?)"/i;
-const patternHotmailN = /'&(n=.*?)'/i;
+const patternHotmailN = /(n=.*?)$/i;
 const patternHotmailSend = /href=".*?,'(.*?SendMessageLight.*?)'.*?"/i;
 const patternHotmailAddAttachment = /href=".*?,'(.*?AddAttachmentLight.*?)'.*?"/i;
 const patternHotmailLastAttachment = /href=".*?,'(.*?EditMessageLight.*?)'.*?"/i;
@@ -102,30 +73,32 @@ const patternHotmailMailBoxTableRow = /<tr.*?>[\s\S]*?<\/tr>/igm;
 const patternHotmailMailBoxTableData = /<td.*?>[\s\S]*?<\/td>/ig;
 const patternHotmailEMailURL = /<td .*?><a href="(.*?)".*?>.*?<\/a><\/td>/i;
 const patternHotmailMad = /mad=[\\]?"(.*?)[\\]?"/i;
-const patternHotmailEmailRead = /class="InboxContentItemUnread"/i;
+const patternHotmailEmailRead = /class="mlUnrd"/i;
 const patternHotmailID = /id=[\\]?"(.*?)[\\]?"/i;
-const patternHotmailEmailSender = /<td class=[\\]?"FromCol[\\]?">[<a>]*(.*?)[<\/a>]*<\/td>/i;
-const patternHotmailEmailSenderAlt= /<div class=[\\]?"FromBox[\\]?">[<a>]*(.*?)[<\/a>]*<\/div>/i
-const patternHotmailEmailSubject = /<td class=[\\]?"SubjectCol[\\]?">.*?<a href=.*?>(.*?)<\/a>.*?<\/td>/i;
-const patternHotmailEmailSubjectAlt = /<div class=[\\]?"SubjectBox[\\]?">.*?<a href=.*?>(.*?)<\/a>.*?<\/td>/i;
-const patternHotmailEmailDate = /<td class=[\\]?"DateCol[\\]?">(.*?)<\/td>/i;
-const patternHotmailEmailDateAlt = /<div class=[\\]?"DatetBox[\\]?">(.*?)<\/div>/i;
+const patternHotmailEmailSender = /<td class=Fm>[<a>].*?email.*?"(.*?)[\\]?".*?[<\/a>]<\/td>/i;
+const patternHotmailEmailSubject = /<td class=Sb><a.*?>(.*?)<\/a><\/td>/i;
+const patternHotmailEmailDate = /<td class=Dt>(.*?)<\/td>/i;
 const patternHotmailSentEMailID =/DraftID=(.*?)&/i;
-const patternHotmailFolderID = /FolderID=(.*?)&/i; 
+const patternHotmailFolderID = /FolderID=(.*?)&/i;
 const patternHotmailFromBeta = /<select.*?id="fromAddressDropdown".*?name="(.*?)"[\s\S]*<option value="(.*?)" selected>.*?<\/option>/im;
 const patternHotmailMT = /mt=(.*?);/i;
 const patternHotmailLight = /"(.*?Light.aspx.*?)"/i;
 const patternHotmailLocale = /culture=(.*?)"/i;
 const patternHotmailFrame = /iframe id="IMFrame"/i;
-const patternHotmailAuthUser =/AuthUser:"(.*?)"/i;
-const patternHotmailSessionID = /SessionID:"(.*?)"/i;
+const patternHotmailAuthUser = /AuthUser:\s*?"(.*?)"/i;
+const patternHotmailSessionID = /SessionID:\s*?"(.*?)"/i;
 const patternHotmailNonce = /nonce.*?"(.*?)"/i;
-const patternHotmailMSGcount = /<div class="PageNavigationMsgRange">(\d+).*?<\/div>/i;
-const patternHotmailMSGPerPage = /msgsPerPage : (.*?),/i;
-const patternHotmailNextPage = /<li id=[\\]*"nextPageLink.*?>/ig;
-const patternHotmailLastPage = /<li pnCur=[\\]*"\d+[\\]*".*?pnDir=[\\]*"LastPage[\\]*".*?><a.*?>(\d+)<\/a><\/li>/i;
+const patternHotmailMSGcount = /mCt=[\\]?"(\d+)[\\]?"/i;
+const patternHotmailPgCount  = /mPgs=[\\]?"(\d+)[\\]?"/i;
+const patternHotmailLastMSGID = /id=[\\]?"(.*?)[\\]?"/i;
+const patternHotmailLastMSGDate = /mdt=[\\]?"(.*?)[\\]?"/i;
+const patternHotmailDispNone = /style=[\\]?"display:none[\\]?"/i;
+const patternHotmailNextPage = /<li.*?nextPageLink.*?>/ig;
 const patternHotmailPageDir = /pnDir=[\\]?"(.*?)[\\]?"/i;
-const patternHotmailMsgAnchor = /pnAm=[\\]?"(.*?)[\\]?"/i;
-const patternHotmailAnchorDate = /pnAd=[\\]?"(.*?)[\\]?"/i;
+const patternHotmailMsgAnchor = /saDate="(.*?)"/i;
+const patternHotmailAnchorDate = /kDate="(.*?)"/i;
 const patternHotmailMid = /pnMid=[\\]?"(.*?)[\\]?"/i;
 const patternHotmailRtl = /g_isRtl = (.*?),/i;
+const patternHotmailInboxLight =/href="(.*?mail.*?InboxLight.aspx.*?)"/i;
+const patternHotmailInboxCount =/h_inboxCount/i;
+const patternHotmailLocal = /"mkt":"(.*?)"/i;
