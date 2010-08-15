@@ -62,11 +62,11 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
         instream.init(inputStream);
         var szStream = instream.read(count);
         this.m_POPLog.Write("POPconnectionHandler - onDataWritable - stream - "+ szStream);
-        
+
         //remove \n\r from request
         var aStream = szStream.split("\r\n");  //split string on return carrage line feed
         var aCommand = aStream[0].match(/^(.*?)\s(.*?)$/); //split string on space
-        
+
         var szCommand = null;
         try
         {
@@ -76,12 +76,12 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
         {
             szCommand = aStream[0];
         }
-        
+
         var szParam = null;
-        try 
+        try
         {
             szParam = aCommand[2];
-        } 
+        }
         catch (e){}
 
         switch(szCommand.toLowerCase())  //first element is command
@@ -148,7 +148,7 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                         this.m_POPLog.Write("POPconnectionHandler - onDataWritable - pass " + szTemp);
                         this.ServerResponse.write(szTemp,szTemp.length);
                     }
-                    
+
                     this.ServerResponse.close();
                     this.ServerRequest.close();
 
@@ -248,7 +248,8 @@ POPconnectionHandler.prototype.onDataAvailable = function(request, context, inpu
                     try
                     {
                         this.m_POPLog.Write("POPconnectionHandler - onDataWritable - top -" + szParam );
-                        if (!this.m_DomainHandler.getMessageHeaders(szParam))
+                        var iId = szParam.split(" ")[0];
+                        if (!this.m_DomainHandler.getMessageHeaders(iId))
                             throw new Error("TOP NOT supported");
                     }
                     catch(e)
