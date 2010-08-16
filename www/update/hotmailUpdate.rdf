@@ -2,6 +2,31 @@
 <RDF:RDF xmlns:em="http://www.mozilla.org/2004/em-rdf#"
          xmlns:NC="http://home.netscape.com/NC-rdf#"
          xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <RDF:Description RDF:about="urn:mozilla:extension:{a6a33690-2c6a-11d9-9669-0800200c9a66}"
+                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBAKOULNfLKWJAesM+gXqBz5N1E/KuxncXRa5zhGYIXpeMYcMkfM0fCID2iu2r5hdFy+ch6eVeLVQSTA75PTbWxmNKT5a/6Avl3rlZxJ3H7icpJe17t7AVh5JnTO+YhO/92rTGw26kTW9cKOx2Ico4RUA0f1b9Ok+79WpU23Nmjdql">
+    <em:updates RDF:resource="rdf:#$7fTXe1"/>
+  </RDF:Description>
+  <RDF:Description RDF:about="rdf:#$8fTXe1"
+                   em:version="1.2.29">
+    <em:targetApplication RDF:resource="rdf:#$bfTXe1"/>
+    <em:targetApplication RDF:resource="rdf:#$hfTXe1"/>
+    <em:requires RDF:resource="rdf:#$ofTXe1"/>
+  </RDF:Description>
+  <Description RDF:about="rdf:#$bfTXe1"
+                   em:id="{3550f703-e582-4d05-9a08-453d09bdfdc6}"
+                   em:minVersion="2.0b2"
+                   em:maxVersion="3.1.*"
+                   em:updateLink="http://download.mozdev.org/webmail/hotmail-1-2-29.xpi"
+                   em:updateHash="sha256:fba103d6b5ec5ec4ff2ab16ab02fd21047f99ae249ae7a7299ee3aca1e630215" />
+  <RDF:Seq RDF:about="rdf:#$7fTXe1">
+    <RDF:li RDF:resource="rdf:#$8fTXe1"/>
+  </RDF:Seq>
+  <Description RDF:about="rdf:#$hfTXe1"
+                   em:id="{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}"
+                   em:minVersion="1.0b13"
+                   em:maxVersion="1.1.*"
+                   em:updateLink="http://download.mozdev.org/webmail/hotmail-1-2-29.xpi"
+                   em:updateHash="sha256:fba103d6b5ec5ec4ff2ab16ab02fd21047f99ae249ae7a7299ee3aca1e630215" />
   <Description RDF:about="rdf:#$ofTXe1"
                    em:id="{3c8e8390-2cf6-11d9-9669-0800200c9a66}"
                    em:minVersion="1.3"
@@ -9,29 +34,4 @@
                    em:name="WebMail"
                    em:homepageURL="http://webmail.mozdev.org/"
                    em:updateURL="http://webmail.mozdev.org/update/webmailUpdate.rdf" />
-  <Description RDF:about="rdf:#$bfTXe1"
-                   em:id="{3550f703-e582-4d05-9a08-453d09bdfdc6}"
-                   em:minVersion="2.0b2"
-                   em:maxVersion="3.1.*"
-                   em:updateLink="http://download.mozdev.org/webmail/hotmail-1-2-28.xpi"
-                   em:updateHash="sha256:a9e67aaeae2fabd29731f013942cb9c0f58f5c7f1810431f60f5486cf5c457c5" />
-  <Description RDF:about="rdf:#$hfTXe1"
-                   em:id="{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}"
-                   em:minVersion="1.0b13"
-                   em:maxVersion="1.1.*"
-                   em:updateLink="http://download.mozdev.org/webmail/hotmail-1-2-28.xpi"
-                   em:updateHash="sha256:a9e67aaeae2fabd29731f013942cb9c0f58f5c7f1810431f60f5486cf5c457c5" />
-  <RDF:Description RDF:about="urn:mozilla:extension:{a6a33690-2c6a-11d9-9669-0800200c9a66}"
-                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBAJfuFlg4qd7oVP/TNqNISlIbn5sxtrWzuDvzUbfkanQX1OpQyioaDkdeqATv6P6uXoyixYTMNAAyS5YXKwK3D7xjQMUp5fE4b22R+PnGeWeja5utj/raKvpKHlCDvVXMoamG+6vxLf2x1wEoRB1b7d/09BhrzdMdgIp83zJ3gsKi">
-    <em:updates RDF:resource="rdf:#$7fTXe1"/>
-  </RDF:Description>
-  <RDF:Seq RDF:about="rdf:#$7fTXe1">
-    <RDF:li RDF:resource="rdf:#$8fTXe1"/>
-  </RDF:Seq>
-  <RDF:Description RDF:about="rdf:#$8fTXe1"
-                   em:version="1.2.28">
-    <em:targetApplication RDF:resource="rdf:#$bfTXe1"/>
-    <em:targetApplication RDF:resource="rdf:#$hfTXe1"/>
-    <em:requires RDF:resource="rdf:#$ofTXe1"/>
-  </RDF:Description>
 </RDF:RDF>
