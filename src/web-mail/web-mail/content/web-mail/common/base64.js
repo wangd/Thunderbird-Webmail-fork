@@ -2,23 +2,23 @@
 // parts taken from mozilla code base
 
 function base64()
-{   
+{
     this.m_hShellService = Components.classes["@mozilla.org/appshell/appShellService;1"].
                                      getService(Components.interfaces.nsIAppShellService);
-                                     
+
     this.m_HiddenWindow = this.m_hShellService.hiddenDOMWindow;
-    
+
     this.m_Timer = Components.classes["@mozilla.org/timer;1"]
-                             .createInstance(Components.interfaces.nsITimer); 
+                             .createInstance(Components.interfaces.nsITimer);
     this.m_callback= null;
     this.m_parent = null;
     this.m_inStream = null;
     this.m_szOutMSG = "";
     this.m_iCount = 0;
     this.m_iType = 0;
-    this.m_kBlockSize = 10000;
-   
-    
+    this.m_kBlockSize = 99999;
+
+
     this.m_kBase64chars = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',   //  0 to  7
                            'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',   //  8 to 15
                            'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',   // 16 to 23
@@ -37,27 +37,27 @@ base64.prototype.iLineBreak = 70;
 base64.prototype.encode = function(szMsg)
 {
     var szB6Temp = this.m_HiddenWindow.btoa(szMsg);
-      
+
     //check length if geater than 74 char split#
     var szB6MSG = "";
-    
+
     if (this.bLineBreak)
     {
-        if (szB6Temp.length < 300) 
+        if (szB6Temp.length < 300)
             szB6MSG = szB6Temp;
         else
-        {  
+        {
             for (var i=0; i<szB6Temp.length; i+=this.iLineBreak)
             {
                 szB6MSG += szB6Temp.substr(i, this.iLineBreak);
                 szB6MSG +=  "\r\n"
-            } 
+            }
         }
      }
      else
         szB6MSG = szB6Temp;
-  
-    
+
+
     return szB6MSG;
 }
 
@@ -67,17 +67,17 @@ base64.prototype.encodeAsync = function (aBytes, callback, parent)
 {
     try
     {
-        
+
         this.m_callback = callback;
         this.m_parent = parent;
         this.m_iType = 0; //encode
         this.m_szOutMSG = "";
-        
+
         this.m_inStream = this.binaryStream(aBytes);
-        
+
         this.m_Timer.initWithCallback(this,
                                       50,
-                                      Components.interfaces.nsITimer.TYPE_REPEATING_SLACK); 
+                                      Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
     }
     catch(err)
     {
@@ -104,22 +104,22 @@ base64.prototype.notify = function (timer)
 {
     try
     {
-        
+
         switch(this.m_iType)
         {
             case 0: //encode
                 var iCurrentStream = this.m_inStream.available();
                 var iBlock = iCurrentStream > this.m_kBlockSize ? this.m_kBlockSize : iCurrentStream;
                 var i=0;
-                var buf = new Array();
-                buf.length = iBlock;
+                var buf = new Array(iBlock);
+                //buf.length = iBlock;
                 buf = this.m_inStream.readByteArray(iBlock);
 
                 while (iBlock>i)
                 {
                     this.m_iCount+=3;
                     if (buf.length - i >=3)
-                    {   
+                    {
                         var chr1 = buf[i];
                         var chr2 = buf[i+1];
                         var chr3 = buf[i+2];
@@ -128,18 +128,18 @@ base64.prototype.notify = function (timer)
                         var enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
                         var enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
                         var enc4 = chr3 & 63;
-                        
-                        this.m_szOutMSG += this.m_kBase64chars[enc1] +  this.m_kBase64chars[enc2] + 
+
+                        this.m_szOutMSG += this.m_kBase64chars[enc1] +  this.m_kBase64chars[enc2] +
                                            this.m_kBase64chars[enc3] +  this.m_kBase64chars[enc4];
-                        
+
                     }
-                    
+
                     if (this.bLineBreak && (this.m_iCount >= this.iLineBreak))
                     {
                         this.m_szOutMSG +=  "\r\n"
                         this.m_iCount = 0;
                     }
-                    
+
                     if (buf.length - i <=2)
                     {
                         switch (buf.length - i)
@@ -153,7 +153,7 @@ base64.prototype.notify = function (timer)
                                this.m_szOutMSG += this.m_kBase64chars[((chr2 & 0x0F) << 2)];
                                this.m_szOutMSG += "=";
                             break;
-                    
+
                             case 1:
                                chr1 = buf[i];
                                i+=1;
@@ -163,14 +163,14 @@ base64.prototype.notify = function (timer)
                             break;
                         }
                     }
-                    
+
                 }
 
-                
+
                 if (this.m_inStream.available() == 0)
                 {
                     timer.cancel();
-                    
+
                     this.m_inStream.close();
                     this.m_inStream = null;
 
@@ -178,7 +178,7 @@ base64.prototype.notify = function (timer)
                     this.m_szOutMSG = null;
                 }
             break;
-        }    
+        }
     }
     catch(err)
     {
