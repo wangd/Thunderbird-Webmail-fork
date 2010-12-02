@@ -24,7 +24,7 @@
   <Description RDF:about="rdf:#$hfTXe1"
                    em:id="{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}"
                    em:minVersion="1.0b13"
-                   em:maxVersion="1.1.*"
+                   em:maxVersion="2.0.*"
                    em:updateLink="http://download.mozdev.org/webmail/hotmail-1-2-29.xpi"
                    em:updateHash="sha256:fba103d6b5ec5ec4ff2ab16ab02fd21047f99ae249ae7a7299ee3aca1e630215" />
   <Description RDF:about="rdf:#$ofTXe1"
