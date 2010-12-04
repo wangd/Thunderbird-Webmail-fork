@@ -7,7 +7,7 @@ function HttpComms(oLog)
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/commsData.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
-        
+
         if (oLog)
         {
             this.m_Log = oLog;
@@ -45,14 +45,14 @@ function HttpComms(oLog)
         this.m_szMethod = null;
         this.m_szContentType = "application/x-www-form-urlencoded";
         this.m_bOverRideUserAgent = false;
-        
+
         var prefs = new WebMailCommonPrefAccess();
         var oPref = {Value : null};
         this.m_szUserAgent = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.9.0.9) Gecko/2009040821 Firefox/3.0.9";
         prefs.Get("char","webmail.UserAgent",oPref);
         this.m_Log.Write("HttpComms3.js - useragent " + oPref.Value);
         if (oPref.Value) this.m_szUserAgent =oPref.Value
-                 
+
         this.m_CallBack = null;
         this.m_Parent = null;
 
@@ -128,12 +128,12 @@ HttpComms.prototype =
 
     setUserAgentOverride : function (bOverride)
     {
-        this.m_bOverRideUserAgent = bOverride;  
+        this.m_bOverRideUserAgent = bOverride;
     },
 
     setUserAgent : function (szUseragent)
     {
-        this.m_szUserAgent = szUseragent;  
+        this.m_szUserAgent = szUseragent;
     },
 
 
@@ -302,7 +302,7 @@ HttpComms.prototype =
     },
 
 
-    addData : function (szData)
+    addData : function (szData, bFile)
     {
         try
         {
@@ -312,6 +312,7 @@ HttpComms.prototype =
             var oData = new commsData();
             oData.szName = null;
             oData.szValue = szData;
+            oData.bFile = bFile;
             this.m_aFormData.push(oData);
 
             this.m_Log.Write("HttpComms3.js - addFormData - END");
@@ -372,7 +373,7 @@ HttpComms.prototype =
                 this.m_Log.Write("HttpComms3.js - send - setting UserAgent " + this.m_szUserAgent);
                 HttpRequest.setRequestHeader("User-Agent", this.m_szUserAgent, true);
             }
-            
+
             for (i=0; i<this.m_aHeaders.length; i++)
             {
                 var oTemp = this.m_aHeaders[i];
@@ -437,7 +438,12 @@ HttpComms.prototype =
         var MultiStream = Components.classes["@mozilla.org/io/multiplex-input-stream;1"]
                                     .createInstance(Components.interfaces.nsIMultiplexInputStream);
 
-        var inStreamData = this.inputStream(this.m_aFormData[0].szValue);
+        var inStreamData = null;
+        if (this.m_aFormData[0].bFile)
+            inStreamData = this.binaryStream(this.m_aFormData[0].szValue);
+        else
+            inStreamData = this.inputStream(this.m_aFormData[0].szValue);
+
         MultiStream.appendStream(inStreamData);
         //inStreamData.close();
 
@@ -538,7 +544,7 @@ HttpComms.prototype =
                 if (oTemp.szFileName.search(/PNG$/i)!=-1) szFileType = "image/png";
                 this.m_Log.Write("HttpComms3.js - multipartFormData - adding szContentType " +szFileType);
                 mimeStream.addHeader("Content-Type",szFileType);
-        
+
                 if(oTemp.szValue)
                 {
                     this.m_Log.Write("HttpComms3.js - multipartFormData - adding binary data");
@@ -784,7 +790,7 @@ HttpComms.prototype =
                         mainObject.setRequestMethod("GET");
 
                     mainObject.m_szContentType = "application/x-www-form-urlencoded";
-                     
+
                     delete mainObject.m_aFormData;
                     mainObject.m_aFormData = new Array();
 
