@@ -5,11 +5,14 @@ const patternGMailFormValue = /value=["|'](.*?)["|']/i;
 const patternGMailFormName = /name=["|'](.*?)["|']/i;
 const PatternGMailGetSessionCookie = /GMAIL_AT=(.*?);/i
 const PatternGMailGetLoginCookie = /.*GX=(.*);/
-const PatternGMailNextMSGTable = /D\(\["ts",(.*?),(.*?),(.*?),.*?,.*?,(.*?),.*?,.*?,.*?,.*?,.*?\]/i;
-const PatternGMailMSGTable = /D\(\["t",\[[\s\S]*?^\);/igm;
-const PatternGMailMSGData = /\["(.*?)",(\d),(\d),".*?","(.*?)",.*?,.*?,.*?,\[(.*?)\],/i;
+const PatternGMailNextMSGTable = /\["ti","(.*?)",(.*?),(.*?),/i;
+const PatternGMailMSGTable = /,\["ti",".*?",\d*,\d*,\d*,[\s\S]*/i;
+const PatternGMailIK = /var GLOBALS=\[,,".*?",".*?",".*?",.*?,.*?,".*?",.*?,"(.*?)",.*?\]/i;
+const PatternGmailMSGTableBlock = /\[".*?",".*?",".*?",\d,\d,\["\^.*?\]/ig;
+const PatternGMailMSGData = /\["(.*?)","(.*?)",".*?",(\d),(\d),\[(.*?)\]/i;
+const PatternGMailThreadTableBlock = /\["ms",".*?",\d,".*?",".*?",".*?"/ig;
+const PatternGMailThreadTableData = /\["ms","(.*?)","",(\d),".*?",".*?","(.*?)"/i;
 const PatternGMailThreadTable = /D\(\["mi",[\s\S]*?\);/igm;
-const PatternGMailThreadData = /\["mi",(\d+),(\d+),"(.*?)",(\d),".*?",".*?",".*?","(.*?)",/i;
 const PatternGMailThreadLabels = /D\(\["cs",".*?",".*?",".*?",".*?",\[(.*?)\]/i;
 const PatternGMailThreadID = /\["(.*?)",\d,\d,.*?,.*?,.*?,.*?,.*?,"(.*?)",\d,.*?,\d,.*?,\d,\d,\d\]/i;
 const PatternGMailThread = /.*?\((\d+)\)/;

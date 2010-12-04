@@ -35,7 +35,7 @@ function nsGMailSMTP()
 
         this.m_DomainManager =  Components.classes["@mozilla.org/GMailDomains;1"]
                                           .getService()
-                                          .QueryInterface(Components.interfaces.nsIGMailDomains);       
+                                          .QueryInterface(Components.interfaces.nsIGMailDomains);
 
         this.m_szMailURL = "http://mail.google.com/mail/"
         this.m_bAuthorised = false;
@@ -44,7 +44,7 @@ function nsGMailSMTP()
         this.m_oResponseStream = null;
         this.m_HttpComms = new HttpComms(this.m_Log);
         this.m_HttpComms.setUserAgentOverride(true);
-        
+
         this.m_iStage = 0;
         this.m_szGMailAtCookie = null;
         this.m_aMsgDataStore = new Array();
@@ -55,10 +55,14 @@ function nsGMailSMTP()
         this.m_aszTo = new Array;
         this.m_szFrom = null;
         this.m_szCookieLoginURL = null;
-
+        this.m_szIK = null;
+        this.m_iAttachCount = 0;
+        this.m_szOauth = null;
+        this.m_aszAttid = new Array;
+        this.m_aszFcid = new Array;
         // this.m_bReEntry = false;
         // this.m_bAttHandled = false;
-
+        this.m_szCommon = "";
         this.m_szMsgID = 0;
         this.m_Log.Write("nsGMailSMTP.js - Constructor - END");
 
@@ -119,15 +123,15 @@ nsGMailSMTP.prototype =
     {
         try {
             this.m_Log.Write("nsGMailSMTP.js - logIN - START");
-            this.m_Log.Write("nsGMailSMTP.js - logIN - Username: " + this.m_szUserName + " Password: " 
-                                                                   + this.m_szPassWord + " stream: " 
+            this.m_Log.Write("nsGMailSMTP.js - logIN - Username: " + this.m_szUserName + " Password: "
+                                                                   + this.m_szPassWord + " stream: "
                                                                    + this.m_oResponseStream);
 
             if (!this.m_szUserName || !this.m_oResponseStream  || !this.m_szPassWord) return false;
 
             // get login webPage
             var szDomain = this.m_szUserName.match(/.*?@(.*?)$/)[1].toLowerCase();
-            if (szDomain == "gmail.com" || szDomain == "googlemail.com") 
+            if (szDomain == "gmail.com" || szDomain == "googlemail.com")
                 loginURL = "http://mail.google.com/mail/";
             else
                 loginURL = "http://mail.google.com/a/" + szDomain + "/";
@@ -138,14 +142,14 @@ nsGMailSMTP.prototype =
             this.m_HttpComms.setUserName(this.m_szUserName);
 
             var bSessionStored = this.m_ComponentManager.findElement(this.m_szUserName, "bSessionStored");
-            if ( bSessionStored && this.m_bReUseSession ) 
+            if ( bSessionStored && this.m_bReUseSession )
             {
                 this.m_Log.Write("nsGMailSMTP.js - logIN - Session Data found");
 
                 this.serverComms("+OK Your in\r\n");
                 this.m_bAuthorised = true;
-            } 
-            else 
+            }
+            else
             {
                 this.m_Log.Write("nsGMailSMTP.js - logIN - No Session Data found");
                 var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
@@ -155,7 +159,7 @@ nsGMailSMTP.prototype =
 
                 this.m_HttpComms.setURI(loginURL);
                 this.m_HttpComms.setRequestMethod("GET");
-                
+
                 var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);
                 if (!bResult) throw new Error('httpConnection returned false');
                 this.m_iStage = 0;
@@ -164,10 +168,10 @@ nsGMailSMTP.prototype =
             this.m_Log.Write("nsGMailSMTP.js - logIN - END");
             return true;
         }
-        catch(e) 
+        catch(e)
         {
-            this.m_Log.DebugDump("nsGMailSMTP.js: logIN : Exception : " + e.name 
-                                                     + ".\nError message: " + e.message+ "\n" 
+            this.m_Log.DebugDump("nsGMailSMTP.js: logIN : Exception : " + e.name
+                                                     + ".\nError message: " + e.message+ "\n"
                                                      + e.lineNumber);
             this.serverComms("502 negative vibes from "+this.m_szUserName+"\r\n");
             return false;
@@ -176,7 +180,7 @@ nsGMailSMTP.prototype =
 
     loginOnloadHandler : function(szResponse ,event , mainObject)
     {
-        try 
+        try
         {
             mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - START");
             mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler : " + mainObject.m_iStage);
@@ -201,68 +205,68 @@ nsGMailSMTP.prototype =
                 mainObject.m_HttpComms.setURI(szURI);
                 mainObject.m_HttpComms.setRequestMethod("GET");
                 var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
-                if (!bResult) throw new Error("httpConnection returned false");    
-                return;   
+                if (!bResult) throw new Error("httpConnection returned false");
+                return;
             }
 
 
-            switch  ( mainObject.m_iStage ) 
+            switch  ( mainObject.m_iStage )
             {
                 case 0:  //login
                     mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - login");
-                     
+
                     var aszLoginForm = szResponse.match(patternGMailLoginForm);
                     mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - aszLoginForm " + aszLoginForm);
-                     
+
                     var szAction = aszLoginForm[0].match(patternGMailFormAction)[1];
                     mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - szAction " + szAction);
-                   
+
                     var aszInput = aszLoginForm[0].match(patternGMailFormInput);
                     mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - aszInput " + aszInput);
-                               
+
                     for (i=0; i<aszInput.length; i++)
                     {
                         mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - aszInput[i] " + aszInput[i]);
-                        
+
                         var szName = aszInput[i].match(patternGMailFormName)[1];
                         mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - szName " + szName);
-                       
+
                         var szValue = "";
-                        try 
+                        try
                         {
                             var szValue = aszInput[i].match(patternGMailFormValue)[1];
-                        } 
-                        catch (e) 
+                        }
+                        catch (e)
                         {
                         }
                         mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - szValue " + szValue);
-                        
+
                         if (szName.search(/Passwd/i) != -1) szValue = mainObject.m_szPassWord;
-                        if (szName.search(/Email/i) != -1) 
+                        if (szName.search(/Email/i) != -1)
                         {
                             var szUserName = mainObject.m_szUserName.match(/(.*?)@.*?$/)[1].toLowerCase();
                             szValue = szUserName;
                         }
-                        
+
                         mainObject.m_HttpComms.addValuePair(szName, encodeURIComponent(szValue));
-                    }        
-                    
+                    }
+
                     mainObject.m_HttpComms.setURI(szAction);
                     mainObject.m_HttpComms.setRequestMethod("POST");
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
                     if (!bResult) throw new Error("httpConnection returned false");
-                    mainObject.m_iStage++;      
+                    mainObject.m_iStage++;
                 break;
-           
+
                 case 1:
-                    if ( szResponse.search(/logout/i) == -1 && szResponse.search(/ManageAccount/i)==-1) 
+                    if ( szResponse.search(/logout/i) == -1 && szResponse.search(/ManageAccount/i)==-1)
                         throw new Error("Invalid Password");
-    
+
                     mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - Getting session cookie...");
-    
+
                     var szLocation  = httpChannel.URI.spec;
                     mainObject.m_Log.Write("nsGMailPOP.js - loginOnloadHandler - location : " + szLocation );
-                    
+
                     var IOService = Components.classes["@mozilla.org/network/io-service;1"]
                                               .getService(Components.interfaces.nsIIOService);
 
@@ -271,15 +275,29 @@ nsGMailSMTP.prototype =
                                              .getService(Components.interfaces.nsIWebMailCookieManager2);
                     szCookies = oCookies.findCookie(mainObject.m_szUserName, nsIURI);
                     mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - session cookies:\n" + szCookies);
-    
+
                     mainObject.m_szGMailAtCookie = szCookies.match(PatternGMailGetSessionCookie)[1];
                     if ( mainObject.m_szGMailAtCookie == null)
                         throw new Error("Error getting session cookie during login");
-    
+
                     mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - szGMAIL_AT: " + mainObject.m_szGMailAtCookie);
-    
-                    if (httpChannel.URI.schemeIs("https")) 
+
+                    if (httpChannel.URI.schemeIs("https"))
                         mainObject.m_szMailURL = mainObject.m_szMailURL.replace(/^http/i,"https");
+
+
+                    var szInboxURI = mainObject.m_szMailURL + "?search=inbox&view=tl&start=0&init=1&ui=1"
+                    mainObject.m_HttpComms.setURI(szInboxURI);
+                    mainObject.m_HttpComms.setRequestMethod("GET");
+                    var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
+                    if (!bResult) throw new Error("httpConnection returned false");
+                    mainObject.m_iStage++;
+                break;
+
+                case 2:
+                    if (!mainObject.m_szIK)
+                        mainObject.m_szIK = szResponse.match(PatternGMailIK)[1];
+                    mainObject.m_Log.Write("nsGMailPOP.js - mailBoxOnloadHandler - szIK :" + mainObject.m_szIK);
 
                     mainObject.serverComms("235 Your In\r\n");
                     mainObject.m_bAuthorised = true;
@@ -288,149 +306,140 @@ nsGMailSMTP.prototype =
 
             mainObject.m_Log.Write("nsGMailSMTP.js - loginOnloadHandler - END");
         }
-        catch(err) {
-
+        catch(err)
+        {
             var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
                                      .getService(Components.interfaces.nsIWebMailCookieManager2);
             oCookies.removeCookie(mainObject.m_szUserName);
 
             mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
 
-            mainObject.m_Log.DebugDump("nsGMailSMTP.js: loginHandler : Exception : " + err.name + ".\nError message: " + err.message+ "\n" + err.lineNumber);
+            mainObject.m_Log.DebugDump("nsGMailSMTP.js: loginHandler : Exception : " + err.name
+                                        + ".\nError message: " + err.message+ "\n" + err.lineNumber);
             mainObject.serverComms("502 negative vibes from "+mainObject.m_szUserName+"\r\n");
         }
     },
 
+
+
     rawMSG : function (szEmail)
     {
-        try {
+        try
+        {
             this.m_Log.Write("nsGMailSMTP.js - rawMSG - START");
             this.m_Log.Write("nsGMailSMTP.js - rawMSG " + szEmail);
 
-            if ( this.m_bAuthorised == false )
-                return false;
+            if ( this.m_bAuthorised == false )return false;
 
             this.m_iStage =0 ;
             if ( !this.m_Email.parse(szEmail) ) throw new Error ("Parse Failed")
 
-            var szTo = this.m_Email.headers.getTo();
-            var szCc = this.m_Email.headers.getCc();
-            var szBCC = this.getBcc(szTo, szCc);
-            
-            var szSubject = this.m_Email.headers.getSubject();
-            szSubject = szSubject ? szSubject : " " ; 
-            this.m_Log.Write("nsGMailSMTP.js - rawMSG - szSubject "+szSubject);
-            
-            var szContentType = null;
-            var szCharset = null;
-   
-            try
+            if ( this.m_Email.attachments.length>0 )
             {
-                 szContentType = this.m_Email.txtBody.headers.getContentType(0);
+                this.m_Log.Write("nsGMailSMTP.js: rawMSG: nAttachments: " + this.m_Email.attachments.length );
+                var szURI = this.m_szMailURL + "ota";
+
+                this.m_HttpComms.setURI(szURI);
+                this.m_HttpComms.setRequestMethod("POST");
+                var bResult = this.m_HttpComms.send(this.attachmentUploadHandler, this);
+                if (!bResult) throw new Error("httpConnection returned false");
+                this.m_iStage =0;
+                this.m_szCommon = this.randomString(5);
             }
-            catch(e)
-            {
-                try
-                {
-                    szContentType = this.m_Email.htmlBody.headers.getContentType(0);
-                }
-                catch(err)
-                {
-                    szContentType = this.m_Email.headers.getContentType(0);
-                }
-            }
-            this.m_Log.Write("nsGMailSMTP.js - composerOnloadHandler szContentType " + szContentType);
-            
-            if (szContentType)
-            {
-                if (szContentType.search(/charset/i)!=-1)
-                {
-                    if (szContentType.search(/charset=(.*?);\s/i)!=-1)
-                        szCharset = szContentType.match(/charset=(.*?);\s/i)[1];
-                    else
-                       szCharset = szContentType.match(/charset=(.*?)$/i)[1];
-                    this.m_Log.Write("nsGMailSMTP.js - rawMSG -szCharset " + szCharset);
-                }
-            }
-                       
-            var szMsgBody = " ";
-            if ( this.m_Email.txtBody ) 
-            {
-                szMsgBody = this.m_Email.txtBody.body.getBody();
-                if (szCharset)
-                    szMsgBody = this.convertToUTF8(szMsgBody, szCharset);              
-            }
+            else
+                this.message();
 
-            this.m_HttpComms.addValuePair('view', 'sm');
-            this.m_HttpComms.addValuePair('cmid', '2');
-            this.m_HttpComms.addValuePair('at', this.m_szGMailAtCookie);
-            this.m_HttpComms.addValuePair('to', (szTo? szTo : "") );
-            this.m_HttpComms.addValuePair('cc', (szCc? szCc : "") );
-            this.m_HttpComms.addValuePair('bcc', (szBCC? szBCC : "") );
-            this.m_HttpComms.addValuePair('subject', szSubject ); 
-
-
-            if ( this.m_Email.htmlBody ) 
-            {
-                this.m_Log.DebugDump("nsGMailSMTP.js: rawMSG: isHTML");
-
-                this.m_HttpComms.addValuePair('ishtml', "1" );
-                szMsgBody = this.m_Email.htmlBody.body.getBody();
-                if (szCharset)
-                    szMsgBody = this.convertToUTF8(szMsgBody, szCharset);               
-            }
-
-            this.m_HttpComms.addValuePair('msgbody', (szMsgBody? szMsgBody : " ") );
-            this.m_Log.DebugDump("nsGMailSMTP.js: rawMSG: body: " + szMsgBody );
-
-            if ( this.m_Email.attachments.length>0 ) {
-                this.m_Log.DebugDump("nsGMailSMTP.js: rawMSG: nAttachments: " + this.m_Email.attachments.length );
-
-                for ( i=0 ; i< this.m_Email.attachments.length ; i++ ) {
-                    var szName = "file" + i;
-                    var szFileName = this.m_Email.attachments[i].headers.getContentType(4);
-                    if ( szFileName )
-                        szName = szFileName;
-                    else
-                        szFileName = szName;
-
-                    var szContentType = this.m_Email.attachments[i].headers.getContentType(0);
-                    var szURLCodedBody =  this.m_Email.attachments[i].body.getBody();
-
-                    var szMsg = "filename=" + szFileName + "\n" + "Content-Type: " + szContentType + "\n\n" + szURLCodedBody;
-
-                    // this.m_HttpComms.addValuePair(szName, encodeURIComponent(szMsg) );
-                    // this.m_Log.DebugDump("nsGMailSMTP.js: rawMSG: attach[" + i + "]: " + szMsg);
-
-                    this.m_HttpComms.addFile(szName, szFileName, this.m_Email.attachments[i].body.getBody() );
-                    // this.m_Log.DebugDump("nsGMailSMTP.js: rawMSG: attach[" + i + "]: " + this.m_Email.attachments[i].body.getBody() );
-                }
-            }
-
-            // var szSave = this.m_bSaveCopy ? "yes" : "no";
-            // this.m_HttpComms.addValuePair(szName, szSave);
-
-            var szComposeURI = this.m_szMailURL+"?ui=1";
-            this.m_HttpComms.setContentType("multipart/form-data");
-            this.m_HttpComms.setURI(szComposeURI);
-            this.m_HttpComms.setRequestMethod("POST");
-            var bResult = this.m_HttpComms.send(this.composerOnloadHandler, this);
-            if ( !bResult ) {
-                // TODO parse reply to get the failure reason
-/*
-D(["sr","2",0,"test.vbs is an executable file. For security reasons, Gmail does not allow you to send this type of file.","0",0,[]
-,,0,0,0,"",,0,[]
-*/
-                throw new Error("httpConnection returned false");
-            }
             this.m_Log.Write("nsGMailSMTP.js - rawMSG - END");
             return true;
         }
-        catch(err) {
-            this.m_Log.DebugDump("nsGMailSMTP.js: rawMSG : Exception : " + err.name + ".\nError message: " + err.message+ "\n" + err.lineNumber);
+        catch(err)
+        {
+            this.m_Log.DebugDump("nsGMailSMTP.js: rawMSG : Exception : " + err.name +
+                                 ".\nError message: " + err.message+ "\n" + err.lineNumber);
             return false;
         }
     },
+
+
+    attachmentUploadHandler : function(szResponse ,event , mainObject)
+    {
+        try
+        {
+            mainObject.m_Log.Write("nsGMailSMTP.js - attachmentUploadHandler - START");
+            mainObject.m_Log.Write("nsGMailSMTP.js - attachmentUploadHandler : " + mainObject.m_iStage);
+
+            var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
+
+            //if this fails we've gone somewhere new
+            mainObject.m_Log.Write("nsGMailSMTP.js - attachmentUploadHandler - status :" + httpChannel.responseStatus );
+            if (httpChannel.responseStatus != 200)
+                throw new Error("return status " + httpChannel.responseStatus);
+
+
+            switch  ( mainObject.m_iStage )
+            {
+                case 0: //oauth
+                    mainObject.m_szOauth =  szResponse;
+                    mainObject.m_Log.Write("nsGMailSMTP.js - m_szOauth  :" + mainObject.m_szOauth);
+
+                    mainObject.m_Log.Write("nsGMailSMTP.js - attachmentUploadHandler - uploading attach");
+
+                    var szAttid =  "f_gg" + mainObject.m_szCommon  +  mainObject.randomString(1) +
+                                            mainObject.m_iAttachCount;
+
+                    mainObject.m_aszFcid[mainObject.m_iAttachCount]  =  "gg" +  mainObject.m_szCommon  +
+                                                                                mainObject.randomString(5);
+
+                    var oAttach = mainObject.m_Email.attachments[mainObject.m_iAttachCount];
+                    var szFileName = oAttach.headers.getContentType(4);
+                    if (!szFileName) szFileName = "File";
+                    var szDisposition = "attachment; filename=\""+ szFileName +"\"";
+                    mainObject.m_HttpComms.addRequestHeader("Content-Disposition",szDisposition,false);
+
+                    mainObject.m_HttpComms.addData(oAttach.body.getBody(),true);
+                    var szURI = mainObject.m_szMailURL +"?ui=2&act=fup&view=up&rt=j"
+                    szURI += "&ik=" + mainObject.m_szIK;
+                    szURI += "&oauth=" + encodeURIComponent(mainObject.m_szOauth);
+                    szURI += "&attid=" + szAttid;
+                    szURI += "&fcid=" + mainObject.m_aszFcid[mainObject.m_iAttachCount];
+
+                    mainObject.m_HttpComms.setURI(szURI);
+                    mainObject.m_iAttachCount++;
+                    mainObject.m_HttpComms.setRequestMethod("POST");
+                    mainObject.m_HttpComms.setContentType("application/octet-stream");
+                    var bResult = mainObject.m_HttpComms.send(mainObject.attachmentUploadHandler, mainObject);
+                    if (!bResult) throw new Error("httpConnection returned false");
+
+                    if (mainObject.m_iAttachCount >= mainObject.m_Email.attachments.length)
+                        mainObject.m_iStage=2;
+                    else
+                        mainObject.m_iStage=1;
+                break;
+
+                case 1:
+                    mainObject.m_HttpComms.setURI(mainObject.m_szMailURL + "ota");
+                    mainObject.m_HttpComms.setRequestMethod("POST");
+                    var bResult = mainObject.m_HttpComms.send(mainObject.attachmentUploadHandler, mainObject);
+                    if (!bResult) throw new Error("httpConnection returned false");
+                    mainObject.m_iStage =0;
+                break;
+
+                case 2:
+                    mainObject.message();
+                break;
+            }
+
+            mainObject.m_Log.Write("nsGMailSMTP.js - attachmentUploadHandler - end");
+        }
+        catch(err)
+        {
+            mainObject.m_Log.DebugDump("nsGMailSMTP.js: attachmentUploadHandler : Exception : " + err.name +
+                                       ".\nError message: " + err.message+ "\n" + err.lineNumber);
+            mainObject.serverComms("502 negative vibes from " + mainObject.m_szUserName + "\r\n");
+            return false;
+        }
+    },
+
 
     composerOnloadHandler : function(szResponse ,event , mainObject)
     {
@@ -439,19 +448,8 @@ D(["sr","2",0,"test.vbs is an executable file. For security reasons, Gmail does 
             mainObject.m_Log.Write("nsGMailSMTP.js - composerOnloadHandler : " + mainObject.m_iStage);
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
-
-            //if this fails we've gone somewhere new
             mainObject.m_Log.Write("nsGMailSMTP.js - composerOnloadHandler - status :" + httpChannel.responseStatus );
 
-            if (szResponse.search("Your message has been sent.") == -1 &&
-                szResponse.search("Il messaggio � stato inviato.") == -1 &&
-                szResponse.search("Ihre Nachricht wurde gesendet.") == -1 &&
-                szResponse.search("Votre message a été envoyé.") == -1 &&
-                szResponse.search("Tu mensaje ha sido enviado.") == -1) 
-            {
-                mainObject.serverComms("502 Invalid mail format\r\n");
-            }
-            
             if ( mainObject.m_bReUseSession)
             {
                 mainObject.m_Log.Write("nsGMailPOP.js - loginOnloadHandler - Saving session Data");
@@ -470,10 +468,134 @@ D(["sr","2",0,"test.vbs is an executable file. For security reasons, Gmail does 
             mainObject.m_Log.Write("nsGMailSMTP.js - composerOnloadHandler - END");
         }
         catch(err) {
-            mainObject.m_Log.DebugDump("nsGMailSMTP.js: composerOnloadHandler : Exception : " + err.name + ".\nError message: " + err.message + "\n" + err.lineNumber);
+            mainObject.m_Log.DebugDump("nsGMailSMTP.js: composerOnloadHandler : Exception : " +
+                                            err.name + ".\nError message: " + err.message + "\n" + err.lineNumber);
             mainObject.serverComms("502 negative vibes from " + mainObject.m_szUserName + "\r\n");
         }
     },
+
+
+    message : function()
+    {
+        try
+        {
+            this.m_Log.Write("nsGMailSMTP.js - message - start ");
+
+            var szTo = this.m_Email.headers.getTo();
+            var szCc = this.m_Email.headers.getCc();
+            var szBCC = this.getBcc(szTo, szCc);
+
+            var szSubject = this.m_Email.headers.getSubject();
+            szSubject = szSubject ? szSubject : " " ;
+           // szSubject = encodeURIComponent(szSubject);
+            this.m_Log.Write("nsGMailSMTP.js - message - szSubject "+szSubject);
+
+            var szContentType = null;
+            var szCharset = null;
+
+            try
+            {
+                 szContentType = this.m_Email.txtBody.headers.getContentType(0);
+            }
+            catch(e)
+            {
+                try
+                {
+                    szContentType = this.m_Email.htmlBody.headers.getContentType(0);
+                }
+                catch(err)
+                {
+                    szContentType = this.m_Email.headers.getContentType(0);
+                }
+            }
+            this.m_Log.Write("nsGMailSMTP.js - message szContentType " + szContentType);
+
+            if (szContentType)
+            {
+                if (szContentType.search(/charset/i)!=-1)
+                {
+                    if (szContentType.search(/charset=(.*?);\s/i)!=-1)
+                        szCharset = szContentType.match(/charset=(.*?);\s/i)[1];
+                    else
+                       szCharset = szContentType.match(/charset=(.*?)$/i)[1];
+                    this.m_Log.Write("nsGMailSMTP.js - message -szCharset " + szCharset);
+                }
+            }
+
+            var szMsgBody = " ";
+            if ( this.m_Email.txtBody )
+            {
+                szMsgBody = this.m_Email.txtBody.body.getBody();
+                if (szCharset)
+                    szMsgBody = this.convertToUTF8(szMsgBody, szCharset);
+            }
+
+            this.m_HttpComms.addValuePair('to', (szTo? szTo : "") );
+            this.m_HttpComms.addValuePair('cc', (szCc? szCc : "") );
+            this.m_HttpComms.addValuePair('bcc', (szBCC? szBCC : "") );
+            this.m_HttpComms.addValuePair('subject', szSubject);
+
+
+            if ( this.m_aszFcid.length>0 )
+            {
+                for ( i=0 ; i< this.m_aszFcid.length ; i++ )
+                {
+                    this.m_Log.Write("nsGMailSMTP.js: message: adding attachment" );
+                    this.m_HttpComms.addValuePair('att_f', this.m_aszFcid[i]);
+                }
+            }
+
+
+            if ( this.m_Email.htmlBody )
+            {
+                this.m_Log.Write("nsGMailSMTP.js: message: isHTML");
+
+                this.m_HttpComms.addValuePair('ishtml', "1" );
+                szMsgBody = this.m_Email.htmlBody.body.getBody();
+                if (szCharset)
+                    szMsgBody = this.convertToUTF8(szMsgBody, szCharset);
+                //szMsgBody = encodeURIComponent(szMsgBody);
+            }
+            this.m_HttpComms.addValuePair('body', (szMsgBody? szMsgBody : " ") );
+
+
+            var szComposeURI = this.m_szMailURL+"?ui=2&act=sm&cmid=2";
+            szComposeURI += "&at=" + this.m_szGMailAtCookie;
+            szComposeURI += "&ik=" + this.m_szIK;
+           // this.m_HttpComms.setContentType("application/x-www-form-urlencoded");
+            this.m_HttpComms.setContentType("multipart/form-data");
+            this.m_HttpComms.setURI(szComposeURI);
+            this.m_HttpComms.setRequestMethod("POST");
+            var bResult = this.m_HttpComms.send(this.composerOnloadHandler, this);
+            if ( !bResult ) throw new Error("httpConnection returned false");
+
+            this.m_Log.Write("nsGMailSMTP.js - message - end ");
+        }
+        catch(err)
+        {
+            this.m_Log.DebugDump("nsGMailSMTP.js: message : Exception : "
+                                    + err.name
+                                    + ".\nError message: "
+                                    + err.message + "\n"
+                                    + err.lineNumber);
+        }
+    },
+
+
+
+    randomString : function (len, charSet)
+    {
+        //charSet = charSet || 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        charSet = charSet || 'abcdefghijklmnopqrstuvwxyz0123456789';
+        var randomString = '';
+        for (var i = 0; i < len; i++)
+        {
+            var randomPoz = Math.floor(Math.random() * charSet.length);
+            randomString += charSet.substring(randomPoz,randomPoz+1);
+        }
+        return randomString;
+    },
+
 
     escapeStr : function(szMSG)
     {
@@ -581,100 +703,7 @@ D(["sr","2",0,"test.vbs is an executable file. For security reasons, Gmail does 
         this.m_Log.Write("nsGMailSMTP - convertToUTF8 END");
         return szDecoded;
     },
-/*
-    writeImageFile : function(szData)
-    {
-        try
-        {
-            this.m_Log.Write("nsGMailSMTP.js - writeImageFile - End");
 
-            var file = Components.classes["@mozilla.org/file/directory_service;1"];
-            file = file.getService(Components.interfaces.nsIProperties);
-            file = file.get("TmpD", Components.interfaces.nsIFile);
-            file.append("suggestedName.jpg");
-            file.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 420);
-
-            var deletefile = Components.classes["@mozilla.org/uriloader/external-helper-app-service;1"];
-            deletefile = deletefile.getService(Components.interfaces.nsPIExternalAppLauncher);
-            deletefile.deleteTemporaryFileOnExit(file);
-
-            var outputStream = Components.classes["@mozilla.org/network/file-output-stream;1"];
-            outputStream = outputStream.createInstance( Components.interfaces.nsIFileOutputStream );
-            outputStream.init( file, 0x04 | 0x08 | 0x10, 420, 0 );
-
-            var binaryStream = Components.classes["@mozilla.org/binaryoutputstream;1"];
-            binaryStream = binaryStream.createInstance(Components.interfaces.nsIBinaryOutputStream);
-            binaryStream.setOutputStream(outputStream)
-            binaryStream.writeBytes( szData, szData.length );
-            outputStream.close();
-            binaryStream.close();
-
-            var ios = Components.classes["@mozilla.org/network/io-service;1"]
-                                .getService(Components.interfaces.nsIIOService);
-            var fileHandler = ios.getProtocolHandler("file")
-                                 .QueryInterface(Components.interfaces.nsIFileProtocolHandler);
-            var URL = fileHandler.getURLSpecFromFile(file);
-            this.m_Log.Write("nsGMailSMTP.js - writeImageFile - path " + URL);
-
-            this.m_Log.Write("nsGMailSMTP.js - writeImageFile - End");
-            return URL;
-        }
-        catch(err)
-        {
-            this.m_Log.DebugDump("nsGMailSMTP.js: writeImageFile : Exception : "
-                                                  + err.name
-                                                  + ".\nError message: "
-                                                  + err.message + "\n"
-                                                  + err.lineNumber);
-
-            return null;
-        }
-    },
-*/
-
-/*
-    openSpamWindow : function(szPath)
-    {
-        try
-        {
-            this.m_Log.Write("nsGMailSMTP : openWindow - START");
-
-            var params = Components.classes["@mozilla.org/embedcomp/dialogparam;1"]
-                                   .createInstance(Components.interfaces.nsIDialogParamBlock);
-            params.SetNumberStrings(1);
-            params.SetString(0, szPath);
-
-            var window = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
-                                  .getService(Components.interfaces.nsIWindowWatcher);
-
-            window.openWindow(null,
-                              "chrome://gmail/content/GMail-SpamImage.xul",
-                              "_blank",
-                              "chrome,alwaysRaised,dialog,modal,centerscreen",
-                              params);
-
-            var iResult = params.GetInt(0);
-            this.m_Log.Write("nsGMailSMTP : openWindow - " + iResult);
-            var szResult =  null;
-            if (iResult)
-            {
-                szResult = params.GetString(0);
-                this.m_Log.Write("nsGMailSMTP : openWindow - " + szResult);
-            }
-
-            this.m_Log.Write("nsGMailSMTP : openWindow - END");
-            return szResult;
-        }
-        catch(err)
-        {
-            this.m_Log.DebugDump("nsGMailSMTP: Exception in openWindow : "
-                                               + err.name
-                                               + ".\nError message: "
-                                               + err.message + "\n"
-                                               + err.lineNumber);
-        }
-    },
-*/
 
 
     ////////////////////////////////////////////////////////////////////////////

@@ -40,6 +40,7 @@ function HotmailScreenRipperBETA(oResponseStream, oLog, oPrefData)
         this.m_iLastPage = 0;
         this.m_szMSGPerPage = 25;
         this.m_szRtl = false;
+        this.m_iMsgCount = 0;
 
         this.m_szMSG = null;
         this.m_bStat = false;
@@ -293,6 +294,7 @@ HotmailScreenRipperBETA.prototype =
 
                     mainObject.m_HttpComms.setURI(szURL);
                     mainObject.m_HttpComms.setRequestMethod("POST");
+                    mainObject.m_HttpComms.addRequestHeader("Accept-Encoding", "deflate", false);
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
                     if (!bResult) throw new Error("httpConnection returned false");
                     mainObject.m_iStage++;
@@ -582,6 +584,7 @@ HotmailScreenRipperBETA.prototype =
                             {
                                 var oMSG = mainObject.processMSG(szMsgRows[j], szStatView);
                                 if (oMSG) mainObject.m_aMsgDataStore.push(oMSG);
+                                mainObject.m_iMsgCount++;
                             }
                         }
                     }
@@ -602,9 +605,9 @@ HotmailScreenRipperBETA.prototype =
 
             var szMSGCount = parseInt(szCleanResponse.match(patternHotmailMSGcount)[1]);
             mainObject.m_Log.Write("Hotmail-SR-BETA - mailBoxOnloadHandler -szMSGCount : "+szMSGCount);
+            mainObject.m_Log.Write("Hotmail-SR-BETA - mailBoxOnloadHandler -m_iMsgCount : "+mainObject.m_iMsgCount);
 
-
-            if (mainObject.m_iLastPage>0 && mainObject.m_aMsgDataStore.length<szMSGCount )  //more pages
+            if (mainObject.m_iLastPage>0 &&  mainObject.m_iMsgCount<szMSGCount )  //more pages
             {
 
                 var szURL = mainObject.m_szLocationURI + "mail.fpp?"
@@ -622,8 +625,10 @@ HotmailScreenRipperBETA.prototype =
                 szD += "2,5,"+ (mainObject.m_iPageCount +2);
                 szD += ",\"" +mainObject.m_szLastMSGID+ "\"" + ",\"" +mainObject.m_szLastMSGDate + "\"";
                 szD += ",Date,false,false,\"\",null,-1,Off,";
-                szD += szMSGCount +",\"" +  mainObject.m_szAnchorDate + "\"";
-                szD += ",null},false,null";
+                szD += szMSGCount;
+                //szD += ",\"" +  mainObject.m_szAnchorDate + "\",null},false,null";
+                szD += ",null,null,true},false,null"
+
 
                 szD = mainObject.urlEncode(szD);
                 mainObject.m_HttpComms.addValuePair("d",szD);
@@ -646,6 +651,7 @@ HotmailScreenRipperBETA.prototype =
                     mainObject.m_szFolderName = oFolder.szFolderName;
                     mainObject.m_iPageCount = 0;
                     mainObject.m_iLastPage =  0;
+                    mainObject.m_iMsgCount =0;
 
                     mainObject.m_HttpComms.setURI(oFolder.szURI);
                     mainObject.m_HttpComms.setRequestMethod("GET");
@@ -1058,6 +1064,7 @@ HotmailScreenRipperBETA.prototype =
             //get msg from hotmail
             this.m_HttpComms.setURI(szURI);
             this.m_HttpComms.setRequestMethod("GET");
+            this.m_HttpComms.addRequestHeader("Accept-Encoding", "deflate", true);
 
             var bResult = this.m_HttpComms.send(this.emailOnloadHandler, this);
             if (!bResult) throw new Error("httpConnection returned false");
@@ -1175,7 +1182,7 @@ HotmailScreenRipperBETA.prototype =
                 szD    += "[\""  + mainObject.m_szMsgID + "\"],";
                 szD    += "[{\"" + mainObject.m_szMad.replace(/\|/g,"\\|")  + "\"}],null,"
                 szD    += "{\""  + mainObject.m_szFolderID + "\",,,FirstPage,5,1,\"00000000-0000-0000-0000-000000000000\",";
-                szD    +=      "\"\",Date,false,false,\"\",null,-1,Off,3,null," + "\"" + mainObject.m_szAnchorDate + "\"},false";
+                szD    +=      "\"\",Date,false,false,\"\",null,-1,Off,3,null," + "\"" + mainObject.m_szAnchorDate + "\",true},false";
 
                 szD = mainObject.urlEncode(szD);
                 mainObject.m_HttpComms.addValuePair("d",szD);
@@ -1237,7 +1244,7 @@ HotmailScreenRipperBETA.prototype =
             szD   +=  "[{\"" + oMSG.szMad.replace(/\|/g,"\\|") + "\"}],null,";
             szD   +=  "{\"00000000-0000-0000-0000-000000000001\",,,FirstPage,5,1,"
             szD   +=      "\"00000000-0000-0000-0000-000000000000\",\"\",Date,false,false,\"\",null,-1,Off,1,null,";
-            szD   +=     "\"" + oMSG.szAnchor + "\"},false,false,null,null,null,false";
+            szD   +=     "\"" + oMSG.szAnchor + "\",true},false,false,null,null,null,false,false";
 
             szD = this.urlEncode(szD);
             this.m_HttpComms.addValuePair("d",szD);
