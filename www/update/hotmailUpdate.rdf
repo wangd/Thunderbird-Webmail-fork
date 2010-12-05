@@ -3,7 +3,7 @@
          xmlns:NC="http://home.netscape.com/NC-rdf#"
          xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
   <RDF:Description RDF:about="urn:mozilla:extension:{a6a33690-2c6a-11d9-9669-0800200c9a66}"
-                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBAKOULNfLKWJAesM+gXqBz5N1E/KuxncXRa5zhGYIXpeMYcMkfM0fCID2iu2r5hdFy+ch6eVeLVQSTA75PTbWxmNKT5a/6Avl3rlZxJ3H7icpJe17t7AVh5JnTO+YhO/92rTGw26kTW9cKOx2Ico4RUA0f1b9Ok+79WpU23Nmjdql">
+                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBAHCD/hv7Ng3D4IZp9B1UocOvZqe/XTvB/WZMaTaXDmejprFD3KiOSxl/Ho0xFdvJLHOWUTXxxGe/5wP8EX5EnAJdIINrQKM/fP6WTBj6J3ZF31IrVvTA1zjbujGel6w/lsd0KrEonrZ+Wf/6Qaa2n1annr+uDaRO3u5Lt+tPYSuy">
     <em:updates RDF:resource="rdf:#$7fTXe1"/>
   </RDF:Description>
   <RDF:Description RDF:about="rdf:#$8fTXe1"
@@ -16,8 +16,8 @@
                    em:id="{3550f703-e582-4d05-9a08-453d09bdfdc6}"
                    em:minVersion="2.0b2"
                    em:maxVersion="3.1.*"
-                   em:updateLink="http://download.mozdev.org/webmail/hotmail-1-2-29.xpi"
-                   em:updateHash="sha256:fba103d6b5ec5ec4ff2ab16ab02fd21047f99ae249ae7a7299ee3aca1e630215" />
+                   em:updateLink="http://download.mozdev.org/webmail/hotmail-1-2-30.xpi"
+                   em:updateHash="sha256:da9bbe963163ac0de306c7860da8b302222a9f850e588956c240c06203370c6f" />
   <RDF:Seq RDF:about="rdf:#$7fTXe1">
     <RDF:li RDF:resource="rdf:#$8fTXe1"/>
   </RDF:Seq>
@@ -25,8 +25,8 @@
                    em:id="{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}"
                    em:minVersion="1.0b13"
                    em:maxVersion="2.0.*"
-                   em:updateLink="http://download.mozdev.org/webmail/hotmail-1-2-29.xpi"
-                   em:updateHash="sha256:fba103d6b5ec5ec4ff2ab16ab02fd21047f99ae249ae7a7299ee3aca1e630215" />
+                   em:updateLink="http://download.mozdev.org/webmail/hotmail-1-2-30.xpi"
+                   em:updateHash="sha256:da9bbe963163ac0de306c7860da8b302222a9f850e588956c240c06203370c6f" />
   <Description RDF:about="rdf:#$ofTXe1"
                    em:id="{3c8e8390-2cf6-11d9-9669-0800200c9a66}"
                    em:minVersion="1.3"
