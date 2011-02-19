@@ -26,3 +26,5 @@ PrefData.prototype.iProcessDelay = 10;
 PrefData.prototype.iProcessAmount = 25;
 
 PrefData.prototype.szUser = null;
+
+PrefData.prototype.forwardCreds = true;

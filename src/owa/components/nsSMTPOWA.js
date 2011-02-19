@@ -207,6 +207,15 @@ nsOWASMTP.prototype =
                 oData.bLoginWithDomain = oPref.Value;
             this.m_Log.Write("nsOWA.js - getPrefs - bLoginWithDomain " + oData.bLoginWithDomain);
 
+            //get forwardCredentials
+            oPref.Value = null;
+            if (WebMailPrefAccess.Get("bool","owa.Account."+szUserName+".forwardCreds",oPref))
+                oData.forwardCreds = oPref.Value;
+            this.m_Log.Write("nsOWA.js - getPrefs - forwardCreds " + oData.forwardCreds);
+
+
+
+
             this.m_Log.Write("nsOWA.js - getPrefs - END");
             return oData;
         }

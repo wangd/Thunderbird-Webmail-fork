@@ -178,6 +178,12 @@ var gPrefAccounts =
                    oPref.Value = false;  
                 this.m_DebugLog.Write("OWA-Pref-Accounts.js - selectUserName - bLoginWithDomain " + oPref.Value);  
                 document.getElementById("chkLoginWithDomain").checked = oPref.Value;
+ 
+                //get LoginWithDomain  
+                if (!prefAccess.Get("bool","owa.Account."+szUserName+".forwardCreds",oPref))
+                   oPref.Value = false;  
+                this.m_DebugLog.Write("OWA-Pref-Accounts.js - selectUserName - forwardCreds " + oPref.Value);  
+                document.getElementById("chkForwardCred").checked = oPref.Value;
             }
             this.m_DebugLog.Write("OWA-Pref-Accounts : selectUserName - END");
         }
@@ -292,6 +298,19 @@ var gPrefAccounts =
         prefAccess.Set("bool","owa.Account."+szUserName+".bLoginWithDomain",bDomain);
         
         this.m_DebugLog.Write("OWA-Pref-Accounts : chkLoginWithDomainOnChange - END");
+    },
+
+    chkForwardCredOnChange: function ()
+    {
+        this.m_DebugLog.Write("OWA-Pref-Accounts : chkForwardCredOnChange - START");
+        var forwardCred = document.getElementById("chkForwardCred").checked ? false : true;
+        this.m_DebugLog.Write("OWA-Pref-Accounts : chkForwardCredOnChange - Set Use Authentication to " + forwardCred);
+        //write pref
+        var szUserName = this.m_aszUserList[this.m_iIndex].szUsername.toLowerCase();
+        szUserName = szUserName.replace(/\./g,"~");
+        var prefAccess = new WebMailCommonPrefAccess();
+        prefAccess.Set("bool","owa.Account."+szUserName+".forwardCreds",forwardCred);
+        this.m_DebugLog.Write("OWA-Pref-Accounts : chkForwardCredOnChange - END");
     }
 }
 

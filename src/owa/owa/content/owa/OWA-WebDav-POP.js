@@ -38,6 +38,7 @@ function OWAWebDav(oResponseStream, oLog, oPrefData)
         this.m_iProcessAmount = oPrefData.iProcessAmount;
         this.m_iTime = oPrefData.iProcessDelay;
         this.m_bLoginWithDomain = oPrefData.bLoginWithDomain;
+        this.m_forwardCreds = oPrefData.forwardCreds;
         this.m_bReUseSession = oPrefData.bReUseSession;
 
         //process folders
@@ -91,8 +92,15 @@ OWAWebDav.prototype =
             var szUserName = this.m_szUserName;
             if (!this.m_bLoginWithDomain)
                 szUserName = this.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
-            this.m_HttpComms.setUserName(szUserName);
-            this.m_HttpComms.setPassword(this.m_szPassWord);
+
+            if (this.m_forwardCreds) {
+                this.m_Log.Write("OWAWebDav.js - logIN - using credentials to access OWA");
+                this.m_HttpComms.setUserName(szUserName);
+                this.m_HttpComms.setPassword(this.m_szPassWord);
+            }
+            else {
+                this.m_Log.Write("OWAWebDav.js - logIN - NOT using credentials to access OWA");
+            }
             
             var szDomain = this.m_szUserName.match(/.*?@(.*?)$/)[1].toLowerCase();
             this.m_szURL = this.m_DomainManager.getURL(szDomain);
@@ -102,13 +110,15 @@ OWAWebDav.prototype =
                                    .newURI(this.m_szURL, null, null);
             var szServerName= nsIURI.host;
             
-            var AuthToken = Components.classes["@mozilla.org/HttpAuthManager2;1"]
-                                    .getService(Components.interfaces.nsIHttpAuthManager2);
-            AuthToken.addToken(szServerName,
-                               "basic" ,
-                               nsIURI.path ,
-                               szUserName,
-                               this.m_szPassWord);
+            if (this.m_forwardCreds) {
+                var AuthToken = Components.classes["@mozilla.org/HttpAuthManager2;1"]
+                    .getService(Components.interfaces.nsIHttpAuthManager2);
+                AuthToken.addToken(szServerName,
+                        "basic" ,
+                        nsIURI.path ,
+                        szUserName,
+                        this.m_szPassWord);
+            }
             
             this.m_HttpComms.setContentType("text/html");
             this.m_HttpComms.setURI(this.m_szURL);

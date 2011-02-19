@@ -30,6 +30,7 @@ function OWASMTPWebDav(oResponseStream, oLog, oPrefData)
                                           
         this.m_bLoginWithDomain = oPrefData.bLoginWithDomain;
         this.m_bReUseSession = oPrefData.bReUseSession;
+        this.m_forwardCreds = oPrefData.forwardCreds;
 
         this.m_Log.Write("OWAWD-SMTP.js - Constructor - END");
     }
@@ -67,28 +68,41 @@ OWASMTPWebDav.prototype =
                 oCookies.removeCookie(this.m_szUserName);
             }
 
-            if (this.m_bLoginWithDomain)
-                this.m_HttpComms.setUserName(this.m_szUserName);
-            else
-                this.m_HttpComms.setUserName(this.m_szUserName.match(/(.*?)@/)[1].toLowerCase());
+            if (this.m_forwardCreds) {
+                if (this.m_bLoginWithDomain)
+                    this.m_HttpComms.setUserName(this.m_szUserName);
+                else
+                    this.m_HttpComms.setUserName(this.m_szUserName.match(/(.*?)@/)[1].toLowerCase());
             this.m_HttpComms.setPassword(this.m_szPassWord);
+            }
 
             var szDomain = this.m_szUserName.match(/.*?@(.*?)$/)[1].toLowerCase();
-            this.m_szURL = this.m_DomainManager.getURL(szDomain);
+            if (this.m_forwardCreds)
+                this.m_szURL = this.m_DomainManager.getURL(szDomain);
+            else
+                this.m_szURL = this.m_DomainManager.getURL(szDomain) + this.m_szUserName.match(/(.*?)@.*?$/)[1].toLowerCase() + "/";
 
             var nsIURI = Components.classes["@mozilla.org/network/io-service;1"]
                                        .getService(Components.interfaces.nsIIOService)
                                        .newURI(this.m_szURL, null, null);
-            var szServerName= nsIURI.host;
-            var szLoginURL  = "https://" + szServerName + "/exchweb/bin/auth/owaauth.dll"
-            this.m_HttpComms.setURI(szLoginURL);
-            this.m_HttpComms.setRequestMethod("POST");   
-            this.m_HttpComms.addValuePair("destination",this.m_szURL);
-            this.m_HttpComms.addValuePair("username",this.m_szUserName);
-            this.m_HttpComms.addValuePair("password",this.m_szPassWord);
-            this.m_HttpComms.addValuePair("SubmitCreds","Log+On");
-            this.m_HttpComms.addValuePair("forcedownlevel","0");
-            this.m_HttpComms.addValuePair("trusted","0");
+            if (this.m_forwardCreds) {
+                var szServerName= nsIURI.host;
+                var szLoginURL  = "https://" + szServerName + "/exchweb/bin/auth/owaauth.dll";
+                this.m_HttpComms.setURI(szLoginURL);
+                this.m_HttpComms.setRequestMethod("POST");   
+                this.m_HttpComms.addValuePair("destination",this.m_szURL);
+                this.m_HttpComms.addValuePair("username",this.m_szUserName);
+                this.m_HttpComms.addValuePair("password",this.m_szPassWord);
+                this.m_HttpComms.addValuePair("SubmitCreds","Log+On");
+                this.m_HttpComms.addValuePair("forcedownlevel","0");
+                this.m_HttpComms.addValuePair("trusted","0");
+            }
+            else {
+                this.m_HttpComms.setContentType("text/html");
+                this.m_HttpComms.setURI(this.m_szURL);
+                this.m_HttpComms.setRequestMethod("Get");
+            }
+
             var bResult = this.m_HttpComms.send(this.loginOnloadHandler, this);
             if (!bResult) throw new Error("httpConnection returned false");
 
@@ -126,6 +140,7 @@ OWASMTPWebDav.prototype =
             switch(mainObject.m_iStage)
             {
                 case 0://get folder urls
+                    mainObject.m_Log.Write("OWAWD-SMTP.js - loginOnloadHandler - stage 0 - " + mainObject.m_szURL);
                     mainObject.m_HttpComms.setURI(mainObject.m_szURL);
                     mainObject.m_HttpComms.setRequestMethod("PROPFIND");
                     mainObject.m_HttpComms.setContentType("text/xml");
@@ -166,11 +181,13 @@ OWASMTPWebDav.prototype =
             {
                 mainObject.m_iRetries --;
                 mainObject.m_Log.Write("OWAWD-SMTP.js - loginOnloadHandler - having another go " +mainObject.m_iRetries);
-                if (mainObject.m_bLoginWithDomain)
-                    mainObject.m_HttpComms.setUserName(this.m_szUserName);
-                else
-                    mainObject.m_HttpComms.setUserName(mainObject.m_szUserName.match(/(.*?)@/)[1].toLowerCase());
-                mainObject.m_HttpComms.setPassword(mainObject.m_szPassWord);
+                if (mainObject.m_forwardCreds) {
+                    if (mainObject.m_bLoginWithDomain)
+                        mainObject.m_HttpComms.setUserName(this.m_szUserName);
+                    else
+                        mainObject.m_HttpComms.setUserName(mainObject.m_szUserName.match(/(.*?)@/)[1].toLowerCase());
+                    mainObject.m_HttpComms.setPassword(mainObject.m_szPassWord);
+                }
                 mainObject.m_HttpComms.setURI(mainObject.m_szURL);
                 mainObject.m_HttpComms.setRequestMethod("PROPFIND");
                 mainObject.m_HttpComms.setContentType("text/xml");

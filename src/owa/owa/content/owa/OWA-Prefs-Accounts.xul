@@ -55,6 +55,9 @@
                                       accesskey="&OWAPref.Login.AccessKey;"
                                       id="chkLoginWithDomain"
                                       onclick ="gPrefAccounts.chkLoginWithDomainOnChange();"/>
+                                  <checkbox label="&OWAPref.Auth.szLabel;"
+                                      id="chkForwardCred"
+                                      onclick ="gPrefAccounts.chkForwardCredOnChange();"/>
                         </vbox>
                     </tabpanels>
                 </tabbox>

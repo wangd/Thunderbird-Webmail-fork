@@ -16,6 +16,8 @@
 <!ENTITY OWAPref.Login.szLabel "Use domain in login request">
 <!ENTITY OWAPref.Login.AccessKey "d">
 
+<!ENTITY OWAPref.Auth.szLabel "Forward Credentials (deselect if using a Client Certificate)">
+
 <!ENTITY OWAPref.AccountError.Label "No OWA Accounts Found">
 <!ENTITY OWAPref.SMTP.NA.Label "No options for OWA Live">
 
