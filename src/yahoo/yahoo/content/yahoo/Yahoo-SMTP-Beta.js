@@ -184,10 +184,10 @@ YahooSMTPBETA.prototype =
             mainObject.m_Log.Write("YahooSMTPBETA.js - loginOnloadHandler - status :" +httpChannel.responseStatus );
             if (httpChannel.responseStatus != 200)
             {
-            	if (szResponse.search(/SessionIdReissue/igm)!=-1)
-            	{
-            		mainObject.m_Log.Write("YahooSMTPBETA.js - loginOnloadHandler : ID Reiussue" );
-            		mainObject.m_szWssid = szResponse.match(/;wssid=(.*?)<\/url>/i)[1];
+                if (szResponse.search(/SessionIdReissue/igm)!=-1)
+                {
+                    mainObject.m_Log.Write("YahooSMTPBETA.js - loginOnloadHandler : ID Reiussue" );
+                    mainObject.m_szWssid = szResponse.match(/;wssid=(.*?)<\/url>/i)[1];
                     mainObject.m_Log.Write("YahooSMTPBETA.js - loginOnloadHandler - m_szWssid : "+mainObject.m_szWssid );
 
                     mainObject.m_bReEntry = false;
@@ -201,11 +201,11 @@ YahooSMTPBETA.prototype =
                     mainObject.m_HttpComms.setContentType("application/xml");
                     mainObject.m_HttpComms.addData(kListFolders);
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
-                    if (!bResult) throw new Error("httpConnection returned false");  
+                    if (!bResult) throw new Error("httpConnection returned false");
                     return;
-            	}
-            	else
-            		throw new Error("return status " + httpChannel.responseStatus);
+                }
+                else
+                    throw new Error("return status " + httpChannel.responseStatus);
             }
 
             if (szResponse.search(patternYahooLoginForm)!=-1)
@@ -229,12 +229,16 @@ YahooSMTPBETA.prototype =
             }
 
             if (mainObject.m_iStage == 0 && szResponse.search(kPatternLogOut)!=-1)
-            {             
+            {
                 mainObject.m_Log.Write("YahooSMTPBETA.js - loginOnloadHandler - already login");
                 mainObject.m_iStage =2; //logged in already
                 mainObject.m_iLoginCount++;
             }
 
+            if (mainObject.m_iStage == 1 && szResponse.search(kPatternWssid)!=-1)
+            {
+                mainObject.m_iStage =2; // no loggin redirect
+            }
 
             //page code
             switch (mainObject.m_iStage)
@@ -274,7 +278,7 @@ YahooSMTPBETA.prototype =
 
                     mainObject.m_HttpComms.addValuePair(".persistent","y");
                     mainObject.m_HttpComms.addValuePair(".save","Sign+In");
-                    
+
                     mainObject.m_HttpComms.setURI(szLoginURL);
                     mainObject.m_HttpComms.setRequestMethod("POST");
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
@@ -288,7 +292,7 @@ YahooSMTPBETA.prototype =
                          throw new Error("error parsing yahoo login web page");
                     mainObject.m_Log.Write("YahooSMTPBETA.js - loginOnloadHandler - login redirect " + aLoginRedirect);
                     var szURL = aLoginRedirect[1];
-                                        
+
                     mainObject.m_HttpComms.setURI(szURL);
                     mainObject.m_HttpComms.setRequestMethod("GET");
                     var bResult = mainObject.m_HttpComms.send(mainObject.loginOnloadHandler, mainObject);
@@ -301,7 +305,7 @@ YahooSMTPBETA.prototype =
                     {
                         mainObject.m_Log.Write("YahooSMTPBETA.js - loginOnloadHandler - logout not found");
                         //check for bounce
-                        if (szResponse.search(kPatternBTBounce)!= -1 && !mainObject.m_bReEntry) 
+                        if (szResponse.search(kPatternBTBounce)!= -1 && !mainObject.m_bReEntry)
                         {
                             var szRedirect = szResponse.match(kPatternBTBounce)[1];
                             mainObject.m_Log.Write("YahooSMTPBETA.js - loginOnloadHandler - szRedirect: " + szRedirect );
@@ -315,11 +319,11 @@ YahooSMTPBETA.prototype =
                         else if (mainObject.m_bReEntry)
                         {
                             mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
-                            
+
                             var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
                                                      .getService(Components.interfaces.nsIWebMailCookieManager2);
                             oCookies.removeCookie(mainObject.m_szUserName);
-                            
+
                             mainObject.m_bReEntry = false;
                             mainObject.m_iStage = 0;
                             mainObject.m_HttpComms.setURI(mainObject.m_szYahooMail);
@@ -452,10 +456,10 @@ YahooSMTPBETA.prototype =
             if (szFromName.length > 1)
                 this.m_szData = this.m_szData.replace(/FROMNAME/g,szFromName[0].replace(/\s*$/g,""));   //set from name
             else
-                this.m_szData = this.m_szData.replace(/FROMNAME/g,"");   
-                          
+                this.m_szData = this.m_szData.replace(/FROMNAME/g,"");
+
             //get subject
-            var szSubject = this.encodeHTML(this.m_Email.headers.getSubject());         
+            var szSubject = this.encodeHTML(this.m_Email.headers.getSubject());
             this.m_Log.Write("YahooSMTPBETA.js - rawMSG - szSubject " + szSubject);
             this.m_szData = this.m_szData.replace(/EMAILSUBJECT/,szSubject);   //set Subject
 
@@ -585,7 +589,7 @@ YahooSMTPBETA.prototype =
 
                 this.m_HttpComms.setContentType("multipart/form-data");
                 this.m_HttpComms.setRequestMethod("POST");
- 
+
                 var bResult = this.m_HttpComms.send(this.composerOnloadHandler, this);
                 if (!bResult) throw new Error("httpConnection returned false");
             }
@@ -622,7 +626,7 @@ YahooSMTPBETA.prototype =
             switch(mainObject.m_iStage)
             {
                 case 0:  //MSG sent
-                	mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - Checking response");
+                    mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - Checking response");
                     if (szResponse.search(kPatternSendMSGResponse)!=-1)
                     {
                         mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - SEND OK");
@@ -678,8 +682,8 @@ YahooSMTPBETA.prototype =
                         mainObject.m_HttpComms.setRequestMethod("POST");
                         mainObject.m_HttpComms.setContentType("application/xml; charset=UTF-8");
                         mainObject.m_HttpComms.addData(mainObject.m_szData.replace(/PACKETHEADER/g,""));   //remove packet header;
-                        var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler, mainObject);                        
-                        if (!bResult) throw new Error("httpConnection returned false");  
+                        var bResult = mainObject.m_HttpComms.send(mainObject.composerOnloadHandler, mainObject);
+                        if (!bResult) throw new Error("httpConnection returned false");
                         return;
                     }
                     else
@@ -751,11 +755,11 @@ YahooSMTPBETA.prototype =
                     mainObject.m_Log.Write("YahooSMTPBETA.js - composerOnloadHandler - imageFile " + szPath);
                     var szResult =  mainObject.openSpamWindow(szPath);
                     if (!szResult) throw new Error("Spam Handling Error");
-    
+
                     var szHeader = kPatternSpamHeader;
                     szHeader = szHeader.replace(/SPAMANSWER/,szResult);
                     szHeader = szHeader.replace(/SPAMIMAGE/,mainObject.m_szSpamURL);
-                    
+
                     mainObject.m_HttpComms.addData(mainObject.m_szData.replace(/PACKETHEADER/g,szHeader));
                     var szURI = mainObject.m_szLocationURI + "/ws/mail/v1/soap?appid=YahooMailRC&m=SendMessage&wssid="+mainObject.m_szWssid;
                     mainObject.m_iStage = 0 ;

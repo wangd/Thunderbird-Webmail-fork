@@ -7,7 +7,7 @@ function YahooFolderBeta(oLog)
         scriptLoader.loadSubScript("chrome://web-mail/content/common/DebugLog.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/HttpComms3.js");
         scriptLoader.loadSubScript("chrome://web-mail/content/common/CommonPrefs.js");
-        
+
         this.m_Log = oLog;
         this.m_Log.Write("YahooFolderBeta.js - Constructor - START");
 
@@ -36,8 +36,8 @@ function YahooFolderBeta(oLog)
         this.m_szLocationURI = null;
         this.m_szHomeURI = null;
         this.m_szYahooMail = null;
-        this.m_szWssid = null;  
-        
+        this.m_szWssid = null;
+
         this.m_Log.Write("YahooFolderBeta.js - Constructor - END");
     }
     catch(e)
@@ -56,21 +56,21 @@ YahooFolderBeta.prototype =
 {
     setUserName : function (szUserName)
     {
-        this.m_szUserName = szUserName;  
+        this.m_szUserName = szUserName;
     },
-    
-    
+
+
     setPassword : function (szPassword)
     {
         this.m_szPassWord = szPassword;
     },
-    
-    
+
+
     cancel : function (bCancel)
     {
-        this.m_bCancel =  bCancel; 
+        this.m_bCancel =  bCancel;
     },
-    
+
     // return  0 = error
     //         1 = ok
     //         -2 = no user name
@@ -81,10 +81,10 @@ YahooFolderBeta.prototype =
         {
             this.m_Log.Write("YahooFolderBeta.js - donwloadFolderList - START");
             if (!this.m_szUserName) return -2;
-            
+
             this.m_callback = callback;
             this.m_parent = parent;
-            
+
             this.m_szYahooMail = "http://mail.yahoo.com";
             this.m_szLoginUserName = this.m_szUserName;
 
@@ -93,7 +93,7 @@ YahooFolderBeta.prototype =
                 if (this.m_szUserName.search(/yahoo\.co\.jp/i)!=-1)
                     this.m_szYahooMail = "http://mail.yahoo.co.jp/";
 
-                //remove domain from user name       
+                //remove domain from user name
                 this.m_szLoginUserName = this.m_szUserName.match(/(.*?)@/)[1].toLowerCase();
             }
             else if (this.m_szUserName.search(/@talk21.com$/i)!=-1 ||
@@ -105,7 +105,7 @@ YahooFolderBeta.prototype =
 
             this.m_Log.Write("YahooFolderBeta.js - donwloadFolderList - default " +this.m_szYahooMail);
             this.m_iStage = 0;
-            
+
             this.m_HttpComms.setUserName(this.m_szUserName);
             this.m_HttpComms.setURI(this.m_szYahooMail);
 
@@ -129,11 +129,11 @@ YahooFolderBeta.prototype =
                 else
                 {
                    this.m_ComponentManager.deleteAllElements(this.m_szUserName);
-    
+
                     var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
                                              .getService(Components.interfaces.nsIWebMailCookieManager2);
-                    oCookies.removeCookie(this.m_szUserName);                    
-                }           
+                    oCookies.removeCookie(this.m_szUserName);
+                }
             }
             else
             {
@@ -143,36 +143,8 @@ YahooFolderBeta.prototype =
                                          .getService(Components.interfaces.nsIWebMailCookieManager2);
                 oCookies.removeCookie(this.m_szUserName);
             }
-            
-            if (!this.m_szHomeURI && !this.m_szPassWord)  //no session data and no password
-            {
-                this.m_Log.Write("YahooFolderBeta.js - donwloadFolderList - NO Session Data");
-                var ioService = Components.classes["@mozilla.org/network/io-service;1"]
-                                          .getService(Components.interfaces.nsIIOService);
-                var passwordManager = Components.classes["@mozilla.org/passwordmanager;1"]
-                                                .getService(Components.interfaces.nsIPasswordManager);
-                var e = passwordManager.enumerator;
-                while (e.hasMoreElements()) 
-                {
-                    try 
-                    {
-                       var pass = e.getNext().QueryInterface(Components.interfaces.nsIPassword);
-                       var user = decodeURIComponent(ioService.newURI(pass.host, null, null).username);
-                       this.m_Log.Write("YahooFolderBeta.js - donwloadFolderList - user " + user);
-                       
-                       var regExp = new RegExp("^"+user+"$","i");
-                       if (this.m_szUserName.search(regExp)!=-1) 
-                       {
-                           this.m_szPassWord = pass.password;
-                           this.m_Log.Write("YahooFolderBeta.js - donwloadFolderList - this.m_szPassWord " + this.m_szPassWord);
-                       }
-                    } 
-                    catch (ex) 
-                    {                      
-                    }
-                }
-                if (!this.m_szPassWord) return -3; //no password
-            }
+
+            if (!this.m_szHomeURI && !this.m_szPassWord)  return -3; //no session data and no password
 
             this.m_HttpComms.setRequestMethod("GET");
             var bResult = this.m_HttpComms.send(this.downloadOnloadHandler, this);
@@ -201,7 +173,7 @@ YahooFolderBeta.prototype =
             mainObject.m_Log.Write("YahooFolderBeta.js - downloadOnloadHandler - START");
             mainObject.m_Log.Write("YahooFolderBeta.js - downloadOnloadHandler : Stage " + mainObject.m_iStage);
             mainObject.m_Log.Write("YahooFolderBeta.js - downloadOnloadHandler : canceled " + mainObject.m_bCancel);
-            
+
             if (mainObject.m_bCancel) throw new Error("canceled");
 
             var httpChannel = event.QueryInterface(Components.interfaces.nsIHttpChannel);
@@ -277,7 +249,7 @@ YahooFolderBeta.prototype =
                     {
                         mainObject.m_Log.Write("YahooFoldersBETA.js - downloadOnloadHandler - logout not found");
                         //check for bounce
-                        if (szResponse.search(kPatternBTBounce)!= -1 && !mainObject.m_bReEntry) 
+                        if (szResponse.search(kPatternBTBounce)!= -1 && !mainObject.m_bReEntry)
                         {
                             var szRedirect = szResponse.match(kPatternBTBounce)[1];
                             mainObject.m_Log.Write("YahooFoldersBETA.js - downloadOnloadHandler - szRedirect: " + szRedirect );
@@ -289,14 +261,14 @@ YahooFolderBeta.prototype =
                             return;
                         }
                         else if (mainObject.m_bReEntry)
-                        {                       
+                        {
                             //clean and start again
                             mainObject.m_ComponentManager.deleteAllElements(mainObject.m_szUserName);
-                            
+
                             var oCookies = Components.classes["@mozilla.org/nsWebMailCookieManager2;1"]
                                                      .getService(Components.interfaces.nsIWebMailCookieManager2);
                             oCookies.removeCookie(mainObject.m_szUserName);
-                            
+
                             mainObject.m_bReEntry = false;
                             mainObject.m_iStage = 0;
                             mainObject.m_HttpComms.setURI(mainObject.m_szYahooMail);
@@ -336,7 +308,7 @@ YahooFolderBeta.prototype =
 
                     var aszFolders = szFolderResponse.match(kPatternFolderData);
                     mainObject.m_Log.Write("YahooFoldersBETA.js - downloadOnloadHandler - aszFolders : "+aszFolders);
-                    
+
                     mainObject.m_ComponentManager.addElement(mainObject.m_szUserName, "szHomeURI", mainObject.m_szHomeURI);
 
                     var aszFolderList = new Array();
@@ -346,7 +318,7 @@ YahooFolderBeta.prototype =
                         mainObject.m_Log.Write("YahooFolderBeta.js - downloadOnloadHandler - szBox : "+szBox );
                         aszFolderList.push(szBox);
                     }
-                    
+
                     mainObject.m_callback(aszFolderList, mainObject.m_parent);
                 break;
             };
@@ -366,7 +338,7 @@ YahooFolderBeta.prototype =
                                           + ".\nError message: "
                                           + err.message + "\n"
                                           + err.lineNumber);
-            mainObject.m_bCancel = true;                              
+            mainObject.m_bCancel = true;
             mainObject.m_callback(null, mainObject.m_parent);
         }
     }
